@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.liferay.blade.tools"
+      label="Blade Tools"
+      version="@master-version@"
+      provider-name="Liferay, Inc."
+>
+
+   <description url="">
+   </description>
+
+   <copyright>
+   </copyright>
+
+   <license url="">
+   </license>
+
+   <url>
+   </url>
+
+   <plugin
+         id="com.liferay.blade.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.liferay.blade.eclipse.provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.liferay.blade.eclipse.provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.liferay.blade.upgrade.liferay70"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

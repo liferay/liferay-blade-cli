@@ -1,0 +1,5 @@
+task cleanupWorkspace(type: Delete) {
+  delete 'workspace'
+}
+
+check.dependsOn cleanupWorkspace

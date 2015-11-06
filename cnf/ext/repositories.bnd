@@ -1,0 +1,44 @@
+bnd-release	=	https://bndtools.ci.cloudbees.com/job/bnd.master/719/artifact/dist/bundles/
+
+-pluginpath:\
+        ${build}/cache/biz.aQute.repository.jar;url=${bnd-release}/biz.aQute.repository/biz.aQute.repository-latest.jar,\
+        ${build}/cache/org.osgi.impl.bundle.repoindex.cli.jar;url=${bnd-release}/org.osgi.impl.bundle.repoindex.cli/org.osgi.impl.bundle.repoindex.cli-latest.jar
+
+-plugin.wrapper: \
+	aQute.bnd.deployer.repository.wrapper.Plugin; \
+            location            =	"${build}/cache/wrapper"; \
+            reindex				=	true; \
+            augments			=   WORKSPACE
+
+-plugin.localrepo= \
+	aQute.bnd.deployer.repository.LocalIndexedRepo; \
+		name=Local; \
+		local=${build}/local;\
+		pretty=true
+
+-plugin.releaserepo = \
+	aQute.bnd.deployer.repository.LocalIndexedRepo; \
+		name=Release; \
+		local=${build}/release;\
+		pretty=true
+
+-plugin.eclipserepo = \
+	aQute.bnd.deployer.repository.FixedIndexedRepo; \
+		name=Mars OBR; \
+		locations=http://106.187.96.36/gamerson/mars-obr/index.xml.gz
+
+
+-plugin.bndrepo = \
+	aQute.bnd.deployer.repository.FixedIndexedRepo; \
+		name=bnd.master; \
+		locations=${bnd-release}/index.xml.gz
+
+-plugin.jpmrepo = \
+	aQute.bnd.jpm.Repository; \
+	    includeStage		=       true; \
+	    name				=       JPM; \
+	    location			=       ~/.bnd/shacache; \
+	    index				=       ${build}/jpm4j.json
+
+
+-releaserepo: 					Release

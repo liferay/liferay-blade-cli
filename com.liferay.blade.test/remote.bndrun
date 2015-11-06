@@ -1,0 +1,8 @@
+-runremote: liferay;shell=-1;jmx=attach
+
+-runbundles: \
+	com.liferay.blade.upgrade.liferay70;version=latest,\
+	com.liferay.blade.eclipse.provider;version=latest
+
+-runpath: \
+	../cnf/cache/biz.aQute.remote.launcher/biz.aQute.remote.launcher-latest.jar;version=file

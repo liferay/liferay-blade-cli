@@ -1,0 +1,35 @@
+-buildpath: \
+	aQute.libg,\
+	biz.aQute.bndlib,\
+	biz.aQute.remote.launcher,\
+	org.apache.commons.lang3,\
+	com.liferay.blade.api;version=latest,\
+	osgi.core
+
+-includeresource: \
+	{templates.zip}
+
+-testpath: \
+	biz.aQute.junit
+
+Bundle-Version: 1.0.0.${tstamp}
+
+Import-Package: \
+	 org.osgi.framework;version=1.5.0,\
+	 !org.osgi.service.repository,\
+	 *
+
+Private-Package: \
+	aQute.bnd.*,\
+	aQute.remote.util,\
+	aQute.configurable;-split-package:=first,\
+	aQute.lib.*;-split-package:=first,\
+	aQute.libg.*;-split-package:=first,\
+	aQute.service.reporter;split-package:=first,\
+	com.liferay.blade.cli.*,\
+	org.apache.commons.lang3.*,\
+	org.osgi.dto,\
+	org.osgi.framework.dto,\
+	org.osgi.resource,\
+	org.osgi.service.component.annotations,\
+	org.osgi.service.metatype.annotations

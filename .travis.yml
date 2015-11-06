@@ -1,0 +1,8 @@
+language: java
+jdk:
+  - oraclejdk7
+
+install: ./gradlew --version
+# TO debug
+# script: ./gradlew build --debug
+script: ./gradlew clean build export.blade

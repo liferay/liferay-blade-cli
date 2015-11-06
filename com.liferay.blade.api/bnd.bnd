@@ -1,0 +1,10 @@
+Bundle-Version: 1.0.0.${tstamp}
+Bundle-SymbolicName: com.liferay.blade.api;singleton:=true
+
+Export-Package:  \
+	com.liferay.blade.api;provide:=true,\
+	com.liferay.blade.util
+
+-buildpath: \
+	org.eclipse.core.resources,\
+	osgi.annotation
