@@ -12,4 +12,6 @@ public interface MigrationConstants {
 	String MARKER_ATTRIBUTE_TIMESTAMP = "migrationProblem.timestamp";
 	String MARKER_ATTRIBUTE_AUTOCORRECTCONTEXT = "migrationProblem.autoCorrectContext";
 
+	String HELPER_PROJECT_NAME = "__migration_helper__";
+
 }

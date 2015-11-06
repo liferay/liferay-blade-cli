@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
+import com.liferay.blade.api.MigrationConstants;
 import com.liferay.blade.api.SourceFile;
 
 public class WorkspaceFile implements SourceFile {
@@ -42,7 +43,7 @@ public class WorkspaceFile implements SourceFile {
 
 		if (retval == null) {
 			try {
-				retval = _helper.createIFile( Constants.HELPER_PROJECT_NAME, file );
+				retval = _helper.createIFile( MigrationConstants.HELPER_PROJECT_NAME, file );
 			} catch (CoreException | IOException e) {
 				e.printStackTrace();
 			}
