@@ -35,6 +35,7 @@ Bundle-Version: 1.0.0.${tstamp}
 
 Import-Package: \
 	org.eclipse.core.runtime;version="[3.2,4)",\
+	org.osgi.service.component;version="[1.2,2)",\
 	*
 
 Private-Package: \
