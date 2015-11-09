@@ -21,6 +21,9 @@ import com.liferay.blade.api.Command;
 )
 public class CopyPortalSettingsCommand implements Command {
 
+	public static final String PARAM_SOURCE = "source";
+	public static final String PARAM_DEST = "dest";
+
 	private final String[] PROPERTIES_FILENAME_PATTERNS = {
 		"portal-.*\\.properties",
 		"system-ext\\.properties",
@@ -64,8 +67,8 @@ public class CopyPortalSettingsCommand implements Command {
 
 	@Override
 	public Object execute(Map<String, ?> parameters) {
-		File src = (File) parameters.get("source");
-		File dest = (File) parameters.get("dest");
+		File src = (File) parameters.get(PARAM_SOURCE);
+		File dest = (File) parameters.get(PARAM_DEST);
 
 		return copyPortalSettings(src, dest);
 	}
