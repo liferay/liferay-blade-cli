@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface Command {
 
-	public Object execute(Map<String, ?> parameters);
+	public Object execute(Map<String, ?> parameters) throws CommandException;
 
 }
