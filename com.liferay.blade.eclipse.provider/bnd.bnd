@@ -4,7 +4,6 @@
 	com.liferay.blade.api;version=project,\
 	dnl.utils.jtext,\
 	org.apache.commons.lang,\
-	org.apache.felix.gogo.runtime,\
 	org.eclipse.core.jobs,\
 	org.eclipse.core.contenttype,\
 	org.eclipse.core.resources,\

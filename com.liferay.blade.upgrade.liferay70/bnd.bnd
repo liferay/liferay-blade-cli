@@ -4,6 +4,7 @@
 	com.liferay.blade.api,\
 	com.liferay.blade.eclipse.provider,\
 	biz.aQute.junit,\
+	org.apache.felix.gogo.runtime,\
 	org.eclipse.jdt.core,\
 	org.eclipse.core.runtime,\
 	org.eclipse.equinox.common,\
