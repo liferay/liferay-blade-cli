@@ -1,13 +1,5 @@
 package com.liferay.blade.eclipse.provider;
 
-import com.liferay.blade.api.FileMigrator;
-import com.liferay.blade.api.Migration;
-import com.liferay.blade.api.MigrationListener;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.api.ProgressMonitor;
-import com.liferay.blade.api.ProjectMigrator;
-import com.liferay.blade.api.Reporter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,7 +13,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -30,8 +24,21 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.liferay.blade.api.FileMigrator;
+import com.liferay.blade.api.Migration;
+import com.liferay.blade.api.MigrationListener;
+import com.liferay.blade.api.Problem;
+import com.liferay.blade.api.ProgressMonitor;
+import com.liferay.blade.api.ProjectMigrator;
+import com.liferay.blade.api.Reporter;
+
 @Component
 public class ProjectMigrationService implements Migration {
+
+	private BundleContext _context;
+	private ServiceTracker<FileMigrator, FileMigrator> _fileMigratorTracker;
+	private ServiceTracker<MigrationListener, MigrationListener> _migrationListenerTracker;
+	private ServiceTracker<ProjectMigrator, ProjectMigrator> _projectMigratorTracker;
 
 	@Activate
 	public void activate(BundleContext context) {
@@ -45,6 +52,53 @@ public class ProjectMigrationService implements Migration {
 
 		_projectMigratorTracker = new ServiceTracker<ProjectMigrator, ProjectMigrator>(context, ProjectMigrator.class, null);
 		_projectMigratorTracker.open();
+	}
+
+	protected FileVisitResult analyzeFile(
+		File file, List<Problem> problems, ProgressMonitor monitor) {
+
+		String fileName = file.toPath().getFileName().toString();
+		String extension = fileName.substring(
+			fileName.lastIndexOf('.') + 1);
+
+		monitor.setTaskName("Analyzing file " + fileName);
+
+		ServiceReference<FileMigrator>[] fileMigrators =
+			_fileMigratorTracker.getServiceReferences();
+
+		if(fileMigrators != null && fileMigrators.length > 0) {
+			for (ServiceReference<FileMigrator> fm : fileMigrators) {
+				if (monitor.isCanceled()) {
+					return FileVisitResult.TERMINATE;
+				}
+
+				final List<String> fileExtensions = Arrays.asList(
+						((String) fm.getProperty("file.extensions"))
+								.split(","));
+
+				if (fileExtensions != null && fileExtensions.contains(extension)) {
+					final FileMigrator fmigrator = _context.getService(fm);
+
+					try {
+						final List<Problem> fileProblems = fmigrator.analyze(
+							file);
+
+						if ( fileProblems != null &&
+							fileProblems.size() > 0) {
+
+							problems.addAll(fileProblems);
+						}
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					_context.ungetService(fm);
+				}
+			}
+		}
+
+		return FileVisitResult.CONTINUE;
 	}
 
 	@Override
@@ -74,22 +128,35 @@ public class ProjectMigrationService implements Migration {
 
 		walkFiles(projectDir, problems, monitor);
 
+		updateListeners(problems);
+
 		monitor.done();
-
-		final MigrationListener[] listeners = _migrationListenerTracker
-				.getServices(new MigrationListener[0]);
-
-		for (MigrationListener listener : listeners) {
-			try {
-				listener.problemsFound(problems);
-			} catch (Exception e) {
-				// ignore
-			}
-		}
 
 		return problems;
 	}
 
+	@Override
+	public List<Problem> findProblems(
+		Set<File> files, final ProgressMonitor monitor) {
+
+		final List<Problem> problems = new ArrayList<>();
+
+		monitor.beginTask("Analyzing files", -1);
+
+		for (File file : files) {
+			if (monitor.isCanceled()) {
+				return Collections.emptyList();
+			}
+
+			analyzeFile(file, problems, monitor);
+		}
+
+		updateListeners(problems);
+
+		monitor.done();
+
+		return problems;
+	}
 	@Override
 	public void reportProblems(List<Problem> problems, int detail, String format, Object... args) {
 		Reporter reporter = null;
@@ -136,7 +203,20 @@ public class ProjectMigrationService implements Migration {
 			reporter.endReporting();
 		}
 	}
+	private void updateListeners(List<Problem> problems) {
+		if (problems.size() > 0) {
+			final MigrationListener[] listeners =
+				_migrationListenerTracker.getServices(new MigrationListener[0]);
 
+			for (MigrationListener listener : listeners) {
+				try {
+					listener.problemsFound(problems);
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+	}
 	private void walkFiles(final File dir, final List<Problem> problems, final ProgressMonitor monitor) {
 		final FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
 			@Override
@@ -152,44 +232,11 @@ public class ProjectMigrationService implements Migration {
 
 				if (file.isFile())
 				{
-					String fileName = file.toPath().getFileName().toString();
-					String extension = fileName.substring(
-						fileName.lastIndexOf('.')+1);
+					FileVisitResult result =
+						analyzeFile(file, problems, monitor);
 
-					monitor.setTaskName("Analyzing file " + fileName);
-
-					ServiceReference<FileMigrator>[] fileMigrators = _fileMigratorTracker.getServiceReferences();
-
-					if(fileMigrators != null && fileMigrators.length > 0) {
-						for (ServiceReference<FileMigrator> fm : fileMigrators) {
-							if (monitor.isCanceled()) {
-								return FileVisitResult.TERMINATE;
-							}
-
-							final List<String> fileExtensions = Arrays.asList(
-									((String) fm.getProperty("file.extensions"))
-											.split(","));
-
-							if (fileExtensions != null && fileExtensions.contains(extension)) {
-								final FileMigrator fmigrator = _context.getService(fm);
-
-								try {
-									final List<Problem> fileProblems = fmigrator.analyze(
-										file);
-
-									if ( fileProblems != null &&
-										fileProblems.size() > 0) {
-
-										problems.addAll(fileProblems);
-									}
-								}
-								catch (Exception e) {
-									e.printStackTrace();
-								}
-
-								_context.ungetService(fm);
-							}
-						}
+					if (result.equals(FileVisitResult.TERMINATE)) {
+						return result;
 					}
 				}
 
@@ -203,10 +250,5 @@ public class ProjectMigrationService implements Migration {
 			e.printStackTrace();
 		}
 	}
-
-	private BundleContext _context;
-	private ServiceTracker<MigrationListener, MigrationListener> _migrationListenerTracker;
-	private ServiceTracker<FileMigrator, FileMigrator> _fileMigratorTracker;
-	private ServiceTracker<ProjectMigrator, ProjectMigrator> _projectMigratorTracker;
 
 }

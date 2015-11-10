@@ -1,4 +1,7 @@
-package com.liferay.blade.eclipse.provider.cmds;
+package com.liferay.blade.upgrade.liferay70.cmds;
+
+import com.liferay.blade.api.Command;
+import com.liferay.blade.api.CommandException;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -9,8 +12,6 @@ import java.util.Map;
 
 import org.apache.felix.service.command.CommandProcessor;
 import org.osgi.service.component.annotations.Component;
-
-import com.liferay.blade.api.Command;
 
 @Component(
 	property = {
@@ -29,7 +30,9 @@ public class CopyPortalSettingsCommand implements Command {
 		"system-ext\\.properties",
 	};
 
-	public Object copyPortalSettings(File sourcePortalDir, File destPortalDir) {
+	public Object copyPortalSettings(File sourcePortalDir, File destPortalDir)
+			throws CommandException {
+
 		if (!sourcePortalDir.exists() || !destPortalDir.exists()) {
 			return null;
 		}
@@ -62,11 +65,15 @@ public class CopyPortalSettingsCommand implements Command {
 			}
 		}
 
-		return errors.length() > 0 ? errors.toString() : null;
+		if (errors.length() > 0) {
+			throw new CommandException(errors.toString());
+		}
+
+		return null;
 	}
 
 	@Override
-	public Object execute(Map<String, ?> parameters) {
+	public Object execute(Map<String, ?> parameters) throws CommandException {
 		File src = (File) parameters.get(PARAM_SOURCE);
 		File dest = (File) parameters.get(PARAM_DEST);
 

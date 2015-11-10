@@ -1,4 +1,4 @@
-package com.liferay.blade.eclipse.provider;
+package com.liferay.blade.upgrade.liferay70.cmds;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -12,8 +12,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.liferay.blade.eclipse.provider.cmds.CopyPortalSettingsCommand;
-
 import aQute.lib.io.IO;
 
 /**
@@ -22,7 +20,7 @@ import aQute.lib.io.IO;
 public class CopyPortalSettingsCommandTest {
 
 	final File dest = new File("generated/copyPortalSettings");
-	final File src = new File("tests/copyPortalSettings");
+	final File src = new File("projects/copyPortalSettings");
 
 	@Before
 	public void cleanUpFiles() throws IOException {
