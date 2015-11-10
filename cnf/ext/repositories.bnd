@@ -1,8 +1,6 @@
-bnd-release	=	https://bndtools.ci.cloudbees.com/job/bnd.master/719/artifact/dist/bundles/
+bnd-release=https://bndtools.ci.cloudbees.com/job/bnd.master/798/artifact/dist/bundles/
 
 -pluginpath:\
-        ${build}/cache/biz.aQute.remote.launcher.jar;url=${bnd-release}/biz.aQute.remote.launcher/biz.aQute.remote.launcher-latest.jar,\
-        ${build}/cache/biz.aQute.repository.jar;url=${bnd-release}/biz.aQute.repository/biz.aQute.repository-latest.jar,\
         ${build}/cache/org.osgi.impl.bundle.repoindex.cli.jar;url=${bnd-release}/org.osgi.impl.bundle.repoindex.cli/org.osgi.impl.bundle.repoindex.cli-latest.jar
 
 -plugin.wrapper: \
