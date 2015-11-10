@@ -20,7 +20,7 @@ import aQute.lib.io.IO;
 public class CopyPortalSettingsCommandTest {
 
 	final File dest = new File("generated/copyPortalSettings");
-	final File src = new File("tests/copyPortalSettings");
+	final File src = new File("projects/copyPortalSettings");
 
 	@Before
 	public void cleanUpFiles() throws IOException {
