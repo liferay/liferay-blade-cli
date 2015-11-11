@@ -29,7 +29,6 @@ import com.liferay.blade.api.Migration;
 import com.liferay.blade.api.MigrationListener;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.ProgressMonitor;
-import com.liferay.blade.api.ProjectMigrator;
 import com.liferay.blade.api.Reporter;
 
 @Component
@@ -38,7 +37,6 @@ public class ProjectMigrationService implements Migration {
 	private BundleContext _context;
 	private ServiceTracker<FileMigrator, FileMigrator> _fileMigratorTracker;
 	private ServiceTracker<MigrationListener, MigrationListener> _migrationListenerTracker;
-	private ServiceTracker<ProjectMigrator, ProjectMigrator> _projectMigratorTracker;
 
 	@Activate
 	public void activate(BundleContext context) {
@@ -49,9 +47,6 @@ public class ProjectMigrationService implements Migration {
 
 		_fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
 		_fileMigratorTracker.open();
-
-		_projectMigratorTracker = new ServiceTracker<ProjectMigrator, ProjectMigrator>(context, ProjectMigrator.class, null);
-		_projectMigratorTracker.open();
 	}
 
 	protected FileVisitResult analyzeFile(
@@ -106,23 +101,6 @@ public class ProjectMigrationService implements Migration {
 		monitor.beginTask("Searching for migration problems in " + projectDir, -1);
 
 		final List<Problem> problems = new ArrayList<>();
-
-		ServiceReference<ProjectMigrator>[] projectMigrators = _projectMigratorTracker.getServiceReferences();
-
-		if (projectMigrators != null && projectMigrators.length > 0) {
-			for (ServiceReference<ProjectMigrator> projectMigratorRef : projectMigrators) {
-				if (!monitor.isCanceled()) {
-					try {
-						ProjectMigrator projectMigrator = _context.getService(projectMigratorRef);
-						List<Problem> migrationProblems = projectMigrator.analyze(projectDir);
-
-						problems.addAll(migrationProblems);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
 
 		monitor.beginTask("Analyzing files", -1);
 
