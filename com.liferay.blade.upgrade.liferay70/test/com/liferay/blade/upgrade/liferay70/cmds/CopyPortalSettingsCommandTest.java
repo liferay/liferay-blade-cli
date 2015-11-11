@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +44,8 @@ public class CopyPortalSettingsCommandTest {
 		};
 
 		File[] actual = dest.listFiles();
+
+		Arrays.sort(actual);
 
 		for (int i = 0; i < expected.length; i++) {
 			assertEquals(expected[i], actual[i]);
