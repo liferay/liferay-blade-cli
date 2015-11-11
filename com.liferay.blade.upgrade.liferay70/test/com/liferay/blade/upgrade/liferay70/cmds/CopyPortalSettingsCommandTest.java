@@ -72,6 +72,8 @@ public class CopyPortalSettingsCommandTest {
 
 		File[] actual = dest.listFiles();
 
+		Arrays.sort(actual);
+
 		for (int i = 0; i < expected.length; i++) {
 			assertEquals(expected[i], actual[i]);
 		}
