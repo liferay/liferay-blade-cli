@@ -69,7 +69,8 @@ public class LiferayVersionsProperties extends PropertiesFileMigrator implements
 							problems.add(new Problem( _problemTitle, _problemSummary,
 								_problemType, _problemTickets, file,
 								searchResult.startLine, searchResult.startOffset,
-								searchResult.endOffset, sectionHtml, searchResult.autoCorrectContext));
+								searchResult.endOffset, sectionHtml, searchResult.autoCorrectContext,
+								Problem.STATUS_NOT_RESOLVED));
 						}
 					}
 				}
