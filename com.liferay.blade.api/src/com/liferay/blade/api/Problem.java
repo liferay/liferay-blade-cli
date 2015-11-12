@@ -4,13 +4,17 @@ import java.io.File;
 
 public class Problem {
 
+	public static final int STATUS_NOT_RESOLVED = 0;
+	public static final int STATUS_RESOLVED = 1;
+	public static final int STATUS_IGNORE = 2;
+
 	public Problem() {
 	}
 
 	public Problem( String title, String summary, String type,
 			String ticket, File file,
 			int lineNumber, int startOffset, int endOffset,
-			String html, String autoCorrectContext) {
+			String html, String autoCorrectContext, int status) {
 
 		this.title = title;
 		this.summary = summary;
@@ -22,6 +26,7 @@ public class Problem {
 		this.endOffset = endOffset;
 		this.html = html;
 		this.autoCorrectContext = autoCorrectContext;
+		this.status = status;
 	}
 
 	public File file;
@@ -35,6 +40,7 @@ public class Problem {
 	public int startOffset;
 	public String html;
 	public String autoCorrectContext;
+	public int status;
 
 	public String getTitle() {
 		return title;
@@ -116,6 +122,14 @@ public class Problem {
 		this.autoCorrectContext = autoCorrectContext;
 	}
 
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -162,6 +176,8 @@ public class Problem {
 			if (other.autoCorrectContext != null)
 				return false;
 		} else if (!autoCorrectContext.equals(other.autoCorrectContext))
+			return false;
+		if (status != other.status)
 			return false;
 		return true;
 	}

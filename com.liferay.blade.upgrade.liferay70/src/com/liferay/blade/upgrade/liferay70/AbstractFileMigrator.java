@@ -28,7 +28,7 @@ public abstract class AbstractFileMigrator<T extends SourceFile> implements File
 	String _problemTickets;
 	String _sectionKey;
 	final Class<T> _type;
-	
+
 	public AbstractFileMigrator(Class<T> type) {
 		_type = type;
 	}
@@ -62,7 +62,7 @@ public abstract class AbstractFileMigrator<T extends SourceFile> implements File
 				problems.add(new Problem(_problemTitle, _problemSummary,
 					fileExtension, _problemTickets, file, searchResult.startLine,
 					searchResult.startOffset, searchResult.endOffset, sectionHtml,
-					searchResult.autoCorrectContext));
+					searchResult.autoCorrectContext, Problem.STATUS_NOT_RESOLVED));
 			}
 		}
 
@@ -71,7 +71,7 @@ public abstract class AbstractFileMigrator<T extends SourceFile> implements File
 
 	protected T createFileChecker(Class<T> type, File file) {
 		final String fileExtension = new Path(file.getAbsolutePath()).getFileExtension();
-		
+
 		try {
 			final Collection<ServiceReference<T>> refs = _context.getServiceReferences(type,
 					"(file.extension=" + fileExtension + ")");
@@ -92,7 +92,7 @@ public abstract class AbstractFileMigrator<T extends SourceFile> implements File
 				return fileCheckerFile;
 			}
 		} catch (InvalidSyntaxException e) {
-		} 
+		}
 
 		return null;
 	}

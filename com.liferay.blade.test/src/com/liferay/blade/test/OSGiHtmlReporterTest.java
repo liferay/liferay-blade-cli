@@ -86,9 +86,9 @@ public class OSGiHtmlReporterTest {
 
 		reporter.beginReporting(Migration.DETAIL_LONG, baos);
 		reporter.report(new Problem(
-				"foo", "foo summary", "java", "LPS-5309", new File("Foo.java"), 10, 100, 110, null, null));
+				"foo", "foo summary", "java", "LPS-5309", new File("Foo.java"), 10, 100, 110, null, null, Problem.STATUS_NOT_RESOLVED));
 		reporter.report(new Problem(
-				"bar", "bar summary", "jsp", "LPS-867", new File("Bar.java"), 20, 200, 220, null, null));
+				"bar", "bar summary", "jsp", "LPS-867", new File("Bar.java"), 20, 200, 220, null, null, Problem.STATUS_NOT_RESOLVED));
 		reporter.endReporting();
 
 		String realString = baos.toString().replace("\r", "");
@@ -157,9 +157,9 @@ public class OSGiHtmlReporterTest {
 
 		reporter.beginReporting(Migration.DETAIL_SHORT, baos);
 		reporter.report(new Problem(
-				"foo", "foo summary", "java", "LPS-867", new File("Foo.java"), 10, 100, 110, null, null));
+				"foo", "foo summary", "java", "LPS-867", new File("Foo.java"), 10, 100, 110, null, null, Problem.STATUS_NOT_RESOLVED));
 		reporter.report(new Problem(
-				"bar", "bar summary", "jsp", "LPS-5309", new File("Bar.java"), 20, 200, 220, null, null));
+				"bar", "bar summary", "jsp", "LPS-5309", new File("Bar.java"), 20, 200, 220, null, null, Problem.STATUS_NOT_RESOLVED));
 		reporter.endReporting();
 
 		String realString = baos.toString().replace("\r", "");
