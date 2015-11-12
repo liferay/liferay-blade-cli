@@ -1,14 +1,14 @@
 package com.liferay.blade.upgrade.liferay70.apichanges;
 
-import java.io.File;
-import java.util.List;
-
-import org.osgi.service.component.annotations.Component;
-
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.api.JSPFile;
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.upgrade.liferay70.JSPFileMigrator;
+
+import java.io.File;
+import java.util.List;
+
+import org.osgi.service.component.annotations.Component;
 
 @Component(
 	property = {

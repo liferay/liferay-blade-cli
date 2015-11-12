@@ -1,13 +1,13 @@
 package com.liferay.blade.cli.cmds;
 
+import com.liferay.blade.cli.OpenOptions;
+import com.liferay.blade.cli.blade;
+import com.liferay.blade.cli.jmx.IDEConnector;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
-
-import com.liferay.blade.cli.OpenOptions;
-import com.liferay.blade.cli.blade;
-import com.liferay.blade.cli.jmx.IDEConnector;
 
 public class OpenCommand {
 

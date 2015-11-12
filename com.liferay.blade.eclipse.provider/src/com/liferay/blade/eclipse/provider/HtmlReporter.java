@@ -5,11 +5,6 @@ import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.Reporter;
 import com.liferay.blade.eclipse.provider.templates.ReporterTemplateLoader;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -20,6 +15,11 @@ import java.util.Map;
 
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 
 @Component(
 	property = {

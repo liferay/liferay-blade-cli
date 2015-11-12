@@ -2,17 +2,17 @@ package com.liferay.blade.cli.cmds;
 
 import aQute.bnd.osgi.Jar;
 
+import com.liferay.blade.cli.DeployOptions;
+import com.liferay.blade.cli.blade;
+import com.liferay.blade.cli.jmx.JMXBundleDeployer;
+import com.liferay.blade.cli.util.FileWatcher;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import com.liferay.blade.cli.DeployOptions;
-import com.liferay.blade.cli.blade;
-import com.liferay.blade.cli.jmx.JMXBundleDeployer;
-import com.liferay.blade.cli.util.FileWatcher;
 
 public class DeployCommand {
 

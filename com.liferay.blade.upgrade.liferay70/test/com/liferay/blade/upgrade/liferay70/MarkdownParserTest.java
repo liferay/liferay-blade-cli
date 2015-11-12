@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.liferay.blade.upgrade.liferay70.MarkdownParser;
-
 public class MarkdownParserTest {
 
 	@Test

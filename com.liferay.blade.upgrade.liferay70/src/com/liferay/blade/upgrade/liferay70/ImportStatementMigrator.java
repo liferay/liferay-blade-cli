@@ -1,5 +1,11 @@
 package com.liferay.blade.upgrade.liferay70;
 
+import com.liferay.blade.api.AutoMigrateException;
+import com.liferay.blade.api.AutoMigrator;
+import com.liferay.blade.api.JavaFile;
+import com.liferay.blade.api.Problem;
+import com.liferay.blade.api.SearchResult;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
@@ -17,12 +23,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
 import org.eclipse.jdt.internal.core.util.Util;
 import org.eclipse.text.edits.TextEdit;
-
-import com.liferay.blade.api.AutoMigrateException;
-import com.liferay.blade.api.AutoMigrator;
-import com.liferay.blade.api.JavaFile;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.api.SearchResult;
 
 public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaFile> implements AutoMigrator {
 

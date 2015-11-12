@@ -1,5 +1,7 @@
 package com.liferay.blade.upgrade.liferay70;
 
+import com.liferay.blade.api.SearchResult;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,8 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.liferay.blade.api.SearchResult;
 
 public class PropertiesFileChecker {
 

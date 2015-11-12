@@ -1,5 +1,12 @@
 package com.liferay.blade.eclipse.provider;
 
+import com.liferay.blade.api.FileMigrator;
+import com.liferay.blade.api.Migration;
+import com.liferay.blade.api.MigrationListener;
+import com.liferay.blade.api.Problem;
+import com.liferay.blade.api.ProgressMonitor;
+import com.liferay.blade.api.Reporter;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,13 +30,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.util.tracker.ServiceTracker;
-
-import com.liferay.blade.api.FileMigrator;
-import com.liferay.blade.api.Migration;
-import com.liferay.blade.api.MigrationListener;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.api.ProgressMonitor;
-import com.liferay.blade.api.Reporter;
 
 @Component
 public class ProjectMigrationService implements Migration {

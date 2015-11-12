@@ -3,7 +3,6 @@ package com.liferay.blade.eclipse.provider;
 import static org.junit.Assert.assertEquals;
 
 import com.liferay.blade.api.Migration;
-import com.liferay.blade.eclipse.provider.ConsoleReporter;
 import com.liferay.blade.api.Problem;
 
 import java.io.ByteArrayOutputStream;

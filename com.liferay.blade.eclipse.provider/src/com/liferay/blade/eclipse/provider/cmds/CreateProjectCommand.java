@@ -1,5 +1,10 @@
 package com.liferay.blade.eclipse.provider.cmds;
 
+import aQute.bnd.osgi.Jar;
+import aQute.bnd.osgi.Processor;
+import aQute.bnd.osgi.Resource;
+import aQute.lib.io.IO;
+
 import com.liferay.blade.api.Command;
 import com.liferay.blade.api.CommandException;
 import com.liferay.blade.api.ProjectBuild;
@@ -17,11 +22,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.felix.service.command.CommandProcessor;
 import org.osgi.service.component.annotations.Component;
-
-import aQute.bnd.osgi.Jar;
-import aQute.bnd.osgi.Processor;
-import aQute.bnd.osgi.Resource;
-import aQute.lib.io.IO;
 
 @Component(
 	property = {

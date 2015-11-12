@@ -5,14 +5,14 @@ import aQute.bnd.annotation.component.Reference;
 import aQute.lib.consoleapp.AbstractConsoleApp;
 import aQute.lib.getopt.Description;
 
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
-
 import com.liferay.blade.cli.cmds.CreateCommand;
 import com.liferay.blade.cli.cmds.DeployCommand;
 import com.liferay.blade.cli.cmds.MigrateCommand;
 import com.liferay.blade.cli.cmds.OpenCommand;
+
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  * @author Gregory Amerson

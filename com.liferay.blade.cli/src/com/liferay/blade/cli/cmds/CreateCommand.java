@@ -1,6 +1,11 @@
 
 package com.liferay.blade.cli.cmds;
 
+import aQute.bnd.osgi.Processor;
+import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
+
 import com.liferay.blade.api.Command;
 import com.liferay.blade.api.ProjectBuild;
 import com.liferay.blade.api.ProjectType;
@@ -17,11 +22,6 @@ import java.util.Map;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
-
-import aQute.bnd.osgi.Processor;
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
 
 public class CreateCommand {
 

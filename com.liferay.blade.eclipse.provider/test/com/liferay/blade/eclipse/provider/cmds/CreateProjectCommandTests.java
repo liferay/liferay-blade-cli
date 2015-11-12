@@ -3,7 +3,7 @@ package com.liferay.blade.eclipse.provider.cmds;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.liferay.blade.eclipse.provider.cmds.CreateProjectCommand;
+import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +12,6 @@ import java.util.regex.Pattern;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import aQute.lib.io.IO;
 
 public class CreateProjectCommandTests {
 

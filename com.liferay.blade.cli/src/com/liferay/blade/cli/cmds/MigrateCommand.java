@@ -1,5 +1,11 @@
 package com.liferay.blade.cli.cmds;
 
+import com.liferay.blade.api.Migration;
+import com.liferay.blade.api.Problem;
+import com.liferay.blade.cli.MigrateOptions;
+import com.liferay.blade.cli.blade;
+import com.liferay.blade.cli.util.ConsoleProgressMonitor;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collections;
@@ -9,12 +15,6 @@ import java.util.List;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
-
-import com.liferay.blade.cli.MigrateOptions;
-import com.liferay.blade.cli.blade;
-import com.liferay.blade.cli.util.ConsoleProgressMonitor;
-import com.liferay.blade.api.Migration;
-import com.liferay.blade.api.Problem;
 
 public class MigrateCommand {
 
