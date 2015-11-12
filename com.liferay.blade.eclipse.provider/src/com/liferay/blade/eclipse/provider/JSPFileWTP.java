@@ -1,5 +1,9 @@
 package com.liferay.blade.eclipse.provider;
 
+import com.liferay.blade.api.JSPFile;
+import com.liferay.blade.api.JavaFile;
+import com.liferay.blade.api.SearchResult;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -23,10 +27,6 @@ import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.osgi.service.component.annotations.Component;
 import org.w3c.dom.NodeList;
-
-import com.liferay.blade.api.JSPFile;
-import com.liferay.blade.api.JavaFile;
-import com.liferay.blade.api.SearchResult;
 
 @Component(
 	property = {

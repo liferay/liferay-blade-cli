@@ -1,8 +1,8 @@
 package com.liferay.blade.cli.util;
 
-import org.osgi.service.component.annotations.Component;
-
 import com.liferay.blade.api.ProgressMonitor;
+
+import org.osgi.service.component.annotations.Component;
 
 @SuppressWarnings("restriction")
 @Component

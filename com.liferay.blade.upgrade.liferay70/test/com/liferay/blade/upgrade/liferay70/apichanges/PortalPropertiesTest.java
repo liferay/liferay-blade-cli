@@ -4,14 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.liferay.blade.api.Problem;
+
 import java.io.File;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.upgrade.liferay70.apichanges.PortalProperties;
 
 public class PortalPropertiesTest {
 	final File file = new File(

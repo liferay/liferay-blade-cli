@@ -1,5 +1,9 @@
 package com.liferay.blade.upgrade.liferay70;
 
+import aQute.lib.io.IO;
+
+import com.liferay.markdown.converter.factory.MarkdownConverterFactoryUtil;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,10 +15,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-
-import com.liferay.markdown.converter.factory.MarkdownConverterFactoryUtil;
-
-import aQute.lib.io.IO;
 
 public class MarkdownParser {
 

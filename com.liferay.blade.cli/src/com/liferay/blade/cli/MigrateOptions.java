@@ -1,10 +1,10 @@
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.cmds.Format;
-
 import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
+
+import com.liferay.blade.cli.cmds.Format;
 
 @Arguments(arg = {"projectDir", "[reportFile]"})
 public interface MigrateOptions extends Options {

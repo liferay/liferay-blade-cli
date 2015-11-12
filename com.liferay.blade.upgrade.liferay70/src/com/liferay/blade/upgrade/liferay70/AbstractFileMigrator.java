@@ -1,5 +1,10 @@
 package com.liferay.blade.upgrade.liferay70;
 
+import com.liferay.blade.api.FileMigrator;
+import com.liferay.blade.api.Problem;
+import com.liferay.blade.api.SearchResult;
+import com.liferay.blade.api.SourceFile;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,11 +18,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
-
-import com.liferay.blade.api.FileMigrator;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.api.SearchResult;
-import com.liferay.blade.api.SourceFile;
 
 public abstract class AbstractFileMigrator<T extends SourceFile> implements FileMigrator {
 

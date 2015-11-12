@@ -6,8 +6,6 @@ import java.io.File;
 
 import org.junit.Test;
 
-import com.liferay.blade.eclipse.provider.XMLFileSAX;
-
 /**
  * @author Gregory Amerson
  */

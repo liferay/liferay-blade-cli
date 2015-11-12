@@ -1,5 +1,11 @@
 package com.liferay.blade.upgrade.liferay70.apichanges;
 
+import com.liferay.blade.api.FileMigrator;
+import com.liferay.blade.api.Problem;
+import com.liferay.blade.api.SearchResult;
+import com.liferay.blade.upgrade.liferay70.MarkdownParser;
+import com.liferay.blade.upgrade.liferay70.PropertiesFileChecker;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -7,12 +13,6 @@ import java.util.List;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
-
-import com.liferay.blade.api.FileMigrator;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.api.SearchResult;
-import com.liferay.blade.upgrade.liferay70.MarkdownParser;
-import com.liferay.blade.upgrade.liferay70.PropertiesFileChecker;
 
 public abstract class PropertiesFileMigrator implements FileMigrator {
 

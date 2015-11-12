@@ -1,10 +1,10 @@
 package com.liferay.blade.upgrade.liferay70.apichanges;
 
-import org.osgi.service.component.annotations.Component;
-
 import com.liferay.blade.api.AutoMigrator;
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.upgrade.liferay70.ImportStatementMigrator;
+
+import org.osgi.service.component.annotations.Component;
 
 @Component(
 	property = {

@@ -1,5 +1,9 @@
 package com.liferay.blade.eclipse.provider;
 
+import com.liferay.blade.api.JavaFile;
+import com.liferay.blade.api.SearchResult;
+import com.liferay.blade.util.FileHelper;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,10 +21,6 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.osgi.service.component.annotations.Component;
-
-import com.liferay.blade.api.JavaFile;
-import com.liferay.blade.api.SearchResult;
-import com.liferay.blade.util.FileHelper;
 
 /**
  * Parses a java file and provides some methods for finding search results

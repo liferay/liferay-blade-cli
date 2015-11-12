@@ -1,15 +1,6 @@
 package com.liferay.blade.upgrade.liferay70.apichanges;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.osgi.service.component.annotations.Component;
+import aQute.lib.io.IO;
 
 import com.liferay.blade.api.AutoMigrateException;
 import com.liferay.blade.api.AutoMigrator;
@@ -20,7 +11,16 @@ import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.upgrade.liferay70.PropertiesFileChecker;
 import com.liferay.blade.upgrade.liferay70.PropertiesFileChecker.KeyInfo;
 
-import aQute.lib.io.IO;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.osgi.service.component.annotations.Component;
 
 @Component(
 	property = {

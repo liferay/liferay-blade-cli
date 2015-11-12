@@ -3,6 +3,10 @@ package com.liferay.blade.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import com.liferay.blade.api.Migration;
+import com.liferay.blade.api.Problem;
+import com.liferay.blade.util.NullProgressMonitor;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
@@ -12,10 +16,6 @@ import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
-
-import com.liferay.blade.api.Migration;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.util.NullProgressMonitor;
 
 public class FileSetMigrationTest {
 

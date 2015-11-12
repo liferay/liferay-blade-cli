@@ -3,13 +3,12 @@ package com.liferay.blade.eclipse.provider;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.liferay.blade.api.SearchResult;
+
 import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
-
-import com.liferay.blade.api.SearchResult;
-import com.liferay.blade.eclipse.provider.JavaFileJDT;
 
 public class JavaFileJDTTest {
 

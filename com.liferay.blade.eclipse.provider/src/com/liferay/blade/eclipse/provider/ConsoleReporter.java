@@ -4,8 +4,6 @@ import com.liferay.blade.api.Migration;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.Reporter;
 
-import dnl.utils.text.table.TextTable;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -13,6 +11,8 @@ import java.util.List;
 
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+
+import dnl.utils.text.table.TextTable;
 
 @Component(
 	property = {

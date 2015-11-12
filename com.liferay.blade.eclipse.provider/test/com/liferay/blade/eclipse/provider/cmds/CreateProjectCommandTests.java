@@ -1,4 +1,4 @@
-package lfr.cli.test;
+package com.liferay.blade.eclipse.provider.cmds;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -13,9 +13,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.liferay.blade.cli.blade;
+public class CreateProjectCommandTests {
 
-public class CreateCommandTests {
+	private final CreateProjectCommand cmd = new CreateProjectCommand();
 
 	@BeforeClass
 	public static void copyTemplates() throws IOException {
@@ -24,14 +24,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createGradleJSPPortletProject() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-d", "generated/test",
-			"jspportlet",
-			"foo",
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"jspportlet",
+				null,
+				"foo",
+				null,
+				null);
 
 		assertTrue(IO.getFile("generated/test/foo").exists());
 
@@ -74,16 +74,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createGradlePortletProject() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-b", "gradle",
-			"-d", "generated/test",
-			"portlet",
-			"-c", "Foo",
-			"gradle.test",
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"portlet",
+				"gradle",
+				"gradle.test",
+				"Foo",
+				null);
 
 		assertTrue(
 			IO.getFile("generated/test/gradle.test/build.gradle").exists());
@@ -116,16 +114,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createGradleServicePreAction() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-b", "gradle",
-			"-d", "generated/test",
-			"service",
-			"servicepreaction",
-			"com.liferay.portal.kernel.events.LifecycleAction"
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"service",
+				"gradle",
+				"servicepreaction",
+				null,
+				"com.liferay.portal.kernel.events.LifecycleAction");
 
 		File buildFile =
 			IO.getFile("generated/test/servicepreaction/build.gradle");
@@ -167,16 +163,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createGradleServiceWrapper() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-b", "gradle",
-			"-d", "generated/test",
-			"servicewrapper",
-			"serviceoverride",
-			"com.liferay.portal.service.UserLocalServiceWrapper"
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"servicewrapper",
+				"gradle",
+				"serviceoverride",
+				null,
+				"com.liferay.portal.service.UserLocalServiceWrapper");
 
 		File buildFile =
 			IO.getFile("generated/test/serviceoverride/build.gradle");
@@ -229,17 +223,14 @@ public class CreateCommandTests {
 	}
 	@Test
 	public void createBndtoolsServicePreAction() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-b", "bndtools",
-			"-d", "generated/test",
-			"service",
-			"-c", "ServicePreAction",
-			"service.pre.action",
-			"com.liferay.portal.kernel.events.LifecycleAction"
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"service",
+				"bndtools",
+				"service.pre.action",
+				"ServicePreAction",
+				"com.liferay.portal.kernel.events.LifecycleAction");
 
 		File bndFile =
 			IO.getFile("generated/test/service.pre.action/bnd.bnd");
@@ -272,15 +263,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createMavenJSPPortletProject() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-d", "generated/test",
-			"-b", "maven",
-			"jspportlet",
-			"foo",
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"jspportlet",
+				"maven",
+				"foo",
+				null,
+				null);
 
 		assertTrue(IO.getFile("generated/test/foo").exists());
 
@@ -324,17 +314,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createMavenPackagePath() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-d", "generated/test",
-			"-b", "maven",
-			"service",
-			"-c", "PackagePathTest",
-			"lfr.package.path.test",
-			"com.liferay.portal.kernel.events.LifecycleAction"
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"service",
+				"maven",
+				"lfr.package.path.test",
+				"PackagePathTest",
+				"com.liferay.portal.kernel.events.LifecycleAction");
 
 		File serviceFile = IO.getFile(
 			"generated/test/lfr.package.path.test/src/main/java/lfr/package/path/test/PackagePathTest.java");
@@ -360,15 +347,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createMavenPortletProject() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-d", "generated/test",
-			"-b", "maven",
-			"portlet",
-			"foo",
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"portlet",
+				"maven",
+				"foo",
+				null,
+				null);
 
 		assertTrue(IO.getFile("generated/test/foo").exists());
 
@@ -406,16 +392,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createMavenServicePreAction() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-d", "generated/test",
-			"-b", "maven",
-			"service",
-			"servicepreaction",
-			"com.liferay.portal.kernel.events.LifecycleAction"
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"service",
+				"maven",
+				"servicepreaction",
+				null,
+				"com.liferay.portal.kernel.events.LifecycleAction");
 
 		assertTrue(IO.getFile("generated/test/servicepreaction").exists());
 
@@ -442,16 +426,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createMavenServicePreActionClassname() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-d", "generated/test",
-			"service",
-			"-c", "LoginPreAction",
-			"loginpre",
-			"com.liferay.portal.kernel.events.LifecycleAction"
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"service",
+				null,
+				"loginpre",
+				"LoginPreAction",
+				"com.liferay.portal.kernel.events.LifecycleAction");
 
 		File serviceFile = IO.getFile(
 			"generated/test/loginpre/src/main/java/loginpre/LoginPreAction.java");
@@ -467,16 +449,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createMavenServiceWrapper() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-d", "generated/test",
-			"-b", "maven",
-			"servicewrapper",
-			"serviceoverride",
-			"com.liferay.portal.service.UserLocalServiceWrapper"
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"servicewrapper",
+				"maven",
+				"serviceoverride",
+				null,
+				"com.liferay.portal.service.UserLocalServiceWrapper");
 
 		assertTrue(IO.getFile("generated/test/serviceoverride").exists());
 
@@ -505,17 +485,14 @@ public class CreateCommandTests {
 
 	@Test
 	public void createMavenServiceWrapperClassname() throws Exception {
-		String[] args = new String[] {
-			"-t", "create",
-			"-b", "maven",
-			"-d", "generated/test",
-			"servicewrapper",
-			"-c", "UserLocalServiceOverride",
-			"serviceoverride",
-			"com.liferay.portal.service.UserLocalServiceWrapper"
-		};
-
-		new blade().run(args);
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"servicewrapper",
+				null,
+				"serviceoverride",
+				"UserLocalServiceOverride",
+				"com.liferay.portal.service.UserLocalServiceWrapper");
 
 		File serviceWrapperFile = IO.getFile(
 			"generated/test/serviceoverride/src/main/java/serviceoverride/UserLocalServiceOverride.java");

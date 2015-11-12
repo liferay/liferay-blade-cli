@@ -1,5 +1,8 @@
 package com.liferay.blade.eclipse.provider;
 
+import com.liferay.blade.api.SearchResult;
+import com.liferay.blade.api.XMLFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,9 +17,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.liferay.blade.api.SearchResult;
-import com.liferay.blade.api.XMLFile;
 
 /**
  * @author Andy Wu

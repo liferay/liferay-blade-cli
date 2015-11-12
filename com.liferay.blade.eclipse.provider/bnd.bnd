@@ -1,9 +1,12 @@
 -buildpath: \
 	aQute.libg,\
 	biz.aQute.junit,\
+	biz.aQute.bndlib,\
 	com.liferay.blade.api;version=project,\
 	dnl.utils.jtext,\
 	org.apache.commons.lang,\
+	org.apache.commons.lang3,\
+	org.apache.felix.gogo.runtime,\
 	org.eclipse.core.jobs,\
 	org.eclipse.core.contenttype,\
 	org.eclipse.core.resources,\
@@ -22,8 +25,13 @@
 	osgi.cmpn,\
 	osgi.core
 
+-includeresource: \
+	{templates.zip}
+
 Bundle-ActivationPolicy: lazy
+
 Bundle-SymbolicName: com.liferay.blade.eclipse.provider;singleton:=true
+
 Bundle-Version: 1.0.0.${tstamp}
 
 Conditional-Package: \
@@ -51,8 +59,14 @@ Import-Package: \
 	*
 
 Private-Package: \
+	aQute.bnd.*,\
+	aQute.service.reporter;-split-package:=merge-first,\
 	com.liferay.blade.eclipse.provider.*,\
 	dnl.utils.text.table.*,\
 	freemarker.*,\
-	org.apache.commons.lang.*
+	org.apache.commons.lang.*,\
+	org.apache.commons.lang3.*,\
+	org.osgi.service.component.annotations;-split-package:=merge-first,\
+	org.osgi.service.metatype.annotations;-split-package:=merge-first,\
+	org.osgi.service.repository;-split-package:=merge-first
 	
