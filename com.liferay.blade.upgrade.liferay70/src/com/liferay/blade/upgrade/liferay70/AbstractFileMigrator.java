@@ -62,7 +62,7 @@ public abstract class AbstractFileMigrator<T extends SourceFile> implements File
 				problems.add(new Problem(_problemTitle, _problemSummary,
 					fileExtension, _problemTickets, file, searchResult.startLine,
 					searchResult.startOffset, searchResult.endOffset, sectionHtml,
-					searchResult.autoCorrectContext, Problem.STATUS_NOT_RESOLVED));
+					searchResult.autoCorrectContext, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 			}
 		}
 

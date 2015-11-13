@@ -70,7 +70,7 @@ public class LiferayVersionsProperties extends PropertiesFileMigrator implements
 								_problemType, _problemTickets, file,
 								searchResult.startLine, searchResult.startOffset,
 								searchResult.endOffset, sectionHtml, searchResult.autoCorrectContext,
-								Problem.STATUS_NOT_RESOLVED));
+								Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 						}
 					}
 				}
