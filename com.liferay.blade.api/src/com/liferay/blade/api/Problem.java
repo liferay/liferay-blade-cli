@@ -7,6 +7,7 @@ public class Problem {
 	public static final int STATUS_NOT_RESOLVED = 0;
 	public static final int STATUS_RESOLVED = 1;
 	public static final int STATUS_IGNORE = 2;
+	public static final long DEFAULT_MARKER_ID = -1;
 
 	public Problem() {
 	}
@@ -14,7 +15,7 @@ public class Problem {
 	public Problem( String title, String summary, String type,
 			String ticket, File file,
 			int lineNumber, int startOffset, int endOffset,
-			String html, String autoCorrectContext, int status) {
+			String html, String autoCorrectContext, int status, long markerId) {
 
 		this.title = title;
 		this.summary = summary;
@@ -27,6 +28,7 @@ public class Problem {
 		this.html = html;
 		this.autoCorrectContext = autoCorrectContext;
 		this.status = status;
+		this.markerId = markerId;
 	}
 
 	public File file;
@@ -41,6 +43,7 @@ public class Problem {
 	public String html;
 	public String autoCorrectContext;
 	public int status;
+	public long markerId;
 
 	public String getTitle() {
 		return title;
@@ -130,6 +133,14 @@ public class Problem {
 		this.status = status;
 	}
 
+	public long getMarkerId() {
+		return markerId;
+	}
+
+	public void setMarkerId(long markerId) {
+		this.markerId = markerId;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -179,6 +190,9 @@ public class Problem {
 			return false;
 		if (status != other.status)
 			return false;
+		if (markerId != other.markerId)
+			return false;
+
 		return true;
 	}
 
