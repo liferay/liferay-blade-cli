@@ -4,6 +4,7 @@
 	com.liferay.blade.api,\
 	com.liferay.blade.eclipse.provider,\
 	com.liferay.markdown.converter,\
+	org.apache.felix.gogo.runtime,\
 	org.eclipse.jdt.core,\
 	org.eclipse.core.runtime,\
 	org.eclipse.equinox.common,\
