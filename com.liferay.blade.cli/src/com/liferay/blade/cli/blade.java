@@ -23,7 +23,6 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	private String[] args;
 
 	public blade() throws UnsupportedEncodingException {
-		System.out.println();
 	}
 
 	public blade(Object target) throws UnsupportedEncodingException {
