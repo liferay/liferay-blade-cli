@@ -1,0 +1,28 @@
+-buildpath: \
+	osgi.core;version=5.0,\
+	com.liferay.portal:portal-service;version='[7.0,8)',\
+	biz.aQute.bndlib,\
+	_api_;version=latest
+
+Bundle-Version: 1.0.0.${tstamp}
+
+Import-Package: \
+	_pkg_.*,\
+	com.liferay.portal.service;version="7.0.0",\
+	org.osgi.framework;version="[1.7,2)",\
+	*
+
+Private-Package: \
+	_pkg_.model.impl,\
+	_pkg_.service.base,\
+	_pkg_.service.http,\
+	_pkg_.service.impl,\
+	_pkg_.service.persistence.impl,\
+	_pkg_.service.util
+
+
+-includeresource: src/main/resources
+Liferay-Service: true
+Require-Capability: liferay.extender;filter:="(&(liferay.extender=spring.extender)(version>=1.0)(!(version>=2.0)))"
+Spring-Context: META-INF/spring
+-dsannotations: *

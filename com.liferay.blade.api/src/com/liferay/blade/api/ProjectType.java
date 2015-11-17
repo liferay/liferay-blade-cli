@@ -1,5 +1,5 @@
 package com.liferay.blade.api;
 
 public enum ProjectType {
-	portlet, jspportlet, service, servicewrapper
+	portlet, jspportlet, service, servicebuilder, servicewrapper
 }

@@ -31,6 +31,7 @@ public class CreateProjectCommandTests {
 				null,
 				"foo",
 				null,
+				null,
 				null);
 
 		assertTrue(IO.getFile("generated/test/foo").exists());
@@ -81,6 +82,7 @@ public class CreateProjectCommandTests {
 				"gradle",
 				"gradle.test",
 				"Foo",
+				null,
 				null);
 
 		assertTrue(
@@ -121,7 +123,8 @@ public class CreateProjectCommandTests {
 				"gradle",
 				"servicepreaction",
 				null,
-				"com.liferay.portal.kernel.events.LifecycleAction");
+				"com.liferay.portal.kernel.events.LifecycleAction",
+				null);
 
 		File buildFile =
 			IO.getFile("generated/test/servicepreaction/build.gradle");
@@ -170,7 +173,8 @@ public class CreateProjectCommandTests {
 				"gradle",
 				"serviceoverride",
 				null,
-				"com.liferay.portal.service.UserLocalServiceWrapper");
+				"com.liferay.portal.service.UserLocalServiceWrapper",
+				null);
 
 		File buildFile =
 			IO.getFile("generated/test/serviceoverride/build.gradle");
@@ -230,7 +234,8 @@ public class CreateProjectCommandTests {
 				"bndtools",
 				"service.pre.action",
 				"ServicePreAction",
-				"com.liferay.portal.kernel.events.LifecycleAction");
+				"com.liferay.portal.kernel.events.LifecycleAction",
+				null);
 
 		File bndFile =
 			IO.getFile("generated/test/service.pre.action/bnd.bnd");
@@ -269,6 +274,7 @@ public class CreateProjectCommandTests {
 				"jspportlet",
 				"maven",
 				"foo",
+				null,
 				null,
 				null);
 
@@ -321,7 +327,8 @@ public class CreateProjectCommandTests {
 				"maven",
 				"lfr.package.path.test",
 				"PackagePathTest",
-				"com.liferay.portal.kernel.events.LifecycleAction");
+				"com.liferay.portal.kernel.events.LifecycleAction",
+				null);
 
 		File serviceFile = IO.getFile(
 			"generated/test/lfr.package.path.test/src/main/java/lfr/package/path/test/PackagePathTest.java");
@@ -353,6 +360,7 @@ public class CreateProjectCommandTests {
 				"portlet",
 				"maven",
 				"foo",
+				null,
 				null,
 				null);
 
@@ -399,7 +407,8 @@ public class CreateProjectCommandTests {
 				"maven",
 				"servicepreaction",
 				null,
-				"com.liferay.portal.kernel.events.LifecycleAction");
+				"com.liferay.portal.kernel.events.LifecycleAction",
+				null);
 
 		assertTrue(IO.getFile("generated/test/servicepreaction").exists());
 
@@ -433,7 +442,8 @@ public class CreateProjectCommandTests {
 				null,
 				"loginpre",
 				"LoginPreAction",
-				"com.liferay.portal.kernel.events.LifecycleAction");
+				"com.liferay.portal.kernel.events.LifecycleAction",
+				null);
 
 		File serviceFile = IO.getFile(
 			"generated/test/loginpre/src/main/java/loginpre/LoginPreAction.java");
@@ -456,7 +466,8 @@ public class CreateProjectCommandTests {
 				"maven",
 				"serviceoverride",
 				null,
-				"com.liferay.portal.service.UserLocalServiceWrapper");
+				"com.liferay.portal.service.UserLocalServiceWrapper",
+				null);
 
 		assertTrue(IO.getFile("generated/test/serviceoverride").exists());
 
@@ -492,7 +503,8 @@ public class CreateProjectCommandTests {
 				null,
 				"serviceoverride",
 				"UserLocalServiceOverride",
-				"com.liferay.portal.service.UserLocalServiceWrapper");
+				"com.liferay.portal.service.UserLocalServiceWrapper",
+				null);
 
 		File serviceWrapperFile = IO.getFile(
 			"generated/test/serviceoverride/src/main/java/serviceoverride/UserLocalServiceOverride.java");

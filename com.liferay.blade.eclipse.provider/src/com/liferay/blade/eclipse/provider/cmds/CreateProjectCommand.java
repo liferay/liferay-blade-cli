@@ -35,11 +35,11 @@ public class CreateProjectCommand implements Command {
 	private static final List<String> textExtensions =
 		Arrays.asList(
 			".bnd", ".java", ".project", ".xml", ".jsp", ".css", ".jspf",
-			".js", ".properties");
+			".js", ".properties", ".gradle");
 
 	public Object createProject(
 			File base, File dir, String typeValue, String buildValue,
-			String name, String classname, String service)
+			String name, String classname, String service, String packageName)
 		throws Exception {
 
 		final ProjectType type;
@@ -120,6 +120,17 @@ public class CreateProjectCommand implements Command {
 				"_SERVICE_SHORT_",
 				service.substring(service.lastIndexOf('.') + 1));
 		}
+		
+		if (ProjectType.servicebuilder.equals(type)) {
+			if (packageName == null || packageName.isEmpty()) {
+				packageName = name;
+			}
+
+			subs.put("_pkg_", packageName);
+			subs.put("_api_", packageName + ".api");
+			subs.put("_svc_", packageName + ".svc");
+			subs.put("_web_", packageName + ".web");
+		}
 
 		else if (ProjectType.portlet.equals(type) || ProjectType.jspportlet.equals(type)) {
 			if (!classname.contains("Portlet")) {
@@ -150,7 +161,7 @@ public class CreateProjectCommand implements Command {
 		try {
 			for (Entry<String, Resource> e : jar.getResources().entrySet()) {
 				String path = e.getKey();
-
+				
 				if (glob != null && !glob.matcher(path).matches())
 					continue;
 
@@ -219,10 +230,11 @@ public class CreateProjectCommand implements Command {
 		final String name = (String) parameters.get("name");
 		final String classname = (String) parameters.get("classname");
 		final String service = (String) parameters.get("service");
+		final String packageName = (String) parameters.get("packageName");
 
 		try {
 			return createProject(
-				base, dir, typeValue, buildValue, name, classname, service);
+				base, dir, typeValue, buildValue, name, classname, service, packageName);
 		} catch (Exception e) {
 			throw new CommandException("Error creating project.", e);
 		}

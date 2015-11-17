@@ -56,7 +56,7 @@ public class CreateCommand {
 		String name = args.get(0);
 		String classname = opts.classname();
 
-		createFromTemplate(ProjectType.portlet, name, classname, "");
+		createFromTemplate(ProjectType.portlet, name, classname, "", "");
 	}
 
 	@Arguments(arg = {"name"})
@@ -68,7 +68,7 @@ public class CreateCommand {
 		List<String> args = opts._arguments();
 		String name = args.get(0);
 
-		createFromTemplate(ProjectType.jspportlet, name, null, "");
+		createFromTemplate(ProjectType.jspportlet, name, null, "", "");
 	}
 
 	@Arguments(arg = {"name", "[service]"})
@@ -85,7 +85,21 @@ public class CreateCommand {
 		List<String> args = opts._arguments();
 		String name =  args.get(0);
 		String service = args.get(1);
-		createFromTemplate(ProjectType.service, name, classname, service);
+		createFromTemplate(ProjectType.service, name, classname, service, "");
+	}
+
+	@Arguments(arg = {"name", "[packageName]"})
+	interface ServiceBuilderOptions extends ServiceOptions {
+
+	}
+
+	@Description(value = "Creates a service builder project with three modules using a multi-project build configuration")
+	public void _servicebuilder(ServiceBuilderOptions opts) throws Exception {
+		List<String> args = opts._arguments();
+		String name =  args.get(0);
+		String packageName = args.get(1);
+
+		createFromTemplate(ProjectType.servicebuilder, name, null, "", packageName);
 	}
 
 	@Arguments(arg = {"name", "[service]"})
@@ -100,11 +114,11 @@ public class CreateCommand {
 		String name =  args.get(0);
 		String service = args.get(1);
 
-		createFromTemplate(ProjectType.servicewrapper, name, classname, service);
+		createFromTemplate(ProjectType.servicewrapper, name, classname, service, "");
 	}
 
 	private void createFromTemplate(
-			ProjectType type, String name, String classname, String service)
+			ProjectType type, String name, String classname, String service, String packageName)
 		throws Exception {
 
 		File base = blade.getBase();
@@ -147,6 +161,7 @@ public class CreateCommand {
 			parameters.put("name", name);
 			parameters.put("classname", classname);
 			parameters.put("service", service);
+			parameters.put("packageName", packageName);
 
 			final Object errors = command.execute(parameters);
 
