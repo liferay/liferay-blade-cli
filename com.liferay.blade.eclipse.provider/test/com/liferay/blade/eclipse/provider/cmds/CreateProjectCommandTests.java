@@ -225,6 +225,79 @@ public class CreateProjectCommandTests {
 			bndFileContent, ".*com.liferay.portal.service;version=\'\\[7.0\\,7.1\\)\'.*");
 
 	}
+	
+	@Test
+	public void createGradleServiceBuilder() throws Exception {
+		cmd.createProject(
+				new File(""),
+				new File("generated/test"),
+				"servicebuilder",
+				"gradle",
+				"guestbook",
+				null,
+				null,
+				"com.liferay.docs.guestbook");
+
+		File settingsFile =
+			IO.getFile("generated/test/guestbook/settings.gradle");
+
+		assertTrue(settingsFile.exists());
+
+		String settingsFileContent = new String(IO.read(settingsFile));
+
+		contains(
+			settingsFileContent,
+			"include 'com.liferay.docs.guestbook.api','com.liferay.docs.guestbook.svc','com.liferay.docs.guestbook.web'");
+
+		File apiBndFile = IO.getFile(
+			"generated/test/guestbook/com.liferay.docs.guestbook.api/bnd.bnd");
+
+		assertTrue(apiBndFile.exists());
+
+		String apiBndFileContent = new String(IO.read(apiBndFile));
+
+		contains(apiBndFileContent, ".*Export-Package\\: \\\\.*");
+		contains(apiBndFileContent, ".*com.liferay.docs.guestbook.exception\\,\\\\.*");
+		contains(apiBndFileContent, ".*com.liferay.docs.guestbook.model\\,\\\\.*");
+		contains(apiBndFileContent, ".*com.liferay.docs.guestbook.service\\,\\\\.*");
+		contains(apiBndFileContent, ".*com.liferay.docs.guestbook.service.persistence.*");
+
+		File svcBndFile = IO.getFile(
+			"generated/test/guestbook/com.liferay.docs.guestbook.svc/bnd.bnd");
+
+		assertTrue(svcBndFile.exists());
+
+		String svcBndFileContent = new String(IO.read(svcBndFile));
+		
+		contains(svcBndFileContent, ".*Private-Package\\: \\\\.*");
+		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.model.impl\\,\\\\.*");
+		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.base\\,\\\\.*");
+		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.http\\,\\\\.*");
+		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.impl\\,\\\\.*");
+		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.persistence.impl\\,\\\\.*");
+		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.util.*");
+		
+		File webBndFile = IO.getFile(
+			"generated/test/guestbook/com.liferay.docs.guestbook.web/bnd.bnd");
+
+		assertTrue(webBndFile.exists());
+
+		String webBndFileContent = new String(IO.read(webBndFile));
+		
+		contains(webBndFileContent, ".*Private-Package\\: \\\\.*");
+		contains(webBndFileContent, ".*com.liferay.docs.guestbook.web.*");
+
+		File portletFile = IO.getFile(
+			"generated/test/guestbook/com.liferay.docs.guestbook.web/src/main/java" +
+			"/com/liferay/docs/guestbook/portlet/GuestbookPortlet.java");
+
+		assertTrue(portletFile.exists());
+
+		String portletFileContent = new String(IO.read(portletFile));
+		
+		contains(portletFileContent, ".*package com.liferay.docs.guestbook.portlet;.*");
+	}
+	
 	@Test
 	public void createBndtoolsServicePreAction() throws Exception {
 		cmd.createProject(
