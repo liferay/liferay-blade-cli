@@ -130,6 +130,12 @@ public class CreateProjectCommand implements Command {
 			subs.put("_api_", packageName + ".api");
 			subs.put("_svc_", packageName + ".svc");
 			subs.put("_web_", packageName + ".web");
+			subs.put("_portlet_", packageName + ".portlet");
+			subs.put("_portletpkg_", packageName.replaceAll("\\.", "/") + "/portlet");
+			
+			if (!classname.contains("Portlet")) {
+				classname += "Portlet";
+			}
 		}
 
 		else if (ProjectType.portlet.equals(type) || ProjectType.jspportlet.equals(type)) {

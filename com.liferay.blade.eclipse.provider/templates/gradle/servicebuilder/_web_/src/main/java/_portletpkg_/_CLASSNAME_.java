@@ -1,4 +1,4 @@
-package _package_;
+package _portlet_;
 
 import javax.portlet.Portlet;
 
