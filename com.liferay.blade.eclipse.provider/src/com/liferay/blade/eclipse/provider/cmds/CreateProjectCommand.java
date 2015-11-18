@@ -122,8 +122,11 @@ public class CreateProjectCommand implements Command {
 		}
 		
 		if (ProjectType.servicebuilder.equals(type)) {
-			if (packageName == null || packageName.isEmpty()) {
-				packageName = name;
+			if (packageName.isEmpty()) {
+				return
+					"if type is servicebuilder, the name of the root package" +
+					"within which to create service builder classes must be" +
+					"specified.";
 			}
 
 			subs.put("_pkg_", packageName);
