@@ -22,8 +22,8 @@ apply plugin: 'biz.aQute.bnd.builder'
 apply plugin: "com.liferay.portal.tools.service.builder"
 
 repositories {
-	mavenCentral()
 	mavenLocal()
+	mavenCentral()
 	maven {
 		url "https://repository.liferay.com/nexus/content/groups/liferay-ce/"
 	}
