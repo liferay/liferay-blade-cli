@@ -51,7 +51,7 @@ buildService {
 	inputFileName = "service.xml"
 	modelHintsFileName = "src/main/resources/META-INF/portlet-model-hints.xml"
 	osgiModule = true
-	propsUtil = "_pkg_.service.util.PropsUtil"
+	propsUtil = "_package_.service.util.PropsUtil"
 	remotingFileName = null
 	resourcesDirName = "src/main/resources"
 	springFileName = "src/main/resources/META-INF/spring/module-spring.xml"

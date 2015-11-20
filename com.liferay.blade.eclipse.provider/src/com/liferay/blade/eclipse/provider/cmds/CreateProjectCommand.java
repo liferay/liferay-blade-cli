@@ -129,7 +129,7 @@ public class CreateProjectCommand implements Command {
 					"specified.";
 			}
 
-			subs.put("_pkg_", packageName);
+			subs.put("_package_", packageName);
 			subs.put("_api_", packageName + ".api");
 			subs.put("_svc_", packageName + ".svc");
 			subs.put("_web_", packageName + ".web");

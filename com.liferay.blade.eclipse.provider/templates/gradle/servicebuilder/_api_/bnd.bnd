@@ -11,7 +11,7 @@ Import-Package: \
     *
 
 Export-Package: \
-	_pkg_.exception,\
-	_pkg_.model,\
-	_pkg_.service,\
-	_pkg_.service.persistence
+	_package_.exception,\
+	_package_.model,\
+	_package_.service,\
+	_package_.service.persistence

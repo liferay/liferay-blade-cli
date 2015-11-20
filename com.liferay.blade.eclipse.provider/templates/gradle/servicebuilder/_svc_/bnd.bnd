@@ -7,18 +7,18 @@
 Bundle-Version: 1.0.0.${tstamp}
 
 Import-Package: \
-	_pkg_.*,\
+	_package_.*,\
 	com.liferay.portal.service;version="7.0.0",\
 	org.osgi.framework;version="[1.7,2)",\
 	*
 
 Private-Package: \
-	_pkg_.model.impl,\
-	_pkg_.service.base,\
-	_pkg_.service.http,\
-	_pkg_.service.impl,\
-	_pkg_.service.persistence.impl,\
-	_pkg_.service.util
+	_package_.model.impl,\
+	_package_.service.base,\
+	_package_.service.http,\
+	_package_.service.impl,\
+	_package_.service.persistence.impl,\
+	_package_.service.util
 
 
 -includeresource: src/main/resources
