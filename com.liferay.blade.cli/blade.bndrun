@@ -7,10 +7,13 @@ JPM-Command: blade
 -resolve.effective: active;skip:="osgi.service"
 
 -runbundles: \
+	aQute.libg,\
+	biz.aQute.bndlib,\
 	com.liferay.blade.api,\
 	com.liferay.blade.eclipse.provider,\
 	com.liferay.blade.upgrade.liferay70,\
 	com.liferay.blade.cli,\
+	org.apache.felix.gogo.runtime,\
 	org.apache.felix.scr;version='[2,2.1)',\
 	org.apache.xerces,\
 	org.apache.xml.resolver,\

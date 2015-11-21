@@ -21,15 +21,18 @@ Test-Cases: ${test-cases}
 	biz.aQute.junit
 
 -runbundles: \
+	aQute.libg,\
+	biz.aQute.bndlib,\
 	com.liferay.blade.api;version=latest,\
 	com.liferay.blade.eclipse.provider;version=latest,\
 	com.liferay.blade.upgrade.liferay70;version=latest,\
+	org.apache.felix.configadmin;version='[1.8.0,1.8.1)',\
+	org.apache.felix.gogo.runtime,\
+	org.apache.felix.metatype;version='[1.0.10,1.0.11)',\
+	org.apache.felix.scr;version='[2.0.0,2.1.0)',\
 	org.apache.xerces,\
 	org.apache.xml.resolver,\
 	org.apache.xml.serializer,\
-	org.apache.felix.configadmin;version='[1.8.0,1.8.1)',\
-	org.apache.felix.metatype;version='[1.0.10,1.0.11)',\
-	org.apache.felix.scr;version='[2.0.0,2.1.0)',\
 	org.eclipse.equinox.app,\
 	org.eclipse.equinox.common,\
 	org.eclipse.equinox.preferences,\

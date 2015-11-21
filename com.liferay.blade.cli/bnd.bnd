@@ -12,16 +12,11 @@ Bundle-Version: 1.0.0.${tstamp}
 
 Import-Package: \
 	 org.osgi.framework;version=1.5.0,\
+	 !aQute.service.reporter,\
 	 !org.osgi.service.repository,\
 	 *
 
 Private-Package: \
-	aQute.bnd.*,\
-	aQute.remote.util,\
-	aQute.configurable;-split-package:=merge-first,\
-	aQute.lib.*;-split-package:=first,\
-	aQute.libg.*;-split-package:=first,\
-	aQute.service.reporter;split-package:=merge-first,\
 	com.liferay.blade.cli.*,\
 	org.osgi.dto;-split-package:=merge-first,\
 	org.osgi.framework.dto;-split-package:=merge-first,\

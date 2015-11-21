@@ -2,13 +2,10 @@
 package com.liferay.blade.cli.cmds;
 
 import aQute.bnd.osgi.Processor;
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
 
 import com.liferay.blade.api.Command;
 import com.liferay.blade.api.ProjectBuild;
-import com.liferay.blade.api.ProjectType;
+import com.liferay.blade.api.ProjectTemplate;
 import com.liferay.blade.cli.CreateOptions;
 import com.liferay.blade.cli.blade;
 
@@ -25,106 +22,55 @@ import org.osgi.framework.ServiceReference;
 
 public class CreateCommand {
 
-	final private blade blade;
-	final private CreateOptions options;
-	final private BundleContext bundleContext =
+	final private blade _blade;
+	final private CreateOptions _options;
+	final private BundleContext _bundleContext =
 		FrameworkUtil.getBundle(CreateCommand.class).getBundleContext();
 
-	public CreateCommand(blade lfr, CreateOptions options) throws Exception {
-		this.blade = lfr;
-		this.options = options;
+	public CreateCommand(blade blade, CreateOptions options) throws Exception {
+		_blade = blade;
+		_options = options;
 
-		String help = options._command().subCmd(options, this);
+		List<String> args = options._arguments();
 
-		if (help != null) {
-			System.out.println(help);
+		if (args.size() < 2) {
+			// TODO print out help for what project templates there are
+			printHelp();
+			return;
 		}
-	}
 
-	@Arguments(arg = {"name"})
-	interface PortletOptions extends Options {
-		@Description("If a class is generated in the project, " +
-				"provide the name of the class to be generated." +
-				" If not provided defaults to Project name.")
-		public String classname();
+		final Collection<ServiceReference<ProjectTemplate>> refs =
+			_bundleContext.getServiceReferences(ProjectTemplate.class, null);
 
-	}
+		final String projectTemplateName = args.remove(0);
+		ProjectTemplate template = null;
 
-	@Description(value = "Use basic portlet template for new project")
-	public void _portlet(PortletOptions opts) throws Exception {
-		List<String> args = opts._arguments();
-		String name = args.get(0);
-		String classname = opts.classname();
+		if (refs != null) {
+			for (ServiceReference<ProjectTemplate> ref : refs) {
+				String name = (String) ref.getProperty("name");
 
-		createFromTemplate(ProjectType.portlet, name, classname, "", "");
-	}
+				if (projectTemplateName.equals(name)) {
+					template = _bundleContext.getService(ref);
+					break;
+				}
+			}
+		}
 
-	@Arguments(arg = {"name"})
-	interface JSPPortletOptions extends Options {
-	}
+		if (template == null) {
+			_blade.error(
+					"Unable to get project template " + projectTemplateName);
+			return;
+		}
 
-	@Description(value = "Use mvcportlet with jsps template for new project")
-	public void _jspportlet(JSPPortletOptions opts) throws Exception {
-		List<String> args = opts._arguments();
-		String name = args.get(0);
+		ProjectBuild build = _options.build();
 
-		createFromTemplate(ProjectType.jspportlet, name, null, "", "");
-	}
+		if (build == null) {
+			build = ProjectBuild.gradle;
+		}
 
-	@Arguments(arg = {"name", "[service]"})
-	interface ServiceOptions extends Options {
-		@Description("If a class is generated in the project, " +
-				"provide the name of the class to be generated." +
-				" If not provided defaults to Project name.")
-		public String classname();
-	}
-
-	@Description(value = "Creates a project with a single service component")
-	public void _service(ServiceOptions opts) throws Exception {
-		String classname = opts.classname();
-		List<String> args = opts._arguments();
-		String name =  args.get(0);
-		String service = args.get(1);
-		createFromTemplate(ProjectType.service, name, classname, service, "");
-	}
-
-	@Arguments(arg = {"name", "[packageName]"})
-	interface ServiceBuilderOptions extends ServiceOptions {
-
-	}
-
-	@Description(value = "Creates a service builder project with three modules using a multi-project build configuration")
-	public void _servicebuilder(ServiceBuilderOptions opts) throws Exception {
-		List<String> args = opts._arguments();
-		String name =  args.get(0);
-		String packageName = args.get(1);
-
-		createFromTemplate(ProjectType.servicebuilder, name, null, "", packageName);
-	}
-
-	@Arguments(arg = {"name", "[service]"})
-	interface ServiceWrapperOptions extends ServiceOptions {
-
-	}
-
-	@Description(value = "Creates a project with a single service wrapper component")
-	public void _servicewrapper(ServiceWrapperOptions opts) throws Exception {
-		String classname = opts.classname();
-		List<String> args = opts._arguments();
-		String name =  args.get(0);
-		String service = args.get(1);
-
-		createFromTemplate(ProjectType.servicewrapper, name, classname, service, "");
-	}
-
-	private void createFromTemplate(
-			ProjectType type, String name, String classname, String service, String packageName)
-		throws Exception {
-
-		File base = blade.getBase();
-
-		File dir = options.dir();
-
+		File dir = _options.dir();
+		File base = _blade.getBase();
+		String name = args.remove(0);
 		File workDir = null;
 
 		if (dir != null) {
@@ -138,50 +84,36 @@ public class CreateCommand {
 			base = workDir.getParentFile();
 		}
 
-		ProjectBuild build = options.build();
+		final ServiceReference<Command> ref =
+			_bundleContext.getServiceReferences(
+				Command.class, "(osgi.command.function=createProject)").iterator().next();
 
-		if (build == null) {
-			build = ProjectBuild.gradle;
-		}
+		final Command command = _bundleContext.getService(ref);
+		final Map<String, Object> parameters = new HashMap<>();
 
-		final Collection<ServiceReference<Command>> refs =
-			bundleContext.getServiceReferences(
-				Command.class, "(osgi.command.function=createProject)");
+		parameters.put("workDir", workDir);
+		parameters.put("projectTemplate", template);
+		parameters.put("buildValue", build.toString());
+		parameters.put("name", name);
+		parameters.put("classname", options.classname());
+		parameters.put("service", options.service());
+		parameters.put("packageName", options.packagename());
 
-		if (refs != null && refs.size() > 0) {
-			final Command command =
-				bundleContext.getService(refs.iterator().next());
+		final Object errors = command.execute(parameters);
 
-			final Map<String, Object> parameters = new HashMap<>();
+		if (errors != null) {
+			_blade.error(errors.toString());
 
-			parameters.put("base", base);
-			parameters.put("dir", dir);
-			parameters.put("typeValue", type.toString());
-			parameters.put("buildValue", build.toString());
-			parameters.put("name", name);
-			parameters.put("classname", classname);
-			parameters.put("service", service);
-			parameters.put("packageName", packageName);
-
-			final Object errors = command.execute(parameters);
-
-			if (errors != null) {
-				blade.error(errors.toString());
-
-				if ("printHelp".equals(errors.toString())) {
-					printHelp();
-				}
+			if ("printHelp".equals(errors.toString())) {
+				printHelp();
 			}
-		}
-		else {
-			blade.error("Unable to obtain createProject command");
 		}
 	}
 
 	private void printHelp() throws Exception {
 		Formatter f = new Formatter();
-		options._command().help(f, this);
-		blade.out().println(f);
+		_options._command().help(f, this);
+		_blade.out().println(f);
 		f.close();
 	}
 
