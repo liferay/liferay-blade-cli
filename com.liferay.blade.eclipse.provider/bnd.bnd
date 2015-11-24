@@ -34,12 +34,14 @@ Bundle-SymbolicName: com.liferay.blade.eclipse.provider;singleton:=true
 
 Bundle-Version: 1.0.0.${tstamp}
 
-Conditional-Package: \
-	aQute.lib.*,\
-	aQute.libg.*
+#Conditional-Package: \
+	#aQute.configurable.*,\
+	#aQute.lib.*,\
+	#aQute.libg.*
 
 Import-Package: \
 	com.liferay.blade.api,\
+	org.apache.felix.service.command,\
 	org.eclipse.core.runtime;version='[3.4,4)',\
 	org.osgi.framework;version='[1.5,2)',\
 	org.osgi.service.component;version='[1.2,2)',\
@@ -59,8 +61,6 @@ Import-Package: \
 	*
 
 Private-Package: \
-	aQute.bnd.*,\
-	aQute.service.reporter;-split-package:=merge-first,\
 	com.liferay.blade.eclipse.provider.*,\
 	dnl.utils.text.table.*,\
 	freemarker.*,\

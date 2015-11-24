@@ -25,9 +25,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createGradleJSPPortletProject() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"jspportlet",
+				new File("generated/test/foo"),
+				new JSPPortletTemplate(),
 				null,
 				"foo",
 				null,
@@ -76,9 +75,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createGradlePortletProject() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"portlet",
+				new File("generated/test/gradle.test"),
+				new PortletTemplate(),
 				"gradle",
 				"gradle.test",
 				"Foo",
@@ -117,9 +115,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createGradleServicePreAction() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"service",
+				new File("generated/test/servicepreaction"),
+				new ServiceTemplate(),
 				"gradle",
 				"servicepreaction",
 				null,
@@ -167,9 +164,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createGradleServiceWrapper() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"servicewrapper",
+				new File("generated/test/serviceoverride"),
+				new ServiceWrapperTemplate(),
 				"gradle",
 				"serviceoverride",
 				null,
@@ -225,13 +221,12 @@ public class CreateProjectCommandTests {
 			bndFileContent, ".*com.liferay.portal.service;version=\'\\[7.0\\,7.1\\)\'.*");
 
 	}
-	
+
 	@Test
 	public void createGradleServiceBuilder() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"servicebuilder",
+				new File("generated/test/guestbook"),
+				new ServiceBuilderTemplate(),
 				"gradle",
 				"guestbook",
 				null,
@@ -268,7 +263,7 @@ public class CreateProjectCommandTests {
 		assertTrue(svcBndFile.exists());
 
 		String svcBndFileContent = new String(IO.read(svcBndFile));
-		
+
 		contains(svcBndFileContent, ".*Private-Package\\: \\\\.*");
 		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.model.impl\\,\\\\.*");
 		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.base\\,\\\\.*");
@@ -276,14 +271,14 @@ public class CreateProjectCommandTests {
 		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.impl\\,\\\\.*");
 		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.persistence.impl\\,\\\\.*");
 		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.util.*");
-		
+
 		File webBndFile = IO.getFile(
 			"generated/test/guestbook/com.liferay.docs.guestbook.web/bnd.bnd");
 
 		assertTrue(webBndFile.exists());
 
 		String webBndFileContent = new String(IO.read(webBndFile));
-		
+
 		contains(webBndFileContent, ".*Private-Package\\: \\\\.*");
 		contains(webBndFileContent, ".*com.liferay.docs.guestbook.web.*");
 
@@ -294,16 +289,15 @@ public class CreateProjectCommandTests {
 		assertTrue(portletFile.exists());
 
 		String portletFileContent = new String(IO.read(portletFile));
-		
+
 		contains(portletFileContent, ".*package com.liferay.docs.guestbook.portlet;.*");
 	}
-	
+
 	@Test
 	public void createBndtoolsServicePreAction() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"service",
+				new File("generated/test/service.pre.action"),
+				new ServiceTemplate(),
 				"bndtools",
 				"service.pre.action",
 				"ServicePreAction",
@@ -342,9 +336,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createMavenJSPPortletProject() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"jspportlet",
+				new File("generated/test/foo"),
+				new JSPPortletTemplate(),
 				"maven",
 				"foo",
 				null,
@@ -394,9 +387,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createMavenPackagePath() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"service",
+				new File("generated/test/lfr.package.path.test"),
+				new ServiceTemplate(),
 				"maven",
 				"lfr.package.path.test",
 				"PackagePathTest",
@@ -428,9 +420,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createMavenPortletProject() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"portlet",
+				new File("generated/test/foo"),
+				new PortletTemplate(),
 				"maven",
 				"foo",
 				null,
@@ -474,9 +465,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createMavenServicePreAction() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"service",
+				new File("generated/test/servicepreaction"),
+				new ServiceTemplate(),
 				"maven",
 				"servicepreaction",
 				null,
@@ -509,9 +499,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createMavenServicePreActionClassname() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"service",
+				new File("generated/test/loginpre"),
+				new ServiceTemplate(),
 				null,
 				"loginpre",
 				"LoginPreAction",
@@ -533,9 +522,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createMavenServiceWrapper() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"servicewrapper",
+				new File("generated/test/serviceoverride"),
+				new ServiceWrapperTemplate(),
 				"maven",
 				"serviceoverride",
 				null,
@@ -570,9 +558,8 @@ public class CreateProjectCommandTests {
 	@Test
 	public void createMavenServiceWrapperClassname() throws Exception {
 		cmd.createProject(
-				new File(""),
-				new File("generated/test"),
-				"servicewrapper",
+				new File("generated/test/serviceoverride"),
+				new ServiceWrapperTemplate(),
 				null,
 				"serviceoverride",
 				"UserLocalServiceOverride",

@@ -8,7 +8,7 @@ import aQute.lib.io.IO;
 import com.liferay.blade.api.Command;
 import com.liferay.blade.api.CommandException;
 import com.liferay.blade.api.ProjectBuild;
-import com.liferay.blade.api.ProjectType;
+import com.liferay.blade.api.ProjectTemplate;
 
 import java.io.File;
 import java.io.InputStream;
@@ -38,31 +38,9 @@ public class CreateProjectCommand implements Command {
 			".js", ".properties", ".gradle");
 
 	public Object createProject(
-			File base, File dir, String typeValue, String buildValue,
+			File workDir, ProjectTemplate template, String buildValue,
 			String name, String classname, String service, String packageName)
 		throws Exception {
-
-		final ProjectType type;
-
-		if (typeValue == null) {
-			type = ProjectType.portlet;
-		}
-		else {
-			type = ProjectType.valueOf(typeValue);
-		}
-
-		File workDir = null;
-
-		if (dir != null) {
-			workDir = Processor.getFile(dir, name);
-			name = workDir.getName();
-			base = workDir.getParentFile();
-		}
-		else {
-			workDir = Processor.getFile(base, name);
-			name = workDir.getName();
-			base = workDir.getParentFile();
-		}
 
 		workDir.mkdirs();
 
@@ -82,10 +60,10 @@ public class CreateProjectCommand implements Command {
 		}
 
 		final Pattern glob = Pattern.compile("^" +
-			build.toString() + "/" + type + "/.*|\\...+/.*");
+			build.toString() + "/" + template.name() + "/.*|\\...+/.*");
 
 		final Map<String, String> subs = new HashMap<>();
-		subs.put("templates/" + build + "/" + type + "/", "");
+		subs.put("templates/" + build + "/" + template.name() + "/", "");
 		subs.put("_name_", name.toLowerCase());
 		subs.put("_NAME_", WordUtils.capitalize(name));
 		subs.put("_package_path_", name.replaceAll("\\.", "/"));
@@ -95,7 +73,7 @@ public class CreateProjectCommand implements Command {
 			classname = WordUtils.capitalize(name);
 		}
 
-		if (ProjectType.service.equals(type)) {
+		if ("service".equals(template.name())) {
 			if (service.isEmpty()) {
 				return
 					"if type is service, the fully qualified name of " +
@@ -108,7 +86,7 @@ public class CreateProjectCommand implements Command {
 				service.substring(service.lastIndexOf('.') + 1));
 		}
 
-		if (ProjectType.servicewrapper.equals(type)) {
+		if ("servicewrapper".equals(template.name())) {
 			if (service.isEmpty()) {
 				return
 					"if type is service, the fully qualified name of service " +
@@ -120,8 +98,8 @@ public class CreateProjectCommand implements Command {
 				"_SERVICE_SHORT_",
 				service.substring(service.lastIndexOf('.') + 1));
 		}
-		
-		if (ProjectType.servicebuilder.equals(type)) {
+
+		if ("servicebuilder".equals(template.name())) {
 			if (packageName.isEmpty()) {
 				return
 					"if type is servicebuilder, the name of the root package" +
@@ -135,13 +113,13 @@ public class CreateProjectCommand implements Command {
 			subs.put("_web_", packageName + ".web");
 			subs.put("_portlet_", packageName + ".portlet");
 			subs.put("_portletpackage_", packageName.replaceAll("\\.", "/") + "/portlet");
-			
+
 			if (!classname.contains("Portlet")) {
 				classname += "Portlet";
 			}
 		}
 
-		else if (ProjectType.portlet.equals(type) || ProjectType.jspportlet.equals(type)) {
+		else if ("portlet".equals(template.name()) || "jspportlet".equals(template.name())) {
 			if (!classname.contains("Portlet")) {
 				classname += "Portlet";
 			}
@@ -156,12 +134,12 @@ public class CreateProjectCommand implements Command {
 			"_portlet_fqn_",
 			unNormalizedPortletFqn.replaceAll("\\.", "_"));
 
-		copy(build, type, workDir, in, glob, true, subs);
+		copy(build, template.name(), workDir, in, glob, true, subs);
 
 		return null;
 	}
 
-	private void copy(ProjectBuild build, ProjectType type,
+	private void copy(ProjectBuild build, String type,
 		File workspaceDir, InputStream in, Pattern glob, boolean overwrite,
 		Map<String, String> subs) throws Exception {
 
@@ -170,7 +148,7 @@ public class CreateProjectCommand implements Command {
 		try {
 			for (Entry<String, Resource> e : jar.getResources().entrySet()) {
 				String path = e.getKey();
-				
+
 				if (glob != null && !glob.matcher(path).matches())
 					continue;
 
@@ -181,7 +159,7 @@ public class CreateProjectCommand implements Command {
 				}
 
 				path =
-					path.replaceAll(build.name() + "/" + type.name() + "/", "");
+					path.replaceAll(build.name() + "/" + type + "/", "");
 
 				File dest = Processor.getFile(workspaceDir, path);
 
@@ -232,9 +210,8 @@ public class CreateProjectCommand implements Command {
 
 	@Override
 	public Object execute(Map<String, ?> parameters) throws CommandException {
-		final File base = (File) parameters.get("base");
-		final File dir = (File) parameters.get("dir");
-		final String typeValue = (String) parameters.get("typeValue");
+		final File workDir = (File) parameters.get("workDir");
+		final ProjectTemplate template = (ProjectTemplate) parameters.get("projectTemplate");
 		final String buildValue = (String) parameters.get("buildValue");
 		final String name = (String) parameters.get("name");
 		final String classname = (String) parameters.get("classname");
@@ -243,10 +220,10 @@ public class CreateProjectCommand implements Command {
 
 		try {
 			return createProject(
-				base, dir, typeValue, buildValue, name, classname, service, packageName);
+				workDir, template, buildValue, name, classname, service,
+				packageName);
 		} catch (Exception e) {
 			throw new CommandException("Error creating project.", e);
 		}
 	}
-
 }
