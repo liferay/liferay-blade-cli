@@ -1,5 +1,4 @@
 -buildpath: \
-	aQute.libg,\
 	biz.aQute.junit,\
 	biz.aQute.bndlib,\
 	com.liferay.blade.api;version=project,\
@@ -34,10 +33,9 @@ Bundle-SymbolicName: com.liferay.blade.eclipse.provider;singleton:=true
 
 Bundle-Version: 1.0.0.${tstamp}
 
-#Conditional-Package: \
-	#aQute.configurable.*,\
-	#aQute.lib.*,\
-	#aQute.libg.*
+Conditional-Package: \
+	aQute.lib.io.*,\
+	aQute.libg.glob.*
 
 Import-Package: \
 	com.liferay.blade.api,\
