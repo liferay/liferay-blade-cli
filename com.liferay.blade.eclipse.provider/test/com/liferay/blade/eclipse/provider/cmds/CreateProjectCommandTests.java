@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class CreateProjectCommandTests {
 
 	private final CreateProjectCommand cmd = new CreateProjectCommand();

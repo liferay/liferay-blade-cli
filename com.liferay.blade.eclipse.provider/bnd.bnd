@@ -1,5 +1,4 @@
 -buildpath: \
-	aQute.libg,\
 	biz.aQute.junit,\
 	biz.aQute.bndlib,\
 	com.liferay.blade.api;version=project,\

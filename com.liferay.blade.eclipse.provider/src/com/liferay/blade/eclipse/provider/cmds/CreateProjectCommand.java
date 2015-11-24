@@ -30,6 +30,7 @@ import org.osgi.service.component.annotations.Component;
 	},
 	service = Command.class
 )
+@SuppressWarnings("restriction")
 public class CreateProjectCommand implements Command {
 
 	private static final List<String> textExtensions =
