@@ -197,6 +197,16 @@ public class ProjectMigrationService implements Migration {
 	}
 	private void walkFiles(final File dir, final List<Problem> problems, final ProgressMonitor monitor) {
 		final FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+
+			@Override
+			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+				if (dir.endsWith(".git")) {
+					return FileVisitResult.SKIP_SUBTREE;
+				}
+
+				return super.preVisitDirectory(dir, attrs);
+			}
+
 			@Override
 			public FileVisitResult visitFile(
 					Path path, BasicFileAttributes attrs)
