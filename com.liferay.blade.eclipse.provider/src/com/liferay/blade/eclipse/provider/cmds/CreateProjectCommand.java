@@ -36,7 +36,7 @@ public class CreateProjectCommand implements Command {
 	private static final List<String> textExtensions =
 		Arrays.asList(
 			".bnd", ".java", ".project", ".xml", ".jsp", ".css", ".jspf",
-			".js", ".properties", ".gradle");
+			".js", ".properties", ".gradle", ".prefs");
 
 	public Object createProject(
 			File workDir, ProjectTemplate template, String buildValue,
@@ -65,6 +65,7 @@ public class CreateProjectCommand implements Command {
 
 		final Map<String, String> subs = new HashMap<>();
 		subs.put("templates/" + build + "/" + template.name() + "/", "");
+		subs.put("_project_path_", workDir.getAbsolutePath());
 		subs.put("_name_", name.toLowerCase());
 		subs.put("_NAME_", WordUtils.capitalize(name));
 		subs.put("_package_path_", name.replaceAll("\\.", "/"));

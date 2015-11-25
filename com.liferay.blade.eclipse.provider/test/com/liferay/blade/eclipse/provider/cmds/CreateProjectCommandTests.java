@@ -36,6 +36,15 @@ public class CreateProjectCommandTests {
 
 		assertTrue(IO.getFile("generated/test/foo").exists());
 
+		File settingsFile =
+			IO.getFile("generated/test/foo/.settings/gradle.prefs");
+
+		assertTrue(settingsFile.exists());
+
+		String settingsFileContent = new String(IO.read(settingsFile));
+
+		contains( settingsFileContent, ".*generated/test/foo.*$");
+
 		assertTrue(IO.getFile("generated/test/foo/bnd.bnd").exists());
 
 		File portletFile =
