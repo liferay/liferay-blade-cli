@@ -10,6 +10,9 @@
 
 Bundle-Version: 1.0.0.${tstamp}
 
+Export-Package: \
+	com.liferay.blade.cli
+
 Import-Package: \
 	 org.osgi.framework;version=1.5.0,\
 	 !aQute.service.reporter,\

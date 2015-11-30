@@ -1,7 +1,7 @@
 Bundle-Version:1.0.0.${tstamp}
 
 Private-Package: \
-	com.liferay.blade.test
+	com.liferay.blade.test.*
 
 Conditional-Package: \
 	aQute.lib.*,\
@@ -10,12 +10,14 @@ Conditional-Package: \
 Test-Cases: ${test-cases}
 
 -buildpath: \
-	osgi.core,\
-	osgi.cmpn,\
-	com.liferay.blade.api;version=project,\
-	biz.aQute.junit,\
 	aQute.libg,\
-	org.apache.felix.scr
+	biz.aQute.junit,\
+	com.liferay.blade.api;version=project,\
+	com.liferay.blade.cli;version=project,\
+	org.apache.felix.gogo.runtime,\
+	org.apache.felix.scr,\
+	osgi.core,\
+	osgi.cmpn
 
 -testpath: \
 	biz.aQute.junit
@@ -24,6 +26,7 @@ Test-Cases: ${test-cases}
 	aQute.libg,\
 	biz.aQute.bndlib,\
 	com.liferay.blade.api;version=latest,\
+	com.liferay.blade.cli;version=latest,\
 	com.liferay.blade.eclipse.provider;version=latest,\
 	com.liferay.blade.upgrade.liferay70;version=latest,\
 	org.apache.felix.configadmin;version='[1.8.0,1.8.1)',\

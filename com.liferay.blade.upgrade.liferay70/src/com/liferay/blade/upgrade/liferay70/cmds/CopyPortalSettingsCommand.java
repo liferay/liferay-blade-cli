@@ -80,4 +80,15 @@ public class CopyPortalSettingsCommand implements Command {
 		return copyPortalSettings(src, dest);
 	}
 
+	public Object execute(String... args) throws CommandException {
+		if (args != null && args.length == 2) {
+			File src = new File(args[0]);
+			File dest = new File(args[1]);
+
+			return copyPortalSettings(src, dest);
+		}
+
+		return null;
+	}
+
 }
