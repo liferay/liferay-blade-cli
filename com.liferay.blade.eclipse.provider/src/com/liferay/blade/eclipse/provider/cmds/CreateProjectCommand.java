@@ -228,4 +228,9 @@ public class CreateProjectCommand implements Command {
 			throw new CommandException("Error creating project.", e);
 		}
 	}
+
+	@Override
+	public Object execute(String... args) throws CommandException {
+		return null;
+	}
 }

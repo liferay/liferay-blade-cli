@@ -5,6 +5,7 @@ import aQute.bnd.annotation.component.Reference;
 import aQute.lib.consoleapp.AbstractConsoleApp;
 import aQute.lib.getopt.Description;
 
+import com.liferay.blade.api.Command;
 import com.liferay.blade.cli.cmds.CreateCommand;
 import com.liferay.blade.cli.cmds.DeployCommand;
 import com.liferay.blade.cli.cmds.MigrateCommand;
@@ -13,6 +14,10 @@ import com.liferay.blade.cli.cmds.OpenCommand;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * @author Gregory Amerson
@@ -55,6 +60,42 @@ public class blade extends AbstractConsoleApp implements Runnable {
 
 	public PrintStream out() {
 		return out;
+	}
+
+	@Override
+	public void run(String[] args) throws Exception {
+		if (args.length > 0) {
+			final String first = args[0];
+
+			try {
+				final BundleContext bundleContext =
+						FrameworkUtil.getBundle(blade.class).getBundleContext();
+				final ServiceReference<Command> ref =
+						bundleContext.getServiceReferences(
+							Command.class,
+								"(osgi.command.function=" + first + ")"
+						).iterator().next();
+				Command command = bundleContext.getService(ref);
+
+				if (command != null) {
+					String[] cmdArgs = new String[args.length - 1];
+					System.arraycopy(args, 1, cmdArgs, 0, args.length - 1);
+
+					try {
+						command.execute(cmdArgs);
+					}
+					catch (Exception e) {
+						error("Exception executing command: " + e.getMessage());
+					}
+
+					return;
+				}
+			}
+			catch (Exception e) {
+			}
+		}
+
+		super.run(args);
 	}
 
 	@Override
