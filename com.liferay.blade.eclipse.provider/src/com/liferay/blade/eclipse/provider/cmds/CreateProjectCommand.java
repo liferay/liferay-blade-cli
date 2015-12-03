@@ -71,12 +71,12 @@ public class CreateProjectCommand implements Command {
 		subs.put("_package_path_", name.replaceAll("\\.", "/"));
 		subs.put("_package_", name.toLowerCase().replaceAll("-", "."));
 
-		if (classname == null) {
+		if (isEmpty(classname)) {
 			classname = WordUtils.capitalize(name);
 		}
 
 		if ("service".equals(template.name())) {
-			if (service.isEmpty()) {
+			if (isEmpty(service)) {
 				return
 					"if type is service, the fully qualified name of " +
 					"service must be specified after the service argument.";
@@ -89,7 +89,7 @@ public class CreateProjectCommand implements Command {
 		}
 
 		if ("servicewrapper".equals(template.name())) {
-			if (service.isEmpty()) {
+			if (isEmpty(service)) {
 				return
 					"if type is service, the fully qualified name of service " +
 					"must be specified after the service argument.";
@@ -102,7 +102,7 @@ public class CreateProjectCommand implements Command {
 		}
 
 		if ("servicebuilder".equals(template.name())) {
-			if (packageName.isEmpty()) {
+			if (isEmpty(packageName)) {
 				return
 					"if type is servicebuilder, the name of the root package" +
 					"within which to create service builder classes must be" +
@@ -225,6 +225,7 @@ public class CreateProjectCommand implements Command {
 				workDir, template, buildValue, name, classname, service,
 				packageName);
 		} catch (Exception e) {
+		    e.printStackTrace();
 			throw new CommandException("Error creating project.", e);
 		}
 	}
@@ -232,5 +233,15 @@ public class CreateProjectCommand implements Command {
 	@Override
 	public Object execute(String... args) throws CommandException {
 		return null;
+	}
+
+	private boolean isEmpty(String str) {
+	    if(str == null)
+	        return true;
+
+	    if(str.trim().isEmpty())
+	        return true;
+
+	    return false;
 	}
 }
