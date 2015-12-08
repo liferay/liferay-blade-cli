@@ -1,4 +1,5 @@
 -buildpath: \
+	aQute.libg,\
 	biz.aQute.bndlib,\
 	biz.aQute.remote.launcher,\
 	com.liferay.blade.api;version=latest,\

@@ -65,7 +65,7 @@ public class CreateCommand {
 			_blade.out().print("Available project templates:\n\t");
 
 			for (String name : templates.keySet()) {
-				_blade.out().print(name + ",");
+				_blade.out().print(name + ", ");
 			}
 
 			_blade.out().println();

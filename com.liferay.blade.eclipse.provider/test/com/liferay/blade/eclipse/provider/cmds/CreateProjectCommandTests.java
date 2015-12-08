@@ -64,12 +64,8 @@ public class CreateProjectCommandTests {
 
 		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
 
-		contains(
-			gradleBuildFileContent,
-			".*classpath 'com.liferay:com.liferay.ant.bnd:1.0.9'.*");
-
 		contains(gradleBuildFileContent,
-			".*apply plugin: 'biz.aQute.bnd.builder'.*");
+			".*^apply plugin: \"com.liferay.plugin\".*");
 
 		File viewJSPFile = IO.getFile(
 			"generated/test/foo/src/main/resources/META-INF/resources/view.jsp");
@@ -119,7 +115,7 @@ public class CreateProjectCommandTests {
 
 		String bndFileContent = new String(IO.read(bndFile));
 
-		contains(bndFileContent, ".*^Private-Package: gradle.test$.*");
+		contains(bndFileContent, ".*^Private-Package: \\\\.*^\tgradle.test$.*");
 	}
 
 	@Test
@@ -137,12 +133,6 @@ public class CreateProjectCommandTests {
 			IO.getFile("generated/test/servicepreaction/build.gradle");
 
 		assertTrue(buildFile.exists());
-
-		String buildFileContent = new String(IO.read(buildFile));
-
-		contains(
-			buildFileContent,
-			".*compile 'com.liferay.portal:portal-service:7.0.0-SNAPSHOT'.*");
 
 		File serviceFile = IO.getFile(
 			"generated/test/servicepreaction/src/main/java/servicepreaction/Servicepreaction.java");
@@ -187,17 +177,6 @@ public class CreateProjectCommandTests {
 
 		assertTrue(buildFile.exists());
 
-
-		String buildFileContent = new String(IO.read(buildFile));
-
-		contains(
-			buildFileContent,
-			".*compile 'com.liferay.portal:portal-service:7.0.0-SNAPSHOT'.*");
-
-        contains(
-                buildFileContent,
-                ".*classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.0.0'.*");
-
 		File serviceWrapperFile = IO.getFile(
 			"generated/test/serviceoverride/src/main/java/serviceoverride/Serviceoverride.java");
 
@@ -225,10 +204,10 @@ public class CreateProjectCommandTests {
 		String bndFileContent = new String(IO.read(bndFile));
 
 		contains(
-			bndFileContent, ".*Private-Package\\: serviceoverride.*");
+			bndFileContent, ".*^Private-Package: \\\\.*^\tserviceoverride.*");
 
 		contains(
-			bndFileContent, ".*com.liferay.portal.service;version=\'\\[7.0\\,7.1\\)\'.*");
+			bndFileContent, ".*com.liferay.portal.service;version=\'7.0.0\'.*");
 
 	}
 
@@ -417,14 +396,12 @@ public class CreateProjectCommandTests {
 		contains(serviceFileContent,
 			".*^public class PackagePathTest implements LifecycleAction \\{.*");
 
-		File pomFile =
-			IO.getFile("generated/test/lfr.package.path.test/pom.xml");
+		File bndFile = IO.getFile("generated/test/lfr.package.path.test/bnd.bnd");
 
-		String pomFileContent = new String(IO.read(pomFile));
+		String bndFileContent = new String(IO.read(bndFile));
 
 		contains(
-			pomFileContent,
-			".*<Private-Package>lfr.package.path.test</Private-Package>.*");
+			bndFileContent, ".*^Private-Package: \\\\.*lfr.package.path.test.*");
 	}
 
 	@Test
@@ -469,7 +446,11 @@ public class CreateProjectCommandTests {
 
 		contains(pomFileContent, ".*<name>Foo</name>.*");
 
-		contains(pomFileContent, ".*<Private-Package>foo</Private-Package>.*");
+		File bndFile = IO.getFile("generated/test/foo/bnd.bnd");
+
+		String bndFileContent = new String(IO.read(bndFile));
+
+		contains(bndFileContent, ".*Private-Package: \\\\.*foo.*");
 	}
 
 	@Test

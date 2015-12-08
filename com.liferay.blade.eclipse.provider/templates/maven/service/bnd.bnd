@@ -5,4 +5,5 @@ Import-Package: \
 	org.osgi.framework;version="[1.7,2)",\
 	*
 
-Private-Package: _package_
+Private-Package: \
+	_package_
