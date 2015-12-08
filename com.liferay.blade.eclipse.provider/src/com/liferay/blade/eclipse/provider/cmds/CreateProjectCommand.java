@@ -104,7 +104,7 @@ public class CreateProjectCommand implements Command {
 		if ("servicebuilder".equals(template.name())) {
 			if (isEmpty(packageName)) {
 				return
-					"if type is servicebuilder, the name of the root package" +
+					"if type is servicebuilder, the name of the root package " +
 					"within which to create service builder classes must be" +
 					"specified.";
 			}
