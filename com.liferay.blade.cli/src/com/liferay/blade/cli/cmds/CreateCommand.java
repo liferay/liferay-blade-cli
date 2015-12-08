@@ -2,6 +2,9 @@
 package com.liferay.blade.cli.cmds;
 
 import aQute.bnd.osgi.Processor;
+import aQute.lib.getopt.CommandLine;
+import aQute.lib.getopt.Options;
+import aQute.lib.justif.Justif;
 
 import com.liferay.blade.api.Command;
 import com.liferay.blade.api.ProjectBuild;
@@ -23,37 +26,62 @@ import org.osgi.framework.ServiceReference;
 public class CreateCommand {
 
 	final private blade _blade;
-	final private CreateOptions _options;
+	final private Options _options;
+	final private CreateOptions _createOptions;
 	final private BundleContext _bundleContext =
 		FrameworkUtil.getBundle(CreateCommand.class).getBundleContext();
+	final Justif				justif		= new Justif(80, 30, 32, 70);
 
-	public CreateCommand(blade blade, CreateOptions options) throws Exception {
+	public CreateCommand(blade blade, Options options) throws Exception {
 		_blade = blade;
 		_options = options;
 
 		List<String> args = options._arguments();
 
-		if (args.size() < 2) {
-			// TODO print out help for what project templates there are
-			printHelp();
-			return;
-		}
+		final Map<String, ServiceReference<ProjectTemplate>> templates =
+				new HashMap<>();
 
 		final Collection<ServiceReference<ProjectTemplate>> refs =
 			_bundleContext.getServiceReferences(ProjectTemplate.class, null);
 
-		final String projectTemplateName = args.remove(0);
-		ProjectTemplate template = null;
+		for (ServiceReference<ProjectTemplate> ref : refs) {
+			final String name = (String) ref.getProperty("name");
+			templates.put(name, ref);
+		}
 
-		if (refs != null) {
-			for (ServiceReference<ProjectTemplate> ref : refs) {
-				String name = (String) ref.getProperty("name");
+		CommandLine cmdline = new CommandLine(_blade);
 
-				if (projectTemplateName.equals(name)) {
-					template = _bundleContext.getService(ref);
-					break;
-				}
+		_createOptions = cmdline.getOptions(CreateOptions.class, args);
+
+		if (args.size() < 2) {
+			StringBuilder sb = new StringBuilder();
+			Formatter f = new Formatter(sb);
+			cmdline.help(f, this, "create", CreateOptions.class);
+
+			f.flush();
+			justif.wrap(sb);
+			_blade.out().print(sb.toString());
+
+			_blade.out().print("Available project templates:\n\t");
+
+			for (String name : templates.keySet()) {
+				_blade.out().print(name + ",");
 			}
+
+			_blade.out().println();
+			return;
+		}
+
+		final String projectTemplateName = args.remove(0);
+		final ServiceReference<ProjectTemplate> templateRef =
+				templates.get(projectTemplateName);
+
+		final ProjectTemplate template;
+		if (templateRef != null) {
+			template = _bundleContext.getService(templateRef);
+		}
+		else {
+			template = null;
 		}
 
 		if (template == null) {
@@ -62,13 +90,13 @@ public class CreateCommand {
 			return;
 		}
 
-		ProjectBuild build = _options.build();
+		ProjectBuild build = _createOptions.build();
 
 		if (build == null) {
 			build = ProjectBuild.gradle;
 		}
 
-		File dir = _options.dir();
+		File dir = _createOptions.dir();
 		File base = _blade.getBase();
 		String name = args.remove(0);
 		File workDir = null;
@@ -95,9 +123,9 @@ public class CreateCommand {
 		parameters.put("projectTemplate", template);
 		parameters.put("buildValue", build.toString());
 		parameters.put("name", name);
-		parameters.put("classname", options.classname());
-		parameters.put("service", options.service());
-		parameters.put("packageName", options.packagename());
+		parameters.put("classname", _createOptions.classname());
+		parameters.put("service", _createOptions.service());
+		parameters.put("packageName", _createOptions.packagename());
 
 		final Object errors = command.execute(parameters);
 
