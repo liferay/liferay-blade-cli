@@ -4,8 +4,10 @@ Private-Package: \
 	com.liferay.blade.test.*
 
 Conditional-Package: \
+	aQute.configurable,\
 	aQute.lib.*,\
-	aQute.libg.*
+	aQute.libg.*,\
+	aQute.service.reporter
 
 Test-Cases: ${test-cases}
 
@@ -23,8 +25,6 @@ Test-Cases: ${test-cases}
 	biz.aQute.junit
 
 -runbundles: \
-	aQute.libg,\
-	biz.aQute.bndlib,\
 	com.liferay.blade.api;version=latest,\
 	com.liferay.blade.cli;version=latest,\
 	com.liferay.blade.eclipse.provider;version=latest,\

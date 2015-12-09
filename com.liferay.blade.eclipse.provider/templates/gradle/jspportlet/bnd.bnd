@@ -1,3 +1,5 @@
+Bundle-SymbolicName: _NAME_
+
 Bundle-Version: 1.0.0.${tstamp}
 
 Import-Package: \
@@ -10,7 +12,3 @@ Private-Package: \
 
 -includeresource:\
 	META-INF/resources=src/main/resources/META-INF/resources
-
--jsp: *.jsp,*.jspf
-
--plugin.jsp: com.liferay.ant.bnd.plugin.JspAnalyzerPlugin

@@ -1,6 +1,5 @@
 buildscript {
-    repositories {
-		mavenLocal()
+	repositories {
 		maven {
 			url "https://repository.liferay.com/nexus/content/groups/public/"
 		}
@@ -8,19 +7,27 @@ buildscript {
 			url "https://repository.liferay.com/nexus/content/groups/liferay-ce/"
 		}
 	}
-    dependencies {
+	dependencies {
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins", version: "latest.release"
-    }
+	}
 }
 
 apply plugin: "com.liferay.plugin"
 
-repositories {		
-	mavenLocal()
-    	maven {
+repositories {
+	maven {
 		url "https://repository.liferay.com/nexus/content/groups/public/"
 	}
 	maven {
 		url "https://repository.liferay.com/nexus/content/groups/liferay-ce/"
 	}
 }
+
+dependencies {
+	compile 'com.liferay.portal:portal-service:7.0.0-SNAPSHOT'
+	compile 'javax.portlet:portlet-api:2.0'
+	compile 'org.osgi:org.osgi.compendium:5.0.0'
+}
+
+sourceCompatibility = 1.7
+version = '1.0'

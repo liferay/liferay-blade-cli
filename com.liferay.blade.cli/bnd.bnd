@@ -10,19 +10,17 @@
 
 Bundle-Version: 1.0.0.${tstamp}
 
-Export-Package: \
-	com.liferay.blade.cli,\
-	com.liferay.blade.cli.cmds
-
 Import-Package: \
 	 org.osgi.framework;version=1.5.0,\
 	 !org.osgi.service.repository,\
 	 *
 
 Conditional-Package: \
+	aQute.bnd.*,\
 	aQute.configurable,\
 	aQute.lib.*,\
-	aQute.libg.*
+	aQute.libg.*,\
+	aQute.service.reporter
 
 Private-Package: \
 	com.liferay.blade.cli.*,\

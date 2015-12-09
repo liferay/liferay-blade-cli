@@ -2,9 +2,10 @@ package com.liferay.blade.test.cli;
 
 import static org.junit.Assert.assertEquals;
 
+import aQute.lib.consoleapp.AbstractConsoleApp;
+
 import com.liferay.blade.api.Command;
 import com.liferay.blade.api.CommandException;
-import com.liferay.blade.cli.blade;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -14,6 +15,7 @@ import org.apache.felix.service.command.CommandProcessor;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public class CLITests {
 
@@ -51,7 +53,13 @@ public class CLITests {
 
 		context.registerService(Command.class, testCmd, properties);
 
-		new blade().run(new String[] { "testCommand", "testValue", });
+		ServiceReference<Runnable> ref =
+			context.getServiceReferences(
+				Runnable.class, "(main.thread=true)").iterator().next();
+
+		AbstractConsoleApp app = (AbstractConsoleApp) context.getService(ref);
+
+		app.run(new String[] { "testCommand", "testValue", });
 
 		assertEquals("testValue", testCmd.getValue());
 	}
