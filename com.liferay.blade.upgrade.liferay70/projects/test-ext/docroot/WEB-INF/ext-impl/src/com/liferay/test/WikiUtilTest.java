@@ -10,4 +10,8 @@ public class WikiUtilTest {
         WikiUtil.getEntries(new HitsImpl());
     }
 
+    public void wikiUtilGetPageOrderByComparator() {
+        WikiUtil.getPageOrderByComparator("modifiedDate","asc");
+    }
+
 }
