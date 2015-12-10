@@ -1,30 +1,33 @@
 buildscript {
 	repositories {
-		ivy {
-			url 'https://bndtools.ci.cloudbees.com/job/bnd.master/719/artifact/dist/bundles'
-			layout 'pattern', {
-				artifact '[module]/[artifact]-[revision].[ext]' /* OSGi repo pattern */
-			}
+		maven {
+			url "https://repository.liferay.com/nexus/content/groups/public/"
+		}
+		maven {
+			url "https://repository.liferay.com/nexus/content/groups/liferay-ce/"
 		}
 	}
 	dependencies {
-		classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.0.0'
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins", version: "latest.release"
 	}
 }
 
-apply plugin: 'biz.aQute.bnd.builder'
+apply plugin: "com.liferay.plugin"
 
 repositories {
-	mavenCentral()
 	maven {
-		url 'https://repository.liferay.com/nexus/content/groups/public'
+		url "https://repository.liferay.com/nexus/content/groups/public/"
 	}
+	maven {
+		url "https://repository.liferay.com/nexus/content/groups/liferay-ce/"
+	}
+}
+
+dependencies {
+	compile 'com.liferay.portal:portal-service:7.0.0-SNAPSHOT'
+	compile 'javax.portlet:portlet-api:2.0'
+	compile 'org.osgi:org.osgi.compendium:5.0.0'
 }
 
 sourceCompatibility = 1.7
 version = '1.0'
-
-dependencies {
-	compile 'com.liferay.portal:portal-service:7.0.0-SNAPSHOT'
-	compile 'org.osgi:org.osgi.compendium:5.0.0'
-}

@@ -7,8 +7,6 @@ JPM-Command: blade
 -resolve.effective: active;skip:="osgi.service"
 
 -runbundles: \
-	aQute.libg,\
-	biz.aQute.bndlib,\
 	com.liferay.blade.api,\
 	com.liferay.blade.eclipse.provider,\
 	com.liferay.blade.upgrade.liferay70,\

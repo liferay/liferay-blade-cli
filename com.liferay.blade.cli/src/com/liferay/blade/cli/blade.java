@@ -4,6 +4,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import aQute.lib.consoleapp.AbstractConsoleApp;
 import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
 
 import com.liferay.blade.api.Command;
 import com.liferay.blade.cli.cmds.CreateCommand;
@@ -39,7 +40,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	}
 
 	@Description("Creates a new Liferay module project from several available templates.")
-	public void _create(CreateOptions options) throws Exception {
+	public void _create(Options options) throws Exception {
 		new CreateCommand(this, options);
 	}
 

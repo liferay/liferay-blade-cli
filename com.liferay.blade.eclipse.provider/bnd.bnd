@@ -34,8 +34,10 @@ Bundle-SymbolicName: com.liferay.blade.eclipse.provider;singleton:=true
 Bundle-Version: 1.0.0.${tstamp}
 
 Conditional-Package: \
-	aQute.lib.io.*,\
-	aQute.libg.glob.*
+	aQute.bnd.*,\
+	aQute.lib.*,\
+	aQute.libg.*,\
+	aQute.service.reporter
 
 Import-Package: \
 	com.liferay.blade.api,\
