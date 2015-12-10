@@ -10,19 +10,20 @@
 
 	<properties>
 		<liferay.version>7.0.0-SNAPSHOT</liferay.version>
-		<osgi.version>6.0.0</osgi.version>
+		<osgi.core.version>6.0.0</osgi.core.version>
+		<osgi.cmpn.version>5.0.0</osgi.cmpn.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
-			<version>${osgi.version}</version>
+			<version>${osgi.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.compendium</artifactId>
-			<version>${osgi.version}</version>
+			<version>${osgi.cmpn.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.liferay.portal</groupId>
