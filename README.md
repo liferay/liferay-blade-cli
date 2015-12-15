@@ -91,10 +91,25 @@ helloworld $ gradle build
 helloworld $ blade deploy build/libs/helloworld-1.0.jar
 ```
 
-If you have Liferay 7 running the blade tool should connect to the Liferay Module Framework and install your newly built module jar file.  You can check the OSGi shell of Liferay to verify
+### Shell
+
+Liferay 7 has a built-in gogo shell that can be accessed with telnet client on port 11311.  However, many times you just wish
+to be able to run a gogo command remotely from the cmdline and return the results directly to the console.  Use the ```blade sh``` to do just that.
 
 ```
-$ blade sh lb helloworld
+$ blade sh <gogo-command>
+```
+
+Some examples:
+
+List all bundles running in the framework.
+```
+$ blade sh lb
+```
+
+Search for all services that provide javax.portlet.Portlet
+```
+$ blade sh services | grep javax.portlet.Portlet
 ```
 
 ### Agent
