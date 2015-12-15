@@ -1,5 +1,5 @@
 -buildpath: \
-	biz.aQute.junit,\
+	aQute.libg,\
 	biz.aQute.bndlib,\
 	com.liferay.blade.api;version=project,\
 	dnl.utils.jtext,\
@@ -24,8 +24,8 @@
 	osgi.cmpn,\
 	osgi.core
 
--includeresource: \
-	{templates.zip}
+-testpath: \
+	biz.aQute.junit
 
 Bundle-ActivationPolicy: lazy
 

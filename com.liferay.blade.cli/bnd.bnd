@@ -1,31 +1,61 @@
 -buildpath: \
 	aQute.libg,\
 	biz.aQute.bndlib,\
-	biz.aQute.remote.launcher,\
-	com.liferay.blade.api;version=latest,\
+	biz.aQute.remote.api,\
+	biz.aQute.repository,\
+	org.apache.commons.lang3,\
 	osgi.core
-
+	
 -testpath: \
 	biz.aQute.junit
 
+-includeresource: \
+	templates.zip
+
+-sources: false
+
 Bundle-Version: 1.0.0.${tstamp}
 
-Import-Package: \
-	 org.osgi.framework;version=1.5.0,\
-	 !org.osgi.service.repository,\
-	 *
-
-Conditional-Package: \
-	aQute.bnd.*,\
-	aQute.configurable,\
-	aQute.lib.*,\
-	aQute.libg.*,\
-	aQute.service.reporter
+Main-Class: com.liferay.blade.cli.blade
+JPM-Command: blade
 
 Private-Package: \
+	aQute.bnd.deployer.http,\
+	aQute.bnd.deployer.repository,\
+	aQute.bnd.deployer.repository.api,\
+	aQute.bnd.deployer.repository.providers,\
+	aQute.bnd.osgi,\
+	aQute.bnd.osgi.resource;-split-package:=merge-first,\
+	aQute.bnd.service,\
+	aQute.bnd.service.url,\
+	aQute.bnd.version,\
+	aQute.configurable;-split-package:=merge-first,\
+	aQute.lib.collections;-split-package:=merge-first,\
+	aQute.lib.consoleapp;-split-package:=merge-first,\
+	aQute.lib.env;-split-package:=merge-first,\
+	aQute.lib.getopt;-split-package:=merge-first,\
+	aQute.lib.hex;-split-package:=merge-first,\
+	aQute.lib.io;-split-package:=merge-first,\
+	aQute.lib.json;-split-package:=merge-first,\
+	aQute.lib.justif;-split-package:=merge-first,\
+	aQute.lib.utf8properties;-split-package:=merge-first,\
+	aQute.lib.zip;-split-package:=merge-first,\
+	aQute.libg.filters;-split-package:=merge-first,\
+	aQute.libg.generics;-split-package:=merge-first,\
+	aQute.libg.gzip;-split-package:=merge-first,\
+	aQute.libg.reporter;-split-package:=merge-first,\
+	aQute.libg.sed;-split-package:=merge-first,\
+	aQute.remote.api,\
+	aQute.remote.util,\
+	aQute.service.reporter;-split-package:=merge-first,\
 	com.liferay.blade.cli.*,\
-	org.osgi.dto;-split-package:=merge-first,\
-	org.osgi.framework.dto;-split-package:=merge-first,\
+	org.apache.commons.lang3.*,\
+	org.osgi.dto,\
+	org.osgi.framework;-split-package:=merge-first,\
+	org.osgi.framework.dto,\
+	org.osgi.impl.bundle.bindex,\
 	org.osgi.resource;-split-package:=merge-first,\
-	org.osgi.service.component.annotations,\
-	org.osgi.service.metatype.annotations
+	org.osgi.service.bindex,\
+	org.osgi.service.indexer,\
+	org.osgi.service.log,\
+	org.osgi.service.repository

@@ -4,21 +4,12 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import aQute.lib.consoleapp.AbstractConsoleApp;
 import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
 
-import com.liferay.blade.api.Command;
-import com.liferay.blade.cli.cmds.CreateCommand;
-import com.liferay.blade.cli.cmds.DeployCommand;
-import com.liferay.blade.cli.cmds.MigrateCommand;
-import com.liferay.blade.cli.cmds.OpenCommand;
+import com.liferay.blade.cli.AgentCommand.AgentOptions;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 
 /**
  * @author Gregory Amerson
@@ -40,7 +31,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	}
 
 	@Description("Creates a new Liferay module project from several available templates.")
-	public void _create(Options options) throws Exception {
+	public void _create(CreateOptions options) throws Exception {
 		new CreateCommand(this, options);
 	}
 
@@ -49,54 +40,31 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		new DeployCommand(this, options);
 	}
 
-	@Description(value = "Runs migration tool on project source to generate a report of problems that need to be fixed.")
-	public void _migrate(MigrateOptions options) throws Exception {
-		new MigrateCommand(this, options);
-	}
-
 	@Description("Opens or imports a file or project in Liferay IDE.")
 	public void _open(OpenOptions options) throws Exception {
 		new OpenCommand(this, options);
+	}
+
+	@Description("Connects to Liferay and executes gogo command and returns output.")
+	public void _sh(ShellOptions options) throws Exception {
+		new ShellCommand(this, options);
+	}
+
+	public void _agent(AgentOptions options) throws Exception {
+		AgentCommand agent = new AgentCommand(this, options);
+		String help = options._command().subCmd(options, agent);
+
+		if (help != null) {
+			out.println(help);
+		}
 	}
 
 	public PrintStream out() {
 		return out;
 	}
 
-	@Override
-	public void run(String[] args) throws Exception {
-		if (args.length > 0) {
-			final String first = args[0];
-
-			try {
-				final BundleContext bundleContext =
-						FrameworkUtil.getBundle(blade.class).getBundleContext();
-				final ServiceReference<Command> ref =
-						bundleContext.getServiceReferences(
-							Command.class,
-								"(osgi.command.function=" + first + ")"
-						).iterator().next();
-				Command command = bundleContext.getService(ref);
-
-				if (command != null) {
-					String[] cmdArgs = new String[args.length - 1];
-					System.arraycopy(args, 1, cmdArgs, 0, args.length - 1);
-
-					try {
-						command.execute(cmdArgs);
-					}
-					catch (Exception e) {
-						error("Exception executing command: " + e.getMessage());
-					}
-
-					return;
-				}
-			}
-			catch (Exception e) {
-			}
-		}
-
-		super.run(args);
+	public PrintStream err() {
+		return err;
 	}
 
 	@Override
