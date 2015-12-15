@@ -30,7 +30,7 @@ public class ShellCommand {
 
 	private void execute() throws Exception {
 		if(!canConnect("localhost", Agent.DEFAULT_PORT)) {
-			addError("sh", "Unable to connect to remote agent. To install the agent bundle run command \n\t\"blade agent install\"");
+			addError("sh", "Unable to connect to remote agent. To install the agent bundle run the command \"blade agent install\".");
 			return;
 		}
 

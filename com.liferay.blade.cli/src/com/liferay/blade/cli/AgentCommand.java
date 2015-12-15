@@ -147,7 +147,7 @@ public class AgentCommand {
 			deployer.deploy("biz.aQute.remote.agent", agentJar.toURI().toURL().toExternalForm());
 		}
 
-		_blade.out().println("Installed remote agent sucessfully.");
+		_blade.out().println("Installed remote agent sucessfully. Please wait 5-10 seconds for remote agent to be autodeployed, then use the \"blade sh <gogo-command>\". At any time, uninstall the remote agent by using the \"blade agent uninstall\" command.");
 	}
 
 	public interface AgentOptions extends Options {
