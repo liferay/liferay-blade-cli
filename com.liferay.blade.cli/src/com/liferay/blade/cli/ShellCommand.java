@@ -30,10 +30,16 @@ public class ShellCommand {
 
 	private void execute() throws Exception {
 		if(!canConnect("localhost", Agent.DEFAULT_PORT)) {
-			addError("sh", "Unable to connect to remote agent. Install agent bundle?");
+			addError("sh", "Unable to connect to remote agent. To install the agent bundle run command \n\t\"blade agent install\"");
 			return;
 		}
 
+		String gogoCommand = StringUtils.join(_options._arguments(), " ");
+
+		executeCommand(gogoCommand);
+	}
+
+	void executeCommand(String cmd) throws Exception {
 		ShellSupervisor supervisor = new ShellSupervisor(_blade);
 
 		supervisor.connect("localhost", Agent.DEFAULT_PORT);
@@ -43,14 +49,11 @@ public class ShellCommand {
 			return;
 		}
 
-		String gogoCommand = StringUtils.join(_options._arguments(), " ");
-
-		supervisor.getAgent().stdin(gogoCommand);
-
+		supervisor.getAgent().stdin(cmd);
 		supervisor.close();
 	}
 
-	private boolean canConnect(String host, int port) {
+	static boolean canConnect(String host, int port) {
         InetSocketAddress address = new InetSocketAddress(host, Integer.valueOf( port ));
         InetSocketAddress local = new InetSocketAddress(0);
 

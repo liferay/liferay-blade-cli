@@ -5,6 +5,8 @@ import aQute.bnd.annotation.component.Reference;
 import aQute.lib.consoleapp.AbstractConsoleApp;
 import aQute.lib.getopt.Description;
 
+import com.liferay.blade.cli.AgentCommand.AgentOptions;
+
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -46,6 +48,15 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	@Description("Connects to Liferay and executes gogo command and returns output.")
 	public void _sh(ShellOptions options) throws Exception {
 		new ShellCommand(this, options);
+	}
+
+	public void _agent(AgentOptions options) throws Exception {
+		AgentCommand agent = new AgentCommand(this, options);
+		String help = options._command().subCmd(options, agent);
+
+		if (help != null) {
+			out.println(help);
+		}
 	}
 
 	public PrintStream out() {
