@@ -5,4 +5,4 @@ jdk:
 install: ./gradlew --version
 # TO debug
 # script: ./gradlew build --debug
-script: ./gradlew clean build --debug
+script: ./gradlew clean build
