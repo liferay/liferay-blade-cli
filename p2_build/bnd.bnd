@@ -7,6 +7,6 @@ p2_main = \
     com.liferay.blade.api,\
     com.liferay.blade.cli,\
     com.liferay.blade.eclipse.provider,\
-    com.liferay.blade.upgrade.liferay70,\
+    com.liferay.blade.upgrade.liferay70
 
 -dependson: ${p2_main}
