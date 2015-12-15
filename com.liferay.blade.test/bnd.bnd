@@ -15,18 +15,14 @@ Test-Cases: ${test-cases}
 	aQute.libg,\
 	biz.aQute.junit,\
 	com.liferay.blade.api;version=project,\
-	com.liferay.blade.cli;version=project,\
 	org.apache.felix.gogo.runtime,\
 	org.apache.felix.scr,\
 	osgi.core,\
 	osgi.cmpn
 
--testpath: \
-	biz.aQute.junit
-
 -runbundles: \
+	biz.aQute.junit,\
 	com.liferay.blade.api;version=latest,\
-	com.liferay.blade.cli;version=latest,\
 	com.liferay.blade.eclipse.provider;version=latest,\
 	com.liferay.blade.upgrade.liferay70;version=latest,\
 	org.apache.felix.configadmin;version='[1.8.0,1.8.1)',\

@@ -1,3 +1,0 @@
--include: blade.bndrun
-
--runprogramargs: -t create portlet foo

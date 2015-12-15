@@ -1,0 +1,9 @@
+task createTemplatesZip(type:Zip) {
+	from "${projectDir}/templates"
+	baseName="templates"
+	destinationDir = new File("${projectDir}")
+}
+
+jar {
+	from createTemplatesZip
+}

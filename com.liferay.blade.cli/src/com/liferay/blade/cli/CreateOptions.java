@@ -4,19 +4,17 @@ import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
-import com.liferay.blade.api.ProjectBuild;
-
 import java.io.File;
 
-@Arguments(arg = {"template", "name"})
+@Arguments(arg = {"name"})
 public interface CreateOptions extends Options {
-
-	@Description("The build type of project to create.  "
-			+ "Valid values are maven or gradle. Default: gradle")
-	public ProjectBuild build();
 
 	@Description("The directory where to create the new project.")
 	public File dir();
+
+	@Description("The project template to use when creating the project.\n"
+			+ "Valid values are jspportlet, portlet, service, servicebuilder, servicewrapper. Default: jspportlet")
+	public Template template();
 
 	@Description("If a class is generated in the project, " +
 			"provide the name of the class to be generated." +

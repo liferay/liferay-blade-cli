@@ -1,6 +1,5 @@
 -buildpath: \
 	aQute.libg,\
-	biz.aQute.junit,\
 	com.liferay.blade.api,\
 	com.liferay.blade.eclipse.provider,\
 	com.liferay.markdown.converter,\
@@ -29,6 +28,9 @@
 	org.pegdown,\
 	osgi.cmpn,\
 	osgi.core
+
+-testpath: \
+	biz.aQute.junit
 
 Bundle-ActivationPolicy: lazy
 
