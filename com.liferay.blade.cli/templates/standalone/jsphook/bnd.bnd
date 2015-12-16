@@ -1,0 +1,8 @@
+Bundle-SymbolicName: _NAME_
+
+Bundle-Version: 1.0.0.${tstamp}
+
+Fragment-Host: HOST_BUNDLE;bundle-version="BUNDLE_VERSION"
+
+-includeresource:\
+	META-INF/resources=src/main/resources/META-INF/resources

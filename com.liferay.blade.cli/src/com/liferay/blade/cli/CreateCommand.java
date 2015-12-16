@@ -137,6 +137,22 @@ public class CreateCommand {
 			}
 		}
 
+		String hostbundle = _options.hostbundle();
+
+		String version = _options.version();
+
+		if("jsphook".equals(template.name())){
+		    if(isEmpty(hostbundle) || isEmpty(version)){
+		        addError("Create",
+                    "if type is jsphook, the name of the hostbundle " +
+                    "and version must be specified.");
+                return;
+		    }
+
+		    subs.put("HOST_BUNDLE", hostbundle);
+		    subs.put("BUNDLE_VERSION", version);
+		}
+
 		subs.put("_CLASSNAME_", classname);
 
 		String unNormalizedPortletFqn =

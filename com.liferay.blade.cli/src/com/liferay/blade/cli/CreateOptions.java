@@ -25,4 +25,12 @@ public interface CreateOptions extends Options {
 	public String service();
 
 	public String packagename();
+
+	@Description("If a new jsp hook fragment needs to be created, " +
+                   "provide the name of the host bundle.")
+	public String hostbundle();
+
+	@Description("If a new jsp hook fragment needs to be created, " +
+                   "provide the name of the host bundle version.")
+	public String version();
 }
