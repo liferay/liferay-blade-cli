@@ -12,8 +12,7 @@ public interface CreateOptions extends Options {
 	@Description("The directory where to create the new project.")
 	public File dir();
 
-	@Description("The project template to use when creating the project.\n"
-			+ "Valid values are jspportlet, portlet, service, servicebuilder, servicewrapper. Default: jspportlet")
+	@Description("The project template to use when creating the project. ")
 	public Template template();
 
 	@Description("If a class is generated in the project, " +
