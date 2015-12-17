@@ -34,7 +34,7 @@ public class CreateCommand {
 		Template template = options.template();
 
 		if (template == null) {
-			template = Template.jspportlet;
+			template = Template.mvcportlet;
 		}
 
 		File dir = options.dir();
@@ -74,7 +74,7 @@ public class CreateCommand {
 
 		String service = options.service();
 
-		if ("service".equals(template.name())) {
+		if (Template.service.equals(template)) {
 			if (isEmpty(service)) {
 				addError("Create", "if type is service, the fully qualified name of " +
 					"service must be specified after the service argument.");
@@ -87,7 +87,7 @@ public class CreateCommand {
 				service.substring(service.lastIndexOf('.') + 1));
 		}
 
-		if ("servicewrapper".equals(template.name())) {
+		if (Template.servicewrapper.equals(template)) {
 			if (isEmpty(service)) {
 				addError("Create",
 					"if type is service, the fully qualified name of service " +
@@ -103,7 +103,7 @@ public class CreateCommand {
 
 		String packageName = options.packagename();
 
-		if ("servicebuilder".equals(template.name())) {
+		if (Template.servicebuilder.equals(template)) {
 			if (isEmpty(packageName)) {
 				addError("Create",
 					"if type is servicebuilder, the name of the root package " +
@@ -123,7 +123,7 @@ public class CreateCommand {
 				classname += "Portlet";
 			}
 		}
-		else if ("portlet".equals(template.name()) || "jspportlet".equals(template.name())) {
+		else if (Template.portlet.equals(template) || Template.mvcportlet.equals(template)) {
 			if (!classname.contains("Portlet")) {
 				classname += "Portlet";
 			}

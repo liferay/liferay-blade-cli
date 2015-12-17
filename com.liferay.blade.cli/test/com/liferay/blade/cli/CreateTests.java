@@ -66,13 +66,13 @@ public class CreateTests {
 	}
 
 	@Test
-	public void createGradleJSPPortletProject() throws Exception {
+	public void createGradleMVCPortletProject() throws Exception {
 		String [] args = {
 				"create",
 				"-d",
 				"generated/test",
 				"-t",
-				"jspportlet",
+				"mvcportlet",
 				"foo"
 		};
 
