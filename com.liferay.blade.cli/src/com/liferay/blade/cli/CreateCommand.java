@@ -25,19 +25,23 @@ public class CreateCommand {
 			".properties", ".gradle", ".prefs");
 
 	final private blade _blade;
+	final private CreateOptions _options;
 
 	public CreateCommand(blade blade, CreateOptions options) throws Exception {
 		_blade = blade;
+		_options = options;
+	}
 
-		List<String> args = options._arguments();
+	public void execute() throws Exception {
+		List<String> args = _options._arguments();
 
-		Template template = options.template();
+		Template template = _options.template();
 
 		if (template == null) {
 			template = Template.mvcportlet;
 		}
 
-		File dir = options.dir();
+		File dir = _options.dir();
 		File base = _blade.getBase();
 		String name = args.remove(0);
 		File workDir = null;
@@ -64,7 +68,7 @@ public class CreateCommand {
 		subs.put("_name_", name.toLowerCase());
 		subs.put("_NAME_", WordUtils.capitalize(name));
 
-		final String packageName = options.packagename();
+		final String packageName = _options.packagename();
 
 		if (isEmpty(packageName)) {
 			subs.put("_package_path_", name.replaceAll("\\.", "/"));
@@ -75,13 +79,13 @@ public class CreateCommand {
 			subs.put("_package_", packageName);
 		}
 
-		String classname = options.classname();
+		String classname = _options.classname();
 
 		if (isEmpty(classname)) {
 			classname = WordUtils.capitalize(name);
 		}
 
-		String service = options.service();
+		String service = _options.service();
 
 		if (Template.service.equals(template)) {
 			if (isEmpty(service)) {

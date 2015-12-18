@@ -20,15 +20,13 @@ public class ShellCommand {
 	public ShellCommand(blade blade, ShellOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
-
-		execute();
 	}
 
 	private void addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private void execute() throws Exception {
+	public void execute() throws Exception {
 		if(!canConnect("localhost", Agent.DEFAULT_PORT)) {
 			addError("sh", "Unable to connect to remote agent. To install the agent bundle run the command \"blade agent install\".");
 			return;

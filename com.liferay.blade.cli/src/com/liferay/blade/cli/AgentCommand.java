@@ -73,9 +73,7 @@ public class AgentCommand {
 			return;
 		}
 
-		String userHome = System.getProperty("user.home");
-
-		File cache = IO.getFile(userHome + "/.blade/repoCache");
+		File cache = _blade.getCacheDir();
 
 		cache.mkdirs();
 

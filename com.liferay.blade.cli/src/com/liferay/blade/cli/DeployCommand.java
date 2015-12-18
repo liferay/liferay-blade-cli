@@ -18,8 +18,6 @@ public class DeployCommand {
 	public DeployCommand(blade blade, DeployOptions options) throws Exception {
 		this.blade = blade;
 		this.options = options;
-
-		execute();
 	}
 
 	private void addError(String prefix, String msg) {
@@ -38,7 +36,7 @@ public class DeployCommand {
 		}
 	}
 
-	private void execute() throws Exception {
+	public void execute() throws Exception {
 		int numOfFiles = options._arguments().size();
 
 		for (int i = 0; i < numOfFiles; i++) {
