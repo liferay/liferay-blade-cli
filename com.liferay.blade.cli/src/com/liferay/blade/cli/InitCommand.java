@@ -68,6 +68,11 @@ public class InitCommand {
 			addError("Unable to unzip contents of workspace to dir: " + e.getMessage());
 			return;
 		}
+
+		if(!new File(destDir, "gradlew").setExecutable(true)) {
+			addError("Unable to make gradlew executable.");
+			return;
+		}
 	}
 
 	void unzip(File srcFile, File destDir, String entryToStart) throws IOException {
