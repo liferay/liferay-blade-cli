@@ -4,14 +4,22 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import aQute.lib.consoleapp.AbstractConsoleApp;
 import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.AgentCommand.AgentOptions;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
+import org.osgi.framework.Constants;
 
 /**
  * @author Gregory Amerson
@@ -57,6 +65,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		new ShellCommand(this, options).execute();
 	}
 
+	@Description("Install or uninstall remote agent in Liferay")
 	public void _agent(AgentOptions options) throws Exception {
 		AgentCommand agent = new AgentCommand(this, options);
 		String help = options._command().subCmd(options, agent);
@@ -64,6 +73,27 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		if (help != null) {
 			out.println(help);
 		}
+	}
+
+	@Description("Show version information about blade")
+	public void _version(Options options) throws IOException {
+		Enumeration<URL> e =
+			getClass().getClassLoader().getResources("META-INF/MANIFEST.MF");
+
+		while (e.hasMoreElements()) {
+			URL u = e.nextElement();
+			Manifest m = new Manifest(u.openStream());
+			String bsn =
+				m.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME);
+
+			if (bsn != null && bsn.equals("com.liferay.blade.cli")) {
+				Attributes attrs = m.getMainAttributes();
+				out.printf("%s\n", attrs.getValue(Constants.BUNDLE_VERSION));
+				return;
+			}
+		}
+
+		error("Could not locate version");
 	}
 
 	public PrintStream out() {
