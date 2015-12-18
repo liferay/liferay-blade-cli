@@ -73,6 +73,8 @@ public class CreateTests {
 				"generated/test",
 				"-t",
 				"mvcportlet",
+				"-p",
+				"com.liferay.test",
 				"foo"
 		};
 
@@ -83,7 +85,7 @@ public class CreateTests {
 		assertTrue(IO.getFile("generated/test/foo/bnd.bnd").exists());
 
 		File portletFile =
-			IO.getFile("generated/test/foo/src/main/java/foo/FooPortlet.java");
+			IO.getFile("generated/test/foo/src/main/java/com/liferay/test/FooPortlet.java");
 
 		assertTrue(portletFile.exists());
 
