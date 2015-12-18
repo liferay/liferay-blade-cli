@@ -64,15 +64,15 @@ public class CreateCommand {
 		subs.put("_name_", name.toLowerCase());
 		subs.put("_NAME_", WordUtils.capitalize(name));
 
-		String packageName = options.packagename();
+		final String packageName = options.packagename();
 
-		if ( isEmpty(packageName) ) {
-		    subs.put("_package_path_", name.replaceAll("\\.", "/"));
-	        subs.put("_package_", name.toLowerCase().replaceAll("-", "."));
+		if (isEmpty(packageName)) {
+			subs.put("_package_path_", name.replaceAll("\\.", "/"));
+			subs.put("_package_", name.toLowerCase().replaceAll("-", "."));
 		}
 		else {
-            subs.put("_package_path_", packageName.replaceAll("\\.", "/"));
-            subs.put("_package_", packageName);
+			subs.put("_package_path_", packageName.replaceAll("\\.", "/"));
+			subs.put("_package_", packageName);
 		}
 
 		String classname = options.classname();
