@@ -63,8 +63,17 @@ public class CreateCommand {
 		subs.put("_project_path_", workDir.getAbsolutePath());
 		subs.put("_name_", name.toLowerCase());
 		subs.put("_NAME_", WordUtils.capitalize(name));
-		subs.put("_package_path_", name.replaceAll("\\.", "/"));
-		subs.put("_package_", name.toLowerCase().replaceAll("-", "."));
+
+		String packageName = options.packagename();
+
+		if ( isEmpty(packageName) ) {
+		    subs.put("_package_path_", name.replaceAll("\\.", "/"));
+	        subs.put("_package_", name.toLowerCase().replaceAll("-", "."));
+		}
+		else {
+            subs.put("_package_path_", packageName.replaceAll("\\.", "/"));
+            subs.put("_package_", packageName);
+		}
 
 		String classname = options.classname();
 
@@ -101,8 +110,6 @@ public class CreateCommand {
 				service.substring(service.lastIndexOf('.') + 1));
 		}
 
-		String packageName = options.packagename();
-
 		if (Template.servicebuilder.equals(template)) {
 			if (isEmpty(packageName)) {
 				addError("Create",
@@ -112,7 +119,6 @@ public class CreateCommand {
 				return;
 			}
 
-			subs.put("_package_", packageName);
 			subs.put("_api_", packageName + ".api");
 			subs.put("_svc_", packageName + ".svc");
 			subs.put("_web_", packageName + ".web");
