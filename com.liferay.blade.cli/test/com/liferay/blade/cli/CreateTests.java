@@ -73,6 +73,53 @@ public class CreateTests {
 				"generated/test",
 				"-t",
 				"mvcportlet",
+				"foo"
+		};
+
+		blade.main(args);
+
+		assertTrue(IO.getFile("generated/test/foo").exists());
+
+		assertTrue(IO.getFile("generated/test/foo/bnd.bnd").exists());
+
+		File portletFile =
+			IO.getFile("generated/test/foo/src/main/java/foo/FooPortlet.java");
+
+		assertTrue(portletFile.exists());
+
+		String portletFileContent = new String(IO.read(portletFile));
+
+		contains(
+			portletFileContent,
+			".*^public class FooPortlet extends MVCPortlet.*$");
+
+		File gradleBuildFile = IO.getFile("generated/test/foo/build.gradle");
+
+		assertTrue(gradleBuildFile.exists());
+
+		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
+
+		contains(gradleBuildFileContent,
+			".*^apply plugin: \"com.liferay.plugin\".*");
+
+		File viewJSPFile = IO.getFile(
+			"generated/test/foo/src/main/resources/META-INF/resources/view.jsp");
+
+		assertTrue(viewJSPFile.exists());
+
+		File initJSPFile = IO.getFile(
+			"generated/test/foo/src/main/resources/META-INF/resources/init.jsp");
+
+		assertTrue(initJSPFile.exists());
+	}
+
+	public void createGradleMVCPortletProjectWithPackage() throws Exception {
+		String [] args = {
+				"create",
+				"-d",
+				"generated/test",
+				"-t",
+				"mvcportlet",
 				"-p",
 				"com.liferay.test",
 				"foo"
