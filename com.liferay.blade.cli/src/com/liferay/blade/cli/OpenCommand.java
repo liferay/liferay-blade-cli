@@ -13,17 +13,17 @@ public class OpenCommand {
 	public OpenCommand(blade blade, OpenOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
+	}
 
-		List<String> args = options._arguments();
+	public void execute() throws Exception {
+		List<String> args = _options._arguments();
 
 		if (args.size() == 0) {
-
 			// Default command
-
 			printHelp();
 		}
 		else {
-			execute();
+			doExecute();
 		}
 	}
 
@@ -31,7 +31,7 @@ public class OpenCommand {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private void execute() throws Exception {
+	private void doExecute() throws Exception {
 		File fileName = new File(_options._arguments().get(0));
 
 		if (!fileName.exists()) {
