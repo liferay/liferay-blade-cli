@@ -57,13 +57,11 @@ public class CreateCommand {
 			base = workDir.getParentFile();
 		}
 
-		String type = "standalone";
-
 		final Pattern glob = Pattern.compile(
-			"^" + type + "/" + template.name() + "/.*|\\...+/.*");
+			"^standalone/" + template.name() + "/.*|\\...+/.*");
 
 		final Map<String, String> subs = new HashMap<>();
-		subs.put("templates/" + type + "/" + template.name() + "/", "");
+		subs.put("templates/standalone/" + template.name() + "/", "");
 		subs.put("_project_path_", workDir.getAbsolutePath());
 		subs.put("_name_", name.toLowerCase());
 		subs.put("_NAME_", WordUtils.capitalize(name));
@@ -150,7 +148,30 @@ public class CreateCommand {
 
 		InputStream in = getClass().getResourceAsStream("/templates.zip");
 
-		copy(type, template.name(), workDir, in, glob, true, subs);
+		copy("standalone", template.name(), workDir, in, glob, true, subs);
+
+		if (isWorkspace(workDir)) {
+			final Pattern buildGlob = Pattern.compile(
+				"^workspace/" + template.name() + "/build.gradle");
+			in = getClass().getResourceAsStream("/templates.zip");
+			copy("workspace", template.name(), workDir, in, buildGlob, true,
+				subs);
+		}
+	}
+
+	private boolean isWorkspace(File workDir) {
+		if (workDir == null || !workDir.exists() || !workDir.isDirectory()) {
+			return false;
+		}
+
+		List<String> names = Arrays.asList(workDir.list());
+
+		if (names != null && names.contains("modules") &&
+			names.contains("themes") && names.contains("build.gradle")) {
+			return true;
+		}
+
+		return isWorkspace(workDir.getParentFile());
 	}
 
 	private void copy(String type, String template, File workspaceDir,

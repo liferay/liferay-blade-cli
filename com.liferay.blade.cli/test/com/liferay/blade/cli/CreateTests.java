@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import aQute.lib.io.IO;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
@@ -63,6 +64,54 @@ public class CreateTests {
 			"generated/test/foo/src/main/resources/META-INF/resources/init.jsp");
 
 		assertTrue(initJSPFile.exists());
+	}
+
+	@Test
+	public void createWorkspaceProjectAllDefaults() throws Exception {
+		String [] args = {
+				"create",
+				"-d",
+				"generated/test/workspace/modules/apps",
+				"foo"
+		};
+
+		File workspace = new File("generated/test/workspace");
+
+		makeWorkspace(workspace);
+
+		blade.main(args);
+
+		assertTrue(IO.getFile("generated/test/workspace/modules/apps/foo").exists());
+
+		assertTrue(IO.getFile("generated/test/workspace/modules/apps/foo/bnd.bnd").exists());
+
+		File portletFile =
+			IO.getFile("generated/test/workspace/modules/apps/foo/src/main/java/foo/FooPortlet.java");
+
+		assertTrue(portletFile.exists());
+
+		String portletFileContent = new String(IO.read(portletFile));
+
+		contains(
+			portletFileContent,
+			".*^public class FooPortlet extends MVCPortlet.*$");
+
+		File gradleBuildFile = IO.getFile("generated/test/workspace/modules/apps/foo/build.gradle");
+
+		assertTrue(gradleBuildFile.exists());
+
+		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
+
+		lacks(gradleBuildFileContent,
+			".*^apply plugin: \"com.liferay.plugin\".*");
+	}
+
+	private void makeWorkspace(File workspace) throws IOException {
+		workspace.mkdirs();
+
+		new File(workspace, "modules").mkdir();
+		new File(workspace, "themes").mkdir();
+		new File(workspace, "build.gradle").createNewFile();
 	}
 
 	@Test
@@ -204,6 +253,63 @@ public class CreateTests {
 		String bndFileContent = new String(IO.read(bndFile));
 
 		contains(bndFileContent, ".*^Private-Package: \\\\.*^\tgradle.test$.*");
+	}
+
+	@Test
+	public void createWorkspaceGradlePortletProject() throws Exception {
+		String [] args = {
+				"create",
+				"-d",
+				"generated/test/workspace/modules/apps",
+				"-t",
+				"portlet",
+				"-c",
+				"Foo",
+				"gradle.test"
+		};
+
+		File workspace = new File("generated/test/workspace");
+
+		makeWorkspace(workspace);
+
+		blade.main(args);
+
+		assertTrue(
+			IO.getFile("generated/test/workspace/modules/apps/gradle.test/build.gradle").exists());
+
+		File portletFile = IO.getFile(
+			"generated/test/workspace/modules/apps/gradle.test/src/main/java/gradle/test/FooPortlet.java");
+
+		assertTrue(portletFile.exists());
+
+		String portletFileContent = new String(IO.read(portletFile));
+
+		contains(portletFileContent, "^package gradle.test;.*");
+
+		contains(portletFileContent,
+			".*javax.portlet.display-name=Gradle.test.*");
+
+		contains(portletFileContent, ".*^public class FooPortlet .*");
+
+		contains(portletFileContent,
+			".*printWriter.print\\(\\\"Gradle.test Portlet.*");
+
+		File bndFile = IO.getFile("generated/test/workspace/modules/apps/gradle.test/bnd.bnd");
+
+		assertTrue(bndFile.exists());
+
+		String bndFileContent = new String(IO.read(bndFile));
+
+		contains(bndFileContent, ".*^Private-Package: \\\\.*^\tgradle.test$.*");
+
+		File gradleBuildFile = IO.getFile("generated/test/workspace/modules/apps/gradle.test/build.gradle");
+
+		assertTrue(gradleBuildFile.exists());
+
+		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
+
+		lacks(gradleBuildFileContent,
+			".*^apply plugin: \"com.liferay.plugin\".*");
 	}
 
 	@Test
@@ -392,6 +498,13 @@ public class CreateTests {
 			IO.delete(testdir);
 			assertFalse(testdir.exists());
 		}
+	}
+
+	private void lacks(String content, String pattern) {
+		assertFalse(
+			Pattern.compile(
+				pattern, Pattern.MULTILINE | Pattern.DOTALL).matcher(
+					content).matches());
 	}
 
 	private void contains(String content, String pattern) {

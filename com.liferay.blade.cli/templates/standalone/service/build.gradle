@@ -1,5 +1,6 @@
 buildscript {
 	repositories {
+	
 		maven {
 			url "https://repository.liferay.com/nexus/content/groups/public/"
 		}
@@ -30,4 +31,4 @@ dependencies {
 }
 
 sourceCompatibility = 1.7
-version = '1.0'
+version = '1.0.0'

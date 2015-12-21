@@ -27,3 +27,6 @@ dependencies {
 	compile 'biz.aQute.bnd:biz.aQute.bnd.annotation:3.0.0'
 	compile 'com.liferay.portal:util-bridges:7.0.0-SNAPSHOT'
 }
+
+sourceCompatibility = 1.0
+version = ‘1.0.0’
