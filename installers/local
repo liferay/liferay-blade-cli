@@ -1,0 +1,5 @@
+curl -sL https://github.com/jpm4j/jpm4j.installers/raw/master/dist/biz.aQute.jpm.run.jar >tmp.jar
+java -jar tmp.jar -u init
+rm tmp.jar
+jpm install -f https://liferay-test-01.ci.cloudbees.com/job/blade.tools/lastSuccessfulBuild/artifact/com.liferay.blade.cli/generated/com.liferay.blade.cli.jar
+echo "blade installed successfully."
