@@ -1,11 +1,13 @@
 package com.liferay.blade.cli;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import aQute.lib.io.IO;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -119,5 +121,47 @@ public class InitTests {
 		new blade().run(args);
 
 		assertTrue(!(new File(workspaceDir, "newproject/build.gradle").exists()));
+	}
+
+	private void makeSDK(File dir) throws IOException {
+		assertTrue(new File(dir, "portlets").mkdirs());
+		assertTrue(new File(dir, "hooks").mkdirs());
+		assertTrue(new File(dir, "layouttpl").mkdirs());
+		assertTrue(new File(dir, "themes").mkdirs());
+		assertTrue(new File(dir, "build.properties").createNewFile());
+		assertTrue(new File(dir, "build.xml").createNewFile());
+		assertTrue(new File(dir, "build-common.xml").createNewFile());
+		assertTrue(new File(dir, "build-common-plugin.xml").createNewFile());
+	}
+
+	@Test
+	public void initInPluginsSDKDirectory() throws Exception {
+		String [] args = {
+				"-b",
+				"generated/test/workspace",
+				"init",
+		};
+
+		makeSDK(workspaceDir);
+
+		new blade().run(args);
+
+		assertTrue((new File(workspaceDir, "build.gradle").exists()));
+
+		assertTrue((new File(workspaceDir, "modules").exists()));
+
+		assertTrue((new File(workspaceDir, "themes").exists()));
+
+		assertFalse((new File(workspaceDir, "portlets").exists()));
+
+		assertFalse((new File(workspaceDir, "hooks").exists()));
+
+		assertFalse((new File(workspaceDir, "build.properties").exists()));
+
+		assertFalse((new File(workspaceDir, "build.xml").exists()));
+
+		assertTrue((new File(workspaceDir, "plugins-sdk/build.properties").exists()));
+
+		assertTrue((new File(workspaceDir, "plugins-sdk/build.xml").exists()));
 	}
 }

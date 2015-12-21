@@ -4,16 +4,22 @@ import aQute.lib.io.IO;
 import aQute.lib.json.JSONCodec;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.apache.commons.io.FileUtils;
 
 public class InitCommand {
 
@@ -26,7 +32,7 @@ public class InitCommand {
 		_options = options;
 	}
 
-	public void execute() {
+	public void execute() throws IOException {
 		final List<String> args = _options._arguments();
 
 		final String name = args.size() > 0 ? args.get(0) : null;
@@ -39,11 +45,16 @@ public class InitCommand {
 			return;
 		}
 
-		if (destDir.exists() && destDir.list().length > 0) {
-			addError(
-				destDir.getAbsolutePath() +
-				" contains files, please move them before continuing.");
-			return;
+		if (destDir.exists()) {
+			if (isPluginsSDK(destDir)) {
+				moveContentsToDir(destDir, new File(destDir, "plugins-sdk"), "plugins-sdk");
+			}
+			else if (destDir.list().length > 0) {
+				addError(
+					destDir.getAbsolutePath() +
+					" contains files, please move them before continuing.");
+				return;
+			}
 		}
 
 		if (!destDir.exists() && !destDir.mkdirs()) {
@@ -73,6 +84,44 @@ public class InitCommand {
 			addError("Unable to make gradlew executable.");
 			return;
 		}
+	}
+
+	private void moveContentsToDir(File src, File dest, final String sdkDirName)
+		throws IOException {
+
+		Path tempDir = Files.createTempDirectory("temp-plugins-sdk");
+
+		FileUtils.copyDirectory(src, tempDir.toFile(), new FileFilter() {
+			public boolean accept(File pathname) {
+				return (!pathname.getName().equals(sdkDirName) || !pathname.getName().startsWith("."));
+			}
+		}, true);
+
+		String[] copied = tempDir.toFile().list();
+
+		for (String name : copied) {
+			IO.delete(new File(src, name));
+		}
+
+		FileUtils.moveDirectory(tempDir.toFile(), dest);
+	}
+
+	private boolean isPluginsSDK(File dir) {
+		if (dir == null || !dir.exists() || !dir.isDirectory()) {
+			return false;
+		}
+
+		List<String> names = Arrays.asList(dir.list());
+
+		return names != null &&
+			names.contains("portlets") &&
+			names.contains("hooks") &&
+			names.contains("layouttpl") &&
+			names.contains("themes") &&
+			names.contains("build.properties") &&
+			names.contains("build.xml") &&
+			names.contains("build-common.xml") &&
+			names.contains("build-common-plugin.xml");
 	}
 
 	void unzip(File srcFile, File destDir, String entryToStart) throws IOException {
