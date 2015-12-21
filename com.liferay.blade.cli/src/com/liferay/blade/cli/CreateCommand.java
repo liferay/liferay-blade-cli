@@ -137,20 +137,20 @@ public class CreateCommand {
 			}
 		}
 
-		String hostbundle = _options.hostbundle();
+		final String hostbundlebsn = _options.hostbundlebsn();
 
-		String version = _options.version();
+		final String hostbundleversion = _options.hostbundleversion();
 
-		if("jsphook".equals(template.name())){
-		    if(isEmpty(hostbundle) || isEmpty(version)){
-		        addError("Create",
-                    "if type is jsphook, the name of the hostbundle " +
-                    "and version must be specified.");
-                return;
-		    }
+		if (Template.jsphook.equals(template)) {
+			if(isEmpty(hostbundlebsn) || isEmpty(hostbundleversion)){
+				addError("Create",
+					"if type is jsphook, the bsn of the hostbundle " +
+					"and version must be specified.");
+				return;
+			}
 
-		    subs.put("HOST_BUNDLE", hostbundle);
-		    subs.put("BUNDLE_VERSION", version);
+			subs.put("_HOST_BUNDLE_BSN_", hostbundlebsn);
+			subs.put("_HOST_BUNDLE_VERSION_", hostbundleversion);
 		}
 
 		subs.put("_CLASSNAME_", classname);
