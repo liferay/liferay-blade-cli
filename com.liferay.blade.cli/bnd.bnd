@@ -54,6 +54,7 @@ Private-Package: \
 	org.apache.commons.io.filefilter,\
 	org.apache.commons.io.output,\
 	org.apache.commons.lang3,\
+	org.apache.commons.lang3.text,\
 	org.osgi.dto,\
 	org.osgi.framework;-split-package:=merge-first,\
 	org.osgi.framework.dto,\
