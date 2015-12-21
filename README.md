@@ -9,30 +9,22 @@ Blade Tools is a set of modular developer tools for building Liferay 7.0 modules
 
 Right now the only installable tool is the ```blade``` CLI tool that provides a few commands.  It can be installed using the following:
 
-### Install JPM 
-Install JPM (Mac, Linux)
+### Install Blade (Mac, Linux)
 ```
-$ curl http://www.jpm4j.org/install/script | sh
+$ curl https://raw.githubusercontent.com/gamerson/liferay-blade-tools/master/installers/global | sudo sh
 ```
 
 OR
 
-Install JPM (Windows)
+Install JPM (Windows) then Install blade
 ```
 Visit the JPM4J [Windows installation](https://www.jpm4j.org/#!/md/windows) setup guide.
 ```
+```
+$ jpm install -f https://liferay-test-01.ci.cloudbees.com/job/blade.tools/lastSuccessfulBuild/artifact/com.liferay.blade.cli/generated/com.liferay.blade.cli.jar
+```
 
-### Download and install blade CLI from CI
-
-If you want to build the com.liferay.blade.cli.jar yourself skip this and go to the next section.
-
-Download the latest CI build of Blade CLI here.
-
-[blade.jar](https://liferay-test-01.ci.cloudbees.com/job/blade.tools/lastSuccessfulBuild/artifact/com.liferay.blade.cli/generated/com.liferay.blade.cli.jar)
-
-### Build blade cli jar
-
-If you have already downloaded the com.liferay.blade.cli.jar from above you can skip this section.
+### How to build blade cli jar from sources
 
 Clone this repo, and then from the command line execute following command:
 
