@@ -3,6 +3,7 @@
 	biz.aQute.bndlib,\
 	biz.aQute.remote.api,\
 	biz.aQute.repository,\
+	org.apache.commons.io,\
 	org.apache.commons.lang3,\
 	osgi.core
 	
@@ -49,7 +50,10 @@ Private-Package: \
 	aQute.remote.util,\
 	aQute.service.reporter;-split-package:=merge-first,\
 	com.liferay.blade.cli.*,\
-	org.apache.commons.lang3.*,\
+	org.apache.commons.io,\
+	org.apache.commons.io.filefilter,\
+	org.apache.commons.io.output,\
+	org.apache.commons.lang3,\
 	org.osgi.dto,\
 	org.osgi.framework;-split-package:=merge-first,\
 	org.osgi.framework.dto,\
