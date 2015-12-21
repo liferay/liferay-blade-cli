@@ -1,4 +1,4 @@
-bnd-release=https://bndtools.ci.cloudbees.com/job/bnd.master/872/artifact/dist/bundles/
+bnd-release=https://dl.bintray.com/bnd/dist/3.1.0/
 
 -pluginpath:\
         ${build}/cache/org.osgi.impl.bundle.repoindex.cli.jar;url=${bnd-release}/org.osgi.impl.bundle.repoindex.cli/org.osgi.impl.bundle.repoindex.cli-latest.jar
