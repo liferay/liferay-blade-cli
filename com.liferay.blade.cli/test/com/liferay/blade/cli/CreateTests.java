@@ -3,6 +3,8 @@ package com.liferay.blade.cli;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import aQute.lib.io.IO;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -10,8 +12,6 @@ import java.util.regex.Pattern;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import aQute.lib.io.IO;
 
 public class CreateTests {
 
@@ -29,7 +29,7 @@ public class CreateTests {
 				"foo"
 		};
 
-		blade.main(args);
+		new bladenofail().run(args);
 
 		assertTrue(IO.getFile("generated/test/foo").exists());
 
@@ -79,7 +79,7 @@ public class CreateTests {
 
 		makeWorkspace(workspace);
 
-		blade.main(args);
+		new bladenofail().run(args);
 
 		assertTrue(IO.getFile("generated/test/workspace/modules/apps/foo").exists());
 
@@ -125,7 +125,7 @@ public class CreateTests {
 				"foo"
 		};
 
-		blade.main(args);
+		new bladenofail().run(args);
 
 		assertTrue(IO.getFile("generated/test/foo").exists());
 
@@ -174,7 +174,7 @@ public class CreateTests {
 				"foo"
 		};
 
-		blade.main(args);
+		new bladenofail().run(args);
 
 		assertTrue(IO.getFile("generated/test/foo").exists());
 
@@ -224,7 +224,7 @@ public class CreateTests {
 				"gradle.test"
 		};
 
-		blade.main(args);
+		new bladenofail().run(args);
 
 		assertTrue(
 			IO.getFile("generated/test/gradle.test/build.gradle").exists());
@@ -272,7 +272,7 @@ public class CreateTests {
 
 		makeWorkspace(workspace);
 
-		blade.main(args);
+		new bladenofail().run(args);
 
 		assertTrue(
 			IO.getFile("generated/test/workspace/modules/apps/gradle.test/build.gradle").exists());
@@ -327,7 +327,7 @@ public class CreateTests {
 				"servicepreaction"
 		};
 
-		blade.main(args);
+		new bladenofail().run(args);
 
 		File buildFile =
 			IO.getFile("generated/test/servicepreaction/build.gradle");
@@ -374,7 +374,7 @@ public class CreateTests {
 				"serviceoverride"
 		};
 
-		blade.main(args);
+		new bladenofail().run(args);
 
 		File buildFile =
 			IO.getFile("generated/test/serviceoverride/build.gradle");
@@ -428,7 +428,7 @@ public class CreateTests {
 				"guestbook"
 		};
 
-		blade.main(args);
+		new bladenofail().run(args);
 
 		File settingsFile =
 			IO.getFile("generated/test/guestbook/settings.gradle");
@@ -491,94 +491,82 @@ public class CreateTests {
 	}
 
 	@Test
-    public void createGradleJspHook() throws Exception {
-        String [] args = {
-                "create",
-                "-d",
-                "generated/test",
-                "-t",
-                "jsphook",
-                "-h",
-                "com.liferay.login.web",
-                "-H",
-                "1.0.0",
-                "loginHook"
-        };
+	public void createGradleJspHook() throws Exception {
+		String[] args = {
+				"create",
+				"-d",
+				"generated/test",
+				"-t",
+				"jsphook",
+				"-h",
+				"com.liferay.login.web",
+				"-H",
+				"1.0.0",
+				"loginHook" };
 
-        blade.main(args);
+		new bladenofail().run(args);
 
-        assertTrue(IO.getFile("generated/test/loginHook").exists());
+		assertTrue(IO.getFile("generated/test/loginHook").exists());
 
-        File bndFile = new File("generated/test/loginHook/bnd.bnd");
+		File bndFile = new File("generated/test/loginHook/bnd.bnd");
 
-        assertTrue(bndFile.exists());
+		assertTrue(bndFile.exists());
 
-        String bndFileContent = new String(IO.read(bndFile));
+		String bndFileContent = new String(IO.read(bndFile));
 
-        contains(
-            bndFileContent,
-            ".*^Bundle-SymbolicName: LoginHook.*$");
-        contains(
-            bndFileContent,
-            ".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$");
+		contains(bndFileContent, ".*^Bundle-SymbolicName: LoginHook.*$");
+		contains(bndFileContent, ".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$");
 
-        File gradleBuildFile = IO.getFile("generated/test/loginHook/build.gradle");
+		File gradleBuildFile = IO.getFile("generated/test/loginHook/build.gradle");
 
-        assertTrue(gradleBuildFile.exists());
+		assertTrue(gradleBuildFile.exists());
 
-        String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
+		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
 
-        contains(gradleBuildFileContent,
-            ".*^apply plugin: \"com.liferay.plugin\".*");
+		contains(gradleBuildFileContent, ".*^apply plugin: \"com.liferay.plugin\".*");
 	}
 
 	@Test
-    public void createWorkspaceGradleJspHook() throws Exception {
-	    String [] args = {
-            "create",
-            "-d",
-            "generated/test/workspace/modules/hooks",
-            "-t",
-            "jsphook",
-            "-h",
-            "com.liferay.login.web",
-            "-H",
-            "1.0.0",
-            "loginHook"
-	    };
+	public void createWorkspaceGradleJspHook() throws Exception {
+		String[] args = {
+				"create",
+				"-d",
+				"generated/test/workspace/modules/hooks",
+				"-t",
+				"jsphook",
+				"-h",
+				"com.liferay.login.web",
+				"-H",
+				"1.0.0",
+				"loginHook"
+		};
 
-        File workspace = new File("generated/test/workspace");
+		File workspace = new File("generated/test/workspace");
 
-        makeWorkspace(workspace);
+		makeWorkspace(workspace);
 
-        blade.main(args);
+		new bladenofail().run(args);
 
-        assertTrue(IO.getFile("generated/test/workspace/modules/hooks/loginHook").exists());
+		assertTrue(IO.getFile("generated/test/workspace/modules/hooks/loginHook").exists());
 
-        File bndFile = new File("generated/test/workspace/modules/hooks/loginHook/bnd.bnd");
+		File bndFile = new File("generated/test/workspace/modules/hooks/loginHook/bnd.bnd");
 
-        assertTrue(bndFile.exists());
+		assertTrue(bndFile.exists());
 
-        String bndFileContent = new String(IO.read(bndFile));
+		String bndFileContent = new String(IO.read(bndFile));
 
-        contains(
-            bndFileContent,
-            ".*^Bundle-SymbolicName: LoginHook.*$");
-        contains(
-            bndFileContent,
-            ".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$");
+		contains(bndFileContent, ".*^Bundle-SymbolicName: LoginHook.*$");
+		contains(bndFileContent, ".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$");
 
-        assertTrue(
-            IO.getFile("generated/test/workspace/modules/hooks/loginHook/build.gradle").exists());
+		assertTrue(IO.getFile("generated/test/workspace/modules/hooks/loginHook/build.gradle").exists());
 
-        File gradleBuildFile = IO.getFile("generated/test/workspace/modules/hooks/loginHook/build.gradle");
+		File gradleBuildFile = IO.getFile("generated/test/workspace/modules/hooks/loginHook/build.gradle");
 
-        assertTrue(gradleBuildFile.exists());
+		assertTrue(gradleBuildFile.exists());
 
-        String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
+		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
 
-        lacks(gradleBuildFileContent,
-            ".*^apply plugin: \"com.liferay.plugin\".*");
+		lacks(gradleBuildFileContent, ".*^apply plugin: \"com.liferay.plugin\".*");
 	}
 
 	@Before
