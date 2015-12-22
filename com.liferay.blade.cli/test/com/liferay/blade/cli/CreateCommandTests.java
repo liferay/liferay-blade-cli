@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class CreateTests {
+public class CreateCommandTests {
 
 	@BeforeClass
 	public static void copyTemplates() throws Exception {

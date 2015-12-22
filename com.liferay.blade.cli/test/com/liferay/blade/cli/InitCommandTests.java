@@ -12,7 +12,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-public class InitTests {
+public class InitCommandTests {
 
 	final File workspaceDir = IO.getFile("generated/test/workspace");
 
