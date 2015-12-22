@@ -3,8 +3,6 @@ package com.liferay.blade.cli;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import aQute.lib.io.IO;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -12,6 +10,8 @@ import java.util.regex.Pattern;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import aQute.lib.io.IO;
 
 public class CreateTests {
 
@@ -488,6 +488,97 @@ public class CreateTests {
 		String portletFileContent = new String(IO.read(portletFile));
 
 		contains(portletFileContent, ".*package com.liferay.docs.guestbook.portlet;.*");
+	}
+
+	@Test
+    public void createGradleJspHook() throws Exception {
+        String [] args = {
+                "create",
+                "-d",
+                "generated/test",
+                "-t",
+                "jsphook",
+                "-h",
+                "com.liferay.login.web",
+                "-H",
+                "1.0.0",
+                "loginHook"
+        };
+
+        blade.main(args);
+
+        assertTrue(IO.getFile("generated/test/loginHook").exists());
+
+        File bndFile = new File("generated/test/loginHook/bnd.bnd");
+
+        assertTrue(bndFile.exists());
+
+        String bndFileContent = new String(IO.read(bndFile));
+
+        contains(
+            bndFileContent,
+            ".*^Bundle-SymbolicName: LoginHook.*$");
+        contains(
+            bndFileContent,
+            ".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$");
+
+        File gradleBuildFile = IO.getFile("generated/test/loginHook/build.gradle");
+
+        assertTrue(gradleBuildFile.exists());
+
+        String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
+
+        contains(gradleBuildFileContent,
+            ".*^apply plugin: \"com.liferay.plugin\".*");
+	}
+
+	@Test
+    public void createWorkspaceGradleJspHook() throws Exception {
+	    String [] args = {
+            "create",
+            "-d",
+            "generated/test/workspace/modules/hooks",
+            "-t",
+            "jsphook",
+            "-h",
+            "com.liferay.login.web",
+            "-H",
+            "1.0.0",
+            "loginHook"
+	    };
+
+        File workspace = new File("generated/test/workspace");
+
+        makeWorkspace(workspace);
+
+        blade.main(args);
+
+        assertTrue(IO.getFile("generated/test/workspace/modules/hooks/loginHook").exists());
+
+        File bndFile = new File("generated/test/workspace/modules/hooks/loginHook/bnd.bnd");
+
+        assertTrue(bndFile.exists());
+
+        String bndFileContent = new String(IO.read(bndFile));
+
+        contains(
+            bndFileContent,
+            ".*^Bundle-SymbolicName: LoginHook.*$");
+        contains(
+            bndFileContent,
+            ".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$");
+
+        assertTrue(
+            IO.getFile("generated/test/workspace/modules/hooks/loginHook/build.gradle").exists());
+
+        File gradleBuildFile = IO.getFile("generated/test/workspace/modules/hooks/loginHook/build.gradle");
+
+        assertTrue(gradleBuildFile.exists());
+
+        String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
+
+        lacks(gradleBuildFileContent,
+            ".*^apply plugin: \"com.liferay.plugin\".*");
 	}
 
 	@Before
