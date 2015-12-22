@@ -12,7 +12,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-public class InitTests {
+public class InitCommandTests {
 
 	final File workspaceDir = IO.getFile("generated/test/workspace");
 
@@ -37,7 +37,7 @@ public class InitTests {
 				"init",
 		};
 
-		new blade().run(args);
+		new bladenofail().run(args);
 
 		assertTrue(workspaceDir.exists());
 
@@ -53,14 +53,12 @@ public class InitTests {
 		String [] args = {
 				"-b",
 				"generated/test/workspace",
-				"-f",
-				".*",
 				"init",
 		};
 
 		assertTrue(new File(workspaceDir, "foo").createNewFile());
 
-		new blade().run(args);
+		new bladenofail().run(args);
 
 		assertTrue(!(new File(workspaceDir, "build.gradle").exists()));
 	}
@@ -74,7 +72,7 @@ public class InitTests {
 				"newproject"
 		};
 
-		new blade().run(args);
+		new bladenofail().run(args);
 
 		assertTrue(new File(workspaceDir, "newproject/build.gradle").exists());
 
@@ -94,7 +92,7 @@ public class InitTests {
 
 		assertTrue(new File(workspaceDir, "newproject").mkdirs());
 
-		new blade().run(args);
+		new bladenofail().run(args);
 
 		assertTrue(new File(workspaceDir, "newproject/build.gradle").exists());
 
@@ -108,8 +106,6 @@ public class InitTests {
 		String [] args = {
 				"-b",
 				"generated/test/workspace",
-				"-f",
-				".*",
 				"init",
 				"newproject"
 		};
@@ -118,7 +114,7 @@ public class InitTests {
 
 		assertTrue(new File(workspaceDir, "newproject/foo").createNewFile());
 
-		new blade().run(args);
+		new bladenofail().run(args);
 
 		assertTrue(!(new File(workspaceDir, "newproject/build.gradle").exists()));
 	}
@@ -144,7 +140,7 @@ public class InitTests {
 
 		makeSDK(workspaceDir);
 
-		new blade().run(args);
+		new bladenofail().run(args);
 
 		assertTrue((new File(workspaceDir, "build.gradle").exists()));
 
