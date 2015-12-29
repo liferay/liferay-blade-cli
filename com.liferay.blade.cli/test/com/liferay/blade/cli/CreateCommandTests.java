@@ -531,7 +531,7 @@ public class CreateCommandTests {
 		String[] args = {
 				"create",
 				"-d",
-				"generated/test/workspace/modules/hooks",
+				"generated/test/workspace/modules/extensions",
 				"-t",
 				"jsphook",
 				"-h",
@@ -547,9 +547,9 @@ public class CreateCommandTests {
 
 		new bladenofail().run(args);
 
-		assertTrue(IO.getFile("generated/test/workspace/modules/hooks/loginHook").exists());
+		assertTrue(IO.getFile("generated/test/workspace/modules/extensions/loginHook").exists());
 
-		File bndFile = new File("generated/test/workspace/modules/hooks/loginHook/bnd.bnd");
+		File bndFile = new File("generated/test/workspace/modules/extensions/loginHook/bnd.bnd");
 
 		assertTrue(bndFile.exists());
 
@@ -558,9 +558,11 @@ public class CreateCommandTests {
 		contains(bndFileContent, ".*^Bundle-SymbolicName: LoginHook.*$");
 		contains(bndFileContent, ".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$");
 
-		assertTrue(IO.getFile("generated/test/workspace/modules/hooks/loginHook/build.gradle").exists());
+		assertTrue(IO.getFile(
+		    "generated/test/workspace/modules/extensions/loginHook/build.gradle").exists());
 
-		File gradleBuildFile = IO.getFile("generated/test/workspace/modules/hooks/loginHook/build.gradle");
+		File gradleBuildFile = IO.getFile(
+		    "generated/test/workspace/modules/extensions/loginHook/build.gradle");
 
 		assertTrue(gradleBuildFile.exists());
 
