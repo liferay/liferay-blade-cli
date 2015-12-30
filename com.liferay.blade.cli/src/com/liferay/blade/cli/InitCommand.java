@@ -40,6 +40,8 @@ public class InitCommand {
 		final File destDir =
 			name != null ? new File(_blade.getBase(), name) : _blade.getBase();
 
+		trace("Using destDir " + destDir);
+
 		if (destDir.exists() && !destDir.isDirectory()) {
 			addError(destDir.getAbsolutePath() + " is not a directory.");
 			return;
@@ -47,13 +49,22 @@ public class InitCommand {
 
 		if (destDir.exists()) {
 			if (isPluginsSDK(destDir)) {
+				trace("Found plugins-sdk, moving contents to new subdirectory "
+						+ "and initing workspace.");
+
 				moveContentsToDir(destDir, new File(destDir, "plugins-sdk"), "plugins-sdk");
 			}
 			else if (destDir.list().length > 0) {
-				addError(
-					destDir.getAbsolutePath() +
-					" contains files, please move them before continuing.");
-				return;
+				if (_options.force()) {
+					trace("Files found, initing anyways.");
+				}
+				else {
+					addError(
+						destDir.getAbsolutePath() +
+						" contains files, please move them before continuing or "
+						+ "use -f (--force) option to init workspace anyways.");
+					return;
+				}
 			}
 		}
 
@@ -73,6 +84,8 @@ public class InitCommand {
 
 		try(ZipFile zip = new ZipFile(workspaceZip)) {
 			String firstEntryName = zip.entries().nextElement().getName();
+
+			trace("Extracting workspace into destDir.");
 
 			unzip(workspaceZip, destDir, firstEntryName);
 		} catch (IOException e) {
@@ -178,16 +191,18 @@ public class InitCommand {
 	}
 
 	File getWorkspaceZip() throws Exception {
+		trace("Reading github tags api: " + tagsApi);
+
 		Object json = new JSONCodec().dec().from(
 				tagsApi.openStream()).get();
 
 		if (json instanceof List<?>) {
 			List<?> list = (List<?>) json;
 
-			Object lastItem = list.get(list.size()-1);
+			Object firstItem = list.get(0);
 
-			if (lastItem instanceof Map<?,?>) {
-				Map<?,?> map = (Map<?, ?>) lastItem;
+			if (firstItem instanceof Map<?,?>) {
+				Map<?,?> map = (Map<?, ?>) firstItem;
 
 				Object name = map.get("name");
 				Object zipUrl = map.get("zipball_url");
@@ -199,6 +214,8 @@ public class InitCommand {
 				File workspaceZip = new File(cache, name + ".zip");
 
 				if (!workspaceZip.exists()) {
+					trace("Downloading workspace zip: " + zipUrl);
+
 					IO.copy(
 						new URL(zipUrl.toString()).openStream(),
 						workspaceZip);
@@ -212,5 +229,9 @@ public class InitCommand {
 	}
 	private void addError(String msg) {
 		_blade.addErrors("init", Collections.singleton(msg));
+	}
+
+	private void trace(String msg) {
+		_blade.trace("%s: %s", "init", msg);
 	}
 }
