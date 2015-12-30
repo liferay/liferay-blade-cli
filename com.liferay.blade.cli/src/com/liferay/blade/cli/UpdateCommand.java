@@ -4,6 +4,7 @@ import java.lang.ProcessBuilder.Redirect;
 import java.util.List;
 
 public class UpdateCommand {
+
 	public UpdateCommand(blade blade, UpdateOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
@@ -25,7 +26,10 @@ public class UpdateCommand {
 		int errCode = process.waitFor();
 
 		if (errCode == 0) {
-			System.out.println("Update completed successfully");
+			_blade.out().println("Update completed successfully");
+		}
+		else {
+			_blade.error("update: jpm exited with code: " + errCode);
 		}
 	}
 
