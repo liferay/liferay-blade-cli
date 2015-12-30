@@ -77,12 +77,12 @@ public class blade extends AbstractConsoleApp implements Runnable {
 			out.println(help);
 		}
 	}
-	
-	@Description("Upgrade blade to latest version")
-	public void _upgrade(UpgradeOptions options) throws Exception {
-		UpgradeCommand upgradeCommand = new UpgradeCommand(this, options);
-		
-		upgradeCommand.execute();
+
+	@Description("Update blade to latest version")
+	public void _update(UpdateOptions options) throws Exception {
+		UpdateCommand updateCommand = new UpdateCommand(this, options);
+
+		updateCommand.execute();
 	}
 
 	@Description("Show version information about blade")
