@@ -15,6 +15,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Formatter;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -28,8 +29,10 @@ import org.osgi.framework.Constants;
 public class blade extends AbstractConsoleApp implements Runnable {
 
 	private String[] args;
+	private final Formatter tracer = new Formatter(System.out);
 
 	public blade() throws UnsupportedEncodingException {
+		super();
 	}
 
 	public blade(Object target) throws UnsupportedEncodingException {
@@ -122,6 +125,14 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		String userHome = System.getProperty("user.home");
 
 		return IO.getFile(userHome + "/.blade/cache");
+	}
+
+	@Override
+	public void trace(String s, Object... args) {
+		if (isTrace() && tracer != null) {
+			tracer.format("# " + s + "%n", args);
+			tracer.flush();
+		}
 	}
 
 }
