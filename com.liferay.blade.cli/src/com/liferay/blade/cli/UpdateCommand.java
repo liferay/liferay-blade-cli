@@ -12,7 +12,7 @@ public class UpdateCommand {
 	public void execute() throws Exception {
 		final List<String> args = _options._arguments();
 
-		final String jarPath = args.size() > 0 ? args.get(0) : _JAR_PATH;
+		final String jarPath = args.size() > 0 ? args.get(0) : _DEFAULT_URL;
 
 		ProcessBuilder processBuilder =
 			new ProcessBuilder("jpm", "install", "-f", jarPath);
@@ -30,8 +30,10 @@ public class UpdateCommand {
 	}
 
 	private blade _blade;
+
 	private UpdateOptions _options;
-	private static final String _JAR_PATH =
+
+	private static final String _DEFAULT_URL =
 		"https://liferay-test-01.ci.cloudbees.com/job/blade.tools/" +
 		"lastSuccessfulBuild/artifact/com.liferay.blade.cli/generated/" +
 		"com.liferay.blade.cli.jar";
