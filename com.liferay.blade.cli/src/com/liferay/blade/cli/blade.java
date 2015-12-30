@@ -78,6 +78,11 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		}
 	}
 
+	@Description("Update blade to latest version")
+	public void _update(UpdateOptions options) throws Exception {
+		new UpdateCommand(this, options).execute();
+	}
+
 	@Description("Show version information about blade")
 	public void _version(Options options) throws IOException {
 		Enumeration<URL> e =
