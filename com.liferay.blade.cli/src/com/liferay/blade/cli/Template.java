@@ -1,5 +1,11 @@
 package com.liferay.blade.cli;
 
 public enum Template {
-	mvcportlet, portlet, service, servicebuilder, servicewrapper, jsphook
+	activator,
+	jsphook,
+	mvcportlet,
+	portlet,
+	service,
+	servicebuilder,
+	servicewrapper
 }
