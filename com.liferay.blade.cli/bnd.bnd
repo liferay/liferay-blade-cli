@@ -5,7 +5,29 @@
 	biz.aQute.repository,\
 	org.apache.commons.io,\
 	org.apache.commons.lang3,\
-	osgi.core
+	osgi.core,\
+	org.eclipse.aether.api,\
+	org.eclipse.aether.connector.basic,\
+	org.eclipse.aether.impl,\
+	org.eclipse.aether.spi,\
+	org.eclipse.aether.transport.classpath,\
+	org.eclipse.aether.transport.file,\
+	org.eclipse.aether.transport.http,\
+	org.eclipse.aether.transport.wagon,\
+	org.eclipse.aether.util,\
+	org.apache.maven.aether-provider,\
+	org.apache.maven.model-builder,\
+	org.apache.maven.builder-support,\
+	org.apache.maven.artifact,\
+	org.codehaus.plexus.utils,\
+	org.apache.maven.model,\
+	org.codehaus.plexus.interpolation,\
+	org.apache.httpcomponents.httpclient;version=4.3,\
+	org.apache.httpcomponents.httpcore;version=4.3,\
+	slf4j.simple,\
+	slf4j.api,\
+	jcl.over.slf4j,\
+	org.apache.maven.repository-metadata
 	
 -testpath: \
 	biz.aQute.junit
