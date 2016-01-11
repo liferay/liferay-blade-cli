@@ -115,6 +115,35 @@ public class CreateCommandTests {
 	}
 
 	@Test
+	public void createActivator() throws Exception {
+		String[] args = {
+				"create",
+				"-d",
+				"generated/test",
+				"-t",
+				"activator",
+				"bar"
+		};
+
+		new bladenofail().run(args);
+
+		assertTrue(IO.getFile("generated/test/bar").exists());
+
+		assertTrue(IO.getFile("generated/test/bar/bnd.bnd").exists());
+
+		File activatorFile =
+			IO.getFile("generated/test/bar/src/main/java/bar/Bar.java");
+
+		assertTrue(activatorFile.exists());
+
+		String activatorFileContent = new String(IO.read(activatorFile));
+
+		contains(
+			activatorFileContent,
+			".*^public class Bar implements BundleActivator.*$");
+	}
+
+	@Test
 	public void createGradleMVCPortletProject() throws Exception {
 		String [] args = {
 				"create",
