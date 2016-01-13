@@ -11,24 +11,24 @@ public class AetherClientTest {
 
     @Test
     public void testCheckLatestArchetypeVersionOnline() throws Exception {
-        File artifact = new AetherClient().findLatestAvailableArtifact("com.liferay:com.liferay.gradle.plugins.workspace");
+        File artifact = new AetherClient().findLatestAvailableArtifact("com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
         assertNotNull(artifact);
         assertTrue(artifact.exists());
         assertTrue(artifact.getName().startsWith("com.liferay.gradle.plugins.workspace"));
-        assertTrue(artifact.getName().endsWith(".jar"));
+        assertTrue(artifact.getName().endsWith("sources.jar"));
     }
 
     @Test
     public void testCheckLatestArchetypeVersionOffline() throws Exception {
         AetherClient client = new AetherClient(null, "test-localrepo");
 
-        File artifact = client.findLatestAvailableArtifact("com.liferay:com.liferay.gradle.plugins.workspace");
+        File artifact = client.findLatestAvailableArtifact("com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
         assertNotNull(artifact);
         assertTrue(artifact.exists());
         assertTrue(artifact.getName().startsWith("com.liferay.gradle.plugins.workspace"));
-        assertTrue(artifact.getName().endsWith(".jar"));
+        assertTrue(artifact.getName().endsWith("sources.jar"));
         assertTrue(artifact.getPath().contains( "test-localrepo" ));
     }
 
