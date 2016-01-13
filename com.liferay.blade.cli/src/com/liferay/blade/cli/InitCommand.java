@@ -146,7 +146,8 @@ public class InitCommand {
 					continue;
 				}
 
-				if (entry.isDirectory()) {
+				if (entry.isDirectory()
+						|| !entry.getName().startsWith(entryToStart)) {
 					continue;
 				}
 

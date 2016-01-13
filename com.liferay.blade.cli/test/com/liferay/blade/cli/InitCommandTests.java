@@ -44,6 +44,8 @@ public class InitCommandTests {
 		assertTrue(new File(workspaceDir, "build.gradle").exists());
 
 		assertTrue(new File(workspaceDir, "modules/apps").exists());
+
+		assertFalse(new File(workspaceDir, "com").exists());
 	}
 
 	@Test
