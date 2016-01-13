@@ -138,22 +138,6 @@ public class AlbumAssetRenderer
 	}
 
 	@Override
-	public PortletURL getURLView(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState)
-		throws Exception {
-
-		PortletURL portletURL = liferayPortletResponse.createLiferayPortletURL(
-			AlbumsPortlet.PORTLET_ID, PortletRequest.RENDER_PHASE);
-
-		portletURL.setParameter("jspPage", "/html/albums/view_album.jsp");
-		portletURL.setParameter("albumId", String.valueOf(_album.getAlbumId()));
-		portletURL.setWindowState(windowState);
-
-		return portletURL;
-	}
-
-	@Override
 	public String getURLViewInContext(
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse,

@@ -137,23 +137,6 @@ public class ArtistAssetRenderer extends BaseAssetRenderer {
 	}
 
 	@Override
-	public PortletURL getURLView(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState)
-		throws Exception {
-
-		PortletURL portletURL = liferayPortletResponse.createLiferayPortletURL(
-			ArtistsPortlet.PORTLET_ID, PortletRequest.RENDER_PHASE);
-
-		portletURL.setParameter("jspPage", "/html/artists/view_artist.jsp");
-		portletURL.setParameter(
-			"artistId", String.valueOf(_artist.getArtistId()));
-		portletURL.setWindowState(windowState);
-
-		return portletURL;
-	}
-
-	@Override
 	public String getURLViewInContext(
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse,

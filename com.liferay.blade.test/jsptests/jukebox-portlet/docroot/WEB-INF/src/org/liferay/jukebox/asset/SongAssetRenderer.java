@@ -137,22 +137,6 @@ public class SongAssetRenderer
 	}
 
 	@Override
-	public PortletURL getURLView(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState)
-		throws Exception {
-
-		PortletURL portletURL = liferayPortletResponse.createLiferayPortletURL(
-			SongsPortlet.PORTLET_ID, PortletRequest.RENDER_PHASE);
-
-		portletURL.setParameter("jspPage", "/html/songs/view_song.jsp");
-		portletURL.setParameter("songId", String.valueOf(_song.getSongId()));
-		portletURL.setWindowState(windowState);
-
-		return portletURL;
-	}
-
-	@Override
 	public String getURLViewInContext(
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse,
