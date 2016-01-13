@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<repository increment="1452556437000" name="Local" xmlns="http://www.osgi.org/xmlns/repository/v1.0.0">
+<repository increment="1452635433000" name="Local" xmlns="http://www.osgi.org/xmlns/repository/v1.0.0">
   <resource>
     <capability namespace="osgi.identity">
       <attribute name="osgi.identity" value="bndtools.runtime.eclipse.applaunch"/>
@@ -703,6 +703,149 @@
       <attribute name="bundle-symbolic-name" value="org.apache.maven.repository-metadata"/>
       <attribute name="bundle-version" type="Version" value="3.3.9"/>
       <directive name="uses" value="org.codehaus.plexus.util.xml.pull,org.codehaus.plexus.util.xml,org.apache.maven.artifact.repository.metadata,org.codehaus.plexus.util"/>
+    </capability>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.codehaus.plexus.util)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.codehaus.plexus.util.xml)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.codehaus.plexus.util.xml.pull)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+  </resource>
+  <resource>
+    <capability namespace="osgi.identity">
+      <attribute name="osgi.identity" value="org.apache.maven.settings-builder"/>
+      <attribute name="type" value="osgi.bundle"/>
+      <attribute name="version" type="Version" value="3.3.9"/>
+    </capability>
+    <capability namespace="osgi.content">
+      <attribute name="osgi.content" value="c9e42b304181b2520ac88d7b040eee8d87c2c5b77eb052c00a2740309df6cfaf"/>
+      <attribute name="url" value="org.apache.maven.settings-builder/org.apache.maven.settings-builder-3.3.9.jar"/>
+      <attribute name="size" type="Long" value="43571"/>
+      <attribute name="mime" value="application/vnd.osgi.bundle"/>
+    </capability>
+    <capability namespace="osgi.wiring.bundle">
+      <attribute name="osgi.wiring.bundle" value="org.apache.maven.settings-builder"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+    </capability>
+    <capability namespace="osgi.wiring.host">
+      <attribute name="osgi.wiring.host" value="org.apache.maven.settings-builder"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+    </capability>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="org.apache.maven.settings.building"/>
+      <attribute name="version" type="Version" value="0.0.0"/>
+      <attribute name="bundle-symbolic-name" value="org.apache.maven.settings-builder"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+      <directive name="uses" value="org.apache.maven.settings,org.codehaus.plexus.interpolation,org.codehaus.plexus.component.annotations,org.apache.maven.settings.io,org.apache.maven.building,org.apache.maven.settings.validation,org.apache.maven.settings.merge"/>
+    </capability>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="org.apache.maven.settings.crypto"/>
+      <attribute name="version" type="Version" value="0.0.0"/>
+      <attribute name="bundle-symbolic-name" value="org.apache.maven.settings-builder"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+      <directive name="uses" value="org.codehaus.plexus.component.annotations,org.apache.maven.settings,org.sonatype.plexus.components.sec.dispatcher,org.apache.maven.settings.building"/>
+    </capability>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="org.apache.maven.settings.io"/>
+      <attribute name="version" type="Version" value="0.0.0"/>
+      <attribute name="bundle-symbolic-name" value="org.apache.maven.settings-builder"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+      <directive name="uses" value="org.apache.commons.lang3,org.codehaus.plexus.component.annotations,org.codehaus.plexus.util.xml.pull,org.apache.maven.settings,org.codehaus.plexus.util.xml,org.apache.maven.settings.io.xpp3,org.codehaus.plexus.util"/>
+    </capability>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="org.apache.maven.settings.merge"/>
+      <attribute name="version" type="Version" value="0.0.0"/>
+      <attribute name="bundle-symbolic-name" value="org.apache.maven.settings-builder"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+      <directive name="uses" value="org.apache.maven.settings,org.codehaus.plexus.util"/>
+    </capability>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="org.apache.maven.settings.validation"/>
+      <attribute name="version" type="Version" value="0.0.0"/>
+      <attribute name="bundle-symbolic-name" value="org.apache.maven.settings-builder"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+      <directive name="uses" value="org.codehaus.plexus.component.annotations,org.apache.maven.settings,org.apache.maven.settings.building,org.codehaus.plexus.util"/>
+    </capability>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.apache.commons.lang3)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.apache.maven.building)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.apache.maven.settings)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.apache.maven.settings.io.xpp3)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.codehaus.plexus.component.annotations)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.codehaus.plexus.interpolation)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.codehaus.plexus.util)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.codehaus.plexus.util.xml)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.codehaus.plexus.util.xml.pull)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=org.sonatype.plexus.components.sec.dispatcher)"/>
+      <directive name="resolution" value="optional"/>
+    </requirement>
+  </resource>
+  <resource>
+    <capability namespace="osgi.identity">
+      <attribute name="osgi.identity" value="org.apache.maven.settings"/>
+      <attribute name="type" value="osgi.bundle"/>
+      <attribute name="version" type="Version" value="3.3.9"/>
+    </capability>
+    <capability namespace="osgi.content">
+      <attribute name="osgi.content" value="ec7f14e6bbbbe8853e410e45d84c5b82ef1abaa0afc1c87c877fab1acc19aa07"/>
+      <attribute name="url" value="org.apache.maven.settings/org.apache.maven.settings-3.3.9.jar"/>
+      <attribute name="size" type="Long" value="44590"/>
+      <attribute name="mime" value="application/vnd.osgi.bundle"/>
+    </capability>
+    <capability namespace="osgi.wiring.bundle">
+      <attribute name="osgi.wiring.bundle" value="org.apache.maven.settings"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+    </capability>
+    <capability namespace="osgi.wiring.host">
+      <attribute name="osgi.wiring.host" value="org.apache.maven.settings"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+    </capability>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="org.apache.maven.settings"/>
+      <attribute name="version" type="Version" value="0.0.0"/>
+      <attribute name="bundle-symbolic-name" value="org.apache.maven.settings"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+      <directive name="uses" value="org.codehaus.plexus.util.xml"/>
+    </capability>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="org.apache.maven.settings.io.xpp3"/>
+      <attribute name="version" type="Version" value="0.0.0"/>
+      <attribute name="bundle-symbolic-name" value="org.apache.maven.settings"/>
+      <attribute name="bundle-version" type="Version" value="3.3.9"/>
+      <directive name="uses" value="org.codehaus.plexus.util.xml.pull,org.apache.maven.settings,org.codehaus.plexus.util.xml,org.codehaus.plexus.util"/>
     </capability>
     <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(osgi.wiring.package=org.codehaus.plexus.util)"/>
