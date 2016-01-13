@@ -43,8 +43,6 @@ public class InitCommandTests {
 
 		assertTrue(new File(workspaceDir, "build.gradle").exists());
 
-		assertTrue(new File(workspaceDir, "gradlew").canExecute());
-
 		assertTrue(new File(workspaceDir, "modules/apps").exists());
 	}
 
@@ -76,8 +74,6 @@ public class InitCommandTests {
 
 		assertTrue(new File(workspaceDir, "newproject/build.gradle").exists());
 
-		assertTrue(new File(workspaceDir, "newproject/gradlew").canExecute());
-
 		assertTrue(new File(workspaceDir, "newproject/modules/apps").exists());
 	}
 
@@ -95,8 +91,6 @@ public class InitCommandTests {
 		new bladenofail().run(args);
 
 		assertTrue(new File(workspaceDir, "newproject/build.gradle").exists());
-
-		assertTrue(new File(workspaceDir, "newproject/gradlew").canExecute());
 
 		assertTrue(new File(workspaceDir, "newproject/modules/apps").exists());
 	}
