@@ -95,6 +95,15 @@ public class KBArticleAssetRenderer extends BaseAssetRenderer {
 	}
 
 	@Override
+	public PortletURL getURLView(
+			LiferayPortletResponse liferayPortletResponse,
+			WindowState windowState)
+		throws Exception {
+
+		return null;
+	}
+
+	@Override
 	public String getURLViewInContext(
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse,
