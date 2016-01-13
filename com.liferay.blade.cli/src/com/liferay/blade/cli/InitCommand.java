@@ -1,21 +1,20 @@
 package com.liferay.blade.cli;
 
 import aQute.lib.io.IO;
-import aQute.lib.json.JSONCodec;
+
+import com.liferay.blade.cli.aether.AetherClient;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -25,7 +24,6 @@ public class InitCommand {
 
 	private final blade _blade;
 	private final InitOptions _options;
-	private final URL tagsApi = new URL("https://api.github.com/repos/david-truong/liferay-workspace/tags");
 
 	public InitCommand(blade blade, InitOptions options) throws Exception {
 		_blade = blade;
@@ -83,19 +81,16 @@ public class InitCommand {
 		}
 
 		try(ZipFile zip = new ZipFile(workspaceZip)) {
-			String firstEntryName = zip.entries().nextElement().getName();
-
 			trace("Extracting workspace into destDir.");
 
-			unzip(workspaceZip, destDir, firstEntryName);
+			unzip(workspaceZip, destDir, "META-INF/liferay-workspace/");
 		} catch (IOException e) {
 			addError("Unable to unzip contents of workspace to dir: " + e.getMessage());
 			return;
 		}
 
 		if(!new File(destDir, "gradlew").setExecutable(true)) {
-			addError("Unable to make gradlew executable.");
-			return;
+			trace("Unable to make gradlew executable.");
 		}
 	}
 
@@ -189,41 +184,13 @@ public class InitCommand {
 	}
 
 	File getWorkspaceZip() throws Exception {
-		trace("Reading github tags api: " + tagsApi);
+		trace("Connecting to repository to find latest workspace template.");
 
-		Object json = new JSONCodec().dec().from(
-				tagsApi.openStream()).get();
+		final File workspacePluginArtifact =
+			new AetherClient().findLatestAvailableArtifact(
+				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
-		if (json instanceof List<?>) {
-			List<?> list = (List<?>) json;
-
-			Object firstItem = list.get(0);
-
-			if (firstItem instanceof Map<?,?>) {
-				Map<?,?> map = (Map<?, ?>) firstItem;
-
-				Object name = map.get("name");
-				Object zipUrl = map.get("zipball_url");
-
-				File cache = _blade.getCacheDir();
-
-				cache.mkdirs();
-
-				File workspaceZip = new File(cache, name + ".zip");
-
-				if (!workspaceZip.exists()) {
-					trace("Downloading workspace zip: " + zipUrl);
-
-					IO.copy(
-						new URL(zipUrl.toString()).openStream(),
-						workspaceZip);
-				}
-
-				return workspaceZip;
-			}
-		}
-
-		return null;
+		return workspacePluginArtifact;
 	}
 	private void addError(String msg) {
 		_blade.addErrors("init", Collections.singleton(msg));
