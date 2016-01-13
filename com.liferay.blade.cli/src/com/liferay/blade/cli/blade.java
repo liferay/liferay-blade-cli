@@ -8,7 +8,6 @@ import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.AgentCommand.AgentOptions;
-import com.liferay.blade.cli.aether.AetherClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,10 +41,6 @@ public class blade extends AbstractConsoleApp implements Runnable {
 
 	public static void main(String[] args) throws Exception {
 		new blade().run(args);
-	}
-
-	public void _aether(Options options) throws Exception {
-		new AetherClient().findLatestAvailableArtifact("com.liferay:com.liferay.gradle.plugins.workspace");
 	}
 
 	@Description("Creates a new Liferay module project from several available templates.")
