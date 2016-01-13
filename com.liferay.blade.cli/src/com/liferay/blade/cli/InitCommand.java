@@ -138,56 +138,54 @@ public class InitCommand {
 	}
 
 	void unzip(File srcFile, File destDir, String entryToStart) throws IOException {
-	    try(final ZipFile zip = new ZipFile(srcFile)) {
-	        final Enumeration<? extends ZipEntry> entries = zip.entries();
+		try (final ZipFile zip = new ZipFile(srcFile)) {
+			final Enumeration<? extends ZipEntry> entries = zip.entries();
 
-            boolean foundStartEntry = entryToStart == null;
+			boolean foundStartEntry = entryToStart == null;
 
-            while (entries.hasMoreElements()) {
-                final ZipEntry entry = entries.nextElement();
+			while (entries.hasMoreElements()) {
+				final ZipEntry entry = entries.nextElement();
 
-                if (!foundStartEntry) {
-                    foundStartEntry = entryToStart.equals(entry.getName());
-                    continue;
-                }
+				if (!foundStartEntry) {
+					foundStartEntry = entryToStart.equals(entry.getName());
+					continue;
+				}
 
-                if (entry.isDirectory()) {
-                    continue;
-                }
+				if (entry.isDirectory()) {
+					continue;
+				}
 
-                String entryName = null;
+				String entryName = null;
 
-                if( entryToStart == null ) {
-                    entryName = entry.getName();
-                }
-                else {
-                    entryName = entry.getName().replaceFirst( entryToStart, "" );
-                }
+				if (entryToStart == null) {
+					entryName = entry.getName();
+				} else {
+					entryName = entry.getName().replaceFirst(entryToStart, "");
+				}
 
-                final File f = new File(destDir, entryName);
-                final File dir = f.getParentFile();
+				final File f = new File(destDir, entryName);
+				final File dir = f.getParentFile();
 
-                if (!dir.exists() && !dir.mkdirs()) {
-                    final String msg = "Could not create dir: " + dir.getPath();
-                    throw new IOException(msg);
-                }
+				if (!dir.exists() && !dir.mkdirs()) {
+					final String msg = "Could not create dir: " + dir.getPath();
+					throw new IOException(msg);
+				}
 
+				try (final InputStream in = zip.getInputStream(entry);
+						final FileOutputStream out = new FileOutputStream(f);) {
 
-                try(final InputStream in = zip.getInputStream(entry);
-                	final FileOutputStream out = new FileOutputStream(f);) {
+					final byte[] bytes = new byte[1024];
+					int count = in.read(bytes);
 
-                    final byte[] bytes = new byte[1024];
-                    int count = in.read(bytes);
+					while (count != -1) {
+						out.write(bytes, 0, count);
+						count = in.read(bytes);
+					}
 
-                    while (count != -1) {
-                        out.write(bytes, 0, count);
-                        count = in.read(bytes);
-                    }
-
-                    out.flush();
-                }
-            }
-	    }
+					out.flush();
+				}
+			}
+		}
 	}
 
 	File getWorkspaceZip() throws Exception {
