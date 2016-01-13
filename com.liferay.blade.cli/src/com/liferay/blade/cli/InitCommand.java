@@ -1,21 +1,20 @@
 package com.liferay.blade.cli;
 
 import aQute.lib.io.IO;
-import aQute.lib.json.JSONCodec;
+
+import com.liferay.blade.cli.aether.AetherClient;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -25,7 +24,6 @@ public class InitCommand {
 
 	private final blade _blade;
 	private final InitOptions _options;
-	private final URL tagsApi = new URL("https://api.github.com/repos/david-truong/liferay-workspace/tags");
 
 	public InitCommand(blade blade, InitOptions options) throws Exception {
 		_blade = blade;
@@ -83,19 +81,16 @@ public class InitCommand {
 		}
 
 		try(ZipFile zip = new ZipFile(workspaceZip)) {
-			String firstEntryName = zip.entries().nextElement().getName();
-
 			trace("Extracting workspace into destDir.");
 
-			unzip(workspaceZip, destDir, firstEntryName);
+			unzip(workspaceZip, destDir, "META-INF/liferay-workspace/");
 		} catch (IOException e) {
 			addError("Unable to unzip contents of workspace to dir: " + e.getMessage());
 			return;
 		}
 
 		if(!new File(destDir, "gradlew").setExecutable(true)) {
-			addError("Unable to make gradlew executable.");
-			return;
+			trace("Unable to make gradlew executable.");
 		}
 	}
 
@@ -138,94 +133,64 @@ public class InitCommand {
 	}
 
 	void unzip(File srcFile, File destDir, String entryToStart) throws IOException {
-	    try(final ZipFile zip = new ZipFile(srcFile)) {
-	        final Enumeration<? extends ZipEntry> entries = zip.entries();
+		try (final ZipFile zip = new ZipFile(srcFile)) {
+			final Enumeration<? extends ZipEntry> entries = zip.entries();
 
-            boolean foundStartEntry = entryToStart == null;
+			boolean foundStartEntry = entryToStart == null;
 
-            while (entries.hasMoreElements()) {
-                final ZipEntry entry = entries.nextElement();
+			while (entries.hasMoreElements()) {
+				final ZipEntry entry = entries.nextElement();
 
-                if (!foundStartEntry) {
-                    foundStartEntry = entryToStart.equals(entry.getName());
-                    continue;
-                }
+				if (!foundStartEntry) {
+					foundStartEntry = entryToStart.equals(entry.getName());
+					continue;
+				}
 
-                if (entry.isDirectory()) {
-                    continue;
-                }
+				if (entry.isDirectory()) {
+					continue;
+				}
 
-                String entryName = null;
+				String entryName = null;
 
-                if( entryToStart == null ) {
-                    entryName = entry.getName();
-                }
-                else {
-                    entryName = entry.getName().replaceFirst( entryToStart, "" );
-                }
+				if (entryToStart == null) {
+					entryName = entry.getName();
+				} else {
+					entryName = entry.getName().replaceFirst(entryToStart, "");
+				}
 
-                final File f = new File(destDir, entryName);
-                final File dir = f.getParentFile();
+				final File f = new File(destDir, entryName);
+				final File dir = f.getParentFile();
 
-                if (!dir.exists() && !dir.mkdirs()) {
-                    final String msg = "Could not create dir: " + dir.getPath();
-                    throw new IOException(msg);
-                }
+				if (!dir.exists() && !dir.mkdirs()) {
+					final String msg = "Could not create dir: " + dir.getPath();
+					throw new IOException(msg);
+				}
 
+				try (final InputStream in = zip.getInputStream(entry);
+						final FileOutputStream out = new FileOutputStream(f);) {
 
-                try(final InputStream in = zip.getInputStream(entry);
-                	final FileOutputStream out = new FileOutputStream(f);) {
+					final byte[] bytes = new byte[1024];
+					int count = in.read(bytes);
 
-                    final byte[] bytes = new byte[1024];
-                    int count = in.read(bytes);
+					while (count != -1) {
+						out.write(bytes, 0, count);
+						count = in.read(bytes);
+					}
 
-                    while (count != -1) {
-                        out.write(bytes, 0, count);
-                        count = in.read(bytes);
-                    }
-
-                    out.flush();
-                }
-            }
-	    }
+					out.flush();
+				}
+			}
+		}
 	}
 
 	File getWorkspaceZip() throws Exception {
-		trace("Reading github tags api: " + tagsApi);
+		trace("Connecting to repository to find latest workspace template.");
 
-		Object json = new JSONCodec().dec().from(
-				tagsApi.openStream()).get();
+		final File workspacePluginArtifact =
+			new AetherClient().findLatestAvailableArtifact(
+				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
-		if (json instanceof List<?>) {
-			List<?> list = (List<?>) json;
-
-			Object firstItem = list.get(0);
-
-			if (firstItem instanceof Map<?,?>) {
-				Map<?,?> map = (Map<?, ?>) firstItem;
-
-				Object name = map.get("name");
-				Object zipUrl = map.get("zipball_url");
-
-				File cache = _blade.getCacheDir();
-
-				cache.mkdirs();
-
-				File workspaceZip = new File(cache, name + ".zip");
-
-				if (!workspaceZip.exists()) {
-					trace("Downloading workspace zip: " + zipUrl);
-
-					IO.copy(
-						new URL(zipUrl.toString()).openStream(),
-						workspaceZip);
-				}
-
-				return workspaceZip;
-			}
-		}
-
-		return null;
+		return workspacePluginArtifact;
 	}
 	private void addError(String msg) {
 		_blade.addErrors("init", Collections.singleton(msg));
