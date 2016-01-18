@@ -38,6 +38,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 import java.io.IOException;
+
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -47,13 +48,15 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Example to watch a directory (or tree) for changes to files.
+ *
+ * @author n/a
  */
-
 public class FileWatcher {
 
 	private final WatchService watcher;
