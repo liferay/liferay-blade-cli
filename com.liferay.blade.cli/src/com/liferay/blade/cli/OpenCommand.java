@@ -4,8 +4,9 @@ import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
-import java.io.File;
+import com.liferay.blade.cli.jmx.IDEConnector;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;

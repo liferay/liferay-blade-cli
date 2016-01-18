@@ -1,15 +1,14 @@
 package com.liferay.blade.cli;
 
 import aQute.bnd.osgi.Jar;
-
 import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
+import com.liferay.blade.cli.jmx.JMXBundleDeployer;
+
 import java.io.File;
-
 import java.net.MalformedURLException;
-
 import java.util.Collections;
 import java.util.regex.Pattern;
 
@@ -129,7 +128,7 @@ public class DeployCommand {
 					bundleDeployer = new JMXBundleDeployer();
 				}
 			}
-			catch (IllegalArgumentException e) {
+			catch (Exception e) {
 				addError(
 					"Deploy", "Unable to connect to Liferay's OSGi framework");
 			}
