@@ -1,17 +1,14 @@
 package com.liferay.blade.cli;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * @author David Truong
@@ -25,7 +22,9 @@ public class SamplesCommand {
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
-	public SamplesCommand(blade blade, SamplesOptions options) throws Exception {
+	public SamplesCommand(blade blade, SamplesOptions options)
+		throws Exception {
+
 		_blade = blade;
 		_options = options;
 	}
@@ -35,19 +34,19 @@ public class SamplesCommand {
 
 		final String sampleName = args.size() > 0 ? args.get(0) : null;
 
-		if (_downloadBladeRepo()) {
-			_extractBladeRepo();
+		if (downloadBladeRepoIfNeeded()) {
+			extractBladeRepo();
 		}
 
 		if (sampleName == null) {
-			_listSamples();
+			listSamples();
 		}
 		else {
-			_copySample(sampleName);
+			copySample(sampleName);
 		}
 	}
 
-	private void _copySample(String sampleName) throws Exception {
+	private void copySample(String sampleName) throws Exception {
 		File workDir = _options.dir();
 
 		if (workDir == null) {
@@ -70,7 +69,7 @@ public class SamplesCommand {
 		}
 	}
 
-	private boolean _downloadBladeRepo() throws Exception {
+	private boolean downloadBladeRepoIfNeeded() throws Exception {
 		File bladeRepoArchive =
 			new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
@@ -87,44 +86,14 @@ public class SamplesCommand {
 		return false;
 	}
 
-	private void _extractBladeRepo() throws Exception {
+	private void extractBladeRepo() throws Exception {
 		File bladeRepoArchive =
 			new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
-		byte[] buffer = new byte[1024];
-
-		try (ZipInputStream zis =
-				 new ZipInputStream(new FileInputStream(bladeRepoArchive))) {
-			ZipEntry ze = zis.getNextEntry();
-
-			while( ze != null) {
-				String fileName = ze.getName();
-
-				File newFile = new File(_blade.getCacheDir() + File.separator + fileName);
-
-				if (ze.isDirectory()) {
-					newFile.mkdir();
-				}
-				else {
-					new File(newFile.getParent()).mkdirs();
-
-					FileOutputStream fos = new FileOutputStream(newFile);
-
-					int len;
-
-					while ((len = zis.read(buffer)) > 0) {
-						fos.write(buffer, 0, len);
-					}
-
-					fos.close();
-				}
-
-				ze = zis.getNextEntry();
-			}
-		}
+		Util.unzip( bladeRepoArchive, _blade.getCacheDir(), null);
 	}
 
-	private void _listSamples() {
+	private void listSamples() {
 		File bladeRepo =
 			new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
@@ -140,8 +109,12 @@ public class SamplesCommand {
 			}
 		}
 
-		_blade.out().println("Please provide the sample name you would like (blade samples blade.rest)");
-		_blade.out().println(StringUtils.join(samples, ","));
+		_blade.out().println(
+			"Please provide the sample project name to create, " +
+			"e.g. \"blade samples blade.rest\"\n");
+		_blade.out().println("Currently available samples:");
+		_blade.out().println(
+			WordUtils.wrap(StringUtils.join(samples, ", "), 80));
 	}
 
 	final private blade _blade;
