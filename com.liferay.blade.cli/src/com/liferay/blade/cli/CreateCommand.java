@@ -48,14 +48,13 @@ public class CreateCommand {
 
 		if (dir != null) {
 			workDir = Processor.getFile(dir, name);
-			name = workDir.getName();
-			base = workDir.getParentFile();
 		}
 		else {
 			workDir = Processor.getFile(base, name);
-			name = workDir.getName();
-			base = workDir.getParentFile();
 		}
+
+		name = workDir.getName();
+		base = workDir.getParentFile();
 
 		final Pattern glob = Pattern.compile(
 			"^standalone/" + template.name() + "/.*|\\...+/.*");
