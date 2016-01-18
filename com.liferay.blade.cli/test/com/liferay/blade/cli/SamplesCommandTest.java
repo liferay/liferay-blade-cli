@@ -1,7 +1,12 @@
 package com.liferay.blade.cli;
 
+import aQute.lib.io.IO;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintStream;
+
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -12,23 +17,36 @@ public class SamplesCommandTest {
 	@Test
 	public void listSamples() throws Exception {
 		String [] args = {
-			"sample"
+			"samples"
 		};
 
-		new bladenofail().run(args);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
 
-		Assert.assertTrue(true);
+		new bladenofail(ps).run(args);
+
+		String content = baos.toString();
+
+		Assert.assertTrue(content.contains("lade.portlet.ds"));
 	}
 
 	@Test
-	@Ignore //Remove this if you need to test.. ignoring by default because its creates a full project
 	public void getSample() throws Exception {
 		String [] args = {
-			"sample", "blade.friendlyurl"
+			"samples",
+			"-d",
+			"generated/test",
+			"blade.friendlyurl"
 		};
 
 		new bladenofail().run(args);
 
-		Assert.assertTrue(true);
+		File projectDir = IO.getFile("generated/test/blade.friendlyurl");
+
+		Assert.assertTrue(projectDir.exists());
+
+		File buildFile = IO.getFile(projectDir, "build.gradle");
+
+		Assert.assertTrue(buildFile.exists());
 	}
 }
