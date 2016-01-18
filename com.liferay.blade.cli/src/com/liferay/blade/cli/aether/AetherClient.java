@@ -24,6 +24,7 @@ import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -163,6 +164,7 @@ public class AetherClient {
 		final LocalRepository localRepo = new LocalRepository(
 			localRepositoryPath);
 
+		session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
 		session.setLocalRepositoryManager(
 			system.newLocalRepositoryManager(session, localRepo));
 		session.setTransferListener(new NoopTransferListener());

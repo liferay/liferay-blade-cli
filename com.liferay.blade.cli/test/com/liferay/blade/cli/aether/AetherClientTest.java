@@ -7,6 +7,9 @@ import java.io.File;
 
 import org.junit.Test;
 
+/**
+ * @author Gregory Amerson
+ */
 public class AetherClientTest {
 
     @Test
@@ -17,6 +20,7 @@ public class AetherClientTest {
         assertTrue(artifact.exists());
         assertTrue(artifact.getName().startsWith("com.liferay.gradle.plugins.workspace"));
         assertTrue(artifact.getName().endsWith("sources.jar"));
+        assertTrue(artifact.getName().contains("1.0.4"));
     }
 
     @Test
@@ -29,7 +33,8 @@ public class AetherClientTest {
         assertTrue(artifact.exists());
         assertTrue(artifact.getName().startsWith("com.liferay.gradle.plugins.workspace"));
         assertTrue(artifact.getName().endsWith("sources.jar"));
-        assertTrue(artifact.getPath().contains( "test-localrepo" ));
+        assertTrue(artifact.getPath().contains("test-localrepo"));
+        assertTrue(artifact.getName().contains("1.0.1"));
     }
 
 }
