@@ -48,6 +48,12 @@ public class SamplesCommand {
 	}
 
 	private void _copySample(String sampleName) throws Exception {
+		File workDir = _options.dir();
+
+		if (workDir == null) {
+			workDir = _blade.getBase();
+		}
+
 		File bladeRepo =
 			new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
@@ -57,7 +63,7 @@ public class SamplesCommand {
 			String fileName = file.getName();
 
 			if (file.isDirectory() && fileName.equals(sampleName)) {
-				File dest = new File(System.getProperty("user.dir"), fileName);
+				File dest = new File(workDir, fileName);
 
 				FileUtils.copyDirectory(file, dest);
 			}
