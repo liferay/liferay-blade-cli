@@ -4,6 +4,9 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ * @author David Truong
+ */
 public class SamplesCommandTest {
 
 	@Test

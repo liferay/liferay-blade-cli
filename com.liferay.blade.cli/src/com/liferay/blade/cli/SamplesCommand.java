@@ -1,8 +1,5 @@
 package com.liferay.blade.cli;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,8 +10,11 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+
 /**
- * Created by dtruong on 1/13/16.
+ * @author David Truong
  */
 public class SamplesCommand {
 	private static final String _BLADE_REPO_URL = "https://github.com/rotty3000/blade/archive/master.zip";

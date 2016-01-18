@@ -24,6 +24,7 @@ import org.osgi.framework.Constants;
 
 /**
  * @author Gregory Amerson
+ * @author David Truong
  */
 @Component(provide = Runnable.class, properties = { "main.thread=true"})
 public class blade extends AbstractConsoleApp implements Runnable {
