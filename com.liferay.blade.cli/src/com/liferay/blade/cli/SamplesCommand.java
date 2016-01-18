@@ -1,7 +1,13 @@
 package com.liferay.blade.cli;
 
+import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
+
 import java.io.File;
+
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +20,9 @@ import org.apache.commons.lang3.text.WordUtils;
  * @author David Truong
  */
 public class SamplesCommand {
-	private static final String _BLADE_REPO_URL = "https://github.com/rotty3000/blade/archive/master.zip";
+
+	private static final String _BLADE_REPO_URL =
+		"https://github.com/rotty3000/blade/archive/master.zip";
 
 	private static final String _BLADE_REPO_ARCHIVE_NAME = "blade-master.zip";
 
@@ -53,8 +61,7 @@ public class SamplesCommand {
 			workDir = _blade.getBase();
 		}
 
-		File bladeRepo =
-			new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
+		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
 		File liferayGradleSamples = new File(bladeRepo, "liferay-gradle");
 
@@ -70,8 +77,8 @@ public class SamplesCommand {
 	}
 
 	private boolean downloadBladeRepoIfNeeded() throws Exception {
-		File bladeRepoArchive =
-			new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
+		File bladeRepoArchive = new File(
+			_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
 		Date now = new Date();
 
@@ -87,15 +94,14 @@ public class SamplesCommand {
 	}
 
 	private void extractBladeRepo() throws Exception {
-		File bladeRepoArchive =
-			new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
+		File bladeRepoArchive = new File(
+			_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
 		Util.unzip( bladeRepoArchive, _blade.getCacheDir(), null);
 	}
 
 	private void listSamples() {
-		File bladeRepo =
-			new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
+		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
 		File liferayGradleSamples = new File(bladeRepo, "liferay-gradle");
 
@@ -115,6 +121,14 @@ public class SamplesCommand {
 		_blade.out().println("Currently available samples:");
 		_blade.out().println(
 			WordUtils.wrap(StringUtils.join(samples, ", "), 80));
+	}
+
+	@Arguments(arg = {"[name]"})
+	public interface SamplesOptions extends Options {
+
+		@Description("The directory where to create the new project.")
+		public File dir();
+
 	}
 
 	final private blade _blade;

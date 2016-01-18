@@ -2,18 +2,27 @@ package com.liferay.blade.cli;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+
 import aQute.lib.consoleapp.AbstractConsoleApp;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.AgentCommand.AgentOptions;
+import com.liferay.blade.cli.DeployCommand.DeployOptions;
+import com.liferay.blade.cli.InitCommand.InitOptions;
+import com.liferay.blade.cli.OpenCommand.OpenOptions;
+import com.liferay.blade.cli.SamplesCommand.SamplesOptions;
+import com.liferay.blade.cli.ShellCommand.ShellOptions;
+import com.liferay.blade.cli.UpdateCommand.UpdateOptions;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+
 import java.net.URL;
+
 import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.Map;
@@ -26,25 +35,34 @@ import org.osgi.framework.Constants;
  * @author Gregory Amerson
  * @author David Truong
  */
-@Component(provide = Runnable.class, properties = { "main.thread=true"})
+@Component(properties = {"main.thread=true"}, provide = Runnable.class)
 public class blade extends AbstractConsoleApp implements Runnable {
 
-	private String[] args;
-	private final Formatter tracer = new Formatter(System.out);
+	public static void main(String[] args) throws Exception {
+		new blade().run(args);
+	}
 
 	public blade() throws UnsupportedEncodingException {
-		super();
 	}
 
 	public blade(Object target) throws UnsupportedEncodingException {
 		super(target);
 	}
 
-	public static void main(String[] args) throws Exception {
-		new blade().run(args);
+	@Description("Install or uninstall remote agent in Liferay")
+	public void _agent(AgentOptions options) throws Exception {
+		AgentCommand agent = new AgentCommand(this, options);
+		String help = options._command().subCmd(options, agent);
+
+		if (help != null) {
+			out.println(help);
+		}
 	}
 
-	@Description("Creates a new Liferay module project from several available templates.")
+	@Description(
+		"Creates a new Liferay module project from several available " +
+		"templates."
+	)
 	public void _create(CreateOptions options) throws Exception {
 		new CreateCommand(this, options).execute();
 	}
@@ -69,19 +87,12 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		new SamplesCommand(this, options).execute();
 	}
 
-	@Description("Connects to Liferay and executes gogo command and returns output.")
+	@Description(
+		"Connects to Liferay and executes gogo command and returns " +
+		"output."
+	)
 	public void _sh(ShellOptions options) throws Exception {
 		new ShellCommand(this, options).execute();
-	}
-
-	@Description("Install or uninstall remote agent in Liferay")
-	public void _agent(AgentOptions options) throws Exception {
-		AgentCommand agent = new AgentCommand(this, options);
-		String help = options._command().subCmd(options, agent);
-
-		if (help != null) {
-			out.println(help);
-		}
 	}
 
 	@Description("Update blade to latest version")
@@ -100,7 +111,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 			String bsn =
 				m.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME);
 
-			if (bsn != null && bsn.equals("com.liferay.blade.cli")) {
+			if ((bsn != null) && bsn.equals("com.liferay.blade.cli")) {
 				Attributes attrs = m.getMainAttributes();
 				out.printf("%s\n", attrs.getValue(Constants.BUNDLE_VERSION));
 				return;
@@ -110,26 +121,13 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		error("Could not locate version");
 	}
 
-	public PrintStream out() {
-		return out;
+	@Reference(target = "(launcher.arguments=*)")
+	public void args( Object object, Map<String, Object> map) {
+		args = (String[])map.get("launcher.arguments");
 	}
 
 	public PrintStream err() {
 		return err;
-	}
-
-	@Override
-	public void run() {
-		try {
-			new blade().run(args);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Reference(target ="(launcher.arguments=*)")
-	void args( Object object, Map<String, Object> map) {
-		args = (String[])map.get("launcher.arguments");
 	}
 
 	public File getCacheDir() {
@@ -138,12 +136,29 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		return IO.getFile(userHome + "/.blade/cache");
 	}
 
+	public PrintStream out() {
+		return out;
+	}
+
+	@Override
+	public void run() {
+		try {
+			new blade().run(args);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public void trace(String s, Object... args) {
-		if (isTrace() && tracer != null) {
+		if (isTrace() && (tracer != null)) {
 			tracer.format("# " + s + "%n", args);
 			tracer.flush();
 		}
 	}
+
+	private String[] args;
+	private final Formatter tracer = new Formatter(System.out);
 
 }

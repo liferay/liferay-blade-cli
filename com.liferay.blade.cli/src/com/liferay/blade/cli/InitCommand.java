@@ -1,5 +1,7 @@
 package com.liferay.blade.cli;
 
+import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.aether.AetherClient;
@@ -7,8 +9,10 @@ import com.liferay.blade.cli.aether.AetherClient;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +20,9 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ * @author Gregory Amerson
+ */
 public class InitCommand {
 
 	private final blade _blade;
@@ -31,8 +38,8 @@ public class InitCommand {
 
 		final String name = args.size() > 0 ? args.get(0) : null;
 
-		final File destDir =
-			name != null ? new File(_blade.getBase(), name) : _blade.getBase();
+		final File destDir = name != null ? new File(
+			_blade.getBase(), name) : _blade.getBase();
 
 		trace("Using destDir " + destDir);
 
@@ -43,10 +50,11 @@ public class InitCommand {
 
 		if (destDir.exists()) {
 			if (isPluginsSDK(destDir)) {
-				trace("Found plugins-sdk, moving contents to new subdirectory "
-						+ "and initing workspace.");
+				trace("Found plugins-sdk, moving contents to new subdirectory " +
+					"and initing workspace.");
 
-				moveContentsToDir(destDir, new File(destDir, "plugins-sdk"), "plugins-sdk");
+				moveContentsToDir(
+					destDir, new File(destDir, "plugins-sdk"), "plugins-sdk");
 			}
 			else if (destDir.list().length > 0) {
 				if (_options.force()) {
@@ -55,15 +63,16 @@ public class InitCommand {
 				else {
 					addError(
 						destDir.getAbsolutePath() +
-						" contains files, please move them before continuing or "
-						+ "use -f (--force) option to init workspace anyways.");
+						" contains files, please move them before continuing or " +
+						"use -f (--force) option to init workspace anyways.");
 					return;
 				}
 			}
 		}
 
 		if (!destDir.exists() && !destDir.mkdirs()) {
-			addError("Unable to make directory at " + destDir.getAbsolutePath());
+			addError(
+				"Unable to make directory at " + destDir.getAbsolutePath());
 			return;
 		}
 
@@ -81,11 +90,12 @@ public class InitCommand {
 
 			Util.unzip(workspaceZip, destDir, "samples/");
 		} catch (IOException e) {
-			addError("Unable to unzip contents of workspace to dir: " + e.getMessage());
+			addError(
+				"Unable to unzip contents of workspace to dir: " + e.getMessage());
 			return;
 		}
 
-		if(!new File(destDir, "gradlew").setExecutable(true)) {
+		if (!new File(destDir, "gradlew").setExecutable(true)) {
 			trace("Unable to make gradlew executable.");
 		}
 	}
@@ -97,8 +107,10 @@ public class InitCommand {
 
 		FileUtils.copyDirectory(src, tempDir.toFile(), new FileFilter() {
 			public boolean accept(File pathname) {
-				return (!pathname.getName().equals(sdkDirName) || !pathname.getName().startsWith("."));
+				return (!pathname.getName().equals(sdkDirName) ||
+				 !pathname.getName().startsWith("."));
 			}
+
 		}, true);
 
 		String[] copied = tempDir.toFile().list();
@@ -137,6 +149,7 @@ public class InitCommand {
 
 		return workspacePluginArtifact;
 	}
+
 	private void addError(String msg) {
 		_blade.addErrors("init", Collections.singleton(msg));
 	}
@@ -144,4 +157,12 @@ public class InitCommand {
 	private void trace(String msg) {
 		_blade.trace("%s: %s", "init", msg);
 	}
+
+	@Arguments(arg = "[name]")
+	public interface InitOptions extends Options {
+
+		public boolean force();
+
+	}
+
 }

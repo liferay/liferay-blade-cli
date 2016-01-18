@@ -4,6 +4,9 @@ import java.io.File;
 
 import javax.management.ObjectName;
 
+/**
+ * @author Gregory Amerson
+ */
 public class IDEConnector extends JMXLocalConnector {
 
 	public IDEConnector() {

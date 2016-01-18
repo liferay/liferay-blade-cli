@@ -1,10 +1,18 @@
 package com.liferay.blade.cli;
 
+import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
+
 import java.io.File;
+
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 
+/**
+ * @author Gregory Amerson
+ */
 public class OpenCommand {
 
 	final private blade _blade;
@@ -19,12 +27,23 @@ public class OpenCommand {
 		List<String> args = _options._arguments();
 
 		if (args.size() == 0) {
+
 			// Default command
+
 			printHelp();
 		}
 		else {
 			doExecute();
 		}
+	}
+
+	@Arguments(arg = "file or directory to open/import")
+	@Description("Opens or imports a file or directory in Liferay IDE")
+	public interface OpenOptions extends Options {
+
+		@Description("The workspace to open or import this file or project")
+		public String workspace();
+
 	}
 
 	private void addError(String prefix, String msg) {

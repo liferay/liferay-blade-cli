@@ -2,14 +2,24 @@ package com.liferay.blade.cli;
 
 import aQute.bnd.osgi.Jar;
 
+import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
+
 import java.io.File;
+
 import java.net.MalformedURLException;
+
 import java.util.Collections;
 import java.util.regex.Pattern;
 
+/**
+ * @author Gregory Amerson
+ */
 public class DeployCommand {
 
-	private final static Pattern BSN_GUESS = Pattern.compile("\\b\\d+(?:\\.\\d+)*\\b");
+	private static final Pattern BSN_GUESS = Pattern.compile(
+		"\\b\\d+(?:\\.\\d+)*\\b");
 
 	final private blade blade;
 	final private DeployOptions options;
@@ -55,7 +65,9 @@ public class DeployCommand {
 					bsn = jar.getBsn();
 				}
 
-				if (bsn == null && bundleFile.getName().toLowerCase().endsWith(".war")) {
+				if (bsn == null &&
+					bundleFile.getName().toLowerCase().endsWith(".war")) {
+
 					bsn = guessBsnFromWar(bundleFile);
 				}
 
@@ -78,23 +90,23 @@ public class DeployCommand {
 			}
 			else {
 				addError("Deploy", "Unable to find specified bundle file " +
-						bundleFile.getAbsolutePath());
+					bundleFile.getAbsolutePath());
 			}
 		}
 	}
 
 	private String guessBsnFromWar(File bundleFile) {
 		return BSN_GUESS.matcher(bundleFile.getName()).replaceAll("")
-				.replaceAll("\\.war$", "").replaceAll("-$", "");
+			.replaceAll("\\.war$", "").replaceAll("-$", "");
 	}
 
 	private String getBundleUrl(File bundleFile) throws MalformedURLException {
 		String bundleUrl = null;
 
 		if (bundleFile.toPath().toString().toLowerCase().endsWith(".war")) {
-			bundleUrl = "webbundle:"
-					+ bundleFile.toURI().toURL().toExternalForm()
-					+ "?Web-ContextPath=/" + guessBsnFromWar(bundleFile);
+			bundleUrl = "webbundle:" +
+					bundleFile.toURI().toURL().toExternalForm() +
+					"?Web-ContextPath=/" + guessBsnFromWar(bundleFile);
 		}
 		else {
 			bundleUrl = bundleFile.toURI().toURL().toExternalForm();
@@ -118,7 +130,8 @@ public class DeployCommand {
 				}
 			}
 			catch (IllegalArgumentException e) {
-				addError("Deploy", "Unable to connect to Liferay's OSGi framework");
+				addError(
+					"Deploy", "Unable to connect to Liferay's OSGi framework");
 			}
 
 			_bundleDeployer = bundleDeployer;
@@ -133,6 +146,7 @@ public class DeployCommand {
 		final boolean[] deploy = new boolean[1];
 
 		new Thread() {
+
 			@Override
 			public void run() {
 				synchronized (bundleFile) {
@@ -164,6 +178,7 @@ public class DeployCommand {
 					}
 				}
 			}
+
 		}.start();
 
 		new FileWatcher(blade.getBase().toPath(), bundleFile.getAbsoluteFile()
@@ -175,7 +190,20 @@ public class DeployCommand {
 					bundleFile.notify();
 				}
 			}
+
 		});
+	}
+
+	@Arguments(arg = "bundle")
+	public interface DeployOptions extends Options {
+
+		@Description("The jmx port to use to connect to Liferay 7")
+		public int port();
+
+		@Description("Watches the deployed file for changes and will " +
+				"automatically redeploy")
+		public boolean watch();
+
 	}
 
 }
