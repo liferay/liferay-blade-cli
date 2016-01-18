@@ -9,6 +9,8 @@ import aQute.lib.io.IO;
 
 import aQute.remote.api.Agent;
 
+import com.liferay.blade.cli.jmx.JMXBundleDeployer;
+
 import java.io.File;
 import java.io.FilenameFilter;
 
