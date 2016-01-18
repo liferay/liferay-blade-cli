@@ -24,6 +24,7 @@ import org.osgi.framework.Constants;
 
 /**
  * @author Gregory Amerson
+ * @author David Truong
  */
 @Component(provide = Runnable.class, properties = { "main.thread=true"})
 public class blade extends AbstractConsoleApp implements Runnable {
@@ -61,6 +62,11 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	@Description("Opens or imports a file or project in Liferay IDE.")
 	public void _open(OpenOptions options) throws Exception {
 		new OpenCommand(this, options).execute();
+	}
+
+	@Description("Generate a sample project")
+	public void _samples(SamplesOptions options) throws Exception {
+		new SamplesCommand(this, options).execute();
 	}
 
 	@Description("Connects to Liferay and executes gogo command and returns output.")
