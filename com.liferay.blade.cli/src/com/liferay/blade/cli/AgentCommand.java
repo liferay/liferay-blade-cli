@@ -2,16 +2,20 @@ package com.liferay.blade.cli;
 
 import aQute.bnd.deployer.repository.FixedIndexedRepo;
 import aQute.bnd.osgi.Processor;
+
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
+
 import aQute.remote.api.Agent;
 
 import com.liferay.blade.cli.jmx.JMXBundleDeployer;
 
 import java.io.File;
 import java.io.FilenameFilter;
+
 import java.net.URL;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
