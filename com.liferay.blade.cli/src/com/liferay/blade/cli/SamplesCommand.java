@@ -16,7 +16,7 @@ import java.util.zip.ZipInputStream;
 /**
  * Created by dtruong on 1/13/16.
  */
-public class SampleCommand {
+public class SamplesCommand {
 	private static final String _BLADE_REPO_URL = "https://github.com/rotty3000/blade/archive/master.zip";
 
 	private static final String _BLADE_REPO_ARCHIVE_NAME = "blade-master.zip";
@@ -25,7 +25,7 @@ public class SampleCommand {
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
-	public SampleCommand(blade blade, SampleOptions options) throws Exception {
+	public SamplesCommand(blade blade, SamplesOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
 	}
@@ -140,5 +140,5 @@ public class SampleCommand {
 
 	final private blade _blade;
 
-	final private SampleOptions _options;
+	final private SamplesOptions _options;
 }

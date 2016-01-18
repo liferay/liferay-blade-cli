@@ -64,8 +64,8 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	}
 
 	@Description("Generate a sample project")
-	public void _sample(SampleOptions options) throws Exception {
-		new SampleCommand(this, options).execute();
+	public void _samples(SamplesOptions options) throws Exception {
+		new SamplesCommand(this, options).execute();
 	}
 
 	@Description("Connects to Liferay and executes gogo command and returns output.")

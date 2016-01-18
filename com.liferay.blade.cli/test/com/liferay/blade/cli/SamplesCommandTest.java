@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class SampleCommandTest {
+public class SamplesCommandTest {
 
 	@Test
 	public void listSamples() throws Exception {

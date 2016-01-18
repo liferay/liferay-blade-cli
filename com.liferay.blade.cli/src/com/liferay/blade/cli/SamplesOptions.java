@@ -7,5 +7,5 @@ import aQute.lib.getopt.Options;
 import java.io.File;
 
 @Arguments(arg = {"[name]"})
-public interface SampleOptions extends Options {
+public interface SamplesOptions extends Options {
 }
