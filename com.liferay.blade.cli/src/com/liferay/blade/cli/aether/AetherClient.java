@@ -164,7 +164,7 @@ public class AetherClient {
 		final LocalRepository localRepo = new LocalRepository(
 			localRepositoryPath);
 
-		session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
+		session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
 		session.setLocalRepositoryManager(
 			system.newLocalRepositoryManager(session, localRepo));
 		session.setTransferListener(new NoopTransferListener());
