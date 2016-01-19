@@ -20,12 +20,22 @@ import org.junit.Test;
 public class CreateCommandTest {
 
 	@BeforeClass
-	public static void copyTemplates() throws Exception {
+	public static void setUpClass() throws Exception {
 		IO.copy(new File("templates.zip"), new File("bin_test/templates.zip"));
 	}
 
+	@Before
+	public void setUp() throws Exception {
+		File testdir = IO.getFile("generated/test");
+
+		if (testdir.exists()) {
+			IO.delete(testdir);
+			assertFalse(testdir.exists());
+		}
+	}
+
 	@Test
-	public void createActivator() throws Exception {
+	public void testCreateActivator() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "activator", "bar-activator"
 		};
@@ -45,7 +55,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createGradleJspHook() throws Exception {
+	public void testCreateGradleJspHook() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "jsphook", "-h",
 			"com.liferay.login.web", "-H", "1.0.0", "loginHook"
@@ -71,7 +81,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createGradleMVCPortletProject() throws Exception {
+	public void testCreateGradleMVCPortletProject() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "mvcportlet", "foo"
 		};
@@ -100,7 +110,9 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createGradleMVCPortletProjectWithPackage() throws Exception {
+	public void testCreateGradleMVCPortletProjectWithPackage()
+		throws Exception {
+
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "mvcportlet", "-p",
 			"com.liferay.test", "foo"
@@ -132,7 +144,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createGradlePortletProject() throws Exception {
+	public void testCreateGradlePortletProject() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "portlet", "-c", "Foo",
 			"gradle.test"
@@ -162,7 +174,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createGradleServiceBuilder() throws Exception {
+	public void testCreateGradleServiceBuilder() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "servicebuilder", "-p",
 			"com.liferay.docs.guestbook", "guestbook"
@@ -219,7 +231,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createGradleServicePreAction() throws Exception {
+	public void testCreateGradleServicePreAction() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "service", "-s",
 			"com.liferay.portal.kernel.events.LifecycleAction", "-c",
@@ -249,7 +261,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createGradleServiceWrapper() throws Exception {
+	public void testCreateGradleServiceWrapper() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "servicewrapper", "-s",
 			"com.liferay.portal.service.UserLocalServiceWrapper",
@@ -285,7 +297,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createProjectAllDefaults() throws Exception {
+	public void testCreateProjectAllDefaults() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "hello-world-portlet"
 		};
@@ -318,7 +330,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createWorkspaceGradleJspHook() throws Exception {
+	public void testCreateWorkspaceGradleJspHook() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules/extensions", "-t",
 			"jsphook", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook"
@@ -350,7 +362,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createWorkspaceGradlePortletProject() throws Exception {
+	public void testCreateWorkspaceGradlePortletProject() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules/apps", "-t",
 			"portlet", "-c", "Foo", "gradle.test"
@@ -385,7 +397,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void createWorkspaceProjectAllDefaults() throws Exception {
+	public void testCreateWorkspaceProjectAllDefaults() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules/apps", "foo"
 		};
@@ -410,16 +422,6 @@ public class CreateCommandTest {
 			projectPath + "/foo/build.gradle");
 
 		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
-	}
-
-	@Before
-	public void setup() throws Exception {
-		File testdir = IO.getFile("generated/test");
-
-		if (testdir.exists()) {
-			IO.delete(testdir);
-			assertFalse(testdir.exists());
-		}
 	}
 
 	private File checkFileExists(String path) {
