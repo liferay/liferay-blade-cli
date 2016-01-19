@@ -12,29 +12,33 @@ import org.junit.Test;
  */
 public class AetherClientTest {
 
-    @Test
-    public void testCheckLatestArchetypeVersionOnline() throws Exception {
-        File artifact = new AetherClient().findLatestAvailableArtifact("com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
+	@Test
+	public void testCheckLatestArchetypeVersionOffline() throws Exception {
+		AetherClient client = new AetherClient(null, "test-localrepo");
 
-        assertNotNull(artifact);
-        assertTrue(artifact.exists());
-        assertTrue(artifact.getName().startsWith("com.liferay.gradle.plugins.workspace"));
-        assertTrue(artifact.getName().endsWith("sources.jar"));
-        assertTrue(artifact.getName().contains("1.0.4"));
-    }
+		File artifact = client.findLatestAvailableArtifact(
+			"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
-    @Test
-    public void testCheckLatestArchetypeVersionOffline() throws Exception {
-        AetherClient client = new AetherClient(null, "test-localrepo");
+		assertNotNull(artifact);
+		assertTrue(artifact.exists());
+		assertTrue(artifact.getName().startsWith(
+			"com.liferay.gradle.plugins.workspace"));
+		assertTrue(artifact.getName().endsWith("sources.jar"));
+		assertTrue(artifact.getPath().contains("test-localrepo"));
+		assertTrue(artifact.getName().contains("1.0.1"));
+	}
 
-        File artifact = client.findLatestAvailableArtifact("com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
+	@Test
+	public void testCheckLatestArchetypeVersionOnline() throws Exception {
+		File artifact = new AetherClient().findLatestAvailableArtifact(
+			"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
-        assertNotNull(artifact);
-        assertTrue(artifact.exists());
-        assertTrue(artifact.getName().startsWith("com.liferay.gradle.plugins.workspace"));
-        assertTrue(artifact.getName().endsWith("sources.jar"));
-        assertTrue(artifact.getPath().contains("test-localrepo"));
-        assertTrue(artifact.getName().contains("1.0.1"));
-    }
+		assertNotNull(artifact);
+		assertTrue(artifact.exists());
+		assertTrue(artifact.getName().startsWith(
+			"com.liferay.gradle.plugins.workspace"));
+		assertTrue(artifact.getName().endsWith("sources.jar"));
+		assertTrue(artifact.getName().contains("1.0.4"));
+	}
 
 }
