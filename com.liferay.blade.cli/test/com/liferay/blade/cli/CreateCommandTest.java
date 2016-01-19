@@ -17,7 +17,7 @@ import org.junit.Test;
 /**
  * @author Gregory Amerson
  */
-public class CreateCommandTests {
+public class CreateCommandTest {
 
 	@BeforeClass
 	public static void copyTemplates() throws Exception {
