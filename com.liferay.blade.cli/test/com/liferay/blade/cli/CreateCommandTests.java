@@ -7,12 +7,16 @@ import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.util.regex.Pattern;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * @author Gregory Amerson
+ */
 public class CreateCommandTests {
 
 	@BeforeClass
@@ -21,553 +25,303 @@ public class CreateCommandTests {
 	}
 
 	@Test
-	public void createProjectAllDefaults() throws Exception {
-		String [] args = {
-				"create",
-				"-d",
-				"generated/test",
-				"foo"
-		};
-
-		new bladenofail().run(args);
-
-		assertTrue(IO.getFile("generated/test/foo").exists());
-
-		assertTrue(IO.getFile("generated/test/foo/bnd.bnd").exists());
-
-		File portletFile =
-			IO.getFile("generated/test/foo/src/main/java/foo/FooPortlet.java");
-
-		assertTrue(portletFile.exists());
-
-		String portletFileContent = new String(IO.read(portletFile));
-
-		contains(
-			portletFileContent,
-			".*^public class FooPortlet extends MVCPortlet.*$");
-
-		File gradleBuildFile = IO.getFile("generated/test/foo/build.gradle");
-
-		assertTrue(gradleBuildFile.exists());
-
-		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
-
-		contains(gradleBuildFileContent,
-			".*^apply plugin: \"com.liferay.plugin\".*");
-
-		File viewJSPFile = IO.getFile(
-			"generated/test/foo/src/main/resources/META-INF/resources/view.jsp");
-
-		assertTrue(viewJSPFile.exists());
-
-		File initJSPFile = IO.getFile(
-			"generated/test/foo/src/main/resources/META-INF/resources/init.jsp");
-
-		assertTrue(initJSPFile.exists());
-	}
-
-	@Test
-	public void createWorkspaceProjectAllDefaults() throws Exception {
-		String [] args = {
-				"create",
-				"-d",
-				"generated/test/workspace/modules/apps",
-				"foo"
-		};
-
-		File workspace = new File("generated/test/workspace");
-
-		makeWorkspace(workspace);
-
-		new bladenofail().run(args);
-
-		assertTrue(IO.getFile("generated/test/workspace/modules/apps/foo").exists());
-
-		assertTrue(IO.getFile("generated/test/workspace/modules/apps/foo/bnd.bnd").exists());
-
-		File portletFile =
-			IO.getFile("generated/test/workspace/modules/apps/foo/src/main/java/foo/FooPortlet.java");
-
-		assertTrue(portletFile.exists());
-
-		String portletFileContent = new String(IO.read(portletFile));
-
-		contains(
-			portletFileContent,
-			".*^public class FooPortlet extends MVCPortlet.*$");
-
-		File gradleBuildFile = IO.getFile("generated/test/workspace/modules/apps/foo/build.gradle");
-
-		assertTrue(gradleBuildFile.exists());
-
-		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
-
-		lacks(gradleBuildFileContent,
-			".*^apply plugin: \"com.liferay.plugin\".*");
-	}
-
-	private void makeWorkspace(File workspace) throws IOException {
-		workspace.mkdirs();
-
-		new File(workspace, "modules").mkdir();
-		new File(workspace, "themes").mkdir();
-		new File(workspace, "build.gradle").createNewFile();
-	}
-
-	@Test
 	public void createActivator() throws Exception {
 		String[] args = {
-				"create",
-				"-d",
-				"generated/test",
-				"-t",
-				"activator",
-				"bar"
+			"create", "-d", "generated/test", "-t", "activator", "bar-activator"
 		};
 
 		new bladenofail().run(args);
 
-		assertTrue(IO.getFile("generated/test/bar").exists());
+		String projectPath = "generated/test/bar-activator";
 
-		assertTrue(IO.getFile("generated/test/bar/bnd.bnd").exists());
+		checkFileExists(projectPath);
 
-		File activatorFile =
-			IO.getFile("generated/test/bar/src/main/java/bar/Bar.java");
-
-		assertTrue(activatorFile.exists());
-
-		String activatorFileContent = new String(IO.read(activatorFile));
+		checkFileExists(projectPath + "/bnd.bnd");
 
 		contains(
-			activatorFileContent,
-			".*^public class Bar implements BundleActivator.*$");
-	}
-
-	@Test
-	public void createGradleMVCPortletProject() throws Exception {
-		String [] args = {
-				"create",
-				"-d",
-				"generated/test",
-				"-t",
-				"mvcportlet",
-				"foo"
-		};
-
-		new bladenofail().run(args);
-
-		assertTrue(IO.getFile("generated/test/foo").exists());
-
-		assertTrue(IO.getFile("generated/test/foo/bnd.bnd").exists());
-
-		File portletFile =
-			IO.getFile("generated/test/foo/src/main/java/foo/FooPortlet.java");
-
-		assertTrue(portletFile.exists());
-
-		String portletFileContent = new String(IO.read(portletFile));
-
-		contains(
-			portletFileContent,
-			".*^public class FooPortlet extends MVCPortlet.*$");
-
-		File gradleBuildFile = IO.getFile("generated/test/foo/build.gradle");
-
-		assertTrue(gradleBuildFile.exists());
-
-		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
-
-		contains(gradleBuildFileContent,
-			".*^apply plugin: \"com.liferay.plugin\".*");
-
-		File viewJSPFile = IO.getFile(
-			"generated/test/foo/src/main/resources/META-INF/resources/view.jsp");
-
-		assertTrue(viewJSPFile.exists());
-
-		File initJSPFile = IO.getFile(
-			"generated/test/foo/src/main/resources/META-INF/resources/init.jsp");
-
-		assertTrue(initJSPFile.exists());
-	}
-
-	public void createGradleMVCPortletProjectWithPackage() throws Exception {
-		String [] args = {
-				"create",
-				"-d",
-				"generated/test",
-				"-t",
-				"mvcportlet",
-				"-p",
-				"com.liferay.test",
-				"foo"
-		};
-
-		new bladenofail().run(args);
-
-		assertTrue(IO.getFile("generated/test/foo").exists());
-
-		assertTrue(IO.getFile("generated/test/foo/bnd.bnd").exists());
-
-		File portletFile =
-			IO.getFile("generated/test/foo/src/main/java/com/liferay/test/FooPortlet.java");
-
-		assertTrue(portletFile.exists());
-
-		String portletFileContent = new String(IO.read(portletFile));
-
-		contains(
-			portletFileContent,
-			".*^public class FooPortlet extends MVCPortlet.*$");
-
-		File gradleBuildFile = IO.getFile("generated/test/foo/build.gradle");
-
-		assertTrue(gradleBuildFile.exists());
-
-		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
-
-		contains(gradleBuildFileContent,
-			".*^apply plugin: \"com.liferay.plugin\".*");
-
-		File viewJSPFile = IO.getFile(
-			"generated/test/foo/src/main/resources/META-INF/resources/view.jsp");
-
-		assertTrue(viewJSPFile.exists());
-
-		File initJSPFile = IO.getFile(
-			"generated/test/foo/src/main/resources/META-INF/resources/init.jsp");
-
-		assertTrue(initJSPFile.exists());
-	}
-
-	@Test
-	public void createGradlePortletProject() throws Exception {
-		String [] args = {
-				"create",
-				"-d",
-				"generated/test",
-				"-t",
-				"portlet",
-				"-c",
-				"Foo",
-				"gradle.test"
-		};
-
-		new bladenofail().run(args);
-
-		assertTrue(
-			IO.getFile("generated/test/gradle.test/build.gradle").exists());
-
-		File portletFile = IO.getFile(
-			"generated/test/gradle.test/src/main/java/gradle/test/FooPortlet.java");
-
-		assertTrue(portletFile.exists());
-
-		String portletFileContent = new String(IO.read(portletFile));
-
-		contains(portletFileContent, "^package gradle.test;.*");
-
-		contains(portletFileContent,
-			".*javax.portlet.display-name=Gradle.test.*");
-
-		contains(portletFileContent, ".*^public class FooPortlet .*");
-
-		contains(portletFileContent,
-			".*printWriter.print\\(\\\"Gradle.test Portlet.*");
-
-		File bndFile = IO.getFile("generated/test/gradle.test/bnd.bnd");
-
-		assertTrue(bndFile.exists());
-
-		String bndFileContent = new String(IO.read(bndFile));
-
-		contains(bndFileContent, ".*^Private-Package: \\\\.*^\tgradle.test$.*");
-	}
-
-	@Test
-	public void createWorkspaceGradlePortletProject() throws Exception {
-		String [] args = {
-				"create",
-				"-d",
-				"generated/test/workspace/modules/apps",
-				"-t",
-				"portlet",
-				"-c",
-				"Foo",
-				"gradle.test"
-		};
-
-		File workspace = new File("generated/test/workspace");
-
-		makeWorkspace(workspace);
-
-		new bladenofail().run(args);
-
-		assertTrue(
-			IO.getFile("generated/test/workspace/modules/apps/gradle.test/build.gradle").exists());
-
-		File portletFile = IO.getFile(
-			"generated/test/workspace/modules/apps/gradle.test/src/main/java/gradle/test/FooPortlet.java");
-
-		assertTrue(portletFile.exists());
-
-		String portletFileContent = new String(IO.read(portletFile));
-
-		contains(portletFileContent, "^package gradle.test;.*");
-
-		contains(portletFileContent,
-			".*javax.portlet.display-name=Gradle.test.*");
-
-		contains(portletFileContent, ".*^public class FooPortlet .*");
-
-		contains(portletFileContent,
-			".*printWriter.print\\(\\\"Gradle.test Portlet.*");
-
-		File bndFile = IO.getFile("generated/test/workspace/modules/apps/gradle.test/bnd.bnd");
-
-		assertTrue(bndFile.exists());
-
-		String bndFileContent = new String(IO.read(bndFile));
-
-		contains(bndFileContent, ".*^Private-Package: \\\\.*^\tgradle.test$.*");
-
-		File gradleBuildFile = IO.getFile("generated/test/workspace/modules/apps/gradle.test/build.gradle");
-
-		assertTrue(gradleBuildFile.exists());
-
-		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
-
-		lacks(gradleBuildFileContent,
-			".*^apply plugin: \"com.liferay.plugin\".*");
-	}
-
-	@Test
-	public void createGradleServicePreAction() throws Exception {
-		String [] args = {
-				"create",
-				"-d",
-				"generated/test",
-				"-t",
-				"service",
-				"-s",
-				"com.liferay.portal.kernel.events.LifecycleAction",
-				"-c",
-				"FooAction",
-				"servicepreaction"
-		};
-
-		new bladenofail().run(args);
-
-		File buildFile =
-			IO.getFile("generated/test/servicepreaction/build.gradle");
-
-		assertTrue(buildFile.exists());
-
-		File serviceFile = IO.getFile(
-			"generated/test/servicepreaction/src/main/java/servicepreaction/FooAction.java");
-
-		assertTrue(serviceFile.exists());
-
-		String serviceFileContent = new String(IO.read(serviceFile));
-
-		contains(serviceFileContent, "^package servicepreaction;.*");
-
-		contains(serviceFileContent,
-			".*^import com.liferay.portal.kernel.events.LifecycleAction;$.*");
-
-		contains(serviceFileContent, ".*service = LifecycleAction.class.*");
-
-		contains(serviceFileContent,
-			".*^public class FooAction implements LifecycleAction \\{.*");
-
-		File bndFile = IO.getFile("generated/test/servicepreaction/bnd.bnd");
-
-		assertTrue(bndFile.exists());
-
-		String bndFileContent = new String(IO.read(bndFile));
-
-		contains(
-			bndFileContent, ".*com.liferay.portal.service;version=\"7.0.0\".*");
-	}
-
-	@Test
-	public void createGradleServiceWrapper() throws Exception {
-		String [] args = {
-				"create",
-				"-d",
-				"generated/test",
-				"-t",
-				"servicewrapper",
-				"-s",
-				"com.liferay.portal.service.UserLocalServiceWrapper",
-				"serviceoverride"
-		};
-
-		new bladenofail().run(args);
-
-		File buildFile =
-			IO.getFile("generated/test/serviceoverride/build.gradle");
-
-		assertTrue(buildFile.exists());
-
-		File serviceWrapperFile = IO.getFile(
-			"generated/test/serviceoverride/src/main/java/serviceoverride/Serviceoverride.java");
-
-		assertTrue(serviceWrapperFile.exists());
-
-		String serviceWrapperFileContent = new String(IO.read(serviceWrapperFile));
-
-		contains(serviceWrapperFileContent, "^package serviceoverride;.*");
-
-		contains(serviceWrapperFileContent,
-			".*^import com.liferay.portal.service.UserLocalServiceWrapper;$.*");
-
-		contains(serviceWrapperFileContent, ".*service = ServiceWrapper.class.*");
-
-		contains(serviceWrapperFileContent,
-			".*^public class Serviceoverride extends UserLocalServiceWrapper \\{.*");
-
-		contains(serviceWrapperFileContent,
-			".*public Serviceoverride\\(\\) \\{.*");
-
-		File bndFile = IO.getFile("generated/test/serviceoverride/bnd.bnd");
-
-		assertTrue(bndFile.exists());
-
-		String bndFileContent = new String(IO.read(bndFile));
-
-		contains(
-			bndFileContent, ".*^Private-Package: \\\\.*^\tserviceoverride.*");
-
-		contains(
-			bndFileContent, ".*com.liferay.portal.service;version=\'7.0.0\'.*");
-
-	}
-
-	@Test
-	public void createGradleServiceBuilder() throws Exception {
-		String [] args = {
-				"create",
-				"-d",
-				"generated/test",
-				"-t",
-				"servicebuilder",
-				"-p",
-				"com.liferay.docs.guestbook",
-				"guestbook"
-		};
-
-		new bladenofail().run(args);
-
-		File settingsFile =
-			IO.getFile("generated/test/guestbook/settings.gradle");
-
-		assertTrue(settingsFile.exists());
-
-		String settingsFileContent = new String(IO.read(settingsFile));
-
-		contains(
-			settingsFileContent,
-			"include 'com.liferay.docs.guestbook.api','com.liferay.docs.guestbook.svc','com.liferay.docs.guestbook.web'");
-
-		File apiBndFile = IO.getFile(
-			"generated/test/guestbook/com.liferay.docs.guestbook.api/bnd.bnd");
-
-		assertTrue(apiBndFile.exists());
-
-		String apiBndFileContent = new String(IO.read(apiBndFile));
-
-		contains(apiBndFileContent, ".*Export-Package\\: \\\\.*");
-		contains(apiBndFileContent, ".*com.liferay.docs.guestbook.exception\\,\\\\.*");
-		contains(apiBndFileContent, ".*com.liferay.docs.guestbook.model\\,\\\\.*");
-		contains(apiBndFileContent, ".*com.liferay.docs.guestbook.service\\,\\\\.*");
-		contains(apiBndFileContent, ".*com.liferay.docs.guestbook.service.persistence.*");
-
-		File svcBndFile = IO.getFile(
-			"generated/test/guestbook/com.liferay.docs.guestbook.svc/bnd.bnd");
-
-		assertTrue(svcBndFile.exists());
-
-		String svcBndFileContent = new String(IO.read(svcBndFile));
-
-		contains(svcBndFileContent, ".*Private-Package\\: \\\\.*");
-		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.model.impl\\,\\\\.*");
-		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.base\\,\\\\.*");
-		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.http\\,\\\\.*");
-		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.impl\\,\\\\.*");
-		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.persistence.impl\\,\\\\.*");
-		contains(svcBndFileContent, ".*com.liferay.docs.guestbook.service.util.*");
-
-		File webBndFile = IO.getFile(
-			"generated/test/guestbook/com.liferay.docs.guestbook.web/bnd.bnd");
-
-		assertTrue(webBndFile.exists());
-
-		String webBndFileContent = new String(IO.read(webBndFile));
-
-		contains(webBndFileContent, ".*Private-Package\\: \\\\.*");
-		contains(webBndFileContent, ".*com.liferay.docs.guestbook.web.*");
-
-		File portletFile = IO.getFile(
-			"generated/test/guestbook/com.liferay.docs.guestbook.web/src/main/java" +
-			"/com/liferay/docs/guestbook/portlet/GuestbookPortlet.java");
-
-		assertTrue(portletFile.exists());
-
-		String portletFileContent = new String(IO.read(portletFile));
-
-		contains(portletFileContent, ".*package com.liferay.docs.guestbook.portlet;.*");
+			checkFileExists(
+				projectPath + "/src/main/java/bar/activator/BarActivator.java"),
+			".*^public class BarActivator implements BundleActivator.*$");
 	}
 
 	@Test
 	public void createGradleJspHook() throws Exception {
 		String[] args = {
-				"create",
-				"-d",
-				"generated/test",
-				"-t",
-				"jsphook",
-				"-h",
-				"com.liferay.login.web",
-				"-H",
-				"1.0.0",
-				"loginHook" };
+			"create", "-d", "generated/test", "-t", "jsphook", "-h",
+			"com.liferay.login.web", "-H", "1.0.0", "loginHook"
+		};
 
 		new bladenofail().run(args);
 
-		assertTrue(IO.getFile("generated/test/loginHook").exists());
+		String projectPath = "generated/test/loginHook";
 
-		File bndFile = new File("generated/test/loginHook/bnd.bnd");
+		checkFileExists(projectPath);
 
-		assertTrue(bndFile.exists());
+		contains(
+			checkFileExists(projectPath + "/bnd.bnd"),
+			new String[] {
+				".*^Bundle-SymbolicName: loginhook.*$",
+				".*^Fragment-Host: com.liferay.login.web;" +
+					"bundle-version=\"1.0.0\".*$"
+			});
 
-		String bndFileContent = new String(IO.read(bndFile));
+		contains(
+			checkFileExists(projectPath + "/build.gradle"),
+			".*^apply plugin: \"com.liferay.plugin\".*");
+	}
 
-		contains(bndFileContent, ".*^Bundle-SymbolicName: LoginHook.*$");
-		contains(bndFileContent, ".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$");
+	@Test
+	public void createGradleMVCPortletProject() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "mvcportlet", "foo"
+		};
 
-		File gradleBuildFile = IO.getFile("generated/test/loginHook/build.gradle");
+		new bladenofail().run(args);
 
-		assertTrue(gradleBuildFile.exists());
+		String projectPath = "generated/test/foo";
 
-		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
+		checkFileExists(projectPath);
 
-		contains(gradleBuildFileContent, ".*^apply plugin: \"com.liferay.plugin\".*");
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		contains(
+			checkFileExists(projectPath + "/src/main/java/foo/FooPortlet.java"),
+			".*^public class FooPortlet extends MVCPortlet.*$");
+
+		contains(
+			checkFileExists(projectPath + "/build.gradle"),
+			".*^apply plugin: \"com.liferay.plugin\".*");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/init.jsp");
+	}
+
+	@Test
+	public void createGradleMVCPortletProjectWithPackage() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "mvcportlet", "-p",
+			"com.liferay.test", "foo"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/foo";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		contains(
+			checkFileExists(
+				projectPath + "/src/main/java/com/liferay/test/" +
+					"FooPortlet.java"),
+			".*^public class FooPortlet extends MVCPortlet.*$");
+
+		contains(
+			checkFileExists("generated/test/foo/build.gradle"),
+			".*^apply plugin: \"com.liferay.plugin\".*");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/init.jsp");
+	}
+
+	@Test
+	public void createGradlePortletProject() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "portlet", "-c", "Foo",
+			"gradle.test"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/gradle.test";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/build.gradle");
+
+		contains(
+			checkFileExists(
+				projectPath + "/src/main/java/gradle/test/FooPortlet.java"),
+			new String[] {
+				"^package gradle.test;.*",
+				".*javax.portlet.display-name=gradle.test.*",
+				".*^public class FooPortlet .*",
+				".*printWriter.print\\(\\\"gradle.test Portlet.*"
+			});
+
+		contains(
+			checkFileExists(projectPath + "/bnd.bnd"),
+			".*^Private-Package: \\\\.*^\tgradle.test$.*");
+	}
+
+	@Test
+	public void createGradleServiceBuilder() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "servicebuilder", "-p",
+			"com.liferay.docs.guestbook", "guestbook"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/guestbook";
+
+		contains(
+			checkFileExists(projectPath + "/settings.gradle"),
+			"include 'com.liferay.docs.guestbook.api'," +
+				"'com.liferay.docs.guestbook.svc'," +
+				"'com.liferay.docs.guestbook.web'");
+
+		contains(
+			checkFileExists(
+				projectPath + "/com.liferay.docs.guestbook.api/bnd.bnd"),
+			new String[] {
+				".*Export-Package: \\\\.*",
+				".*com.liferay.docs.guestbook.exception,\\\\.*",
+				".*com.liferay.docs.guestbook.model,\\\\.*",
+				".*com.liferay.docs.guestbook.service,\\\\.*",
+				".*com.liferay.docs.guestbook.service.persistence.*"
+			});
+
+		contains(
+			checkFileExists(
+				projectPath + "/com.liferay.docs.guestbook.svc/bnd.bnd"),
+			new String[] {
+				".*Private-Package: \\\\.*",
+				".*com.liferay.docs.guestbook.model.impl,\\\\.*",
+				".*com.liferay.docs.guestbook.service.base,\\\\.*",
+				".*com.liferay.docs.guestbook.service.http,\\\\.*",
+				".*com.liferay.docs.guestbook.service.impl,\\\\.*",
+				".*com.liferay.docs.guestbook.service.persistence.impl,\\\\.*",
+				".*com.liferay.docs.guestbook.service.util.*"
+			});
+
+		contains(
+			checkFileExists(
+				projectPath + "/com.liferay.docs.guestbook.web/bnd.bnd"),
+			new String[] {
+				".*Private-Package: \\\\.*",
+				".*com.liferay.docs.guestbook.web.*"
+			});
+
+		contains(
+			checkFileExists(
+				projectPath + "/com.liferay.docs.guestbook.web/src/main/java" +
+					"/com/liferay/docs/guestbook/portlet/" +
+					"GuestbookPortlet.java"),
+			".*package com.liferay.docs.guestbook.portlet;.*");
+	}
+
+	@Test
+	public void createGradleServicePreAction() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "service", "-s",
+			"com.liferay.portal.kernel.events.LifecycleAction", "-c",
+			"FooAction", "servicepreaction"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/servicepreaction";
+
+		checkFileExists(projectPath + "/build.gradle");
+
+		contains(
+			checkFileExists(
+				projectPath + "/src/main/java/servicepreaction/FooAction.java"),
+			new String[] {
+				"^package servicepreaction;.*",
+				".*^import " +
+					"com.liferay.portal.kernel.events.LifecycleAction;$.*",
+				".*service = LifecycleAction.class.*",
+				".*^public class FooAction implements LifecycleAction \\{.*"
+			});
+
+		contains(
+			checkFileExists(projectPath + "/bnd.bnd"),
+			".*com.liferay.portal.service;version=\"7.0.0\".*");
+	}
+
+	@Test
+	public void createGradleServiceWrapper() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "servicewrapper", "-s",
+			"com.liferay.portal.service.UserLocalServiceWrapper",
+			"serviceoverride"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/serviceoverride";
+
+		checkFileExists(projectPath + "/build.gradle");
+
+		contains(
+			checkFileExists(
+				projectPath + "/src/main/java/serviceoverride/" +
+					"Serviceoverride.java"),
+			new String[] {
+				"^package serviceoverride;.*",
+				".*^import " +
+					"com.liferay.portal.service.UserLocalServiceWrapper;$.*",
+				".*service = ServiceWrapper.class.*",
+				".*^public class Serviceoverride extends " +
+					"UserLocalServiceWrapper \\{.*",
+				".*public Serviceoverride\\(\\) \\{.*"
+			});
+
+		contains(
+			checkFileExists(projectPath + "/bnd.bnd"),
+			new String[] {
+				".*^Private-Package: \\\\.*^\tserviceoverride.*",
+				".*com.liferay.portal.service;version=\'7.0.0\'.*"
+			});
+	}
+
+	@Test
+	public void createProjectAllDefaults() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "hello-world-portlet"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/hello-world-portlet";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		File portletFile = checkFileExists(
+			projectPath + "/src/main/java/hello/world/portlet/" +
+				"HelloWorldPortlet.java");
+
+		contains(
+			portletFile,
+			".*^public class HelloWorldPortlet extends MVCPortlet.*$");
+
+		File gradleBuildFile = checkFileExists(projectPath + "/build.gradle");
+
+		contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 	}
 
 	@Test
 	public void createWorkspaceGradleJspHook() throws Exception {
 		String[] args = {
-				"create",
-				"-d",
-				"generated/test/workspace/modules/extensions",
-				"-t",
-				"jsphook",
-				"-h",
-				"com.liferay.login.web",
-				"-H",
-				"1.0.0",
-				"loginHook"
+			"create", "-d", "generated/test/workspace/modules/extensions", "-t",
+			"jsphook", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook"
 		};
 
 		File workspace = new File("generated/test/workspace");
@@ -576,28 +330,86 @@ public class CreateCommandTests {
 
 		new bladenofail().run(args);
 
-		assertTrue(IO.getFile("generated/test/workspace/modules/extensions/loginHook").exists());
+		String projectPath = "generated/test/workspace/modules/extensions";
 
-		File bndFile = new File("generated/test/workspace/modules/extensions/loginHook/bnd.bnd");
+		checkFileExists(projectPath + "/loginHook");
 
-		assertTrue(bndFile.exists());
+		contains(
+			checkFileExists(projectPath + "/loginHook/bnd.bnd"),
+			new String[] {
+				".*^Bundle-SymbolicName: loginhook.*$",
+				".*^Fragment-Host: com.liferay.login.web;" +
+					"bundle-version=\"1.0.0\".*$"
+			});
 
-		String bndFileContent = new String(IO.read(bndFile));
+		checkFileExists(projectPath + "/loginHook/build.gradle");
 
-		contains(bndFileContent, ".*^Bundle-SymbolicName: LoginHook.*$");
-		contains(bndFileContent, ".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$");
+		lacks(
+			checkFileExists(projectPath + "/loginHook/build.gradle"),
+			".*^apply plugin: \"com.liferay.plugin\".*");
+	}
 
-		assertTrue(IO.getFile(
-		    "generated/test/workspace/modules/extensions/loginHook/build.gradle").exists());
+	@Test
+	public void createWorkspaceGradlePortletProject() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test/workspace/modules/apps", "-t",
+			"portlet", "-c", "Foo", "gradle.test"
+		};
 
-		File gradleBuildFile = IO.getFile(
-		    "generated/test/workspace/modules/extensions/loginHook/build.gradle");
+		makeWorkspace(new File("generated/test/workspace"));
 
-		assertTrue(gradleBuildFile.exists());
+		new bladenofail().run(args);
 
-		String gradleBuildFileContent = new String(IO.read(gradleBuildFile));
+		String projectPath = "generated/test/workspace/modules/apps";
 
-		lacks(gradleBuildFileContent, ".*^apply plugin: \"com.liferay.plugin\".*");
+		checkFileExists(projectPath + "/gradle.test/build.gradle");
+
+		contains(
+			checkFileExists(
+				projectPath + "/gradle.test/src/main/java/gradle/test/" +
+					"FooPortlet.java"),
+			new String[] {
+				"^package gradle.test;.*",
+				".*javax.portlet.display-name=gradle.test.*",
+				".*^public class FooPortlet .*",
+				".*printWriter.print\\(\\\"gradle.test Portlet.*"
+			});
+
+		contains(
+			checkFileExists(projectPath + "/gradle.test/bnd.bnd"),
+			".*^Private-Package: \\\\.*^\tgradle.test$.*");
+
+		lacks(
+			checkFileExists(projectPath + "/gradle.test/build.gradle"),
+			".*^apply plugin: \"com.liferay.plugin\".*");
+	}
+
+	@Test
+	public void createWorkspaceProjectAllDefaults() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test/workspace/modules/apps", "foo"
+		};
+
+		makeWorkspace(new File("generated/test/workspace"));
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/workspace/modules/apps";
+
+		checkFileExists(projectPath + "/foo");
+
+		checkFileExists(projectPath + "/foo/bnd.bnd");
+
+		File portletFile = checkFileExists(
+			projectPath + "/foo/src/main/java/foo/FooPortlet.java");
+
+		contains(
+			portletFile, ".*^public class FooPortlet extends MVCPortlet.*$");
+
+		File gradleBuildFile = checkFileExists(
+			projectPath + "/foo/build.gradle");
+
+		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 	}
 
 	@Before
@@ -610,18 +422,50 @@ public class CreateCommandTests {
 		}
 	}
 
-	private void lacks(String content, String pattern) {
-		assertFalse(
-			Pattern.compile(
-				pattern, Pattern.MULTILINE | Pattern.DOTALL).matcher(
-					content).matches());
+	private File checkFileExists(String path) {
+		File file = IO.getFile(path);
+
+		assertTrue(file.exists());
+
+		return file;
 	}
 
-	private void contains(String content, String pattern) {
+	private void contains(File file, String pattern) throws Exception {
+		String content = new String(IO.read(file));
+
+		contains(content, pattern);
+	}
+
+	private void contains(File file, String[] patterns) throws Exception {
+		String content = new String(IO.read(file));
+
+		for (String pattern : patterns) {
+			contains(content, pattern);
+		}
+	}
+
+	private void contains(String content, String pattern) throws Exception {
 		assertTrue(
 			Pattern.compile(
-				pattern, Pattern.MULTILINE | Pattern.DOTALL).matcher(
-					content).matches());
+				pattern,
+				Pattern.MULTILINE | Pattern.DOTALL).matcher(content).matches());
+	}
+
+	private void lacks(File file, String pattern) throws Exception {
+		String content = new String(IO.read(file));
+
+		assertFalse(
+			Pattern.compile(
+				pattern,
+				Pattern.MULTILINE | Pattern.DOTALL).matcher(content).matches());
+	}
+
+	private void makeWorkspace(File workspace) throws IOException {
+		workspace.mkdirs();
+
+		new File(workspace, "modules").mkdir();
+		new File(workspace, "themes").mkdir();
+		new File(workspace, "build.gradle").createNewFile();
 	}
 
 }

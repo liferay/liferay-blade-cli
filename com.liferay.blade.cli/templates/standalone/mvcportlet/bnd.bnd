@@ -1,4 +1,4 @@
-Bundle-SymbolicName: _NAME_
+Bundle-SymbolicName: _package_
 
 Bundle-Version: 1.0.0.${tstamp}
 

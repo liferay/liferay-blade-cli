@@ -3,10 +3,12 @@ package com.liferay.blade.cli;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
+
 import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.InputStream;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,15 +19,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+/**
+ * @author Gregory Amerson
+ * @author David Truong
+ */
 public class CreateCommand {
-
-	private static final List<String> textExtensions =
-		Arrays.asList(
-			".bnd", ".java", ".project", ".xml", ".jsp", ".css", ".jspf", ".js",
-			".properties", ".gradle", ".prefs");
-
-	final private blade _blade;
-	final private CreateOptions _options;
 
 	public CreateCommand(blade blade, CreateOptions options) throws Exception {
 		_blade = blade;
@@ -41,20 +39,11 @@ public class CreateCommand {
 			template = Template.mvcportlet;
 		}
 
-		File dir = _options.dir();
-		File base = _blade.getBase();
+		File dir = _options.dir() != null ? _options.dir() : _blade.getBase();
 		String name = args.remove(0);
-		File workDir = null;
-
-		if (dir != null) {
-			workDir = Processor.getFile(dir, name);
-		}
-		else {
-			workDir = Processor.getFile(base, name);
-		}
+		File workDir = Processor.getFile(dir, name);
 
 		name = workDir.getName();
-		base = workDir.getParentFile();
 
 		final Pattern glob = Pattern.compile(
 			"^standalone/" + template.name() + "/.*|\\...+/.*");
@@ -62,14 +51,15 @@ public class CreateCommand {
 		final Map<String, String> subs = new HashMap<>();
 		subs.put("templates/standalone/" + template.name() + "/", "");
 		subs.put("_project_path_", workDir.getAbsolutePath());
-		subs.put("_name_", name.toLowerCase());
-		subs.put("_NAME_", WordUtils.capitalize(name));
+		subs.put("_name_", getPackageName(name));
+		subs.put("_NAME_", name);
 
 		final String packageName = _options.packagename();
 
 		if (isEmpty(packageName)) {
-			subs.put("_package_path_", name.replaceAll("\\.", "/"));
-			subs.put("_package_", name.toLowerCase().replaceAll("-", "."));
+			subs.put(
+				"_package_path_", getPackageName(name).replaceAll("\\.", "/"));
+			subs.put("_package_", getPackageName(name));
 		}
 		else {
 			subs.put("_package_path_", packageName.replaceAll("\\.", "/"));
@@ -79,15 +69,20 @@ public class CreateCommand {
 		String classname = _options.classname();
 
 		if (isEmpty(classname)) {
-			classname = WordUtils.capitalize(name);
+			classname = getClassName(name);
 		}
 
 		String service = _options.service();
 
 		if (Template.service.equals(template)) {
 			if (isEmpty(service)) {
-				addError("Create", "if type is service, the fully qualified name of " +
-					"service must be specified after the service argument.");
+				addError(
+					"Create",
+					"The service template requires the fully qualified name " +
+						"of service must be specified after the service " +
+						"argument.\nFor example: blade create -t service -s " +
+						"com.liferay.portal.kernel.events.LifecycleAction " +
+						"customPreAction");
 				return;
 			}
 
@@ -99,9 +94,14 @@ public class CreateCommand {
 
 		if (Template.servicewrapper.equals(template)) {
 			if (isEmpty(service)) {
-				addError("Create",
-					"if type is service, the fully qualified name of service " +
-					"must be specified after the service argument.");
+				addError(
+					"Create",
+					"The servicewrapper template requires the fully qualified" +
+						" name of service must be specified after the service" +
+						" argument.\nFor example: blade create -t " +
+						"servicewrapper -s " +
+						"com.liferay.portal.service.UserLocalServiceWrapper " +
+						"customServiceWrapper");
 				return;
 			}
 
@@ -113,10 +113,13 @@ public class CreateCommand {
 
 		if (Template.servicebuilder.equals(template)) {
 			if (isEmpty(packageName)) {
-				addError("Create",
-					"if type is servicebuilder, the name of the root package " +
-					"within which to create service builder classes must be " +
-					"specified.");
+				addError(
+					"Create",
+					"The servicebuilder template requires the name of the " +
+						"root package within which to create service builder " +
+						"classes must be specified.\nFor example: blade " +
+						"create -t servicebuilder -p " +
+						"com.liferay.docs.guestbook guestbook");
 				return;
 			}
 
@@ -124,13 +127,22 @@ public class CreateCommand {
 			subs.put("_svc_", packageName + ".svc");
 			subs.put("_web_", packageName + ".web");
 			subs.put("_portlet_", packageName + ".portlet");
-			subs.put("_portletpackage_", packageName.replaceAll("\\.", "/") + "/portlet");
+			subs.put(
+				"_portletpackage_",
+				packageName.replaceAll("\\.", "/") + "/portlet");
 
 			if (!classname.contains("Portlet")) {
 				classname += "Portlet";
 			}
 		}
-		else if (Template.portlet.equals(template) || Template.mvcportlet.equals(template)) {
+		else if (Template.activator.equals(template)) {
+			if (!classname.contains("Activator")) {
+				classname += "Activator";
+			}
+		}
+		else if (Template.portlet.equals(template) ||
+				 Template.mvcportlet.equals(template)) {
+
 			if (!classname.contains("Portlet")) {
 				classname += "Portlet";
 			}
@@ -141,10 +153,13 @@ public class CreateCommand {
 		final String hostbundleversion = _options.hostbundleversion();
 
 		if (Template.jsphook.equals(template)) {
-			if(isEmpty(hostbundlebsn) || isEmpty(hostbundleversion)){
-				addError("Create",
-					"if type is jsphook, the bsn of the hostbundle " +
-					"and version must be specified.");
+			if (isEmpty(hostbundlebsn) || isEmpty(hostbundleversion)) {
+				addError(
+					"Create",
+					"The jsphook template requires the bundle symbolic name " +
+						"of the hostbundle and version must be specified.\n" +
+						"For example: blade create -t jsphook -h " +
+						"com.liferay.login.web -H 1.0.0 name");
 				return;
 			}
 
@@ -155,7 +170,7 @@ public class CreateCommand {
 		subs.put("_CLASSNAME_", classname);
 
 		String unNormalizedPortletFqn =
-				name.toLowerCase().replaceAll("-", ".") + "_" + classname;
+			name.toLowerCase().replaceAll("-", ".") + "_" + classname;
 
 		subs.put(
 			"_portlet_fqn_",
@@ -168,37 +183,29 @@ public class CreateCommand {
 		if (isWorkspace(workDir)) {
 			final Pattern buildGlob = Pattern.compile(
 				"^workspace/" + template.name() + "/build.gradle");
+
 			in = getClass().getResourceAsStream("/templates.zip");
-			copy("workspace", template.name(), workDir, in, buildGlob, true,
+
+			copy(
+				"workspace", template.name(), workDir, in, buildGlob, true,
 				subs);
 		}
 	}
 
-	private boolean isWorkspace(File workDir) {
-		if (workDir == null || !workDir.exists() || !workDir.isDirectory()) {
-			return false;
-		}
-
-		List<String> names = Arrays.asList(workDir.list());
-
-		if (names != null && names.contains("modules") &&
-			names.contains("themes") && names.contains("build.gradle")) {
-			return true;
-		}
-
-		return isWorkspace(workDir.getParentFile());
+	private void addError(String prefix, String msg) {
+		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private void copy(String type, String template, File workspaceDir,
-		InputStream in, Pattern glob, boolean overwrite,
-		Map<String, String> subs) throws Exception {
+	private void copy(
+			String type, String template, File workspaceDir, InputStream in,
+			Pattern glob, boolean overwrite, Map<String, String> subs)
+		throws Exception {
 
 		try (Jar jar = new Jar("dot", in)) {
 			for (Entry<String, Resource> e : jar.getResources().entrySet()) {
 				String path = e.getKey();
 
-				if (glob != null && !glob.matcher(path).matches())
-					continue;
+				if (glob != null && !glob.matcher(path).matches())continue;
 
 				Resource r = e.getValue();
 
@@ -206,20 +213,17 @@ public class CreateCommand {
 					path = path.replaceAll(key, subs.get(key));
 				}
 
-				path =
-					path.replaceAll(type + "/" + template + "/", "");
+				path = path.replaceAll(type + "/" + template + "/", "");
 
 				File dest = Processor.getFile(workspaceDir, path);
 
-				if (overwrite ||
-					dest.lastModified() < r.lastModified() ||
-					r.lastModified() <= 0) {
+				if (overwrite || (dest.lastModified() < r.lastModified()) ||
+					(r.lastModified() <= 0)) {
 
 					File dp = dest.getParentFile();
 
 					if (!dp.exists() && !dp.mkdirs()) {
-						throw new Exception(
-							"Could not create directory " + dp);
+						throw new Exception("Could not create directory " + dp);
 					}
 
 					IO.copy(r.openInputStream(), dest);
@@ -230,6 +234,55 @@ public class CreateCommand {
 				}
 			}
 		}
+	}
+
+	private String getClassName(String name) {
+		name = WordUtils.capitalizeFully(name, ' ', '.', '-');
+		name = name.replaceAll("[- .]", "");
+
+		return name;
+	}
+
+	private String getPackageName(String name) {
+		name = name.replaceAll("[- .]", ".");
+		name = name.toLowerCase();
+
+		return name;
+	}
+
+	private boolean isEmpty(String str) {
+		if (str == null) {
+			return true;
+		}
+
+		if (str.trim().isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean isTextFile(File dest) {
+		String name = dest.getName();
+
+		return textExtensions.contains(
+			name.substring(name.lastIndexOf("."), name.length()));
+	}
+
+	private boolean isWorkspace(File workDir) {
+		if ((workDir == null) || !workDir.exists() || !workDir.isDirectory()) {
+			return false;
+		}
+
+		List<String> names = Arrays.asList(workDir.list());
+
+		if ((names != null) && names.contains("modules") &&
+			names.contains("themes") && names.contains("build.gradle")) {
+
+			return true;
+		}
+
+		return isWorkspace(workDir.getParentFile());
 	}
 
 	private void process(File dest, Map<String, String> subs) throws Exception {
@@ -245,24 +298,11 @@ public class CreateCommand {
 		}
 	}
 
-	private boolean isTextFile(File dest) {
-		String name = dest.getName();
+	private static final List<String> textExtensions = Arrays.asList(
+		".bnd", ".java", ".project", ".xml", ".jsp", ".css", ".jspf", ".js",
+		".properties", ".gradle", ".prefs");
 
-		return textExtensions.contains(
-			name.substring(name.lastIndexOf("."), name.length()));
-	}
+	private final blade _blade;
+	private final CreateOptions _options;
 
-	private void addError(String prefix, String msg) {
-		_blade.addErrors(prefix, Collections.singleton(msg));
-	}
-
-	private boolean isEmpty(String str) {
-	    if(str == null)
-	        return true;
-
-	    if(str.trim().isEmpty())
-	        return true;
-
-	    return false;
-	}
 }
