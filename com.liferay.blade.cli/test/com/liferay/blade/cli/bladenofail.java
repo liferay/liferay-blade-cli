@@ -3,16 +3,15 @@ package com.liferay.blade.cli;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * @author Gregory Amerson
+ */
 public class bladenofail extends blade {
 
-	private PrintStream _out;
-
 	public bladenofail() throws UnsupportedEncodingException {
-		super();
 	}
 
 	public bladenofail(PrintStream out) throws UnsupportedEncodingException {
-		super();
 		_out = out;
 	}
 
@@ -25,4 +24,7 @@ public class bladenofail extends blade {
 	public PrintStream out() {
 		return _out;
 	}
+
+	private PrintStream _out;
+
 }

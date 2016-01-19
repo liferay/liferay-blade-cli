@@ -17,29 +17,20 @@ import org.junit.Test;
  */
 public class SamplesCommandTest {
 
-	@Test
-	public void listSamples() throws Exception {
-		String [] args = {
-			"samples"
-		};
+	@Before
+	public void setUp() throws Exception {
+		File testdir = IO.getFile("generated/test");
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream ps = new PrintStream(baos);
-
-		new bladenofail(ps).run(args);
-
-		String content = baos.toString();
-
-		Assert.assertTrue(content.contains("blade.portlet.ds"));
+		if (testdir.exists()) {
+			IO.delete(testdir);
+			assertFalse(testdir.exists());
+		}
 	}
 
 	@Test
-	public void getSample() throws Exception {
-		String [] args = {
-			"samples",
-			"-d",
-			"generated/test",
-			"blade.friendlyurl"
+	public void testGetSample() throws Exception {
+		String[] args = {
+			"samples", "-d", "generated/test", "blade.friendlyurl"
 		};
 
 		new bladenofail().run(args);
@@ -53,13 +44,18 @@ public class SamplesCommandTest {
 		Assert.assertTrue(buildFile.exists());
 	}
 
-	@Before
-	public void setup() throws Exception {
-		File testdir = IO.getFile("generated/test");
+	@Test
+	public void testListSamples() throws Exception {
+		String[] args = {"samples"};
 
-		if (testdir.exists()) {
-			IO.delete(testdir);
-			assertFalse(testdir.exists());
-		}
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
+
+		new bladenofail(ps).run(args);
+
+		String content = baos.toString();
+
+		Assert.assertTrue(content.contains("blade.portlet.ds"));
 	}
+
 }
