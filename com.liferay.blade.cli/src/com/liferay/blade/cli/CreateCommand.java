@@ -200,6 +200,16 @@ public class CreateCommand {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
+	private boolean containsDir(File currentDir, File parentDir)
+		throws Exception {
+
+		String currentPath = currentDir.getCanonicalPath();
+
+		String parentPath = parentDir.getCanonicalPath();
+
+		return currentPath.startsWith(parentPath);
+	}
+
 	private void copy(
 			String type, String template, File workspaceDir, InputStream in,
 			Pattern glob, boolean overwrite, Map<String, String> subs)
@@ -258,10 +268,9 @@ public class CreateCommand {
 
 		File projectDir = Util.getProjectDir(_blade);
 
-		File modulesDir =
-			new File(
-				projectDir,
-				(String)properties.get("liferay.workspace.modules.dir"));
+		File modulesDir = new File(
+			projectDir,
+			(String)properties.get("liferay.workspace.modules.dir"));
 
 		if (template.equals(Template.mvcportlet) ||
 			template.equals(Template.portlet) ||
@@ -272,9 +281,9 @@ public class CreateCommand {
 			return containsDir(baseDir, appsDir) ? baseDir : appsDir;
 		}
 		else if (template.equals(Template.activator) ||
-			template.equals(Template.jsphook) ||
-			template.equals(Template.service) ||
-			template.equals(Template.servicewrapper)) {
+				 template.equals(Template.jsphook) ||
+				 template.equals(Template.service) ||
+				 template.equals(Template.servicewrapper)) {
 
 			File extensionsDir = new File(modulesDir, "extensions");
 
@@ -283,16 +292,6 @@ public class CreateCommand {
 		}
 
 		return baseDir;
-	}
-
-	private boolean containsDir(File currentDir, File parentDir)
-		throws Exception {
-
-		String currentPath = currentDir.getCanonicalPath();
-
-		String parentPath = parentDir.getCanonicalPath();
-
-		return currentPath.startsWith(parentPath);
 	}
 
 	private String getPackageName(String name) {
