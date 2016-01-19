@@ -6,8 +6,10 @@ import static org.junit.Assert.assertTrue;
 import aQute.lib.io.IO;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
@@ -468,6 +470,16 @@ public class CreateCommandTest {
 		new File(workspace, "modules").mkdir();
 		new File(workspace, "themes").mkdir();
 		new File(workspace, "build.gradle").createNewFile();
+
+		File propertiesFile = new File(workspace, "gradle.properties");
+
+		propertiesFile.createNewFile();
+
+		Properties properties = Util.getGradleProperties(workspace);
+
+		properties.setProperty("liferay.workspace.home.dir", "bundles");
+
+		properties.store(new FileOutputStream(propertiesFile), "");
 	}
 
 }
