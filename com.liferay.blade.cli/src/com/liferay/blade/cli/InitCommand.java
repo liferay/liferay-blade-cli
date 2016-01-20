@@ -9,16 +9,15 @@ import com.liferay.blade.cli.aether.AetherClient;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.aether.artifact.Artifact;
 
 /**
  * @author Gregory Amerson
@@ -140,14 +139,19 @@ public class InitCommand {
 			names.contains("build-common-plugin.xml");
 	}
 
-	File getWorkspaceZip() throws Exception {
+	public File getWorkspaceZip() throws Exception {
 		trace("Connecting to repository to find latest workspace template.");
 
-		final File workspacePluginArtifact =
+		final Artifact workspacePluginArtifact =
 			new AetherClient().findLatestAvailableArtifact(
 				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
-		return workspacePluginArtifact;
+		trace("Found workspace template version " +
+			workspacePluginArtifact.getVersion() );
+
+		final File zipFile = workspacePluginArtifact.getFile();
+
+		return zipFile;
 	}
 
 	private void addError(String msg) {
