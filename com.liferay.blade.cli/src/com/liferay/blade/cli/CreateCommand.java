@@ -40,7 +40,7 @@ public class CreateCommand {
 			template = Template.mvcportlet;
 		}
 
-		File dir = _options.dir() != null ? _options.dir() : getDir(template);
+		File dir = _options.dir() != null ? _options.dir() : getDefaultDir();
 		String name = args.remove(0);
 		File workDir = Processor.getFile(dir, name);
 
@@ -257,7 +257,7 @@ public class CreateCommand {
 		return name;
 	}
 
-	private File getDir(Template template) throws Exception {
+	private File getDefaultDir() throws Exception {
 		File baseDir = _blade.getBase();
 
 		if (!Util.isWorkspace(baseDir)) {
@@ -272,26 +272,7 @@ public class CreateCommand {
 			projectDir,
 			(String)properties.get("liferay.workspace.modules.dir"));
 
-		if (template.equals(Template.mvcportlet) ||
-			template.equals(Template.portlet) ||
-			template.equals(Template.servicebuilder)) {
-
-			File appsDir = new File(modulesDir, "apps");
-
-			return containsDir(baseDir, appsDir) ? baseDir : appsDir;
-		}
-		else if (template.equals(Template.activator) ||
-				 template.equals(Template.jsphook) ||
-				 template.equals(Template.service) ||
-				 template.equals(Template.servicewrapper)) {
-
-			File extensionsDir = new File(modulesDir, "extensions");
-
-			return
-				containsDir(baseDir, extensionsDir) ? baseDir : extensionsDir;
-		}
-
-		return baseDir;
+		return containsDir(baseDir, modulesDir) ? baseDir : modulesDir;
 	}
 
 	private String getPackageName(String name) {
