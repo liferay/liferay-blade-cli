@@ -266,11 +266,16 @@ public class CreateCommand {
 
 		Properties properties = Util.getGradleProperties(baseDir);
 
-		File projectDir = Util.getProjectDir(_blade);
+		String modulesDirValue = (String)properties.get(
+			"liferay.workspace.modules.dir");
 
-		File modulesDir = new File(
-			projectDir,
-			(String)properties.get("liferay.workspace.modules.dir"));
+		if (modulesDirValue == null) {
+			modulesDirValue = Workspace.DEFAULT_MODULES_DIR;
+		}
+
+		File projectDir = Util.getWorkspaceDir(_blade);
+
+		File modulesDir = new File(projectDir, modulesDirValue);
 
 		return containsDir(baseDir, modulesDir) ? baseDir : modulesDir;
 	}

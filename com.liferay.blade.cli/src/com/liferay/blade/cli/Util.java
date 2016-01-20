@@ -6,13 +6,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.nio.file.Files;
+
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
  * @author Gregory Amerson
+ * @author David Truong
  */
 public class Util {
 
@@ -41,30 +45,28 @@ public class Util {
 
 	protected static File getGradlePropertiesFile(File workDir) {
 		File gradlePropertiesFile = new File(
-			workDir, _GRADLE_PROPERTIES_FILE_NAME);
-
-		while (!gradlePropertiesFile.exists()) {
-			workDir = workDir.getParentFile();
-
-			if (workDir == null) {
-				return null;
-			}
-
-			gradlePropertiesFile = new File(
-				workDir, _GRADLE_PROPERTIES_FILE_NAME);
-		}
+			getWorkspaceDir(workDir), _GRADLE_PROPERTIES_FILE_NAME);
 
 		return gradlePropertiesFile;
 	}
 
-	protected static File getProjectDir(blade blade) {
-		File gradlePropertiesFile = getGradlePropertiesFile(blade);
+	protected static File getWorkspaceDir(blade blade) {
+		return getWorkspaceDir(blade.getBase());
+	}
 
-		if (gradlePropertiesFile == null) {
+	protected static File getWorkspaceDir(File workDir) {
+		if (workDir == null) {
 			return null;
 		}
 
-		return gradlePropertiesFile.getParentFile();
+		File propertiesFile = new File(workDir, _GRADLE_PROPERTIES_FILE_NAME);
+		File settingsFile = new File(workDir, _SETTINGS_GRADLE_FILE_NAME);
+
+		if (propertiesFile.exists() || settingsFile.exists()) {
+			return workDir;
+		}
+
+		return getWorkspaceDir(workDir.getParentFile());
 	}
 
 	protected static boolean isWorkspace(blade blade) {
@@ -72,15 +74,42 @@ public class Util {
 	}
 
 	protected static boolean isWorkspace(File workDir) {
-		Properties properties = getGradleProperties(workDir);
+		File workspaceDir = getWorkspaceDir(workDir);
 
-		if ((properties == null) ||
-			!properties.containsKey("liferay.workspace.home.dir")) {
+		File gradleFile = new File(workspaceDir, _SETTINGS_GRADLE_FILE_NAME);
 
+		if (!gradleFile.exists()) {
 			return false;
 		}
 
-		return true;
+		try {
+			String script = read(gradleFile);
+
+			Matcher matcher = Workspace.PATTERN_WORKSPACE_PLUGIN.matcher(
+				script);
+
+			if (matcher.find()) {
+				return true;
+			}
+			else {
+				//For workspace plugin < 1.0.5
+
+				gradleFile = new File(workspaceDir, _BUILD_GRADLE_FILE_NAME);
+
+				script = read(gradleFile);
+
+				matcher = Workspace.PATTERN_WORKSPACE_PLUGIN.matcher(script);
+
+				return matcher.find();
+			}
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+
+	protected static String read(File file) throws IOException {
+		return new String(Files.readAllBytes(file.toPath()));
 	}
 
 	protected static void unzip(File srcFile, File destDir, String entryToStart)
@@ -94,23 +123,22 @@ public class Util {
 			while (entries.hasMoreElements()) {
 				final ZipEntry entry = entries.nextElement();
 
+				String entryName = entry.getName();
+
 				if (!foundStartEntry) {
-					foundStartEntry = entryToStart.equals(entry.getName());
+					foundStartEntry = entryToStart.equals(entryName);
 					continue;
 				}
 
 				if (entry.isDirectory() ||
-					(entryToStart != null &&
-					 !entry.getName().startsWith(entryToStart))) {
+					((entryToStart != null) &&
+					 !entryName.startsWith(entryToStart))) {
+
 					continue;
 				}
 
-				String entryName = null;
-
-				if (entryToStart == null) {
-					entryName = entry.getName();
-				} else {
-					entryName = entry.getName().replaceFirst(entryToStart, "");
+				if (entryToStart != null) {
+					entryName = entryName.replaceFirst(entryToStart, "");
 				}
 
 				final File f = new File(destDir, entryName);
@@ -122,7 +150,7 @@ public class Util {
 				}
 
 				try (final InputStream in = zip.getInputStream(entry);
-						final FileOutputStream out = new FileOutputStream(f);) {
+						final FileOutputStream out = new FileOutputStream(f)) {
 
 					final byte[] bytes = new byte[1024];
 					int count = in.read(bytes);
@@ -138,7 +166,11 @@ public class Util {
 		}
 	}
 
+	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
+
 	private static final String _GRADLE_PROPERTIES_FILE_NAME =
 		"gradle.properties";
+
+	private static final String _SETTINGS_GRADLE_FILE_NAME = "settings.gradle";
 
 }
