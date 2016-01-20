@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.text.WordUtils;
@@ -39,7 +40,7 @@ public class CreateCommand {
 			template = Template.mvcportlet;
 		}
 
-		File dir = _options.dir() != null ? _options.dir() : _blade.getBase();
+		File dir = _options.dir() != null ? _options.dir() : getDefaultDir();
 		String name = args.remove(0);
 		File workDir = Processor.getFile(dir, name);
 
@@ -180,7 +181,7 @@ public class CreateCommand {
 
 		copy("standalone", template.name(), workDir, in, glob, true, subs);
 
-		if (isWorkspace(workDir)) {
+		if (Util.isWorkspace(workDir)) {
 			final Pattern buildGlob = Pattern.compile(
 				"^workspace/" + template.name() + "/build.gradle");
 
@@ -190,10 +191,23 @@ public class CreateCommand {
 				"workspace", template.name(), workDir, in, buildGlob, true,
 				subs);
 		}
+
+		_blade.out().println("Created the project " + name + " using the " +
+			template + " template in " + workDir);
 	}
 
 	private void addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));
+	}
+
+	private boolean containsDir(File currentDir, File parentDir)
+		throws Exception {
+
+		String currentPath = currentDir.getCanonicalPath();
+
+		String parentPath = parentDir.getCanonicalPath();
+
+		return currentPath.startsWith(parentPath);
 	}
 
 	private void copy(
@@ -243,6 +257,29 @@ public class CreateCommand {
 		return name;
 	}
 
+	private File getDefaultDir() throws Exception {
+		File baseDir = _blade.getBase();
+
+		if (!Util.isWorkspace(baseDir)) {
+			return baseDir;
+		}
+
+		Properties properties = Util.getGradleProperties(baseDir);
+
+		String modulesDirValue = (String)properties.get(
+			"liferay.workspace.modules.dir");
+
+		if (modulesDirValue == null) {
+			modulesDirValue = Workspace.DEFAULT_MODULES_DIR;
+		}
+
+		File projectDir = Util.getWorkspaceDir(_blade);
+
+		File modulesDir = new File(projectDir, modulesDirValue);
+
+		return containsDir(baseDir, modulesDir) ? baseDir : modulesDir;
+	}
+
 	private String getPackageName(String name) {
 		name = name.replaceAll("[- .]", ".");
 		name = name.toLowerCase();
@@ -267,22 +304,6 @@ public class CreateCommand {
 
 		return textExtensions.contains(
 			name.substring(name.lastIndexOf("."), name.length()));
-	}
-
-	private boolean isWorkspace(File workDir) {
-		if ((workDir == null) || !workDir.exists() || !workDir.isDirectory()) {
-			return false;
-		}
-
-		List<String> names = Arrays.asList(workDir.list());
-
-		if ((names != null) && names.contains("modules") &&
-			names.contains("themes") && names.contains("build.gradle")) {
-
-			return true;
-		}
-
-		return isWorkspace(workDir.getParentFile());
 	}
 
 	private void process(File dest, Map<String, String> subs) throws Exception {

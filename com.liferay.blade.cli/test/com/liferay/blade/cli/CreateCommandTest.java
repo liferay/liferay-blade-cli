@@ -8,6 +8,8 @@ import aQute.lib.io.IO;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Files;
+
 import java.util.regex.Pattern;
 
 import org.junit.Before;
@@ -188,7 +190,7 @@ public class CreateCommandTest {
 			checkFileExists(projectPath + "/settings.gradle"),
 			"include 'com.liferay.docs.guestbook.api'," +
 				"'com.liferay.docs.guestbook.svc'," +
-				"'com.liferay.docs.guestbook.web'");
+					"'com.liferay.docs.guestbook.web'");
 
 		contains(
 			checkFileExists(
@@ -226,7 +228,7 @@ public class CreateCommandTest {
 			checkFileExists(
 				projectPath + "/com.liferay.docs.guestbook.web/src/main/java" +
 					"/com/liferay/docs/guestbook/portlet/" +
-					"GuestbookPortlet.java"),
+						"GuestbookPortlet.java"),
 			".*package com.liferay.docs.guestbook.portlet;.*");
 	}
 
@@ -465,9 +467,11 @@ public class CreateCommandTest {
 	private void makeWorkspace(File workspace) throws IOException {
 		workspace.mkdirs();
 
-		new File(workspace, "modules").mkdir();
-		new File(workspace, "themes").mkdir();
-		new File(workspace, "build.gradle").createNewFile();
+		String settings = "apply plugin: \"com.liferay.workspace\"";
+
+		File settingsFile = new File(workspace, "settings.gradle");
+
+		Files.write(settingsFile.toPath(), settings.getBytes());
 	}
 
 }
