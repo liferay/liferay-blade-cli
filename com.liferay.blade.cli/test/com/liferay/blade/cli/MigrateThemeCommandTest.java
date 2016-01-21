@@ -17,7 +17,7 @@ import org.junit.Test;
 /**
  * @author David Truong
  */
-public class MigrateThemeClassTest {
+public class MigrateThemeCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
