@@ -21,6 +21,7 @@ import java.io.File;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -115,25 +116,34 @@ public class MigrateThemeCommand {
 
 		List<String> commands = new ArrayList<>();
 
-		commands.add("yo");
-		commands.add("liferay-theme:import");
-		commands.add("-p");
-		commands.add(themePath);
-		commands.add("-c");
-		commands.add("false");
-		commands.add("--skip-install");
+		if (Util.isWindows()) {
+			commands.add("cmd.exe");
+			commands.add("/c");
+		}
+		else {
+			commands.add("sh");
+			commands.add("-c");
+		}
+
+		commands.add(
+			"yo liferay-theme:import -p \"" + themePath +
+			"\" -c false --skip-install");
+
+		Map<String, String> env = processBuilder.environment();
+
+		String path = env.get("PATH");
+
+		env.put("PATH", path + ":/usr/local/bin");
 
 		processBuilder.command(commands);
 
-		processBuilder.inheritIO();
+		processBuilder.redirectErrorStream(true);
 
-		Process process = processBuilder.start();
+		final Process process = processBuilder.start();
 
-		Thread.sleep(5000);
+		process.getOutputStream().close();
 
-		process.destroy();
-
-		int errCode = process.exitValue();
+		int errCode = process.waitFor();
 
 		if (errCode == 143 || errCode == 0) {
 			_blade.out().println(
