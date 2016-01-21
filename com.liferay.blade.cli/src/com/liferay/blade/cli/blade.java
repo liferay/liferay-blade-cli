@@ -11,6 +11,7 @@ import aQute.lib.io.IO;
 import com.liferay.blade.cli.AgentCommand.AgentOptions;
 import com.liferay.blade.cli.DeployCommand.DeployOptions;
 import com.liferay.blade.cli.InitCommand.InitOptions;
+import com.liferay.blade.cli.MigrateThemeCommand.MigrateThemeOptions;
 import com.liferay.blade.cli.OpenCommand.OpenOptions;
 import com.liferay.blade.cli.SamplesCommand.SamplesOptions;
 import com.liferay.blade.cli.ShellCommand.ShellOptions;
@@ -61,7 +62,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 
 	@Description(
 		"Creates a new Liferay module project from several available " +
-		"templates."
+			"templates."
 	)
 	public void _create(CreateOptions options) throws Exception {
 		new CreateCommand(this, options).execute();
@@ -77,6 +78,11 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		new InitCommand(this, options).execute();
 	}
 
+	@Description("Migrate a plugins sdk theme to new workspace theme project")
+	public void _migrateTheme(MigrateThemeOptions options) throws Exception {
+		new MigrateThemeCommand(this, options).execute();
+	}
+
 	@Description("Opens or imports a file or project in Liferay IDE.")
 	public void _open(OpenOptions options) throws Exception {
 		new OpenCommand(this, options).execute();
@@ -89,7 +95,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 
 	@Description(
 		"Connects to Liferay and executes gogo command and returns " +
-		"output."
+			"output."
 	)
 	public void _sh(ShellOptions options) throws Exception {
 		new ShellCommand(this, options).execute();

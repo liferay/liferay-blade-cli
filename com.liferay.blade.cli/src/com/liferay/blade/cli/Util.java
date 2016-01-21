@@ -166,6 +166,10 @@ public class Util {
 		}
 	}
 
+	public static boolean isWindows() {
+		return System.getProperty("os.name").toLowerCase().equals("windows");
+	}
+
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
 
 	private static final String _GRADLE_PROPERTIES_FILE_NAME =

@@ -78,6 +78,7 @@ Private-Package: \
 	org.apache.commons.io.filefilter,\
 	org.apache.commons.io.output,\
 	org.apache.commons.lang3,\
+	org.apache.commons.lang3.exception,\
 	org.apache.commons.lang3.text,\
 	org.apache.commons.logging,\
 	org.apache.commons.logging.impl,\
