@@ -8,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import java.nio.file.Files;
 
 import org.junit.Assert;
@@ -75,14 +74,12 @@ public class MigrateThemeClassTest {
 
 		File diffs = new File(
 			workspace, "plugins-sdk/themes/compass-theme/docroot/_diffs");
+
 		diffs.mkdirs();
-
-		String css = "@import \"compass\";";
-
-		File customCss = new File(diffs, "custom.css");
 
 		File webInf = new File(
 			workspace, "plugins-sdk/themes/compass-theme/docroot/WEB-INF/");
+
 		webInf.mkdirs();
 
 		String xml = "";
