@@ -6,8 +6,8 @@ import aQute.lib.io.IO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
+
 import java.nio.file.Files;
 
 import org.junit.Assert;
@@ -33,7 +33,7 @@ public class MigrateThemeCommandTest {
 	public void testListThemes() throws Exception {
 		String[] args = {"-b", "generated/test/workspace", "migrateTheme"};
 
-		makeWorkspace();
+		createWorkspace();
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream ps = new PrintStream(baos);
@@ -48,37 +48,57 @@ public class MigrateThemeCommandTest {
 	@Test
 	public void testMigrateCompassTheme() throws Exception {
 		String[] args = {
-			"-b", "generated/test/workspace", "migrateTheme", "compass-theme"
+			"-b", "generated/test/workspace", "migrateTheme", "-a"
 		};
 
-		makeWorkspace();
+		File workspace = createWorkspace();
 
-		new bladenofail().run(args);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
 
-		File theme = new File("generated/test/workspace/themes/compass-theme");
+		new bladenofail(ps).run(args);
 
-		Assert.assertTrue(theme.exists());
+		File compassTheme = new File(workspace, "themes/compass-theme");
+
+		Assert.assertTrue(compassTheme.exists());
+
+		File packageJson = new File(compassTheme, "package.json");
+
+		String json = new String(Files.readAllBytes(packageJson.toPath()));
+
+		Assert.assertTrue(json.contains("\"supportCompass\": true"));
+
+		File nonCompassTheme = new File(workspace, "themes/non-compass-theme");
+
+		Assert.assertTrue(compassTheme.exists());
+
+		packageJson = new File(nonCompassTheme, "package.json");
+
+		json = new String(Files.readAllBytes(packageJson.toPath()));
+
+		Assert.assertTrue(json.contains("\"supportCompass\": false"));
 	}
 
-	private void makeWorkspace() throws IOException {
-		File workspace = new File("generated/test/workspace");
-		File themesDir = new File(workspace, "themes");
+	private void createTheme(File workspace, String themeName, boolean compass)
+		throws Exception {
 
-		themesDir.mkdirs();
+		File theme = new File(workspace, "plugins-sdk/themes/" + themeName);
 
-		String settings = "apply plugin: \"com.liferay.workspace\"";
-
-		File settingsFile = new File(workspace, "settings.gradle");
-
-		Files.write(settingsFile.toPath(), settings.getBytes());
-
-		File diffs = new File(
-			workspace, "plugins-sdk/themes/compass-theme/docroot/_diffs");
+		File diffs = new File(theme, "/docroot/_diffs");
 
 		diffs.mkdirs();
 
-		File webInf = new File(
-			workspace, "plugins-sdk/themes/compass-theme/docroot/WEB-INF/");
+		String css = "";
+
+		if (compass) {
+			css = "@import \"compass\";";
+		}
+
+		File customCss = new File(diffs, "custom.css");
+
+		Files.write(customCss.toPath(), css.getBytes());
+
+		File webInf = new File(theme, "/docroot/WEB-INF/");
 
 		webInf.mkdirs();
 
@@ -94,6 +114,25 @@ public class MigrateThemeCommandTest {
 			webInf, "liferay-plugin-package.properties");
 
 		Files.write(liferayPluginPackage.toPath(), properties.getBytes());
+	}
+
+	private File createWorkspace() throws Exception {
+		File workspace = new File("generated/test/workspace");
+		File themesDir = new File(workspace, "themes");
+
+		themesDir.mkdirs();
+
+		String settings = "apply plugin: \"com.liferay.workspace\"";
+
+		File settingsFile = new File(workspace, "settings.gradle");
+
+		Files.write(settingsFile.toPath(), settings.getBytes());
+
+		createTheme(workspace, "compass-theme", true);
+
+		createTheme(workspace, "non-compass-theme", false);
+
+		return workspace;
 	}
 
 }

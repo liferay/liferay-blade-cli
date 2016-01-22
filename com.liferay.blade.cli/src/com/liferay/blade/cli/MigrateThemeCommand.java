@@ -15,14 +15,24 @@
 package com.liferay.blade.cli;
 
 import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+
+import java.nio.file.Files;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -86,16 +96,23 @@ public class MigrateThemeCommand {
 
 			for (File file : _pluginsSDKThemesDir.listFiles()) {
 				if (file.isDirectory()) {
-					themes.add(file.getName());
+					if (_options.all()) {
+						importTheme(file.getCanonicalPath());
+					}
+					else {
+						themes.add(file.getName());
+					}
 				}
 			}
 
-			_blade.out().println(
-				"Please provide the theme project name to migrate, " +
-					"e.g. \"blade migrateTheme my-theme\"\n");
-			_blade.out().println("Currently available themes:");
-			_blade.out().println(
-				WordUtils.wrap(StringUtils.join(themes, ", "), 80));
+			if (!_options.all()) {
+				_blade.out().println(
+					"Please provide the theme project name to migrate, " +
+						"e.g. \"blade migrateTheme my-theme\"\n");
+				_blade.out().println("Currently available themes:");
+				_blade.out().println(
+					WordUtils.wrap(StringUtils.join(themes, ", "), 80));
+			}
 		}
 		else {
 			File themeDir = new File(_pluginsSDKThemesDir, themeName);
@@ -116,36 +133,36 @@ public class MigrateThemeCommand {
 
 		List<String> commands = new ArrayList<>();
 
+		Map<String, String> env = processBuilder.environment();
+
 		if (Util.isWindows()) {
 			commands.add("cmd.exe");
 			commands.add("/c");
 		}
 		else {
+			env.put("PATH", env.get("PATH") + ":/usr/local/bin");
+
 			commands.add("sh");
 			commands.add("-c");
 		}
 
 		commands.add(
 			"yo liferay-theme:import -p \"" + themePath +
-			"\" -c false --skip-install");
-
-		Map<String, String> env = processBuilder.environment();
-
-		String path = env.get("PATH");
-
-		env.put("PATH", path + ":/usr/local/bin");
+			"\" -c " + compassSupport(themePath) + " --skip-install");
 
 		processBuilder.command(commands);
 
-		processBuilder.redirectErrorStream(true);
+		Process process = processBuilder.start();
 
-		final Process process = processBuilder.start();
+		readProcessStream(process.getInputStream(), _blade.out());
+
+		readProcessStream(process.getErrorStream(), _blade.err());
 
 		process.getOutputStream().close();
 
 		int errCode = process.waitFor();
 
-		if (errCode == 143 || errCode == 0) {
+		if (errCode == 0) {
 			_blade.out().println(
 				"Theme " + themePath + " migrated successfully");
 		}
@@ -156,9 +173,57 @@ public class MigrateThemeCommand {
 
 	@Arguments(arg = "[name]")
 	public interface MigrateThemeOptions extends Options {
+
+		@Description("Migrate all themes")
+		public boolean all();
+
+	}
+
+	private boolean compassSupport(String themePath) throws Exception {
+		File themeDir = new File(themePath);
+
+		File customCss = new File(themeDir, "docroot/_diffs/custom.css");
+
+		String css = new String(Files.readAllBytes(customCss.toPath()));
+
+		Matcher matcher = _compassImport.matcher(css);
+
+		if (matcher.find()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private void readProcessStream(final InputStream is, final PrintStream ps) {
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					InputStreamReader isr = new InputStreamReader(is);
+					BufferedReader br = new BufferedReader(isr);
+					String line = null;
+
+					while ( (line = br.readLine()) != null) {
+						ps.println(line);
+					}
+
+					br.close();
+					isr.close();
+					is.close();
+				}
+				catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+			}
+
+		});
+
+		t.start();
 	}
 
 	private blade _blade;
+	private final Pattern
+		_compassImport = Pattern.compile("@import\\s*['\"]compass['\"];");
 	private MigrateThemeOptions _options;
 	private File _pluginsSDKThemesDir;
 	private File _themesDir;
