@@ -58,6 +58,11 @@ public class MigrateThemeCommandTest {
 
 		new bladenofail(ps).run(args);
 
+		File oldCompassTheme = new File(
+			workspace, "plugins-sdk/themes/compass-theme");
+
+		Assert.assertTrue(!oldCompassTheme.exists());
+
 		File compassTheme = new File(workspace, "themes/compass-theme");
 
 		Assert.assertTrue(compassTheme.exists());

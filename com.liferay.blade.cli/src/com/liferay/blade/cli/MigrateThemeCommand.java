@@ -34,6 +34,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -118,8 +119,9 @@ public class MigrateThemeCommand {
 						WordUtils.wrap(StringUtils.join(themes, ", "), 80));
 				}
 				else {
-					_blade.out().println("Good news! All your themes have " +
-						"already been migrated to " + _themesDir);
+					_blade.out().println(
+						"Good news! All your themes have already been " +
+							"migrated to " + _themesDir);
 				}
 			}
 		}
@@ -157,7 +159,7 @@ public class MigrateThemeCommand {
 
 		commands.add(
 			"yo liferay-theme:import -p \"" + themePath +
-			"\" -c " + compassSupport(themePath) + " --skip-install");
+				"\" -c " + compassSupport(themePath) + " --skip-install");
 
 		processBuilder.command(commands);
 
@@ -174,6 +176,10 @@ public class MigrateThemeCommand {
 		if (errCode == 0) {
 			_blade.out().println(
 				"Theme " + themePath + " migrated successfully");
+
+			File theme = new File(themePath);
+
+			FileUtils.deleteDirectory(theme);
 		}
 		else {
 			_blade.error("update: jpm exited with code: " + errCode);
