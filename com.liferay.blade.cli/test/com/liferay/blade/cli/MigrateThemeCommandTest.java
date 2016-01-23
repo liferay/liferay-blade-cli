@@ -89,7 +89,7 @@ public class MigrateThemeCommandTest {
 
 		File theme = new File(workspace, "plugins-sdk/themes/" + themeName);
 
-		File diffs = new File(theme, "/docroot/_diffs");
+		File diffs = new File(theme, "/docroot/_diffs/css");
 
 		diffs.mkdirs();
 

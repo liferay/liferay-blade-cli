@@ -197,17 +197,21 @@ public class MigrateThemeCommand {
 	private boolean compassSupport(String themePath) throws Exception {
 		File themeDir = new File(themePath);
 
-		File customCss = new File(themeDir, "docroot/_diffs/custom.css");
+		File customCss = new File(themeDir, "docroot/_diffs/css/custom.css");
+
+		if (!customCss.exists()) {
+			customCss = new File(themeDir, "docroot/_diffs/css/_custom.scss");
+		}
+
+		if (!customCss.exists()) {
+			return false;
+		}
 
 		String css = new String(Files.readAllBytes(customCss.toPath()));
 
 		Matcher matcher = _compassImport.matcher(css);
 
-		if (matcher.find()) {
-			return true;
-		}
-
-		return false;
+		return matcher.find();
 	}
 
 	private void readProcessStream(final InputStream is, final PrintStream ps) {
