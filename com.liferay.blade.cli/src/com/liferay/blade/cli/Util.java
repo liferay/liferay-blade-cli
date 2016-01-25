@@ -1,17 +1,15 @@
 package com.liferay.blade.cli;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 
 import java.nio.file.Files;
 
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
@@ -25,6 +23,21 @@ public class Util {
 
 	public static boolean isWindows() {
 		return System.getProperty("os.name").toLowerCase().equals("windows");
+	}
+
+	public static void useShell(ProcessBuilder processBuilder) {
+		Map<String, String> env = processBuilder.environment();
+
+		if (Util.isWindows()) {
+			processBuilder.command("cmd.exe");
+			processBuilder.command("/c");
+		}
+		else {
+			env.put("PATH", env.get("PATH") + ":/usr/local/bin");
+
+			processBuilder.command("sh");
+			processBuilder.command("-c");
+		}
 	}
 
 	protected static File findParentFile(

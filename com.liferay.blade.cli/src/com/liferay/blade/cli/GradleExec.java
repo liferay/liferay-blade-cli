@@ -2,10 +2,6 @@ package com.liferay.blade.cli;
 
 import java.io.File;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author David Truong
  */
@@ -35,24 +31,9 @@ public class GradleExec {
 	public int executeGradleCommand(String cmd) throws Exception {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 
-		List<String> commands = new ArrayList<>();
+		Util.useShell(processBuilder);
 
-		Map<String, String> env = processBuilder.environment();
-
-		if (Util.isWindows()) {
-			commands.add("cmd.exe");
-			commands.add("/c");
-		}
-		else {
-			env.put("PATH", env.get("PATH") + ":/usr/local/bin");
-
-			commands.add("sh");
-			commands.add("-c");
-		}
-
-		commands.add(_executable + " " + cmd);
-
-		processBuilder.command(commands);
+		processBuilder.command(_executable + " " + cmd);
 
 		processBuilder.inheritIO();
 

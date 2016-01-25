@@ -24,10 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+
 import java.nio.file.Files;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -140,26 +141,11 @@ public class MigrateThemeCommand {
 
 		processBuilder.directory(_themesDir);
 
-		List<String> commands = new ArrayList<>();
+		Util.useShell(processBuilder);
 
-		Map<String, String> env = processBuilder.environment();
-
-		if (Util.isWindows()) {
-			commands.add("cmd.exe");
-			commands.add("/c");
-		}
-		else {
-			env.put("PATH", env.get("PATH") + ":/usr/local/bin");
-
-			commands.add("sh");
-			commands.add("-c");
-		}
-
-		commands.add(
+		processBuilder.command(
 			"yo liferay-theme:import -p \"" + themePath +
 				"\" -c " + compassSupport(themePath) + " --skip-install");
-
-		processBuilder.command(commands);
 
 		Process process = processBuilder.start();
 
@@ -215,8 +201,7 @@ public class MigrateThemeCommand {
 	private void readProcessStream(final InputStream is, final PrintStream ps) {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				try (
-					InputStreamReader isr = new InputStreamReader(is);
+				try (InputStreamReader isr = new InputStreamReader(is);
 					BufferedReader br = new BufferedReader(isr)) {
 
 					String line = null;
@@ -231,6 +216,7 @@ public class MigrateThemeCommand {
 					ioe.printStackTrace();
 				}
 			}
+
 		});
 
 		t.start();
