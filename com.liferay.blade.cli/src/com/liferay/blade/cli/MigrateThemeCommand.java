@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-
 import java.nio.file.Files;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -217,24 +215,22 @@ public class MigrateThemeCommand {
 	private void readProcessStream(final InputStream is, final PrintStream ps) {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				try {
+				try (
 					InputStreamReader isr = new InputStreamReader(is);
-					BufferedReader br = new BufferedReader(isr);
+					BufferedReader br = new BufferedReader(isr)) {
+
 					String line = null;
 
 					while ( (line = br.readLine()) != null) {
 						ps.println(line);
 					}
 
-					br.close();
-					isr.close();
 					is.close();
 				}
 				catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
 			}
-
 		});
 
 		t.start();
