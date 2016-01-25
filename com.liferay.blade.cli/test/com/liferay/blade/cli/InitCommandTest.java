@@ -36,7 +36,7 @@ public class InitCommandTest {
 
 		assertTrue(new File(workspaceDir, "build.gradle").exists());
 
-		assertTrue(new File(workspaceDir, "modules/apps").exists());
+		assertTrue(new File(workspaceDir, "modules").exists());
 
 		assertFalse(new File(workspaceDir, "com").exists());
 	}
@@ -98,7 +98,7 @@ public class InitCommandTest {
 
 		assertTrue(new File(workspaceDir, "newproject/build.gradle").exists());
 
-		assertTrue(new File(workspaceDir, "newproject/modules/apps").exists());
+		assertTrue(new File(workspaceDir, "newproject/modules").exists());
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class InitCommandTest {
 
 		assertTrue(new File(workspaceDir, "newproject/build.gradle").exists());
 
-		assertTrue(new File(workspaceDir, "newproject/modules/apps").exists());
+		assertTrue(new File(workspaceDir, "newproject/modules").exists());
 	}
 
 	private void makeSDK(File dir) throws IOException {

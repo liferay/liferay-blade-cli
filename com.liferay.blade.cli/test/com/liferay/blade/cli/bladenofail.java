@@ -13,6 +13,7 @@ public class bladenofail extends blade {
 
 	public bladenofail(PrintStream out) throws UnsupportedEncodingException {
 		_out = out;
+		_err = out;
 	}
 
 	@Override
@@ -21,10 +22,16 @@ public class bladenofail extends blade {
 	}
 
 	@Override
+	public PrintStream err() {
+		return _err;
+	}
+
+	@Override
 	public PrintStream out() {
 		return _out;
 	}
 
+	private PrintStream _err;
 	private PrintStream _out;
 
 }

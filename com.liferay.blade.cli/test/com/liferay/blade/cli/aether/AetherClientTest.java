@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.eclipse.aether.artifact.Artifact;
+
 import org.junit.Test;
 
 /**
@@ -17,9 +18,8 @@ public class AetherClientTest {
 	public void testCheckLatestArchetypeVersionOffline() throws Exception {
 		AetherClient client = new AetherClient(null, "test-localrepo");
 
-		Artifact artifact =
-			client.findLatestAvailableArtifact(
-				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
+		Artifact artifact = client.findLatestAvailableArtifact(
+			"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
 		assertNotNull(artifact);
 
@@ -38,9 +38,8 @@ public class AetherClientTest {
 	public void testCheckLatestArchetypeVersionOnline() throws Exception {
 		AetherClient client = new AetherClient();
 
-		Artifact artifact =
-			client.findLatestAvailableArtifact(
-				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
+		Artifact artifact = client.findLatestAvailableArtifact(
+			"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
 		assertNotNull(artifact);
 
@@ -49,10 +48,9 @@ public class AetherClientTest {
 		assertNotNull(file);
 		assertTrue(file.exists());
 		assertTrue(
-			file.getName().startsWith(
-				"com.liferay.gradle.plugins.workspace"));
+			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
 		assertTrue(file.getName().endsWith("sources.jar"));
-		assertTrue(file.getName().contains("1.0.5"));
+		assertTrue(file.getName().contains("1.0.6"));
 	}
 
 }
