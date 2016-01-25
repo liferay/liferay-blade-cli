@@ -8,7 +8,10 @@ import java.io.InputStream;
 
 import java.nio.file.Files;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
@@ -19,6 +22,53 @@ import java.util.zip.ZipFile;
  * @author David Truong
  */
 public class Util {
+
+	public static boolean isWindows() {
+		return System.getProperty("os.name").toLowerCase().equals("windows");
+	}
+
+	public static void useShell(ProcessBuilder processBuilder, String cmd) {
+		Map<String, String> env = processBuilder.environment();
+
+		List<String> commands = new ArrayList<>();
+
+		if (Util.isWindows()) {
+			commands.add("cmd.exe");
+			commands.add("/c");
+		}
+		else {
+			env.put("PATH", env.get("PATH") + ":/usr/local/bin");
+
+			commands.add("sh");
+			commands.add("-c");
+		}
+
+		commands.add(cmd);
+
+		processBuilder.command(commands);
+	}
+
+	protected static File findParentFile(
+		File dir, String[] fileNames, boolean checkParents) {
+
+		if (dir == null) {
+			return null;
+		}
+
+		for (String fileName : fileNames) {
+			File file = new File(dir, fileName);
+
+			if (file.exists()) {
+				return dir;
+			}
+		}
+
+		if (checkParents) {
+			return findParentFile(dir.getParentFile(), fileNames, checkParents);
+		}
+
+		return null;
+	}
 
 	protected static Properties getGradleProperties(blade blade) {
 		return getGradleProperties(blade.getBase());
@@ -50,23 +100,36 @@ public class Util {
 		return gradlePropertiesFile;
 	}
 
+	protected static File getGradleWrapper(File dir) {
+		File gradleRoot = findParentFile(
+			dir,
+			new String[] {
+				_GRADLEW_UNIX_FILE_NAME, _GRADLEW_WINDOWS_FILE_NAME },
+			true);
+
+		if (gradleRoot != null) {
+			if (isWindows()) {
+				return new File(gradleRoot, _GRADLEW_WINDOWS_FILE_NAME);
+			}
+			else {
+				return new File(gradleRoot, _GRADLEW_UNIX_FILE_NAME);
+			}
+		}
+
+		return null;
+	}
+
 	protected static File getWorkspaceDir(blade blade) {
 		return getWorkspaceDir(blade.getBase());
 	}
 
-	protected static File getWorkspaceDir(File workDir) {
-		if (workDir == null) {
-			return null;
-		}
-
-		File propertiesFile = new File(workDir, _GRADLE_PROPERTIES_FILE_NAME);
-		File settingsFile = new File(workDir, _SETTINGS_GRADLE_FILE_NAME);
-
-		if (propertiesFile.exists() || settingsFile.exists()) {
-			return workDir;
-		}
-
-		return getWorkspaceDir(workDir.getParentFile());
+	protected static File getWorkspaceDir(File dir) {
+		return findParentFile(
+			dir,
+			new String[] {
+				_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME
+			},
+			true);
 	}
 
 	protected static boolean isWorkspace(blade blade) {
@@ -166,14 +229,14 @@ public class Util {
 		}
 	}
 
-	public static boolean isWindows() {
-		return System.getProperty("os.name").toLowerCase().equals("windows");
-	}
-
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
 
 	private static final String _GRADLE_PROPERTIES_FILE_NAME =
 		"gradle.properties";
+
+	private static final String _GRADLEW_UNIX_FILE_NAME = "gradlew";
+
+	private static final String _GRADLEW_WINDOWS_FILE_NAME = "gradlew.bat";
 
 	private static final String _SETTINGS_GRADLE_FILE_NAME = "settings.gradle";
 
