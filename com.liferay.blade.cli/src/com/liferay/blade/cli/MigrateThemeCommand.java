@@ -141,9 +141,8 @@ public class MigrateThemeCommand {
 
 		processBuilder.directory(_themesDir);
 
-		Util.useShell(processBuilder);
-
-		processBuilder.command(
+		Util.useShell(
+			processBuilder,
 			"yo liferay-theme:import -p \"" + themePath +
 				"\" -c " + compassSupport(themePath) + " --skip-install");
 

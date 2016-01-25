@@ -8,7 +8,9 @@ import java.io.InputStream;
 
 import java.nio.file.Files;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -25,19 +27,25 @@ public class Util {
 		return System.getProperty("os.name").toLowerCase().equals("windows");
 	}
 
-	public static void useShell(ProcessBuilder processBuilder) {
+	public static void useShell(ProcessBuilder processBuilder, String cmd) {
 		Map<String, String> env = processBuilder.environment();
 
+		List<String> commands = new ArrayList<>();
+
 		if (Util.isWindows()) {
-			processBuilder.command("cmd.exe");
-			processBuilder.command("/c");
+			commands.add("cmd.exe");
+			commands.add("/c");
 		}
 		else {
 			env.put("PATH", env.get("PATH") + ":/usr/local/bin");
 
-			processBuilder.command("sh");
-			processBuilder.command("-c");
+			commands.add("sh");
+			commands.add("-c");
 		}
+
+		commands.add(cmd);
+
+		processBuilder.command(commands);
 	}
 
 	protected static File findParentFile(

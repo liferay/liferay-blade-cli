@@ -31,9 +31,7 @@ public class GradleExec {
 	public int executeGradleCommand(String cmd) throws Exception {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 
-		Util.useShell(processBuilder);
-
-		processBuilder.command(_executable + " " + cmd);
+		Util.useShell(processBuilder, _executable + " " + cmd);
 
 		processBuilder.inheritIO();
 
