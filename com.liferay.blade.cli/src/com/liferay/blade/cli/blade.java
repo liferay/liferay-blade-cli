@@ -10,6 +10,7 @@ import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.AgentCommand.AgentOptions;
 import com.liferay.blade.cli.DeployCommand.DeployOptions;
+import com.liferay.blade.cli.GradleCommand.GradleOptions;
 import com.liferay.blade.cli.InitCommand.InitOptions;
 import com.liferay.blade.cli.MigrateThemeCommand.MigrateThemeOptions;
 import com.liferay.blade.cli.OpenCommand.OpenOptions;
@@ -71,6 +72,11 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	@Description("Deploys a bundle to the Liferay module framework.")
 	public void _deploy(DeployOptions options) throws Exception {
 		new DeployCommand(this, options).execute();
+	}
+
+	@Description("Execute gradle command.  Will use gradle wrapper if detected")
+	public void _gw(GradleOptions options) throws Exception {
+		new GradleCommand(this, options).execute();
 	}
 
 	@Description("Initializes a new Liferay 7 workspace")
