@@ -1,6 +1,7 @@
 package com.liferay.blade.cli;
 
 import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
 import aQute.remote.api.Agent;
@@ -24,10 +25,12 @@ public class ShellCommand {
 
 	final private blade _blade;
 	final private ShellOptions _options;
+	final private int _port;
 
 	public ShellCommand(blade blade, ShellOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
+		_port = options.port() != 0 ? options.port() : Agent.DEFAULT_PORT;
 	}
 
 	private void addError(String prefix, String msg) {
@@ -35,11 +38,12 @@ public class ShellCommand {
 	}
 
 	public void execute() throws Exception {
-		if (!canConnect("localhost", Agent.DEFAULT_PORT)) {
+		if (!canConnect("localhost", _port)) {
 			addError(
 				"sh",
-				"Unable to connect to remote agent. To install the agent " +
-				"bundle run the command \"blade agent install\".");
+				"Unable to connect to remote agent on port " + _port + ". " +
+				"To install the agent bundle run the command \"blade agent " +
+				"install\".");
 			return;
 		}
 
@@ -51,7 +55,7 @@ public class ShellCommand {
 	void executeCommand(String cmd) throws Exception {
 		ShellSupervisor supervisor = new ShellSupervisor(_blade);
 
-		supervisor.connect("localhost", Agent.DEFAULT_PORT);
+		supervisor.connect("localhost", _port);
 
 		if (!supervisor.getAgent().redirect(-1)) {
 			addError("sh", "Unable to redirect input to agent.");
@@ -126,6 +130,8 @@ public class ShellCommand {
 
 	@Arguments(arg = {"gogo-command", "args..."})
 	public interface ShellOptions extends Options {
+		@Description("The port to use to connect to remote agent")
+		public int port();
 	}
 
 }
