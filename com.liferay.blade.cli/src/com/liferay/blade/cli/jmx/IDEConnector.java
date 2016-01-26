@@ -26,8 +26,8 @@ public class IDEConnector extends JMXLocalConnector {
 
 		return mBeanServerConnection.invoke(
 			workspaceHelper, "openDir",
-			new Object[] { dir.getAbsoluteFile().getAbsolutePath() },
-			new String[] { String.class.getName() });
+			new Object[] {dir.getAbsoluteFile().getAbsolutePath()},
+			new String[] {String.class.getName()});
 	}
 
 	private static ObjectName getWorkspaceHelper(
