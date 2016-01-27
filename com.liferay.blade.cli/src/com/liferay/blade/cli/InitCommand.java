@@ -9,23 +9,23 @@ import com.liferay.blade.cli.aether.AetherClient;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
+
 import org.eclipse.aether.artifact.Artifact;
 
 /**
  * @author Gregory Amerson
  */
 public class InitCommand {
-
-	private final blade _blade;
-	private final InitOptions _options;
 
 	public InitCommand(blade blade, InitOptions options) throws Exception {
 		_blade = blade;
@@ -99,6 +99,50 @@ public class InitCommand {
 		}
 	}
 
+	public File getWorkspaceZip() throws Exception {
+		trace("Connecting to repository to find latest workspace template.");
+
+		final Artifact workspacePluginArtifact =
+			new AetherClient().findLatestAvailableArtifact(
+				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
+
+		trace("Found workspace template version " +
+			workspacePluginArtifact.getVersion() );
+
+		final File zipFile = workspacePluginArtifact.getFile();
+
+		return zipFile;
+	}
+
+	@Arguments(arg = "[name]")
+	public interface InitOptions extends Options {
+
+		public boolean force();
+
+	}
+
+	private void addError(String msg) {
+		_blade.addErrors("init", Collections.singleton(msg));
+	}
+
+	private boolean isPluginsSDK(File dir) {
+		if (dir == null || !dir.exists() || !dir.isDirectory()) {
+			return false;
+		}
+
+		List<String> names = Arrays.asList(dir.list());
+
+		return names != null &&
+			names.contains("portlets") &&
+			names.contains("hooks") &&
+			names.contains("layouttpl") &&
+			names.contains("themes") &&
+			names.contains("build.properties") &&
+			names.contains("build.xml") &&
+			names.contains("build-common.xml") &&
+			names.contains("build-common-plugin.xml");
+	}
+
 	private void moveContentsToDir(File src, File dest, final String sdkDirName)
 		throws IOException {
 
@@ -121,52 +165,11 @@ public class InitCommand {
 		FileUtils.moveDirectory(tempDir.toFile(), dest);
 	}
 
-	private boolean isPluginsSDK(File dir) {
-		if (dir == null || !dir.exists() || !dir.isDirectory()) {
-			return false;
-		}
-
-		List<String> names = Arrays.asList(dir.list());
-
-		return names != null &&
-			names.contains("portlets") &&
-			names.contains("hooks") &&
-			names.contains("layouttpl") &&
-			names.contains("themes") &&
-			names.contains("build.properties") &&
-			names.contains("build.xml") &&
-			names.contains("build-common.xml") &&
-			names.contains("build-common-plugin.xml");
-	}
-
-	public File getWorkspaceZip() throws Exception {
-		trace("Connecting to repository to find latest workspace template.");
-
-		final Artifact workspacePluginArtifact =
-			new AetherClient().findLatestAvailableArtifact(
-				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
-
-		trace("Found workspace template version " +
-			workspacePluginArtifact.getVersion() );
-
-		final File zipFile = workspacePluginArtifact.getFile();
-
-		return zipFile;
-	}
-
-	private void addError(String msg) {
-		_blade.addErrors("init", Collections.singleton(msg));
-	}
-
 	private void trace(String msg) {
 		_blade.trace("%s: %s", "init", msg);
 	}
 
-	@Arguments(arg = "[name]")
-	public interface InitOptions extends Options {
-
-		public boolean force();
-
-	}
+	private final blade _blade;
+	private final InitOptions _options;
 
 }

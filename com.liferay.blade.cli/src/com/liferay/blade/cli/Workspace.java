@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 /**
  * @author David Truong
  */
-
 public class Workspace {
 
 	public static final String DEFAULT_MODULES_DIR = "modules";

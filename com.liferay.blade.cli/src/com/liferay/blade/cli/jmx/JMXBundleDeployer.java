@@ -63,21 +63,21 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 
 		if (bundleId > -1) {
 			mBeanServerConnection.invoke(
-				framework, "stopBundle", new Object[] { bundleId },
-				new String[] { "long" });
+				framework, "stopBundle", new Object[] {bundleId},
+				new String[] {"long"});
 
-			Object[] params = new Object[] { bundleId, bundleUrl };
+			Object[] params = new Object[] {bundleId, bundleUrl};
 
 			mBeanServerConnection.invoke(
 				framework, "updateBundleFromURL", params,
-				new String[] { "long", String.class.getName() });
+				new String[] {"long", String.class.getName()});
 
 			mBeanServerConnection.invoke(
-				framework, "refreshBundle", new Object[] { bundleId },
-				new String[] { "long" });
+				framework, "refreshBundle", new Object[] {bundleId},
+				new String[] {"long"});
 		}
 		else {
-			Object[] params = new Object[] { bundleUrl, bundleUrl };
+			Object[] params = new Object[] {bundleUrl, bundleUrl};
 
 			String[] signature = new String[] {
 				String.class.getName(), String.class.getName()
@@ -90,8 +90,8 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		}
 
 		mBeanServerConnection.invoke(
-			framework, "startBundle", new Object[] { bundleId },
-			new String[] { "long" });
+			framework, "startBundle", new Object[] {bundleId},
+			new String[] {"long"});
 
 		return bundleId;
 	}
