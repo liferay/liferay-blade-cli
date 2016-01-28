@@ -130,6 +130,7 @@ public class ShellCommand {
 
 	@Arguments(arg = {"gogo-command", "args..."})
 	public interface ShellOptions extends Options {
+
 		@Description("The port to use to connect to remote agent")
 		public int port();
 	}

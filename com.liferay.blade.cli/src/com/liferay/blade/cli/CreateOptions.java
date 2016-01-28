@@ -44,7 +44,7 @@ public interface CreateOptions extends Options {
 	@Description(
 		"The project template to use when creating the project. The following" +
 			" templates are available: activator, jsphook, mvcportlet, " +
-			"portlet, service, servicebuilder, servicewrapper"
+				"portlet, service, servicebuilder, servicewrapper"
 	)
 	public Template template();
 
