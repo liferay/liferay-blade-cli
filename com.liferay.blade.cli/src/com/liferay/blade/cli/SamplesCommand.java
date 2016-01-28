@@ -21,15 +21,6 @@ import org.apache.commons.lang3.text.WordUtils;
  */
 public class SamplesCommand {
 
-	private static final String _BLADE_REPO_URL =
-		"https://github.com/rotty3000/blade/archive/master.zip";
-
-	private static final String _BLADE_REPO_ARCHIVE_NAME = "blade-master.zip";
-
-	private static final String _BLADE_REPO_NAME = "blade-master";
-
-	private static final long _FILE_EXPIRATION_TIME = 604800000;
-
 	public SamplesCommand(blade blade, SamplesOptions options)
 		throws Exception {
 
@@ -52,6 +43,14 @@ public class SamplesCommand {
 		else {
 			copySample(sampleName);
 		}
+	}
+
+	@Arguments(arg = {"[name]"})
+	public interface SamplesOptions extends Options {
+
+		@Description("The directory where to create the new project.")
+		public File dir();
+
 	}
 
 	private void copySample(String sampleName) throws Exception {
@@ -117,21 +116,22 @@ public class SamplesCommand {
 
 		_blade.out().println(
 			"Please provide the sample project name to create, " +
-			"e.g. \"blade samples blade.rest\"\n");
+				"e.g. \"blade samples blade.rest\"\n");
 		_blade.out().println("Currently available samples:");
 		_blade.out().println(
 			WordUtils.wrap(StringUtils.join(samples, ", "), 80));
 	}
 
-	@Arguments(arg = {"[name]"})
-	public interface SamplesOptions extends Options {
+	private static final String _BLADE_REPO_ARCHIVE_NAME = "blade-master.zip";
 
-		@Description("The directory where to create the new project.")
-		public File dir();
+	private static final String _BLADE_REPO_NAME = "blade-master";
 
-	}
+	private static final String _BLADE_REPO_URL =
+		"https://github.com/rotty3000/blade/archive/master.zip";
 
-	final private blade _blade;
+	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
-	final private SamplesOptions _options;
+	private final blade _blade;
+	private final SamplesOptions _options;
+
 }

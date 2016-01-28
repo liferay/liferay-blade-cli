@@ -192,8 +192,9 @@ public class CreateCommand {
 				subs);
 		}
 
-		_blade.out().println("Created the project " + name + " using the " +
-			template + " template in " + workDir);
+		_blade.out().println(
+			"Created the project " + name + " using the " + template +
+				" template in " + workDir);
 	}
 
 	private void addError(String prefix, String msg) {
@@ -267,7 +268,7 @@ public class CreateCommand {
 		Properties properties = Util.getGradleProperties(baseDir);
 
 		String modulesDirValue = (String)properties.get(
-			"liferay.workspace.modules.dir");
+			Workspace.DEFAULT_MODULES_DIR_PROPERTY);
 
 		if (modulesDirValue == null) {
 			modulesDirValue = Workspace.DEFAULT_MODULES_DIR;
