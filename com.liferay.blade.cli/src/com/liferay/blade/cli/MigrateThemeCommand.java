@@ -18,12 +18,7 @@ import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 
 import java.nio.file.Files;
 
@@ -56,7 +51,7 @@ public class MigrateThemeCommand {
 
 		if (gradleProperties != null) {
 			pluginsSDKDirPath = gradleProperties.getProperty(
-				"liferay.workspace.plugins.sdk.dir");
+				Workspace.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
 		}
 
 		if (pluginsSDKDirPath == null) {
@@ -70,7 +65,7 @@ public class MigrateThemeCommand {
 
 		if (gradleProperties != null) {
 			themesDirPath = gradleProperties.getProperty(
-				"liferay.workspace.themes.dir");
+				Workspace.DEFAULT_THEMES_DIR_PROPERTY);
 		}
 
 		if (themesDirPath == null) {
@@ -137,22 +132,11 @@ public class MigrateThemeCommand {
 	}
 
 	public void importTheme(String themePath) throws Exception {
-		ProcessBuilder processBuilder = new ProcessBuilder();
-
-		processBuilder.directory(_themesDir);
-
-		Util.useShell(
-			processBuilder,
-			"yo liferay-theme:import -p \"" + themePath +
-				"\" -c " + compassSupport(themePath) + " --skip-install");
-
-		Process process = processBuilder.start();
-
-		readProcessStream(process.getInputStream(), _blade.out());
-
-		readProcessStream(process.getErrorStream(), _blade.err());
-
-		process.getOutputStream().close();
+		Process process = Util.startProcess(
+			_blade,
+			"yo liferay-theme:import -p \"" + themePath + "\" -c " +
+				compassSupport(themePath) + " --skip-install",
+			_themesDir, false);
 
 		int errCode = process.waitFor();
 
@@ -165,7 +149,7 @@ public class MigrateThemeCommand {
 			FileUtils.deleteDirectory(theme);
 		}
 		else {
-			_blade.error("update: jpm exited with code: " + errCode);
+			_blade.error("blade exited with code: " + errCode);
 		}
 	}
 
@@ -195,30 +179,6 @@ public class MigrateThemeCommand {
 		Matcher matcher = _compassImport.matcher(css);
 
 		return matcher.find();
-	}
-
-	private void readProcessStream(final InputStream is, final PrintStream ps) {
-		Thread t = new Thread(new Runnable() {
-			public void run() {
-				try (InputStreamReader isr = new InputStreamReader(is);
-					BufferedReader br = new BufferedReader(isr)) {
-
-					String line = null;
-
-					while ( (line = br.readLine()) != null) {
-						ps.println(line);
-					}
-
-					is.close();
-				}
-				catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-			}
-
-		});
-
-		t.start();
 	}
 
 	private blade _blade;

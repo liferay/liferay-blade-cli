@@ -1,10 +1,13 @@
 package com.liferay.blade.cli;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 import java.nio.file.Files;
 
@@ -27,7 +30,34 @@ public class Util {
 		return System.getProperty("os.name").toLowerCase().equals("windows");
 	}
 
-	public static void useShell(ProcessBuilder processBuilder, String cmd) {
+	public static void readProcessStream(
+		final InputStream is, final PrintStream ps) {
+
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try (InputStreamReader isr = new InputStreamReader(is);
+					 BufferedReader br = new BufferedReader(isr)) {
+
+					String line = null;
+
+					while ( (line = br.readLine()) != null) {
+						ps.println(line);
+					}
+
+					is.close();
+				}
+
+				catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+			}
+
+		});
+
+		t.start();
+	}
+
+	public static void setShell(ProcessBuilder processBuilder, String cmd) {
 		Map<String, String> env = processBuilder.environment();
 
 		List<String> commands = new ArrayList<>();
@@ -46,6 +76,33 @@ public class Util {
 		commands.add(cmd);
 
 		processBuilder.command(commands);
+	}
+
+	public static Process startProcess(
+			blade blade, String command, File dir, boolean inheritIO)
+		throws Exception {
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+
+		if ((dir != null) && dir.exists()) {
+			processBuilder.directory(dir);
+		}
+
+		Util.setShell(processBuilder, command);
+
+		Process process = processBuilder.start();
+
+		if(inheritIO) {
+			processBuilder.inheritIO();
+		}
+		else {
+			readProcessStream(process.getInputStream(), blade.out());
+			readProcessStream(process.getErrorStream(), blade.err());
+		}
+
+		process.getOutputStream().close();
+
+		return process;
 	}
 
 	protected static File findParentFile(

@@ -8,6 +8,8 @@ import java.io.File;
 public class GradleExec {
 
 	public GradleExec(blade blade) {
+		_blade = blade;
+
 		File gradlew = Util.getGradleWrapper(blade.getBase());
 
 		if (gradlew != null) {
@@ -29,17 +31,13 @@ public class GradleExec {
 	}
 
 	public int executeGradleCommand(String cmd) throws Exception {
-		ProcessBuilder processBuilder = new ProcessBuilder();
-
-		Util.useShell(processBuilder, "\"" + _executable + "\" " + cmd);
-
-		processBuilder.inheritIO();
-
-		Process process = processBuilder.start();
+		Process process = Util.startProcess(
+			_blade, "\"" + _executable + "\" " + cmd, null, true);
 
 		return process.waitFor();
 	}
 
+	private blade _blade;
 	private String _executable;
 
 }
