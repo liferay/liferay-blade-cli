@@ -50,6 +50,11 @@ public class CreateCommandTest {
 
 		checkFileExists(projectPath + "/bnd.bnd");
 
+        contains(
+            checkFileExists( projectPath + "/bnd.bnd" ),
+            ".*^Bundle-SymbolicName: bar.activator.*$"
+            );
+
 		contains(
 			checkFileExists(
 				projectPath + "/src/main/java/bar/activator/BarActivator.java"),
@@ -96,9 +101,14 @@ public class CreateCommandTest {
 
 		checkFileExists(projectPath + "/bnd.bnd");
 
+        contains( checkFileExists( projectPath + "/bnd.bnd" ), ".*^Bundle-SymbolicName: foo.*$" );
+
 		contains(
 			checkFileExists(projectPath + "/src/main/java/foo/FooPortlet.java"),
-			".*^public class FooPortlet extends MVCPortlet.*$");
+		     new String[]{
+                    ".*javax.portlet.display-name=foo.*",
+                    ".*^public class FooPortlet extends MVCPortlet.*$"
+			    });
 
 		contains(
 			checkFileExists(projectPath + "/build.gradle"),
@@ -128,11 +138,15 @@ public class CreateCommandTest {
 
 		checkFileExists(projectPath + "/bnd.bnd");
 
+		contains( checkFileExists( projectPath + "/bnd.bnd" ), ".*^Bundle-SymbolicName: foo.*$");
+
 		contains(
 			checkFileExists(
-				projectPath + "/src/main/java/com/liferay/test/" +
-					"FooPortlet.java"),
-			".*^public class FooPortlet extends MVCPortlet.*$");
+				projectPath + "/src/main/java/com/liferay/test/FooPortlet.java"),
+			    new String[]{
+                  ".*javax.portlet.display-name=foo.*",
+                  ".*^public class FooPortlet extends MVCPortlet.*$"
+			    });
 
 		contains(
 			checkFileExists("generated/test/foo/build.gradle"),
@@ -159,6 +173,12 @@ public class CreateCommandTest {
 		checkFileExists(projectPath);
 
 		checkFileExists(projectPath + "/build.gradle");
+
+        checkFileExists(projectPath + "/bnd.bnd");
+
+        contains(
+            checkFileExists( projectPath + "/bnd.bnd" ),
+            ".*^Bundle-SymbolicName: gradle.test.*$" );
 
 		contains(
 			checkFileExists(
@@ -257,9 +277,11 @@ public class CreateCommandTest {
 				".*^public class FooAction implements LifecycleAction \\{.*"
 			});
 
-		contains(
-			checkFileExists(projectPath + "/bnd.bnd"),
-			".*com.liferay.portal.service;version=\"7.0.0\".*");
+        contains( checkFileExists( projectPath + "/bnd.bnd" ),
+            new String[] {
+                ".*^Bundle-SymbolicName: servicepreaction.*$",
+                ".*com.liferay.portal.service;version=\"7.0.0\".*"
+            } );
 	}
 
 	@Test
@@ -293,6 +315,7 @@ public class CreateCommandTest {
 		contains(
 			checkFileExists(projectPath + "/bnd.bnd"),
 			new String[] {
+			    ".*^Bundle-SymbolicName: serviceoverride.*$",
 				".*^Private-Package: \\\\.*^\tserviceoverride.*",
 				".*com.liferay.portal.service;version=\'7.0.0\'.*"
 			});
@@ -311,6 +334,11 @@ public class CreateCommandTest {
 		checkFileExists(projectPath);
 
 		checkFileExists(projectPath + "/bnd.bnd");
+
+        contains(
+            checkFileExists( projectPath + "/bnd.bnd" ),
+            ".*^Bundle-SymbolicName: hello.world.portlet.*$"
+            );
 
 		File portletFile = checkFileExists(
 			projectPath + "/src/main/java/hello/world/portlet/" +
@@ -391,7 +419,10 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(projectPath + "/gradle.test/bnd.bnd"),
-			".*^Private-Package: \\\\.*^\tgradle.test$.*");
+			new String[]{
+                ".*^Bundle-SymbolicName: gradle.test.*$",
+                ".*^Private-Package: \\\\.*^\tgradle.test$.*"
+			 });
 
 		lacks(
 			checkFileExists(projectPath + "/gradle.test/build.gradle"),
@@ -413,6 +444,11 @@ public class CreateCommandTest {
 		checkFileExists(projectPath + "/foo");
 
 		checkFileExists(projectPath + "/foo/bnd.bnd");
+
+		contains(
+            checkFileExists(projectPath + "/foo/bnd.bnd"),
+                            ".*^Bundle-SymbolicName: foo.*$"
+                            );
 
 		File portletFile = checkFileExists(
 			projectPath + "/foo/src/main/java/foo/FooPortlet.java");
