@@ -362,7 +362,7 @@ public class Util {
 		"build." + System.getProperty("user.name") + ".properties",
 		"build." + System.getenv("COMPUTERNAME") + ".properties",
 		"build." + System.getenv("HOST") + ".properties",
-		"build."  + System.getenv("HOSTNAME") + ".properties",
+		"build." + System.getenv("HOSTNAME") + ".properties",
 		"build.properties"
 	};
 

@@ -23,50 +23,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ShellCommand {
 
-	final private blade _blade;
-	final private ShellOptions _options;
-	final private int _port;
-
-	public ShellCommand(blade blade, ShellOptions options) throws Exception {
-		_blade = blade;
-		_options = options;
-		_port = options.port() != 0 ? options.port() : Agent.DEFAULT_PORT;
-	}
-
-	private void addError(String prefix, String msg) {
-		_blade.addErrors(prefix, Collections.singleton(msg));
-	}
-
-	public void execute() throws Exception {
-		if (!canConnect("localhost", _port)) {
-			addError(
-				"sh",
-				"Unable to connect to remote agent on port " + _port + ". " +
-				"To install the agent bundle run the command \"blade agent " +
-				"install\".");
-			return;
-		}
-
-		String gogoCommand = StringUtils.join(_options._arguments(), " ");
-
-		executeCommand(gogoCommand);
-	}
-
-	void executeCommand(String cmd) throws Exception {
-		ShellSupervisor supervisor = new ShellSupervisor(_blade);
-
-		supervisor.connect("localhost", _port);
-
-		if (!supervisor.getAgent().redirect(-1)) {
-			addError("sh", "Unable to redirect input to agent.");
-			return;
-		}
-
-		supervisor.getAgent().stdin(cmd);
-		supervisor.close();
-	}
-
-	static boolean canConnect(String host, int port) {
+	public static boolean canConnect(String host, int port) {
 		InetSocketAddress address = new InetSocketAddress(
 			host, Integer.valueOf( port ));
 		InetSocketAddress local = new InetSocketAddress(0);
@@ -83,8 +40,7 @@ public class ShellCommand {
 		catch ( Exception e ) {
 		}
 
-		finally
-		{
+		finally {
 			if ( in != null ) {
 				try {
 					in.close();
@@ -97,35 +53,25 @@ public class ShellCommand {
 		return false;
 	}
 
-	public class ShellSupervisor extends AgentSupervisor<Supervisor, Agent>implements Supervisor
-	{
-		private final blade _blade;
+	public ShellCommand(blade blade, ShellOptions options) throws Exception {
+		_blade = blade;
+		_options = options;
+		_port = options.port() != 0 ? options.port() : Agent.DEFAULT_PORT;
+	}
 
-		public ShellSupervisor(blade blade) {
-
-			super();
-			_blade = blade;
+	public void execute() throws Exception {
+		if (!canConnect("localhost", _port)) {
+			addError(
+				"sh",
+				"Unable to connect to remote agent on port " + _port + ". " +
+					"To install the agent bundle run the command \"blade " +
+						"agent install\".");
+			return;
 		}
 
-	@Override
-	public boolean stdout(String out) throws Exception {
-		_blade.out().print(out.replaceAll(".*>.*$", ""));
-	return true;
-	}
+		String gogoCommand = StringUtils.join(_options._arguments(), " ");
 
-	@Override
-	public boolean stderr(String out) throws Exception {
-		_blade.err().print(out);
-	return true;
-	}
-
-	public void connect(String host, int port) throws Exception {
-	super.connect(Agent.class, this, host, port);
-	}
-
-	@Override
-	public void event(Event e) throws Exception {
-	}
+		executeCommand(gogoCommand);
 	}
 
 	@Arguments(arg = {"gogo-command", "args..."})
@@ -133,6 +79,60 @@ public class ShellCommand {
 
 		@Description("The port to use to connect to remote agent")
 		public int port();
+
 	}
+
+	public class ShellSupervisor
+		extends AgentSupervisor<Supervisor, Agent>implements Supervisor {
+
+		public ShellSupervisor(blade blade) {
+			_blade = blade;
+		}
+
+		public void connect(String host, int port) throws Exception {
+			super.connect(Agent.class, this, host, port);
+		}
+
+		@Override
+		public void event(Event e) throws Exception {
+		}
+
+		@Override
+		public boolean stderr(String out) throws Exception {
+			_blade.err().print(out);
+			return true;
+		}
+
+		@Override
+		public boolean stdout(String out) throws Exception {
+			_blade.out().print(out.replaceAll(".*>.*$", ""));
+			return true;
+		}
+
+		private final blade _blade;
+
+	}
+
+	private void addError(String prefix, String msg) {
+		_blade.addErrors(prefix, Collections.singleton(msg));
+	}
+
+	private void executeCommand(String cmd) throws Exception {
+		ShellSupervisor supervisor = new ShellSupervisor(_blade);
+
+		supervisor.connect("localhost", _port);
+
+		if (!supervisor.getAgent().redirect(-1)) {
+			addError("sh", "Unable to redirect input to agent.");
+			return;
+		}
+
+		supervisor.getAgent().stdin(cmd);
+		supervisor.close();
+	}
+
+	private final blade _blade;
+	private final ShellOptions _options;
+	private final int _port;
 
 }
