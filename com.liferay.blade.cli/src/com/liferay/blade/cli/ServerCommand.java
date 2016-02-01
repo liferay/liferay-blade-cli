@@ -1,6 +1,5 @@
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
@@ -22,32 +21,33 @@ public class ServerCommand {
 	}
 
 	public void execute() throws Exception {
-		File gradleWrapper = Util.getGradleWrapper(_blade.getBase());
+		if (_options.background() || _options.debug() || _options.run() ||
+			_options.stop() || _options.tail()) {
 
-		File rootDir = gradleWrapper.getParentFile();
-
-		executeCommand(rootDir);
+			executeCommand();
+		}
+		else {
+			Util.printHelp(_blade, _options, "server", ServerOptions.class);
+		}
 	}
 
-	@Arguments(arg = {"[serverType]"})
+	@Description("Start server set in app.server.properties, " +
+		"build.properties, or gradle.properties")
 	public interface ServerOptions extends Options {
+
+		@Description("Start server in background")
+		public boolean background();
 
 		@Description("Start server in debug mode")
 		public boolean debug();
 
-		@Description("Restart server")
-		public boolean restart();
-
 		@Description("Run server in current window")
 		public boolean run();
 
-		@Description("Start server in background")
-		public boolean start();
-
-		@Description("Stop server")
+		@Description("Stop server that's running in background")
 		public boolean stop();
 
-		@Description("Tail server")
+		@Description("Tail a running server")
 		public boolean tail();
 
 	}
@@ -71,6 +71,8 @@ public class ServerCommand {
 				}
 			}
 		}
+
+		_blade.error(serverType + " not supported");
 	}
 
 	private void commmandJBossWildfly(File dir) throws Exception {
@@ -111,36 +113,23 @@ public class ServerCommand {
 			executable = "catalina.bat";
 		}
 
-		if (_options.debug()) {
+		if (_options.background()) {
+			Process process = Util.startProcess(
+				_blade, executable + " start", new File(dir, "bin"),
+				enviroment);
+
+			process.waitFor();
+		}
+		else if (_options.debug()) {
 			Process process = Util.startProcess(
 				_blade, executable + " jpda run", new File(dir, "bin"),
 				enviroment);
 
 			process.waitFor();
 		}
-		else if (_options.restart()) {
-			Process process = Util.startProcess(
-				_blade, executable + " stop 60 -force", new File(dir, "bin"),
-				enviroment);
-
-			if (process.waitFor() == 0) {
-				process = Util.startProcess(
-					_blade, executable + " start", new File(dir, "bin"),
-					enviroment);
-
-				process.waitFor();
-			}
-		}
 		else if (_options.run()) {
 			Process process = Util.startProcess(
 				_blade, executable + " run", new File(dir, "bin"), enviroment);
-
-			process.waitFor();
-		}
-		else if (_options.start()) {
-			Process process = Util.startProcess(
-				_blade, executable + " start", new File(dir, "bin"),
-				enviroment);
 
 			process.waitFor();
 		}
@@ -150,10 +139,6 @@ public class ServerCommand {
 				enviroment);
 
 			process.waitFor();
-		}
-		else {
-			_blade.error(
-				"Tomcat supports start, stop, restart, debug, and run flag");
 		}
 
 		if (_options.tail()) {
@@ -165,10 +150,12 @@ public class ServerCommand {
 		}
 	}
 
-	private void executeCommand(File rootDir) throws Exception {
-		List<String> args = _options._arguments();
+	private void executeCommand() throws Exception {
+		File gradleWrapper = Util.getGradleWrapper(_blade.getBase());
 
-		String serverType = args.size() > 0 ? args.get(0) : null;
+		File rootDir = gradleWrapper.getParentFile();
+
+		String serverType = null;
 
 		if (Util.isWorkspace(rootDir)) {
 			Properties properties = Util.getGradleProperties(rootDir);
@@ -176,22 +163,20 @@ public class ServerCommand {
 			String liferayHomePath = properties.getProperty(
 				Workspace.DEFAULT_LIFERAY_HOME_DIR_PROPERTY);
 
-			if (liferayHomePath == null || liferayHomePath.equals("")) {
+			if ((liferayHomePath == null) || liferayHomePath.equals("")) {
 				liferayHomePath = Workspace.DEFAULT_LIFERAY_HOME_DIR;
 			}
 
+			serverType = properties.getProperty(
+				Workspace.DEFAULT_BUNDLE_ARTIFACT_NAME_PROPERTY);
+
 			if (serverType == null) {
-				serverType = properties.getProperty(
-					Workspace.DEFAULT_BUNDLE_ARTIFACT_NAME_PROPERTY);
-
-				if (serverType == null) {
-					serverType = Workspace.DEFAULT_BUNDLE_ARTIFACT_NAME;
-				}
-
-				serverType = serverType.replace("portal-", "");
-
-				serverType = serverType.replace("-bundle", "");
+				serverType = Workspace.DEFAULT_BUNDLE_ARTIFACT_NAME;
 			}
+
+			serverType = serverType.replace("portal-", "");
+
+			serverType = serverType.replace("-bundle", "");
 
 			commandServer(new File(rootDir, liferayHomePath), serverType);
 		}
@@ -232,7 +217,7 @@ public class ServerCommand {
 				}
 
 				if (appServerParentDir.startsWith(".") ||
-					(Character.isLowerCase(appServerParentDir.charAt(0)))) {
+					Character.isLowerCase(appServerParentDir.charAt(0))) {
 
 					commandServer(
 						new File(rootDir, appServerParentDir), serverType);

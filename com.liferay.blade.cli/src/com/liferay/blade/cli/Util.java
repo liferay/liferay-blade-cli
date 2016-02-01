@@ -1,5 +1,8 @@
 package com.liferay.blade.cli;
 
+import aQute.lib.getopt.Options;
+import aQute.lib.justif.Justif;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +16,7 @@ import java.nio.file.Files;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -168,6 +172,22 @@ public class Util {
 		}
 		catch (Exception e) {
 			return false;
+		}
+	}
+
+	public static void printHelp(
+			blade blade, Options options, String cmd,
+			Class< ? extends Options> optionClass)
+		throws Exception {
+
+		Justif j = new Justif();
+
+		try (Formatter f = j.formatter()) {
+			options._command().help(f, null, cmd, optionClass);
+
+			j.wrap();
+
+			blade.err().println(f);
 		}
 	}
 
