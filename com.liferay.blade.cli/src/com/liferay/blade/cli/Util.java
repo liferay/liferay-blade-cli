@@ -26,8 +26,153 @@ import java.util.zip.ZipFile;
  */
 public class Util {
 
+	public static final String APP_SERVER_PARENT_DIR_PROPERTY =
+		"app.server.parent.dir";
+
+	public static final String APP_SERVER_TYPE_PROPERTY = "app.server.type";
+
+	public static File findParentFile(
+		File dir, String[] fileNames, boolean checkParents) {
+
+		if (dir == null) {
+			return null;
+		}
+
+		for (String fileName : fileNames) {
+			File file = new File(dir, fileName);
+
+			if (file.exists()) {
+				return dir;
+			}
+		}
+
+		if (checkParents) {
+			return findParentFile(dir.getParentFile(), fileNames, checkParents);
+		}
+
+		return null;
+	}
+
+	public static List<Properties> getAppServerProperties(File dir) {
+		File projectRoot = findParentFile(
+			dir, _APP_SERVER_PROPERTIES_FILE_NAMES, true);
+
+		List<Properties> properties = new ArrayList<>();
+
+		for (String fileName : _APP_SERVER_PROPERTIES_FILE_NAMES) {
+			File file = new File(projectRoot, fileName);
+
+			if (file.exists()) {
+				properties.add(getProperties(file));
+			}
+		}
+
+		return properties;
+	}
+
+	public static Properties getGradleProperties(File dir) {
+		File file = getGradlePropertiesFile(dir);
+
+		return getProperties(file);
+	}
+
+	public static File getGradlePropertiesFile(File dir) {
+		File gradlePropertiesFile = new File(
+			getWorkspaceDir(dir), _GRADLE_PROPERTIES_FILE_NAME);
+
+		return gradlePropertiesFile;
+	}
+
+	public static File getGradleWrapper(File dir) {
+		File gradleRoot = findParentFile(
+			dir,
+			new String[] {
+				_GRADLEW_UNIX_FILE_NAME, _GRADLEW_WINDOWS_FILE_NAME },
+			true);
+
+		if (gradleRoot != null) {
+			if (isWindows()) {
+				return new File(gradleRoot, _GRADLEW_WINDOWS_FILE_NAME);
+			}
+			else {
+				return new File(gradleRoot, _GRADLEW_UNIX_FILE_NAME);
+			}
+		}
+
+		return null;
+	}
+
+	public static Properties getProperties(File file) {
+		try (InputStream inputStream = new FileInputStream(file)) {
+			Properties properties = new Properties();
+
+			properties.load(inputStream);
+
+			return properties;
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static File getWorkspaceDir(blade blade) {
+		return getWorkspaceDir(blade.getBase());
+	}
+
+	public static File getWorkspaceDir(File dir) {
+		return findParentFile(
+			dir,
+			new String[] {
+				_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME
+			},
+			true);
+	}
+
 	public static boolean isWindows() {
 		return System.getProperty("os.name").toLowerCase().equals("windows");
+	}
+
+	public static boolean isWorkspace(blade blade) {
+		return isWorkspace(blade.getBase());
+	}
+
+	public static boolean isWorkspace(File dir) {
+		File workspaceDir = getWorkspaceDir(dir);
+
+		File gradleFile = new File(workspaceDir, _SETTINGS_GRADLE_FILE_NAME);
+
+		if (!gradleFile.exists()) {
+			return false;
+		}
+
+		try {
+			String script = read(gradleFile);
+
+			Matcher matcher = Workspace.PATTERN_WORKSPACE_PLUGIN.matcher(
+				script);
+
+			if (matcher.find()) {
+				return true;
+			}
+			else {
+				//For workspace plugin < 1.0.5
+
+				gradleFile = new File(workspaceDir, _BUILD_GRADLE_FILE_NAME);
+
+				script = read(gradleFile);
+
+				matcher = Workspace.PATTERN_WORKSPACE_PLUGIN.matcher(script);
+
+				return matcher.find();
+			}
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+
+	public static String read(File file) throws IOException {
+		return new String(Files.readAllBytes(file.toPath()));
 	}
 
 	public static void readProcessStream(
@@ -78,24 +223,53 @@ public class Util {
 		processBuilder.command(commands);
 	}
 
+	public static Process startProcess(blade blade, String command)
+		throws Exception {
+
+		return startProcess(blade, command, null, null, true);
+	}
+
 	public static Process startProcess(
 			blade blade, String command, File dir, boolean inheritIO)
 		throws Exception {
 
+		return startProcess(blade, command, dir, null, inheritIO);
+	}
+
+	public static Process startProcess(
+			blade blade, String command, File dir,
+			Map<String, String> environment)
+		throws Exception {
+
+		return startProcess(blade, command, dir, environment, true);
+	}
+
+	public static Process startProcess(
+			blade blade, String command, File dir,
+			Map<String, String> environment, boolean inheritIO)
+		throws Exception {
+
 		ProcessBuilder processBuilder = new ProcessBuilder();
+
+		Map<String, String> env = processBuilder.environment();
+
+		if (environment != null) {
+			env.putAll(environment);
+		}
 
 		if ((dir != null) && dir.exists()) {
 			processBuilder.directory(dir);
 		}
 
-		Util.setShell(processBuilder, command);
-
-		Process process = processBuilder.start();
+		setShell(processBuilder, command);
 
 		if(inheritIO) {
 			processBuilder.inheritIO();
 		}
-		else {
+
+		Process process = processBuilder.start();
+
+		if (!inheritIO) {
 			readProcessStream(process.getInputStream(), blade.out());
 			readProcessStream(process.getErrorStream(), blade.err());
 		}
@@ -105,134 +279,7 @@ public class Util {
 		return process;
 	}
 
-	protected static File findParentFile(
-		File dir, String[] fileNames, boolean checkParents) {
-
-		if (dir == null) {
-			return null;
-		}
-
-		for (String fileName : fileNames) {
-			File file = new File(dir, fileName);
-
-			if (file.exists()) {
-				return dir;
-			}
-		}
-
-		if (checkParents) {
-			return findParentFile(dir.getParentFile(), fileNames, checkParents);
-		}
-
-		return null;
-	}
-
-	protected static Properties getGradleProperties(blade blade) {
-		return getGradleProperties(blade.getBase());
-	}
-
-	protected static Properties getGradleProperties(File workDir) {
-		File propertiesFile = getGradlePropertiesFile(workDir);
-
-		try (InputStream inputStream = new FileInputStream(propertiesFile)) {
-			Properties properties = new Properties();
-
-			properties.load(inputStream);
-
-			return properties;
-		}
-		catch (Exception e) {
-			return null;
-		}
-	}
-
-	protected static File getGradlePropertiesFile(blade blade) {
-		return getGradlePropertiesFile(blade.getBase());
-	}
-
-	protected static File getGradlePropertiesFile(File workDir) {
-		File gradlePropertiesFile = new File(
-			getWorkspaceDir(workDir), _GRADLE_PROPERTIES_FILE_NAME);
-
-		return gradlePropertiesFile;
-	}
-
-	protected static File getGradleWrapper(File dir) {
-		File gradleRoot = findParentFile(
-			dir,
-			new String[] {
-				_GRADLEW_UNIX_FILE_NAME, _GRADLEW_WINDOWS_FILE_NAME },
-			true);
-
-		if (gradleRoot != null) {
-			if (isWindows()) {
-				return new File(gradleRoot, _GRADLEW_WINDOWS_FILE_NAME);
-			}
-			else {
-				return new File(gradleRoot, _GRADLEW_UNIX_FILE_NAME);
-			}
-		}
-
-		return null;
-	}
-
-	protected static File getWorkspaceDir(blade blade) {
-		return getWorkspaceDir(blade.getBase());
-	}
-
-	protected static File getWorkspaceDir(File dir) {
-		return findParentFile(
-			dir,
-			new String[] {
-				_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME
-			},
-			true);
-	}
-
-	protected static boolean isWorkspace(blade blade) {
-		return isWorkspace(blade.getBase());
-	}
-
-	protected static boolean isWorkspace(File workDir) {
-		File workspaceDir = getWorkspaceDir(workDir);
-
-		File gradleFile = new File(workspaceDir, _SETTINGS_GRADLE_FILE_NAME);
-
-		if (!gradleFile.exists()) {
-			return false;
-		}
-
-		try {
-			String script = read(gradleFile);
-
-			Matcher matcher = Workspace.PATTERN_WORKSPACE_PLUGIN.matcher(
-				script);
-
-			if (matcher.find()) {
-				return true;
-			}
-			else {
-				//For workspace plugin < 1.0.5
-
-				gradleFile = new File(workspaceDir, _BUILD_GRADLE_FILE_NAME);
-
-				script = read(gradleFile);
-
-				matcher = Workspace.PATTERN_WORKSPACE_PLUGIN.matcher(script);
-
-				return matcher.find();
-			}
-		}
-		catch (Exception e) {
-			return false;
-		}
-	}
-
-	protected static String read(File file) throws IOException {
-		return new String(Files.readAllBytes(file.toPath()));
-	}
-
-	protected static void unzip(File srcFile, File destDir, String entryToStart)
+	public static void unzip(File srcFile, File destDir, String entryToStart)
 		throws IOException {
 
 		try (final ZipFile zip = new ZipFile(srcFile)) {
@@ -285,6 +332,19 @@ public class Util {
 			}
 		}
 	}
+
+	private static final String[] _APP_SERVER_PROPERTIES_FILE_NAMES = {
+		"app.server." + System.getProperty("user.name") + ".properties",
+		"app.server." + System.getenv("COMPUTERNAME") + ".properties",
+		"app.server." + System.getenv("HOST") + ".properties",
+		"app.server." + System.getenv("HOSTNAME") + ".properties",
+		"app.server.properties",
+		"build." + System.getProperty("user.name") + ".properties",
+		"build." + System.getenv("COMPUTERNAME") + ".properties",
+		"build." + System.getenv("HOST") + ".properties",
+		"build."  + System.getenv("HOSTNAME") + ".properties",
+		"build.properties"
+	};
 
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
 

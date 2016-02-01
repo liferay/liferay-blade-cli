@@ -7,6 +7,17 @@ import java.util.regex.Pattern;
  */
 public class Workspace {
 
+	public static final String DEFAULT_BUNDLE_ARTIFACT_NAME =
+		"portal-tomcat-bundle";
+
+	public static final String DEFAULT_BUNDLE_ARTIFACT_NAME_PROPERTY =
+		"liferay.workspace.bundle.artifact.name";
+
+	public static final String DEFAULT_LIFERAY_HOME_DIR = "bundles";
+
+	public static final String DEFAULT_LIFERAY_HOME_DIR_PROPERTY =
+		"liferay.workspace.home.dir";
+
 	public static final String DEFAULT_MODULES_DIR = "modules";
 
 	public static final String DEFAULT_MODULES_DIR_PROPERTY =
