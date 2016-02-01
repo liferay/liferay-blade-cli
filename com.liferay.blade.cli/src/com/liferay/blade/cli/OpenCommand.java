@@ -21,7 +21,7 @@ public class OpenCommand {
 	}
 
 	public void execute() throws Exception {
-		doExecute();
+		executeCommand();
 	}
 
 	@Arguments(arg = "file or directory to open/import")
@@ -37,7 +37,7 @@ public class OpenCommand {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private void doExecute() throws Exception {
+	private void executeCommand() throws Exception {
 		File fileName = new File(_options._arguments().get(0));
 
 		if (!fileName.exists()) {
@@ -73,9 +73,6 @@ public class OpenCommand {
 			}
 		}
 	}
-
-	private final blade _blade;
-	private final OpenOptions _options;
 
 	private final blade _blade;
 	private final OpenOptions _options;
