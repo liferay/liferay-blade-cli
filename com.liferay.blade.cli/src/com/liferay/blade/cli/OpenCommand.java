@@ -9,8 +9,6 @@ import com.liferay.blade.cli.jmx.IDEConnector;
 import java.io.File;
 
 import java.util.Collections;
-import java.util.Formatter;
-import java.util.List;
 
 /**
  * @author Gregory Amerson
@@ -23,17 +21,7 @@ public class OpenCommand {
 	}
 
 	public void execute() throws Exception {
-		List<String> args = _options._arguments();
-
-		if (args.size() == 0) {
-
-			// Default command
-
-			printHelp();
-		}
-		else {
-			doExecute();
-		}
+		doExecute();
 	}
 
 	@Arguments(arg = "file or directory to open/import")
@@ -86,12 +74,8 @@ public class OpenCommand {
 		}
 	}
 
-	private void printHelp() throws Exception {
-		Formatter f = new Formatter();
-		_options._command().help(f, this);
-		_blade.out().println(f);
-		f.close();
-	}
+	private final blade _blade;
+	private final OpenOptions _options;
 
 	private final blade _blade;
 	private final OpenOptions _options;
