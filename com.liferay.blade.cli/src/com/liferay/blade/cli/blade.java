@@ -15,6 +15,7 @@ import com.liferay.blade.cli.InitCommand.InitOptions;
 import com.liferay.blade.cli.MigrateThemeCommand.MigrateThemeOptions;
 import com.liferay.blade.cli.OpenCommand.OpenOptions;
 import com.liferay.blade.cli.SamplesCommand.SamplesOptions;
+import com.liferay.blade.cli.ServerCommand.ServerOptions;
 import com.liferay.blade.cli.ShellCommand.ShellOptions;
 import com.liferay.blade.cli.UpdateCommand.UpdateOptions;
 
@@ -97,6 +98,11 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	@Description("Generate a sample project")
 	public void _samples(SamplesOptions options) throws Exception {
 		new SamplesCommand(this, options).execute();
+	}
+
+	@Description("Start or stop your server")
+	public void _server(ServerOptions options) throws Exception {
+		new ServerCommand(this, options).execute();
 	}
 
 	@Description(

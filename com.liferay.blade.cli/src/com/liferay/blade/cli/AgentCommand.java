@@ -74,7 +74,7 @@ public class AgentCommand {
 		if ((files == null) || (files.length == 0)) {
 			addError(
 				"Unable to find remote agent from remote repository. " +
-				"Please ensure internet connectivity.");
+					"Please ensure internet connectivity.");
 			return;
 		}
 
@@ -86,7 +86,7 @@ public class AgentCommand {
 			if (!modulesDir.exists()) {
 				addError(
 					"Could not find modules dir at " +
-					modulesDir.getAbsolutePath());
+						modulesDir.getAbsolutePath());
 				return;
 			}
 
@@ -101,9 +101,9 @@ public class AgentCommand {
 				}
 				catch (Exception e) {
 					addError(
-						"Unable to connect to Liferay using JMX.  Please " +
-						"try again and specify the Liferay home folder using " +
-						"the -l option.");
+						"Unable to connect to Liferay using JMX.  Please try " +
+							"again and specify the Liferay home folder using " +
+								"the -l option.");
 					return;
 				}
 			}
@@ -114,8 +114,8 @@ public class AgentCommand {
 				catch (Exception e) {
 					addError(
 						"Unable to connect to Liferay using JDK attach API, " +
-						"please specify a port for JMX or specify Liferay " +
-						"home folder -l option.");
+							"please specify a port for JMX or specify " +
+								"Liferay home folder -l option.");
 					return;
 				}
 			}
@@ -143,7 +143,7 @@ public class AgentCommand {
 		if (!modulesDir.exists()) {
 			addError(
 				"Could not find modules dir at " +
-				modulesDir.getAbsolutePath());
+					modulesDir.getAbsolutePath());
 			return;
 		}
 
@@ -164,7 +164,7 @@ public class AgentCommand {
 			if (!agentJar.delete()) {
 				addError(
 					"Could not delete remote agent jar " +
-					agentJar.getAbsolutePath());
+						agentJar.getAbsolutePath());
 				return;
 			}
 		}

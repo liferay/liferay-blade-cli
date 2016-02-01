@@ -8,6 +8,8 @@ import aQute.lib.io.IO;
 import java.io.File;
 
 import java.nio.file.Files;
+import java.util.List;
+import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -74,6 +76,27 @@ public class UtilTest {
 		Files.write(buildFile.toPath(), plugin.getBytes());
 
 		assertTrue(Util.isWorkspace(workspace));
+	}
+
+	@Test
+	public void testAppServerProperties() throws Exception {
+		File dir = new File("generated/test");
+
+		dir.mkdirs();
+
+		File appServerProperty1 = new File(
+			dir,
+			"app.server." + System.getProperty("user.name") + ".properties");
+
+		appServerProperty1.createNewFile();
+
+		File appServerProperty2 = new File(dir, "app.server.properties");
+
+		appServerProperty2.createNewFile();
+
+		List<Properties> propertiesList = Util.getAppServerProperties(dir);
+
+		assertTrue(propertiesList.size() == 2);
 	}
 
 }

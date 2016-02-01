@@ -21,7 +21,7 @@ public class UpdateCommand {
 		final String jarPath = args.size() > 0 ? args.get(0) : _DEFAULT_URL;
 
 		Process process = Util.startProcess(
-			_blade, "jpm install -f " + jarPath, null, true);
+			_blade, "jpm install -f " + jarPath);
 
 		int errCode = process.waitFor();
 

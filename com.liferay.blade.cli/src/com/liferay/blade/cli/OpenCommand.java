@@ -17,9 +17,6 @@ import java.util.List;
  */
 public class OpenCommand {
 
-	final private blade _blade;
-	final private OpenOptions _options;
-
 	public OpenCommand(blade blade, OpenOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
@@ -56,8 +53,9 @@ public class OpenCommand {
 		File fileName = new File(_options._arguments().get(0));
 
 		if (!fileName.exists()) {
-			addError("open", "Unable to find specified file " +
-				fileName.getAbsolutePath());
+			addError(
+				"open",
+				"Unable to find specified file " + fileName.getAbsolutePath());
 			return;
 		}
 
@@ -94,5 +92,8 @@ public class OpenCommand {
 		_blade.out().println(f);
 		f.close();
 	}
+
+	private final blade _blade;
+	private final OpenOptions _options;
 
 }

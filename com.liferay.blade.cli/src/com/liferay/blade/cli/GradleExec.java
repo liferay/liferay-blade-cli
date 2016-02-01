@@ -32,7 +32,7 @@ public class GradleExec {
 
 	public int executeGradleCommand(String cmd) throws Exception {
 		Process process = Util.startProcess(
-			_blade, "\"" + _executable + "\" " + cmd, null, true);
+			_blade, "\"" + _executable + "\" " + cmd);
 
 		return process.waitFor();
 	}

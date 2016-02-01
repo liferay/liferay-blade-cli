@@ -49,8 +49,9 @@ public class InitCommand {
 
 		if (destDir.exists()) {
 			if (isPluginsSDK(destDir)) {
-				trace("Found plugins-sdk, moving contents to new subdirectory " +
-					"and initing workspace.");
+				trace(
+					"Found plugins-sdk, moving contents to new subdirectory " +
+						"and initing workspace.");
 
 				moveContentsToDir(
 					destDir, new File(destDir, "plugins-sdk"), "plugins-sdk");
@@ -62,8 +63,9 @@ public class InitCommand {
 				else {
 					addError(
 						destDir.getAbsolutePath() +
-						" contains files, please move them before continuing or " +
-						"use -f (--force) option to init workspace anyways.");
+						" contains files, please move them before continuing " +
+							"or use -f (--force) option to init workspace " +
+								"anyways.");
 					return;
 				}
 			}
@@ -79,7 +81,8 @@ public class InitCommand {
 
 		try {
 			workspaceZip = getWorkspaceZip();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			addError("Could not get workspace template: " + e.getMessage());
 			return;
 		}
@@ -88,9 +91,11 @@ public class InitCommand {
 			trace("Extracting workspace into destDir.");
 
 			Util.unzip(workspaceZip, destDir, "samples/");
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			addError(
-				"Unable to unzip contents of workspace to dir: " + e.getMessage());
+				"Unable to unzip contents of workspace to dir: " +
+					e.getMessage());
 			return;
 		}
 
@@ -106,8 +111,9 @@ public class InitCommand {
 			new AetherClient().findLatestAvailableArtifact(
 				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
-		trace("Found workspace template version " +
-			workspacePluginArtifact.getVersion() );
+		trace(
+			"Found workspace template version " +
+				workspacePluginArtifact.getVersion());
 
 		final File zipFile = workspacePluginArtifact.getFile();
 
@@ -126,7 +132,7 @@ public class InitCommand {
 	}
 
 	private boolean isPluginsSDK(File dir) {
-		if (dir == null || !dir.exists() || !dir.isDirectory()) {
+		if ((dir == null) || !dir.exists() || !dir.isDirectory()) {
 			return false;
 		}
 
@@ -148,13 +154,17 @@ public class InitCommand {
 
 		Path tempDir = Files.createTempDirectory("temp-plugins-sdk");
 
-		FileUtils.copyDirectory(src, tempDir.toFile(), new FileFilter() {
+		FileFilter fileFilter = new FileFilter() {
+
 			public boolean accept(File pathname) {
-				return (!pathname.getName().equals(sdkDirName) ||
-				 !pathname.getName().startsWith("."));
+				return
+					(!pathname.getName().equals(sdkDirName) ||
+						!pathname.getName().startsWith("."));
 			}
 
-		}, true);
+		};
+
+		FileUtils.copyDirectory(src, tempDir.toFile(), fileFilter, true);
 
 		String[] copied = tempDir.toFile().list();
 
