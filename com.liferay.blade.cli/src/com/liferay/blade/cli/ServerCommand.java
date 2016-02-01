@@ -96,7 +96,7 @@ public class ServerCommand {
 			process.waitFor();
 		}
 		else {
-			_blade.error("JBoss/Wildfly only supports debug and run");
+			_blade.error("JBoss/Wildfly supports debug and run flag");
 		}
 	}
 
@@ -150,6 +150,10 @@ public class ServerCommand {
 				enviroment);
 
 			process.waitFor();
+		}
+		else {
+			_blade.error(
+				"Tomcat supports start, stop, restart, debug, and run flag");
 		}
 
 		if (_options.tail()) {
