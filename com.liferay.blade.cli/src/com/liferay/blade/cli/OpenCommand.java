@@ -21,23 +21,6 @@ public class OpenCommand {
 	}
 
 	public void execute() throws Exception {
-		executeCommand();
-	}
-
-	@Arguments(arg = "file or directory to open/import")
-	@Description("Opens or imports a file or directory in Liferay IDE")
-	public interface OpenOptions extends Options {
-
-		@Description("The workspace to open or import this file or project")
-		public String workspace();
-
-	}
-
-	private void addError(String prefix, String msg) {
-		_blade.addErrors(prefix, Collections.singleton(msg));
-	}
-
-	private void executeCommand() throws Exception {
 		File fileName = new File(_options._arguments().get(0));
 
 		if (!fileName.exists()) {
@@ -72,6 +55,19 @@ public class OpenCommand {
 				return;
 			}
 		}
+	}
+
+	@Arguments(arg = "file or directory to open/import")
+	@Description("Opens or imports a file or directory in Liferay IDE")
+	public interface OpenOptions extends Options {
+
+		@Description("The workspace to open or import this file or project")
+		public String workspace();
+
+	}
+
+	private void addError(String prefix, String msg) {
+		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
 	private final blade _blade;

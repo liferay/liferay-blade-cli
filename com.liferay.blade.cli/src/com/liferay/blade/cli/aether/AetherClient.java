@@ -76,7 +76,7 @@ public class AetherClient {
 			version = system.resolveVersionRange(
 				session, rangeRequest).getHighestVersion();
 		}
-		catch ( Exception e ) {
+		catch (Exception e) {
 		}
 
 		if (version == null) {
@@ -99,8 +99,8 @@ public class AetherClient {
 	private static Settings buildSettings() {
 		SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
 
-		request.setGlobalSettingsFile( DEFAULT_GLOBAL_SETTINGS_FILE );
-		request.setUserSettingsFile( USER_MAVEN_DEFAULT_USER_SETTINGS_FILE );
+		request.setGlobalSettingsFile(DEFAULT_GLOBAL_SETTINGS_FILE);
+		request.setUserSettingsFile(USER_MAVEN_DEFAULT_USER_SETTINGS_FILE);
 
 		try {
 			DefaultSettingsBuilder builder =
@@ -108,7 +108,7 @@ public class AetherClient {
 
 			return builder.build(request).getEffectiveSettings();
 		}
-		catch ( SettingsBuildingException e ) {
+		catch (SettingsBuildingException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -118,8 +118,8 @@ public class AetherClient {
 		String localRepoPathSetting = buildSettings().getLocalRepository();
 
 		return localRepoPathSetting == null
-			? new File( USER_MAVEN_CONFIGURATION_HOME, "repository" )
-			: new File( localRepoPathSetting );
+			? new File(USER_MAVEN_CONFIGURATION_HOME, "repository")
+			: new File(localRepoPathSetting);
 	}
 
 	private static RemoteRepository newRemoteRepository(String url) {
@@ -131,26 +131,26 @@ public class AetherClient {
 			MavenRepositorySystemUtils.newServiceLocator();
 		locator.addService(
 			RepositoryConnectorFactory.class,
-			BasicRepositoryConnectorFactory.class );
+			BasicRepositoryConnectorFactory.class);
 		locator.addService(
-			TransporterFactory.class, FileTransporterFactory.class );
+			TransporterFactory.class, FileTransporterFactory.class);
 		locator.addService(
-			TransporterFactory.class, HttpTransporterFactory.class );
+			TransporterFactory.class, HttpTransporterFactory.class);
 
 		DefaultServiceLocator.ErrorHandler handler =
 			new DefaultServiceLocator.ErrorHandler() {
 
 				public void serviceCreationFailed(
-					Class<?> type, Class<?> impl, Throwable exception ) {
+					Class<?> type, Class<?> impl, Throwable exception) {
 
 					exception.printStackTrace();
 				}
 
 			};
 
-		locator.setErrorHandler( handler);
+		locator.setErrorHandler(handler);
 
-		RepositorySystem system = locator.getService( RepositorySystem.class );
+		RepositorySystem system = locator.getService(RepositorySystem.class);
 
 		return system;
 	}

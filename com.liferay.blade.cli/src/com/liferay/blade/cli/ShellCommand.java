@@ -25,7 +25,7 @@ public class ShellCommand {
 
 	public static boolean canConnect(String host, int port) {
 		InetSocketAddress address = new InetSocketAddress(
-			host, Integer.valueOf( port ));
+			host, Integer.valueOf(port));
 		InetSocketAddress local = new InetSocketAddress(0);
 
 		InputStream in = null;
@@ -37,15 +37,15 @@ public class ShellCommand {
 
 			return true;
 		}
-		catch ( Exception e ) {
+		catch (Exception e) {
 		}
 
 		finally {
-			if ( in != null ) {
+			if (in != null) {
 				try {
 					in.close();
 				}
-				catch ( Exception e ) {
+				catch (Exception e) {
 				}
 			}
 		}

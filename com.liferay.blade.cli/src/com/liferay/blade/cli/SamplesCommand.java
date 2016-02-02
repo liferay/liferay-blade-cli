@@ -96,7 +96,7 @@ public class SamplesCommand {
 		File bladeRepoArchive = new File(
 			_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
-		Util.unzip( bladeRepoArchive, _blade.getCacheDir(), null);
+		Util.unzip(bladeRepoArchive, _blade.getCacheDir(), null);
 	}
 
 	private void listSamples() {
