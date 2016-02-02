@@ -23,6 +23,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ShellCommand {
 
+	public static final String DESCRIPTION =
+		"Connects to Liferay and executes gogo command and returns output.";
+
 	public static boolean canConnect(String host, int port) {
 		InetSocketAddress address = new InetSocketAddress(
 			host, Integer.valueOf(port));
@@ -75,6 +78,7 @@ public class ShellCommand {
 	}
 
 	@Arguments(arg = {"gogo-command", "args..."})
+	@Description(DESCRIPTION)
 	public interface ShellOptions extends Options {
 
 		@Description("The port to use to connect to remote agent")

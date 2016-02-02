@@ -15,26 +15,35 @@ import java.util.Properties;
  */
 public class ServerCommand {
 
+	public static final String DESCRIPTION =
+		"Start or stop server defined by your Liferay project";
+
+	public static final String DESCRIPTION_START =
+		"Start server defined by your Liferay project";
+
+	public static final String DESCRIPTION_STOP =
+		"Stop server defined by your Liferay project";
+
 	public ServerCommand(blade blade, ServerOptions options) {
 		_blade = blade;
 		_options = options;
 	}
 
-	@Description("Start server defined by your project")
+	@Description(DESCRIPTION_START)
 	public void _start(ServerStartOptions options) throws Exception {
 		executeCommand("start", options);
 	}
 
-	@Description("Stop server defined by your project")
+	@Description(DESCRIPTION_STOP)
 	public void _stop(ServerStopOptions options) throws Exception {
 		executeCommand("stop", options);
 	}
 
-	@Description("Start or stop server defined by your project")
+	@Description(DESCRIPTION)
 	public interface ServerOptions extends Options {
 	}
 
-	@Description("Start server defined by your project")
+	@Description(DESCRIPTION_START)
 	public interface ServerStartOptions extends ServerOptions {
 
 		@Description("Start server in background")
@@ -48,7 +57,7 @@ public class ServerCommand {
 
 	}
 
-	@Description("Stop server defined by your project")
+	@Description(DESCRIPTION_STOP)
 	public interface ServerStopOptions extends ServerOptions {
 	}
 

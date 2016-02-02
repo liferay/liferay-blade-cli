@@ -15,6 +15,9 @@ import java.util.Collections;
  */
 public class OpenCommand {
 
+	public static final String DESCRIPTION =
+		"Opens or imports a file or project in Liferay IDE.";
+
 	public OpenCommand(blade blade, OpenOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
@@ -58,7 +61,7 @@ public class OpenCommand {
 	}
 
 	@Arguments(arg = "file or directory to open/import")
-	@Description("Opens or imports a file or directory in Liferay IDE")
+	@Description(DESCRIPTION)
 	public interface OpenOptions extends Options {
 
 		@Description("The workspace to open or import this file or project")

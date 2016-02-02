@@ -29,6 +29,10 @@ import org.apache.commons.lang3.text.WordUtils;
  */
 public class CreateCommand {
 
+	public static final String DESCRIPTION =
+		"Creates a new Liferay module project from several available " +
+			"templates.";
+
 	public CreateCommand(blade blade, CreateOptions options) {
 		_blade = blade;
 		_options = options;
@@ -201,6 +205,7 @@ public class CreateCommand {
 	}
 
 	@Arguments(arg = {"name"})
+	@Description(DESCRIPTION)
 	public interface CreateOptions extends Options {
 
 		@Description(

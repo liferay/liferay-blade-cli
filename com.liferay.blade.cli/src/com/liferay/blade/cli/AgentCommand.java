@@ -27,10 +27,20 @@ import org.osgi.framework.Version;
  */
 public class AgentCommand {
 
+	public static final String DESCRIPTION =
+		"Install or uninstall remote agent in Liferay";
+
+	public static final String DESCRIPTION_INSTALL =
+		"Install remote agent in Liferay";
+
+	public static final String DESCRIPTION_UNINSTALL =
+		"Uninstall remote agent in Liferay";
+
 	public AgentCommand(blade blade, AgentOptions options) throws Exception {
 		_blade = blade;
 	}
 
+	@Description(DESCRIPTION_INSTALL)
 	public void _install(AgentInstallOptions options) throws Exception {
 		if (ShellCommand.canConnect("localhost", Agent.DEFAULT_PORT)) {
 			addWarning("Agent appears to be already installed and running.");
@@ -132,6 +142,7 @@ public class AgentCommand {
 			"using the \"blade agent uninstall\" command.");
 	}
 
+	@Description(DESCRIPTION_UNINSTALL)
 	public void _uninstall(AgentUninstallOptions options) throws Exception {
 		if (options.liferayhome() == null) {
 			addError("Must specify Liferay home location using -l option.");
@@ -172,6 +183,7 @@ public class AgentCommand {
 		_blade.out().println("Uninstalled remote agent sucessfully.");
 	}
 
+	@Description(DESCRIPTION_INSTALL)
 	public interface AgentInstallOptions extends AgentOptions {
 
 		public File liferayhome();
@@ -182,6 +194,7 @@ public class AgentCommand {
 
 	}
 
+	@Description(DESCRIPTION)
 	public interface AgentOptions extends Options {
 
 		@Description("The jmx port to use to connect to Liferay 7")
@@ -189,6 +202,7 @@ public class AgentCommand {
 
 	}
 
+	@Description(DESCRIPTION_UNINSTALL)
 	public interface AgentUninstallOptions extends AgentOptions {
 
 		public File liferayhome();

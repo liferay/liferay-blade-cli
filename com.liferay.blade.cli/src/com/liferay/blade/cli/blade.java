@@ -53,7 +53,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		super(target);
 	}
 
-	@Description("Install or uninstall remote agent in Liferay")
+	@Description(AgentCommand.DESCRIPTION)
 	public void _agent(AgentOptions options) throws Exception {
 		AgentCommand agent = new AgentCommand(this, options);
 		String help = options._command().subCmd(options, agent);
@@ -63,10 +63,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		}
 	}
 
-	@Description(
-		"Creates a new Liferay module project from several available " +
-			"templates."
-	)
+	@Description(CreateCommand.DESCRIPTION)
 	public void _create(CreateOptions options) throws Exception {
 		new CreateCommand(this, options).execute();
 	}
@@ -76,7 +73,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		new DeployCommand(this, options).execute();
 	}
 
-	@Description("Execute gradle command.  Will use gradle wrapper if detected")
+	@Description(GradleCommand.DESCRIPTION)
 	public void _gw(GradleOptions options) throws Exception {
 		new GradleCommand(this, options).execute();
 	}
@@ -86,27 +83,27 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		options._help();
 	}
 
-	@Description("Initializes a new Liferay 7 workspace")
+	@Description(InitCommand.DESCRIPTION)
 	public void _init(InitOptions options) throws Exception {
 		new InitCommand(this, options).execute();
 	}
 
-	@Description("Migrate a plugins sdk theme to new workspace theme project")
+	@Description(MigrateThemeCommand.DESCRIPTION)
 	public void _migrateTheme(MigrateThemeOptions options) throws Exception {
 		new MigrateThemeCommand(this, options).execute();
 	}
 
-	@Description("Opens or imports a file or project in Liferay IDE.")
+	@Description(OpenCommand.DESCRIPTION)
 	public void _open(OpenOptions options) throws Exception {
 		new OpenCommand(this, options).execute();
 	}
 
-	@Description("Generate a sample project")
+	@Description(SamplesCommand.DESCRIPTION)
 	public void _samples(SamplesOptions options) throws Exception {
 		new SamplesCommand(this, options).execute();
 	}
 
-	@Description("Start or stop your server")
+	@Description(ServerCommand.DESCRIPTION)
 	public void _server(ServerOptions options) throws Exception {
 		ServerCommand serverCommand = new ServerCommand(this, options);
 		String help = options._command().subCmd(options, serverCommand);
@@ -116,15 +113,12 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		}
 	}
 
-	@Description(
-		"Connects to Liferay and executes gogo command and returns " +
-			"output."
-	)
+	@Description(ShellCommand.DESCRIPTION)
 	public void _sh(ShellOptions options) throws Exception {
 		new ShellCommand(this, options).execute();
 	}
 
-	@Description("Update blade to latest version")
+	@Description(UpdateCommand.DESCRIPTION)
 	public void _update(UpdateOptions options) throws Exception {
 		new UpdateCommand(this, options).execute();
 	}
