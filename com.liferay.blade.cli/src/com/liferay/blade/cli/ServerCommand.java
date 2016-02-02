@@ -15,25 +15,27 @@ import java.util.Properties;
  */
 public class ServerCommand {
 
-	public ServerCommand(blade blade, ServerOptions options) throws Exception {
+	public ServerCommand(blade blade, ServerOptions options) {
 		_blade = blade;
 		_options = options;
 	}
 
-	public void execute() throws Exception {
-		if (_options.background() || _options.debug() || _options.run() ||
-			_options.stop() || _options.tail()) {
-
-			executeCommand();
-		}
-		else {
-			Util.printHelp(_blade, _options, "server", ServerOptions.class);
-		}
+	@Description("Start server defined by your project")
+	public void _start(ServerStartOptions options) throws Exception {
+		executeCommand("start", options);
 	}
 
-	@Description("Start server set in app.server.properties, " +
-		"build.properties, or gradle.properties")
+	@Description("Stop server defined by your project")
+	public void _stop(ServerStopOptions options) throws Exception {
+		executeCommand("stop", options);
+	}
+
+	@Description("Start or stop server defined by your project")
 	public interface ServerOptions extends Options {
+	}
+
+	@Description("Start server defined by your project")
+	public interface ServerStartOptions extends ServerOptions {
 
 		@Description("Start server in background")
 		public boolean background();
@@ -41,31 +43,32 @@ public class ServerCommand {
 		@Description("Start server in debug mode")
 		public boolean debug();
 
-		@Description("Run server in current window")
-		public boolean run();
-
-		@Description("Stop server that's running in background")
-		public boolean stop();
-
 		@Description("Tail a running server")
 		public boolean tail();
 
 	}
 
-	private void commandServer(File dir, String serverType) throws Exception {
+	@Description("Stop server defined by your project")
+	public interface ServerStopOptions extends ServerOptions {
+	}
+
+	private void commandServer(
+			String cmd, File dir, String serverType, ServerOptions options)
+		throws Exception {
+
 		for (File file : dir.listFiles()) {
 			String fileName = file.getName();
 
 			if (fileName.startsWith(serverType) && file.isDirectory()) {
 				if (serverType.equals("tomcat")) {
-					commmandTomcat(file);
+					commmandTomcat(cmd, file, options);
 
 					return;
 				}
 				else if (serverType.equals("jboss") ||
 						 serverType.equals("wildfly")) {
 
-					commmandJBossWildfly(file);
+					commmandJBossWildfly(cmd, file, options);
 
 					return;
 				}
@@ -75,7 +78,10 @@ public class ServerCommand {
 		_blade.error(serverType + " not supported");
 	}
 
-	private void commmandJBossWildfly(File dir) throws Exception {
+	private void commmandJBossWildfly(
+			String cmd, File dir, ServerOptions options)
+		throws Exception {
+
 		Map<String, String> enviroment = new HashMap<>();
 
 		String executable = "./standalone.sh";
@@ -84,25 +90,28 @@ public class ServerCommand {
 			executable = "standalone.bat";
 		}
 
-		if (_options.debug()) {
-			Process process = Util.startProcess(
-				_blade, executable + " --debug", new File(dir, "bin"),
-				enviroment);
+		if (cmd.equals("start")) {
+			ServerStartOptions startOptions = (ServerStartOptions)options;
 
-			process.waitFor();
-		}
-		else if (_options.run()) {
+			String debug = "";
+
+			if (startOptions.debug()) {
+				debug = " --debug";
+			}
+
 			Process process = Util.startProcess(
-				_blade, executable, new File(dir, "bin"), enviroment);
+				_blade, executable + debug, new File(dir, "bin"), enviroment);
 
 			process.waitFor();
 		}
 		else {
-			_blade.error("JBoss/Wildfly supports debug and run flag");
+			_blade.error("JBoss/Wildfly supports start command and debug flag");
 		}
 	}
 
-	private void commmandTomcat(File dir) throws Exception {
+	private void commmandTomcat(String cmd, File dir, ServerOptions options)
+		throws Exception {
+
 		Map<String, String> enviroment = new HashMap<>();
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
@@ -113,44 +122,44 @@ public class ServerCommand {
 			executable = "catalina.bat";
 		}
 
-		if (_options.background()) {
+		if (cmd.equals("start")) {
+			ServerStartOptions startOptions = (ServerStartOptions)options;
+
+			String startCommand = " run";
+
+			if (startOptions.background()) {
+				startCommand = " start";
+			}
+			else if (startOptions.debug()) {
+				startCommand = " jpda " + startCommand;
+			}
+
 			Process process = Util.startProcess(
-				_blade, executable + " start", new File(dir, "bin"),
+				_blade, executable + startCommand, new File(dir, "bin"),
 				enviroment);
 
 			process.waitFor();
-		}
-		else if (_options.debug()) {
-			Process process = Util.startProcess(
-				_blade, executable + " jpda run", new File(dir, "bin"),
-				enviroment);
 
-			process.waitFor();
-		}
-		else if (_options.run()) {
-			Process process = Util.startProcess(
-				_blade, executable + " run", new File(dir, "bin"), enviroment);
+			if (startOptions.background() && startOptions.tail()) {
+				process = Util.startProcess(
+					_blade, "tail -f catalina.out", new File(dir, "logs"),
+					enviroment);
 
-			process.waitFor();
+				process.waitFor();
+			}
 		}
-		else if (_options.stop()) {
+		else if (cmd.equals("stop")) {
 			Process process = Util.startProcess(
 				_blade, executable + " stop 60 -force", new File(dir, "bin"),
 				enviroment);
 
 			process.waitFor();
 		}
-
-		if (_options.tail()) {
-			Process process = Util.startProcess(
-				_blade, "tail -f catalina.out", new File(dir, "logs"),
-				enviroment);
-
-			process.waitFor();
-		}
 	}
 
-	private void executeCommand() throws Exception {
+	private void executeCommand(String cmd, ServerOptions options)
+		throws Exception {
+
 		File gradleWrapper = Util.getGradleWrapper(_blade.getBase());
 
 		File rootDir = gradleWrapper.getParentFile();
@@ -178,7 +187,8 @@ public class ServerCommand {
 
 			serverType = serverType.replace("-bundle", "");
 
-			commandServer(new File(rootDir, liferayHomePath), serverType);
+			commandServer(
+				cmd, new File(rootDir, liferayHomePath), serverType, options);
 		}
 		else {
 			try {
@@ -216,14 +226,16 @@ public class ServerCommand {
 					}
 				}
 
-				if (appServerParentDir.startsWith(".") ||
-					Character.isLowerCase(appServerParentDir.charAt(0))) {
+				if (appServerParentDir.startsWith("/") ||
+					appServerParentDir.contains(":")) {
 
 					commandServer(
-						new File(rootDir, appServerParentDir), serverType);
+						cmd, new File(appServerParentDir), serverType, options);
 				}
 				else {
-					commandServer(new File(appServerParentDir), serverType);
+					commandServer(
+						cmd, new File(rootDir, appServerParentDir), serverType,
+						options);
 				}
 			}
 			catch (Exception e) {
@@ -233,7 +245,7 @@ public class ServerCommand {
 		}
 	}
 
-	private final blade _blade;
-	private final ServerOptions _options;
+	private blade _blade;
+	private ServerOptions _options;
 
 }

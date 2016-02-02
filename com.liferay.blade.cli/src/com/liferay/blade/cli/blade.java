@@ -9,6 +9,7 @@ import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.AgentCommand.AgentOptions;
+import com.liferay.blade.cli.CreateCommand.CreateOptions;
 import com.liferay.blade.cli.DeployCommand.DeployOptions;
 import com.liferay.blade.cli.GradleCommand.GradleOptions;
 import com.liferay.blade.cli.InitCommand.InitOptions;
@@ -80,6 +81,11 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		new GradleCommand(this, options).execute();
 	}
 
+	@Description("Get help on a specific command")
+	public void _help(Options options) throws Exception {
+		options._help();
+	}
+
 	@Description("Initializes a new Liferay 7 workspace")
 	public void _init(InitOptions options) throws Exception {
 		new InitCommand(this, options).execute();
@@ -102,7 +108,12 @@ public class blade extends AbstractConsoleApp implements Runnable {
 
 	@Description("Start or stop your server")
 	public void _server(ServerOptions options) throws Exception {
-		new ServerCommand(this, options).execute();
+		ServerCommand serverCommand = new ServerCommand(this, options);
+		String help = options._command().subCmd(options, serverCommand);
+
+		if (help != null) {
+			out.println(help);
+		}
 	}
 
 	@Description(
@@ -140,7 +151,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	}
 
 	@Reference(target = "(launcher.arguments=*)")
-	public void args( Object object, Map<String, Object> map) {
+	public void args(Object object, Map<String, Object> map) {
 		args = (String[])map.get("launcher.arguments");
 	}
 
