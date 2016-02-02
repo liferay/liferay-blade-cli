@@ -1,6 +1,7 @@
 package com.liferay.blade.cli;
 
 import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
@@ -26,6 +27,9 @@ import org.eclipse.aether.artifact.Artifact;
  * @author Gregory Amerson
  */
 public class InitCommand {
+
+	public static final String DESCRIPTION =
+		"Initializes a new Liferay workspace";
 
 	public InitCommand(blade blade, InitOptions options) throws Exception {
 		_blade = blade;
@@ -121,6 +125,7 @@ public class InitCommand {
 	}
 
 	@Arguments(arg = "[name]")
+	@Description(DESCRIPTION)
 	public interface InitOptions extends Options {
 
 		public boolean force();

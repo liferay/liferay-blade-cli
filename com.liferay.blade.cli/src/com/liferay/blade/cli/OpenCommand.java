@@ -9,13 +9,14 @@ import com.liferay.blade.cli.jmx.IDEConnector;
 import java.io.File;
 
 import java.util.Collections;
-import java.util.Formatter;
-import java.util.List;
 
 /**
  * @author Gregory Amerson
  */
 public class OpenCommand {
+
+	public static final String DESCRIPTION =
+		"Opens or imports a file or project in Liferay IDE.";
 
 	public OpenCommand(blade blade, OpenOptions options) throws Exception {
 		_blade = blade;
@@ -23,33 +24,6 @@ public class OpenCommand {
 	}
 
 	public void execute() throws Exception {
-		List<String> args = _options._arguments();
-
-		if (args.size() == 0) {
-
-			// Default command
-
-			printHelp();
-		}
-		else {
-			doExecute();
-		}
-	}
-
-	@Arguments(arg = "file or directory to open/import")
-	@Description("Opens or imports a file or directory in Liferay IDE")
-	public interface OpenOptions extends Options {
-
-		@Description("The workspace to open or import this file or project")
-		public String workspace();
-
-	}
-
-	private void addError(String prefix, String msg) {
-		_blade.addErrors(prefix, Collections.singleton(msg));
-	}
-
-	private void doExecute() throws Exception {
 		File fileName = new File(_options._arguments().get(0));
 
 		if (!fileName.exists()) {
@@ -86,11 +60,17 @@ public class OpenCommand {
 		}
 	}
 
-	private void printHelp() throws Exception {
-		Formatter f = new Formatter();
-		_options._command().help(f, this);
-		_blade.out().println(f);
-		f.close();
+	@Arguments(arg = "file or directory to open/import")
+	@Description(DESCRIPTION)
+	public interface OpenOptions extends Options {
+
+		@Description("The workspace to open or import this file or project")
+		public String workspace();
+
+	}
+
+	private void addError(String prefix, String msg) {
+		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
 	private final blade _blade;

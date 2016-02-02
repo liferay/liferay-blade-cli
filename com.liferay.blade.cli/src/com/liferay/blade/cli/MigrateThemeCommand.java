@@ -37,6 +37,9 @@ import org.apache.commons.lang3.text.WordUtils;
  */
 public class MigrateThemeCommand {
 
+	public static final String DESCRIPTION =
+		"Migrate a plugins sdk theme to new workspace theme project";
+
 	public MigrateThemeCommand(blade blade, MigrateThemeOptions options)
 		throws Exception {
 
@@ -154,6 +157,7 @@ public class MigrateThemeCommand {
 	}
 
 	@Arguments(arg = "[name]")
+	@Description(DESCRIPTION)
 	public interface MigrateThemeOptions extends Options {
 
 		@Description("Migrate all themes")

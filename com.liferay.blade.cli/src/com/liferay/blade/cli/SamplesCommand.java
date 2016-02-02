@@ -21,6 +21,8 @@ import org.apache.commons.lang3.text.WordUtils;
  */
 public class SamplesCommand {
 
+	public static final String DESCRIPTION = "Generate a sample project";
+
 	public SamplesCommand(blade blade, SamplesOptions options)
 		throws Exception {
 
@@ -46,6 +48,7 @@ public class SamplesCommand {
 	}
 
 	@Arguments(arg = {"[name]"})
+	@Description(DESCRIPTION)
 	public interface SamplesOptions extends Options {
 
 		@Description("The directory where to create the new project.")
@@ -96,7 +99,7 @@ public class SamplesCommand {
 		File bladeRepoArchive = new File(
 			_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
-		Util.unzip( bladeRepoArchive, _blade.getCacheDir(), null);
+		Util.unzip(bladeRepoArchive, _blade.getCacheDir(), null);
 	}
 
 	private void listSamples() {

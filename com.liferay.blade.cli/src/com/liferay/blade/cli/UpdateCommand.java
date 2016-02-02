@@ -1,6 +1,7 @@
 package com.liferay.blade.cli;
 
 import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.List;
  * @author Gregory Amerson
  */
 public class UpdateCommand {
+
+	public static final String DESCRIPTION = "Update blade to latest version";
 
 	public UpdateCommand(blade blade, UpdateOptions options) throws Exception {
 		_blade = blade;
@@ -34,6 +37,7 @@ public class UpdateCommand {
 	}
 
 	@Arguments(arg = "[updateUrl]")
+	@Description(DESCRIPTION)
 	public interface UpdateOptions extends Options {
 	}
 
