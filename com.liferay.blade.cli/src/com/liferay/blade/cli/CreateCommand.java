@@ -4,6 +4,9 @@ import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
 
+import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
 import java.io.File;
@@ -26,7 +29,7 @@ import org.apache.commons.lang3.text.WordUtils;
  */
 public class CreateCommand {
 
-	public CreateCommand(blade blade, CreateOptions options) throws Exception {
+	public CreateCommand(blade blade, CreateOptions options) {
 		_blade = blade;
 		_options = options;
 	}
@@ -195,6 +198,49 @@ public class CreateCommand {
 		_blade.out().println(
 			"Created the project " + name + " using the " + template +
 				" template in " + workDir);
+	}
+
+	@Arguments(arg = {"name"})
+	public interface CreateOptions extends Options {
+
+		@Description(
+			"If a class is generated in the project, provide the name of the " +
+				"class to be generated. If not provided defaults to Project " +
+					"name."
+		)
+		public String classname();
+
+		@Description("The directory where to create the new project.")
+		public File dir();
+
+		@Description(
+			"If a new jsp hook fragment needs to be created, provide the name" +
+				" of the host bundle symbolic name."
+		)
+		public String hostbundlebsn();
+
+		@Description(
+			"If a new jsp hook fragment needs to be created, provide the name" +
+				" of the host bundle version."
+		)
+		public String hostbundleversion();
+
+		public String packagename();
+
+		@Description(
+			"If a new DS component needs to be created, provide the name of " +
+				"the service to be implemented."
+		)
+		public String service();
+
+		@Description(
+			"The project template to use when creating the project. The " +
+				"following templates are available: activator, jsphook, " +
+					"mvcportlet, portlet, service, servicebuilder, " +
+						"servicewrapper"
+		)
+		public Template template();
+
 	}
 
 	private void addError(String prefix, String msg) {
