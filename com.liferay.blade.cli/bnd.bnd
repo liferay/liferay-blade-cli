@@ -70,6 +70,7 @@ Private-Package: \
 	aQute.lib.justif;-split-package:=merge-first,\
 	aQute.lib.utf8properties;-split-package:=merge-first,\
 	aQute.lib.zip;-split-package:=merge-first,\
+	aQute.libg.cryptography;-split-package:=merge-first,\
 	aQute.libg.filters;-split-package:=merge-first,\
 	aQute.libg.generics;-split-package:=merge-first,\
 	aQute.libg.gzip;-split-package:=merge-first,\
@@ -79,6 +80,7 @@ Private-Package: \
 	aQute.remote.util,\
 	aQute.service.reporter;-split-package:=merge-first,\
 	com.liferay.blade.cli.*,\
+	com.liferay.blade.gradle.model,\
 	org.apache.commons.io,\
 	org.apache.commons.io.filefilter,\
 	org.apache.commons.io.output,\
@@ -189,6 +191,7 @@ Private-Package: \
 	org.eclipse.aether.util.repository,\
 	org.eclipse.aether.util.version,\
 	org.eclipse.aether.version,\
+	org.gradle.*,\
 	org.osgi.dto,\
 	org.osgi.framework;-split-package:=merge-first,\
 	org.osgi.framework.dto,\
