@@ -28,7 +28,6 @@ public class GradleToolingTest {
 
 		assertNotNull(files);
 		assertEquals(2, files.size());
-		assertEquals("buildfiles", files.iterator().next().getName());
 	}
 
 	@Test

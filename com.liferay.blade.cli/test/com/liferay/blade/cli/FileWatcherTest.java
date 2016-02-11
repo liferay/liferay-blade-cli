@@ -110,7 +110,7 @@ public class FileWatcherTest {
 		t.start();
 
 		// let the file watcher get all registered before we touch the file
-		Thread.sleep(1000);
+		Thread.sleep(2000);
 
 		IO.write("touch".getBytes(), testfile);
 		IO.write("second file content".getBytes(), secondfile);
