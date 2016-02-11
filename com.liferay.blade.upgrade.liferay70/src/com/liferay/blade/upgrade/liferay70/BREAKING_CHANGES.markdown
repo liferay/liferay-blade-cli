@@ -20,7 +20,7 @@ feature or API will be dropped in an upcoming version.
 replaces an old API, in spite of the old API being kept in Liferay Portal for
 backwards compatibility.
 
-*This document has been reviewed through commit `3231563`.*
+*This document has been reviewed through commit `61d6186`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -47,7 +47,7 @@ Here's the template to use for each breaking change (note how it ends with a
 horizontal rule):
 
 ```
-### [Title]
+### Title
 - **Date:**
 - **JIRA Ticket:**
 
@@ -125,7 +125,7 @@ New way:
     <liferay-ui:logo-selector
         currentLogoURL="<%= selUser.getPortraitURL(themeDisplay) %>"
         defaultLogoURL="<%= UserConstants.getPortraitURL(themeDisplay.getPathImage(), selUser.isMale(), 0) %>"
-        hasUpdateLogoPermission='<%= UsersAdminUtil.hasUpdateFieldPermission(selUser, "portrait") %>'
+        hasUpdateLogoPermission='<%= UsersAdminUtil.hasUpdateFieldPermission(permissionChecker, null, selUser, "portrait") %>'
         imageId="<%= selUser.getPortraitId() %>"
         logoDisplaySelector=".user-logo"
         maxFileSize="<%= PrefsPropsUtil.getLong(PropsKeys.USERS_IMAGE_MAX_SIZE) / 1024 %>"
@@ -2449,9 +2449,7 @@ In Velocity:
 
 In FreeMarker:
 
-    <#assign liferay_portlet = PortalJspTagLibs["/WEB-INF/tld/liferay-portlet-ext.tld"] />
-
-    <@liferay_portlet["runtime"] portletName="145" />
+    <@liferay_portlet_ext["runtime"] portletName="145" />
 
 #### Why was this change made?
 
@@ -3231,13 +3229,11 @@ Portal by means of an OSGi container.
 #### What changed?
 
 The `${theme}` variable previously injected in the FreeMarker context providing
-access to various tags and utilities no longer provides them. Only the
-`${theme.include}` method is preserved for performance reasons.
+access to various tags and utilities is no longer available.
 
 #### Who is affected?
 
-This affects FreeMarker templates that are using the `${theme}` variable to
-access tags.
+This affects FreeMarker templates that are using the `${theme}` variable.
 
 #### How should I update my code?
 
@@ -3328,16 +3324,18 @@ following behaviors based on the portlet type:
 
 - **Struts Portlet:** If you've defined a `view-action` init parameter, the
 configuration options are only displayed for that particular view when invoking
-a URL with a parameter `struts-action` with the value indicated in the
-`view-action` init parameter.
+a URL with a parameter `struts_action` with the value indicated in the
+`view-action` init parameter and also in the default view of the portlet (when
+there is no `struts_action` parameter in the request).
 
 - **Liferay MVC Portlet:** If you've defined a `view-template` init parameter,
 the configuration options are only displayed when that template is rendered by
 invoking a URL with a parameter `mvcPath` with the value indicated in the
-`view-template` init parameter.
+`view-template` init parameter. and also in the default view of the portlet
+(when there is no `mvcPath` parameter in the request).
 
 - If it's a portlet using any other framework, the configuration options are
-never displayed.
+always displayed.
 
 In order to keep the old behavior of adding the configuration options in every
 view, you need to add the init parameter
@@ -3409,8 +3407,231 @@ To keep the previous behavior in Velocity:
 To keep the previous behavior in FreeMarker:
 
     <@liferay_theme["layout-icon"] layout=nav_item_layout />
- 
+
 #### Why was this change made?
 
 The API was forcing developers to have a dependency on a taglib, which didn't
 allow for much flexibility.
+
+---------------------------------------
+
+### Renamed Packages to Fix the Split Packages Problem
+- **Date:** 2016-Jan-19
+- **JIRA Ticket:** LPS-61952
+
+#### What changed?
+
+Split packages are caused when two or more bundles export the same package name
+and version. When the classloader loads a package, exactly one exporter of that
+package is chosen; so if a package is split across multiple bundles, then an
+importer only sees a subset of the package.
+
+#### Who is affected?
+
+The `portal-service` and `portal-impl` folders have many packages with the same
+name. Therefore, all of these packages are affected by the split package
+problem.
+
+#### How should I update my code?
+
+You should rename duplicated package names if they currently exist somewhere
+else.
+
+**Example**
+
+- `com.liferay.counter` &rarr; `com.liferay.counter.kernel`
+
+- `com.liferay.portal.jdbc.pool.metrics` &rarr; `com.liferay.portal.kernel.jdbc.pool.metrics`
+
+- `com.liferay.portal.layoutconfiguration.util` &rarr; `com.liferay.portal.kernel.layoutconfiguration.util`
+
+- `com.liferay.portal.layoutconfiguration.util.xml` &rarr; `com.liferay.portal.kernel.layoutconfiguration.util.xml`
+
+- `com.liferay.portal.portletfilerepository` &rarr; `com.liferay.portal.kernel.portletfilerepository`
+
+- `com.liferay.portal.repository.proxy` &rarr; `com.liferay.portal.kernel.repository.proxy`
+
+- `com.liferay.portal.security.auth` &rarr; `com.liferay.portal.kernel.security.auth`
+
+- `com.liferay.portal.security.exportimport` &rarr; `com.liferay.portal.kernel.security.exportimport`
+
+- `com.liferay.portal.security.ldap` &rarr; `com.liferay.portal.kernel.security.ldap`
+
+- `com.liferay.portal.security.membershippolicy` &rarr; `com.liferay.portal.kernel.security.membershippolicy`
+
+- `com.liferay.portal.security.permission` &rarr; `com.liferay.portal.kernel.security.permission`
+
+- `com.liferay.portal.security.permission.comparator` &rarr; `com.liferay.portal.kernel.security.permission.comparator`
+
+- `com.liferay.portal.security.pwd` &rarr; `com.liferay.portal.kernel.security.pwd`
+
+- `com.liferay.portal.security.xml` &rarr; `com.liferay.portal.kernel.security.xml`
+
+- `com.liferay.portal.util.comparator` &rarr; `com.liferay.portal.kernel.util.comparator`
+
+- `com.liferay.portal.verify.model` &rarr; `com.liferay.portal.kernel.verify.model`
+
+- `com.liferay.portal.webserver` &rarr; `com.liferay.portal.kernel.webserver`
+
+- `com.liferay.portlet.admin.util` &rarr; `com.liferay.admin.kernel.util`
+
+- `com.liferay.portlet.announcements` &rarr; `com.liferay.announcements.kernel`
+
+- `com.liferay.portlet.backgroundtask.util.comparator` &rarr; `com.liferay.background.task.kernel.util.comparator`
+
+- `com.liferay.portlet.blogs` &rarr; `com.liferay.blogs.kernel`
+
+- `com.liferay.portlet.blogs.exception` &rarr; `com.liferay.blogs.kernel.exception`
+
+- `com.liferay.portlet.blogs.model` &rarr; `com.liferay.blogs.kernel.model`
+
+- `com.liferay.portlet.blogs.service` &rarr; `com.liferay.blogs.kernel.service`
+
+- `com.liferay.portlet.blogs.service.persistence` &rarr; `com.liferay.blogs.service.persistence`
+
+- `com.liferay.portlet.blogs.util.comparator` &rarr; `com.liferay.blogs.kernel.util.comparator`
+
+- `com.liferay.portlet.dynamicdatamapping` &rarr; `com.liferay.dynamic.data.mapping.kernel`
+
+- `com.liferay.portlet.exportimport` &rarr; `com.liferay.exportimport.kernel`
+
+- `com.liferay.portlet.imagegallerydisplay.display.context` &rarr; `com.liferay.image.gallery.display.kernel.display.context`
+
+- `com.liferay.portlet.journal.util` &rarr; `com.liferay.journal.kernel.util`
+
+- `com.liferay.portlet.layoutsadmin.util` &rarr; `com.liferay.layouts.admin.kernel.util`
+
+- `com.liferay.portlet.messageboards` &rarr; `com.liferay.message.boards.kernel`
+
+- `com.liferay.portlet.messageboards.constants` &rarr; `com.liferay.message.boards.kernel.constants`
+
+- `com.liferay.portlet.messageboards.exception` &rarr; `com.liferay.message.boards.kernel.exception`
+
+- `com.liferay.portlet.messageboards.model` &rarr; `com.liferay.message.boards.kernel.model`
+
+- `com.liferay.portlet.messageboards.service` &rarr; `com.liferay.message.boards.kernel.service`
+
+- `com.liferay.portlet.messageboards.service.persistence` &rarr; `com.liferay.message.boards.kernel.service.persistence`
+
+- `com.liferay.portlet.messageboards.util` &rarr; `com.liferay.message.boards.kernel.util`
+
+- `com.liferay.portlet.messageboards.util.comparator` &rarr; `com.liferay.message.boards.kernel.util.comparator`
+
+- `com.liferay.portlet.mobiledevicerules` &rarr; `com.liferay.mobile.device.rules`
+
+- `com.liferay.portlet.portletconfiguration.util` &rarr; `com.liferay.portlet.configuration.kernel.util`
+
+- `com.liferay.portlet.rolesadmin.util` &rarr; `com.liferay.roles.admin.kernel.util`
+
+- `com.liferay.portlet.sites.util` &rarr; `com.liferay.sites.kernel.util`
+
+- `com.liferay.portlet.social` &rarr; `com.liferay.social.kernel`
+
+- `com.liferay.portlet.trash` &rarr; `com.liferay.trash.kernel`
+
+- `com.liferay.portlet.useradmin.util` &rarr; `com.liferay.users.admin.kernel.util`
+
+- `com.liferay.portlet.ratings` &rarr; `com.liferay.ratings.kernel`
+
+- `com.liferay.portlet.ratings.definition` &rarr; `com.liferay.ratings.kernel.definition`
+
+- `com.liferay.portlet.ratings.display.context` &rarr; `com.liferay.ratings.kernel.display.context`
+
+- `com.liferay.portlet.ratings.exception` &rarr; `com.liferay.ratings.kernel.exception`
+
+- `com.liferay.portlet.ratings.model` &rarr; `com.liferay.ratings.kernel.model`
+
+- `com.liferay.portlet.ratings.service` &rarr; `com.liferay.ratings.kernel.service`
+
+- `com.liferay.portlet.ratings.service.persistence` &rarr; `com.liferay.ratings.kernel.service.persistence`
+
+- `com.liferay.portlet.ratings.transformer` &rarr; `com.liferay.ratings.kernel.transformer`
+
+#### Why was this change made?
+
+This change was necessary to solve the current split package problems and
+prevent future ones.
+
+---------------------------------------
+
+### The title Field of FileEntry Models is Now Mandatory
+- **Date:** 2016-Jan-25
+- **JIRA Ticket:** LPS-62251
+
+#### What changed?
+
+The `title` field of file entries was optional as long as a source file name was
+provided. To avoid confusion, the title is now required by the API and is filled
+automatically by the UI when a source file name is present.
+
+#### Who is affected?
+
+This affects any user of the local or remote API. Users of the Web UI are
+unaffected.
+
+#### How should I update my code?
+
+You should pass a non-null, non-empty string for the `title` parameter of the
+`addFileEntry` and `updateFileEntry` methods.
+
+#### Why was this change made?
+
+The `title` field was marked as mandatory, but it was possible to create a
+document without filling it, as the backend would infer a value from the source
+file name automatically. This was considered confusing from a UX perspective.
+
+---------------------------------------
+
+### DLUtil.getImagePreviewURL and DLUtil.getThumbnailSrc can return blank
+- **Date:** 2016-Jan-28
+- **JIRA Ticket:** LPS-62643
+
+#### What changed?
+
+DLUtil.getImagePreviewURL and DLUtil.getThumbnailSrc will return a blank
+string if there are not previews or thumbnails for the specific image, video or
+document.
+
+Before, if there was no previews or thumbnail it would return a url to a image
+based on the document.
+
+#### Who is affected?
+
+Any developer invoking DLUtil.getImagePreviewURL or DLUtil.getThumbnailSrc.
+
+#### How should I update my code?
+
+You should take into account that the method could return a blank string and act
+accordingly. For example, you could display the `documents-and-media` lexicon
+icon instead.
+
+#### Why was this change made?
+
+In order to display the `documents-and-media` lexicon icon in Documents and
+Media this change was necessary.
+
+---------------------------------------
+
+### The aui:column taglib has been removed and replaced with aui:col taglib
+- **Date:** 2016-Jan-19
+- **JIRA Ticket:** LPS-62208
+
+#### What changed?
+
+The `aui:column` taglib has been removed and replaced with
+`aui:col` taglib.
+
+#### Who is affected?
+
+Plugins or templates that are using the `aui:column` tag need
+to update their usage of the tag.
+
+#### How should I update my code?
+
+You should import the `aui` tag library if it isn't already and
+update the tag namespace from `aui:column` to `aui:col`.
+
+#### Why was this change made?
+
+This change was made as a part of the ongoing strategy to modularize Liferay
+Portal by means of an OSGi container.
