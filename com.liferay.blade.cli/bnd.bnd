@@ -32,11 +32,14 @@
 	osgi.core,\
 	slf4j.simple,\
 	slf4j.api
+
+-dependson: com.liferay.blade.gradle
 	
 -testpath: \
 	biz.aQute.junit
 
 -includeresource: \
+	deps.zip,\
 	templates.zip
 
 -sources: false
