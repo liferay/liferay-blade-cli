@@ -8,15 +8,6 @@
 	org.apache.commons.lang3,\
 	org.apache.httpcomponents.httpclient;version=4.3,\
 	org.apache.httpcomponents.httpcore;version=4.3,\
-	org.eclipse.aether.api,\
-	org.eclipse.aether.connector.basic,\
-	org.eclipse.aether.impl,\
-	org.eclipse.aether.spi,\
-	org.eclipse.aether.transport.classpath,\
-	org.eclipse.aether.transport.file,\
-	org.eclipse.aether.transport.http,\
-	org.eclipse.aether.transport.wagon,\
-	org.eclipse.aether.util,\
 	org.apache.maven.artifact,\
 	org.apache.maven.aether-provider,\
 	org.apache.maven.builder-support,\
@@ -27,6 +18,15 @@
 	org.apache.maven.settings-builder,\
 	org.codehaus.plexus.utils,\
 	org.codehaus.plexus.interpolation,\
+	org.eclipse.aether.api,\
+	org.eclipse.aether.connector.basic,\
+	org.eclipse.aether.impl,\
+	org.eclipse.aether.spi,\
+	org.eclipse.aether.transport.classpath,\
+	org.eclipse.aether.transport.file,\
+	org.eclipse.aether.transport.http,\
+	org.eclipse.aether.transport.wagon,\
+	org.eclipse.aether.util,\
 	osgi.core,\
 	slf4j.simple,\
 	slf4j.api
