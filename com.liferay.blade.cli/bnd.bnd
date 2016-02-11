@@ -3,6 +3,7 @@
 	biz.aQute.bndlib,\
 	biz.aQute.remote.api,\
 	biz.aQute.repository,\
+	com.liferay.blade.gradle.model;version=latest,\
 	jcl.over.slf4j,\
 	org.apache.commons.io,\
 	org.apache.commons.lang3,\
@@ -27,6 +28,7 @@
 	org.eclipse.aether.transport.http,\
 	org.eclipse.aether.transport.wagon,\
 	org.eclipse.aether.util,\
+	org.gradle.toolingapi,\
 	osgi.core,\
 	slf4j.simple,\
 	slf4j.api
