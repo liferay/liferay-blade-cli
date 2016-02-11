@@ -1,0 +1,4 @@
+-sub: *.bnd
+-buildpath: \
+	javax.inject,\
+	org.gradle.toolingapi
