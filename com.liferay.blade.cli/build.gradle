@@ -24,10 +24,18 @@ formatSource {
 
 task createTemplatesZip(type:Zip) {
 	from "${projectDir}/templates"
-	baseName="templates"
+	baseName = "templates"
 	destinationDir = new File("${projectDir}")
 }
 
+task createDepsZip(type:Zip) {
+	from "${projectDir}/../com.liferay.blade.gradle/generated/"
+	baseName = "deps"
+	destinationDir = new File("${projectDir}")
+	include "*.jar"
+}
+
 jar {
+	from createDepsZip
 	from createTemplatesZip
 }

@@ -1,211 +1,226 @@
 package com.liferay.blade.cli;
 
 import aQute.bnd.osgi.Jar;
-
-import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
+import aQute.remote.api.Agent;
+import aQute.remote.api.Event;
+import aQute.remote.api.Supervisor;
+import aQute.remote.util.AgentSupervisor;
 
-import com.liferay.blade.cli.jmx.JMXBundleDeployer;
+import com.liferay.blade.cli.FileWatcher.Consumer;
+import com.liferay.blade.cli.gradle.GradleExec;
+import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
-
-import java.net.MalformedURLException;
-
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.regex.Pattern;
+import java.util.List;
+import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
+import org.osgi.framework.dto.BundleDTO;
 
 /**
  * @author Gregory Amerson
  */
 public class DeployCommand {
 
-	private static final Pattern BSN_GUESS = Pattern.compile(
-		"\\b\\d+(?:\\.\\d+)*\\b");
-
-	final private blade blade;
-	final private DeployOptions options;
-	private JMXBundleDeployer _bundleDeployer;
-
 	public DeployCommand(blade blade, DeployOptions options) throws Exception {
-		this.blade = blade;
-		this.options = options;
+		_blade = blade;
+		_options = options;
 	}
 
-	private void addError(String prefix, String msg) {
-		blade.addErrors(prefix, Collections.singleton(msg));
+	private void addError(String msg) {
+		_blade.addErrors("deploy", Collections.singleton(msg));
 	}
 
-	private void deploy(JMXBundleDeployer bundleDeployer, String bsn,
-			String bundleUrl) throws Exception {
+	public String deploy(GradleExec gradle, Set<File> outputFiles) throws Exception {
+		final int retcode = gradle.executeGradleCommand("jar");
 
-		final long bundleId = bundleDeployer.deploy(bsn, bundleUrl);
-		blade.out().println("Installed or updated bundle " + bundleId);
-
-		if (bundleId <= 0) {
-			addError(
-				"Deploy", "Unable to deploy bundle to framework " + bundleId);
+		if (retcode > 0) {
+			addError("Gradle jar task failed.");
+			return null;
 		}
+
+		return installOrUpdate(outputFiles.iterator().next());
+	}
+
+	public void deployWatch(
+		final GradleExec gradleExec, final Set<File> outputFiles)
+			throws Exception {
+
+		if (outputFiles.size() > 0) {
+			for (File outputFile : outputFiles) {
+				final String retval = installOrUpdate(outputFile);
+
+				_blade.out().println(retval);
+			}
+		}
+
+		new Thread() {
+			public void run() {
+				try {
+					gradleExec.executeGradleCommand("jar -t");
+				}
+				catch (Exception e) {
+				}
+			}
+		}.start();
+
+		final Consumer<Path> consumer = new Consumer<Path>(){
+			@Override
+			public void consume(Path modified) {
+				try {
+					File modifiedFile = modified.toFile();
+
+					if (outputFiles.contains(modifiedFile)) {
+						_blade.out().println("installOrUpdate " + modifiedFile);
+
+						final String retval = installOrUpdate(modifiedFile);
+						_blade.out().println(retval);
+					}
+				}
+				catch (Exception e) {
+				}
+			}
+		};
+
+		new FileWatcher(_blade.getBase().toPath(), false, consumer);
 	}
 
 	public void execute() throws Exception {
-		int numOfFiles = options._arguments().size();
+		final GradleExec gradleExec = new GradleExec(_blade);
 
-		for (int i = 0; i < numOfFiles; i++) {
-			String bundlePath = options._arguments().get(i);
+		final Set<File> outputFiles =
+			GradleTooling.getOutputFiles(_blade.getCacheDir(), _blade.getBase());
 
-			File bundleFile = new File(bundlePath);
-
-			if (!bundleFile.exists() && !bundleFile.isAbsolute()) {
-				bundleFile = new File(blade.getBase(), bundlePath);
-			}
-
-			if (bundleFile.exists()) {
-				String bsn = null;
-
-				try (Jar jar = new Jar(bundleFile)) {
-					bsn = jar.getBsn();
-				}
-
-				if (bsn == null &&
-					bundleFile.getName().toLowerCase().endsWith(".war")) {
-
-					bsn = guessBsnFromWar(bundleFile);
-				}
-
-				if (bsn == null) {
-					addError("Deploy", "Unable to determine bsn for file " +
-						bundleFile.getAbsolutePath());
-				}
-
-				final JMXBundleDeployer bundleDeployer = getBundleDeployer();
-
-				String bundleUrl = getBundleUrl(bundleFile);
-
-				if (bundleDeployer != null && bundleUrl != null) {
-					deploy(bundleDeployer, bsn, bundleUrl);
-
-					if (options.watch()) {
-						watch(bundleDeployer, bsn, bundleFile);
-					}
-				}
-			}
-			else {
-				addError("Deploy", "Unable to find specified bundle file " +
-					bundleFile.getAbsolutePath());
-			}
-		}
-	}
-
-	private String guessBsnFromWar(File bundleFile) {
-		return BSN_GUESS.matcher(bundleFile.getName()).replaceAll("")
-			.replaceAll("\\.war$", "").replaceAll("-$", "");
-	}
-
-	private String getBundleUrl(File bundleFile) throws MalformedURLException {
-		String bundleUrl = null;
-
-		if (bundleFile.toPath().toString().toLowerCase().endsWith(".war")) {
-			bundleUrl = "webbundle:" +
-					bundleFile.toURI().toURL().toExternalForm() +
-					"?Web-ContextPath=/" + guessBsnFromWar(bundleFile);
+		if (_options.watch()) {
+			deployWatch(gradleExec, outputFiles);
 		}
 		else {
-			bundleUrl = bundleFile.toURI().toURL().toExternalForm();
+			deploy(gradleExec, outputFiles);
 		}
-
-		return bundleUrl;
 	}
 
-	private JMXBundleDeployer getBundleDeployer() {
-		if (_bundleDeployer == null) {
-			int port = options.port();
+	private String installOrUpdate(File outputFile) throws Exception {
+		boolean isFragment = false;
+		String bsn = null;
 
-			JMXBundleDeployer bundleDeployer = null;
+		try(Jar bundle = new Jar(outputFile)) {
+			final Manifest manifest = bundle.getManifest();
+			final Attributes mainAttributes = manifest.getMainAttributes();
 
-			try {
-				if (port > 0) {
-					bundleDeployer = new JMXBundleDeployer(port);
-				}
-				else {
-					bundleDeployer = new JMXBundleDeployer();
-				}
-			}
-			catch (Exception e) {
-				addError(
-					"Deploy", "Unable to connect to Liferay's OSGi framework");
-			}
+			isFragment =
+				mainAttributes.getValue("Fragment-Host") != null;
 
-			_bundleDeployer = bundleDeployer;
+			bsn = bundle.getBsn();
 		}
 
-		return _bundleDeployer;
-	}
+		final DeploySupervisor supervisor = new DeploySupervisor(_blade);
+		supervisor.connect("localhost", Agent.DEFAULT_PORT);
 
-	private void watch(final JMXBundleDeployer bundleDeployer, final String bsn,
-			final File bundleFile) throws Exception {
+		final Agent agent = supervisor.getAgent();
+		agent.redirect(-1);
 
-		final boolean[] deploy = new boolean[1];
+		long existingId = -1;
 
-		new Thread() {
+		List<BundleDTO> bundles = agent.getBundles();
 
-			@Override
-			public void run() {
-				synchronized (bundleFile) {
-					while (true) {
-						try {
-							bundleFile.wait();
-						} catch (InterruptedException e) {
-						}
+		for (BundleDTO bundle : bundles) {
+			if (bundle.symbolicName.equals(bsn)) {
+				existingId = bundle.id;
+				break;
+			}
+		}
 
-						while (deploy[0]) {
-							deploy[0] = false;
+		String retval = null;
 
-							try {
-								bundleFile.wait(300);
-							} catch (InterruptedException e) {
-							}
-						}
+		String bundleURL = outputFile.toURI().toASCIIString();
 
-						deploy[0] = false;
+		if (existingId > 0) {
+			agent.stop(existingId);
+			agent.updateFromURL(existingId, bundleURL);
 
-						try {
-							String bundleUrl = getBundleUrl(bundleFile);
+			_blade.out().println("Updated bundle " + existingId);
+		}
+		else {
+			_blade.out().println("install " + bundleURL);
 
-							long bundleId = bundleDeployer.deploy(
-								bsn, bundleUrl);
-							blade.out().println("Installed or updated bundle " + bundleId);
-						} catch (Exception e) {
-						}
+			agent.stdin("install " + bundleURL);
+
+			if (!isFragment) {
+				bundles = agent.getBundles();
+
+				for (BundleDTO bundle : bundles) {
+					if (bundle.symbolicName.equals(bsn)) {
+						existingId = bundle.id;
+						break;
 					}
 				}
 			}
+		}
 
-		}.start();
+		agent.start(existingId);
 
-		new FileWatcher(blade.getBase().toPath(), bundleFile.getAbsoluteFile()
-				.toPath(), true, new Runnable() {
-			@Override
-			public void run() {
-				synchronized (bundleFile) {
-					deploy[0] = true;
-					bundleFile.notify();
-				}
-			}
+		retval = Arrays.toString(supervisor.output().toArray(new String[0]));
 
-		});
+		supervisor.close();
+
+		return retval;
 	}
 
-	@Arguments(arg = "bundle")
+	private final blade _blade;
+	private final DeployOptions _options;
+
 	public interface DeployOptions extends Options {
-
-		@Description("The jmx port to use to connect to Liferay 7")
-		public int port();
-
 		@Description("Watches the deployed file for changes and will " +
 				"automatically redeploy")
-		public boolean watch();
-
+		boolean watch();
 	}
 
+	public class DeploySupervisor
+		extends AgentSupervisor<Supervisor, Agent>implements Supervisor {
+
+		private final blade _blade;
+
+		private final List<String> _outLines;
+
+		public DeploySupervisor(blade blade) {
+			_blade = blade;
+			_outLines = new ArrayList<>();
+		}
+
+		public void connect(String host, int port) throws Exception {
+			super.connect(Agent.class, this, host, port);
+		}
+
+		@Override
+		public void event(Event e) throws Exception {
+		}
+
+		public synchronized List<String> output() {
+			List<String> retval = new ArrayList<>(_outLines);
+
+			_outLines.clear();
+
+			return retval;
+		}
+
+		@Override
+		public boolean stderr(String out) throws Exception {
+			_blade.err().print(out);
+			return true;
+		}
+
+		@Override
+		public synchronized boolean stdout(String out) throws Exception {
+			_outLines.add(out);
+			return true;
+		}
+
+	}
 }

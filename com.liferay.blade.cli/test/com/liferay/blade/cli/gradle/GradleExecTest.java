@@ -1,4 +1,8 @@
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.gradle;
+
+import com.liferay.blade.cli.blade;
+import com.liferay.blade.cli.bladenofail;
+import com.liferay.blade.cli.gradle.GradleExec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

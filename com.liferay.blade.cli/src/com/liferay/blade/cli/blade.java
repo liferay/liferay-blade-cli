@@ -15,6 +15,7 @@ import com.liferay.blade.cli.GradleCommand.GradleOptions;
 import com.liferay.blade.cli.InitCommand.InitOptions;
 import com.liferay.blade.cli.MigrateThemeCommand.MigrateThemeOptions;
 import com.liferay.blade.cli.OpenCommand.OpenOptions;
+import com.liferay.blade.cli.OutputsCommand.OutputsOptions;
 import com.liferay.blade.cli.SamplesCommand.SamplesOptions;
 import com.liferay.blade.cli.ServerCommand.ServerOptions;
 import com.liferay.blade.cli.ShellCommand.ShellOptions;
@@ -68,7 +69,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		new CreateCommand(this, options).execute();
 	}
 
-	@Description("Deploys a bundle to the Liferay module framework.")
+	@Description("Builds and deploys bundles to the Liferay module framework.")
 	public void _deploy(DeployOptions options) throws Exception {
 		new DeployCommand(this, options).execute();
 	}
@@ -96,6 +97,10 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	@Description(OpenCommand.DESCRIPTION)
 	public void _open(OpenOptions options) throws Exception {
 		new OpenCommand(this, options).execute();
+	}
+
+	public void _outputs(OutputsOptions options) throws Exception {
+		new OutputsCommand(this, options).execute();
 	}
 
 	@Description(SamplesCommand.DESCRIPTION)

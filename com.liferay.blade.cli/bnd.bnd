@@ -3,20 +3,12 @@
 	biz.aQute.bndlib,\
 	biz.aQute.remote.api,\
 	biz.aQute.repository,\
+	com.liferay.blade.gradle.model;version=latest,\
 	jcl.over.slf4j,\
 	org.apache.commons.io,\
 	org.apache.commons.lang3,\
 	org.apache.httpcomponents.httpclient;version=4.3,\
 	org.apache.httpcomponents.httpcore;version=4.3,\
-	org.eclipse.aether.api,\
-	org.eclipse.aether.connector.basic,\
-	org.eclipse.aether.impl,\
-	org.eclipse.aether.spi,\
-	org.eclipse.aether.transport.classpath,\
-	org.eclipse.aether.transport.file,\
-	org.eclipse.aether.transport.http,\
-	org.eclipse.aether.transport.wagon,\
-	org.eclipse.aether.util,\
 	org.apache.maven.artifact,\
 	org.apache.maven.aether-provider,\
 	org.apache.maven.builder-support,\
@@ -27,14 +19,27 @@
 	org.apache.maven.settings-builder,\
 	org.codehaus.plexus.utils,\
 	org.codehaus.plexus.interpolation,\
+	org.eclipse.aether.api,\
+	org.eclipse.aether.connector.basic,\
+	org.eclipse.aether.impl,\
+	org.eclipse.aether.spi,\
+	org.eclipse.aether.transport.classpath,\
+	org.eclipse.aether.transport.file,\
+	org.eclipse.aether.transport.http,\
+	org.eclipse.aether.transport.wagon,\
+	org.eclipse.aether.util,\
+	org.gradle.toolingapi,\
 	osgi.core,\
 	slf4j.simple,\
 	slf4j.api
+
+-dependson: com.liferay.blade.gradle
 	
 -testpath: \
 	biz.aQute.junit
 
 -includeresource: \
+	deps.zip,\
 	templates.zip
 
 -sources: false
@@ -65,6 +70,7 @@ Private-Package: \
 	aQute.lib.justif;-split-package:=merge-first,\
 	aQute.lib.utf8properties;-split-package:=merge-first,\
 	aQute.lib.zip;-split-package:=merge-first,\
+	aQute.libg.cryptography;-split-package:=merge-first,\
 	aQute.libg.filters;-split-package:=merge-first,\
 	aQute.libg.generics;-split-package:=merge-first,\
 	aQute.libg.gzip;-split-package:=merge-first,\
@@ -74,6 +80,7 @@ Private-Package: \
 	aQute.remote.util,\
 	aQute.service.reporter;-split-package:=merge-first,\
 	com.liferay.blade.cli.*,\
+	com.liferay.blade.gradle.model,\
 	org.apache.commons.io,\
 	org.apache.commons.io.filefilter,\
 	org.apache.commons.io.output,\
@@ -184,6 +191,7 @@ Private-Package: \
 	org.eclipse.aether.util.repository,\
 	org.eclipse.aether.util.version,\
 	org.eclipse.aether.version,\
+	org.gradle.*,\
 	org.osgi.dto,\
 	org.osgi.framework;-split-package:=merge-first,\
 	org.osgi.framework.dto,\

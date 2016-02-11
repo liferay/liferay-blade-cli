@@ -1,4 +1,7 @@
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.gradle;
+
+import com.liferay.blade.cli.Util;
+import com.liferay.blade.cli.blade;
 
 import java.io.File;
 

@@ -33,24 +33,25 @@ package com.liferay.blade.cli;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 import java.io.IOException;
-
+import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.WatchEvent;
+import java.nio.file.WatchEvent.Modifier;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
-
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Example to watch a directory (or tree) for changes to files.
@@ -73,8 +74,29 @@ public class FileWatcher {
 	 * Register the given directory with the WatchService
 	 */
 	private void register(Path dir) throws IOException {
-		WatchKey key = dir.register(
-			watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+		Modifier modifier = null;
+
+		try {
+			Class<?> c =
+				Class.forName("com.sun.nio.file.SensitivityWatchEventModifier");
+			Field f = c.getField("HIGH");
+			modifier = (Modifier) f.get(c);
+		}
+		catch (Exception e) {
+		}
+
+		WatchKey key;
+
+		if (modifier != null) {
+			key =
+				dir.register(
+					watcher,
+					new WatchEvent.Kind[] {ENTRY_CREATE, ENTRY_MODIFY},
+					modifier);
+		}
+		else {
+			key = dir.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+		}
 
 		if (trace) {
 			Path prev = keys.get(key);
@@ -109,30 +131,38 @@ public class FileWatcher {
 		});
 	}
 
+	public FileWatcher(Path baseDir, boolean recursive, Consumer<Path> consumer)
+		throws IOException {
+
+		this(baseDir, null, recursive, consumer);
+	}
+
 	/**
 	 * Creates a WatchService and registers the given directory
 	 * @param runnable
 	 */
 	public FileWatcher(
 			Path baseDir, Path fileToWatch, boolean recursive,
-			Runnable runnable)
+			Consumer<Path> consumer)
 		throws IOException {
 		this.watcher = FileSystems.getDefault().newWatchService();
 		this.keys = new HashMap<>();
 		this.recursive = recursive;
 
+		System.out.format("Scanning %s\n", baseDir);
+
 		if (recursive) {
-			System.out.format("Scanning %s ...\n", baseDir);
-			System.out.format("Watch for changes to %s ...\n", fileToWatch);
 			registerAll(baseDir);
-		} else {
+		}
+		else {
 			register(baseDir);
 		}
 
 		// enable trace after initial registration
 
 		this.trace = true;
-		processEvents(fileToWatch, runnable);
+
+		processEvents(fileToWatch, consumer);
 	}
 
 	/**
@@ -140,7 +170,7 @@ public class FileWatcher {
 	 * @param fileToWatch
 	 * @param runnable
 	 */
-	void processEvents(Path fileToWatch, Runnable runnable) {
+	void processEvents(Path fileToWatch, Consumer<Path> consumer) {
 		while (true) {
 
 			// wait for key to be signalled
@@ -160,7 +190,7 @@ public class FileWatcher {
 				continue;
 			}
 
-			boolean reportFileModified = false;
+			final Set<Path> reportModified = new HashSet<>();
 
 			for (WatchEvent<?> event : key.pollEvents()) {
 				WatchEvent.Kind<?> kind = event.kind();
@@ -177,10 +207,10 @@ public class FileWatcher {
 				Path name = ev.context();
 				Path child = dir.resolve(name);
 
-				if (child.equals(fileToWatch) &&
+				if ((child.equals(fileToWatch) || fileToWatch == null) &&
 					(kind == ENTRY_CREATE || kind == ENTRY_MODIFY)) {
 
-					reportFileModified = true;
+					reportModified.add(child);
 				}
 
 				// if directory is created, and watching recursively, then
@@ -199,8 +229,15 @@ public class FileWatcher {
 				}
 			}
 
-			if (reportFileModified) {
-				runnable.run();
+			if (reportModified.size() > 0) {
+				for (Path modified : reportModified) {
+					try {
+						consumer.consume(modified);
+					}
+					catch (Throwable t) {
+						//ignore
+					}
+				}
 			}
 
 			// reset key and remove from set if directory no longer accessible
@@ -217,6 +254,10 @@ public class FileWatcher {
 				}
 			}
 		}
+	}
+
+	public interface Consumer<E> {
+		public void consume(E reference);
 	}
 
 }

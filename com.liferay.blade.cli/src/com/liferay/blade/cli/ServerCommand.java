@@ -4,7 +4,6 @@ import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
 import java.io.File;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,6 @@ public class ServerCommand {
 
 	public ServerCommand(blade blade, ServerOptions options) {
 		_blade = blade;
-		_options = options;
 	}
 
 	@Description(DESCRIPTION_START)
@@ -255,6 +253,5 @@ public class ServerCommand {
 	}
 
 	private blade _blade;
-	private ServerOptions _options;
 
 }
