@@ -81,6 +81,7 @@ public class DeployCommand {
 						_blade.out().println("installOrUpdate " + modifiedFile);
 
 						final String retval = installOrUpdate(modifiedFile);
+
 						_blade.out().println(retval);
 					}
 				}
@@ -89,7 +90,7 @@ public class DeployCommand {
 			}
 		};
 
-		new FileWatcher(_blade.getBase().toPath(), false, consumer);
+		new FileWatcher(_blade.getBase().toPath(), true, consumer);
 	}
 
 	public void execute() throws Exception {
@@ -166,7 +167,10 @@ public class DeployCommand {
 
 		agent.start(existingId);
 
-		retval = Arrays.toString(supervisor.output().toArray(new String[0]));
+		String[] output = supervisor.output().toArray(new String[0]);
+
+		retval =
+			output != null && output.length > 0 ? Arrays.toString(output) : "";
 
 		supervisor.close();
 
@@ -218,7 +222,7 @@ public class DeployCommand {
 
 		@Override
 		public synchronized boolean stdout(String out) throws Exception {
-			_outLines.add(out);
+			_outLines.add(out.replaceAll( "^>.*$", "" ));
 			return true;
 		}
 
