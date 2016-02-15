@@ -62,8 +62,7 @@ public class AgentCommand {
 		else {
 			props.put(
 				"locations",
-				"https://bndtools.ci.cloudbees.com/job/bnd.master/866/" +
-					"artifact/dist/bundles/index.xml");
+				"http://dl.bintray.com/bnd/dist/3.1.0/index.xml.gz");
 		}
 
 		props.put(FixedIndexedRepo.PROP_CACHE, cache.getAbsolutePath());
