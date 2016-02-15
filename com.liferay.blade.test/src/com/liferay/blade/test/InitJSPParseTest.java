@@ -10,6 +10,7 @@ import com.liferay.blade.util.NullProgressMonitor;
 import java.io.File;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -18,6 +19,7 @@ import org.osgi.framework.ServiceReference;
 public class InitJSPParseTest {
 
 	@Test
+	@Ignore
 	public void initParseErrorCheck() throws Exception {
 		ServiceReference<Migration> sr = context
 				.getServiceReference(Migration.class);
