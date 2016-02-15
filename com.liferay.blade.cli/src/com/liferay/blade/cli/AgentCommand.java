@@ -42,7 +42,7 @@ public class AgentCommand {
 
 	@Description(DESCRIPTION_INSTALL)
 	public void _install(AgentInstallOptions options) throws Exception {
-		if (ShellCommand.canConnect("localhost", Agent.DEFAULT_PORT)) {
+		if (Util.canConnect("localhost", Agent.DEFAULT_PORT)) {
 			addWarning("Agent appears to be already installed and running.");
 			return;
 		}

@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.file.Files;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Formatter;
@@ -35,6 +35,35 @@ public class Util {
 
 	public static final String APP_SERVER_TYPE_PROPERTY = "app.server.type";
 
+	public static boolean canConnect(String host, int port) {
+		InetSocketAddress address = new InetSocketAddress(
+			host, Integer.valueOf(port));
+		InetSocketAddress local = new InetSocketAddress(0);
+
+		InputStream in = null;
+
+		try (Socket socket = new Socket()) {
+			socket.bind(local);
+			socket.connect(address, 3000);
+			in = socket.getInputStream();
+
+			return true;
+		}
+		catch (Exception e) {
+		}
+
+		finally {
+			if (in != null) {
+				try {
+					in.close();
+				}
+				catch (Exception e) {
+				}
+			}
+		}
+
+		return false;
+	}
 	public static File findParentFile(
 		File dir, String[] fileNames, boolean checkParents) {
 

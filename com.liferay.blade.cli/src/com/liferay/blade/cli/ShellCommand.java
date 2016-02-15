@@ -9,11 +9,6 @@ import aQute.remote.api.Event;
 import aQute.remote.api.Supervisor;
 import aQute.remote.util.AgentSupervisor;
 
-import java.io.InputStream;
-
-import java.net.InetSocketAddress;
-import java.net.Socket;
-
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,36 +21,6 @@ public class ShellCommand {
 	public static final String DESCRIPTION =
 		"Connects to Liferay and executes gogo command and returns output.";
 
-	public static boolean canConnect(String host, int port) {
-		InetSocketAddress address = new InetSocketAddress(
-			host, Integer.valueOf(port));
-		InetSocketAddress local = new InetSocketAddress(0);
-
-		InputStream in = null;
-
-		try (Socket socket = new Socket()) {
-			socket.bind(local);
-			socket.connect(address, 3000);
-			in = socket.getInputStream();
-
-			return true;
-		}
-		catch (Exception e) {
-		}
-
-		finally {
-			if (in != null) {
-				try {
-					in.close();
-				}
-				catch (Exception e) {
-				}
-			}
-		}
-
-		return false;
-	}
-
 	public ShellCommand(blade blade, ShellOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
@@ -63,7 +28,7 @@ public class ShellCommand {
 	}
 
 	public void execute() throws Exception {
-		if (!canConnect("localhost", _port)) {
+		if (!Util.canConnect("localhost", _port)) {
 			addError(
 				"sh",
 				"Unable to connect to remote agent on port " + _port + ". " +
