@@ -113,4 +113,46 @@ public class GradleTooling {
 		return model.getOutputFiles();
 	}
 
+	public static File findLatestAvailableArtifact(String artifact)
+		throws Exception {
+
+		return
+			findLatestAvailableArtifact(
+				artifact, "http://cdn.repository.liferay.com/nexus/content/groups/public");
+	}
+
+	public static File findLatestAvailableArtifact(
+			String downloadDep, String repo) throws Exception {
+
+		File projectDir = Files.createTempDirectory("blade").toFile();
+
+		final String buildScriptTemplate =
+			IO.collect(
+				GradleTooling.class.getResourceAsStream("dep.gradle"));
+
+		String buildScript =
+			buildScriptTemplate.replaceFirst("%repo%", repo).replaceFirst(
+				"%dep%", downloadDep);
+
+		File buildGradle = new File(projectDir, "build.gradle");
+
+		IO.write(buildScript.getBytes(), buildGradle);
+
+		ProjectConnection connection = null;
+
+		try {
+			final GradleConnector connector =
+				GradleConnector.newConnector().forProjectDirectory(projectDir);
+
+			connection = connector.connect();
+
+			connection.newBuild().forTasks("copyDep").run();
+		}
+		finally {
+			connection.close();
+		}
+
+		return new File(projectDir, "build").listFiles()[0];
+	}
+
 }

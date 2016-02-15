@@ -87,6 +87,22 @@ Private-Package: \
 	org.apache.commons.lang3,\
 	org.apache.commons.lang3.exception,\
 	org.apache.commons.lang3.text,\
+	org.gradle.*,\
+	org.osgi.dto,\
+	org.osgi.framework;-split-package:=merge-first,\
+	org.osgi.framework.dto,\
+	org.osgi.impl.bundle.bindex,\
+	org.osgi.resource;-split-package:=merge-first,\
+	org.osgi.service.bindex,\
+	org.osgi.service.indexer,\
+	org.osgi.service.log,\
+	org.osgi.service.repository,\
+	org.slf4j;-split-package:=merge-first,\
+	org.slf4j.helpers;-split-package:=merge-first,\
+	org.slf4j.spi;-split-package:=merge-first,\
+	org.slf4j.impl
+
+aether-deps: \
 	org.apache.commons.logging,\
 	org.apache.commons.logging.impl,\
 	org.apache.http,\
@@ -190,18 +206,4 @@ Private-Package: \
 	org.eclipse.aether.util.graph.visitor,\
 	org.eclipse.aether.util.repository,\
 	org.eclipse.aether.util.version,\
-	org.eclipse.aether.version,\
-	org.gradle.*,\
-	org.osgi.dto,\
-	org.osgi.framework;-split-package:=merge-first,\
-	org.osgi.framework.dto,\
-	org.osgi.impl.bundle.bindex,\
-	org.osgi.resource;-split-package:=merge-first,\
-	org.osgi.service.bindex,\
-	org.osgi.service.indexer,\
-	org.osgi.service.log,\
-	org.osgi.service.repository,\
-	org.slf4j;-split-package:=merge-first,\
-	org.slf4j.helpers;-split-package:=merge-first,\
-	org.slf4j.spi;-split-package:=merge-first,\
-	org.slf4j.impl
+	org.eclipse.aether.version

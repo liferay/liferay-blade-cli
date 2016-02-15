@@ -5,23 +5,19 @@ import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
-import com.liferay.blade.cli.aether.AetherClient;
+import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
-
-import org.eclipse.aether.artifact.Artifact;
 
 /**
  * @author Gregory Amerson
@@ -111,15 +107,23 @@ public class InitCommand {
 	public File getWorkspaceZip() throws Exception {
 		trace("Connecting to repository to find latest workspace template.");
 
-		final Artifact workspacePluginArtifact =
-			new AetherClient().findLatestAvailableArtifact(
-				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
+//		final Artifact workspacePluginArtifact =
+//			new AetherClient().findLatestAvailableArtifact(
+//				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
+//
+//		trace(
+//			"Found workspace template version " +
+//				workspacePluginArtifact.getVersion());
+//
+//		final File zipFile = workspacePluginArtifact.getFile();
 
-		trace(
-			"Found workspace template version " +
-				workspacePluginArtifact.getVersion());
+		File zipFile =
+			GradleTooling.findLatestAvailableArtifact(
+				"group: 'com.liferay', " +
+				"name: 'com.liferay.gradle.plugins.workspace', " +
+				"version: '1+', classifier: 'sources', ext: 'jar'");
 
-		final File zipFile = workspacePluginArtifact.getFile();
+		trace("Found workspace template " + zipFile);
 
 		return zipFile;
 	}
