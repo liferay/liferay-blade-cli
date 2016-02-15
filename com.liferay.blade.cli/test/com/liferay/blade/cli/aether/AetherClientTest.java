@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.eclipse.aether.artifact.Artifact;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -14,6 +15,7 @@ import org.junit.Test;
 public class AetherClientTest {
 
 	@Test
+	@Ignore
 	public void testCheckLatestArchetypeVersionOffline() throws Exception {
 		AetherClient client = new AetherClient(null, "test-localrepo");
 

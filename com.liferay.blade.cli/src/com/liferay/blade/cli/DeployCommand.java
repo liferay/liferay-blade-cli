@@ -1,5 +1,6 @@
 package com.liferay.blade.cli;
 
+import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Jar;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
@@ -32,6 +33,7 @@ public class DeployCommand {
 	public DeployCommand(blade blade, DeployOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
+		_port = options.port() != 0 ? options.port() : Agent.DEFAULT_PORT;
 	}
 
 	private void addError(String msg) {
@@ -94,6 +96,15 @@ public class DeployCommand {
 	}
 
 	public void execute() throws Exception {
+		if (!Util.canConnect("localhost", _port)) {
+			addError(
+				"deploy",
+				"Unable to connect to remote agent on port " + _port + ". " +
+					"To install the agent bundle run the command \"blade " +
+						"agent install\".");
+			return;
+		}
+
 		final GradleExec gradleExec = new GradleExec(_blade);
 
 		final Set<File> outputFiles =
@@ -107,16 +118,22 @@ public class DeployCommand {
 		}
 	}
 
+	private void addError(String prefix, String msg) {
+		_blade.addErrors(prefix, Collections.singleton(msg));
+	}
+
 	private String installOrUpdate(File outputFile) throws Exception {
 		boolean isFragment = false;
+		String fragmentHost = null;
 		String bsn = null;
 
 		try(Jar bundle = new Jar(outputFile)) {
 			final Manifest manifest = bundle.getManifest();
 			final Attributes mainAttributes = manifest.getMainAttributes();
 
-			isFragment =
-				mainAttributes.getValue("Fragment-Host") != null;
+			fragmentHost = mainAttributes.getValue("Fragment-Host");
+
+			isFragment = fragmentHost != null;
 
 			bsn = bundle.getBsn();
 		}
@@ -167,6 +184,26 @@ public class DeployCommand {
 
 		agent.start(existingId);
 
+		if (isFragment) {
+			String hostBSN =
+				new Parameters(fragmentHost).keySet().iterator().next();
+
+			long hostId = -1;
+
+			for (BundleDTO bundle : bundles) {
+				if (bundle.symbolicName.equals(hostBSN)) {
+					hostId = bundle.id;
+					break;
+				}
+			}
+
+			if (hostId > 0) {
+				_blade.out().println("refreshing host " + hostId);
+
+				agent.stdin("refresh " + hostId);
+			}
+		}
+
 		String[] output = supervisor.output().toArray(new String[0]);
 
 		retval =
@@ -179,8 +216,12 @@ public class DeployCommand {
 
 	private final blade _blade;
 	private final DeployOptions _options;
+	private final int _port;
 
 	public interface DeployOptions extends Options {
+		@Description("The port to use to connect to remote agent")
+		public int port();
+
 		@Description("Watches the deployed file for changes and will " +
 				"automatically redeploy")
 		boolean watch();

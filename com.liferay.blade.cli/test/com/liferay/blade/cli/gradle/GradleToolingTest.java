@@ -2,6 +2,7 @@ package com.liferay.blade.cli.gradle;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import aQute.lib.io.IO;
 
@@ -39,4 +40,32 @@ public class GradleToolingTest {
 		assertEquals(17, files.size());
 	}
 
+	@Test
+	public void testCheckLatestArchetypeVersionOffline() throws Exception {
+		File file =
+			GradleTooling.findLatestAvailableArtifact(
+				"group: 'com.liferay', name: 'com.liferay.gradle.plugins.workspace', version: '1+', classifier: 'sources', ext: 'jar'",
+				new File("test-localrepo").toURI().toURL().toExternalForm());
+
+		assertNotNull(file);
+		assertTrue(file.exists());
+		assertTrue(
+			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
+		assertTrue(file.getName().endsWith("sources.jar"));
+		assertTrue(file.getName().contains("1.0.8"));
+	}
+
+	@Test
+	public void testCheckLatestArchetypeVersionOnline() throws Exception {
+		File file =
+			GradleTooling.findLatestAvailableArtifact(
+				"group: 'com.liferay', name: 'com.liferay.gradle.plugins.workspace', version: '1+', classifier: 'sources', ext: 'jar'");
+
+		assertNotNull(file);
+		assertTrue(file.exists());
+		assertTrue(
+			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
+		assertTrue(file.getName().endsWith("sources.jar"));
+		assertTrue(file.getName().contains("1.0.8"));
+	}
 }
