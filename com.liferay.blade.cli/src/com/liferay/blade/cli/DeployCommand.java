@@ -32,6 +32,7 @@ public class DeployCommand {
 	public DeployCommand(blade blade, DeployOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
+		_port = options.port() != 0 ? options.port() : Agent.DEFAULT_PORT;
 	}
 
 	private void addError(String msg) {
@@ -94,6 +95,15 @@ public class DeployCommand {
 	}
 
 	public void execute() throws Exception {
+		if (!Util.canConnect("localhost", _port)) {
+			addError(
+				"deploy",
+				"Unable to connect to remote agent on port " + _port + ". " +
+					"To install the agent bundle run the command \"blade " +
+						"agent install\".");
+			return;
+		}
+
 		final GradleExec gradleExec = new GradleExec(_blade);
 
 		final Set<File> outputFiles =
@@ -105,6 +115,10 @@ public class DeployCommand {
 		else {
 			deploy(gradleExec, outputFiles);
 		}
+	}
+
+	private void addError(String prefix, String msg) {
+		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
 	private String installOrUpdate(File outputFile) throws Exception {
@@ -179,8 +193,12 @@ public class DeployCommand {
 
 	private final blade _blade;
 	private final DeployOptions _options;
+	private final int _port;
 
 	public interface DeployOptions extends Options {
+		@Description("The port to use to connect to remote agent")
+		public int port();
+
 		@Description("Watches the deployed file for changes and will " +
 				"automatically redeploy")
 		boolean watch();
