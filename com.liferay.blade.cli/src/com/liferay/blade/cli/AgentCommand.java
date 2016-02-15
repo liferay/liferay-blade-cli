@@ -47,47 +47,15 @@ public class AgentCommand {
 			return;
 		}
 
-		File cache = _blade.getCacheDir();
+		final File agentJar = getAgentJar(
+			_blade.getCacheDir(), options.repo(), options.version());
 
-		cache.mkdirs();
-
-		Processor reporter = new Processor();
-		FixedIndexedRepo repo = new FixedIndexedRepo();
-		Map<String, String> props = new HashMap<>();
-		props.put("name", "index1");
-
-		if (options.repo() != null) {
-			props.put("locations", options.repo().toExternalForm());
-		}
-		else {
-			props.put(
-				"locations",
-				"http://dl.bintray.com/bnd/dist/3.1.0/index.xml.gz");
-		}
-
-		props.put(FixedIndexedRepo.PROP_CACHE, cache.getAbsolutePath());
-
-		repo.setProperties(props);
-		repo.setReporter(reporter);
-
-		File[] files = null;
-
-		if (options.version() != null) {
-			files = repo.get(
-				"biz.aQute.remote.agent", options.version().toString());
-		}
-		else {
-			files = repo.get("biz.aQute.remote.agent", "latest");
-		}
-
-		if ((files == null) || (files.length == 0)) {
+		if (agentJar == null) {
 			addError(
 				"Unable to find remote agent from remote repository. " +
 					"Please ensure internet connectivity.");
 			return;
 		}
-
-		File agentJar = files[0];
 
 		if (options.liferayhome() != null) {
 			File modulesDir = new File(options.liferayhome(), "osgi/modules");
@@ -182,6 +150,51 @@ public class AgentCommand {
 		_blade.out().println("Uninstalled remote agent sucessfully.");
 	}
 
+	private void addError(String msg) {
+		_blade.addErrors("agent", Collections.singleton(msg));
+	}
+
+	private void addWarning(String msg) {
+		_blade.addWarnings("agent", Collections.singleton(msg));
+	}
+
+	public File getAgentJar(File cacheDir, URL repoUrl, Version version)
+			throws Exception {
+
+		cacheDir.mkdirs();
+
+		Processor reporter = new Processor();
+		FixedIndexedRepo repo = new FixedIndexedRepo();
+		Map<String, String> props = new HashMap<>();
+		props.put("name", "index1");
+
+		if (repoUrl != null) {
+			props.put("locations", repoUrl.toExternalForm());
+		}
+		else {
+			props.put(
+				"locations",
+				"http://dl.bintray.com/bnd/dist/3.1.0/index.xml.gz");
+		}
+
+		props.put(FixedIndexedRepo.PROP_CACHE, cacheDir.getAbsolutePath());
+
+		repo.setProperties(props);
+		repo.setReporter(reporter);
+
+		File[] files = null;
+
+		if (version != null) {
+			files = repo.get(
+				"biz.aQute.remote.agent", version.toString());
+		}
+		else {
+			files = repo.get("biz.aQute.remote.agent", "latest");
+		}
+
+		return files[0];
+	}
+
 	@Description(DESCRIPTION_INSTALL)
 	public interface AgentInstallOptions extends AgentOptions {
 
@@ -206,14 +219,6 @@ public class AgentCommand {
 
 		public File liferayhome();
 
-	}
-
-	private void addError(String msg) {
-		_blade.addErrors("agent", Collections.singleton(msg));
-	}
-
-	private void addWarning(String msg) {
-		_blade.addWarnings("agent", Collections.singleton(msg));
 	}
 
 	private final blade _blade;
