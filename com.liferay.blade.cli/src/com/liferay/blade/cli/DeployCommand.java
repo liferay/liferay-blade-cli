@@ -41,7 +41,7 @@ public class DeployCommand {
 	}
 
 	public String deploy(GradleExec gradle, Set<File> outputFiles) throws Exception {
-		final int retcode = gradle.executeGradleCommand("jar");
+		final int retcode = gradle.executeGradleCommand("build -x check");
 
 		if (retcode > 0) {
 			addError("Gradle jar task failed.");
@@ -55,18 +55,12 @@ public class DeployCommand {
 		final GradleExec gradleExec, final Set<File> outputFiles)
 			throws Exception {
 
-		if (outputFiles.size() > 0) {
-			for (File outputFile : outputFiles) {
-				final String retval = installOrUpdate(outputFile);
-
-				_blade.out().println(retval);
-			}
-		}
+		deploy(gradleExec, outputFiles);
 
 		new Thread() {
 			public void run() {
 				try {
-					gradleExec.executeGradleCommand("jar -t");
+					gradleExec.executeGradleCommand("build -x check -t");
 				}
 				catch (Exception e) {
 				}
