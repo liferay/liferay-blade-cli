@@ -40,15 +40,19 @@ public class DeployCommand {
 		_blade.addErrors("deploy", Collections.singleton(msg));
 	}
 
-	public String deploy(GradleExec gradle, Set<File> outputFiles) throws Exception {
+	public void deploy(GradleExec gradle, Set<File> outputFiles) throws Exception {
 		final int retcode = gradle.executeGradleCommand("build -x check");
 
 		if (retcode > 0) {
 			addError("Gradle jar task failed.");
-			return null;
+			return;
 		}
 
-		return installOrUpdate(outputFiles.iterator().next());
+		for (File outputFile : outputFiles) {
+			String retval = installOrUpdate(outputFile);
+
+			_blade.out().println(retval);
+		}
 	}
 
 	public void deployWatch(
