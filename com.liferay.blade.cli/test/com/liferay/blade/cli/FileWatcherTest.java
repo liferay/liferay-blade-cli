@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class FileWatcherTest {
@@ -78,7 +77,6 @@ public class FileWatcherTest {
 	}
 
 	@Test
-	@Ignore
 	public void testFileWatcherMultipleFiles() throws Exception {
 		IO.write("foobar".getBytes(), testfile);
 
