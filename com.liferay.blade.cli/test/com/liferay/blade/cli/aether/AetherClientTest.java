@@ -32,7 +32,7 @@ public class AetherClientTest {
 			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
 		assertTrue(file.getName().endsWith("sources.jar"));
 		assertTrue(file.getPath().contains("test-localrepo"));
-		assertTrue(file.getName().contains("1.0.1"));
+		assertTrue(file.getName().contains("1.0.8"));
 	}
 
 	@Test
@@ -51,7 +51,7 @@ public class AetherClientTest {
 		assertTrue(
 			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
 		assertTrue(file.getName().endsWith("sources.jar"));
-		assertTrue(file.getName().contains("1.0.8"));
+		assertTrue(file.getName().contains("1.0.9"));
 	}
 
 }
