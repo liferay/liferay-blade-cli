@@ -14,7 +14,6 @@ Private-Package: \
 	_package_.service.persistence.impl,\
 	_package_.service.util
 
--includeresource: src/main/resources
 Liferay-Service: true
 Require-Capability: liferay.extender;filter:="(&(liferay.extender=spring.extender)(version>=1.0)(!(version>=2.0)))"
 Spring-Context: META-INF/spring

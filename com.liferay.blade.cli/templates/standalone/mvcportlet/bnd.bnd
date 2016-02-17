@@ -9,6 +9,3 @@ Import-Package: \
 
 Private-Package: \
 	_package_
-
--includeresource:\
-	META-INF/resources=src/main/resources/META-INF/resources

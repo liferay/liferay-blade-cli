@@ -55,9 +55,9 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateGradleJspHook() throws Exception {
+	public void testCreateGradleFragment() throws Exception {
 		String[] args = {
-			"create", "-d", "generated/test", "-t", "jsphook", "-h",
+			"create", "-d", "generated/test", "-t", "fragment", "-h",
 			"com.liferay.login.web", "-H", "1.0.0", "loginHook"
 		};
 
@@ -347,10 +347,10 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateWorkspaceGradleJspHook() throws Exception {
+	public void testCreateWorkspaceGradleFragment() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules/extensions", "-t",
-			"jsphook", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook"
+			"fragment", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook"
 		};
 
 		File workspace = new File("generated/test/workspace");
