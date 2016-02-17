@@ -51,7 +51,7 @@ public class AetherClientTest {
 		assertTrue(
 			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
 		assertTrue(file.getName().endsWith("sources.jar"));
-		assertTrue(file.getName().contains("1.0.9"));
+		assertTrue(file.getName().contains("1.0.10"));
 	}
 
 }
