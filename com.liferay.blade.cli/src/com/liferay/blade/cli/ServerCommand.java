@@ -190,9 +190,15 @@ public class ServerCommand {
 				serverType = Workspace.DEFAULT_BUNDLE_ARTIFACT_NAME;
 			}
 
-			serverType = serverType.replace("portal-", "");
-
-			serverType = serverType.replace("-bundle", "");
+			if (serverType.contains("jboss")) {
+				serverType = "jboss";
+			}
+			else if (serverType.contains("wildfly")) {
+				serverType = "wildfly";
+			}
+			else if (serverType.contains("tomcat")) {
+				serverType = "tomcat";
+			}
 
 			commandServer(
 				cmd, new File(rootDir, liferayHomePath), serverType, options);
