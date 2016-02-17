@@ -3,7 +3,6 @@ package com.liferay.blade.cli;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
-
 import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
@@ -11,7 +10,6 @@ import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.InputStream;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -160,13 +158,13 @@ public class CreateCommand {
 
 		final String hostbundleversion = _options.hostbundleversion();
 
-		if (Template.jsphook.equals(template)) {
+		if (Template.fragment.equals(template)) {
 			if (isEmpty(hostbundlebsn) || isEmpty(hostbundleversion)) {
 				addError(
 					"Create",
-					"The jsphook template requires the bundle symbolic name " +
+					"The fragment template requires the bundle symbolic name " +
 						"of the hostbundle and version must be specified.\n" +
-						"For example: blade create -t jsphook -h " +
+						"For example: blade create -t fragment -h " +
 						"com.liferay.login.web -H 1.0.0 name");
 				return;
 			}
@@ -240,7 +238,7 @@ public class CreateCommand {
 
 		@Description(
 			"The project template to use when creating the project. The " +
-				"following templates are available: activator, jsphook, " +
+				"following templates are available: activator, fragment, " +
 					"mvcportlet, portlet, service, servicebuilder, " +
 						"servicewrapper"
 		)
