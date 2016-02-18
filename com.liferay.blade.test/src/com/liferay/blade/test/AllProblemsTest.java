@@ -11,7 +11,6 @@ import com.liferay.blade.util.NullProgressMonitor;
 import java.io.File;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -20,7 +19,6 @@ import org.osgi.framework.ServiceReference;
 public class AllProblemsTest {
 
 	@Test
-	@Ignore
 	public void allProblems() throws Exception {
 		ServiceReference<Migration> sr = context
 			.getServiceReference(Migration.class);

@@ -1,6 +1,7 @@
 package com.liferay.blade.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import com.liferay.blade.api.Migration;
 import com.liferay.blade.api.Problem;
@@ -14,23 +15,32 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-public class AllJSPTagProblemsTest {
+public class LiferayUIFlagsTagsTest {
 
 	@Test
-	public void allProblems() throws Exception {
+	public void findProblems() throws Exception {
 		ServiceReference<Migration> sr = context
-			.getServiceReference(Migration.class);
+				.getServiceReference(Migration.class);
+
 		Migration m = context.getService(sr);
-		List<Problem> problems = m.findProblems(new File("jsptests/"), new NullProgressMonitor());
 
-		final int expectedSize = 58;
-		final int size = problems.size();
+		List<Problem> problems = m.findProblems(new File("jsptests/liferayui-flags/"), new NullProgressMonitor());
 
-		if (size != expectedSize) {
-			System.err.println("All problems size is " + size + ", expected size is " + expectedSize);
+		assertEquals(1, problems.size());
+
+		boolean found = false;
+
+		for (Problem problem : problems) {
+			if (problem.file.getName().endsWith("LiferayUIFlagsTagsTest.jsp")) {
+				if (problem.lineNumber == 3 && problem.startOffset == 65 && problem.endOffset == 273) {
+					found = true;
+				}
+			}
 		}
 
-		assertEquals(expectedSize, size);
+		if (!found) {
+			fail();
+		}
 	}
 
 	private final BundleContext context = FrameworkUtil.getBundle(
