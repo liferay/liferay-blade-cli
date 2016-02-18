@@ -45,6 +45,23 @@ public class SamplesCommandTest {
 	}
 
 	@Test
+	public void testGetSampleWithDependencies() throws Exception {
+		String[] args = {
+			"samples", "-d", "generated/test", "blade.rest"
+		};
+
+		new bladenofail().run(args);
+
+		File projectDir = IO.getFile("generated/test/blade.rest");
+
+		Assert.assertTrue(projectDir.exists());
+
+		File buildFile = IO.getFile(projectDir, "build.gradle");
+
+		Assert.assertTrue(buildFile.exists());
+	}
+
+	@Test
 	public void testListSamples() throws Exception {
 		String[] args = {"samples"};
 
