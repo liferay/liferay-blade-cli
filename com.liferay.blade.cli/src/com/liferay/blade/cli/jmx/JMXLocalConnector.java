@@ -75,18 +75,20 @@ public class JMXLocalConnector {
 					Field nl = ClassLoader.class.getDeclaredField(
 						"nativeLibraries");
 					nl.setAccessible(true);
+
 					Vector< ? > nativeLibs = (Vector< ? >)nl.get(
 						toolsClassloader);
 
 					for (Object nativeLib : nativeLibs) {
-						Field nameField =
-							nativeLib.getClass().getDeclaredField("name");
+						Class<?> clazz = nativeLib.getClass();
+
+						Field nameField = clazz.getDeclaredField("name");
 						nameField.setAccessible(true);
+
 						String name = (String)nameField.get(nativeLib);
 
 						if (new File(name).getName().contains("attach")) {
-							Method f = nativeLib.getClass().getDeclaredMethod(
-								"finalize");
+							Method f = clazz.getDeclaredMethod("finalize");
 							f.setAccessible(true);
 							f.invoke(nativeLib);
 						}
@@ -161,7 +163,7 @@ public class JMXLocalConnector {
 
 						localConnectorAddress = agentProperties.getProperty(
 							"com.sun.management.jmxremote." +
-							"localConnectorAddress");
+								"localConnectorAddress");
 					}
 				}
 
@@ -248,7 +250,7 @@ public class JMXLocalConnector {
 			try {
 				toolsUrl = toolsJar.toURI().toURL();
 			}
-			catch (MalformedURLException e) {
+			catch (MalformedURLException murle) {
 				//
 			}
 

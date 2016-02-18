@@ -150,16 +150,8 @@ public class AgentCommand {
 		_blade.out().println("Uninstalled remote agent sucessfully.");
 	}
 
-	private void addError(String msg) {
-		_blade.addErrors("agent", Collections.singleton(msg));
-	}
-
-	private void addWarning(String msg) {
-		_blade.addWarnings("agent", Collections.singleton(msg));
-	}
-
 	public File getAgentJar(File cacheDir, URL repoUrl, Version version)
-			throws Exception {
+		throws Exception {
 
 		cacheDir.mkdirs();
 
@@ -185,8 +177,7 @@ public class AgentCommand {
 		File[] files = null;
 
 		if (version != null) {
-			files = repo.get(
-				"biz.aQute.remote.agent", version.toString());
+			files = repo.get("biz.aQute.remote.agent", version.toString());
 		}
 		else {
 			files = repo.get("biz.aQute.remote.agent", "latest");
@@ -219,6 +210,14 @@ public class AgentCommand {
 
 		public File liferayhome();
 
+	}
+
+	private void addError(String msg) {
+		_blade.addErrors("agent", Collections.singleton(msg));
+	}
+
+	private void addWarning(String msg) {
+		_blade.addWarnings("agent", Collections.singleton(msg));
 	}
 
 	private final blade _blade;

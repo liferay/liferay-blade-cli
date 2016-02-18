@@ -69,7 +69,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		new CreateCommand(this, options).execute();
 	}
 
-	@Description("Builds and deploys bundles to the Liferay module framework.")
+	@Description(DeployCommand.DESCRIPTION)
 	public void _deploy(DeployOptions options) throws Exception {
 		new DeployCommand(this, options).execute();
 	}
