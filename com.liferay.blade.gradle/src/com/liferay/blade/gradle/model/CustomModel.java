@@ -1,6 +1,7 @@
 package com.liferay.blade.gradle.model;
 
 import java.io.File;
+
 import java.util.Set;
 
 /**
@@ -8,8 +9,10 @@ import java.util.Set;
  */
 public interface CustomModel {
 
-    boolean hasPlugin(String className);
-    Set<File> getOutputFiles();
-    Set<String> getPluginClassNames();
+	public Set<File> getOutputFiles();
+
+	public Set<String> getPluginClassNames();
+
+	public boolean hasPlugin(String className);
 
 }

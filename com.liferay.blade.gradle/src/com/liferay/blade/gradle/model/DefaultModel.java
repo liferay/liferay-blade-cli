@@ -2,6 +2,7 @@ package com.liferay.blade.gradle.model;
 
 import java.io.File;
 import java.io.Serializable;
+
 import java.util.Set;
 
 /**
@@ -10,23 +11,24 @@ import java.util.Set;
 @SuppressWarnings("serial")
 public class DefaultModel implements Serializable {
 
-    private final Set<String> _pluginClassNames;
-    private final Set<File> _outputFiles;
+	public DefaultModel(Set<String> pluginClassNames, Set<File> outputFiles) {
+		_pluginClassNames = pluginClassNames;
+		_outputFiles = outputFiles;
+	}
 
-    public DefaultModel(Set<String> pluginClassNames, Set<File> outputFiles) {
-        _pluginClassNames = pluginClassNames;
-        _outputFiles = outputFiles;
-    }
+	public Set<File> getOutputFiles() {
+		return _outputFiles;
+	}
 
-    public boolean hasPlugin(String pluginClassName) {
-        return _pluginClassNames.contains(pluginClassName);
-    }
+	public Set<String> getPluginClassNames() {
+		return _pluginClassNames;
+	}
 
-    public Set<File> getOutputFiles() {
-        return _outputFiles;
-    }
+	public boolean hasPlugin(String pluginClassName) {
+		return _pluginClassNames.contains(pluginClassName);
+	}
 
-    public Set<String> getPluginClassNames() {
-        return _pluginClassNames;
-    }
+	private final Set<File> _outputFiles;
+	private final Set<String> _pluginClassNames;
+
 }
