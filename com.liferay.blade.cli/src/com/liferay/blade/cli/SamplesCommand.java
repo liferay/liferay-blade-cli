@@ -8,6 +8,8 @@ import java.io.File;
 
 import java.net.URL;
 
+import java.nio.file.Files;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -74,8 +76,14 @@ public class SamplesCommand {
 				File dest = new File(workDir, fileName);
 
 				FileUtils.copyDirectory(file, dest);
+
+				updateBuildGradle(dest);
 			}
 		}
+	}
+
+	private String deindent(String s) {
+		return s.replaceAll("(?m)^\t", "");
 	}
 
 	private boolean downloadBladeRepoIfNeeded() throws Exception {
@@ -123,6 +131,81 @@ public class SamplesCommand {
 		_blade.out().println("Currently available samples:");
 		_blade.out().println(
 			WordUtils.wrap(StringUtils.join(samples, ", "), 80));
+	}
+
+	private String parseGradleScript(String script, String section) {
+		int begin = script.indexOf(section + " {") + section.length() + 2;
+		int end = begin;
+		int count = 0;
+
+		while (true) {
+			char c = script.charAt(end);
+
+			if ((count == 0) && (c == '}')) {
+				break;
+			}
+
+			if ((count != 0) && (c == '}')) {
+				count--;
+			}
+			else if (c == '{') {
+				count++;
+			}
+
+			end++;
+		}
+
+		return script.substring(begin, end);
+	}
+
+	private void updateBuildGradle(File dir) throws Exception {
+		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
+
+		File parentBuildGradleFile = new File(
+			bladeRepo, "liferay-gradle/build.gradle");
+
+		String parentScript = parseGradleScript(
+			Util.read(parentBuildGradleFile), "subprojects");
+
+		File sampleGradleFile = new File(dir, "build.gradle");
+
+		String script = Util.read(sampleGradleFile);
+
+		if (Util.isWorkspace(dir)) {
+			parentScript = parseGradleScript(parentScript, "dependencies");
+
+			if (script.contains("dependencies")) {
+				String dependencies = parseGradleScript(script, "dependencies");
+
+				script = script.replace(
+					dependencies, parentScript + dependencies);
+			}
+			else {
+				script += "\ndependencies {\n" + deindent(parentScript) + "}";
+			}
+		}
+		else {
+			if (script.contains("dependencies")) {
+				String dependencies = parseGradleScript(script, "dependencies");
+
+				String parentDependencies = parseGradleScript(
+					parentScript, "dependencies");
+
+				parentScript = parentScript.replace(
+					parentDependencies, parentDependencies + dependencies);
+
+				int begin = script.indexOf("dependencies");
+				int end = script.indexOf("}", begin) + 1;
+
+				script = script.replace(
+					script.substring(begin, end), deindent(parentScript));
+			}
+			else {
+				script += deindent(parentScript);
+			}
+		}
+
+		Files.write(sampleGradleFile.toPath(), script.getBytes());
 	}
 
 	private static final String _BLADE_REPO_ARCHIVE_NAME = "blade-master.zip";
