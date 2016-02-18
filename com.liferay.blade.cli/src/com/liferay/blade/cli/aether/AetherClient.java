@@ -108,8 +108,8 @@ public class AetherClient {
 
 			return builder.build(request).getEffectiveSettings();
 		}
-		catch (SettingsBuildingException e) {
-			e.printStackTrace();
+		catch (SettingsBuildingException sbe) {
+			sbe.printStackTrace();
 			return null;
 		}
 	}

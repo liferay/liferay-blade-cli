@@ -5,7 +5,9 @@ import aQute.lib.getopt.Options;
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
+
 import java.nio.file.Path;
+
 import java.util.Set;
 
 /**
@@ -13,7 +15,9 @@ import java.util.Set;
  */
 public class OutputsCommand {
 
-	public OutputsCommand(blade blade, OutputsOptions options) throws Exception {
+	public OutputsCommand(blade blade, OutputsOptions options)
+		throws Exception {
+
 		_blade = blade;
 		_options = options;
 	}
@@ -21,8 +25,8 @@ public class OutputsCommand {
 	public void execute() throws Exception {
 		final File base = _blade.getBase();
 
-		final Set<File> outputs =
-			GradleTooling.getOutputFiles(_blade.getCacheDir(), base);
+		final Set<File> outputs = GradleTooling.getOutputFiles(
+			_blade.getCacheDir(), base);
 
 		for (File output : outputs) {
 			Path outputPath = output.toPath();
@@ -36,11 +40,13 @@ public class OutputsCommand {
 		}
 	}
 
+	public interface OutputsOptions extends Options {
+
+		public boolean absolute();
+
+	}
+
 	private blade _blade;
 	private OutputsOptions _options;
-
-	public interface OutputsOptions extends Options {
-		boolean absolute();
-	}
 
 }

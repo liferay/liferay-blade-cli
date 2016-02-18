@@ -11,9 +11,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+
 import java.net.InetSocketAddress;
 import java.net.Socket;
+
 import java.nio.file.Files;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Formatter;
@@ -64,6 +67,7 @@ public class Util {
 
 		return false;
 	}
+
 	public static File findParentFile(
 		File dir, String[] fileNames, boolean checkParents) {
 
@@ -366,7 +370,7 @@ public class Util {
 				}
 
 				try (final InputStream in = zip.getInputStream(entry);
-						final FileOutputStream out = new FileOutputStream(f)) {
+					 final FileOutputStream out = new FileOutputStream(f)) {
 
 					final byte[] bytes = new byte[1024];
 					int count = in.read(bytes);

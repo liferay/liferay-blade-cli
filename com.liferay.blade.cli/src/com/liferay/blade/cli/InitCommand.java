@@ -10,8 +10,10 @@ import com.liferay.blade.cli.gradle.GradleTooling;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -92,10 +94,10 @@ public class InitCommand {
 
 			Util.unzip(workspaceZip, destDir, "samples/");
 		}
-		catch (IOException e) {
+		catch (IOException ioe) {
 			addError(
 				"Unable to unzip contents of workspace to dir: " +
-					e.getMessage());
+					ioe.getMessage());
 			return;
 		}
 
@@ -107,21 +109,20 @@ public class InitCommand {
 	public File getWorkspaceZip() throws Exception {
 		trace("Connecting to repository to find latest workspace template.");
 
-//		final Artifact workspacePluginArtifact =
-//			new AetherClient().findLatestAvailableArtifact(
-//				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
-//
-//		trace(
-//			"Found workspace template version " +
-//				workspacePluginArtifact.getVersion());
-//
-//		final File zipFile = workspacePluginArtifact.getFile();
+		/*final Artifact workspacePluginArtifact =
+			new AetherClient().findLatestAvailableArtifact(
+				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
-		File zipFile =
-			GradleTooling.findLatestAvailableArtifact(
-				"group: 'com.liferay', " +
+		trace(
+			"Found workspace template version " +
+				workspacePluginArtifact.getVersion());
+
+		final File zipFile = workspacePluginArtifact.getFile(); */
+
+		File zipFile = GradleTooling.findLatestAvailableArtifact(
+			"group: 'com.liferay', " +
 				"name: 'com.liferay.gradle.plugins.workspace', " +
-				"version: '1+', classifier: 'sources', ext: 'jar'");
+					"version: '1+', classifier: 'sources', ext: 'jar'");
 
 		trace("Found workspace template " + zipFile);
 

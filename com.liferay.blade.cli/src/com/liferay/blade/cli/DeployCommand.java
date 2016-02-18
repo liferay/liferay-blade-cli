@@ -2,8 +2,10 @@ package com.liferay.blade.cli;
 
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Jar;
+
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
+
 import aQute.remote.api.Agent;
 import aQute.remote.api.Event;
 import aQute.remote.api.Supervisor;
@@ -14,7 +16,9 @@ import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
+
 import java.nio.file.Path;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,17 +34,18 @@ import org.osgi.framework.dto.BundleDTO;
  */
 public class DeployCommand {
 
+	public static final String DESCRIPTION =
+		"Builds and deploys bundles to the Liferay module framework.";
+
 	public DeployCommand(blade blade, DeployOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
 		_port = options.port() != 0 ? options.port() : Agent.DEFAULT_PORT;
 	}
 
-	private void addError(String msg) {
-		_blade.addErrors("deploy", Collections.singleton(msg));
-	}
+	public void deploy(GradleExec gradle, Set<File> outputFiles)
+		throws Exception {
 
-	public void deploy(GradleExec gradle, Set<File> outputFiles) throws Exception {
 		final int retcode = gradle.executeGradleCommand("build -x check");
 
 		if (retcode > 0) {
@@ -56,12 +61,13 @@ public class DeployCommand {
 	}
 
 	public void deployWatch(
-		final GradleExec gradleExec, final Set<File> outputFiles)
-			throws Exception {
+			final GradleExec gradleExec, final Set<File> outputFiles)
+		throws Exception {
 
 		deploy(gradleExec, outputFiles);
 
 		new Thread() {
+
 			public void run() {
 				try {
 					gradleExec.executeGradleCommand("build -x check -t");
@@ -69,9 +75,11 @@ public class DeployCommand {
 				catch (Exception e) {
 				}
 			}
+
 		}.start();
 
-		final Consumer<Path> consumer = new Consumer<Path>(){
+		final Consumer<Path> consumer = new Consumer<Path>() {
+
 			@Override
 			public void consume(Path modified) {
 				try {
@@ -88,6 +96,7 @@ public class DeployCommand {
 				catch (Exception e) {
 				}
 			}
+
 		};
 
 		new FileWatcher(_blade.getBase().toPath(), true, consumer);
@@ -105,8 +114,8 @@ public class DeployCommand {
 
 		final GradleExec gradleExec = new GradleExec(_blade);
 
-		final Set<File> outputFiles =
-			GradleTooling.getOutputFiles(_blade.getCacheDir(), _blade.getBase());
+		final Set<File> outputFiles = GradleTooling.getOutputFiles(
+			_blade.getCacheDir(), _blade.getBase());
 
 		if (_options.watch()) {
 			deployWatch(gradleExec, outputFiles);
@@ -114,6 +123,65 @@ public class DeployCommand {
 		else {
 			deploy(gradleExec, outputFiles);
 		}
+	}
+
+	@Description(DESCRIPTION)
+	public interface DeployOptions extends Options {
+
+		@Description("The port to use to connect to remote agent")
+		public int port();
+
+		@Description(
+			"Watches the deployed file for changes and will automatically " +
+				"redeploy"
+		)
+		public boolean watch();
+
+	}
+
+	public class DeploySupervisor
+		extends AgentSupervisor<Supervisor, Agent> implements Supervisor {
+
+		public DeploySupervisor(blade blade) {
+			_blade = blade;
+			_outLines = new ArrayList<>();
+		}
+
+		public void connect(String host, int port) throws Exception {
+			super.connect(Agent.class, this, host, port);
+		}
+
+		@Override
+		public void event(Event e) throws Exception {
+		}
+
+		public synchronized List<String> output() {
+			List<String> retval = new ArrayList<>(_outLines);
+
+			_outLines.clear();
+
+			return retval;
+		}
+
+		@Override
+		public boolean stderr(String out) throws Exception {
+			_blade.err().print(out);
+			return true;
+		}
+
+		@Override
+		public synchronized boolean stdout(String out) throws Exception {
+			_outLines.add(out.replaceAll("^>.*$", ""));
+			return true;
+		}
+
+		private final blade _blade;
+		private final List<String> _outLines;
+
+	}
+
+	private void addError(String msg) {
+		_blade.addErrors("deploy", Collections.singleton(msg));
 	}
 
 	private void addError(String prefix, String msg) {
@@ -183,8 +251,8 @@ public class DeployCommand {
 		agent.start(existingId);
 
 		if (isFragment) {
-			String hostBSN =
-				new Parameters(fragmentHost).keySet().iterator().next();
+			String hostBSN = new Parameters(
+				fragmentHost).keySet().iterator().next();
 
 			long hostId = -1;
 
@@ -216,54 +284,4 @@ public class DeployCommand {
 	private final DeployOptions _options;
 	private final int _port;
 
-	public interface DeployOptions extends Options {
-		@Description("The port to use to connect to remote agent")
-		public int port();
-
-		@Description("Watches the deployed file for changes and will " +
-				"automatically redeploy")
-		boolean watch();
-	}
-
-	public class DeploySupervisor
-		extends AgentSupervisor<Supervisor, Agent>implements Supervisor {
-
-		private final blade _blade;
-
-		private final List<String> _outLines;
-
-		public DeploySupervisor(blade blade) {
-			_blade = blade;
-			_outLines = new ArrayList<>();
-		}
-
-		public void connect(String host, int port) throws Exception {
-			super.connect(Agent.class, this, host, port);
-		}
-
-		@Override
-		public void event(Event e) throws Exception {
-		}
-
-		public synchronized List<String> output() {
-			List<String> retval = new ArrayList<>(_outLines);
-
-			_outLines.clear();
-
-			return retval;
-		}
-
-		@Override
-		public boolean stderr(String out) throws Exception {
-			_blade.err().print(out);
-			return true;
-		}
-
-		@Override
-		public synchronized boolean stdout(String out) throws Exception {
-			_outLines.add(out.replaceAll( "^>.*$", "" ));
-			return true;
-		}
-
-	}
 }
