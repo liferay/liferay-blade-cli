@@ -47,10 +47,6 @@ subprojects {
 	}
 
 	apply plugin: "com.liferay.source.formatter"
-
-	formatSource {
-		baseDirName = "$project.projectDir/src"
-	}
 }
 
 task wrapper(type: Wrapper) {
