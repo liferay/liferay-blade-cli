@@ -1,4 +1,4 @@
--sub: *.bnd
--buildpath: \
+-buildpath:\
 	javax.inject,\
 	org.gradle.toolingapi
+-sub: *.bnd
