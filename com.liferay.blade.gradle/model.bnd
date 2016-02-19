@@ -1,5 +1,5 @@
--sources: false
-
 Bundle-Version: 1.0.0.${tstamp}
 
 Export-Package: com.liferay.blade.gradle.model
+
+-sources: false

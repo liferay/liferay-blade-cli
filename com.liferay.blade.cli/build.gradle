@@ -1,27 +1,3 @@
-buildscript {
-	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "1.0.8"
-	}
-
-	repositories {
-		maven {
-			url "http://cdn.repository.liferay.com/nexus/content/groups/public"
-		}
-	}
-}
-
-repositories {
-	maven {
-		url "http://cdn.repository.liferay.com/nexus/content/groups/public"
-	}
-}
-
-apply plugin: "com.liferay.source.formatter"
-
-formatSource {
-	baseDirName = "src"
-}
-
 task createTemplatesZip(type:Zip) {
 	from "${projectDir}/templates"
 	baseName = "templates"

@@ -1,55 +1,10 @@
--buildpath: \
-	aQute.libg,\
-	biz.aQute.bndlib,\
-	biz.aQute.remote.api,\
-	biz.aQute.repository,\
-	com.liferay.blade.gradle.model;version=latest,\
-	jcl.over.slf4j,\
-	org.apache.commons.io,\
-	org.apache.commons.lang3,\
-	org.apache.httpcomponents.httpclient;version=4.3,\
-	org.apache.httpcomponents.httpcore;version=4.3,\
-	org.apache.maven.artifact,\
-	org.apache.maven.aether-provider,\
-	org.apache.maven.builder-support,\
-	org.apache.maven.model,\
-	org.apache.maven.model-builder,\
-	org.apache.maven.repository-metadata,\
-	org.apache.maven.settings,\
-	org.apache.maven.settings-builder,\
-	org.codehaus.plexus.utils,\
-	org.codehaus.plexus.interpolation,\
-	org.eclipse.aether.api,\
-	org.eclipse.aether.connector.basic,\
-	org.eclipse.aether.impl,\
-	org.eclipse.aether.spi,\
-	org.eclipse.aether.transport.classpath,\
-	org.eclipse.aether.transport.file,\
-	org.eclipse.aether.transport.http,\
-	org.eclipse.aether.transport.wagon,\
-	org.eclipse.aether.util,\
-	org.gradle.toolingapi,\
-	osgi.core,\
-	slf4j.simple,\
-	slf4j.api
-
--dependson: com.liferay.blade.gradle
-	
--testpath: \
-	biz.aQute.junit
-
--includeresource: \
-	deps.zip,\
-	templates.zip
-
--sources: false
-
 Bundle-Version: 1.0.0.${tstamp}
 
-Main-Class: com.liferay.blade.cli.blade
 JPM-Command: blade
 
-Private-Package: \
+Main-Class: com.liferay.blade.cli.blade
+
+Private-Package:\
 	aQute.bnd.deployer.http,\
 	aQute.bnd.deployer.repository,\
 	aQute.bnd.deployer.repository.api,\
@@ -102,7 +57,7 @@ Private-Package: \
 	org.slf4j.spi;-split-package:=merge-first,\
 	org.slf4j.impl
 
-aether-deps: \
+aether-deps:\
 	org.apache.commons.logging,\
 	org.apache.commons.logging.impl,\
 	org.apache.http,\
@@ -207,3 +162,47 @@ aether-deps: \
 	org.eclipse.aether.util.repository,\
 	org.eclipse.aether.util.version,\
 	org.eclipse.aether.version
+
+-buildpath:\
+	aQute.libg,\
+	biz.aQute.bndlib,\
+	biz.aQute.remote.api,\
+	biz.aQute.repository,\
+	com.liferay.blade.gradle.model;version=latest,\
+	jcl.over.slf4j,\
+	org.apache.commons.io,\
+	org.apache.commons.lang3,\
+	org.apache.httpcomponents.httpclient;version=4.3,\
+	org.apache.httpcomponents.httpcore;version=4.3,\
+	org.apache.maven.artifact,\
+	org.apache.maven.aether-provider,\
+	org.apache.maven.builder-support,\
+	org.apache.maven.model,\
+	org.apache.maven.model-builder,\
+	org.apache.maven.repository-metadata,\
+	org.apache.maven.settings,\
+	org.apache.maven.settings-builder,\
+	org.codehaus.plexus.utils,\
+	org.codehaus.plexus.interpolation,\
+	org.eclipse.aether.api,\
+	org.eclipse.aether.connector.basic,\
+	org.eclipse.aether.impl,\
+	org.eclipse.aether.spi,\
+	org.eclipse.aether.transport.classpath,\
+	org.eclipse.aether.transport.file,\
+	org.eclipse.aether.transport.http,\
+	org.eclipse.aether.transport.wagon,\
+	org.eclipse.aether.util,\
+	org.gradle.toolingapi,\
+	osgi.core,\
+	slf4j.simple,\
+	slf4j.api
+
+-dependson: com.liferay.blade.gradle
+-includeresource:\
+	deps.zip,\
+	templates.zip
+
+-sources: false
+
+-testpath: biz.aQute.junit

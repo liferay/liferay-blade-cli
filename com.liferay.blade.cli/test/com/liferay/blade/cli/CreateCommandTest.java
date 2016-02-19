@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.liferay.blade.cli;
 
 import static org.junit.Assert.assertFalse;
@@ -7,7 +23,9 @@ import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.Files;
+
 import java.util.regex.Pattern;
 
 import org.junit.Before;
@@ -71,8 +89,7 @@ public class CreateCommandTest {
 			checkFileExists(projectPath + "/bnd.bnd"),
 			new String[] {
 				".*^Bundle-SymbolicName: loginhook.*$",
-				".*^Fragment-Host: com.liferay.login.web;" +
-					"bundle-version=\"1.0.0\".*$"
+				".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$"
 			});
 
 		contains(
@@ -128,8 +145,7 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(
-				projectPath + "/src/main/java/com/liferay/test/" +
-					"FooPortlet.java"),
+				projectPath + "/src/main/java/com/liferay/test/FooPortlet.java"),
 			".*^public class FooPortlet extends MVCPortlet.*$");
 
 		contains(
@@ -186,9 +202,7 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(projectPath + "/settings.gradle"),
-			"include 'com.liferay.docs.guestbook.api'," +
-				"'com.liferay.docs.guestbook.svc'," +
-					"'com.liferay.docs.guestbook.web'");
+			"include 'com.liferay.docs.guestbook.api','com.liferay.docs.guestbook.svc','com.liferay.docs.guestbook.web'");
 
 		contains(
 			checkFileExists(
@@ -224,9 +238,7 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(
-				projectPath + "/com.liferay.docs.guestbook.web/src/main/java" +
-					"/com/liferay/docs/guestbook/portlet/" +
-						"GuestbookPortlet.java"),
+				projectPath + "/com.liferay.docs.guestbook.web/src/main/java/com/liferay/docs/guestbook/portlet/GuestbookPortlet.java"),
 			".*package com.liferay.docs.guestbook.portlet;.*");
 	}
 
@@ -249,8 +261,7 @@ public class CreateCommandTest {
 				projectPath + "/src/main/java/servicepreaction/FooAction.java"),
 			new String[] {
 				"^package servicepreaction;.*",
-				".*^import " +
-					"com.liferay.portal.kernel.events.LifecycleAction;$.*",
+				".*^import com.liferay.portal.kernel.events.LifecycleAction;$.*",
 				".*service = LifecycleAction.class.*",
 				".*^public class FooAction implements LifecycleAction \\{.*"
 			});
@@ -276,15 +287,12 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(
-				projectPath + "/src/main/java/serviceoverride/" +
-					"Serviceoverride.java"),
+				projectPath + "/src/main/java/serviceoverride/Serviceoverride.java"),
 			new String[] {
 				"^package serviceoverride;.*",
-				".*^import " +
-					"com.liferay.portal.service.UserLocalServiceWrapper;$.*",
+				".*^import com.liferay.portal.service.UserLocalServiceWrapper;$.*",
 				".*service = ServiceWrapper.class.*",
-				".*^public class Serviceoverride extends " +
-					"UserLocalServiceWrapper \\{.*",
+				".*^public class Serviceoverride extends UserLocalServiceWrapper \\{.*",
 				".*public Serviceoverride\\(\\) \\{.*"
 			});
 
@@ -367,8 +375,7 @@ public class CreateCommandTest {
 			checkFileExists(projectPath + "/loginHook/bnd.bnd"),
 			new String[] {
 				".*^Bundle-SymbolicName: loginhook.*$",
-				".*^Fragment-Host: com.liferay.login.web;" +
-					"bundle-version=\"1.0.0\".*$"
+				".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$"
 			});
 
 		checkFileExists(projectPath + "/loginHook/build.gradle");
@@ -395,8 +402,7 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(
-				projectPath + "/gradle.test/src/main/java/gradle/test/" +
-					"FooPortlet.java"),
+				projectPath + "/gradle.test/src/main/java/gradle/test/FooPortlet.java"),
 			new String[] {
 				"^package gradle.test;.*",
 				".*javax.portlet.display-name=gradle.test.*",
