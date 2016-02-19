@@ -19,6 +19,7 @@ package com.liferay.blade.cli;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
+
 import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
@@ -26,6 +27,7 @@ import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.InputStream;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;

@@ -62,9 +62,7 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithDependencies() throws Exception {
-		String[] args = {
-			"samples", "-d", "generated/test", "blade.rest"
-		};
+		String[] args = {"samples", "-d", "generated/test", "blade.rest"};
 
 		new bladenofail().run(args);
 
