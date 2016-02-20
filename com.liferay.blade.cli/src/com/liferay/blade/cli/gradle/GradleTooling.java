@@ -136,14 +136,12 @@ public class GradleTooling {
 
 			final File depsDir = new File(cacheDir, "deps");
 
-			if (!depsDir.exists()) {
-				depsDir.mkdirs();
+			depsDir.mkdirs();
 
-				InputStream in = GradleTooling.class.getResourceAsStream(
-					"/deps.zip");
+			InputStream in = GradleTooling.class.getResourceAsStream(
+				"/deps.zip");
 
-				copy(in, depsDir);
-			}
+			copy(in, depsDir);
 
 			final String initScriptTemplate = IO.collect(
 				GradleTooling.class.getResourceAsStream("init.gradle"));
