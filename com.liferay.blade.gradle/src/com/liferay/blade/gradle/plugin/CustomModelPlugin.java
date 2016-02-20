@@ -20,7 +20,6 @@ import com.liferay.blade.gradle.model.CustomModel;
 import com.liferay.blade.gradle.model.DefaultModel;
 
 import java.io.File;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +28,12 @@ import javax.inject.Inject;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.PublishArtifactSet;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.tooling.provider.model.ToolingModelBuilder;
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
 
@@ -61,19 +66,36 @@ public class CustomModelPlugin implements Plugin<Project> {
 				pluginClassNames.add(clazz.getName());
 			}
 
+			Set<Task> buildTasks = project.getTasksByName("build", true);
+
 			Set<Task> jarTasks = project.getTasksByName("jar", true);
 
-			Set<Task> buildTasks = project.getTasksByName("build", true);
+			Set<Task> tasks = new HashSet<>();
+
+			tasks.addAll(buildTasks);
+			tasks.addAll(jarTasks);
 
 			Set<File> outputFiles = new HashSet<>();
 
-			for (Task task : jarTasks) {
-				outputFiles.addAll(task.getOutputs().getFiles().getFiles());
+			for (Task task : tasks) {
+				TaskOutputs outputs = task.getOutputs();
+
+				FileCollection fileCollection = outputs.getFiles();
+
+				Set<File> files = fileCollection.getFiles();
+
+				outputFiles.addAll(files);
 			}
 
-			for (Task task : buildTasks) {
-				outputFiles.addAll(task.getOutputs().getFiles().getFiles());
-			}
+			ConfigurationContainer configurations = project.getConfigurations();
+
+			Configuration archivesConfiguration =
+				configurations.getByName(
+						Dependency.ARCHIVES_CONFIGURATION);
+
+			PublishArtifactSet artifacts = archivesConfiguration.getArtifacts();
+
+			outputFiles.addAll(artifacts.getFiles().getFiles());
 
 			return new DefaultModel(pluginClassNames, outputFiles);
 		}
