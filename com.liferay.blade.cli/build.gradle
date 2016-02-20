@@ -1,15 +1,20 @@
-task createTemplatesZip(type:Zip) {
-	from "${projectDir}/templates"
-	baseName = "templates"
-	destinationDir = new File("${projectDir}")
-}
-
 task createDepsZip(type:Zip) {
 	from "${projectDir}/../com.liferay.blade.gradle/generated/"
 	baseName = "deps"
 	destinationDir = new File("${projectDir}")
 	include "*.jar"
 }
+
+task createTemplatesZip(type:Zip) {
+	from "${projectDir}/templates"
+	baseName = "templates"
+	destinationDir = new File("${projectDir}")
+}
+
+clean.doFirst {
+	delete "${projectDir}/deps.zip"
+	delete "${projectDir}/templates.zip"
+ }
 
 jar {
 	from createDepsZip
