@@ -89,13 +89,22 @@ public class CustomModelPlugin implements Plugin<Project> {
 
 			ConfigurationContainer configurations = project.getConfigurations();
 
-			Configuration archivesConfiguration =
-				configurations.getByName(
-						Dependency.ARCHIVES_CONFIGURATION);
+			try {
+				Configuration archivesConfiguration =
+					configurations.getByName(
+							Dependency.ARCHIVES_CONFIGURATION);
 
-			PublishArtifactSet artifacts = archivesConfiguration.getArtifacts();
+				PublishArtifactSet artifacts =
+					archivesConfiguration.getArtifacts();
 
-			outputFiles.addAll(artifacts.getFiles().getFiles());
+				FileCollection fileCollection = artifacts.getFiles();
+
+				Set<File> files = fileCollection.getFiles();
+
+				outputFiles.addAll(files);
+			}
+			catch (Exception e) {
+			}
 
 			return new DefaultModel(pluginClassNames, outputFiles);
 		}
