@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.aether;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -42,14 +43,14 @@ public class AetherClientTest {
 		assertNotNull(artifact);
 
 		File file = artifact.getFile();
+		String name = file.getName();
 
 		assertNotNull(file);
 		assertTrue(file.exists());
-		assertTrue(
-			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
-		assertTrue(file.getName().endsWith("sources.jar"));
+		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
+		assertTrue(name.endsWith("sources.jar"));
 		assertTrue(file.getPath().contains("test-localrepo"));
-		assertTrue(file.getName().contains("1.0.8"));
+		assertTrue(name.contains("1.0.8"));
 	}
 
 	@Test
@@ -62,13 +63,13 @@ public class AetherClientTest {
 		assertNotNull(artifact);
 
 		File file = artifact.getFile();
+		String name = file.getName();
 
 		assertNotNull(file);
 		assertTrue(file.exists());
-		assertTrue(
-			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
-		assertTrue(file.getName().endsWith("sources.jar"));
-		assertTrue(file.getName().contains("1.0.10"));
+		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
+		assertTrue(name.endsWith("sources.jar"));
+		assertEquals(name, true, name.contains("1.0.11"));
 	}
 
 }
