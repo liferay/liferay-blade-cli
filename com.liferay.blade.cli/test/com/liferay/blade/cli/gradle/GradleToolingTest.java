@@ -45,12 +45,13 @@ public class GradleToolingTest {
 			"group: 'com.liferay', name: 'com.liferay.gradle.plugins.workspace', version: '1+', classifier: 'sources', ext: 'jar'",
 			new File("test-localrepo").toURI().toURL().toExternalForm());
 
+		String name = file.getName();
+
 		assertNotNull(file);
 		assertTrue(file.exists());
-		assertTrue(
-			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
-		assertTrue(file.getName().endsWith("sources.jar"));
-		assertTrue(file.getName().contains("1.0.8"));
+		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
+		assertTrue(name.endsWith("sources.jar"));
+		assertTrue(name.contains("1.0.8"));
 	}
 
 	@Test
@@ -58,12 +59,13 @@ public class GradleToolingTest {
 		File file = GradleTooling.findLatestAvailableArtifact(
 			"group: 'com.liferay', name: 'com.liferay.gradle.plugins.workspace', version: '1+', classifier: 'sources', ext: 'jar'");
 
+		String name = file.getName();
+
 		assertNotNull(file);
 		assertTrue(file.exists());
-		assertTrue(
-			file.getName().startsWith("com.liferay.gradle.plugins.workspace"));
-		assertTrue(file.getName().endsWith("sources.jar"));
-		assertTrue(file.getName().contains("1.0.10"));
+		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
+		assertTrue(name.endsWith("sources.jar"));
+		assertEquals(name, true, name.contains("1.0.11"));
 	}
 
 	@Test
