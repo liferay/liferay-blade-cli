@@ -3,8 +3,8 @@ Bundle-SymbolicName: _name_
 Bundle-Version: 1.0.0.${tstamp}
 
 Import-Package: \
-	com.liferay.portal.model;version='7.0.0',\
-	com.liferay.portal.service;version='7.0.0',\
+	com.liferay.portal.kernel.model;version=7.0.0,\
+	com.liferay.portal.kernel.service;version=7.0.0,\
 	*
 
 Private-Package: \
