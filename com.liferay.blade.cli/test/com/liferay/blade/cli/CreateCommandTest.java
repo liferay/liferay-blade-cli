@@ -23,9 +23,7 @@ import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.file.Files;
-
 import java.util.regex.Pattern;
 
 import org.junit.Before;
@@ -300,7 +298,7 @@ public class CreateCommandTest {
 			checkFileExists(projectPath + "/bnd.bnd"),
 			new String[] {
 				".*^Private-Package: \\\\.*^\tserviceoverride.*",
-				".*com.liferay.portal.service;version=\'7.0.0\'.*"
+				".*com.liferay.portal.kernel.service;version=\'7.0.0\'.*"
 			});
 	}
 
