@@ -418,6 +418,32 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceGradleServiceBuilderProject() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test/workspace/modules", "-t",
+			"servicebuilder", "-p", "com.sample", "workspace.sample"
+		};
+
+		makeWorkspace(new File("generated/test/workspace"));
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/workspace/modules";
+
+		checkFileExists(
+			projectPath + "/workspace.sample/build.gradle");
+
+		checkFileExists(
+			projectPath + "/workspace.sample/com.sample.api/build.gradle");
+
+		checkFileExists(
+			projectPath + "/workspace.sample/com.sample.svc/build.gradle");
+
+		checkFileExists(
+			projectPath + "/workspace.sample/com.sample.web/build.gradle");
+	}
+
+	@Test
 	public void testCreateWorkspaceProjectAllDefaults() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules/apps", "foo"
