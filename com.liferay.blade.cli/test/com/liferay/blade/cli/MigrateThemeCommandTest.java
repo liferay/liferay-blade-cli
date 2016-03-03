@@ -28,6 +28,7 @@ import java.nio.file.Files;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -62,6 +63,7 @@ public class MigrateThemeCommandTest {
 	}
 
 	@Test
+	@Ignore
 	public void testMigrateCompassTheme() throws Exception {
 		String[] args = {
 			"-b", "generated/test/workspace", "migrateTheme", "-a"
