@@ -18,13 +18,11 @@ package com.liferay.blade.cli;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-
 import aQute.lib.consoleapp.AbstractConsoleApp;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
-import com.liferay.blade.cli.AgentCommand.AgentOptions;
 import com.liferay.blade.cli.CreateCommand.CreateOptions;
 import com.liferay.blade.cli.DeployCommand.DeployOptions;
 import com.liferay.blade.cli.GradleCommand.GradleOptions;
@@ -40,9 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-
 import java.net.URL;
-
 import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.Map;
@@ -67,16 +63,6 @@ public class blade extends AbstractConsoleApp implements Runnable {
 
 	public blade(Object target) throws UnsupportedEncodingException {
 		super(target);
-	}
-
-	@Description(AgentCommand.DESCRIPTION)
-	public void _agent(AgentOptions options) throws Exception {
-		AgentCommand agent = new AgentCommand(this, options);
-		String help = options._command().subCmd(options, agent);
-
-		if (help != null) {
-			out.println(help);
-		}
 	}
 
 	@Description(CreateCommand.DESCRIPTION)

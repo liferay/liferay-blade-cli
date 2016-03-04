@@ -16,39 +16,21 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import aQute.lib.io.IO;
-
-import java.io.File;
-
-import org.junit.Before;
-import org.junit.Test;
+import java.io.IOException;
 
 /**
  * @author Gregory Amerson
  */
-public class AgentCommandTest {
+public class GogoTelnetClientMain {
 
-	@Before
-	public void setUp() throws Exception {
-		if (cacheDir.exists()) {
-			IO.delete(cacheDir);
-			assertFalse(cacheDir.exists());
+	public static void main(String[] args) {
+		try (GogoTelnetClient client = new GogoTelnetClient()) {
+			System.out.println(client.send("help"));
+			System.out.println(client.send("lb -s"));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
-
-	@Test
-	public void testGetAgentJarDefaultURL() throws Exception {
-		File agentJar = new AgentCommand(
-			null, null).getAgentJar(cacheDir, null, null);
-
-		assertNotNull(agentJar);
-		assertTrue(agentJar.exists());
-	}
-
-	private final File cacheDir = IO.getFile("generated/cache");
 
 }
