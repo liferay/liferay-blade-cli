@@ -18,31 +18,24 @@ package com.liferay.blade.cli;
 
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Jar;
-
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
-
-import aQute.remote.api.Agent;
-import aQute.remote.api.Event;
-import aQute.remote.api.Supervisor;
-import aQute.remote.util.AgentSupervisor;
 
 import com.liferay.blade.cli.FileWatcher.Consumer;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
-
+import java.io.IOException;
 import java.nio.file.Path;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.dto.BundleDTO;
 
 /**
@@ -56,13 +49,14 @@ public class DeployCommand {
 	public DeployCommand(blade blade, DeployOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
-		_port = options.port() != 0 ? options.port() : Agent.DEFAULT_PORT;
+		_host = options.host() != null ? options.host() : "localhost";
+		_port = options.port() != 0 ? options.port() : 11311;
 	}
 
 	public void deploy(GradleExec gradle, Set<File> outputFiles)
 		throws Exception {
 
-		final int retcode = gradle.executeGradleCommand("build -x check");
+		int retcode = gradle.executeGradleCommand("build -x check");
 
 		if (retcode > 0) {
 			addError("Gradle jar task failed.");
@@ -70,9 +64,7 @@ public class DeployCommand {
 		}
 
 		for (File outputFile : outputFiles) {
-			String retval = installOrUpdate(outputFile);
-
-			_blade.out().println(retval);
+			installOrUpdate(outputFile);
 		}
 	}
 
@@ -94,7 +86,7 @@ public class DeployCommand {
 
 		}.start();
 
-		final Consumer<Path> consumer = new Consumer<Path>() {
+		Consumer<Path> consumer = new Consumer<Path>() {
 
 			@Override
 			public void consume(Path modified) {
@@ -104,9 +96,7 @@ public class DeployCommand {
 					if (outputFiles.contains(modifiedFile)) {
 						_blade.out().println("installOrUpdate " + modifiedFile);
 
-						final String retval = installOrUpdate(modifiedFile);
-
-						_blade.out().println(retval);
+						installOrUpdate(modifiedFile);
 					}
 				}
 				catch (Exception e) {
@@ -128,9 +118,9 @@ public class DeployCommand {
 			return;
 		}
 
-		final GradleExec gradleExec = new GradleExec(_blade);
+		GradleExec gradleExec = new GradleExec(_blade);
 
-		final Set<File> outputFiles = GradleTooling.getOutputFiles(
+		Set<File> outputFiles = GradleTooling.getOutputFiles(
 			_blade.getCacheDir(), _blade.getBase());
 
 		if (_options.watch()) {
@@ -144,7 +134,10 @@ public class DeployCommand {
 	@Description(DESCRIPTION)
 	public interface DeployOptions extends Options {
 
-		@Description("The port to use to connect to remote agent")
+		@Description("The host to use to connect to gogo shell")
+		public String host();
+
+		@Description("The port to use to connect to gogo shell")
 		public int port();
 
 		@Description(
@@ -155,46 +148,6 @@ public class DeployCommand {
 
 	}
 
-	public class DeploySupervisor
-		extends AgentSupervisor<Supervisor, Agent> implements Supervisor {
-
-		public DeploySupervisor(blade blade) {
-			_blade = blade;
-			_outLines = new ArrayList<>();
-		}
-
-		public void connect(String host, int port) throws Exception {
-			super.connect(Agent.class, this, host, port);
-		}
-
-		@Override
-		public void event(Event e) throws Exception {
-		}
-
-		public synchronized List<String> output() {
-			List<String> retval = new ArrayList<>(_outLines);
-
-			_outLines.clear();
-
-			return retval;
-		}
-
-		@Override
-		public boolean stderr(String out) throws Exception {
-			_blade.err().print(out);
-			return true;
-		}
-
-		@Override
-		public synchronized boolean stdout(String out) throws Exception {
-			_outLines.add(out.replaceAll("^>.*$", ""));
-			return true;
-		}
-
-		private final blade _blade;
-		private final List<String> _outLines;
-
-	}
 
 	private void addError(String msg) {
 		_blade.addErrors("deploy", Collections.singleton(msg));
@@ -204,14 +157,14 @@ public class DeployCommand {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private String installOrUpdate(File outputFile) throws Exception {
+	private void installOrUpdate(File outputFile) throws Exception {
 		boolean isFragment = false;
 		String fragmentHost = null;
 		String bsn = null;
 
 		try(Jar bundle = new Jar(outputFile)) {
-			final Manifest manifest = bundle.getManifest();
-			final Attributes mainAttributes = manifest.getMainAttributes();
+			Manifest manifest = bundle.getManifest();
+			Attributes mainAttributes = manifest.getMainAttributes();
 
 			fragmentHost = mainAttributes.getValue("Fragment-Host");
 
@@ -220,15 +173,11 @@ public class DeployCommand {
 			bsn = bundle.getBsn();
 		}
 
-		final DeploySupervisor supervisor = new DeploySupervisor(_blade);
-		supervisor.connect("localhost", Agent.DEFAULT_PORT);
-
-		final Agent agent = supervisor.getAgent();
-		agent.redirect(-1);
+		GogoTelnetClient client = new GogoTelnetClient(_host, _port);
 
 		long existingId = -1;
 
-		List<BundleDTO> bundles = agent.getBundles();
+		List<BundleDTO> bundles = getBundles(client);
 
 		for (BundleDTO bundle : bundles) {
 			if (bundle.symbolicName.equals(bsn)) {
@@ -237,23 +186,28 @@ public class DeployCommand {
 			}
 		}
 
-		String retval = null;
-
 		String bundleURL = outputFile.toURI().toASCIIString();
 
 		if (existingId > 0) {
-			agent.stop(existingId);
-			agent.updateFromURL(existingId, bundleURL);
+			String response = client.send("stop " + existingId);
+
+			_blade.out().println(response);
+
+			response = client.send("update " + existingId + " " + bundleURL);
+
+			_blade.out().println(response);
 
 			_blade.out().println("Updated bundle " + existingId);
 		}
 		else {
 			_blade.out().println("install " + bundleURL);
 
-			agent.stdin("install " + bundleURL);
+			String response = client.send("install " + bundleURL);
+
+			_blade.out().println(response);
 
 			if (!isFragment) {
-				bundles = agent.getBundles();
+				bundles = getBundles(client);
 
 				for (BundleDTO bundle : bundles) {
 					if (bundle.symbolicName.equals(bsn)) {
@@ -264,7 +218,9 @@ public class DeployCommand {
 			}
 		}
 
-		agent.start(existingId);
+		String response = client.send("start " + existingId);
+
+		_blade.out().println(response);
 
 		if (isFragment) {
 			String hostBSN = new Parameters(
@@ -282,21 +238,71 @@ public class DeployCommand {
 			if (hostId > 0) {
 				_blade.out().println("refreshing host " + hostId);
 
-				agent.stdin("refresh " + hostId);
+				response = client.send("refresh " + hostId);
+
+				_blade.out().println(response);
 			}
 		}
 
-		String[] output = supervisor.output().toArray(new String[0]);
+		client.close();
+	}
 
-		retval =
-			output != null && output.length > 0 ? Arrays.toString(output) : "";
+	private List<BundleDTO> getBundles(GogoTelnetClient client)
+		throws IOException {
 
-		supervisor.close();
+		List<BundleDTO> bundles = new ArrayList<>();
 
-		return retval;
+		String output = client.send("lb -s -u");
+
+		String lines[] = output.split("\\r?\\n");
+
+		for (String line : lines) {
+			try {
+				String[] fields = line.split("\\|");
+
+				//ID|State|Level|Symbolic name
+				BundleDTO bundle = new BundleDTO();
+
+				bundle.id = Long.parseLong(fields[0].trim());
+				bundle.state = getState(fields[1].trim());
+				bundle.symbolicName = fields[3];
+
+				bundles.add(bundle);
+			}
+			catch (Exception e) {
+			}
+		}
+
+		return bundles;
+	}
+
+	private int getState(String state) {
+		String bundleState = state.toUpperCase();
+
+		if ("ACTIVE".equals(bundleState)) {
+			return Bundle.ACTIVE;
+		}
+		else if ("INSTALLED".equals(Bundle.INSTALLED)) {
+			return Bundle.INSTALLED;
+		}
+		else if ("RESOLVED".equals(Bundle.RESOLVED)) {
+			return Bundle.RESOLVED;
+		}
+		else if ("STARTING".equals(Bundle.STARTING)) {
+			return Bundle.STARTING;
+		}
+		else if ("STOPPING".equals(Bundle.STOPPING)) {
+			return Bundle.STOPPING;
+		}
+		else if ("UNINSTALLED".equals(Bundle.UNINSTALLED)) {
+			return Bundle.UNINSTALLED;
+		}
+
+		return 0;
 	}
 
 	private final blade _blade;
+	private final String _host;
 	private final DeployOptions _options;
 	private final int _port;
 

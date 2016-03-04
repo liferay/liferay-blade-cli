@@ -92,11 +92,13 @@ public class GogoTelnetClient implements AutoCloseable {
 			c = _inputStream.read();
 		}
 
-		return sb.toString();
+		String output = sb.substring(0, sb.length() - 3);
+
+		return output.trim();
 	}
 
-	public String sendCommand(String cmdString) throws IOException {
-		byte[] bytes = cmdString.getBytes();
+	public String send(String command) throws IOException {
+		byte[] bytes = command.getBytes();
 
 		int[] codes = new int[bytes.length + 2];
 

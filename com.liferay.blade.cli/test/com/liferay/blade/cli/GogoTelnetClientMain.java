@@ -25,8 +25,8 @@ public class GogoTelnetClientMain {
 
 	public static void main(String[] args) {
 		try (GogoTelnetClient client = new GogoTelnetClient()) {
-			System.out.println(client.sendCommand("help"));
-			System.out.println(client.sendCommand("lb -s"));
+			System.out.println(client.send("help"));
+			System.out.println(client.send("lb -s"));
 		}
 		catch (IOException e) {
 			e.printStackTrace();

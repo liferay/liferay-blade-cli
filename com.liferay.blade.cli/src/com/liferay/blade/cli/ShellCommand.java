@@ -73,7 +73,7 @@ public class ShellCommand {
 		final GogoTelnetClient telnetClient =
 			new GogoTelnetClient(_host, _port);
 
-		String response = telnetClient.sendCommand(cmd);
+		String response = telnetClient.send(cmd);
 
 		_blade.out().print(response);
 

@@ -31,8 +31,6 @@ Private-Package:\
 	aQute.libg.gzip;-split-package:=merge-first,\
 	aQute.libg.reporter;-split-package:=merge-first,\
 	aQute.libg.sed;-split-package:=merge-first,\
-	aQute.remote.api,\
-	aQute.remote.util,\
 	aQute.service.reporter;-split-package:=merge-first,\
 	com.liferay.blade.cli.*,\
 	com.liferay.blade.gradle.model,\
@@ -166,7 +164,6 @@ aether-deps:\
 -buildpath:\
 	aQute.libg,\
 	biz.aQute.bndlib,\
-	biz.aQute.remote.api,\
 	biz.aQute.repository,\
 	com.liferay.blade.gradle.model;version=latest,\
 	jcl.over.slf4j,\

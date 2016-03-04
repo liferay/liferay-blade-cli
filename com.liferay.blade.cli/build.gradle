@@ -14,7 +14,7 @@ task createTemplatesZip(type:Zip) {
 clean.doFirst {
 	delete "${projectDir}/deps.zip"
 	delete "${projectDir}/templates.zip"
- }
+}
 
 jar {
 	from createDepsZip
