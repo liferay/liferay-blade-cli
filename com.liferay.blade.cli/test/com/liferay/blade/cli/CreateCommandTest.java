@@ -433,6 +433,9 @@ public class CreateCommandTest {
 		checkFileExists(
 			projectPath + "/workspace.sample/build.gradle");
 
+		checkFileDoesNotExists(
+			projectPath + "/workspace.sample/settings.gradle");
+
 		checkFileExists(
 			projectPath + "/workspace.sample/com.sample.api/build.gradle");
 
@@ -475,6 +478,14 @@ public class CreateCommandTest {
 		File file = IO.getFile(path);
 
 		assertTrue(file.exists());
+
+		return file;
+	}
+
+	private File checkFileDoesNotExists(String path) {
+		File file = IO.getFile(path);
+
+		assertFalse(file.exists());
 
 		return file;
 	}
