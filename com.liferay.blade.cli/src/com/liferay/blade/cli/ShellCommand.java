@@ -20,11 +20,6 @@ import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
-import aQute.remote.api.Agent;
-import aQute.remote.api.Event;
-import aQute.remote.api.Supervisor;
-import aQute.remote.util.AgentSupervisor;
-
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,16 +35,16 @@ public class ShellCommand {
 	public ShellCommand(blade blade, ShellOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
-		_port = options.port() != 0 ? options.port() : Agent.DEFAULT_PORT;
+		_host = options.host() != null ? options.host() : "localhost";
+		_port = options.port() != 0 ? options.port() : 11311;
 	}
 
 	public void execute() throws Exception {
 		if (!Util.canConnect("localhost", _port)) {
 			addError(
 				"sh",
-				"Unable to connect to remote agent on port " + _port + ". " +
-					"To install the agent bundle run the command \"blade " +
-						"agent install\".");
+				"Unable to connect to remote gogo shell on port " + _port);
+
 			return;
 		}
 
@@ -62,39 +57,11 @@ public class ShellCommand {
 	@Description(DESCRIPTION)
 	public interface ShellOptions extends Options {
 
-		@Description("The port to use to connect to remote agent")
+		@Description("")
+		public String host();
+
+		@Description("The port to use to connect to gogo shell")
 		public int port();
-
-	}
-
-	public class ShellSupervisor
-		extends AgentSupervisor<Supervisor, Agent>implements Supervisor {
-
-		public ShellSupervisor(blade blade) {
-			_blade = blade;
-		}
-
-		public void connect(String host, int port) throws Exception {
-			super.connect(Agent.class, this, host, port);
-		}
-
-		@Override
-		public void event(Event e) throws Exception {
-		}
-
-		@Override
-		public boolean stderr(String out) throws Exception {
-			_blade.err().print(out);
-			return true;
-		}
-
-		@Override
-		public boolean stdout(String out) throws Exception {
-			_blade.out().print(out.replaceAll(".*>.*$", ""));
-			return true;
-		}
-
-		private final blade _blade;
 
 	}
 
@@ -103,20 +70,18 @@ public class ShellCommand {
 	}
 
 	private void executeCommand(String cmd) throws Exception {
-		ShellSupervisor supervisor = new ShellSupervisor(_blade);
+		final GogoTelnetClient telnetClient =
+			new GogoTelnetClient(_host, _port);
 
-		supervisor.connect("localhost", _port);
+		String response = telnetClient.sendCommand(cmd);
 
-		if (!supervisor.getAgent().redirect(-1)) {
-			addError("sh", "Unable to redirect input to agent.");
-			return;
-		}
+		_blade.out().print(response);
 
-		supervisor.getAgent().stdin(cmd);
-		supervisor.close();
+		telnetClient.close();
 	}
 
 	private final blade _blade;
+	private final String _host;
 	private final ShellOptions _options;
 	private final int _port;
 
