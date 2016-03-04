@@ -65,7 +65,7 @@ public class GradleToolingTest {
 		assertTrue(file.exists());
 		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
 		assertTrue(name.endsWith("sources.jar"));
-		assertEquals(name, true, name.contains("1.0.15"));
+		assertEquals(name, true, name.contains("1.0.17"));
 	}
 
 	@Test
