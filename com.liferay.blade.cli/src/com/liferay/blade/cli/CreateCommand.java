@@ -204,7 +204,7 @@ public class CreateCommand {
 
 		copy("standalone", template.name(), workDir, in, glob, true, subs);
 
-		if (Util.isWorkspace(workDir)) {
+		if (Util.isWorkspace(dir)) {
 			final Pattern buildGlob = Pattern.compile(
 				"^workspace/" + template.name() + "/build.gradle");
 
@@ -213,6 +213,13 @@ public class CreateCommand {
 			copy(
 				"workspace", template.name(), workDir, in, buildGlob, true,
 				subs);
+
+			File settingsFile = new File(workDir, "settings.gradle");
+
+			if (settingsFile.exists()) {
+				settingsFile.delete();
+			}
+
 		}
 
 		_blade.out().println(
