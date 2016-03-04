@@ -219,7 +219,6 @@ public class CreateCommand {
 			if (settingsFile.exists()) {
 				settingsFile.delete();
 			}
-
 		}
 
 		_blade.out().println(

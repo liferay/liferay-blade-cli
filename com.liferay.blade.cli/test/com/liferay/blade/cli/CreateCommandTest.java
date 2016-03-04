@@ -23,7 +23,9 @@ import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.Files;
+
 import java.util.regex.Pattern;
 
 import org.junit.Before;
@@ -430,8 +432,7 @@ public class CreateCommandTest {
 
 		String projectPath = "generated/test/workspace/modules";
 
-		checkFileExists(
-			projectPath + "/workspace.sample/build.gradle");
+		checkFileExists(projectPath + "/workspace.sample/build.gradle");
 
 		checkFileDoesNotExists(
 			projectPath + "/workspace.sample/settings.gradle");
@@ -474,18 +475,18 @@ public class CreateCommandTest {
 		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 	}
 
-	private File checkFileExists(String path) {
-		File file = IO.getFile(path);
-
-		assertTrue(file.exists());
-
-		return file;
-	}
-
 	private File checkFileDoesNotExists(String path) {
 		File file = IO.getFile(path);
 
 		assertFalse(file.exists());
+
+		return file;
+	}
+
+	private File checkFileExists(String path) {
+		File file = IO.getFile(path);
+
+		assertTrue(file.exists());
 
 		return file;
 	}
