@@ -115,7 +115,7 @@ $ blade agent install
 If this command fails it will prompt you for what additional information you need to specify in order to install the remote agent.  
 
 ## Release
-Blade Tools is continuously built and released on [CloudBees](https://https://liferay-test-01.ci.cloudbees.com/job/blade.tools/).
+Blade Tools is continuously built and released on [CloudBees](https://liferay-test-01.ci.cloudbees.com/job/blade.tools/).
 
 [![Built on DEV@cloud](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)](http://www.cloudbees.com/foss/foss-dev.cb)
 
