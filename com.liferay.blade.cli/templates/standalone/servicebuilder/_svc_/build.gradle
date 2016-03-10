@@ -1,4 +1,20 @@
+buildscript {
+	dependencies {
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.service.builder", version: "latest.release"
+		classpath group: "com.liferay", name: "com.liferay.portal.tools.service.builder", version: "1.0.103"
+	}
+}
+
 apply plugin: "com.liferay.portal.tools.service.builder"
+
+dependencies {
+	compile 'biz.aQute.bnd:biz.aQute.bndlib:3.1.0'
+	compile 'com.liferay:com.liferay.portal.spring.extender:1.0.2'
+	compile 'com.liferay:com.liferay.osgi.util:2.0.4'
+	compile  project(':_package_.api')
+	testCompile 'com.liferay:com.liferay.arquillian.extension.junit.bridge:1.0.0-SNAPSHOT'
+	testCompile 'junit:junit:4.+'
+}
 
 buildService {
 	apiDir = "../_package_.api/src/main/java"
@@ -6,15 +22,3 @@ buildService {
 	propsUtil = "_package_.service.util.PropsUtil"
 	testDir = "src/main/test"
 }
-
-dependencies {
-	compile  project(':_package_.api')
-	compile group: 'com.liferay', name: 'com.liferay.portal.spring.extender', version: '1.0.2'
-	compile group: 'com.liferay', name: 'com.liferay.osgi.util', version: '2.0.4'
-	testCompile group: 'junit', name: 'junit', version: '4.+'
-	testCompile group: 'com.liferay.portal', name: 'portal-test', version: '7.0.0-SNAPSHOT'
-	testCompile group: 'com.liferay.portal', name: 'portal-test-internal', version: '7.0.0-SNAPSHOT'
-	testCompile group: 'com.liferay', name: 'com.liferay.arquillian.extension.junit.bridge', version: '1.0.0-SNAPSHOT'
-}
-
-version = '1.0.0'

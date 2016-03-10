@@ -1,13 +1,4 @@
-Bundle-Version: 1.0.0.${tstamp}
-
-Import-Package: \
-	javax.portlet;version='[2.0,3)',\
-	javax.servlet;version='[2.5,4)',\
-	*
-
-Private-Package: \
-	_web_
-
+Bundle-Version: 1.0.0
 -jsp: *.jsp,*.jspf
-
--plugin.jsp: com.liferay.ant.bnd.plugin.JspAnalyzerPlugin
+-plugin.jsp: com.liferay.ant.bnd.jsp.JspAnalyzerPlugin
+-sources: true
