@@ -218,23 +218,14 @@ public class CreateCommandTest {
 		contains(
 			checkFileExists(
 				projectPath + "/com.liferay.docs.guestbook.svc/bnd.bnd"),
-			new String[] {
-				".*Private-Package: \\\\.*",
-				".*com.liferay.docs.guestbook.model.impl,\\\\.*",
-				".*com.liferay.docs.guestbook.service.base,\\\\.*",
-				".*com.liferay.docs.guestbook.service.http,\\\\.*",
-				".*com.liferay.docs.guestbook.service.impl,\\\\.*",
-				".*com.liferay.docs.guestbook.service.persistence.impl,\\\\.*",
-				".*com.liferay.docs.guestbook.service.util.*"
-			});
+				".*Liferay-Service: true.*"
+		);
 
 		contains(
 			checkFileExists(
 				projectPath + "/com.liferay.docs.guestbook.web/bnd.bnd"),
-			new String[] {
-				".*Private-Package: \\\\.*",
-				".*com.liferay.docs.guestbook.web.*"
-			});
+				".*^\\-plugin.jsp: com.liferay.ant.bnd.jsp.JspAnalyzerPlugin$.*"
+			);
 
 		contains(
 			checkFileExists(
