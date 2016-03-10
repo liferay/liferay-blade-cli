@@ -206,7 +206,7 @@ public class CreateCommand {
 
 		if (Util.isWorkspace(dir)) {
 			final Pattern buildGlob = Pattern.compile(
-				"^workspace/" + template.name() + "/build.gradle");
+				"^workspace/" + template.name() + "/.*|\\...+/build.gradle");
 
 			in = getClass().getResourceAsStream("/templates.zip");
 

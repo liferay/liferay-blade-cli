@@ -11,7 +11,7 @@ dependencies {
 	compile 'biz.aQute.bnd:biz.aQute.bndlib:3.1.0'
 	compile 'com.liferay:com.liferay.portal.spring.extender:1.0.2'
 	compile 'com.liferay:com.liferay.osgi.util:2.0.4'
-	compile  project(':_package_.api')
+	compile  project(':modules:_NAME_:_package_.api')
 	testCompile 'com.liferay:com.liferay.arquillian.extension.junit.bridge:1.0.0-SNAPSHOT'
 	testCompile 'junit:junit:4.+'
 }
