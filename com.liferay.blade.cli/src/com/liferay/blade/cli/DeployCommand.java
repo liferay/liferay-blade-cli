@@ -112,9 +112,7 @@ public class DeployCommand {
 		if (!Util.canConnect("localhost", _port)) {
 			addError(
 				"deploy",
-				"Unable to connect to remote agent on port " + _port + ". " +
-					"To install the agent bundle run the command \"blade " +
-						"agent install\".");
+				"Unable to connect to gogo shell on port " + _port + ".");
 			return;
 		}
 
