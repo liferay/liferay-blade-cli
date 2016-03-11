@@ -3,6 +3,6 @@ dependencies {
 	compile 'javax.portlet:portlet-api:2.0'
 	compile 'javax.servlet:javax.servlet-api:3.0.1'
 	compile 'org.osgi:org.osgi.service.component.annotations:1.3.0'
-	compile  project(':_api_.api')
-	compile  project(':_svc_.svc')
+	compile  project(':_package_.api')
+	compile  project(':_package_.svc')
 }
