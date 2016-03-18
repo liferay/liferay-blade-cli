@@ -1,6 +1,5 @@
 buildscript {
 	repositories {
-		mavenLocal()
 		maven {
 			url "https://repository.liferay.com/nexus/content/groups/public/"
 		}
@@ -29,7 +28,6 @@ subprojects {
 	sourceCompatibility = 1.7
 
 	repositories {		
-		mavenLocal()
 		maven {
 			url "https://repository.liferay.com/nexus/content/groups/public/"
 		}
