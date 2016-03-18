@@ -11,13 +11,13 @@ dependencies {
 	compile 'biz.aQute.bnd:biz.aQute.bndlib:3.1.0'
 	compile 'com.liferay:com.liferay.portal.spring.extender:1.0.2'
 	compile 'com.liferay:com.liferay.osgi.util:2.0.4'
-	compile  project(':_package_.api')
+	compile  project(':_api_')
 	testCompile 'com.liferay:com.liferay.arquillian.extension.junit.bridge:1.0.0-SNAPSHOT'
 	testCompile 'junit:junit:4.+'
 }
 
 buildService {
-	apiDir = "../_package_.api/src/main/java"
+	apiDir = "../_api_/src/main/java"
 	osgiModule = true
 	propsUtil = "_package_.service.util.PropsUtil"
 	testDir = "src/main/test"

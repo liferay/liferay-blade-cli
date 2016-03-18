@@ -147,9 +147,9 @@ public class CreateCommand {
 				return;
 			}
 
-			subs.put("_api_", packageName + ".api");
-			subs.put("_svc_", packageName + ".svc");
-			subs.put("_web_", packageName + ".web");
+			subs.put("_api_", name + "-api");
+			subs.put("_svc_", name + "-service");
+			subs.put("_web_", name + "-web");
 			subs.put("_portlet_", packageName + ".portlet");
 			subs.put(
 				"_portletpackage_",
