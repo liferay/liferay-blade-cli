@@ -23,9 +23,7 @@ import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.file.Files;
-
 import java.util.regex.Pattern;
 
 import org.junit.Before;
@@ -190,7 +188,53 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateGradleServiceBuilder() throws Exception {
+	public void testCreateGradleServiceBuilderDashes() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "servicebuilder", "-p",
+			"com.liferay.backend.integration", "backend-integration"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/backend-integration";
+
+		contains(
+			checkFileExists(projectPath + "/settings.gradle"),
+			"include 'backend-integration-api'," +
+			"'backend-integration-service'," +
+			"'backend-integration-web'");
+
+		contains(
+			checkFileExists(
+				projectPath + "/backend-integration-api/bnd.bnd"),
+			new String[] {
+				".*Export-Package: \\\\.*",
+				".*com.liferay.backend.integration.exception,\\\\.*",
+				".*com.liferay.backend.integration.model,\\\\.*",
+				".*com.liferay.backend.integration.service,\\\\.*",
+				".*com.liferay.backend.integration.service.persistence.*"
+			});
+
+		contains(
+			checkFileExists(
+				projectPath + "/backend-integration-service/bnd.bnd"),
+				".*Liferay-Service: true.*"
+		);
+
+		contains(
+			checkFileExists(
+				projectPath + "/backend-integration-web/bnd.bnd"),
+				".*^\\-plugin.jsp: com.liferay.ant.bnd.jsp.JspAnalyzerPlugin$.*"
+			);
+
+		contains(
+			checkFileExists(
+				projectPath + "/backend-integration-web/src/main/java/com/liferay/backend/integration/portlet/BackendIntegrationPortlet.java"),
+			".*package com.liferay.backend.integration.portlet;.*");
+	}
+
+	@Test
+	public void testCreateGradleServiceBuilderDefault() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "servicebuilder", "-p",
 			"com.liferay.docs.guestbook", "guestbook"
@@ -202,7 +246,53 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(projectPath + "/settings.gradle"),
-			"include 'com.liferay.docs.guestbook.api','com.liferay.docs.guestbook.svc','com.liferay.docs.guestbook.web'");
+			"include 'guestbook-api','guestbook-service','guestbook-web'");
+
+		contains(
+			checkFileExists(
+				projectPath + "/guestbook-api/bnd.bnd"),
+			new String[] {
+				".*Export-Package: \\\\.*",
+				".*com.liferay.docs.guestbook.exception,\\\\.*",
+				".*com.liferay.docs.guestbook.model,\\\\.*",
+				".*com.liferay.docs.guestbook.service,\\\\.*",
+				".*com.liferay.docs.guestbook.service.persistence.*"
+			});
+
+		contains(
+			checkFileExists(
+				projectPath + "/guestbook-service/bnd.bnd"),
+				".*Liferay-Service: true.*"
+		);
+
+		contains(
+			checkFileExists(
+				projectPath + "/guestbook-web/bnd.bnd"),
+				".*^\\-plugin.jsp: com.liferay.ant.bnd.jsp.JspAnalyzerPlugin$.*"
+			);
+
+		contains(
+			checkFileExists(
+				projectPath + "/guestbook-web/src/main/java/com/liferay/docs/guestbook/portlet/GuestbookPortlet.java"),
+				".*package com.liferay.docs.guestbook.portlet;.*");
+	}
+
+	@Test
+	public void testCreateGradleServiceBuilderDots() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "servicebuilder", "-p",
+			"com.liferay.docs.guestbook", "com.liferay.docs.guestbook"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/com.liferay.docs.guestbook";
+
+		contains(
+			checkFileExists(projectPath + "/settings.gradle"),
+			"include 'com.liferay.docs.guestbook.api'," +
+			"'com.liferay.docs.guestbook.svc'," +
+			"'com.liferay.docs.guestbook.web'");
 
 		contains(
 			checkFileExists(
@@ -229,7 +319,7 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(
-				projectPath + "/com.liferay.docs.guestbook.web/src/main/java/com/liferay/docs/guestbook/portlet/GuestbookPortlet.java"),
+				projectPath + "/com.liferay.docs.guestbook.web/src/main/java/com/liferay/docs/guestbook/portlet/ComLiferayDocsGuestbookPortlet.java"),
 			".*package com.liferay.docs.guestbook.portlet;.*");
 	}
 
@@ -411,7 +501,69 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateWorkspaceGradleServiceBuilderProject() throws Exception {
+	public void testCreateWorkspaceGradleServiceBuilderProjectDashes()
+			throws Exception {
+
+		String[] args = {
+			"create", "-d", "generated/test/workspace/modules", "-t",
+			"servicebuilder", "-p", "com.sample", "workspace.sample"
+		};
+
+		makeWorkspace(new File("generated/test/workspace"));
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/workspace/modules";
+
+		checkFileExists(projectPath + "/workspace.sample/build.gradle");
+
+		checkFileDoesNotExists(
+			projectPath + "/workspace.sample/settings.gradle");
+
+		checkFileExists(
+			projectPath + "/workspace.sample/com.sample.api/build.gradle");
+
+		checkFileExists(
+			projectPath + "/workspace.sample/com.sample.svc/build.gradle");
+
+		checkFileExists(
+			projectPath + "/workspace.sample/com.sample.web/build.gradle");
+	}
+
+	@Test
+	public void testCreateWorkspaceGradleServiceBuilderProjectDefault()
+			throws Exception {
+
+		String[] args = {
+			"create", "-d", "generated/test/workspace/modules", "-t",
+			"servicebuilder", "-p", "com.liferay.sample", "sample"
+		};
+
+		makeWorkspace(new File("generated/test/workspace"));
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/workspace/modules";
+
+		checkFileExists(projectPath + "/sample/build.gradle");
+
+		checkFileDoesNotExists(
+			projectPath + "/sample/settings.gradle");
+
+		checkFileExists(
+			projectPath + "/sample/sample-api/build.gradle");
+
+		checkFileExists(
+			projectPath + "/sample/sample-service/build.gradle");
+
+		checkFileExists(
+			projectPath + "/sample/sample-web/build.gradle");
+	}
+
+	@Test
+	public void testCreateWorkspaceGradleServiceBuilderProjectDots()
+			throws Exception {
+
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules", "-t",
 			"servicebuilder", "-p", "com.sample", "workspace.sample"

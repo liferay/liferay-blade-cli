@@ -19,7 +19,6 @@ package com.liferay.blade.cli;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
-
 import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
@@ -27,7 +26,6 @@ import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.InputStream;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -143,13 +141,20 @@ public class CreateCommand {
 						"root package within which to create service builder " +
 						"classes must be specified.\nFor example: blade " +
 						"create -t servicebuilder -p " +
-						"com.liferay.docs.guestbook guestbook");
+						"com.liferay.guestbook guestbook");
 				return;
 			}
 
-			subs.put("_api_", name + "-api");
-			subs.put("_svc_", name + "-service");
-			subs.put("_web_", name + "-web");
+			if (name.indexOf(".") > -1) {
+				subs.put("_api_", packageName + ".api");
+				subs.put("_service_", packageName + ".svc");
+				subs.put("_web_", packageName + ".web");
+			}
+			else {
+				subs.put("_api_", name + "-api");
+				subs.put("_service_", name + "-service");
+				subs.put("_web_", name + "-web");
+			}
 			subs.put("_portlet_", packageName + ".portlet");
 			subs.put(
 				"_portletpackage_",
