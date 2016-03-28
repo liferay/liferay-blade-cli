@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
@@ -102,11 +103,11 @@ public class OSGiHtmlReporterTest {
 
 		reporter.beginReporting(Migration.DETAIL_LONG, baos);
 		reporter.report(new Problem(
-				"foo", "foo summary", "java", "LPS-5309", new File("Foo.java"), 10, 100, 110, null, null,
-				Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
+				UUID.randomUUID().toString(), "foo", "foo summary", "java", "LPS-5309", new File("Foo.java"), 10, 100,
+				110, null, null, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 		reporter.report(new Problem(
-				"bar", "bar summary", "jsp", "LPS-867", new File("Bar.java"), 20, 200, 220, null, null,
-				Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
+				UUID.randomUUID().toString(), "bar", "bar summary", "jsp", "LPS-867", new File("Bar.java"), 20, 200,
+				220, null, null, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 		reporter.endReporting();
 
 		String realString = baos.toString().replace("\r", "");
@@ -175,11 +176,11 @@ public class OSGiHtmlReporterTest {
 
 		reporter.beginReporting(Migration.DETAIL_SHORT, baos);
 		reporter.report(new Problem(
-				"foo", "foo summary", "java", "LPS-867", new File("Foo.java"), 10, 100, 110, null, null,
-				Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
+				UUID.randomUUID().toString(), "foo", "foo summary", "java", "LPS-867", new File("Foo.java"), 10, 100,
+				110, null, null, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 		reporter.report(new Problem(
-				"bar", "bar summary", "jsp", "LPS-5309", new File("Bar.java"), 20, 200, 220, null, null,
-				Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
+				UUID.randomUUID().toString(), "bar", "bar summary", "jsp", "LPS-5309", new File("Bar.java"), 20, 200,
+				220, null, null, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 		reporter.endReporting();
 
 		String realString = baos.toString().replace("\r", "");

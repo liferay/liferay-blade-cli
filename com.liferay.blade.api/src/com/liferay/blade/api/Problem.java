@@ -28,11 +28,12 @@ public class Problem {
 	public Problem() {
 	}
 
-	public Problem( String title, String summary, String type,
+	public Problem( String uuid, String title, String summary, String type,
 			String ticket, File file,
 			int lineNumber, int startOffset, int endOffset,
 			String html, String autoCorrectContext, int status, long markerId) {
 
+	    this.uuid = uuid;
 		this.title = title;
 		this.summary = summary;
 		this.type = type;
@@ -47,6 +48,7 @@ public class Problem {
 		this.markerId = markerId;
 	}
 
+	public String uuid;
 	public File file;
 	public int lineNumber;
 	public int number;
@@ -60,6 +62,14 @@ public class Problem {
 	public String autoCorrectContext;
 	public int status;
 	public long markerId;
+
+	public String getUuid() {
+        return uuid;
+   }
+
+	public void setUuid(String uuid) {
+	    this.uuid = uuid;
+	}
 
 	public String getTitle() {
 		return title;
@@ -166,6 +176,8 @@ public class Problem {
 		if (getClass() != obj.getClass())
 			return false;
 		Problem other = (Problem) obj;
+		if (uuid.equals( other.uuid ))
+		    return true;
 		if (endOffset != other.endOffset)
 			return false;
 		if (file == null) {

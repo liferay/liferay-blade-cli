@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
+import java.util.UUID;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -73,7 +74,7 @@ public abstract class PropertiesFileMigrator implements FileMigrator {
 				String sectionHtml = MarkdownParser.getSection("BREAKING_CHANGES.markdown", _sectionKey);
 
 				for (SearchResult searchResult : results) {
-					problems.add(new Problem( _problemTitle, _problemSummary,
+					problems.add(new Problem( UUID.randomUUID().toString(), _problemTitle, _problemSummary,
 						_problemType, _problemTickets, file,
 						searchResult.startLine, searchResult.startOffset,
 						searchResult.endOffset, sectionHtml, searchResult.autoCorrectContext,

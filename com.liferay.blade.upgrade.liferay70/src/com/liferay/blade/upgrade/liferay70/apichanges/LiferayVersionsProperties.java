@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -82,7 +83,7 @@ public class LiferayVersionsProperties extends PropertiesFileMigrator implements
 						for (SearchResult searchResult : results) {
 							searchResult.autoCorrectContext = PREFIX + "liferay-versions";
 
-							problems.add(new Problem( _problemTitle, _problemSummary,
+							problems.add(new Problem( UUID.randomUUID().toString(), _problemTitle, _problemSummary,
 								_problemType, _problemTickets, file,
 								searchResult.startLine, searchResult.startOffset,
 								searchResult.endOffset, sectionHtml, searchResult.autoCorrectContext,
