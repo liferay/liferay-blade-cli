@@ -33,7 +33,7 @@ public class Problem {
 			int lineNumber, int startOffset, int endOffset,
 			String html, String autoCorrectContext, int status, long markerId) {
 
-	    this.uuid = uuid;
+		this.uuid = uuid;
 		this.title = title;
 		this.summary = summary;
 		this.type = type;
