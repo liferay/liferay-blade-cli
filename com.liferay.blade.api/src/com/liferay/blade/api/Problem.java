@@ -17,6 +17,7 @@
 package com.liferay.blade.api;
 
 import java.io.File;
+import java.util.UUID;
 
 public class Problem {
 
@@ -26,6 +27,16 @@ public class Problem {
 	public static final long DEFAULT_MARKER_ID = -1;
 
 	public Problem() {
+	}
+
+	public Problem( String title, String summary, String type,
+			String ticket, File file,
+			int lineNumber, int startOffset, int endOffset,
+			String html, String autoCorrectContext, int status, long markerId) {
+
+		this( UUID.randomUUID().toString(), title, summary, type, ticket, file,
+				lineNumber, startOffset, endOffset, html, autoCorrectContext,
+				status, markerId );
 	}
 
 	public Problem( String uuid, String title, String summary, String type,
