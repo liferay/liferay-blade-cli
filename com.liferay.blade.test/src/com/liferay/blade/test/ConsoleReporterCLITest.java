@@ -52,11 +52,11 @@ public class ConsoleReporterCLITest {
 		Reporter reporter = context.getService(sr);
 		reporter.beginReporting(Migration.DETAIL_LONG, baos);
 		reporter.report(new Problem(
-				"foo", "foo summary", "java", "LPS-5309", new File("Foo.java"), 10, 100, 110, null, null,
-				Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
+				"foo", "foo summary", "java", "LPS-5309", new File("Foo.java"), 10, 100,
+				110, null, null, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 		reporter.report(new Problem(
-				"bar", "bar summary", "jsp", "LPS-867", new File("Bar.java"), 20, 200, 220, null, null,
-				Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
+				"bar", "bar summary", "jsp", "LPS-867", new File("Bar.java"), 20, 200,
+				220, null, null, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 		reporter.endReporting();
 
 		String realString = baos.toString().replace("\r", "");
@@ -82,11 +82,11 @@ public class ConsoleReporterCLITest {
 		Reporter reporter = context.getService(sr);
 		reporter.beginReporting(Migration.DETAIL_SHORT, baos);
 		reporter.report(new Problem(
-				"foo", "foo summary", "java", "LPS-867", new File("Foo.java"), 10, 100, 110, null, null,
-				Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
+				"foo", "foo summary", "java", "LPS-867", new File("Foo.java"), 10, 100,
+				110, null, null, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 		reporter.report(new Problem(
-				"bar", "bar summary", "jsp", "LPS-5309", new File("Bar.java"), 20, 200, 220, null, null,
-				Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
+				"bar", "bar summary", "jsp", "LPS-5309", new File("Bar.java"), 20, 200,
+				220, null, null, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
 		reporter.endReporting();
 
 		String realString = baos.toString().replace("\r", "");

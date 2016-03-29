@@ -73,7 +73,7 @@ public abstract class PropertiesFileMigrator implements FileMigrator {
 				String sectionHtml = MarkdownParser.getSection("BREAKING_CHANGES.markdown", _sectionKey);
 
 				for (SearchResult searchResult : results) {
-					problems.add(new Problem( _problemTitle, _problemSummary,
+					problems.add(new Problem(_problemTitle, _problemSummary,
 						_problemType, _problemTickets, file,
 						searchResult.startLine, searchResult.startOffset,
 						searchResult.endOffset, sectionHtml, searchResult.autoCorrectContext,
