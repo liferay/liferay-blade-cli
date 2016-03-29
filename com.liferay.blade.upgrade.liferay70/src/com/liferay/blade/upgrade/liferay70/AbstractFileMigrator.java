@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.List;
-import java.util.UUID;
 
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.BundleContext;
@@ -76,7 +75,7 @@ public abstract class AbstractFileMigrator<T extends SourceFile> implements File
 			for (SearchResult searchResult : searchResults) {
 				String fileExtension = new Path(file.getAbsolutePath()).getFileExtension();
 
-				problems.add(new Problem(UUID.randomUUID().toString(), _problemTitle, _problemSummary,
+				problems.add(new Problem(_problemTitle, _problemSummary,
 					fileExtension, _problemTickets, file, searchResult.startLine,
 					searchResult.startOffset, searchResult.endOffset, sectionHtml,
 					searchResult.autoCorrectContext, Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
