@@ -40,7 +40,7 @@ public class GradleToolingTest {
 	}
 
 	@Test
-	public void testCheckLatestArchetypeVersionOffline() throws Exception {
+	public void testCheckLatestArtifactVersionOffline() throws Exception {
 		File file = GradleTooling.findLatestAvailableArtifact(
 			"group: 'com.liferay', name: 'com.liferay.gradle.plugins.workspace', version: '1+', classifier: 'sources', ext: 'jar'",
 			new File("test-localrepo").toURI().toURL().toExternalForm());
@@ -55,7 +55,7 @@ public class GradleToolingTest {
 	}
 
 	@Test
-	public void testCheckLatestArchetypeVersionOnline() throws Exception {
+	public void testCheckLatestArtifactVersionOnline() throws Exception {
 		File file = GradleTooling.findLatestAvailableArtifact(
 			"group: 'com.liferay', name: 'com.liferay.gradle.plugins.workspace', version: '1+', classifier: 'sources', ext: 'jar'");
 
