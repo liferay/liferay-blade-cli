@@ -24,7 +24,10 @@ import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.gradle.GradleTooling;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -196,7 +199,7 @@ public class CreateCommand {
 			subs.put("_HOST_BUNDLE_VERSION_", hostbundleversion);
 		}
 
-		subs.put("_CLASSNAME_", classname);
+		subs.put("_CLASS_", classname);
 
 		String unNormalizedPortletFqn =
 			name.toLowerCase().replaceAll("-", ".") + "_" + classname;
@@ -205,19 +208,25 @@ public class CreateCommand {
 			"_portlet_fqn_",
 			unNormalizedPortletFqn.replaceAll("\\.", "_"));
 
-		InputStream in = getClass().getResourceAsStream("/templates.zip");
+		File moduleTemplatesZip = getModuleTemplatesZip();
+
+		InputStream in = new FileInputStream(moduleTemplatesZip);
 
 		copy("standalone", template.name(), workDir, in, glob, true, subs);
+
+		in.close();
 
 		if (Util.isWorkspace(dir)) {
 			final Pattern buildGlob = Pattern.compile(
 				"^workspace/" + template.name() + "/.*|\\...+/build.gradle");
 
-			in = getClass().getResourceAsStream("/templates.zip");
+			in = new FileInputStream(moduleTemplatesZip);
 
 			copy(
 				"workspace", template.name(), workDir, in, buildGlob, true,
 				subs);
+
+			in.close();
 
 			File settingsFile = new File(workDir, "settings.gradle");
 
@@ -273,6 +282,19 @@ public class CreateCommand {
 		)
 		public Template template();
 
+	}
+
+	File getModuleTemplatesZip() throws Exception {
+		trace("Connecting to repository to find latest module templates.");
+
+		File zipFile = GradleTooling.findLatestAvailableArtifact(
+			"group: 'com.liferay', " +
+				"name: 'com.liferay.gradle.templates', " +
+					"version: '1.0.1+', classifier: 'sources', ext: 'jar'");
+
+		trace("Found gradle templates " + zipFile);
+
+		return zipFile;
 	}
 
 	private void addError(String prefix, String msg) {
@@ -396,6 +418,10 @@ public class CreateCommand {
 		if (!content.equals(newContent)) {
 			IO.write(newContent.getBytes(), dest);
 		}
+	}
+
+	private void trace(String msg) {
+		_blade.trace("%s: %s", "create", msg);
 	}
 
 	private static final List<String> textExtensions = Arrays.asList(

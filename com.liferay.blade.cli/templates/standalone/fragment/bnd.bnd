@@ -1,5 +1,0 @@
-Bundle-SymbolicName: _name_
-
-Bundle-Version: 1.0.0.${tstamp}
-
-Fragment-Host: _HOST_BUNDLE_BSN_;bundle-version="_HOST_BUNDLE_VERSION_"

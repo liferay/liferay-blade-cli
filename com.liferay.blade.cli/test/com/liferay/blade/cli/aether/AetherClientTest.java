@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.eclipse.aether.artifact.Artifact;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -53,6 +52,7 @@ public class AetherClientTest {
 		assertTrue(name.contains("1.0.8"));
 	}
 
+	@Ignore
 	@Test
 	public void testCheckLatestArchetypeVersionOnline() throws Exception {
 		AetherClient client = new AetherClient();

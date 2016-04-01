@@ -196,9 +196,8 @@ aether-deps:\
 	slf4j.api
 
 -dependson: com.liferay.blade.gradle
--includeresource:\
-	deps.zip,\
-	templates.zip
+
+-includeresource: deps.zip
 
 -sources: false
 
