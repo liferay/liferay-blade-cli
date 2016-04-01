@@ -5,18 +5,10 @@ task createDepsZip(type:Zip) {
 	include "*.jar"
 }
 
-task createTemplatesZip(type:Zip) {
-	from "${projectDir}/templates"
-	baseName = "templates"
-	destinationDir = new File("${projectDir}")
-}
-
 clean.doFirst {
 	delete "${projectDir}/deps.zip"
-	delete "${projectDir}/templates.zip"
 }
 
 jar {
 	from createDepsZip
-	from createTemplatesZip
 }
