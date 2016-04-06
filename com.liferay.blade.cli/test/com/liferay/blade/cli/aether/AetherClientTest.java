@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.eclipse.aether.artifact.Artifact;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -69,7 +68,7 @@ public class AetherClientTest {
 		assertTrue(file.exists());
 		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
 		assertTrue(name.endsWith("sources.jar"));
-		assertEquals(name, true, name.contains("1.0.22"));
+		assertEquals(name, true, name.contains("1.0.24"));
 	}
 
 }
