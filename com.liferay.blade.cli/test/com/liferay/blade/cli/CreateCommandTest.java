@@ -16,7 +16,9 @@
 
 package com.liferay.blade.cli;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import aQute.lib.io.IO;
@@ -27,18 +29,12 @@ import java.nio.file.Files;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * @author Gregory Amerson
  */
 public class CreateCommandTest {
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-		IO.copy(new File("templates.zip"), new File("bin_test/templates.zip"));
-	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -181,10 +177,6 @@ public class CreateCommandTest {
 				".*^public class FooPortlet .*",
 				".*printWriter.print\\(\\\"gradle.test Portlet.*"
 			});
-
-		contains(
-			checkFileExists(projectPath + "/bnd.bnd"),
-			".*^Private-Package: \\\\.*^\tgradle.test$.*");
 	}
 
 	@Test
@@ -200,15 +192,14 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(projectPath + "/settings.gradle"),
-			"include 'backend-integration-api'," +
-			"'backend-integration-service'," +
-			"'backend-integration-web'");
+			"include \"backend-integration-api\", " +
+			"\"backend-integration-service\"");
 
 		contains(
 			checkFileExists(
 				projectPath + "/backend-integration-api/bnd.bnd"),
 			new String[] {
-				".*Export-Package: \\\\.*",
+				".*Export-Package:\\\\.*",
 				".*com.liferay.backend.integration.exception,\\\\.*",
 				".*com.liferay.backend.integration.model,\\\\.*",
 				".*com.liferay.backend.integration.service,\\\\.*",
@@ -220,17 +211,6 @@ public class CreateCommandTest {
 				projectPath + "/backend-integration-service/bnd.bnd"),
 				".*Liferay-Service: true.*"
 		);
-
-		contains(
-			checkFileExists(
-				projectPath + "/backend-integration-web/bnd.bnd"),
-				".*^\\-plugin.jsp: com.liferay.ant.bnd.jsp.JspAnalyzerPlugin$.*"
-			);
-
-		contains(
-			checkFileExists(
-				projectPath + "/backend-integration-web/src/main/java/com/liferay/backend/integration/portlet/BackendIntegrationPortlet.java"),
-			".*package com.liferay.backend.integration.portlet;.*");
 	}
 
 	@Test
@@ -246,13 +226,13 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(projectPath + "/settings.gradle"),
-			"include 'guestbook-api','guestbook-service','guestbook-web'");
+			"include \"guestbook-api\", \"guestbook-service\"");
 
 		contains(
 			checkFileExists(
 				projectPath + "/guestbook-api/bnd.bnd"),
 			new String[] {
-				".*Export-Package: \\\\.*",
+				".*Export-Package:\\\\.*",
 				".*com.liferay.docs.guestbook.exception,\\\\.*",
 				".*com.liferay.docs.guestbook.model,\\\\.*",
 				".*com.liferay.docs.guestbook.service,\\\\.*",
@@ -264,17 +244,6 @@ public class CreateCommandTest {
 				projectPath + "/guestbook-service/bnd.bnd"),
 				".*Liferay-Service: true.*"
 		);
-
-		contains(
-			checkFileExists(
-				projectPath + "/guestbook-web/bnd.bnd"),
-				".*^\\-plugin.jsp: com.liferay.ant.bnd.jsp.JspAnalyzerPlugin$.*"
-			);
-
-		contains(
-			checkFileExists(
-				projectPath + "/guestbook-web/src/main/java/com/liferay/docs/guestbook/portlet/GuestbookPortlet.java"),
-				".*package com.liferay.docs.guestbook.portlet;.*");
 	}
 
 	@Test
@@ -290,15 +259,14 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(projectPath + "/settings.gradle"),
-			"include 'com.liferay.docs.guestbook.api'," +
-			"'com.liferay.docs.guestbook.svc'," +
-			"'com.liferay.docs.guestbook.web'");
+			"include \"com.liferay.docs.guestbook.api\", " +
+			"\"com.liferay.docs.guestbook.svc\"");
 
 		contains(
 			checkFileExists(
 				projectPath + "/com.liferay.docs.guestbook.api/bnd.bnd"),
 			new String[] {
-				".*Export-Package: \\\\.*",
+				".*Export-Package:\\\\.*",
 				".*com.liferay.docs.guestbook.exception,\\\\.*",
 				".*com.liferay.docs.guestbook.model,\\\\.*",
 				".*com.liferay.docs.guestbook.service,\\\\.*",
@@ -310,17 +278,6 @@ public class CreateCommandTest {
 				projectPath + "/com.liferay.docs.guestbook.svc/bnd.bnd"),
 				".*Liferay-Service: true.*"
 		);
-
-		contains(
-			checkFileExists(
-				projectPath + "/com.liferay.docs.guestbook.web/bnd.bnd"),
-				".*^\\-plugin.jsp: com.liferay.ant.bnd.jsp.JspAnalyzerPlugin$.*"
-			);
-
-		contains(
-			checkFileExists(
-				projectPath + "/com.liferay.docs.guestbook.web/src/main/java/com/liferay/docs/guestbook/portlet/ComLiferayDocsGuestbookPortlet.java"),
-			".*package com.liferay.docs.guestbook.portlet;.*");
 	}
 
 	@Test
@@ -346,10 +303,6 @@ public class CreateCommandTest {
 				".*service = LifecycleAction.class.*",
 				".*^public class FooAction implements LifecycleAction \\{.*"
 			});
-
-		contains(
-			checkFileExists(projectPath + "/bnd.bnd"),
-			".*com.liferay.portal.service;version=\"7.0.0\".*");
 	}
 
 	@Test
@@ -375,13 +328,6 @@ public class CreateCommandTest {
 				".*service = ServiceWrapper.class.*",
 				".*^public class Serviceoverride extends UserLocalServiceWrapper \\{.*",
 				".*public Serviceoverride\\(\\) \\{.*"
-			});
-
-		contains(
-			checkFileExists(projectPath + "/bnd.bnd"),
-			new String[] {
-				".*^Private-Package: \\\\.*^\tserviceoverride.*",
-				".*com.liferay.portal.kernel.service;version=\'7.0.0\'.*"
 			});
 	}
 
@@ -491,10 +437,6 @@ public class CreateCommandTest {
 				".*printWriter.print\\(\\\"gradle.test Portlet.*"
 			});
 
-		contains(
-			checkFileExists(projectPath + "/gradle.test/bnd.bnd"),
-			".*^Private-Package: \\\\.*^\tgradle.test$.*");
-
 		lacks(
 			checkFileExists(projectPath + "/gradle.test/build.gradle"),
 			".*^apply plugin: \"com.liferay.plugin\".*");
@@ -525,9 +467,6 @@ public class CreateCommandTest {
 
 		checkFileExists(
 			projectPath + "/workspace.sample/com.sample.svc/build.gradle");
-
-		checkFileExists(
-			projectPath + "/workspace.sample/com.sample.web/build.gradle");
 	}
 
 	@Test
@@ -555,9 +494,6 @@ public class CreateCommandTest {
 
 		checkFileExists(
 			projectPath + "/sample/sample-service/build.gradle");
-
-		checkFileExists(
-			projectPath + "/sample/sample-web/build.gradle");
 	}
 
 	@Test
@@ -585,9 +521,6 @@ public class CreateCommandTest {
 
 		checkFileExists(
 			projectPath + "/workspace.sample/com.sample.svc/build.gradle");
-
-		checkFileExists(
-			projectPath + "/workspace.sample/com.sample.web/build.gradle");
 	}
 
 	@Test
@@ -616,6 +549,20 @@ public class CreateCommandTest {
 			projectPath + "/foo/build.gradle");
 
 		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+	}
+
+	@Test
+	public void testGetLatestModuleTemplatesArtifact() throws Exception {
+		File moduleTemplatesArtifact =
+			new CreateCommand(new bladenofail(), null).getModuleTemplatesZip();
+
+		assertNotNull(moduleTemplatesArtifact);
+
+		assertTrue(moduleTemplatesArtifact.exists());
+
+		String name = moduleTemplatesArtifact.getName();
+
+		assertEquals("com.liferay.gradle.templates-1.0.1-sources.jar", name);
 	}
 
 	private File checkFileDoesNotExists(String path) {
