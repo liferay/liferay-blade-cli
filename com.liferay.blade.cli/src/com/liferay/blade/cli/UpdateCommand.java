@@ -58,7 +58,7 @@ public class UpdateCommand {
 	}
 
 	private static final String _DEFAULT_URL =
-		"https://liferay-test-01.ci.cloudbees.com/job/blade.tools/" +
+		"https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/" +
 			"lastSuccessfulBuild/artifact/com.liferay.blade.cli/generated/" +
 				"com.liferay.blade.cli.jar";
 
