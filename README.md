@@ -1,17 +1,14 @@
-# Blade Tools
+# Blade CLI
 
-[![Build Status](https://liferay-test-01.ci.cloudbees.com/job/blade.tools/badge/icon)](https://liferay-test-01.ci.cloudbees.com/job/blade.tools/)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/gamerson/liferay-blade-tools?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-Blade Tools is a set of modular developer tools for building Liferay 7.0 modules built with OSGi.
+[![Build Status](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/badge/icon)](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/)
 
 ## Install 
 
-Right now the only installable tool is the ```blade``` CLI tool that provides a few commands.  It can be installed using the following:
+In order to use the blade cli, you must install it with the following:
 
 ### Install Blade (Mac, Linux)
 ```
-$ curl https://raw.githubusercontent.com/gamerson/liferay-blade-tools/master/installers/global | sudo sh
+$ curl https://raw.githubusercontent.com/liferay/liferay-blade-cli/master/installers/global | sudo sh
 ```
 
 OR
@@ -21,7 +18,7 @@ Install JPM (Windows) then Install blade
 Visit the JPM4J [Windows installation](https://www.jpm4j.org/#!/md/windows) setup guide.
 ```
 ```
-$ jpm install -f https://liferay-test-01.ci.cloudbees.com/job/blade.tools/lastSuccessfulBuild/artifact/com.liferay.blade.cli/generated/com.liferay.blade.cli.jar
+$ jpm install -f https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/lastSuccessfulBuild/artifact/com.liferay.blade.cli/generated/com.liferay.blade.cli.jar
 ```
 
 ### How to build blade cli jar from sources
@@ -32,7 +29,7 @@ Clone this repo, and then from the command line execute following command:
 $ ./gradlew clean build -x check
 ```
 
-### Install Blade Tools jar using JPM
+### Install Blade cli jar using JPM
 
 Install from downloaded jar from above.
 
@@ -68,7 +65,7 @@ Current available commands
 The ```Create``` command allows you to create new Liferay 7 module projects based on gradle.
 
 ```
-$ blade create mvcportlet helloworld 
+$ blade create -t mvcportlet helloworld 
 ```
 
 This will create a new helloworld portlet module project that contains an OSGi component built by a gradle script.
@@ -79,7 +76,6 @@ This will create a new helloworld portlet module project that contains an OSGi c
 First, start Liferay 7 Portal, once it is running you can build your Liferay 7 module and deploy it
 
 ```
-helloworld $ gradle build
 helloworld $ blade deploy build/libs/helloworld-1.0.jar
 ```
 
@@ -104,18 +100,8 @@ Search for all services that provide javax.portlet.Portlet
 $ blade sh services | grep javax.portlet.Portlet
 ```
 
-### Agent
-
-When the blade tool executes gogo shell commands using the ```blade sh <gogo-command>``` it needs to connect to a remote agent running in the module framework.  To install the agent into Liferay 7 execute this command:
-
-```
-$ blade agent install
-```
-
-If this command fails it will prompt you for what additional information you need to specify in order to install the remote agent.  
-
 ## Release
-Blade Tools is continuously built and released on [CloudBees](https://liferay-test-01.ci.cloudbees.com/job/blade.tools/).
+Blade Tools is continuously built and released on [CloudBees](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/).
 
 [![Built on DEV@cloud](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)](http://www.cloudbees.com/foss/foss-dev.cb)
 
