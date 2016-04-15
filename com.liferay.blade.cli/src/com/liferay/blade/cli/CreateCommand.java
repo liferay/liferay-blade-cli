@@ -53,14 +53,11 @@ public class CreateCommand {
 		"Creates a new Liferay module project from several available " +
 			"templates.";
 
-	public static final String DEFAULT_TEMPLATES_VERSION = "1.0.3";
+	public static final String TEMPLATES_VERSION = "1.0.3";
 
 	public CreateCommand(blade blade, CreateOptions options) {
 		_blade = blade;
 		_options = options;
-		_templatesVersion =
-			options.version() == null ?
-				DEFAULT_TEMPLATES_VERSION : options.version();
 	}
 
 	public void execute() throws Exception {
@@ -316,21 +313,17 @@ public class CreateCommand {
 					"--listtemplates>"
 		)
 		public String template();
-
-		@Description(
-			"Specify a custom version of project templates to download.")
-		public String version();
 	}
 
 	File getGradleTemplatesZip() throws Exception {
 		trace(
-			"Connecting to repository to find version " + _templatesVersion +
+			"Connecting to repository to find version " + TEMPLATES_VERSION +
 				" gradle templates.");
 
 		File zipFile = GradleTooling.findLatestAvailableArtifact(
 			"group: 'com.liferay', " +
 				"name: 'com.liferay.gradle.templates', " +
-					"version: '" + _templatesVersion + "', classifier: " +
+					"version: '" + TEMPLATES_VERSION + "', classifier: " +
 						"'sources', ext: 'jar'");
 
 		trace("Found gradle templates " + zipFile);
@@ -492,6 +485,5 @@ public class CreateCommand {
 
 	private final blade _blade;
 	private final CreateOptions _options;
-	private final String _templatesVersion;
 
 }

@@ -638,28 +638,6 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testGetSpecificGradleTemplatsArtifact() throws Exception {
-		List<String> args = new ArrayList<>();
-
-		args.add("-v");
-		args.add("1.0.0");
-		args.add("foo");
-
-		CreateOptions options =
-			new CommandLine(null).getOptions(CreateOptions.class, args);
-
-		File gradleTemplates =
-			new CreateCommand(
-				new bladenofail(), options).getGradleTemplatesZip();
-
-		assertNotNull(gradleTemplates);
-
-		assertTrue(gradleTemplates.exists());
-
-		assertTrue(gradleTemplates.getName().contains("1.0.0"));
-	}
-
-	@Test
 	public void testListTemplates() throws Exception {
 		String[] args = {
 			"create", "-l"
