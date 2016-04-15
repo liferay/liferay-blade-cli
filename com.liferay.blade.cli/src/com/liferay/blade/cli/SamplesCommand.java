@@ -224,12 +224,14 @@ public class SamplesCommand {
 		Files.write(sampleGradleFile.toPath(), script.getBytes());
 	}
 
-	private static final String _BLADE_REPO_ARCHIVE_NAME = "blade-master.zip";
+	private static final String _BLADE_REPO_ARCHIVE_NAME =
+			"liferay-blade-samples-master.zip";
 
-	private static final String _BLADE_REPO_NAME = "blade-master";
+	private static final String _BLADE_REPO_NAME =
+			"liferay-blade-samples-master";
 
 	private static final String _BLADE_REPO_URL =
-		"https://github.com/rotty3000/blade/archive/master.zip";
+		"https://github.com/liferay/liferay-blade-samples/archive/master.zip";
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 

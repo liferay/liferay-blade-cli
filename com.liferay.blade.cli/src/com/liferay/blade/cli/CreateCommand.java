@@ -29,6 +29,9 @@ import com.liferay.blade.cli.gradle.GradleTooling;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,18 +53,28 @@ public class CreateCommand {
 		"Creates a new Liferay module project from several available " +
 			"templates.";
 
+	public static final String DEFAULT_TEMPLATES_VERSION = "1.0.1";
+
 	public CreateCommand(blade blade, CreateOptions options) {
 		_blade = blade;
 		_options = options;
+		_templatesVersion =
+			options.version() == null ?
+				DEFAULT_TEMPLATES_VERSION : options.version();
 	}
 
 	public void execute() throws Exception {
+		if (_options.listtemplates()) {
+			listTemplates();
+			return;
+		}
+
 		List<String> args = _options._arguments();
 
-		Template template = _options.template();
+		String template = _options.template();
 
 		if (template == null) {
-			template = Template.mvcportlet;
+			template = "mvcportlet";
 		}
 
 		File dir = _options.dir() != null ? _options.dir() : getDefaultDir();
@@ -71,10 +84,10 @@ public class CreateCommand {
 		name = workDir.getName();
 
 		final Pattern glob = Pattern.compile(
-			"^standalone/" + template.name() + "/.*|\\...+/.*");
+			"^standalone/" + template + "/.*|\\...+/.*");
 
 		final Map<String, String> subs = new HashMap<>();
-		subs.put("templates/standalone/" + template.name() + "/", "");
+		subs.put("templates/standalone/" + template + "/", "");
 		subs.put("_project_path_", workDir.getAbsolutePath());
 		subs.put("_name_", getPackageName(name));
 		subs.put("_NAME_", name);
@@ -99,7 +112,7 @@ public class CreateCommand {
 
 		String service = _options.service();
 
-		if (Template.service.equals(template)) {
+		if ("service".equals(template)) {
 			if (isEmpty(service)) {
 				addError(
 					"Create",
@@ -117,7 +130,7 @@ public class CreateCommand {
 				service.substring(service.lastIndexOf('.') + 1));
 		}
 
-		if (Template.servicewrapper.equals(template)) {
+		if ("servicewrapper".equals(template)) {
 			if (isEmpty(service)) {
 				addError(
 					"Create",
@@ -136,7 +149,7 @@ public class CreateCommand {
 				service.substring(service.lastIndexOf('.') + 1));
 		}
 
-		if (Template.servicebuilder.equals(template)) {
+		if ("servicebuilder".equals(template)) {
 			if (isEmpty(packageName)) {
 				addError(
 					"Create",
@@ -167,13 +180,13 @@ public class CreateCommand {
 				classname += "Portlet";
 			}
 		}
-		else if (Template.activator.equals(template)) {
+		else if ("activator".equals(template)) {
 			if (!classname.contains("Activator")) {
 				classname += "Activator";
 			}
 		}
-		else if (Template.portlet.equals(template) ||
-				 Template.mvcportlet.equals(template)) {
+		else if ("portlet".equals(template) ||
+				 "mvcportlet".equals(template)) {
 
 			if (!classname.contains("Portlet")) {
 				classname += "Portlet";
@@ -184,7 +197,7 @@ public class CreateCommand {
 
 		final String hostbundleversion = _options.hostbundleversion();
 
-		if (Template.fragment.equals(template)) {
+		if ("fragment".equals(template)) {
 			if (isEmpty(hostbundlebsn) || isEmpty(hostbundleversion)) {
 				addError(
 					"Create",
@@ -208,22 +221,22 @@ public class CreateCommand {
 			"_portlet_fqn_",
 			unNormalizedPortletFqn.replaceAll("\\.", "_"));
 
-		File moduleTemplatesZip = getModuleTemplatesZip();
+		File moduleTemplatesZip = getGradleTemplatesZip();
 
 		InputStream in = new FileInputStream(moduleTemplatesZip);
 
-		copy("standalone", template.name(), workDir, in, glob, true, subs);
+		copy("standalone", template, workDir, in, glob, true, subs);
 
 		in.close();
 
 		if (Util.isWorkspace(dir)) {
 			final Pattern buildGlob = Pattern.compile(
-				"^workspace/" + template.name() + "/.*|\\...+/build.gradle");
+				"^workspace/" + template + "/.*|\\...+/build.gradle");
 
 			in = new FileInputStream(moduleTemplatesZip);
 
 			copy(
-				"workspace", template.name(), workDir, in, buildGlob, true,
+				"workspace", template, workDir, in, buildGlob, true,
 				subs);
 
 			in.close();
@@ -240,7 +253,7 @@ public class CreateCommand {
 				" template in " + workDir);
 	}
 
-	@Arguments(arg = {"name"})
+	@Arguments(arg = {"[name]"})
 	@Description(DESCRIPTION)
 	public interface CreateOptions extends Options {
 
@@ -266,6 +279,9 @@ public class CreateCommand {
 		)
 		public String hostbundleversion();
 
+		@Description("Prints a list of available project templates")
+		public boolean listtemplates();
+
 		public String packagename();
 
 		@Description(
@@ -275,22 +291,27 @@ public class CreateCommand {
 		public String service();
 
 		@Description(
-			"The project template to use when creating the project. The " +
-				"following templates are available: activator, fragment, " +
-					"mvcportlet, portlet, service, servicebuilder, " +
-						"servicewrapper"
+			"The project template to use when creating the project. To " +
+				"see the list of templates available use blade create <-l | " +
+					"--listtemplates>"
 		)
-		public Template template();
+		public String template();
 
+		@Description(
+			"Specify a custom version of project templates to download.")
+		public String version();
 	}
 
-	File getModuleTemplatesZip() throws Exception {
-		trace("Connecting to repository to find latest module templates.");
+	File getGradleTemplatesZip() throws Exception {
+		trace(
+			"Connecting to repository to find version " + _templatesVersion +
+				" gradle templates.");
 
 		File zipFile = GradleTooling.findLatestAvailableArtifact(
 			"group: 'com.liferay', " +
 				"name: 'com.liferay.gradle.templates', " +
-					"version: '1.0.1+', classifier: 'sources', ext: 'jar'");
+					"version: '" + _templatesVersion + "', classifier: " +
+						"'sources', ext: 'jar'");
 
 		trace("Found gradle templates " + zipFile);
 
@@ -407,6 +428,27 @@ public class CreateCommand {
 			name.substring(name.lastIndexOf("."), name.length()));
 	}
 
+	private void listTemplates() throws Exception {
+		List<String> templateNames = new ArrayList<>();
+		File templatesZip = getGradleTemplatesZip();
+
+		try (Jar jar = new Jar(templatesZip)) {
+			Map<String, Map<String, Resource>> directories = jar.getDirectories();
+
+			for (String key : directories.keySet()) {
+				Path path = Paths.get(key);
+
+				if (path.getNameCount() == 2 && path.startsWith("standalone")) {
+					templateNames.add(path.getName(1).toString());
+				}
+			}
+		}
+
+		for (String name : templateNames) {
+			_blade.out().println(name);
+		}
+	}
+
 	private void process(File dest, Map<String, String> subs) throws Exception {
 		String content = new String(IO.read(dest));
 		String newContent = content;
@@ -430,5 +472,6 @@ public class CreateCommand {
 
 	private final blade _blade;
 	private final CreateOptions _options;
+	private final String _templatesVersion;
 
 }
