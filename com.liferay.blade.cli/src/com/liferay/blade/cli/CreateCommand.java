@@ -53,7 +53,7 @@ public class CreateCommand {
 		"Creates a new Liferay module project from several available " +
 			"templates.";
 
-	public static final String DEFAULT_TEMPLATES_VERSION = "1.0.1";
+	public static final String DEFAULT_TEMPLATES_VERSION = "1.0.3";
 
 	public CreateCommand(blade blade, CreateOptions options) {
 		_blade = blade;
@@ -77,9 +77,10 @@ public class CreateCommand {
 			template = "mvcportlet";
 		}
 
-		File dir = _options.dir() != null ? _options.dir() : getDefaultDir();
 		String name = args.remove(0);
-		File workDir = Processor.getFile(dir, name);
+		final File dir = _options.dir() != null ? _options.dir() : getDefaultDir();
+		final File workDir = Processor.getFile(dir, name);
+		final boolean isWorkspace = Util.isWorkspace(dir);
 
 		name = workDir.getName();
 
@@ -171,6 +172,25 @@ public class CreateCommand {
 				subs.put("_service_", name + "-service");
 				subs.put("_web_", name + "-web");
 			}
+
+			if (isWorkspace) {
+				final Path workspacePath =
+					Util.getWorkspaceDir(dir).getAbsoluteFile().toPath();
+
+				final Path dirPath = dir.getAbsoluteFile().toPath();
+
+				final String relativePath =
+					workspacePath.relativize(dirPath).toString();
+
+				final String apiPath =
+					":" + relativePath.replaceAll("\\/", ":") + ":" + name;
+
+				subs.put("_api_path_",  apiPath);
+			}
+			else {
+				subs.put("_api_path_", "");
+			}
+
 			subs.put("_portlet_", packageName + ".portlet");
 			subs.put(
 				"_portletpackage_",
@@ -229,7 +249,7 @@ public class CreateCommand {
 
 		in.close();
 
-		if (Util.isWorkspace(dir)) {
+		if (isWorkspace) {
 			final Pattern buildGlob = Pattern.compile(
 				"^workspace/" + template + "/.*|\\...+/build.gradle");
 

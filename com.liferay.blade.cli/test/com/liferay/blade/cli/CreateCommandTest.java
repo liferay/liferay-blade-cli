@@ -218,6 +218,12 @@ public class CreateCommandTest {
 				projectPath + "/backend-integration-service/bnd.bnd"),
 				".*Liferay-Service: true.*"
 		);
+
+		contains(
+			checkFileExists(
+				projectPath + "/backend-integration-service/build.gradle"),
+				".*repositories \\{.*"
+		);
 	}
 
 	@Test
@@ -250,6 +256,12 @@ public class CreateCommandTest {
 			checkFileExists(
 				projectPath + "/guestbook-service/bnd.bnd"),
 				".*Liferay-Service: true.*"
+		);
+
+		contains(
+			checkFileExists(
+				projectPath + "/guestbook-service/build.gradle"),
+				".*compile project\\(\":guestbook-api\"\\).*"
 		);
 	}
 
@@ -455,7 +467,7 @@ public class CreateCommandTest {
 
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules", "-t",
-			"servicebuilder", "-p", "com.sample", "workspace.sample"
+			"servicebuilder", "-p", "com.sample", "workspace-sample"
 		};
 
 		makeWorkspace(new File("generated/test/workspace"));
@@ -464,16 +476,22 @@ public class CreateCommandTest {
 
 		String projectPath = "generated/test/workspace/modules";
 
-		checkFileExists(projectPath + "/workspace.sample/build.gradle");
+		checkFileExists(projectPath + "/workspace-sample/build.gradle");
 
 		checkFileDoesNotExists(
-			projectPath + "/workspace.sample/settings.gradle");
+			projectPath + "/workspace-sample/settings.gradle");
 
 		checkFileExists(
-			projectPath + "/workspace.sample/com.sample.api/build.gradle");
+			projectPath + "/workspace-sample/workspace-sample-api/build.gradle");
 
 		checkFileExists(
-			projectPath + "/workspace.sample/com.sample.svc/build.gradle");
+			projectPath + "/workspace-sample/workspace-sample-service/build.gradle");
+
+		contains(
+			checkFileExists(
+				projectPath + "/workspace-sample/workspace-sample-service/build.gradle"),
+				".*repositories \\{.*"
+		);
 	}
 
 	@Test
@@ -501,6 +519,48 @@ public class CreateCommandTest {
 
 		checkFileExists(
 			projectPath + "/sample/sample-service/build.gradle");
+
+		contains(
+			checkFileExists(
+				projectPath + "/sample/sample-service/build.gradle"),
+				".*compile project\\(\":modules:sample:sample-api\"\\).*"
+		);
+	}
+
+	@Test
+	public void testCreateWorkspaceGradleServiceBuilderProjectApiPath()
+			throws Exception {
+
+		String[] args = {
+			"create", "-d", "generated/test/workspace/modules/nested/path",
+			"-t", "servicebuilder", "-p", "com.liferay.sample", "sample"
+		};
+
+		makeWorkspace(new File("generated/test/workspace"));
+
+		assertTrue(
+			new File("generated/test/workspace/modules/nested/path").mkdirs());
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/workspace/modules/nested/path";
+
+		checkFileExists(projectPath + "/sample/build.gradle");
+
+		checkFileDoesNotExists(
+			projectPath + "/sample/settings.gradle");
+
+		checkFileExists(
+			projectPath + "/sample/sample-api/build.gradle");
+
+		checkFileExists(
+			projectPath + "/sample/sample-service/build.gradle");
+
+		contains(
+			checkFileExists(
+				projectPath + "/sample/sample-service/build.gradle"),
+				".*compile project\\(\":modules:nested:path:sample:sample-api\"\\).*"
+		);
 	}
 
 	@Test
@@ -574,7 +634,7 @@ public class CreateCommandTest {
 
 		assertTrue(gradleTemplates.exists());
 
-		assertTrue(gradleTemplates.getName().contains("1.0.1"));
+		assertTrue(gradleTemplates.getName().contains("1.0.3"));
 	}
 
 	@Test
