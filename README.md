@@ -2,51 +2,31 @@
 
 [![Build Status](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/badge/icon)](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/)
 
+The Blade CLI is a command line java tool that can be used to help bootstrap Liferay 7 module development.  It is installed using a java package manager called [jpm4j](https://www.jpm4j.org).
+
 ## Install 
 
-In order to use the blade cli, you must install it with the following:
+In order to install blade cli tool, jpm4j much first be installed.
 
-### Install Blade (Mac, Linux)
+### (Mac, Linux) Install Blade
+For Mac, Linux you can install both jpm and blade executables with a single command:
+
 ```
 $ curl https://raw.githubusercontent.com/liferay/liferay-blade-cli/master/installers/global | sudo sh
 ```
+Feel free to [view the source of that script](https://github.com/liferay/liferay-blade-cli/blob/master/installers/global) so you know what it is doing before you pass it to `sudo` :)
 
-OR
+Once this script finishes you will have the `blade` command in your path.
 
-Install JPM (Windows) then Install blade
+### (Windows) Install JPM then install blade
+For Windows you must use the separate windows installer for jpm4j first and then install blade.
+
 ```
 Visit the JPM4J [Windows installation](https://www.jpm4j.org/#!/md/windows) setup guide.
 ```
+next install blade
 ```
-$ jpm install -f https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/lastSuccessfulBuild/artifact/com.liferay.blade.cli/generated/com.liferay.blade.cli.jar
-```
-
-### How to build blade cli jar from sources
-
-Clone this repo, and then from the command line execute following command:
-
-```
-$ ./gradlew clean build -x check
-```
-
-### Install Blade cli jar using JPM
-
-Install from downloaded jar from above.
-
-```
-$ (sudo) jpm install -fl <downloads_dir>/com.liferay.blade.cli.jar
-```
-
-OR Install from newly built jar if you buildt from source.
-
-```
-$ (sudo) jpm install -fl com.liferay.blade.cli/generated/com.liferay.blade.cli.jar
-```
-
-Now you should have the ```blade``` executable in your path. Try it by running:
-
-```
-blade
+$ jpm install blade
 ```
 
 ## Usage
@@ -99,6 +79,28 @@ Search for all services that provide javax.portlet.Portlet
 ```
 $ blade sh services | grep javax.portlet.Portlet
 ```
+
+### How to build blade cli jar from sources
+
+Clone this repo, and then from the command line execute following command:
+
+```
+$ ./gradlew clean build -x check
+```
+
+### Install blade-cli using JPM
+
+```
+$ (sudo) jpm install blade
+```
+
+OR Install from newly built jar if you build from source.
+
+```
+$ (sudo) jpm install -fl com.liferay.blade.cli/generated/com.liferay.blade.cli.jar
+```
+
+
 
 ## Release
 Blade Tools is continuously built and released on [CloudBees](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/).
