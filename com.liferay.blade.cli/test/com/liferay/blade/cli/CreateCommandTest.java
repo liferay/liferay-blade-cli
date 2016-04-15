@@ -21,11 +21,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import aQute.lib.getopt.CommandLine;
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.CreateCommand.CreateOptions;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
@@ -552,17 +559,72 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testGetLatestModuleTemplatesArtifact() throws Exception {
-		File moduleTemplatesArtifact =
-			new CreateCommand(new bladenofail(), null).getModuleTemplatesZip();
+	public void testGetLatestGradleTemplatesArtifact() throws Exception {
+		List<String> args = new ArrayList<>();
+		args.add("foo");
 
-		assertNotNull(moduleTemplatesArtifact);
+		CreateOptions options =
+			new CommandLine(null).getOptions(CreateOptions.class, args);
 
-		assertTrue(moduleTemplatesArtifact.exists());
+		File gradleTemplates =
+			new CreateCommand(
+				new bladenofail(), options).getGradleTemplatesZip();
 
-		String name = moduleTemplatesArtifact.getName();
+		assertNotNull(gradleTemplates);
 
-		assertEquals("com.liferay.gradle.templates-1.0.1-sources.jar", name);
+		assertTrue(gradleTemplates.exists());
+
+		assertTrue(gradleTemplates.getName().contains("1.0.1"));
+	}
+
+	@Test
+	public void testGetSpecificGradleTemplatsArtifact() throws Exception {
+		List<String> args = new ArrayList<>();
+
+		args.add("-v");
+		args.add("1.0.0");
+		args.add("foo");
+
+		CreateOptions options =
+			new CommandLine(null).getOptions(CreateOptions.class, args);
+
+		File gradleTemplates =
+			new CreateCommand(
+				new bladenofail(), options).getGradleTemplatesZip();
+
+		assertNotNull(gradleTemplates);
+
+		assertTrue(gradleTemplates.exists());
+
+		assertTrue(gradleTemplates.getName().contains("1.0.0"));
+	}
+
+	@Test
+	public void testListTemplates() throws Exception {
+		String[] args = {
+			"create", "-l"
+		};
+
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(output);
+
+		blade blade =new bladenofail(ps);
+
+		blade.run(args);
+
+		String templateList = new String(output.toByteArray());
+
+		assertNotNull(templateList);
+
+		assertEquals(
+			"activator\n" +
+			"fragment\n" +
+			"mvcportlet\n" +
+			"portlet\n" +
+			"service\n" +
+			"servicebuilder\n" +
+			"servicewrapper\n",
+			templateList.replaceAll("\\r", ""));
 	}
 
 	private File checkFileDoesNotExists(String path) {
