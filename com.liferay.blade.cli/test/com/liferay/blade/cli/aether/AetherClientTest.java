@@ -52,7 +52,6 @@ public class AetherClientTest {
 		assertTrue(name.contains("1.0.8"));
 	}
 
-	@Ignore
 	@Test
 	public void testCheckLatestArchetypeVersionOnline() throws Exception {
 		AetherClient client = new AetherClient();
@@ -69,7 +68,7 @@ public class AetherClientTest {
 		assertTrue(file.exists());
 		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
 		assertTrue(name.endsWith("sources.jar"));
-		assertEquals(name, true, name.contains("1.0.22"));
+		assertEquals(name, true, name.matches(".*-1\\.0\\.[0-9]+-.*"));
 	}
 
 }
