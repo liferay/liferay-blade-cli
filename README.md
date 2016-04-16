@@ -26,7 +26,7 @@ Visit the JPM4J [Windows installation](https://www.jpm4j.org/#!/md/windows) setu
 ```
 next install blade
 ```
-$ jpm install blade
+$ jpm install com.liferay.blade.cli
 ```
 
 ## Usage
@@ -91,7 +91,7 @@ $ ./gradlew clean build -x check
 ### Install blade-cli using JPM
 
 ```
-$ (sudo) jpm install blade
+$ (sudo) jpm install com.liferay.blade.cli
 ```
 
 OR Install from newly built jar if you build from source.
