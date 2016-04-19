@@ -39,7 +39,7 @@ public class AllJSPTagProblemsTest {
 		Migration m = context.getService(sr);
 		List<Problem> problems = m.findProblems(new File("jsptests/"), new NullProgressMonitor());
 
-		final int expectedSize = 58;
+		final int expectedSize = 59;
 		final int size = problems.size();
 
 		if (size != expectedSize) {
