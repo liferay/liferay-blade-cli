@@ -23,6 +23,7 @@ import com.liferay.blade.util.FileHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -188,6 +189,41 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		}
 
 		return null;
+	}
+
+	public List<SearchResult> findImports(final String importName , final String[] imports) {
+		final List<SearchResult> searchResults = new ArrayList<>();
+
+		_ast.accept(new ASTVisitor() {
+
+			@Override
+			public boolean visit(ImportDeclaration node) {
+				if (node.getName().toString().contains(importName)) {
+					final List<String> importsList = new ArrayList<>(Arrays.asList(imports));
+
+					String greedyImport = importName;
+					importsList.remove(importName);
+
+					for (String anotherImport : importsList) {
+						if (node.getName().toString().contains(anotherImport)
+								&& anotherImport.length() > importName.length()) {
+							greedyImport = anotherImport;
+						}
+					}
+
+					int startLine = _ast.getLineNumber(node.getName().getStartPosition());
+					int startOffset = node.getName().getStartPosition();
+					int endLine = _ast.getLineNumber(node.getName().getStartPosition() + node.getName().getLength());
+					int endOffset = node.getName().getStartPosition() + greedyImport.length();
+
+					searchResults.add(createSearchResult(startOffset, endOffset, startLine, endLine, true));
+				}
+
+				return false;
+			};
+		});
+
+		return searchResults;
 	}
 
 	public List<SearchResult> findMethodDeclaration(

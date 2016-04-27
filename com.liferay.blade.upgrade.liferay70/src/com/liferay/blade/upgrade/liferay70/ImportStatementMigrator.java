@@ -137,4 +137,12 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 		return searchResults;
 	}
 
+	public static String getPrefix() {
+		return PREFIX;
+	}
+
+	public Map<String, String> get_imports() {
+		return _imports;
+	}
+
 }
