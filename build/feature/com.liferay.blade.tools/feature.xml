@@ -22,42 +22,42 @@
          id="biz.aQute.remote.api"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="@biz.aQute.remote.api-version@"
          unpack="false"/>
 
    <plugin
          id="com.liferay.blade.api"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="@com.liferay.blade.api-version@"
          unpack="false"/>
 
    <plugin
          id="com.liferay.blade.gradle.model"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="@com.liferay.blade.gradle.model-version@"
          unpack="false"/>
 
    <plugin
          id="com.liferay.blade.gradle.plugin"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="@com.liferay.blade.gradle.plugin-version@"
          unpack="false"/>
 
    <plugin
          id="com.liferay.blade.eclipse.provider"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="@com.liferay.blade.eclipse.provider-version@"
          unpack="false"/>
 
    <plugin
          id="com.liferay.blade.upgrade.liferay70"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="@com.liferay.blade.upgrade.liferay70-version@"
          unpack="false"/>
 
 </feature>

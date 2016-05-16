@@ -1,4 +1,4 @@
 # Only extra bundles that are needed for the main feature are mentioned here
+-resourceonly: true
 Include-Resource: \
-    ${repo;biz.aQute.remote.api;3.1.0},\
-    ${repo;biz.aQute.repository;3.1.0}
+    ${repo;biz.aQute.remote.api;3.2.0}
