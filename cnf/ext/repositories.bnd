@@ -1,7 +1,4 @@
-bnd-release=https://dl.bintray.com/bnd/dist/3.1.0/
-
--pluginpath:\
-        ${build}/cache/org.osgi.impl.bundle.repoindex.cli.jar;url=${bnd-release}/org.osgi.impl.bundle.repoindex.cli/org.osgi.impl.bundle.repoindex.cli-latest.jar
+-include: ${build}/../gradle.properties
 
 -plugin.wrapper: \
 	aQute.bnd.deployer.repository.wrapper.Plugin; \
@@ -30,7 +27,7 @@ bnd-release=https://dl.bintray.com/bnd/dist/3.1.0/
 -plugin.bndrepo = \
 	aQute.bnd.deployer.repository.FixedIndexedRepo; \
 		name=bnd.master; \
-		locations=${bnd-release}/index.xml.gz
+		locations=${bnd_repourl}/index.xml.gz
 
 -plugin.jpmrepo = \
 	aQute.bnd.jpm.Repository; \

@@ -14,16 +14,15 @@
   </target>
 
   <!-- Called by the Eclipse embedded ANT application -->
-  <target name="p2Main" depends="init">
+  <target name="p2Blade" depends="init">
     <p2.publish.featuresAndBundles
         source="${workspacedir}"
         repository="file:${target}/p2"
         append="false"
         repositoryname="Blade"
         compress="true">
-      <features dir="${target}/features/main"   includes="*.jar"/>
-      <bundles  dir="${target}/plugins/main"    includes="*.jar"/>
+      <features dir="${target}/features"   includes="*.jar"/>
+      <bundles  dir="${target}/plugins"    includes="*.jar"/>
     </p2.publish.featuresAndBundles>
   </target>
-
 </project>
