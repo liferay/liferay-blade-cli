@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.gradle;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -85,4 +86,20 @@ public class GradleToolingTest {
 		assertEquals(17, files.size());
 	}
 
+	@Test
+	public void testGetPluginClassNames() throws Exception {
+		Set<String> pluginClassNames = GradleTooling.getPluginClassNames (
+			new File("bin_test"), new File("."));
+
+		assertNotNull(pluginClassNames);
+		assertTrue(pluginClassNames.contains("aQute.bnd.gradle.BndPlugin"));
+	}
+
+	@Test
+	public void testIsLiferayModule() throws Exception {
+		boolean isModule = GradleTooling.isLiferayModule (
+			new File("bin_test"), new File("."));
+
+		assertFalse(isModule);
+	}
 }
