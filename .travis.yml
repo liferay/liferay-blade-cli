@@ -8,4 +8,4 @@ before_script:
 install: ./gradlew --version
 # TO debug
 # script: ./gradlew build --debug
-script: ./gradlew
+script: ./gradlew build
