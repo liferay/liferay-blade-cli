@@ -1,0 +1,8 @@
+image: java:openjdk-8-jdk
+
+build:
+  script:
+    - ./gradlew clean build
+  artifacts:
+    paths:
+      - build/generated/p2/
