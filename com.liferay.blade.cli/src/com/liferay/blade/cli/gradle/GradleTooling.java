@@ -19,16 +19,13 @@ package com.liferay.blade.cli.gradle;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
-
 import aQute.lib.io.IO;
 
 import com.liferay.blade.gradle.model.CustomModel;
 
 import java.io.File;
 import java.io.InputStream;
-
 import java.nio.file.Files;
-
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -90,6 +87,24 @@ public class GradleTooling {
 			CustomModel.class, cacheDir, buildDir);
 
 		return model.getOutputFiles();
+	}
+
+	public static Set<String> getPluginClassNames(File cacheDir, File buildDir)
+		throws Exception {
+
+		final CustomModel model = getModel(
+				CustomModel.class, cacheDir, buildDir);
+
+		return model.getPluginClassNames();
+	}
+
+	public static boolean isLiferayModule(File cacheDir, File buildDir)
+		throws Exception {
+
+		final CustomModel model = getModel(
+				CustomModel.class, cacheDir, buildDir);
+
+		return model.isLiferayModule();
 	}
 
 	private static void copy(InputStream in, File outputDir) throws Exception {

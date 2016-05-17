@@ -18,14 +18,13 @@ package com.liferay.blade.gradle.model;
 
 import java.io.File;
 import java.io.Serializable;
-
 import java.util.Set;
 
 /**
  * @author Gregory Amerson
  */
 @SuppressWarnings("serial")
-public class DefaultModel implements Serializable {
+public class DefaultModel implements CustomModel, Serializable {
 
 	public DefaultModel(Set<String> pluginClassNames, Set<File> outputFiles) {
 		_pluginClassNames = pluginClassNames;
@@ -42,6 +41,14 @@ public class DefaultModel implements Serializable {
 
 	public boolean hasPlugin(String pluginClassName) {
 		return _pluginClassNames.contains(pluginClassName);
+	}
+
+	public boolean isLiferayModule() {
+		return
+			hasPlugin("aQute.bnd.gradle.BndBuilderPlugin") ||
+			hasPlugin("com.liferay.gradle.plugins.LiferayPlugin") ||
+			hasPlugin("com.liferay.gradle.plugins.LiferayOSGiPlugin") ||
+			hasPlugin("com.liferay.gradle.plugins.gulp.GulpPlugin");
 	}
 
 	private final Set<File> _outputFiles;

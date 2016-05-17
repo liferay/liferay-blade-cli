@@ -17,7 +17,6 @@
 package com.liferay.blade.gradle.model;
 
 import java.io.File;
-
 import java.util.Set;
 
 /**
@@ -30,5 +29,7 @@ public interface CustomModel {
 	public Set<String> getPluginClassNames();
 
 	public boolean hasPlugin(String className);
+
+	public boolean isLiferayModule();
 
 }
