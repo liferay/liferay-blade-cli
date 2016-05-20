@@ -15,22 +15,23 @@
  */
 
 configurations {
-        download {
-                transitive = false
-        }
+  download {
+    transitive = false
+  }
 }
 
 repositories {
-        maven {
-                url '%repo%'
-        }
+  mavenLocal()
+  maven {
+    url '%repo%'
+  }
 }
 
 dependencies {
-        download %dep%
+  download %dep%
 }
 
 task copyDep(type: Copy) {
-    into "$buildDir"
-    from configurations.download
+  into "$buildDir"
+  from configurations.download
 }

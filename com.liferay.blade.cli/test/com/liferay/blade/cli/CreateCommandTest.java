@@ -16,27 +16,21 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import aQute.lib.getopt.CommandLine;
-import aQute.lib.io.IO;
-
-import com.liferay.blade.cli.CreateCommand.CreateOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import aQute.lib.io.IO;
 
 /**
  * @author Gregory Amerson
@@ -113,8 +107,37 @@ public class CreateCommandTest {
 		checkFileExists(projectPath + "/bnd.bnd");
 
 		contains(
-			checkFileExists(projectPath + "/src/main/java/foo/FooPortlet.java"),
+			checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
 			".*^public class FooPortlet extends MVCPortlet.*$");
+
+		contains(
+			checkFileExists(projectPath + "/build.gradle"),
+			".*^apply plugin: \"com.liferay.plugin\".*");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/init.jsp");
+	}
+
+	@Test
+	public void testCreateGradleMVCPortletProjectWithPortletSuffix() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "mvcportlet", "portlet-portlet"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/portlet-portlet";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		contains(
+			checkFileExists(projectPath + "/src/main/java/portlet/portlet/portlet/PortletPortlet.java"),
+			".*^public class PortletPortlet extends MVCPortlet.*$");
 
 		contains(
 			checkFileExists(projectPath + "/build.gradle"),
@@ -146,7 +169,7 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(
-				projectPath + "/src/main/java/com/liferay/test/FooPortlet.java"),
+				projectPath + "/src/main/java/com/liferay/test/portlet/FooPortlet.java"),
 			".*^public class FooPortlet extends MVCPortlet.*$");
 
 		contains(
@@ -177,9 +200,9 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(
-				projectPath + "/src/main/java/gradle/test/FooPortlet.java"),
+				projectPath + "/src/main/java/gradle/test/portlet/FooPortlet.java"),
 			new String[] {
-				"^package gradle.test;.*",
+				"^package gradle.test.portlet;.*",
 				".*javax.portlet.display-name=gradle.test.*",
 				".*^public class FooPortlet .*",
 				".*printWriter.print\\(\\\"gradle.test Portlet.*"
@@ -382,7 +405,7 @@ public class CreateCommandTest {
 		checkFileExists(projectPath + "/bnd.bnd");
 
 		File portletFile = checkFileExists(
-			projectPath + "/src/main/java/hello/world/portlet/" +
+			projectPath + "/src/main/java/hello/world/portlet/portlet/" +
 				"HelloWorldPortlet.java");
 
 		contains(
@@ -448,9 +471,9 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(
-				projectPath + "/gradle.test/src/main/java/gradle/test/FooPortlet.java"),
+				projectPath + "/gradle.test/src/main/java/gradle/test/portlet/FooPortlet.java"),
 			new String[] {
-				"^package gradle.test;.*",
+				"^package gradle.test.portlet;.*",
 				".*javax.portlet.display-name=gradle.test.*",
 				".*^public class FooPortlet .*",
 				".*printWriter.print\\(\\\"gradle.test Portlet.*"
@@ -607,7 +630,7 @@ public class CreateCommandTest {
 		checkFileExists(projectPath + "/foo/bnd.bnd");
 
 		File portletFile = checkFileExists(
-			projectPath + "/foo/src/main/java/foo/FooPortlet.java");
+			projectPath + "/foo/src/main/java/foo/portlet/FooPortlet.java");
 
 		contains(
 			portletFile, ".*^public class FooPortlet extends MVCPortlet.*$");
@@ -616,25 +639,6 @@ public class CreateCommandTest {
 			projectPath + "/foo/build.gradle");
 
 		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
-	}
-
-	@Test
-	public void testGetLatestGradleTemplatesArtifact() throws Exception {
-		List<String> args = new ArrayList<>();
-		args.add("foo");
-
-		CreateOptions options =
-			new CommandLine(null).getOptions(CreateOptions.class, args);
-
-		File gradleTemplates =
-			new CreateCommand(
-				new bladenofail(), options).getGradleTemplatesZip();
-
-		assertNotNull(gradleTemplates);
-
-		assertTrue(gradleTemplates.exists());
-
-		assertTrue(gradleTemplates.getName().contains("1.0.3"));
 	}
 
 	@Test
@@ -654,15 +658,7 @@ public class CreateCommandTest {
 
 		assertNotNull(templateList);
 
-		assertEquals(
-			"activator\n" +
-			"fragment\n" +
-			"mvcportlet\n" +
-			"portlet\n" +
-			"service\n" +
-			"servicebuilder\n" +
-			"servicewrapper\n",
-			templateList.replaceAll("\\r", ""));
+		assertTrue(templateList.startsWith("activator"));
 	}
 
 	private File checkFileDoesNotExists(String path) {
