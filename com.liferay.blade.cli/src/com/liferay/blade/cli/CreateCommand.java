@@ -193,20 +193,16 @@ public class CreateCommand {
 				"_portletpackage_",
 				packageName.replaceAll("\\.", "/") + "/portlet");
 
-			if (!classname.contains("Portlet")) {
-				classname += "Portlet";
-			}
 		}
 		else if ("activator".equals(template)) {
 			if (!classname.contains("Activator")) {
 				classname += "Activator";
 			}
 		}
-		else if ("portlet".equals(template) ||
-				 "mvcportlet".equals(template)) {
 
-			if (!classname.contains("Portlet")) {
-				classname += "Portlet";
+		if ("portlet".equals(template) || "mvcportlet".equals(template)) {
+			if (classname.endsWith("Portlet")) {
+				classname = classname.replaceAll("Portlet$", "");
 			}
 		}
 
