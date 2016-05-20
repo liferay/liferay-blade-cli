@@ -53,7 +53,7 @@ public class CreateCommand {
 		"Creates a new Liferay module project from several available " +
 			"templates.";
 
-	public static final String TEMPLATES_VERSION = "1.0.3";
+	public static final String TEMPLATES_VERSION = "1+";
 
 	public CreateCommand(blade blade, CreateOptions options) {
 		_blade = blade;
