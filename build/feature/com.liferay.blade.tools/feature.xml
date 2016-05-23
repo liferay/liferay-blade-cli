@@ -32,7 +32,7 @@
          version="@com.liferay.blade.api-version@"
          unpack="false"/>
 
-   <plugin
+   <!--plugin
          id="com.liferay.blade.gradle.model"
          download-size="0"
          install-size="0"
@@ -44,7 +44,7 @@
          download-size="0"
          install-size="0"
          version="@com.liferay.blade.gradle.plugin-version@"
-         unpack="false"/>
+         unpack="false"/-->
 
    <plugin
          id="com.liferay.blade.eclipse.provider"
