@@ -42,7 +42,7 @@ public class AUIColumnTagsTest {
 
 		List<Problem> problems = m.findProblems(new File("jsptests/aui-column/"), new NullProgressMonitor());
 
-		assertEquals(1, problems.size());
+		assertEquals(2, problems.size());
 
 		boolean found = false;
 

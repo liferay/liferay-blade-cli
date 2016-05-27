@@ -19,10 +19,6 @@ package com.liferay.blade.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import com.liferay.blade.api.Migration;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.util.NullProgressMonitor;
-
 import java.io.File;
 import java.util.List;
 
@@ -31,7 +27,11 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-public class AUIButtonItemTagsTest {
+import com.liferay.blade.api.Migration;
+import com.liferay.blade.api.Problem;
+import com.liferay.blade.util.NullProgressMonitor;
+
+public class AUILayoutTagsTest {
 
 	@Test
 	public void findProblems() throws Exception {
@@ -40,15 +40,15 @@ public class AUIButtonItemTagsTest {
 
 		Migration m = context.getService(sr);
 
-		List<Problem> problems = m.findProblems(new File("jsptests/aui-button/"), new NullProgressMonitor());
+		List<Problem> problems = m.findProblems(new File("jsptests/aui-layout/"), new NullProgressMonitor());
 
-		assertEquals(2, problems.size());
+		assertEquals(1, problems.size());
 
 		boolean found = false;
 
 		for (Problem problem : problems) {
-			if (problem.file.getName().endsWith("AUIButtonItemTagTest.jsp")) {
-				if (problem.lineNumber == 3 && problem.startOffset == 94 && problem.endOffset == 129) {
+			if (problem.file.getName().endsWith("AUILayoutTagTest.jsp")) {
+				if (problem.lineNumber == 1) {
 					found = true;
 				}
 			}
