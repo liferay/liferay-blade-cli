@@ -180,7 +180,7 @@ public class CreateCommand {
 					workspacePath.relativize(dirPath).toString();
 
 				final String apiPath =
-					":" + relativePath.replaceAll("\\/", ":") + ":" + name;
+					":" + relativePath.replaceAll("\\\\", "/").replaceAll("\\/", ":") + ":" + name;
 
 				subs.put("_api_path_",  apiPath);
 			}
