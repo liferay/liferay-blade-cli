@@ -39,10 +39,19 @@ public class JavaFileJDTTest {
 		SearchResult searchResult = searchResults.get(0);
 
 		assertNotNull(searchResult);
-		assertEquals( 14, searchResult.startLine );
-		assertEquals( 15, searchResult.endLine );
-		assertEquals( 229, searchResult.startOffset );
-		assertEquals( 251, searchResult.endOffset );
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(14, searchResult.startLine);
+			assertEquals(15, searchResult.endLine);
+			assertEquals(242, searchResult.startOffset);
+			assertEquals(265, searchResult.endOffset);
+		}
+		else {
+			assertEquals(14, searchResult.startLine);
+			assertEquals(15, searchResult.endLine);
+			assertEquals(229, searchResult.startOffset);
+			assertEquals(251, searchResult.endOffset);
+		}
 	}
 
 	@Test
@@ -58,10 +67,19 @@ public class JavaFileJDTTest {
 		SearchResult searchResult = searchResults.get(0);
 
 		assertNotNull(searchResult);
-		assertEquals( 10, searchResult.startLine );
-		assertEquals( 11, searchResult.endLine );
-		assertEquals( 181, searchResult.startOffset );
-		assertEquals( 200, searchResult.endOffset );
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(10, searchResult.startLine);
+			assertEquals(11, searchResult.endLine);
+			assertEquals(190, searchResult.startOffset);
+			assertEquals(210, searchResult.endOffset);
+		}
+		else {
+			assertEquals(10, searchResult.startLine);
+			assertEquals(11, searchResult.endLine);
+			assertEquals(181, searchResult.startOffset);
+			assertEquals(200, searchResult.endOffset);
+		}
 	}
 	@Test
 	public void checkGuessMethodInvocation() {

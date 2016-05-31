@@ -1,4 +1,3 @@
-
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -23,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.eclipse.provider.JavaFileJDT;
+import com.liferay.blade.eclipse.provider.PlatformUtil;
 
 import java.io.File;
 import java.util.List;
@@ -41,30 +41,36 @@ public class MBMessageServiceUtilInvocationTest {
 		component = new MBMessageServiceUtilInvocation();
 	}
 
-    @Test
-    public void dlAppHelperLocalServiceTest() throws Exception {
-    	List<SearchResult> results = component.searchFile(testFile,
-				new JavaFileJDT(testFile));
+	@Test
+	public void dlAppHelperLocalServiceTest() throws Exception {
+		List<SearchResult> results = component.searchFile(
+			testFile, new JavaFileJDT(testFile));
 
-        assertNotNull(results);
-        assertEquals(3, results.size());
+		assertNotNull(results);
+		assertEquals(3, results.size());
 
-        SearchResult problem = results.get(0);
+		SearchResult problem = results.get(0);
 
-		assertEquals( 248, problem.startLine );
-		assertEquals( 7830, problem.startOffset );
-		assertEquals( 8058, problem.endOffset );
-    }
+		assertEquals(248, problem.startLine);
 
-    @Test
-    public void dlAppHelperLocalServiceTestTwice() throws Exception {
-    	List<SearchResult> results = component.searchFile(testFile,
-				new JavaFileJDT(testFile));
+		if (PlatformUtil.isWindows()) {
+			assertEquals(8077, problem.startOffset);
+			assertEquals(8308, problem.endOffset);
+		} else {
+			assertEquals(7830, problem.startOffset);
+			assertEquals(8058, problem.endOffset);
 
-    	results = component.searchFile(testFile,
-				new JavaFileJDT(testFile));
+		}
+	}
 
-        assertNotNull(results);
-        assertEquals(3, results.size());
-    }
+	@Test
+	public void dlAppHelperLocalServiceTestTwice() throws Exception {
+		List<SearchResult> results = component.searchFile(
+			testFile, new JavaFileJDT(testFile));
+
+		results = component.searchFile(testFile, new JavaFileJDT(testFile));
+
+		assertNotNull(results);
+		assertEquals(3, results.size());
+	}
 }

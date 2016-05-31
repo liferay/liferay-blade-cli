@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.eclipse.provider.JavaFileJDT;
+import com.liferay.blade.eclipse.provider.PlatformUtil;
 
 import java.io.File;
 import java.util.List;
@@ -43,8 +44,8 @@ public class ShoppingCartLegacyAPITest {
 
 	@Test
 	public void shoppingCartLegacyAPITest() throws Exception {
-		List<SearchResult> results = component.searchFile(testFile,
-				new JavaFileJDT(testFile));
+		List<SearchResult> results = component.searchFile(
+			testFile, new JavaFileJDT(testFile));
 
 		assertNotNull(results);
 		assertEquals(4, results.size());
@@ -52,27 +53,53 @@ public class ShoppingCartLegacyAPITest {
 		SearchResult problem = results.get(0);
 
 		assertEquals(32, problem.startLine);
-		assertEquals(1444, problem.startOffset);
-		assertEquals(1509, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(1475, problem.startOffset);
+			assertEquals(1540, problem.endOffset);
+		}
+		else {
+			assertEquals(1444, problem.startOffset);
+			assertEquals(1509, problem.endOffset);
+		}
 
 		problem = results.get(1);
 
 		assertEquals(143, problem.startLine);
-		assertEquals(4549, problem.startOffset);
-		assertEquals(4714, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(4691, problem.startOffset);
+			assertEquals(4858, problem.endOffset);
+		} else {
+			assertEquals(4549, problem.startOffset);
+			assertEquals(4714, problem.endOffset);
+		}
 
 		problem = results.get(2);
 
 		assertEquals(33, problem.startLine);
-		assertEquals(1518, problem.startOffset);
-		assertEquals(1583, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(1550, problem.startOffset);
+			assertEquals(1615, problem.endOffset);
+		}
+		else {
+			assertEquals(1518, problem.startOffset);
+			assertEquals(1583, problem.endOffset);
+		}
 
 		problem = results.get(3);
 
 		assertEquals(118, problem.startLine);
-		assertEquals(3870, problem.startOffset);
-		assertEquals(3914, problem.endOffset);
 
+		if (PlatformUtil.isWindows()) {
+			assertEquals(3987, problem.startOffset);
+			assertEquals(4031, problem.endOffset);
+		}
+		else {
+			assertEquals(3870, problem.startOffset);
+			assertEquals(3914, problem.endOffset);
+		}
 	}
 
 }

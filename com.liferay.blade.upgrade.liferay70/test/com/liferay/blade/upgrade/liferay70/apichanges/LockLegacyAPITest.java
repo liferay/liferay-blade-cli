@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.eclipse.provider.JavaFileJDT;
+import com.liferay.blade.eclipse.provider.PlatformUtil;
 
 import java.io.File;
 import java.util.List;
@@ -52,27 +53,53 @@ public class LockLegacyAPITest {
 		SearchResult problem = results.get(0);
 
 		assertEquals(22, problem.startLine);
-		assertEquals(872, problem.startOffset);
-		assertEquals(919, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(893, problem.startOffset);
+			assertEquals(940, problem.endOffset);
+		} else {
+			assertEquals(872, problem.startOffset);
+			assertEquals(919, problem.endOffset);
+		}
 
 		problem = results.get(1);
 
 		assertEquals(46, problem.startLine);
-		assertEquals(1375, problem.startOffset);
-		assertEquals(1438, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(1420, problem.startOffset);
+			assertEquals(1484, problem.endOffset);
+		}
+		else {
+			assertEquals(1375, problem.startOffset);
+			assertEquals(1438, problem.endOffset);
+		}
 
 		problem = results.get(2);
 
 		assertEquals(62, problem.startLine);
-		assertEquals(1686, problem.startOffset);
-		assertEquals(1745, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(1747, problem.startOffset);
+			assertEquals(1806, problem.endOffset);
+		}
+		else {
+			assertEquals(1686, problem.startOffset);
+			assertEquals(1745, problem.endOffset);
+		}
 
 		problem = results.get(3);
 
 		assertEquals(73, problem.startLine);
-		assertEquals(1899, problem.startOffset);
-		assertEquals(1971, problem.endOffset);
 
+		if (PlatformUtil.isWindows()) {
+			assertEquals(1971, problem.startOffset);
+			assertEquals(2044, problem.endOffset);
+		}
+		else {
+			assertEquals(1899, problem.startOffset);
+			assertEquals(1971, problem.endOffset);
+		}
 	}
 
 }

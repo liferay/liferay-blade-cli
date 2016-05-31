@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.eclipse.provider.JavaFileJDT;
+import com.liferay.blade.eclipse.provider.PlatformUtil;
 
 import java.io.File;
 import java.util.List;
@@ -52,45 +53,93 @@ public class CalendarLegacyAPITest {
 		SearchResult problem = results.get(0);
 
 		assertEquals(38, problem.startLine);
-		assertEquals(1849, problem.startOffset);
-		assertEquals(1909, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(1886, problem.startOffset);
+			assertEquals(1946, problem.endOffset);
+		}
+		else {
+			assertEquals(1849, problem.startOffset);
+			assertEquals(1909, problem.endOffset);
+		}
 
 		problem = results.get(1);
 
 		assertEquals(39, problem.startLine);
-		assertEquals(1918, problem.startOffset);
-		assertEquals(1973, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(1956, problem.startOffset);
+			assertEquals(2011, problem.endOffset);
+		}
+		else {
+			assertEquals(1918, problem.startOffset);
+			assertEquals(1973, problem.endOffset);
+		}
 
 		problem = results.get(2);
 
 		assertEquals(40, problem.startLine);
-		assertEquals(1982, problem.startOffset);
-		assertEquals(2035, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(2021, problem.startOffset);
+			assertEquals(2074, problem.endOffset);
+		}
+		else {
+			assertEquals(1982, problem.startOffset);
+			assertEquals(2035, problem.endOffset);
+		}
 
 		problem = results.get(3);
 
 		assertEquals(159, problem.startLine);
-		assertEquals(6848, problem.startOffset);
-		assertEquals(6983, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(7006, problem.startOffset);
+			assertEquals(7143, problem.endOffset);
+		}
+		else {
+			assertEquals(6848, problem.startOffset);
+			assertEquals(6983, problem.endOffset);
+		}
 
 		problem = results.get(4);
 
 		assertEquals(43, problem.startLine);
-		assertEquals(2186, problem.startOffset);
-		assertEquals(2234, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(2228, problem.startOffset);
+			assertEquals(2276, problem.endOffset);
+		}
+		else {
+			assertEquals(2186, problem.startOffset);
+			assertEquals(2234, problem.endOffset);
+		}
 
 		problem = results.get(5);
 
 		assertEquals(41, problem.startLine);
-		assertEquals(2044, problem.startOffset);
-		assertEquals(2112, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(2084, problem.startOffset);
+			assertEquals(2152, problem.endOffset);
+		}
+		else {
+			assertEquals(2044, problem.startOffset);
+			assertEquals(2112, problem.endOffset);
+		}
 
 		problem = results.get(6);
 
 		assertEquals(42, problem.startLine);
-		assertEquals(2121, problem.startOffset);
-		assertEquals(2177, problem.endOffset);
 
+		if (PlatformUtil.isWindows()) {
+			assertEquals(2162, problem.startOffset);
+			assertEquals(2218, problem.endOffset);
+		}
+		else {
+			assertEquals(2121, problem.startOffset);
+			assertEquals(2177, problem.endOffset);
+		}
 	}
 
 }
