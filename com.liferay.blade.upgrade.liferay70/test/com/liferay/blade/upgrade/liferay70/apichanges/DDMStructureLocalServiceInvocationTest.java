@@ -1,4 +1,3 @@
-
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -23,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.eclipse.provider.JavaFileJDT;
+import com.liferay.blade.eclipse.provider.PlatformUtil;
 
 import java.io.File;
 import java.util.List;
@@ -41,19 +41,26 @@ public class DDMStructureLocalServiceInvocationTest {
 		component = new DDMStructureLocalServiceAPI();
 	}
 
-    @Test
-    public void ddmTemplateAnalyzeTest() throws Exception {
-    	List<SearchResult> results = component.searchFile(testFile,
-				new JavaFileJDT(testFile));
+	@Test
+	public void ddmTemplateAnalyzeTest() throws Exception {
+		List<SearchResult> results = component.searchFile(
+			testFile, new JavaFileJDT(testFile));
 
-        assertNotNull(results);
-        assertEquals(1, results.size());
+		assertNotNull(results);
+		assertEquals(1, results.size());
 
-        SearchResult problem = results.get(0);
+		SearchResult problem = results.get(0);
 
-        assertEquals(7, problem.startLine);
-        assertEquals(138, problem.startOffset);
-        assertEquals(264, problem.endOffset);
-    }
+		assertEquals(7, problem.startLine);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(144, problem.startOffset);
+			assertEquals(270, problem.endOffset);
+		}
+		else {
+			assertEquals(138, problem.startOffset);
+			assertEquals(264, problem.endOffset);
+		}
+	}
 
 }

@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.Problem;
+import com.liferay.blade.eclipse.provider.PlatformUtil;
 
 import java.io.File;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class PortalPropertiesTest {
 	final File file = new File(
 			"projects/knowledge-base-portlet-6.2.x/docroot/WEB-INF/src/portal.properties");
@@ -48,7 +50,12 @@ public class PortalPropertiesTest {
 		assertEquals(1, problems.size());
 
 		Problem problem = problems.get(0);
-		assertEquals(10, problem.lineNumber);
+		if (PlatformUtil.isWindows()) {
+			assertEquals(19, problem.lineNumber);
+		}
+		else {
+			assertEquals(10, problem.lineNumber);
+		}
 	}
 
 	@Test

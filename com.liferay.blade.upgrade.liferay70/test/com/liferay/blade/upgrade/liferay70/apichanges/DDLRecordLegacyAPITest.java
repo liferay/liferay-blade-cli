@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.eclipse.provider.JavaFileJDT;
+import com.liferay.blade.eclipse.provider.PlatformUtil;
 
 import java.io.File;
 import java.util.List;
@@ -52,21 +53,41 @@ public class DDLRecordLegacyAPITest {
 		SearchResult problem = results.get(0);
 
 		assertEquals(30, problem.startLine);
-		assertEquals(1332, problem.startOffset);
-		assertEquals(1397, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(1361, problem.startOffset);
+			assertEquals(1426, problem.endOffset);
+		}
+		else {
+			assertEquals(1332, problem.startOffset);
+			assertEquals(1397, problem.endOffset);
+		}
 
 		problem = results.get(1);
 
 		assertEquals(132, problem.startLine);
-		assertEquals(4089, problem.startOffset);
-		assertEquals(4132, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(4220, problem.startOffset);
+			assertEquals(4263, problem.endOffset);
+		}
+		else {
+			assertEquals(4089, problem.startOffset);
+			assertEquals(4132, problem.endOffset);
+		}
 
 		problem = results.get(2);
 
 		assertEquals(145, problem.startLine);
-		assertEquals(4475, problem.startOffset);
-		assertEquals(4554, problem.endOffset);
 
+		if (PlatformUtil.isWindows()) {
+			assertEquals(4619, problem.startOffset);
+			assertEquals(4699, problem.endOffset);
+		}
+		else {
+			assertEquals(4475, problem.startOffset);
+			assertEquals(4554, problem.endOffset);
+		}
 	}
 
 }

@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.eclipse.provider.JavaFileJDT;
+import com.liferay.blade.eclipse.provider.PlatformUtil;
 
 import java.io.File;
 import java.util.List;
@@ -52,15 +53,28 @@ public class BackgroundTaskLegacyAPITest {
 		SearchResult problem = results.get(0);
 
 		assertEquals(18, problem.startLine);
-		assertEquals(671, problem.startOffset);
-		assertEquals(719, problem.endOffset);
+
+		if (PlatformUtil.isWindows()) {
+			assertEquals(688, problem.startOffset);
+			assertEquals(736, problem.endOffset);
+		}
+		else {
+			assertEquals(671, problem.startOffset);
+			assertEquals(719, problem.endOffset);
+		}
 
 		problem = results.get(1);
 
 		assertEquals(19, problem.startLine);
-		assertEquals(728, problem.startOffset);
-		assertEquals(783, problem.endOffset);
 
+		if (PlatformUtil.isWindows()) {
+			assertEquals(746, problem.startOffset);
+			assertEquals(801, problem.endOffset);
+		}
+		else {
+			assertEquals(728, problem.startOffset);
+			assertEquals(783, problem.endOffset);
+		}
 	}
 
 }
