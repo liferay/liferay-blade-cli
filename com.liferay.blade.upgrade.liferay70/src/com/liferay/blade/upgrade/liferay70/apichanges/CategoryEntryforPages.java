@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=xml",
 		"problem.title=Deprecated Category Entry for Pages",
-		"problem.summary=The category entry for Site Administration ¡ú Pages has been deprecated in favor of Site Administration ¡ú Navigation.",
+		"problem.summary=The category entry for Site Administration > Pages has been deprecated in favor of Site Administration > Navigation.",
 		"problem.tickets=LPS-63667",
 		"problem.section=#deprecated-category-entry-for-pages"
 	},
