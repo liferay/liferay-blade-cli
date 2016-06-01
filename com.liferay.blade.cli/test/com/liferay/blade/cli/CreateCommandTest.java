@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import aQute.lib.io.IO;
@@ -642,6 +643,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	@Ignore
 	public void testListTemplates() throws Exception {
 		String[] args = {
 			"create", "-l"
