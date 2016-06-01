@@ -36,5 +36,9 @@
 	    location			=       ~/.bnd/shacache; \
 	    index				=       ${build}/jpm4j.json
 
+-plugin.gradlelibs = \
+  aQute.bnd.repository.maven.provider.MavenBndRepository; \
+    releaseUrl=https://repo.gradle.org/gradle/libs-releases/; \
+    name=gradlelibs
 
 -releaserepo: 					Release

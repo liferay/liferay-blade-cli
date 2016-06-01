@@ -4,57 +4,6 @@ JPM-Command: blade
 
 Main-Class: com.liferay.blade.cli.blade
 
-Private-Package:\
-	aQute.bnd.deployer.http,\
-	aQute.bnd.deployer.repository,\
-	aQute.bnd.deployer.repository.api,\
-	aQute.bnd.deployer.repository.providers,\
-	aQute.bnd.osgi,\
-	aQute.bnd.osgi.resource;-split-package:=merge-first,\
-	aQute.bnd.service,\
-	aQute.bnd.service.url,\
-	aQute.bnd.version,\
-	aQute.configurable;-split-package:=merge-first,\
-	aQute.lib.collections;-split-package:=merge-first,\
-	aQute.lib.consoleapp;-split-package:=merge-first,\
-	aQute.lib.env;-split-package:=merge-first,\
-	aQute.lib.getopt;-split-package:=merge-first,\
-	aQute.lib.hex;-split-package:=merge-first,\
-	aQute.lib.io;-split-package:=merge-first,\
-	aQute.lib.json;-split-package:=merge-first,\
-	aQute.lib.justif;-split-package:=merge-first,\
-	aQute.lib.utf8properties;-split-package:=merge-first,\
-	aQute.lib.zip;-split-package:=merge-first,\
-	aQute.libg.cryptography;-split-package:=merge-first,\
-	aQute.libg.filters;-split-package:=merge-first,\
-	aQute.libg.generics;-split-package:=merge-first,\
-	aQute.libg.gzip;-split-package:=merge-first,\
-	aQute.libg.reporter;-split-package:=merge-first,\
-	aQute.libg.sed;-split-package:=merge-first,\
-	aQute.service.reporter;-split-package:=merge-first,\
-	com.liferay.blade.cli.*,\
-	com.liferay.blade.gradle.model,\
-	org.apache.commons.io,\
-	org.apache.commons.io.filefilter,\
-	org.apache.commons.io.output,\
-	org.apache.commons.lang3,\
-	org.apache.commons.lang3.exception,\
-	org.apache.commons.lang3.text,\
-	org.gradle.*,\
-	org.osgi.dto,\
-	org.osgi.framework;-split-package:=merge-first,\
-	org.osgi.framework.dto,\
-	org.osgi.impl.bundle.bindex,\
-	org.osgi.resource;-split-package:=merge-first,\
-	org.osgi.service.bindex,\
-	org.osgi.service.indexer,\
-	org.osgi.service.log,\
-	org.osgi.service.repository,\
-	org.slf4j;-split-package:=merge-first,\
-	org.slf4j.helpers;-split-package:=merge-first,\
-	org.slf4j.spi;-split-package:=merge-first,\
-	org.slf4j.impl
-
 aether-deps:\
 	org.apache.commons.logging,\
 	org.apache.commons.logging.impl,\
@@ -161,7 +110,58 @@ aether-deps:\
 	org.eclipse.aether.util.version,\
 	org.eclipse.aether.version
 
--buildpath:\
+Private-Package:\
+	aQute.bnd.deployer.http,\
+	aQute.bnd.deployer.repository,\
+	aQute.bnd.deployer.repository.api,\
+	aQute.bnd.deployer.repository.providers,\
+	aQute.bnd.osgi,\
+	aQute.bnd.osgi.resource;-split-package:=merge-first,\
+	aQute.bnd.service,\
+	aQute.bnd.service.url,\
+	aQute.bnd.version,\
+	aQute.configurable;-split-package:=merge-first,\
+	aQute.lib.collections;-split-package:=merge-first,\
+	aQute.lib.consoleapp;-split-package:=merge-first,\
+	aQute.lib.env;-split-package:=merge-first,\
+	aQute.lib.getopt;-split-package:=merge-first,\
+	aQute.lib.hex;-split-package:=merge-first,\
+	aQute.lib.io;-split-package:=merge-first,\
+	aQute.lib.json;-split-package:=merge-first,\
+	aQute.lib.justif;-split-package:=merge-first,\
+	aQute.lib.utf8properties;-split-package:=merge-first,\
+	aQute.lib.zip;-split-package:=merge-first,\
+	aQute.libg.cryptography;-split-package:=merge-first,\
+	aQute.libg.filters;-split-package:=merge-first,\
+	aQute.libg.generics;-split-package:=merge-first,\
+	aQute.libg.gzip;-split-package:=merge-first,\
+	aQute.libg.reporter;-split-package:=merge-first,\
+	aQute.libg.sed;-split-package:=merge-first,\
+	aQute.service.reporter;-split-package:=merge-first,\
+	com.liferay.blade.cli.*,\
+	com.liferay.blade.gradle.model,\
+	org.apache.commons.io,\
+	org.apache.commons.io.filefilter,\
+	org.apache.commons.io.output,\
+	org.apache.commons.lang3,\
+	org.apache.commons.lang3.exception,\
+	org.apache.commons.lang3.text,\
+	org.gradle.*,\
+	org.osgi.dto,\
+	org.osgi.framework;-split-package:=merge-first,\
+	org.osgi.framework.dto,\
+	org.osgi.impl.bundle.bindex,\
+	org.osgi.resource;-split-package:=merge-first,\
+	org.osgi.service.bindex,\
+	org.osgi.service.indexer,\
+	org.osgi.service.log,\
+	org.osgi.service.repository,\
+	org.slf4j;-split-package:=merge-first,\
+	org.slf4j.helpers;-split-package:=merge-first,\
+	org.slf4j.spi;-split-package:=merge-first,\
+	org.slf4j.impl
+
+-buildpath: \
 	aQute.libg,\
 	biz.aQute.bndlib,\
 	biz.aQute.repository,\
@@ -190,10 +190,10 @@ aether-deps:\
 	org.eclipse.aether.transport.http,\
 	org.eclipse.aether.transport.wagon,\
 	org.eclipse.aether.util,\
-	org.gradle.toolingapi,\
 	osgi.core,\
 	slf4j.simple,\
-	slf4j.api
+	slf4j.api,\
+	org.gradle:gradle-tooling-api
 
 -dependson: com.liferay.blade.gradle
 
