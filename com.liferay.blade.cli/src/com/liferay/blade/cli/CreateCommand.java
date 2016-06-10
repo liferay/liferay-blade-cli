@@ -73,6 +73,10 @@ public class CreateCommand {
 		if (template == null) {
 			template = "mvcportlet";
 		}
+		else if (!isExistingTemplate(template)) {
+				addError("Create", "the template "+template+" is not in the list");
+				return;
+		}
 
 		String name = args.remove(0);
 		final File dir = _options.dir() != null ? _options.dir() : getDefaultDir();
@@ -341,6 +345,8 @@ public class CreateCommand {
 		return currentPath.startsWith(parentPath);
 	}
 
+
+
 	private void copy(
 			String type, String template, File workspaceDir, InputStream in,
 			Pattern glob, boolean overwrite, Map<String, String> subs)
@@ -418,26 +424,7 @@ public class CreateCommand {
 		return name;
 	}
 
-	private boolean isEmpty(String str) {
-		if (str == null) {
-			return true;
-		}
-
-		if (str.trim().isEmpty()) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean isTextFile(File dest) {
-		String name = dest.getName();
-
-		return textExtensions.contains(
-			name.substring(name.lastIndexOf("."), name.length()));
-	}
-
-	private void listTemplates() throws Exception {
+	private List<String> getTemplates() throws Exception {
 		List<String> templateNames = new ArrayList<>();
 		File templatesZip = getGradleTemplatesZip();
 
@@ -452,6 +439,46 @@ public class CreateCommand {
 				}
 			}
 		}
+
+		return templateNames;
+	}
+
+	private boolean isEmpty(String str) {
+		if (str == null) {
+			return true;
+		}
+
+		if (str.trim().isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean isExistingTemplate( String templateName ) throws Exception
+	{
+		List<String> templates = getTemplates();
+
+		for (String template : templates) {
+			if (templateName.equals(template)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean isTextFile(File dest) {
+		String name = dest.getName();
+
+		return textExtensions.contains(
+			name.substring(name.lastIndexOf("."), name.length()));
+	}
+
+
+
+	private void listTemplates() throws Exception {
+		List<String> templateNames = getTemplates();
 
 		for (String name : templateNames) {
 			_blade.out().println(name);

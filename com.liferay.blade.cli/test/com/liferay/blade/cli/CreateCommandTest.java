@@ -663,6 +663,19 @@ public class CreateCommandTest {
 		assertTrue(templateList.startsWith("activator"));
 	}
 
+	@Test
+	public void testWrongTemplateTyping() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "activatorXXX", "wrong-activator"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/wrong-activator";
+
+		checkFileDoesNotExists(projectPath);
+	}
+
 	private File checkFileDoesNotExists(String path) {
 		File file = IO.getFile(path);
 
