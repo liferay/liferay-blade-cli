@@ -19,6 +19,7 @@ package com.liferay.blade.cli;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
+
 import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
@@ -29,8 +30,10 @@ import com.liferay.blade.cli.gradle.GradleTooling;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,9 +76,15 @@ public class CreateCommand {
 		if (template == null) {
 			template = "mvcportlet";
 		}
+		else if (!isExistingTemplate(template)) {
+				addError(
+					"Create", "the template "+template+" is not in the list");
+				return;
+		}
 
 		String name = args.remove(0);
-		final File dir = _options.dir() != null ? _options.dir() : getDefaultDir();
+		final File dir =
+			_options.dir() != null ? _options.dir() : getDefaultDir();
 		final File workDir = Processor.getFile(dir, name);
 		final boolean isWorkspace = Util.isWorkspace(dir);
 
@@ -171,18 +180,18 @@ public class CreateCommand {
 			}
 
 			if (isWorkspace) {
-				final Path workspacePath =
-					Util.getWorkspaceDir(dir).getAbsoluteFile().toPath();
+				final Path workspacePath = Util.getWorkspaceDir(
+					dir).getAbsoluteFile().toPath();
 
 				final Path dirPath = dir.getAbsoluteFile().toPath();
 
-				final String relativePath =
-					workspacePath.relativize(dirPath).toString();
+				final String relativePath = workspacePath.relativize(
+					dirPath).toString();
 
 				final String apiPath =
 					":" + relativePath.replaceAll("\\\\", "/").replaceAll("\\/", ":") + ":" + name;
 
-				subs.put("_api_path_",  apiPath);
+				subs.put("_api_path_", apiPath);
 			}
 			else {
 				subs.put("_api_path_", "");
@@ -192,7 +201,6 @@ public class CreateCommand {
 			subs.put(
 				"_portletpackage_",
 				packageName.replaceAll("\\.", "/") + "/portlet");
-
 		}
 		else if ("activator".equals(template)) {
 			if (!classname.contains("Activator")) {
@@ -248,9 +256,7 @@ public class CreateCommand {
 
 			in = new FileInputStream(moduleTemplatesZip);
 
-			copy(
-				"workspace", template, workDir, in, buildGlob, true,
-				subs);
+			copy("workspace", template, workDir, in, buildGlob, true, subs);
 
 			in.close();
 
@@ -318,8 +324,8 @@ public class CreateCommand {
 
 		File zipFile = GradleTooling.findLatestAvailableArtifact(
 			"group: 'com.liferay', " +
-				"name: 'com.liferay.gradle.templates', " +
-					"version: '" + TEMPLATES_VERSION + "', classifier: " +
+				"name: 'com.liferay.gradle.templates', " + "version: '" +
+					TEMPLATES_VERSION + "', classifier: " +
 						"'sources', ext: 'jar'");
 
 		trace("Found gradle templates " + zipFile);
@@ -418,6 +424,26 @@ public class CreateCommand {
 		return name;
 	}
 
+	private List<String> getTemplates() throws Exception {
+		List<String> templateNames = new ArrayList<>();
+		File templatesZip = getGradleTemplatesZip();
+
+		try (Jar jar = new Jar(templatesZip)) {
+			Map<String, Map<String, Resource>> directories =
+				jar.getDirectories();
+
+			for (String key : directories.keySet()) {
+				Path path = Paths.get(key);
+
+				if (path.getNameCount() == 2 && path.startsWith("standalone")) {
+					templateNames.add(path.getName(1).toString());
+				}
+			}
+		}
+
+		return templateNames;
+	}
+
 	private boolean isEmpty(String str) {
 		if (str == null) {
 			return true;
@@ -425,6 +451,19 @@ public class CreateCommand {
 
 		if (str.trim().isEmpty()) {
 			return true;
+		}
+
+		return false;
+	}
+
+	private boolean isExistingTemplate(String templateName) throws Exception
+	{
+		List<String> templates = getTemplates();
+
+		for (String template : templates) {
+			if (templateName.equals(template)) {
+				return true;
+			}
 		}
 
 		return false;
@@ -438,20 +477,7 @@ public class CreateCommand {
 	}
 
 	private void listTemplates() throws Exception {
-		List<String> templateNames = new ArrayList<>();
-		File templatesZip = getGradleTemplatesZip();
-
-		try (Jar jar = new Jar(templatesZip)) {
-			Map<String, Map<String, Resource>> directories = jar.getDirectories();
-
-			for (String key : directories.keySet()) {
-				Path path = Paths.get(key);
-
-				if (path.getNameCount() == 2 && path.startsWith("standalone")) {
-					templateNames.add(path.getName(1).toString());
-				}
-			}
-		}
+		List<String> templateNames = getTemplates();
 
 		for (String name : templateNames) {
 			_blade.out().println(name);
