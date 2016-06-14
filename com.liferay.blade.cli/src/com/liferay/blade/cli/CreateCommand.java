@@ -244,7 +244,7 @@ public class CreateCommand {
 
 		if (isWorkspace) {
 			final Pattern buildGlob = Pattern.compile(
-				"^workspace/" + template + "/.*|\\...+/build.gradle");
+				"^workspace/" + template + "/.*|\\...+/.*");
 
 			in = new FileInputStream(moduleTemplatesZip);
 
