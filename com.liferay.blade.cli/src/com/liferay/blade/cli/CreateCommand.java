@@ -86,6 +86,15 @@ public class CreateCommand {
 		final File dir =
 			_options.dir() != null ? _options.dir() : getDefaultDir();
 		final File workDir = Processor.getFile(dir, name);
+
+		if(!checkDir(workDir)) {
+			addError(
+					"Create",
+					name+" is not empty or it is a file." +
+					" Please clean or delete it then run again");
+				return;
+		}
+
 		final boolean isWorkspace = Util.isWorkspace(dir);
 
 		name = workDir.getName();
@@ -345,6 +354,23 @@ public class CreateCommand {
 		String parentPath = parentDir.getCanonicalPath();
 
 		return currentPath.startsWith(parentPath);
+	}
+
+	private boolean checkDir(File file) {
+		if(file.exists()) {
+			if(!file.isDirectory()) {
+				return false;
+			}
+			else {
+				File[] children = file.listFiles();
+
+				if(children != null && children.length > 0) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	private void copy(

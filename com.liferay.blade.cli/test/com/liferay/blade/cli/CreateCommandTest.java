@@ -48,6 +48,14 @@ public class CreateCommandTest {
 			IO.delete(testdir);
 			assertFalse(testdir.exists());
 		}
+
+		File existFile = IO.getFile("generated/exist/file.txt");
+
+		if(!existFile.exists()) {
+			IO.getFile("generated/exist").mkdirs();
+			existFile.createNewFile();
+			assertTrue(existFile.exists());
+		}
 	}
 
 	@Test
@@ -365,6 +373,19 @@ public class CreateCommandTest {
 				".*^public class Serviceoverride extends UserLocalServiceWrapper \\{.*",
 				".*public Serviceoverride\\(\\) \\{.*"
 			});
+	}
+
+	@Test
+	public void testCreateOnExistFolder() throws Exception {
+		String[] args = {
+			"create", "-d", "generated", "-t", "activator", "exist"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/exist";
+
+		checkFileDoesNotExists(projectPath+"/bnd.bnd");
 	}
 
 	@Test
