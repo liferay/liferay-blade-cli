@@ -45,9 +45,9 @@ public class ContactNameExceptionImport extends ImportStatementMigrator {
 	};
 
 	private final static String[] IMPORTS_FIXED = new String[] {
-		"com.liferay.portal.ContactFirstNameException",
-		"com.liferay.portal.ContactFullNameException",
-		"com.liferay.portal.ContactLastNameException"
+		"com.liferay.portal.kernel.exception.ContactNameException",
+		"com.liferay.portal.kernel.exception.ContactNameException",
+		"com.liferay.portal.kernel.exception.ContactNameException"
 	};
 
 	public ContactNameExceptionImport() {
