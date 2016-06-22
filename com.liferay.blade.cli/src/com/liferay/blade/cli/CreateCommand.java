@@ -19,7 +19,6 @@ package com.liferay.blade.cli;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
-
 import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
@@ -30,10 +29,8 @@ import com.liferay.blade.cli.gradle.GradleTooling;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -89,10 +86,9 @@ public class CreateCommand {
 
 		if(!checkDir(workDir)) {
 			addError(
-					"Create",
-					name+" is not empty or it is a file." +
-					" Please clean or delete it then run again");
-				return;
+				"Create", name+" is not empty or it is a file." +
+				" Please clean or delete it then run again");
+			return;
 		}
 
 		final boolean isWorkspace = Util.isWorkspace(dir);
