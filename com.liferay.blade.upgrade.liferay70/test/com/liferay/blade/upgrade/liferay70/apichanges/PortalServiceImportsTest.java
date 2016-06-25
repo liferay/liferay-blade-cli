@@ -31,14 +31,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 @SuppressWarnings("restriction")
-public class MovedClassesImportTest {
-	final File testFile = new File("projects/filetests/MovedClassesImports.java");
-	MovedClassesImport component;
+public class PortalServiceImportsTest {
+	final File testFile = new File("projects/filetests/PortalServiceImports.java");
+	PortalServiceImports component;
 
 	@Before
 	public void beforeTest() {
 		assertTrue(testFile.exists());
-		component = new MovedClassesImport();
+		component = new PortalServiceImports();
 	}
 
 	@Test

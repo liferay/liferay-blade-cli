@@ -25,8 +25,8 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	property = {
 		"file.extensions=java",
-		"problem.title=Classes in portal-service.jar moved",
-		"problem.summary=Many classes from former Liferay 6 JAR file portal-service.jar have been moved into application and framework API modules.",
+		"problem.title=Imports from portal-service moved to modules.",
+		"problem.summary=Many classes from former portal-service.jar from Liferay Portal 6.x have been moved into application and framework API modules.",
 		"problem.tickets=",
 		"problem.section=#classes-in-portal",
 		"auto.correct=import"
@@ -36,7 +36,7 @@ import org.osgi.service.component.annotations.Component;
 		AutoMigrator.class
 	}
 )
-public class MovedClassesImport extends ImportStatementMigrator {
+public class PortalServiceImports extends ImportStatementMigrator {
 
 	private final static String[] IMPORTS = new String[] {
 		"com.liferay.portal.kernel.mobile.device.rulegroup.action.ActionHandler",
@@ -1442,7 +1442,7 @@ public class MovedClassesImport extends ImportStatementMigrator {
 		"com.liferay.wiki.model.WikiPageWrapper"
 	};
 
-	public MovedClassesImport() {
+	public PortalServiceImports() {
 		super(IMPORTS, IMPORTS_FIXED);
 	}
 
