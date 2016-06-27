@@ -26,9 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import java.nio.file.Files;
-
 import java.util.regex.Pattern;
 
 import org.junit.Before;
@@ -556,11 +554,6 @@ public class CreateCommandTest {
 
 		checkFileExists(
 			projectPath + "/workspace-sample/workspace-sample-service/build.gradle");
-
-		contains(
-			checkFileExists(
-				projectPath + "/workspace-sample/workspace-sample-service/build.gradle"),
-				".*repositories \\{.*");
 	}
 
 	@Test

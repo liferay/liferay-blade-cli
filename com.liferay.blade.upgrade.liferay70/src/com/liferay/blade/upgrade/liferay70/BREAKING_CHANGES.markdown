@@ -4082,3 +4082,23 @@ This change has been made as part of the modularization efforts to decouple
 different parts of the portal.
 
 ---------------------------------------
+
+### Classes in portal-service.jar moved [](id=classes-in-portal-service-jar-moved)
+- **Date:** 2016-Jun-24
+- **JIRA Ticket:** no ticket number
+
+#### What changed? [](id=what-changed-102)
+
+Many classes from former Liferay 6 JAR file portal-service.jar have been moved into application and framework API modules.
+
+#### Who is affected? [](id=who-is-affected-102)
+
+Any code that uses the moved classes.
+
+#### How should I update my code? [](id=how-should-i-update-my-code-102)
+
+You should change the package name via "correct automatically" in liferay-ide upgrade tool or you can do it manully. Then add denpencies for them. For more information, see [https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/classes-moved-from-portal-service-jar](https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/classes-moved-from-portal-service-jar)
+
+#### Why was this change made? [](id=why-was-this-change-made-102)
+
+To leverage the benefits of modularization in Liferay 7.
