@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -640,7 +639,6 @@ public class CreateCommandTest {
 		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 	}
 
-	@Ignore
 	@Test
 	public void testListTemplates() throws Exception {
 		String[] args = {"create", "-l"};
@@ -655,8 +653,6 @@ public class CreateCommandTest {
 		String templateList = new String(output.toByteArray());
 
 		assertNotNull(templateList);
-
-		assertTrue(templateList.startsWith("activator"));
 	}
 
 	@Test
