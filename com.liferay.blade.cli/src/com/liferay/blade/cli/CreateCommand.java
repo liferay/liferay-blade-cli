@@ -493,12 +493,11 @@ public class CreateCommand {
 
 	private boolean isTextFile(File dest) {
 		String name = dest.getName();
-		int posi = name.lastIndexOf(".");
+		int index = name.lastIndexOf(".");
 
-		if ( posi > -1 ) {
-
+		if ( index > -1 ) {
 			return textExtensions.contains(
-					name.substring(posi, name.length()));
+					name.substring(index, name.length()));
 		}
 
 		return false;
