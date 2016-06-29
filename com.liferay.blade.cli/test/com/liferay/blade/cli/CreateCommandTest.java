@@ -247,11 +247,6 @@ public class CreateCommandTest {
 			checkFileExists(
 				projectPath + "/backend-integration-service/bnd.bnd"),
 				".*Liferay-Service: true.*");
-
-		contains(
-			checkFileExists(
-				projectPath + "/backend-integration-service/build.gradle"),
-				".*repositories \\{.*");
 	}
 
 	@Test
