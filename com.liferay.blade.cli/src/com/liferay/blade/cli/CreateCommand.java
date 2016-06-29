@@ -330,8 +330,7 @@ public class CreateCommand {
 		File zipFile = GradleTooling.findLatestAvailableArtifact(
 			"group: 'com.liferay', " +
 				"name: 'com.liferay.gradle.templates', " + "version: '" +
-					TEMPLATES_VERSION + "', classifier: " +
-						"'sources', ext: 'jar'");
+					TEMPLATES_VERSION + "', ext: 'jar'");
 
 		trace("Found gradle templates " + zipFile);
 
