@@ -493,9 +493,14 @@ public class CreateCommand {
 
 	private boolean isTextFile(File dest) {
 		String name = dest.getName();
+		int index = name.lastIndexOf(".");
 
-		return textExtensions.contains(
-			name.substring(name.lastIndexOf("."), name.length()));
+		if ( index > -1 ) {
+			return textExtensions.contains(
+					name.substring(index, name.length()));
+		}
+
+		return false;
 	}
 
 	private void listTemplates() throws Exception {
