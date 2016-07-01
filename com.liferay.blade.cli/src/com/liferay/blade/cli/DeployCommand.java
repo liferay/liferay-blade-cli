@@ -159,6 +159,7 @@ public class DeployCommand {
 		boolean isFragment = false;
 		String fragmentHost = null;
 		String bsn = null;
+		String hostBSN = null;
 
 		try(Jar bundle = new Jar(outputFile)) {
 			Manifest manifest = bundle.getManifest();
@@ -169,80 +170,91 @@ public class DeployCommand {
 			isFragment = fragmentHost != null;
 
 			bsn = bundle.getBsn();
+
+			if(isFragment) {
+				hostBSN =
+						new Parameters(fragmentHost).keySet().iterator().next();
+			}
 		}
 
 		GogoTelnetClient client = new GogoTelnetClient(_host, _port);
 
-		long existingId = -1;
-
 		List<BundleDTO> bundles = getBundles(client);
 
-		for (BundleDTO bundle : bundles) {
-			if (bundle.symbolicName.equals(bsn)) {
-				existingId = bundle.id;
-				break;
-			}
-		}
+		long hostId = getBundleId(bundles, hostBSN);
+
+		long existingId = getBundleId(bundles,bsn);
 
 		String bundleURL = outputFile.toURI().toASCIIString();
 
 		if (existingId > 0) {
-			String response = client.send("stop " + existingId);
+			if (isFragment && hostId > 0) {
+				String response =
+						client.send("update " + existingId + " " + bundleURL);
 
-			_blade.out().println(response);
-
-			response = client.send("update " + existingId + " " + bundleURL);
-
-			_blade.out().println(response);
-
-			_blade.out().println("Updated bundle " + existingId);
-		}
-		else {
-			_blade.out().println("install " + bundleURL);
-
-			String response = client.send("install " + bundleURL);
-
-			_blade.out().println(response);
-
-			if (!isFragment) {
-				bundles = getBundles(client);
-
-				for (BundleDTO bundle : bundles) {
-					if (bundle.symbolicName.equals(bsn)) {
-						existingId = bundle.id;
-						break;
-					}
-				}
-			}
-		}
-
-		String response = client.send("start " + existingId);
-
-		_blade.out().println(response);
-
-		if (isFragment) {
-			String hostBSN = new Parameters(
-				fragmentHost).keySet().iterator().next();
-
-			long hostId = -1;
-
-			for (BundleDTO bundle : bundles) {
-				if (bundle.symbolicName.equals(hostBSN)) {
-					hostId = bundle.id;
-					break;
-				}
-			}
-
-			if (hostId > 0) {
-				_blade.out().println("refreshing host " + hostId);
+				_blade.out().println(response);
 
 				response = client.send("refresh " + hostId);
 
 				_blade.out().println(response);
 			}
+			else {
+				String response = client.send("stop " + existingId);
+
+				_blade.out().println(response);
+
+				response =
+						client.send("update " + existingId + " " + bundleURL);
+
+				_blade.out().println(response);
+
+				response = client.send("start " + existingId);
+
+				_blade.out().println(response);
+			}
+
+			_blade.out().println("Updated bundle " + existingId);
+		}
+		else {
+			String response = client.send("install " + bundleURL);
+
+			_blade.out().println(response);
+
+			if (isFragment && hostId > 0) {
+				response = client.send("refresh " + hostId);
+
+				_blade.out().println(response);
+			}
+			else {
+				existingId = getBundleId(getBundles(client),bsn);
+
+				if(existingId > 1) {
+					response = client.send("start " + existingId);
+					_blade.out().println(response);
+				}
+				else {
+					_blade.out().println("Error: fail to install "+bsn);
+				}
+			}
 		}
 
 		client.close();
+	}
+
+	private long getBundleId(List<BundleDTO> bundles, String bsn)
+			throws IOException {
+		long existingId = -1;
+
+		if(bundles != null && bundles.size() > 0 ) {
+			for (BundleDTO bundle : bundles) {
+				if (bundle.symbolicName.equals(bsn)) {
+					existingId = bundle.id;
+					break;
+				}
+			}
+		}
+
+		return existingId;
 	}
 
 	private List<BundleDTO> getBundles(GogoTelnetClient client)

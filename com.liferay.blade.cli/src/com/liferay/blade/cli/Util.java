@@ -295,7 +295,7 @@ public class Util {
 	public static Process startProcess(blade blade, String command)
 		throws Exception {
 
-		return startProcess(blade, command, null, null, true);
+		return startProcess(blade, command, blade.getBase(), null, true);
 	}
 
 	public static Process startProcess(
