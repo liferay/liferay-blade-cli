@@ -134,11 +134,17 @@ public class InitCommand {
 				workspacePluginArtifact.getVersion());
 
 		final File zipFile = workspacePluginArtifact.getFile(); */
+		boolean refresh = false;
+
+		if (_options != null) {
+			refresh = _options.refresh();
+		}
 
 		File zipFile = GradleTooling.findLatestAvailableArtifact(
 			"group: 'com.liferay', " +
 				"name: 'com.liferay.gradle.plugins.workspace', " +
-					"version: '1+', classifier: 'sources', ext: 'jar'");
+					"version: '1+', classifier: 'sources', ext: 'jar'",
+					refresh);
 
 		trace("Found workspace template " + zipFile);
 
@@ -149,8 +155,12 @@ public class InitCommand {
 	@Description(DESCRIPTION)
 	public interface InitOptions extends Options {
 
+		@Description(
+				"create anyway if there are files located at target folder")
 		public boolean force();
 
+		@Description("force to refresh workspace template")
+		public boolean refresh();
 	}
 
 	private void addError(String msg) {
