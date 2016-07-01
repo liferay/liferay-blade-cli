@@ -272,6 +272,12 @@ public class CreateCommand {
 			}
 		}
 
+		File gradlew = new File(workDir, "gradlew");
+
+		if (gradlew.exists()) {
+			gradlew.setExecutable(true);
+		}
+
 		_blade.out().println(
 			"Created the project " + name + " using the " + template +
 				" template in " + workDir);
