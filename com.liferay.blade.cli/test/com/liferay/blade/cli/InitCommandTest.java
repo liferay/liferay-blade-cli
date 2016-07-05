@@ -44,7 +44,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"-b", "generated/test/workspace", "init"};
+		String[] args = {"-b", "generated/test/workspace", "init", "-r"};
 
 		new bladenofail().run(args);
 

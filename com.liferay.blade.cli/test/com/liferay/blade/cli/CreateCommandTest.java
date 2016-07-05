@@ -45,20 +45,12 @@ public class CreateCommandTest {
 			IO.delete(testdir);
 			assertFalse(testdir.exists());
 		}
-
-		File existFile = IO.getFile("generated/exist/file.txt");
-
-		if(!existFile.exists()) {
-			IO.getFile("generated/exist").mkdirs();
-			existFile.createNewFile();
-			assertTrue(existFile.exists());
-		}
 	}
 
 	@Test
 	public void testCreateActivator() throws Exception {
 		String[] args = {
-			"create", "-d", "generated/test", "-t", "activator", "bar-activator"
+			"create", "-d", "generated/test", "-r", "-t", "activator", "bar-activator"
 		};
 
 		new bladenofail().run(args);
@@ -373,6 +365,14 @@ public class CreateCommandTest {
 			"create", "-d", "generated", "-t", "activator", "exist"
 		};
 
+		File existFile = IO.getFile("generated/exist/file.txt");
+
+		if(!existFile.exists()) {
+			IO.getFile("generated/exist").mkdirs();
+			existFile.createNewFile();
+			assertTrue(existFile.exists());
+		}
+
 		new bladenofail().run(args);
 
 		String projectPath = "generated/exist";
@@ -418,6 +418,39 @@ public class CreateCommandTest {
 		contains(
 			portletFile,
 			".*^public class HelloWorldPortlet extends MVCPortlet.*$");
+
+		File gradleBuildFile = checkFileExists(projectPath + "/build.gradle");
+
+		contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/init.jsp");
+	}
+
+	@Test
+	public void testCreateProjectWithRefresh() throws Exception {
+		String[] args = {
+				"create", "-d", "generated/test", "hello-world-refresh"
+			};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/hello-world-refresh";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		File portletFile = checkFileExists(
+			projectPath + "/src/main/java/hello/world/refresh/portlet/" +
+				"HelloWorldRefreshPortlet.java");
+
+		contains(
+			portletFile,
+			".*^public class HelloWorldRefreshPortlet extends MVCPortlet.*$");
 
 		File gradleBuildFile = checkFileExists(projectPath + "/build.gradle");
 
@@ -630,6 +663,38 @@ public class CreateCommandTest {
 
 		File gradleBuildFile = checkFileExists(
 			projectPath + "/foo/build.gradle");
+
+		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+	}
+
+	@Test
+	public void testCreateWorkspaceProjectWithRefresh() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test/workspace/modules/apps",
+			"foo-refresh"
+		};
+
+		makeWorkspace(new File("generated/test/workspace"));
+
+		new bladenofail().run(args);
+
+		String projectPath =
+				"generated/test/workspace/modules/apps/foo-refresh";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		File portletFile = checkFileExists(
+				projectPath +
+				"/src/main/java/foo/refresh/portlet/FooRefreshPortlet.java");
+
+		contains(
+			portletFile,
+			".*^public class FooRefreshPortlet extends MVCPortlet.*$");
+
+		File gradleBuildFile = checkFileExists(
+			projectPath + "/build.gradle");
 
 		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 	}

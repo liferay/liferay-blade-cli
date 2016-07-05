@@ -42,7 +42,7 @@ public class GradleToolingTest {
 	@Test
 	public void testCheckLatestArtifactVersionOnline() throws Exception {
 		File file = GradleTooling.findLatestAvailableArtifact(
-			"group: 'com.liferay', name: 'com.liferay.gradle.plugins.workspace', version: '1+', classifier: 'sources', ext: 'jar'");
+			"group: 'com.liferay', name: 'com.liferay.gradle.plugins.workspace', version: '1+', classifier: 'sources', ext: 'jar'",false);
 
 		String name = file.getName();
 

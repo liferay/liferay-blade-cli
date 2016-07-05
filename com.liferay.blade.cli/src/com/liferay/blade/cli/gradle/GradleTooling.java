@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ModelBuilder;
 import org.gradle.tooling.ProjectConnection;
@@ -38,16 +39,17 @@ import org.gradle.tooling.ProjectConnection;
  */
 public class GradleTooling {
 
-	public static File findLatestAvailableArtifact(String artifact)
-		throws Exception {
+	public static File findLatestAvailableArtifact(
+			String artifact, boolean refresh) throws Exception {
 
 		return findLatestAvailableArtifact(
 			artifact,
-			"http://cdn.repository.liferay.com/nexus/content/groups/public");
+			"http://cdn.repository.liferay.com/nexus/content/groups/public",
+			refresh);
 	}
 
 	public static File findLatestAvailableArtifact(
-			String downloadDep, String repo)
+			String downloadDep, String repo, boolean refresh)
 		throws Exception {
 
 		File projectDir = Files.createTempDirectory("blade").toFile();
@@ -71,7 +73,14 @@ public class GradleTooling {
 
 			connection = connector.connect();
 
-			connection.newBuild().forTasks("copyDep").run();
+			BuildLauncher buildLauncher =
+					connection.newBuild().forTasks("copyDep");
+
+			if(refresh) {
+				buildLauncher.withArguments("--refresh-dependencies");
+			}
+
+			buildLauncher.run();
 		}
 		finally {
 			connection.close();
