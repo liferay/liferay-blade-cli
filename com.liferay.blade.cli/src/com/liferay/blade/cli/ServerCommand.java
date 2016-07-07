@@ -165,9 +165,14 @@ public class ServerCommand {
 			process.waitFor();
 
 			if (startOptions.background() && startOptions.tail()) {
+				File logs = new File(dir, "logs");
+
+				if (!logs.exists()) {
+					logs.mkdirs();
+				}
+
 				process = Util.startProcess(
-					_blade, "tail -f catalina.out", new File(dir, "logs"),
-					enviroment);
+					_blade, "tail -f catalina.out", logs, enviroment);
 
 				process.waitFor();
 			}
