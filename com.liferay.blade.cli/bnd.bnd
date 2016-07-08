@@ -115,6 +115,7 @@ Private-Package:\
 	aQute.bnd.deployer.repository,\
 	aQute.bnd.deployer.repository.api,\
 	aQute.bnd.deployer.repository.providers,\
+	aQute.bnd.header,\
 	aQute.bnd.osgi,\
 	aQute.bnd.osgi.resource;-split-package:=merge-first,\
 	aQute.bnd.service,\
@@ -137,6 +138,7 @@ Private-Package:\
 	aQute.libg.gzip;-split-package:=merge-first,\
 	aQute.libg.reporter;-split-package:=merge-first,\
 	aQute.libg.sed;-split-package:=merge-first,\
+	aQute.libg.qtokens;-split-package:=merge-first,\
 	aQute.service.reporter;-split-package:=merge-first,\
 	com.liferay.blade.cli.*,\
 	com.liferay.blade.gradle.model,\
