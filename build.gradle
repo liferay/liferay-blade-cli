@@ -6,47 +6,36 @@
  */
 
 import aQute.bnd.build.Workspace
+import aQute.bnd.osgi.Constants
 
 /* Add bnd gradle plugin as a script dependency */
 buildscript {
 	dependencies {
 		classpath bndPlugin
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "1.0.8"
-	}
-
-	repositories {
-		maven {
-			url "http://cdn.repository.liferay.com/nexus/content/groups/public"
-		}
 	}
 }
 
 /* Initialize the bnd workspace */
-ext.bndWorkspace = Workspace.getWorkspace(rootDir, bnd_cnf)
-
+Workspace.setDriver(Constants.BNDDRIVER_GRADLE)
+Workspace.addGestalt(Constants.GESTALT_BATCH, null)
+ext.bndWorkspace = new Workspace(rootDir, bnd_cnf)
 if (bndWorkspace == null) {
-	throw new GradleException("Unable to load workspace ${rootDir}/${bnd_cnf}")
+  throw new GradleException("Unable to load workspace ${rootDir}/${bnd_cnf}")
 }
-
-bndWorkspace.setProperty('bnd_repourl', bnd_repourl)
+/* Set this property in the workspace */
+bndWorkspace.setProperty('bnd_repourl', uri(bnd_repourl).toString())
 
 ext.cnf = rootProject.project(bnd_cnf)
 
 /* Configure the subprojects */
 subprojects {
-	repositories {
-		maven {
-			url "http://cdn.repository.liferay.com/nexus/content/groups/public"
-		}
-	}
-
-	def bndProject = bndWorkspace.getProject(name)
-
-	if (bndProject != null) {
-		plugins.apply 'biz.aQute.bnd'
-	}
-
-	apply plugin: "com.liferay.source.formatter"
+  def bndProject = bndWorkspace.getProject(name)
+  if (bndProject != null) {
+    plugins.apply 'biz.aQute.bnd'
+    test.testLogging {
+      exceptionFormat 'full'
+    }
+  }
 }
 
 task wrapper(type: Wrapper) {

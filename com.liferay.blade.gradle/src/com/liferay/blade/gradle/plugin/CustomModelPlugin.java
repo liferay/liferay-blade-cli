@@ -92,7 +92,7 @@ public class CustomModelPlugin implements Plugin<Project> {
 			try {
 				Configuration archivesConfiguration =
 					configurations.getByName(
-							Dependency.ARCHIVES_CONFIGURATION);
+						Dependency.ARCHIVES_CONFIGURATION);
 
 				PublishArtifactSet artifacts =
 					archivesConfiguration.getArtifacts();

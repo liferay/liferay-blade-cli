@@ -1,1 +1,3 @@
-org.gradle:gradle-tooling-api:2.13
+org.gradle:gradle-core:2.14
+org.gradle:gradle-base-services-groovy:2.14
+org.gradle:gradle-tooling-api:2.14
