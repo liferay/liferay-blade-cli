@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -70,8 +71,15 @@ public class InitCommandTest {
 
 	@Test
 	public void testGetWorkspaceZip() throws Exception {
-		assertTrue(
-			new InitCommand(new blade(), null).getWorkspaceZip().exists());
+		File workspaceZip = new InitCommand(new blade(), null).getWorkspaceZip();
+
+		assertTrue(workspaceZip.exists());
+
+		String workspaceName = workspaceZip.getName();
+
+		assertTrue(workspaceName.startsWith("com.liferay.gradle.plugins.workspace"));
+		assertTrue(workspaceName.endsWith("sources.jar"));
+		assertEquals(workspaceName, true, workspaceName.matches(".*-1\\.0\\.35+-.*"));
 	}
 
 	@Test

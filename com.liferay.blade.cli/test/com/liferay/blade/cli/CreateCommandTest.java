@@ -50,7 +50,7 @@ public class CreateCommandTest {
 	@Test
 	public void testCreateActivator() throws Exception {
 		String[] args = {
-			"create", "-d", "generated/test", "-r", "-t", "activator", "bar-activator"
+			"create", "-d", "generated/test", "-t", "activator", "bar-activator"
 		};
 
 		new bladenofail().run(args);
@@ -697,6 +697,18 @@ public class CreateCommandTest {
 			projectPath + "/build.gradle");
 
 		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+	}
+
+	@Test
+	public void testGetGradleTemplatesZip() throws Exception {
+		File gradleTemplatesZip = new CreateCommand(new blade(), null).getGradleTemplatesZip();
+
+		assertTrue(gradleTemplatesZip.exists());
+
+		String gradleTemplatesName = gradleTemplatesZip.getName();
+
+		assertTrue(gradleTemplatesName, gradleTemplatesName.startsWith("com.liferay.gradle.templates"));
+		assertTrue(gradleTemplatesName, gradleTemplatesName.endsWith("1.0.9.jar"));
 	}
 
 	@Test

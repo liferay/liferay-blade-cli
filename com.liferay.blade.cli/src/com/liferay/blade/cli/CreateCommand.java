@@ -53,7 +53,7 @@ public class CreateCommand {
 		"Creates a new Liferay module project from several available " +
 			"templates.";
 
-	public static final String TEMPLATES_VERSION = "1+";
+	public static final String TEMPLATES_VERSION = "1.0.9";
 
 	private static File zipFile = null;
 
@@ -322,9 +322,6 @@ public class CreateCommand {
 		)
 		public String service();
 
-		@Description("force to refresh templates")
-		public boolean refresh();
-
 		@Description(
 			"The project template to use when creating the project. To " +
 				"see the list of templates available use blade create <-l | " +
@@ -345,7 +342,7 @@ public class CreateCommand {
 		zipFile = GradleTooling.findLatestAvailableArtifact(
 			"group: 'com.liferay', " +
 				"name: 'com.liferay.gradle.templates', " + "version: '" +
-					TEMPLATES_VERSION + "', ext: 'jar'", _options.refresh());
+					TEMPLATES_VERSION + "', ext: 'jar'");
 
 		trace("Found gradle templates " + zipFile);
 

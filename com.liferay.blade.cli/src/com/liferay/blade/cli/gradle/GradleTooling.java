@@ -40,16 +40,15 @@ import org.gradle.tooling.ProjectConnection;
 public class GradleTooling {
 
 	public static File findLatestAvailableArtifact(
-			String artifact, boolean refresh) throws Exception {
+			String artifact) throws Exception {
 
 		return findLatestAvailableArtifact(
 			artifact,
-			"http://cdn.repository.liferay.com/nexus/content/groups/public",
-			refresh);
+			"http://cdn.repository.liferay.com/nexus/content/groups/public");
 	}
 
 	public static File findLatestAvailableArtifact(
-			String downloadDep, String repo, boolean refresh)
+			String downloadDep, String repo)
 		throws Exception {
 
 		File projectDir = Files.createTempDirectory("blade").toFile();
@@ -75,10 +74,6 @@ public class GradleTooling {
 
 			BuildLauncher buildLauncher =
 					connection.newBuild().forTasks("copyDep");
-
-			if(refresh) {
-				buildLauncher.withArguments("--refresh-dependencies");
-			}
 
 			buildLauncher.run();
 		}
@@ -155,7 +150,7 @@ public class GradleTooling {
 
 		try {
 			connection = connector.connect();
-			ModelBuilder<T> modelBuilder = (ModelBuilder<T>)connection.model(
+			ModelBuilder<T> modelBuilder = connection.model(
 				modelClass);
 
 			final File depsDir = new File(cacheDir, "deps");

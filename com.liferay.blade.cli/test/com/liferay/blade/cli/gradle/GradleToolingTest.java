@@ -40,20 +40,6 @@ public class GradleToolingTest {
 	}
 
 	@Test
-	public void testCheckLatestArtifactVersionOnline() throws Exception {
-		File file = GradleTooling.findLatestAvailableArtifact(
-			"group: 'com.liferay', name: 'com.liferay.gradle.plugins.workspace', version: '1+', classifier: 'sources', ext: 'jar'",false);
-
-		String name = file.getName();
-
-		assertNotNull(file);
-		assertTrue(file.exists());
-		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
-		assertTrue(name.endsWith("sources.jar"));
-		assertEquals(name, true, name.matches(".*-1\\.0\\.[0-9]+-.*"));
-	}
-
-	@Test
 	public void testGetOutputFile() throws Exception {
 		Set<File> files = GradleTooling.getOutputFiles(
 			new File("bin_test"), new File("."));
