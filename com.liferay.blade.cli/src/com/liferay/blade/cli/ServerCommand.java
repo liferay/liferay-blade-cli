@@ -164,13 +164,13 @@ public class ServerCommand {
 
 			process.waitFor();
 
+			File logs = new File(dir, "logs");
+			logs.mkdirs();
+
+			File catalinaOut = new File(logs, "catalina.out");
+			catalinaOut.createNewFile();
+
 			if (startOptions.background() && startOptions.tail()) {
-				File logs = new File(dir, "logs");
-
-				if (!logs.exists()) {
-					logs.mkdirs();
-				}
-
 				process = Util.startProcess(
 					_blade, "tail -f catalina.out", logs, enviroment);
 
