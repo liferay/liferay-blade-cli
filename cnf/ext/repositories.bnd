@@ -20,9 +20,8 @@
 
 -plugin.eclipserepo = \
 	aQute.bnd.deployer.repository.FixedIndexedRepo; \
-		name=Mars OBR; \
-		locations=http://106.187.96.36/gamerson/mars-obr/index.xml.gz
-
+		name=Mars; \
+		locations=https://dl.bintray.com/gamerson/mars-r5/index.xml.gz
 
 -plugin.bndrepo = \
 	aQute.bnd.deployer.repository.FixedIndexedRepo; \
