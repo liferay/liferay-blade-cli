@@ -106,6 +106,10 @@ public class CreateCommandTest {
 
 		checkFileExists(projectPath + "/bnd.bnd");
 
+		checkFileExists(projectPath + "/gradlew");
+
+		checkFileExists(projectPath + "/gradlew.bat");
+
 		contains(
 			checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
 			".*^public class FooPortlet extends MVCPortlet.*$");
@@ -508,6 +512,8 @@ public class CreateCommandTest {
 		String projectPath = "generated/test/workspace/modules/apps";
 
 		checkFileExists(projectPath + "/gradle.test/build.gradle");
+
+		checkFileDoesNotExists(projectPath + "/gradle.test/gradlew");
 
 		contains(
 			checkFileExists(
