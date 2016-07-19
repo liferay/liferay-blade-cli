@@ -272,12 +272,17 @@ public class CreateCommand {
 			if (settingsFile.exists()) {
 				settingsFile.delete();
 			}
+
+			IO.delete(new File(workDir, "gradlew"));
+			IO.delete(new File(workDir, "gradlew.bat"));
+			IO.delete(new File(workDir, "gradle"));
 		}
+		else {
+			File gradlew = new File(workDir, "gradlew");
 
-		File gradlew = new File(workDir, "gradlew");
-
-		if (gradlew.exists()) {
-			gradlew.setExecutable(true);
+			if (gradlew.exists()) {
+				gradlew.setExecutable(true);
+			}
 		}
 
 		_blade.out().println(
