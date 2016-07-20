@@ -158,17 +158,17 @@ public class ServerCommand {
 				startCommand = " jpda " + startCommand;
 			}
 
-			Process process = Util.startProcess(
-				_blade, executable + startCommand, new File(dir, "bin"),
-				enviroment);
-
-			process.waitFor();
-
 			File logs = new File(dir, "logs");
 			logs.mkdirs();
 
 			File catalinaOut = new File(logs, "catalina.out");
 			catalinaOut.createNewFile();
+
+			Process process = Util.startProcess(
+				_blade, executable + startCommand, new File(dir, "bin"),
+				enviroment);
+
+			process.waitFor();
 
 			if (startOptions.background() && startOptions.tail()) {
 				process = Util.startProcess(
