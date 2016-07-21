@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -29,6 +30,10 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.util.regex.Pattern;
 
+import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.BuildTask;
+import org.gradle.testkit.runner.GradleRunner;
+import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,6 +70,21 @@ public class CreateCommandTest {
 			checkFileExists(
 				projectPath + "/src/main/java/bar/activator/BarActivator.java"),
 			".*^public class BarActivator implements BundleActivator.*$");
+
+		BuildResult buildResult = GradleRunner.create().withProjectDir(new File(projectPath)).withArguments("build").build();
+
+		BuildTask buildtask = null;
+
+		for (BuildTask task : buildResult.getTasks()) {
+			if (task.getPath().endsWith("build")) {
+				buildtask = task;
+				break;
+			}
+		}
+
+		assertNotNull(buildtask);
+
+		assertEquals(buildtask.getOutcome(), TaskOutcome.SUCCESS);
 	}
 
 	@Test
