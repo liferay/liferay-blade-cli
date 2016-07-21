@@ -130,6 +130,7 @@ Private-Package:\
 	aQute.lib.io;-split-package:=merge-first,\
 	aQute.lib.json;-split-package:=merge-first,\
 	aQute.lib.justif;-split-package:=merge-first,\
+	aQute.lib.strings;-split-package:=merge-first,\
 	aQute.lib.utf8properties;-split-package:=merge-first,\
 	aQute.lib.zip;-split-package:=merge-first,\
 	aQute.libg.cryptography;-split-package:=merge-first,\
