@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java",
 		"problem.title=MBMessageService API Changes",
-		"problem.section=#removed-permissionclassname-permissionclasspk-and-permissionowner-parameters-from-mbmessage-api",
+		"problem.section=#removed-permissionclassname-permissionclasspk-and-permissionowner-parameter",
 		"problem.summary=Removed permissionClassName, permissionClassPK, and permissionOwner Parameters from MBMessage API",
 		"problem.tickets=LPS-55877",
 	},

@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.title=Email Signature Properties",
 		"problem.summary=Merged Configured Email Signature Field into the Body of Email Messages from Message Boards and Wiki",
 		"problem.tickets=LPS-44599",
-		"problem.section=#merged-configured-email-signature-field-into-the-body-of-email-messages-from-message-boards-and-wiki",
+		"problem.section=#merged-configured-email-signature-field-into-the-body-of-email-messages-fro",
 	},
 	service = FileMigrator.class
 )

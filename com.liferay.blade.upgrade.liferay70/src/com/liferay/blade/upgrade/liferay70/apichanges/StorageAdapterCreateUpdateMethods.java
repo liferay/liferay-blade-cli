@@ -34,7 +34,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=Removed Operations That Used the Fields Class from the StorageAdapter Interface",
 		"problem.tickets=LPS-53021",
 		"problem.type=java",
-		"problem.section=#removed-operations-that-used-the-fields-class-from-the-storageadapter-interface"
+		"problem.section=#removed-operations-that-used-the-fields-class-from-the-storageadapter-inter"
 	},
 	service = FileMigrator.class
 )

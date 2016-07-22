@@ -18,7 +18,7 @@ package com.liferay.blade.upgrade.liferay70;
 
 import aQute.lib.io.IO;
 
-import com.liferay.markdown.converter.factory.MarkdownConverterFactoryUtil;
+import com.liferay.knowledge.base.markdown.converter.factory.MarkdownConverterFactoryUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;

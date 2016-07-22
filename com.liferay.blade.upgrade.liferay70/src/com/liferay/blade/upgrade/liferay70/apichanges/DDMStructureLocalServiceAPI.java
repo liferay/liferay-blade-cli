@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=DDM Structure Local Service API No Longer Has the updateXSDFieldMetadata operation",
 		"problem.tickets=LPS-47559",
 		"problem.title=DDM Structure Local Service API No Longer Has the updateXSDFieldMetadata operation",
-		"problem.section=#ddm-structure-local-service-api-no-longer-has-the-updatexsdfieldmetadata-operation"
+		"problem.section=#ddm-structure-local-service-api-no-longer-has-the-updatexsdfieldmetadata-op"
 	},
 	service = FileMigrator.class
 )

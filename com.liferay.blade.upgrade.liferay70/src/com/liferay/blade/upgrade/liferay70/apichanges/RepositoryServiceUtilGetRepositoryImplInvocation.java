@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java,jsp,jspf",
 		"problem.title=RepositoryLocalServiceUtil changes",
-		"problem.section=#removed-methods-getgrouplocalrepositoryimpl-and-getlocalrepositoryimpl-from-repositorylocalservice-and-repositoryservice",
+		"problem.section=#removed-methods-getgrouplocalrepositoryimpl-and-getlocalrepositoryimpl-from",
 		"problem.summary=Removed Methods getGroupLocalRepositoryImpl and getLocalRepositoryImpl from RepositoryLocalService and RepositoryService",
 		"problem.tickets=LPS-55566",
 	},

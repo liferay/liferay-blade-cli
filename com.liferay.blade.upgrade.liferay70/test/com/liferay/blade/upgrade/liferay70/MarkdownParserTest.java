@@ -30,6 +30,6 @@ public class MarkdownParserTest {
 		Map<String, String> tags = MarkdownParser.parse("BREAKING_CHANGES.markdown");
 
 		assertNotNull(tags);
-		assertEquals(100, tags.size());
+		assertEquals(112, tags.size());
 	}
 }

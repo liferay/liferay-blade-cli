@@ -31,7 +31,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java,jsp,jspf",
 		"problem.title=User Operation and Importer/Exporter Classes and Utilities Moved or Removed",
-		"problem.section=#user-operation-and-importerexporter-classes-and-utilities-have-been-moved-or-removed-from-portal",		
+		"problem.section=#user-operation-and-importer-exporter-classes-and-utilities-have-been-moved-",
 		"problem.summary==User Operation and Importer/Exporter Classes and Utilities Moved or Removed",
 		"problem.tickets=LPS-63205",
 	},

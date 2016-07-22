@@ -31,7 +31,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java,jsp,jspf",
 		"problem.title=Methods removed in SearchResult API",
-		"problem.section=#removed-mbmessages-and-fileentrytuples-attributes-from-app",
+		"problem.section=#removed-mbmessages-and-fileentrytuples-attributes-from-app-view-search-entr",
 		"problem.summary=Removed getMbMessages , getFileEntryTuples and addMbMessage Methods from SearchResult Class",
 		"problem.tickets=LPS-55886",
 	},

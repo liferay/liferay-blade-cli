@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java,jsp,jspf",
 		"problem.title=DDMTemplateLocalService add new param userId",
-		"problem.section=#added-userid-parameter-to-update-operations-of-ddmstructurelocalservice-and-ddmtemplatelocalservice",
+		"problem.section=#added-userid-parameter-to-update-operations-of-ddmstructurelocalservice-and",
 		"problem.summary=Added userId Parameter to Update Operations of DDMStructureLocalService and DDMTemplateLocalService",
 		"problem.tickets=LPS-50939",
 	},

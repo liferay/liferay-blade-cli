@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=Added userId Parameter to Update Operations of DDMStructureLocalService and DDMTemplateLocalService",
 		"problem.tickets=LPS-50939",
 		"problem.title=DDMStructureLocalService add new param userId",
-		"problem.section=#added-userid-parameter-to-update-operations-of-ddmstructurelocalservice-and-ddmtemplatelocalservice",
+		"problem.section=#added-userid-parameter-to-update-operations-of-ddmstructurelocalservice-and",
 	},
 	service = FileMigrator.class
 )
