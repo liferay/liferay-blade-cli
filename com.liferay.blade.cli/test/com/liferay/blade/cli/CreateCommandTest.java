@@ -388,7 +388,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateGradleServicePreAction() throws Exception {
+	public void testCreateGradleService() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "service", "-s",
 			"com.liferay.portal.kernel.events.LifecycleAction", "-c",
@@ -411,24 +411,18 @@ public class CreateCommandTest {
 				".*^public class FooAction implements LifecycleAction \\{.*"
 			});
 
-		BuildTask buildService = executeGradleRunner(projectPath, "buildService");
-
-		verifyGradleRunnerOutput(buildService);
-
 		BuildTask buildtask = executeGradleRunner(projectPath, "build");
 
 		verifyGradleRunnerOutput(buildtask);
 
-		verifyBuildOutput(projectPath + "/servicepreaction-api", "servicepreaction-api-1.0.0.jar");
-
-		verifyBuildOutput(projectPath + "/servicepreaction-service", "servicepreaction-service-1.0.0.jar");
+		verifyBuildOutput(projectPath, "servicepreaction-1.0.0.jar");
 	}
 
 	@Test
 	public void testCreateGradleServiceWrapper() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "servicewrapper", "-s",
-			"com.liferay.portal.service.UserLocalServiceWrapper",
+			"com.liferay.portal.kernel.service.UserLocalServiceWrapper",
 			"serviceoverride"
 		};
 
@@ -443,23 +437,17 @@ public class CreateCommandTest {
 				projectPath + "/src/main/java/serviceoverride/Serviceoverride.java"),
 			new String[] {
 				"^package serviceoverride;.*",
-				".*^import com.liferay.portal.service.UserLocalServiceWrapper;$.*",
+				".*^import com.liferay.portal.kernel.service.UserLocalServiceWrapper;$.*",
 				".*service = ServiceWrapper.class.*",
 				".*^public class Serviceoverride extends UserLocalServiceWrapper \\{.*",
 				".*public Serviceoverride\\(\\) \\{.*"
 			});
 
-		BuildTask buildService = executeGradleRunner(projectPath, "buildService");
-
-		verifyGradleRunnerOutput(buildService);
-
 		BuildTask buildtask = executeGradleRunner(projectPath, "build");
 
 		verifyGradleRunnerOutput(buildtask);
 
-		verifyBuildOutput(projectPath + "/serviceoverride-api", "serviceoverride-api-1.0.0.jar");
-
-		verifyBuildOutput(projectPath + "/serviceoverride-service", "serviceoverride-service-1.0.0.jar");
+		verifyBuildOutput(projectPath, "serviceoverride-1.0.0.jar");
 	}
 
 	@Test
