@@ -25,7 +25,13 @@ import aQute.lib.io.IO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.PrintStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.gradle.testkit.runner.BuildResult;
@@ -401,15 +407,46 @@ public class CreateCommandTest {
 
 		checkFileExists(projectPath + "/build.gradle");
 
+		File file = new File(projectPath + "/src/main/java/servicepreaction/FooAction.java");
+
 		contains(
-			checkFileExists(
-				projectPath + "/src/main/java/servicepreaction/FooAction.java"),
+			checkFileExists(file.getPath()),
 			new String[] {
 				"^package servicepreaction;.*",
 				".*^import com.liferay.portal.kernel.events.LifecycleAction;$.*",
 				".*service = LifecycleAction.class.*",
 				".*^public class FooAction implements LifecycleAction \\{.*"
 			});
+
+		List<String> lines = new ArrayList<String>();
+		String line = null;
+
+		try(BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			while ((line = reader.readLine()) !=null) {
+				lines.add(line);
+				if (line.equals("import com.liferay.portal.kernel.events.LifecycleAction;")) {
+					lines.add("import com.liferay.portal.kernel.events.LifecycleEvent;");
+					lines.add("import com.liferay.portal.kernel.events.ActionException;");
+				}
+
+				if (line.equals("public class FooAction implements LifecycleAction {")) {
+					String s = new StringBuilder()
+					           .append("@Override\n")
+					           .append("public void processLifecycleEvent(LifecycleEvent lifecycleEvent)\n")
+					           .append("throws ActionException {\n")
+					           .append("System.out.println(\"login.event.pre=\" + lifecycleEvent);\n")
+					           .append("}\n")
+					           .toString();
+					lines.add(s);
+				}
+			}
+		}
+
+		try(Writer writer = new FileWriter(file)) {
+			for(String string : lines){
+				writer.write(string + "\n");
+			}
+		}
 
 		BuildTask buildtask = executeGradleRunner(projectPath, "build");
 
