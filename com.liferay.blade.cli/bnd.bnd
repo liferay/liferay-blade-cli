@@ -204,4 +204,6 @@ Private-Package:\
 
 -sources: false
 
--testpath: biz.aQute.junit
+-testpath: \
+	biz.aQute.junit,\
+	com.liferay.blade.gradle.testkit.api

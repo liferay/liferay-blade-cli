@@ -1,3 +1,7 @@
+dependencies {
+	testCompile gradleTestKit()
+}
+
 task createDepsZip(type:Zip) {
 	from "${projectDir}/../com.liferay.blade.gradle/generated/"
 	baseName = "deps"

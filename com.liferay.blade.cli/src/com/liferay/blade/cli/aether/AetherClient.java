@@ -156,6 +156,7 @@ public class AetherClient {
 		DefaultServiceLocator.ErrorHandler handler =
 			new DefaultServiceLocator.ErrorHandler() {
 
+				@Override
 				public void serviceCreationFailed(
 					Class<?> type, Class<?> impl, Throwable exception) {
 
@@ -212,7 +213,7 @@ public class AetherClient {
 		USER_MAVEN_CONFIGURATION_HOME, "settings.xml");
 
 	private static final String[] _defaultRepoUrls = {
-		"http://cdn.repository.liferay.com/nexus/content/groups/public"
+		"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
 	};
 
 	private final String _localRepositoryPath;
