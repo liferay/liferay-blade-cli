@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import aQute.lib.io.IO;
+
 import java.io.File;
 
 import org.gradle.testkit.runner.BuildResult;
@@ -27,20 +29,23 @@ import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 
-import aQute.lib.io.IO;
-
 /**
  * @author Lawrence Lee
  */
 public class GradleRunnerUtil {
 
-	public static BuildTask executeGradleRunner (String projectPath, String gradleArgument) {
-		BuildResult buildResult = GradleRunner.create().withProjectDir(new File(projectPath)).withArguments(gradleArgument).build();
+	public static BuildTask executeGradleRunner (String projectPath, String taskPath) {
+		File projectDir = new File(projectPath);
+
+		BuildResult buildResult = GradleRunner.create()
+									.withProjectDir(projectDir)
+									.withArguments(taskPath)
+									.build();
 
 		BuildTask buildtask = null;
 
 		for (BuildTask task : buildResult.getTasks()) {
-			if (task.getPath().endsWith(gradleArgument)) {
+			if (task.getPath().endsWith(taskPath)) {
 				buildtask = task;
 				break;
 			}
