@@ -21,7 +21,10 @@ clean.doFirst {
 	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
 }
 
-test.dependsOn createDepsZip, createWrapperZip
+test {
+	systemProperty 'verifyBuilds', System.getProperty('verifyBuilds', 'false')
+	dependsOn createDepsZip, createWrapperZip
+}
 
 jar {
 	from createDepsZip, createWrapperZip
