@@ -33,7 +33,6 @@ import com.liferay.blade.cli.OpenCommand.OpenOptions;
 import com.liferay.blade.cli.SamplesCommand.SamplesOptions;
 import com.liferay.blade.cli.ServerCommand.ServerOptions;
 import com.liferay.blade.cli.ShellCommand.ShellOptions;
-import com.liferay.blade.cli.UpdateCommand.UpdateOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -131,7 +130,7 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	}
 
 	@Description(UpdateCommand.DESCRIPTION)
-	public void _update(UpdateOptions options) throws Exception {
+	public void _update(Options options) throws Exception {
 		new UpdateCommand(this, options).execute();
 	}
 
