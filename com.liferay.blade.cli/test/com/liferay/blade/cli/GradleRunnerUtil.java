@@ -34,7 +34,7 @@ import org.gradle.testkit.runner.TaskOutcome;
  */
 public class GradleRunnerUtil {
 
-	public static BuildTask executeGradleRunner (String projectPath, String taskPath) {
+	public static BuildTask executeGradleRunner (String projectPath, String... taskPath) {
 		File projectDir = new File(projectPath);
 
 		BuildResult buildResult = GradleRunner.create()
@@ -45,7 +45,7 @@ public class GradleRunnerUtil {
 		BuildTask buildtask = null;
 
 		for (BuildTask task : buildResult.getTasks()) {
-			if (task.getPath().endsWith(taskPath)) {
+			if (task.getPath().endsWith(taskPath[taskPath.length - 1])) {
 				buildtask = task;
 				break;
 			}

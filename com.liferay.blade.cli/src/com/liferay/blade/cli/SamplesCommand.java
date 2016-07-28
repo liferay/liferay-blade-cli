@@ -21,7 +21,7 @@ import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
 import java.io.File;
-
+import java.io.InputStream;
 import java.net.URL;
 
 import java.nio.file.Files;
@@ -94,8 +94,20 @@ public class SamplesCommand {
 				FileUtils.copyDirectory(file, dest);
 
 				updateBuildGradle(dest);
+
+				if (!Util.hasGradleWrapper(dest)) {
+					addGradleWrapper(dest);
+				}
 			}
 		}
+	}
+
+	private void addGradleWrapper(File dest) throws Exception {
+		InputStream in = SamplesCommand.class.getResourceAsStream("/wrapper.zip");
+
+		Util.copy(in, dest);
+
+		new File(dest, "gradlew").setExecutable(true);
 	}
 
 	private String deindent(String s) {

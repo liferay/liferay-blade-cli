@@ -9,10 +9,23 @@ task createDepsZip(type:Zip) {
 	include "*.jar"
 }
 
+task createWrapperZip(type:Zip) {
+	from "${projectDir}/../"
+	baseName = "wrapper"
+	destinationDir = new File("${projectDir}")
+	include "gradle/**"
+	include "gradlew*"
+}
+
 clean.doFirst {
-	delete "${projectDir}/deps.zip"
+	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
+}
+
+test {
+	systemProperty 'verifyBuilds', System.getProperty('verifyBuilds', 'false')
+	dependsOn createDepsZip, createWrapperZip
 }
 
 jar {
-	from createDepsZip
+	from createDepsZip, createWrapperZip
 }

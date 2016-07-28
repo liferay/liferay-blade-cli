@@ -16,7 +16,11 @@
 
 package com.liferay.blade.cli;
 
+import aQute.bnd.osgi.Jar;
+import aQute.bnd.osgi.Processor;
+import aQute.bnd.osgi.Resource;
 import aQute.lib.getopt.Options;
+import aQute.lib.io.IO;
 import aQute.lib.justif.Justif;
 
 import java.io.BufferedReader;
@@ -27,17 +31,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-
 import java.net.InetSocketAddress;
 import java.net.Socket;
-
 import java.nio.file.Files;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
@@ -82,6 +84,30 @@ public class Util {
 		}
 
 		return false;
+	}
+
+	public static void copy(InputStream in, File outputDir) throws Exception {
+		try (Jar jar = new Jar("dot", in)) {
+			for (Entry<String, Resource> e : jar.getResources().entrySet()) {
+				String path = e.getKey();
+
+				Resource r = e.getValue();
+
+				File dest = Processor.getFile(outputDir, path);
+
+				if ((dest.lastModified() < r.lastModified()) ||
+					(r.lastModified() <= 0)) {
+
+					File dp = dest.getParentFile();
+
+					if (!dp.exists() && !dp.mkdirs()) {
+						throw new Exception("Could not create directory " + dp);
+					}
+
+					IO.copy(r.openInputStream(), dest);
+				}
+			}
+		}
 	}
 
 	public static File findParentFile(
@@ -181,6 +207,23 @@ public class Util {
 			true);
 	}
 
+	public static boolean hasGradleWrapper(File dir) {
+		if (new File(dir, "gradlew").exists() &&
+			new File(dir, "gradlew.bat").exists()) {
+
+			return true;
+		}
+		else {
+			File parent = dir.getParentFile();
+
+			if (parent != null && parent.exists()) {
+				return hasGradleWrapper(parent);
+			}
+		}
+
+		return false;
+	}
+
 	public static boolean isWindows() {
 		return System.getProperty("os.name").toLowerCase().contains("windows");
 	}
@@ -248,6 +291,7 @@ public class Util {
 		final InputStream is, final PrintStream ps) {
 
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				try (InputStreamReader isr = new InputStreamReader(is);
 					 BufferedReader br = new BufferedReader(isr)) {

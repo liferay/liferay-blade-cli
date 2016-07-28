@@ -16,17 +16,14 @@
 
 package com.liferay.blade.cli.gradle;
 
-import aQute.bnd.osgi.Jar;
-import aQute.bnd.osgi.Processor;
-import aQute.bnd.osgi.Resource;
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.Util;
 import com.liferay.blade.gradle.model.CustomModel;
 
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.gradle.tooling.BuildLauncher;
@@ -111,32 +108,6 @@ public class GradleTooling {
 		return model.isLiferayModule();
 	}
 
-	private static void copy(InputStream in, File outputDir) throws Exception {
-		try (Jar jar = new Jar("dot", in)) {
-			for (Entry<String, Resource> e : jar.getResources().entrySet()) {
-				String path = e.getKey();
-
-				Resource r = e.getValue();
-
-				//path = path.replaceAll(type + "/" + template + "/", "");
-
-				File dest = Processor.getFile(outputDir, path);
-
-				if ((dest.lastModified() < r.lastModified()) ||
-					(r.lastModified() <= 0)) {
-
-					File dp = dest.getParentFile();
-
-					if (!dp.exists() && !dp.mkdirs()) {
-						throw new Exception("Could not create directory " + dp);
-					}
-
-					IO.copy(r.openInputStream(), dest);
-				}
-			}
-		}
-	}
-
 	private static <T> T getModel(
 			Class<T> modelClass, File cacheDir, File projectDir)
 		throws Exception {
@@ -160,7 +131,7 @@ public class GradleTooling {
 			InputStream in = GradleTooling.class.getResourceAsStream(
 				"/deps.zip");
 
-			copy(in, depsDir);
+			Util.copy(in, depsDir);
 
 			final String initScriptTemplate = IO.collect(
 				GradleTooling.class.getResourceAsStream("init.gradle"));
