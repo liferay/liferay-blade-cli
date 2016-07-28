@@ -116,6 +116,7 @@ Private-Package:\
 	aQute.bnd.deployer.repository.api,\
 	aQute.bnd.deployer.repository.providers,\
 	aQute.bnd.header,\
+	aQute.bnd.maven,\
 	aQute.bnd.osgi,\
 	aQute.bnd.osgi.resource;-split-package:=merge-first,\
 	aQute.bnd.service,\
@@ -200,7 +201,9 @@ Private-Package:\
 
 -dependson: com.liferay.blade.gradle
 
--includeresource: deps.zip
+-includeresource: \
+	deps.zip,\
+	wrapper.zip
 
 -sources: false
 

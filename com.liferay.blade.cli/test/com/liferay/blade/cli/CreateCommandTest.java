@@ -22,10 +22,10 @@ import static org.junit.Assert.assertTrue;
 
 import aQute.lib.io.IO;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
-import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.PrintStream;
 import java.io.Writer;
@@ -939,7 +939,7 @@ public class CreateCommandTest {
 		String gradleTemplatesName = gradleTemplatesZip.getName();
 
 		assertTrue(gradleTemplatesName, gradleTemplatesName.startsWith("com.liferay.gradle.templates"));
-		assertTrue(gradleTemplatesName, gradleTemplatesName.endsWith("1.0.9.jar"));
+		assertTrue(gradleTemplatesName, gradleTemplatesName.contains(CreateCommand.TEMPLATES_VERSION));
 	}
 
 	@Test
