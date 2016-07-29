@@ -53,7 +53,7 @@ public class CreateCommand {
 		"Creates a new Liferay module project from several available " +
 			"templates.";
 
-	public static final String TEMPLATES_VERSION = "1.0.9";
+	public static final String TEMPLATES_VERSION = "1.0.13";
 
 	private static File zipFile = null;
 
