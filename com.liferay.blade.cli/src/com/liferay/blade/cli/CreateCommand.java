@@ -53,6 +53,22 @@ public class CreateCommand {
 		"Creates a new Liferay module project from several available " +
 			"templates.";
 
+	public static final List<String> TEMPLATE_NAMES = Arrays.asList(
+		"activator",
+		"contenttargetingreport",
+		"contenttargetingrule",
+		"contenttargetingtrackingaction",
+		"controlmenuentry",
+		"fragment",
+		"mvcportlet",
+		"panelapp",
+		"portlet",
+		"portletprovider",
+		"service",
+		"servicebuilder",
+		"servicewrapper"
+	);
+
 	public static final String TEMPLATES_VERSION = "1.0.13";
 
 	private static File zipFile = null;
@@ -483,6 +499,10 @@ public class CreateCommand {
 		return templateNames;
 	}
 
+	private List<String> getTemplateNames() {
+		return TEMPLATE_NAMES;
+	}
+
 	private boolean isEmpty(String str) {
 		if (str == null) {
 			return true;
@@ -521,7 +541,7 @@ public class CreateCommand {
 	}
 
 	private void listTemplates() throws Exception {
-		List<String> templateNames = getTemplates();
+		List<String> templateNames = getTemplateNames();
 
 		for (String name : templateNames) {
 			_blade.out().println(name);

@@ -17,7 +17,6 @@
 package com.liferay.blade.cli;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import aQute.lib.io.IO;
@@ -942,7 +941,9 @@ public class CreateCommandTest {
 
 		String templateList = new String(output.toByteArray());
 
-		assertNotNull(templateList);
+		for (String templateName : CreateCommand.TEMPLATE_NAMES) {
+			assertTrue(templateList.contains(templateName));
+		}
 	}
 
 	@Test
