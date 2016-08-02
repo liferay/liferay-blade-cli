@@ -55,7 +55,7 @@ Private-Package: \
 	org.pegdown.*;-split-package:=merge-first
 
 Include-Resource: \
-	@com.liferay.portal.kernel-2.2.0.jar!/com/liferay/portal/kernel/util/StringBundler.class,\
-	@com.liferay.portal.kernel-2.2.0.jar!/com/liferay/portal/kernel/memory/SoftReferenceThreadLocal.class,\
-	@com.liferay.portal.kernel-2.2.0.jar!/com/liferay/portal/kernel/util/CentralizedThreadLocal.class,\
-	@com.liferay.portal.kernel-2.2.0.jar!/com/liferay/portal/kernel/util/GetterUtil.class
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/StringBundler.class,\
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/memory/SoftReferenceThreadLocal.class,\
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/CentralizedThreadLocal.class,\
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/GetterUtil.class
