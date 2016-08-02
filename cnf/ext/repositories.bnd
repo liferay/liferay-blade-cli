@@ -40,4 +40,9 @@
     releaseUrl=https://repo.gradle.org/gradle/libs-releases/; \
     name=gradlelibs
 
+-plugin.liferayrepo = \
+  aQute.bnd.repository.maven.provider.MavenBndRepository; \
+  releaseUrl=https://repository.liferay.com/nexus/content/groups/public/; \
+  name=liferayrepo
+
 -releaserepo: 					Release

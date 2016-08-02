@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.title=Asset Publisher Properties Removed",
 		"problem.summary=Removed the asset.publisher.asset.entry.query.processors Property",
 		"problem.tickets=LPS-52966",
-		"problem.section=#removed-the-asset",
+		"problem.section=#removed-the-asset-publisher-asset-entry-query-processors-property",
 	},
 	service = FileMigrator.class
 )

@@ -31,7 +31,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java,jsp,jspf",
 		"problem.title=DLFileEntryTypeLocalServiceUtil Api Changes",
-		"problem.section=#removed-the-dlfileentrytypes",
+		"problem.section=#removed-the-dlfileentrytypesddmstructures-mapping-table",
 		"problem.summary=Removed the DLFileEntryTypes_DDMStructures Mapping Table",
 		"problem.tickets=LPS-56660",
 	},

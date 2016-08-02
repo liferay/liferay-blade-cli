@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java",
 		"problem.title=Replaced the ReservedUserEmailAddressException with UserEmailAddressException",
-		"problem.section=#replaced-the-reserveduseremailaddressexception-with-useremailaddressexception-inner-classes-in-user-services",
+		"problem.section=#replaced-the-reserveduseremailaddressexception-with-useremailaddressexcepti",
 		"problem.summary=Replaced the ReservedUserEmailAddressException with UserEmailAddressException Inner Classes in User Services",
 		"problem.tickets=LPS-53279",
 	},

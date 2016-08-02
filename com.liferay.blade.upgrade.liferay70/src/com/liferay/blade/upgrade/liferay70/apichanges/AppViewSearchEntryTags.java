@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=jsp,jspf",
 		"problem.title=Removed mbMessages and fileEntryTuples Attributes from app-view-search-entry Tag",
-		"problem.section=#removed-mbmessages-and-fileentrytuples-attributes-from-app-view-search-entry-tag",
+		"problem.section=#removed-mbmessages-and-fileentrytuples-attributes-from-app-view-search-entr",
 		"problem.summary=Removed mbMessages and fileEntryTuples Attributes from app-view-search-entry Tag",
 		"problem.tickets=LPS-55886",
 	},

@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java,jsp,jspf",
 		"problem.title=FlagsEntryService.addEntry Method Throws PortalException",
-		"problem.section=#flagsentryservice",
+		"problem.section=#flagsentryservice-addentry-method-throws-portalexception",
 		"problem.summary=FlagsEntryService.addEntry Method Throws PortalException",
 		"problem.tickets=LPS-63109",
 	},
