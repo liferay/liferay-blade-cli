@@ -32,62 +32,6 @@
   </resource>
   <resource>
     <capability namespace="osgi.identity">
-      <attribute name="osgi.identity" value="com.liferay.markdown.converter"/>
-      <attribute name="type" value="osgi.bundle"/>
-      <attribute name="version" type="Version" value="1.0.2"/>
-    </capability>
-    <capability namespace="osgi.content">
-      <attribute name="osgi.content" value="c15307d04dda6811c45bee178115379c8de0e2dd544b461423184faaed4fcbff"/>
-      <attribute name="url" value="com.liferay.markdown.converter/com.liferay.markdown.converter-1.0.2.jar"/>
-      <attribute name="size" type="Long" value="11415"/>
-      <attribute name="mime" value="application/vnd.osgi.bundle"/>
-    </capability>
-    <capability namespace="osgi.wiring.bundle">
-      <attribute name="osgi.wiring.bundle" value="com.liferay.markdown.converter"/>
-      <attribute name="bundle-version" type="Version" value="1.0.2"/>
-    </capability>
-    <capability namespace="osgi.wiring.host">
-      <attribute name="osgi.wiring.host" value="com.liferay.markdown.converter"/>
-      <attribute name="bundle-version" type="Version" value="1.0.2"/>
-    </capability>
-    <capability namespace="osgi.wiring.package">
-      <attribute name="osgi.wiring.package" value="com.liferay.markdown.converter"/>
-      <attribute name="version" type="Version" value="1.0.2"/>
-      <attribute name="bundle-symbolic-name" value="com.liferay.markdown.converter"/>
-      <attribute name="bundle-version" type="Version" value="1.0.2"/>
-    </capability>
-    <capability namespace="osgi.wiring.package">
-      <attribute name="osgi.wiring.package" value="com.liferay.markdown.converter.factory"/>
-      <attribute name="version" type="Version" value="1.0.2"/>
-      <attribute name="bundle-symbolic-name" value="com.liferay.markdown.converter"/>
-      <attribute name="bundle-version" type="Version" value="1.0.2"/>
-      <directive name="uses" value="com.liferay.markdown.converter"/>
-    </capability>
-    <capability namespace="osgi.wiring.package">
-      <attribute name="osgi.wiring.package" value="org.pegdown"/>
-      <attribute name="version" type="Version" value="1.0.2"/>
-      <attribute name="bundle-symbolic-name" value="com.liferay.markdown.converter"/>
-      <attribute name="bundle-version" type="Version" value="1.0.2"/>
-      <directive name="uses" value="org.parboiled"/>
-    </capability>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(osgi.wiring.package=com.liferay.markdown.converter)"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(osgi.wiring.package=org.parboiled)"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(osgi.wiring.package=org.parboiled.common)"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(osgi.wiring.package=org.pegdown.ast)"/>
-    </requirement>
-    <requirement namespace="osgi.ee">
-      <directive name="filter" value="(&amp;(osgi.ee=JavaSE)(version=1.6))"/>
-    </requirement>
-  </resource>
-  <resource>
-    <capability namespace="osgi.identity">
       <attribute name="osgi.identity" value="dnl.utils.jtext"/>
       <attribute name="type" value="osgi.bundle"/>
       <attribute name="version" type="Version" value="0.3.3"/>

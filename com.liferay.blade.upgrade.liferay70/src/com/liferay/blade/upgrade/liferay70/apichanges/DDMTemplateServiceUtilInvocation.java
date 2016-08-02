@@ -31,7 +31,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java,jsp,jspf",
 		"problem.title=Added Required Parameter resourceClassNameId for DDM Template Search Operations",
-		"problem.section=#added-required-parameter-resourceclassnameid-for-ddm-template-search-operations",
+		"problem.section=#added-required-parameter-resourceclassnameid-for-ddm-template-search-operat",
 		"problem.summary=Added Required Parameter resourceClassNameId for DDM Template Search Operations",
 		"problem.tickets=LPS-52990",
 	},

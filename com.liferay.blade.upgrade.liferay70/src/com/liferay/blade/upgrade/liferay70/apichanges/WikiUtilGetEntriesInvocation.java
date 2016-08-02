@@ -31,7 +31,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java",
 		"problem.title=Removed WikiUtil.getEntries Method",
-		"problem.section=#removed-wikiutil",
+		"problem.section=#removed-wikiutil-getentries-method",
 		"problem.summary=Removed WikiUtil.getEntries Method",
 		"problem.tickets=LPS-56242",
 	},

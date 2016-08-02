@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=Replaced Method getPermissionQuery with getPermissionFilter in SearchPermissionChecker",
 		"problem.tickets=LPS-56064",
 		"problem.title=Replaced Method getPermissionQuery",
-		"problem.section=#replaced-method-getpermissionquery-with-getpermissionfilter-in-searchpermissionchecker-and-getfacetquery-with-getfacetbooleanfilter-in-indexer"
+		"problem.section=#replaced-method-getpermissionquery-with-getpermissionfilter-in-searchpermis"
 	},
 	service = FileMigrator.class
 )

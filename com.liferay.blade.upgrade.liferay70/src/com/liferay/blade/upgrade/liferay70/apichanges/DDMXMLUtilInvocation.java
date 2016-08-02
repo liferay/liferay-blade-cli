@@ -30,8 +30,8 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java,jsp,jspf",
 		"problem.title=Removed the com.liferay.dynamic.data.mapping.util.DDMXMLUtil Class",
-		"problem.section=#removed-the-com",
-		"problem.summary=The class com.liferay.dynamic.data.mapping.util.DDMXMLUtil has been removed with no replacement.",
+		"problem.section=#removed-the-com-liferay-dynamic-data-mapping-util-ddmxmlutil-class",
+		"problem.summary=The class com.liferay.dynamic.data.mapping.util.DDMXMLUtil has been removed with no replacement",
 		"problem.tickets=LPS-63928",
 	},
 	service = FileMigrator.class

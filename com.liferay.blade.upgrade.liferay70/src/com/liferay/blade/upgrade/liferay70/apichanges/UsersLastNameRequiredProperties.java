@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 				+ "on a per-language basis via the language.properties files. It has also been removed as "
 				+ "an option from the Portal Settings section of the Control Panel.",
 		"problem.tickets=LPS-54956",
-		"problem.section=#removed-users",
+		"problem.section=#removed-userslastnamerequired-from-portal-properties-in-favor-of-language-p",
 	},
 	service = FileMigrator.class
 )

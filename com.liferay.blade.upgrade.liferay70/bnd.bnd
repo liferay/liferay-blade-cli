@@ -2,7 +2,8 @@
 	aQute.libg,\
 	com.liferay.blade.api,\
 	com.liferay.blade.eclipse.provider,\
-	com.liferay.markdown.converter,\
+	com.liferay.knowledge.base.markdown.converter,\
+	com.liferay.portal.kernel,\
 	org.apache.felix.gogo.runtime,\
 	org.eclipse.jdt.core,\
 	org.eclipse.core.runtime,\
@@ -47,9 +48,14 @@ Private-Package: \
 	aQute.lib.io;-split-package:=merge-first,\
 	aQute.libg.glob;-split-package:=merge-first,\
 	com.liferay.blade.upgrade.liferay70.*,\
-	com.liferay.markdown.converter.*,\
+	com.liferay.knowledge.base.markdown.converter.*,\
 	org.jsoup.*,\
 	org.objectweb.asm.*,\
 	org.parboiled.*;-split-package:=merge-first,\
 	org.pegdown.*;-split-package:=merge-first
 
+Include-Resource: \
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/StringBundler.class,\
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/memory/SoftReferenceThreadLocal.class,\
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/CentralizedThreadLocal.class,\
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/GetterUtil.class

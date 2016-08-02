@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=jsp,jspf",
 		"problem.title=Removed the liferay-ui:asset-categories-navigation Tag and Replaced with liferay-asset:asset-categories-navigation",
-		"problem.section=#removed-the-liferay-uiasset-categories-navigation-tag-and-replaced-with-liferay-assetasset-categories-navigation",
+		"problem.section=#removed-the-liferay-uiasset-categories-navigation-tag-and-replaced-with-lif",
 		"problem.summary=Removed the liferay-ui:asset-categories-navigation Tag and Replaced with liferay-asset:asset-categories-navigation",
 		"problem.tickets=LPS-60753",
 	},

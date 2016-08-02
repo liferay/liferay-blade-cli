@@ -29,10 +29,10 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	property = {
 		"file.extensions=java",
-		"problem.summary=Changed the Indexer API to Include the PortletRequest and PortletResponse Parameters",
+		"problem.summary=Changed the AssetRenderer and Indexer APIs to Include the PortletRequest and PortletResponse Parameters",
 		"problem.tickets=LPS-44639,LPS-44894",
 		"problem.title=Indexer API Changes",
-		"problem.section=#changed-the-assetrenderer-and-indexer-apis-to-include-the-portletrequest-and-portletresponse-parameters"
+		"problem.section=#changed-the-assetrenderer-and-indexer-apis-to-include-the-portletrequest-an"
 	},
 	service = FileMigrator.class
 )

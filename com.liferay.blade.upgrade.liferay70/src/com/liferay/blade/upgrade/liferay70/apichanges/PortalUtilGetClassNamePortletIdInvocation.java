@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=java,jsp,jspf",
 		"problem.title=Removed the getClassNamePortletId(String) Method from PortalUtil Class",
-		"problem.section=#removed-the-getclassnameportletid",
+		"problem.section=#removed-the-getclassnameportletidstring-method-from-portalutil-class",
 		"problem.summary=Removed the getClassNamePortletId(String) Method from PortalUtil Class",
 		"problem.tickets=LPS-50604",
 	},

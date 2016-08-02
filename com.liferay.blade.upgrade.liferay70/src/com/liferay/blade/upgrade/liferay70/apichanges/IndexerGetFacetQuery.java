@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=Replaced Method getFacetQuery with getFacetBooleanFilter in Indexer",
 		"problem.tickets=LPS-56064",
 		"problem.title=Indexer API Changes",
-		"problem.section=#replaced-method-getpermissionquery-with-getpermissionfilter-in-searchpermissionchecker-and-getfacetquery-with-getfacetbooleanfilter-in-indexer"
+		"problem.section=#replaced-method-getpermissionquery-with-getpermissionfilter-in-searchpermis"
 	},
 	service = FileMigrator.class
 )
