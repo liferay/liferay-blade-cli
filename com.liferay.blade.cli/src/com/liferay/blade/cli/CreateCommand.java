@@ -55,6 +55,7 @@ public class CreateCommand {
 
 	public static final List<String> TEMPLATE_NAMES = Arrays.asList(
 		"activator",
+		"api",
 		"contenttargetingreport",
 		"contenttargetingrule",
 		"contenttargetingtrackingaction",
