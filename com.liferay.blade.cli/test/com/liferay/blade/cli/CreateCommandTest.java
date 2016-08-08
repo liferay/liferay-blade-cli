@@ -522,6 +522,64 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreatePortletConfigurationIcon() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "portletconfigurationicon", "-p", "blade.test", "icontest"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/icontest";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		File componentFile = checkFileExists(
+			projectPath + "/src/main/java/blade/test/portlet/configuration/icon/" +
+				"IcontestPortletConfigurationIcon.java");
+
+		contains(
+			componentFile,
+			".*^public class IcontestPortletConfigurationIcon.*extends BasePortletConfigurationIcon.*$");
+
+		File gradleBuildFile = checkFileExists(projectPath + "/build.gradle");
+
+		contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+
+		verifyBuild(projectPath, projectPath, "icontest-1.0.0.jar");
+	}
+
+	@Test
+	public void testCreatePortletToolbarContributor() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "portlettoolbarcontributor", "-p", "blade.test",  "toolbartest"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/toolbartest";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		File componentFile = checkFileExists(
+			projectPath + "/src/main/java/blade/test/portlet/toolbar/contributor/" +
+				"ToolbartestPortletToolbarContributor.java");
+
+		contains(
+			componentFile,
+			".*^public class ToolbartestPortletToolbarContributor.*implements PortletToolbarContributor.*$");
+
+		File gradleBuildFile = checkFileExists(projectPath + "/build.gradle");
+
+		contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+
+		verifyBuild(projectPath, projectPath, "toolbartest-1.0.0.jar");
+	}
+
+	@Test
 	public void testCreateProjectAllDefaults() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "hello-world-portlet"
@@ -597,6 +655,64 @@ public class CreateCommandTest {
 			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 			GradleRunnerUtil.verifyBuildOutput(projectPath, "hello.world.refresh-1.0.0.jar");
 		}
+	}
+
+	@Test
+	public void testCreateSimulationPanelEntry() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "simulationpanelentry", "-p", "test.simulator", "simulator"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/simulator";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		File componentFile = checkFileExists(
+			projectPath + "/src/main/java/test/simulator/application/list/" +
+				"SimulatorSimulationPanelApp.java");
+
+		contains(
+			componentFile,
+			".*^public class SimulatorSimulationPanelApp.*extends BaseJSPPanelApp.*$");
+
+		File gradleBuildFile = checkFileExists(projectPath + "/build.gradle");
+
+		contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+
+		verifyBuild(projectPath, projectPath, "simulator-1.0.0.jar");
+	}
+
+	@Test
+	public void testCreateTemplateContextContributor() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "templatecontextcontributor", "blade-test"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/blade-test";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		File componentFile = checkFileExists(
+			projectPath + "/src/main/java/blade/test/theme/contributor/" +
+				"BladeTestTemplateContextContributor.java");
+
+		contains(
+			componentFile,
+			".*^public class BladeTestTemplateContextContributor.*implements TemplateContextContributor.*$");
+
+		File gradleBuildFile = checkFileExists(projectPath + "/build.gradle");
+
+		contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+
+		verifyBuild(projectPath, projectPath, "blade.test-1.0.0.jar");
 	}
 
 	@Test
@@ -913,7 +1029,6 @@ public class CreateCommandTest {
 			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 			GradleRunnerUtil.verifyBuildOutput(projectPath, "foo.refresh-1.0.0.jar");
 		}
-
 	}
 
 	@Test
@@ -1013,5 +1128,13 @@ public class CreateCommandTest {
 		new bladenofail().run(args);
 
 		assertTrue(Util.isWorkspace(workspace));
+	}
+
+	private void verifyBuild(String runnerPath, String projectPath, String outputFileName) {
+		if (SysProps.verifyBuilds) {
+			BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(runnerPath, "build");
+			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+			GradleRunnerUtil.verifyBuildOutput(projectPath, outputFileName);
+		}
 	}
 }
