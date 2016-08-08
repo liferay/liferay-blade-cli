@@ -51,8 +51,7 @@ public class SearchResult{
 		if (autoCorrectContext == null) {
 			if (other.autoCorrectContext != null)
 				return false;
-		} else if (!autoCorrectContext.equals(other.autoCorrectContext))
-			return false;
+		}
 		if (endLine != other.endLine)
 			return false;
 		if (endOffset != other.endOffset)

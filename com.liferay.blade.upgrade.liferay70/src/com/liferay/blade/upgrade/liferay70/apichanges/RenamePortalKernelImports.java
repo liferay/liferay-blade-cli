@@ -24,9 +24,7 @@ import com.liferay.blade.upgrade.liferay70.ImportStatementMigrator;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -224,11 +222,10 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 	}
 
 	private List<SearchResult> removeDuplicate(List<SearchResult> searchResults) {
-		final Set<SearchResult> sr = new HashSet<>();
 		final List<SearchResult> newList = new ArrayList<>();
 
 		for (SearchResult searchResult : searchResults) {
-			if (sr.add(searchResult)) {
+			if (!newList.contains(searchResult)) {
 				newList.add(searchResult);
 			}
 		}
