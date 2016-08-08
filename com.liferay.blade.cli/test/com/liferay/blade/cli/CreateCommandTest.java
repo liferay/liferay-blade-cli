@@ -16,9 +16,11 @@
 
 package com.liferay.blade.cli;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import aQute.bnd.osgi.Jar;
 import aQute.lib.io.IO;
 
 import java.io.BufferedReader;
@@ -74,6 +76,43 @@ public class CreateCommandTest {
 			BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
 			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 			GradleRunnerUtil.verifyBuildOutput(projectPath, "bar.activator-1.0.0.jar");
+		}
+	}
+
+	@Test
+	public void testCreateApi() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "api", "foo"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/foo";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(projectPath + "/bnd.bnd");
+
+		contains(
+			checkFileExists(
+				projectPath + "/src/main/java/foo/api/Foo.java"),
+				".*^public interface Foo.*");
+
+		contains(
+			checkFileExists(
+				projectPath + "/src/main/java/foo/api/packageinfo"),
+				"version 1.0.0");
+
+		if (SysProps.verifyBuilds) {
+			BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
+			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+			GradleRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
+			try (Jar jar = new Jar(new File(projectPath + "/build/libs/foo-1.0.0.jar"))) {
+				assertEquals(
+					"foo.api;version=\"1.0.0\"",
+					jar.getManifest().getMainAttributes().getValue("Export-Package"));
+			}
 		}
 	}
 
