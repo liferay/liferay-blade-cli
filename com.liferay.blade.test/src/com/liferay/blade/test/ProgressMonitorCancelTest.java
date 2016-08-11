@@ -61,7 +61,7 @@ public class ProgressMonitorCancelTest {
 
 		t.join();
 
-		final int expectedSize = 284;
+		final int expectedSize = 1324;
 		final int size = result.size();
 
 		assertTrue(size < expectedSize);

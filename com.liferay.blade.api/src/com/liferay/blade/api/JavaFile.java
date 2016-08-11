@@ -29,6 +29,8 @@ public interface JavaFile extends SourceFile {
 
 	SearchResult findImport(String importName);
 
+	List<SearchResult> findImports(String importName, String[] imports);
+
 	List<SearchResult> findMethodDeclaration(String name, String[] params);
 
 	List<SearchResult> findMethodInvocations(String typeHint, String expressionValue, String methodName, String[] methodParamTypes);

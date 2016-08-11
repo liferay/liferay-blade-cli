@@ -18,7 +18,7 @@ package com.liferay.blade.api;
 
 import java.io.File;
 
-public class SearchResult {
+public class SearchResult{
 
 	public final int endLine;
 	public final int endOffset;
@@ -37,6 +37,51 @@ public class SearchResult {
 		this.endOffset = endOffset;
 		this.startLine = startLine;
 		this.endLine = endLine;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SearchResult other = (SearchResult) obj;
+		if (autoCorrectContext == null) {
+			if (other.autoCorrectContext != null)
+				return false;
+		}
+		if (endLine != other.endLine)
+			return false;
+		if (endOffset != other.endOffset)
+			return false;
+		if (file == null) {
+			if (other.file != null)
+				return false;
+		} else if (!file.equals(other.file))
+			return false;
+		if (fullMatch != other.fullMatch)
+			return false;
+		if (startLine != other.startLine)
+			return false;
+		if (startOffset != other.startOffset)
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((autoCorrectContext == null) ? 0 : autoCorrectContext.hashCode());
+		result = prime * result + endLine;
+		result = prime * result + endOffset;
+		result = prime * result + ((file == null) ? 0 : file.hashCode());
+		result = prime * result + (fullMatch ? 1231 : 1237);
+		result = prime * result + startLine;
+		result = prime * result + startOffset;
+		return result;
 	}
 
 }
