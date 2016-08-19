@@ -45,13 +45,11 @@ import org.apache.commons.io.FileUtils;
  */
 public class InitCommand {
 
-	public final String PLUGINS_SDK_7_URL =
-		"http://downloads.sourceforge.net/project/lportal/Liferay%20Portal/"
-		+ "7.0.1%20GA2/"
-		+ "com.liferay.portal.plugins.sdk-7.0-ga2-20160610113014153.zip";
-
-	public final String PLUGINS_SDK_7_ZIP = "com.liferay.portal.plugins.sdk-7.0-ga2-20160610113014153.zip";
-	public final String PLUGINS_SDK_7_NAME = "com.liferay.portal.plugins.sdk-7.0-ga2";
+	private final static String _PLUGINS_SDK_7_ZIP = "com.liferay.portal.plugins.sdk-7.0-ga2-20160610113014153.zip";
+	private final static String _PLUGINS_SDK_7_NAME = "com.liferay.portal.plugins.sdk-7.0-ga2";
+	private final static String _PLUGINS_SDK_7_URL =
+		"http://downloads.sourceforge.net/project/lportal/Liferay%20Portal/7.0.2%20GA3/" +
+			_PLUGINS_SDK_7_ZIP;
 
 	public static final String DESCRIPTION =
 		"Initializes a new Liferay workspace";
@@ -80,27 +78,19 @@ public class InitCommand {
 
 		if (destDir.exists()) {
 			if (isPluginsSDK(destDir)) {
-				if (isPluginsSDK70(destDir)) {
-					trace(
-						"Found plugins-sdk, moving contents to new subdirectory " +
-							"and initing workspace.");
-
-					moveContentsToDir(
-						destDir, new File(destDir, "plugins-sdk"), "plugins-sdk");
-				}
-				else {
+				if (!isPluginsSDK70(destDir)) {
 					if (_options.upgrade()) {
 						trace(
 							"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory " +
 								"and initing workspace.");
 
-						File sdk7zip = new File (_blade.getCacheDir(), PLUGINS_SDK_7_ZIP);
+						File sdk7zip = new File (_blade.getCacheDir(), _PLUGINS_SDK_7_ZIP);
 
 						if (!sdk7zip.exists()) {
-							FileUtils.copyURLToFile(new URL(PLUGINS_SDK_7_URL), sdk7zip);
+							FileUtils.copyURLToFile(new URL(_PLUGINS_SDK_7_URL), sdk7zip);
 						}
 
-						File sdk7temp = new File(_blade.getCacheDir(), PLUGINS_SDK_7_NAME);
+						File sdk7temp = new File(_blade.getCacheDir(), _PLUGINS_SDK_7_NAME);
 
 						if (!sdk7temp.exists()) {
 							try {
@@ -110,21 +100,26 @@ public class InitCommand {
 								addError("Opening zip file error, "
 									+ "please delete zip file: " +
 										sdk7zip.getPath());
+								return;
 							}
 						}
 
 						File sdk7 = new File(sdk7temp, "com.liferay.portal.plugins.sdk-7.0");
 
 						IO.copy(sdk7, destDir);
-
-						moveContentsToDir(
-							destDir, new File(destDir, "plugins-sdk"), "plugins-sdk");
 					}
 					else {
 						addError("Unable to run blade init in plugins sdk 6.2, please add -u (--upgrade)"
 							+ " if you want to upgrade to 7.0");
+						return;
 					}
 				}
+
+				trace("Found plugins-sdk, moving contents to new subdirectory " +
+					"and initing workspace.");
+
+				moveContentsToDir(
+					destDir, new File(destDir, "plugins-sdk"), "plugins-sdk");
 			}
 			else if (destDir.list().length > 0) {
 				if (_options.force()) {

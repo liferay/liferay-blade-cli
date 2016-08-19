@@ -107,7 +107,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitInPluginsSDKDirectory() throws Exception {
-		String[] args = {"-b", workspaceDir.getPath(), "init"};
+		String[] args = {"-b", workspaceDir.getPath(), "init", "-u"};
 
 		makeSDK(workspaceDir);
 
