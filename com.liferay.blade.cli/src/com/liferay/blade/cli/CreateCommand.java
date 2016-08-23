@@ -73,7 +73,7 @@ public class CreateCommand {
 		"templatecontextcontributor"
 	);
 
-	public static final String TEMPLATES_VERSION = "1.0.17";
+	public static final String TEMPLATES_VERSION = "1.0.18";
 
 	private static File zipFile = null;
 
