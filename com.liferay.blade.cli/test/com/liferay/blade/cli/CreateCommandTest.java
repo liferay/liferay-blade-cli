@@ -327,7 +327,7 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(projectPath + "/guestbook-service/build.gradle"),
-				".*compile project\\(\":guestbook-api\"\\).*");
+				".*compileOnly project\\(\":guestbook-api\"\\).*");
 
 		if (SysProps.verifyBuilds) {
 			BuildTask buildService = GradleRunnerUtil.executeGradleRunner(projectPath, "buildService");
@@ -823,7 +823,7 @@ public class CreateCommandTest {
 		contains(
 			checkFileExists(
 				projectPath + "/sample/sample-service/build.gradle"),
-				".*compile project\\(\":modules:nested:path:sample:sample-api\"\\).*");
+				".*compileOnly project\\(\":modules:nested:path:sample:sample-api\"\\).*");
 
 		if (SysProps.verifyBuilds) {
 			BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
@@ -903,7 +903,7 @@ public class CreateCommandTest {
 		contains(
 			checkFileExists(
 				projectPath + "/sample/sample-service/build.gradle"),
-				".*compile project\\(\":modules:sample:sample-api\"\\).*");
+				".*compileOnly project\\(\":modules:sample:sample-api\"\\).*");
 
 		if (SysProps.verifyBuilds) {
 			BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
