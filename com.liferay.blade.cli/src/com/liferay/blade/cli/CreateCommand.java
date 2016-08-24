@@ -63,13 +63,17 @@ public class CreateCommand {
 		"mvcportlet",
 		"panelapp",
 		"portlet",
+		"portletconfigurationicon",
 		"portletprovider",
+		"portlettoolbarcontributor",
 		"service",
 		"servicebuilder",
-		"servicewrapper"
+		"servicewrapper",
+		"simulationpanelentry",
+		"templatecontextcontributor"
 	);
 
-	public static final String TEMPLATES_VERSION = "1.0.13";
+	public static final String TEMPLATES_VERSION = "1.0.18";
 
 	private static File zipFile = null;
 
