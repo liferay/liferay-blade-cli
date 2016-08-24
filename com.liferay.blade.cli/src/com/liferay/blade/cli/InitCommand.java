@@ -45,8 +45,8 @@ import org.apache.commons.io.FileUtils;
  */
 public class InitCommand {
 
-	private final static String _PLUGINS_SDK_7_ZIP = "com.liferay.portal.plugins.sdk-7.0-ga2-20160610113014153.zip";
-	private final static String _PLUGINS_SDK_7_NAME = "com.liferay.portal.plugins.sdk-7.0-ga2";
+	private final static String _PLUGINS_SDK_7_ZIP = "com.liferay.portal.plugins.sdk-7.0-ga3-20160804222206210.zip";
+	private final static String _PLUGINS_SDK_7_NAME = "com.liferay.portal.plugins.sdk-7.0-ga3";
 	private final static String _PLUGINS_SDK_7_URL =
 		"http://downloads.sourceforge.net/project/lportal/Liferay%20Portal/7.0.2%20GA3/" +
 			_PLUGINS_SDK_7_ZIP;
