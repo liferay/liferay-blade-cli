@@ -100,7 +100,7 @@ public class CreateCommandTest {
 
 		contains(
 			checkFileExists(
-				projectPath + "/src/main/java/foo/api/packageinfo"),
+				projectPath + "/src/main/resources/foo/api/packageinfo"),
 				"version 1.0.0");
 
 		if (SysProps.verifyBuilds) {
