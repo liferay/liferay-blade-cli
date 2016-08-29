@@ -2,9 +2,9 @@
 
 -plugin.wrapper: \
 	aQute.bnd.deployer.repository.wrapper.Plugin; \
-            location            =	"${build}/cache/wrapper"; \
-            reindex				=	true; \
-            augments			=   WORKSPACE
+		location	=	"${build}/cache/wrapper"; \
+		reindex		=	true; \
+		augments	=   WORKSPACE
 
 -plugin.localrepo= \
 	aQute.bnd.deployer.repository.LocalIndexedRepo; \
@@ -19,30 +19,31 @@
 		pretty=true
 
 -plugin.eclipserepo = \
-	aQute.bnd.deployer.repository.FixedIndexedRepo; \
+	aQute.bnd.repository.osgi.OSGiRepository; \
 		name=Mars; \
 		locations=https://dl.bintray.com/gamerson/mars-r5/index.xml.gz
 
 -plugin.bndrepo = \
-	aQute.bnd.deployer.repository.FixedIndexedRepo; \
+	aQute.bnd.repository.osgi.OSGiRepository; \
 		name=bnd.master; \
-		locations=${bnd_repourl}/index.xml.gz
+		locations=${bnd_repourl}/index.xml.gz; \
+		max_stale = 1800
 
 -plugin.jpmrepo = \
 	aQute.bnd.jpm.Repository; \
-	    includeStage		=       true; \
-	    name				=       JPM; \
-	    location			=       ~/.bnd/shacache; \
-	    index				=       ${build}/jpm4j.json
+		includeStage		=	true; \
+		name				=	JPM; \
+		location			=	~/.bnd/shacache; \
+		index				=	${build}/jpm4j.json
 
 -plugin.gradlelibs = \
-  aQute.bnd.repository.maven.provider.MavenBndRepository; \
-    releaseUrl=https://repo.gradle.org/gradle/libs-releases/; \
-    name=gradlelibs
+	aQute.bnd.repository.maven.provider.MavenBndRepository; \
+		releaseUrl=https://repo.gradle.org/gradle/libs-releases; \
+		name=gradlelibs
 
 -plugin.liferayrepo = \
-  aQute.bnd.repository.maven.provider.MavenBndRepository; \
-  releaseUrl=https://repository.liferay.com/nexus/content/groups/public/; \
-  name=liferayrepo
+	aQute.bnd.repository.maven.provider.MavenBndRepository; \
+		releaseUrl=https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public; \
+		name=liferayrepo
 
--releaserepo: 					Release
+-releaserepo:	Release
