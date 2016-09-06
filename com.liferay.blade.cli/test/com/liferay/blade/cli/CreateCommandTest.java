@@ -1229,6 +1229,14 @@ public class CreateCommandTest {
 
 		assertTrue(Util.isWorkspace(workspace));
 	}
+	
+	private void verifyBuild(String runnerPath, String projectPath, String outputFileName) {
+		if (SysProps.verifyBuilds) {
+			BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(runnerPath, "build");
+			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+			GradleRunnerUtil.verifyBuildOutput(projectPath, outputFileName);
+		}
+	}
 
 	private void verifyImportPackage(File serviceJar) throws Exception {
 		Jar jar = new Jar(serviceJar);
