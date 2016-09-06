@@ -51,6 +51,11 @@ public class InitCommand {
 		"http://downloads.sourceforge.net/project/lportal/Liferay%20Portal/7.0.2%20GA3/" +
 			_PLUGINS_SDK_7_ZIP;
 
+	private final static String[] _SDK_6_GA5_FILES = {
+		"app-servers.gradle", "build.gradle", "build-plugins.gradle",
+		"build-themes.gradle", "sdk.gradle", "settings.gradle",
+		"util.gradle", "versions.gradle" };
+
 	public static final String DESCRIPTION =
 		"Initializes a new Liferay workspace";
 
@@ -105,6 +110,14 @@ public class InitCommand {
 						}
 
 						File sdk7 = new File(sdk7temp, "com.liferay.portal.plugins.sdk-7.0");
+
+						for (String fileName : _SDK_6_GA5_FILES) {
+							File file = new File(destDir, fileName);
+
+							if (file.exists()) {
+								file.delete();
+							}
+						}
 
 						IO.copy(sdk7, destDir);
 					}
