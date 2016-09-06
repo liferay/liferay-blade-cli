@@ -59,7 +59,7 @@ public class InitCommand {
 	public static final String DESCRIPTION =
 		"Initializes a new Liferay workspace";
 
-	public static final String WORKSPACE_VERSION = "1.0.37";
+	public static final String WORKSPACE_VERSION = "1.0.40";
 
 	public InitCommand(blade blade, InitOptions options) throws Exception {
 		_blade = blade;
