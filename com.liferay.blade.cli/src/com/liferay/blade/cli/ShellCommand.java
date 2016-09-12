@@ -40,10 +40,10 @@ public class ShellCommand {
 	}
 
 	public void execute() throws Exception {
-		if (!Util.canConnect("localhost", _port)) {
+		if (!Util.canConnect(_host , _port)) {
 			addError(
 				"sh",
-				"Unable to connect to remote gogo shell on port " + _port);
+				"Unable to connect to gogo shell on " + _host + ":" + _port);
 
 			return;
 		}
