@@ -49,8 +49,8 @@ public class DeployCommand {
 	public DeployCommand(blade blade, DeployOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
-		_host = options.host() != null ? options.host() : "localhost";
-		_port = options.port() != 0 ? options.port() : 11311;
+		_host = /*options.host() != null ? options.host() : */"localhost";
+		_port = /*options.port() != 0 ? options.port() : */11311;
 	}
 
 	public void deploy(GradleExec gradle, Set<File> outputFiles)
@@ -132,11 +132,11 @@ public class DeployCommand {
 	@Description(DESCRIPTION)
 	public interface DeployOptions extends Options {
 
-		@Description("The host to use to connect to gogo shell")
-		public String host();
+		//@Description("The host to use to connect to gogo shell")
+		//public String host();
 
-		@Description("The port to use to connect to gogo shell")
-		public int port();
+		//@Description("The port to use to connect to gogo shell")
+		//public int port();
 
 		@Description(
 			"Watches the deployed file for changes and will automatically " +
