@@ -64,14 +64,15 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 	private File _file;
 
 	private final FileHelper _fileHelper = new FileHelper();
-	
+
 	public JavaFileJDT() {
 	}
 
 	public JavaFileJDT(File file) {
 		setFile(file);
 	}
-	
+
+	@Override
 	public void setFile(File file) {
 		_file = file;
 
@@ -82,13 +83,14 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		}
 	}
 
-	protected SearchResult createSearchResult(int startOffset, int endOffset,
+	protected SearchResult createSearchResult(String searchContext, int startOffset, int endOffset,
 			int startLine, int endLine, boolean fullMatch) {
 
-		return new SearchResult(_file, startOffset, endOffset, startLine,
+		return new SearchResult(_file, searchContext, startOffset, endOffset, startLine,
 				endLine, fullMatch);
 	}
 
+	@Override
 	public List<SearchResult> findCatchExceptions(final String[] exceptions) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
@@ -107,7 +109,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 						int endLine = _ast.getLineNumber(node.getException().getStartPosition() + node.getException().getLength());
 							int endOffset = node.getException().getStartPosition() + node.getException().getLength();
 							searchResults
-									.add(createSearchResult(startOffset,
+									.add(createSearchResult(exceptionTypeName, startOffset,
 										endOffset, startLine, endLine, true));
 
 							retVal = true;
@@ -121,6 +123,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		return searchResults;
 	}
 
+	@Override
 	public List<SearchResult> findImplementsInterface(final String interfaceName){
 		final List<SearchResult> searchResults = new ArrayList<>();
 
@@ -135,8 +138,9 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 
 					if (superInterfaces != null && superInterfaces.length > 0) {
 
-						if (superInterfaces[0].getName()
-								.equals(interfaceName)) {
+						String searchContext = superInterfaces[0].getName();
+
+						if (searchContext.equals(interfaceName)) {
 							int startLine = _ast.getLineNumber(
 									node.getName().getStartPosition());
 							int startOffset = node.getName().getStartPosition();
@@ -147,7 +151,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 									+ node.getName().getLength();
 
 							searchResults
-									.add(createSearchResult(startOffset,
+									.add(createSearchResult(searchContext, startOffset,
 											endOffset, startLine, endLine, true));
 						}
 					}
@@ -160,6 +164,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		return searchResults;
 	}
 
+	@Override
 	public SearchResult findImport(final String importName) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
@@ -167,7 +172,9 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 
 			@Override
 			public boolean visit(ImportDeclaration node) {
-				if (importName.equals(node.getName().toString())) {
+				final String searchContext = node.getName().toString();
+
+				if (importName.equals(searchContext)) {
 					int startLine = _ast.getLineNumber(node.getName()
 						.getStartPosition());
 					int startOffset = node.getName().getStartPosition();
@@ -176,7 +183,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 					int endOffset = node.getName().getStartPosition() +
 						node.getName().getLength();
 
-					searchResults.add(createSearchResult(startOffset,
+					searchResults.add(createSearchResult(searchContext, startOffset,
 						endOffset, startLine, endLine, true));
 				}
 
@@ -191,6 +198,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		return null;
 	}
 
+	@Override
 	public List<SearchResult> findImports(final String importName , final String[] imports) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
@@ -198,7 +206,9 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 
 			@Override
 			public boolean visit(ImportDeclaration node) {
-				if (node.getName().toString().contains(importName)) {
+				String searchContext = node.getName().getFullyQualifiedName();
+
+				if (searchContext.startsWith(importName)) {
 					final List<String> importsList = new ArrayList<>(Arrays.asList(imports));
 
 					String greedyImport = importName;
@@ -216,7 +226,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 					int endLine = _ast.getLineNumber(node.getName().getStartPosition() + node.getName().getLength());
 					int endOffset = node.getName().getStartPosition() + greedyImport.length();
 
-					searchResults.add(createSearchResult(startOffset, endOffset, startLine, endLine, true));
+					searchResults.add(createSearchResult(searchContext, startOffset, endOffset, startLine, endLine, true));
 				}
 
 				return false;
@@ -226,6 +236,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		return searchResults;
 	}
 
+	@Override
 	public List<SearchResult> findMethodDeclaration(
 		final String name, final String[] params) {
 
@@ -272,7 +283,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 								.getStartPosition());
 							int endOffset = node.getStartPosition();
 							searchResults
-									.add(createSearchResult(startOffset,
+									.add(createSearchResult(null, startOffset,
 										endOffset, startLine, endLine, true));
 
 							return false;
@@ -295,6 +306,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 	 * @param methodName     the method name
 	 * @return    search results
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<SearchResult> findMethodInvocations(
 		final String typeHint, final String expressionValue, final String methodName,
@@ -366,7 +378,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 								final int endOffset = node.getStartPosition() + node.getLength();
 								final int endLine = _ast.getLineNumber(endOffset);
 								//can't resolve the type but  args number matched  ,  note that the last param is false
-								searchResults.add(createSearchResult(startOffset, endOffset, startLine, endLine, false));
+								searchResults.add(createSearchResult(null, startOffset, endOffset, startLine, endLine, false));
 							}
 
 							if (possibleMatch) {
@@ -391,7 +403,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 							isFullMatch = false;
 						}
 
-						searchResults.add(createSearchResult(startOffset, endOffset, startLine, endLine, isFullMatch));
+						searchResults.add(createSearchResult(null, startOffset, endOffset, startLine, endLine, isFullMatch));
 					}
 				}
 
@@ -402,13 +414,16 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		return searchResults;
 	}
 
+	@Override
 	public SearchResult findPackage(final String packageName) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
 		_ast.accept(new ASTVisitor() {
 			@Override
 			public boolean visit(PackageDeclaration node) {
-				if (packageName.equals(node.getName().toString())) {
+				String searchContext = node.getName().toString();
+
+				if (packageName.equals(searchContext)) {
 					int startLine = _ast.getLineNumber(node.getName()
 						.getStartPosition());
 					int startOffset = node.getName().getStartPosition();
@@ -417,7 +432,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 					int endOffset = node.getName().getStartPosition() +
 						node.getName().getLength();
 
-					searchResults.add(createSearchResult(startOffset,
+					searchResults.add(createSearchResult(searchContext, startOffset,
 						endOffset, startLine, endLine, true));
 				}
 
@@ -462,6 +477,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		return searchResults;
 	}
 
+	@Override
 	public List<SearchResult> findServiceAPIs(final String[] serviceFQNPrefixes) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
@@ -488,6 +504,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		return searchResults;
 	}
 
+	@Override
 	public List<SearchResult> findSuperClass(final String superClassName){
 		final List<SearchResult> searchResults = new ArrayList<>();
 
@@ -501,7 +518,9 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 					superClass = node.resolveBinding().getSuperclass();
 
 					if (superClass != null) {
-						if (superClass.getName().equals(superClassName)) {
+						final String searchContext = superClass.getName();
+
+						if (searchContext.equals(superClassName)) {
 							int startLine = _ast.getLineNumber(
 									node.getName().getStartPosition());
 							int startOffset = node.getName().getStartPosition();
@@ -512,7 +531,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 									+ node.getName().getLength();
 
 							searchResults
-									.add(createSearchResult(startOffset,
+									.add(createSearchResult(searchContext, startOffset,
 											endOffset, startLine, endLine, true));
 						}
 					}

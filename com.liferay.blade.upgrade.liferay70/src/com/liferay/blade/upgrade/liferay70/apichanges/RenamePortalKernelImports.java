@@ -206,13 +206,27 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 	public List<SearchResult> searchFile(File file, JavaFile javaFile) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
-		for (String importName : get_imports().keySet()) {
+		for (String importName : getImports().keySet()) {
 			final List<SearchResult> importResult = javaFile.findImports(importName, IMPORTS);
 
 			if (importResult.size() != 0) {
 				for (SearchResult result : importResult) {
-					result.autoCorrectContext = getPrefix() + importName;
-					searchResults.add(result);
+					// make sure that our import is not in list of fixed imports
+					boolean skip = false;
+
+					if (result.searchContext != null) {
+						for (String fixed : IMPORTS_FIXED) {
+							if (result.searchContext.contains(fixed)) {
+								skip = true;
+								break;
+							}
+						}
+					}
+
+					if (!skip) {
+						result.autoCorrectContext = getPrefix() + importName;
+						searchResults.add(result);
+					}
 				}
 
 			}

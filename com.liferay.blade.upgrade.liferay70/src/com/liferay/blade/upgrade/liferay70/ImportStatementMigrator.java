@@ -22,23 +22,19 @@ import com.liferay.blade.api.JavaFile;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.SearchResult;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
-import org.eclipse.jdt.internal.core.util.Util;
-import org.eclipse.text.edits.TextEdit;
 
 public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaFile> implements AutoMigrator {
 
@@ -47,7 +43,7 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 
 	public ImportStatementMigrator(String[] imports, String[] fixedImports) {
 		super(JavaFile.class);
-		
+
 		for(int i = 0; i < imports.length; i++) {
 			_imports.put(imports[i], fixedImports[i]);
 		}
@@ -72,52 +68,63 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 		}
 
 		if (importsToRewrite.size() > 0) {
-			ICompilationUnit source = null;
-			final IFile javaFile;
-
-			final JavaFile javaFileService = _context.getService(_context.getServiceReference(JavaFile.class));
-			
-			javaFile = javaFileService.getIFile(file);
-				
-			if (javaFile == null) {
-				throw new AutoMigrateException("Unable to get java file as IFile, is project a java project?");
-			}
-
 			try {
-				source = JavaCore.createCompilationUnitFrom(javaFile);
-			}
-			catch (Exception e) {
-				throw new AutoMigrateException("Could not get compilation unit for file: " + file.getName(), e);
-			}
+				FileInputStream inputStream = new FileInputStream(file);
+				String[] lines = readLines(inputStream);
+				inputStream.close();
 
-			final ImportRewrite importRewrite;
+				String[] editedLines = new String[lines.length];
+				System.arraycopy(lines, 0, editedLines, 0, lines.length);
 
-			try {
-				importRewrite = ImportRewrite.create(source, true);
-			} catch (JavaModelException e1) {
-				e1.printStackTrace();
-				throw new AutoMigrateException("Unable to create import rewrite action: " + file.getName(), e1);
-			}
-
-			for (String importToRewrite : importsToRewrite) {
-				importRewrite.removeImport(importToRewrite);
-
-				final String newImport = _imports.get(importToRewrite);
-
-				importRewrite.addImport(newImport);
-			}
-
-			if (importRewrite.hasRecordedChanges()) {
-				try {
-					final TextEdit textEdit = importRewrite.rewriteImports(new NullProgressMonitor());
-					final String newSource = Util.editedString(source.getSource(), textEdit);
-
-					javaFile.setContents(new ByteArrayInputStream(newSource.getBytes()), IResource.FORCE, null);
-				} catch (CoreException e) {
-					throw new AutoMigrateException("Auto correct failed to rewrite imports", e);
+				for (String importToRewrite : importsToRewrite) {
+					for (int i = 0; i < editedLines.length; i++) {
+						editedLines[i] = editedLines[i].replace("import " + importToRewrite, "import " + _imports.get(importToRewrite));
+					}
 				}
+
+				StringBuilder sb = new StringBuilder();
+				for (String editedLine : editedLines) {
+					sb.append(editedLine);
+					sb.append(System.getProperty("line.separator"));
+				}
+
+				FileWriter writer = new FileWriter(file);
+				writer.write(sb.toString());
+				writer.close();
+			} catch (IOException e) {
+				throw new AutoMigrateException("Unable to auto-correct", e);
 			}
 		}
+	}
+
+	protected IFile getJavaFile(File file) {
+		final JavaFile javaFileService = _context.getService(_context.getServiceReference(JavaFile.class));
+
+		return javaFileService.getIFile(file);
+	}
+
+	private static String[] readLines(InputStream inputStream) {
+		if (inputStream == null) {
+			return null;
+		}
+
+		List<String> lines = new ArrayList<>();
+
+		try (BufferedReader bufferedReader =
+				new BufferedReader(new InputStreamReader(inputStream))) {
+
+			String line;
+
+			while ((line = bufferedReader.readLine()) != null) {
+				StringBuffer contents = new StringBuffer(line);
+
+				lines.add(contents.toString());
+			}
+		}
+		catch (Exception e) {
+		}
+
+		return lines.toArray(new String[lines.size()]);
 	}
 
 	@Override
@@ -141,7 +148,7 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 		return PREFIX;
 	}
 
-	public Map<String, String> get_imports() {
+	public Map<String, String> getImports() {
 		return _imports;
 	}
 

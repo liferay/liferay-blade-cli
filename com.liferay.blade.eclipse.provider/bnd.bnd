@@ -31,7 +31,7 @@ Bundle-ActivationPolicy: lazy
 
 Bundle-SymbolicName: com.liferay.blade.eclipse.provider;singleton:=true
 
-Bundle-Version: 1.0.0.${tstamp}
+Bundle-Version: 1.0.1.${tstamp}
 
 Conditional-Package: \
 	aQute.bnd.*,\
