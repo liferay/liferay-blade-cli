@@ -1,4 +1,4 @@
-# Blade CLI
+# Blade CLI :sunglasses:
 
 [![Build Status](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/badge/icon)](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/)
 
