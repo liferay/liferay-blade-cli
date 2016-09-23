@@ -78,7 +78,11 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 
 				for (String importToRewrite : importsToRewrite) {
 					for (int i = 0; i < editedLines.length; i++) {
-						editedLines[i] = editedLines[i].replace("import " + importToRewrite, "import " + _imports.get(importToRewrite));
+						System.out.println(editedLines[i]);
+						editedLines[i] = editedLines[i].
+								replaceAll("import\\s+" + importToRewrite, "import " + _imports.get(importToRewrite));
+						editedLines[i] = editedLines[i].
+								replaceAll("import\\s*=\\s*\"" + importToRewrite, "import=\"" + _imports.get(importToRewrite));
 					}
 				}
 

@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(
 	property = {
-		"file.extensions=java",
+		"file.extensions=java,jsp,jspf",
 		"problem.summary=The portal-kernel and portal-impl folders have many packages with the same name. Therefore, all of these packages are affected by the split package problem",
 		"problem.tickets=LPS-61952",
 		"problem.title=Renamed Packages to Fix the Split Packages Problem",
