@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(
 	property = {
-		"file.extensions=java",
+		"file.extensions=java,jsp,jspf",
 		"problem.summary=The portal-kernel and portal-impl folders have many packages with the same name. Therefore, all of these packages are affected by the split package problem",
 		"problem.tickets=LPS-61952",
 		"problem.title=Renamed Packages to Fix the Split Packages Problem",
@@ -206,13 +206,27 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 	public List<SearchResult> searchFile(File file, JavaFile javaFile) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
-		for (String importName : get_imports().keySet()) {
+		for (String importName : getImports().keySet()) {
 			final List<SearchResult> importResult = javaFile.findImports(importName, IMPORTS);
 
 			if (importResult.size() != 0) {
 				for (SearchResult result : importResult) {
-					result.autoCorrectContext = getPrefix() + importName;
-					searchResults.add(result);
+					// make sure that our import is not in list of fixed imports
+					boolean skip = false;
+
+					if (result.searchContext != null) {
+						for (String fixed : IMPORTS_FIXED) {
+							if (result.searchContext.contains(fixed)) {
+								skip = true;
+								break;
+							}
+						}
+					}
+
+					if (!skip) {
+						result.autoCorrectContext = getPrefix() + importName;
+						searchResults.add(result);
+					}
 				}
 
 			}

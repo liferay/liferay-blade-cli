@@ -24,7 +24,7 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(
 	property = {
-		"file.extensions=java",
+		"file.extensions=java,jsp,jspf",
 		"problem.summary=The classes from package com.liferay.util.bridges.mvc in util-bridges.jar were moved to a new package com.liferay.portal.kernel.portlet.bridges.mvc in portal-service.jar.",
 		"problem.tickets=LPS-50156",
 		"problem.title=Moved MVCPortlet, ActionCommand and ActionCommandCache from util-bridges.jar to portal-service.jar",

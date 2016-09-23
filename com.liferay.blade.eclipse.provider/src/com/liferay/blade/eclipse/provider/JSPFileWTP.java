@@ -109,7 +109,7 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 	}
 
 	@Override
-	protected SearchResult createSearchResult(int startOffset, int endOffset,
+	protected SearchResult createSearchResult(String searchContext, int startOffset, int endOffset,
 			int startLine, int endLine, boolean fullMatch) {
 
 		IDOMModel jspModel = null;
@@ -131,7 +131,7 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 			final int jspEndLine = structuredDocument
 					.getLineOfOffset(jspEndOffset) + 1;
 
-			return super.createSearchResult(jspStartOffset, jspEndOffset,
+			return super.createSearchResult(searchContext, jspStartOffset, jspEndOffset,
 					jspStartLine, jspEndLine, fullMatch);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -141,7 +141,7 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 			}
 		}
 
-		return super.createSearchResult(startOffset, endOffset, startLine,
+		return super.createSearchResult(searchContext, startOffset, endOffset, startLine,
 				endLine, fullMatch);
 	}
 
@@ -175,6 +175,7 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 		return _translation;
 	}
 
+	@Override
 	public List<SearchResult> findJSPTags(String tagName , String[] attrNames , String[] attrValues) {
 
 		if (tagName == null || tagName.isEmpty()) {
@@ -209,7 +210,7 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 					int endOffset = domNode.getEndOffset();
 					int jspStartLine = structuredDocument.getLineOfOffset(startOffset) + 1;
 					int jspEndLine = structuredDocument.getLineOfOffset(endOffset) + 1;
-					searchResults.add(super.createSearchResult(
+					searchResults.add(super.createSearchResult(null,
 							startOffset,endOffset, jspStartLine,jspEndLine, true));
 
 				} else {
@@ -227,7 +228,7 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 							int jspStartLine = structuredDocument.getLineOfOffset(startOffset) + 1;
 							int jspEndLine = structuredDocument.getLineOfOffset(endOffset) + 1;
 
-							searchResults.add(super.createSearchResult(
+							searchResults.add(super.createSearchResult(null,
 									startOffset, endOffset, jspStartLine,jspEndLine, true));
 						}
 					}

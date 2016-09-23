@@ -90,13 +90,21 @@ public class MarkdownParser {
 			String href = a.attr("href");
 
 			String content = sb.toString();
-			String find = "\\[\\]\\(id=[^\\s]+?\\)";
+			String idReg = "\\[\\]\\(id=[^\\s]+?\\)";
 			String replace = "";
-			Pattern pattern = Pattern.compile(find);
-			Matcher matcher = pattern.matcher(content);
-			String output = matcher.replaceAll(replace);
+			Pattern idPattern = Pattern.compile(idReg);
+			Matcher idMatcher = idPattern.matcher(content);
+			content = idMatcher.replaceAll(replace);
 
-			retval.put(href, output);
+			String hyperLinkReg = "<a\\s+href\\s*=\\s*\"(http.+?)\"\\s*>.+?</a>";
+			Pattern hyperLinkPattern = Pattern.compile(hyperLinkReg);
+			Matcher hyperLinkMatcher = hyperLinkPattern.matcher(content);
+
+			while(hyperLinkMatcher.find()) {
+				content = content.replace(hyperLinkMatcher.group(), hyperLinkMatcher.group(1));
+			}
+
+			retval.put(href, content);
 		}
 
 		return retval;
