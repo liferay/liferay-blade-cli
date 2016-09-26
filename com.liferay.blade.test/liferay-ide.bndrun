@@ -7,4 +7,4 @@
 	com.liferay.blade.upgrade.liferay70;version=latest
 
 -runpath: \
-	../cnf/cache/3.1.0/biz.aQute.remote.launcher/biz.aQute.remote.launcher-3.1.0.jar;version=file
+	../cnf/cache/3.3.0/biz.aQute.remote.launcher/biz.aQute.remote.launcher-3.3.0.jar;version=file
