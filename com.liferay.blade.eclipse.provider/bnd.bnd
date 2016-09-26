@@ -21,7 +21,6 @@
 	org.eclipse.wst.sse.core,\
 	org.eclipse.wst.xml.core,\
 	org.freemarker.freemarker,\
-	osgi.cmpn,\
 	osgi.core
 
 -testpath: \
