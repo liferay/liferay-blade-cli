@@ -29,13 +29,6 @@
 		locations=${bnd_repourl}/index.xml.gz; \
 		max_stale = 1800
 
--plugin.jpmrepo = \
-	aQute.bnd.jpm.Repository; \
-		includeStage		=	true; \
-		name				=	JPM; \
-		location			=	~/.bnd/shacache; \
-		index				=	${build}/jpm4j.json
-
 -plugin.gradlelibs = \
 	aQute.bnd.repository.maven.provider.MavenBndRepository; \
 		releaseUrl=https://repo.gradle.org/gradle/libs-releases; \
