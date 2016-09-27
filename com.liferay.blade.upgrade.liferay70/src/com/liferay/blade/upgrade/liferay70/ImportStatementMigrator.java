@@ -18,6 +18,7 @@ package com.liferay.blade.upgrade.liferay70;
 
 import com.liferay.blade.api.AutoMigrateException;
 import com.liferay.blade.api.AutoMigrator;
+import com.liferay.blade.api.CacheUtil;
 import com.liferay.blade.api.JavaFile;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.SearchResult;
@@ -30,11 +31,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaFile> implements AutoMigrator {
 
@@ -47,6 +51,14 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 		for(int i = 0; i < imports.length; i++) {
 			_imports.put(imports[i], fixedImports[i]);
 		}
+	}
+
+	private void clearCache(File file) {
+		final ServiceReference<CacheUtil> sr = _context.getServiceReference(CacheUtil.class);
+
+		CacheUtil cache = _context.getService(sr);
+
+		cache.unget(file);
 	}
 
 	@Override
@@ -94,6 +106,8 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 				FileWriter writer = new FileWriter(file);
 				writer.write(sb.toString());
 				writer.close();
+
+				clearCache(file);
 			} catch (IOException e) {
 				throw new AutoMigrateException("Unable to auto-correct", e);
 			}

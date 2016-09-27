@@ -16,6 +16,8 @@
 
 package com.liferay.blade.eclipse.provider;
 
+import com.liferay.blade.api.CacheUtil;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -25,12 +27,16 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.osgi.service.component.annotations.Component;
 
-public class CUCache {
+@Component(
+	service = CacheUtil.class
+)
+public class CUCache implements CacheUtil<CompilationUnit> {
 
 	private static final Map<File, WeakReference<CompilationUnit>> _map = new WeakHashMap<>();
 
-	public static CompilationUnit getCU(File file, char[] javaSource) {
+	public CompilationUnit getCU(File file, char[] javaSource) {
 		synchronized (_map) {
 			WeakReference<CompilationUnit> astRef = _map.get(file);
 
@@ -47,14 +53,14 @@ public class CUCache {
 		}
 	}
 
-	public static void unget(File file) {
+	public void unget(File file) {
 		synchronized (_map) {
 			_map.remove(file);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private static CompilationUnit createCompilationUnit(String unitName, char[] javaSource) {
+	private CompilationUnit createCompilationUnit(String unitName, char[] javaSource) {
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
 
 		Map<String, String> options = JavaCore.getOptions();
