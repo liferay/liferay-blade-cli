@@ -43,6 +43,6 @@ public class SearchPermissionCheckerGetPermissionQueryDecl extends JavaFileMigra
 		return javaFileChecker.findMethodDeclaration(
 				"getPermissionQuery",
 				new String[] {"long", "long[]", "long", "String",
-						"Query", "SearchContext"});
+						"Query", "SearchContext"}, null);
 	}
 }
