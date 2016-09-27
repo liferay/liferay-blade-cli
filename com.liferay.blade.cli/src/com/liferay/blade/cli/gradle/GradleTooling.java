@@ -75,7 +75,9 @@ public class GradleTooling {
 			buildLauncher.run();
 		}
 		finally {
-			connection.close();
+			if (connection != null) {
+				connection.close();
+			}
 		}
 
 		return new File(projectDir, "build").listFiles()[0];
