@@ -161,6 +161,7 @@ Private-Package:\
 	org.osgi.service.log,\
 	org.osgi.service.repository,\
 	org.slf4j;-split-package:=merge-first,\
+	org.slf4j.event;-split-package:=merge-first,\
 	org.slf4j.helpers;-split-package:=merge-first,\
 	org.slf4j.spi;-split-package:=merge-first,\
 	org.slf4j.impl
