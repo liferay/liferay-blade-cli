@@ -45,7 +45,7 @@ public class ConfigurationActionRenderMethod extends JavaFileMigrator {
 
 		// render method declarations
 		List<SearchResult> declarations = javaFileChecker.findMethodDeclaration("render",
-				new String[] { "PortletConfig", "RenderRequest", "RenderResponse" });
+				new String[] { "PortletConfig", "RenderRequest", "RenderResponse" }, null);
 
 		searchResults.addAll(declarations);
 

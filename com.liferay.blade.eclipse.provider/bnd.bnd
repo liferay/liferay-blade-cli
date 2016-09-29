@@ -21,7 +21,8 @@
 	org.eclipse.wst.sse.core,\
 	org.eclipse.wst.xml.core,\
 	org.freemarker.freemarker,\
-	osgi.core
+	osgi.core,\
+	osgi.cmpn
 
 -testpath: \
 	biz.aQute.junit

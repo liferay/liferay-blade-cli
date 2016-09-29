@@ -41,6 +41,6 @@ public class AssetRendererGetURLViewDecl extends JavaFileMigrator {
 	@Override
 	protected List<SearchResult> searchFile(File file, JavaFile javaFileChecker) {
 		return javaFileChecker.findMethodDeclaration("getURLView",
-				new String[] { "LiferayPortletResponse", "WindowState" });
+				new String[] { "LiferayPortletResponse", "WindowState" }, "PortletURL");
 	}
 }

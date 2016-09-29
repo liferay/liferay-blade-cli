@@ -44,7 +44,7 @@ public class IndexerGetFacetQuery extends JavaFileMigrator {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
 		final List<SearchResult> declaration = javaFileChecker.findMethodDeclaration("getFacetQuery",
-				new String[] { "String", "SearchContextPortletURL" });
+				new String[] { "String", "SearchContextPortletURL" }, null);
 
 		searchResults.addAll(declaration);
 

@@ -51,11 +51,11 @@ public class AssetRendererAndWorkflowHandlerRenderInvocation extends JavaFileMig
 
 		// render method declarations
 		List<SearchResult> declarations = javaFileChecker
-				.findMethodDeclaration("render", assetRendererArgTypes);
+				.findMethodDeclaration("render", assetRendererArgTypes, null);
 		searchResults.addAll(declarations);
 
 		declarations = javaFileChecker.findMethodDeclaration("render",
-				workflowHandlerArgTypes);
+				workflowHandlerArgTypes, null);
 		searchResults.addAll(declarations);
 
 		// render method invocations

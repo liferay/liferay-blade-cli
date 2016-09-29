@@ -40,6 +40,6 @@ public class IndexerDoGetSummaryDecl extends JavaFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JavaFile javaFileChecker) {
-		return javaFileChecker.findMethodDeclaration("doGetSummary", new String[] {"Document", "Locale", "String", "PortletURL"});
+		return javaFileChecker.findMethodDeclaration("doGetSummary", new String[] {"Document", "Locale", "String", "PortletURL"}, null);
 	}
 }

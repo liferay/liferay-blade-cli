@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.osgi.service.component.annotations.Component;
 
@@ -238,7 +239,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 
 	@Override
 	public List<SearchResult> findMethodDeclaration(
-		final String name, final String[] params) {
+		final String name, final String[] params, final String returnType) {
 
 		final List<SearchResult> searchResults = new ArrayList<>();
 
@@ -247,6 +248,21 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 			@Override
 			public boolean visit(MethodDeclaration node) {
 				boolean sameParmSize = true;
+				boolean sameReturnType = true;
+
+				if(returnType != null) {
+					Type type = node.getReturnType2();
+
+					if(type != null) {
+						String returnTypeName = type.resolveBinding().getName();
+						if(!returnTypeName.equals(returnType)) {
+							sameReturnType = false;
+						}
+					}else {
+						sameReturnType = false;
+					}
+				}
+
 				String methodName = node.getName().toString();
 				List<?> parmsList = node.parameters();
 
@@ -265,7 +281,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 					sameParmSize = false;
 				}
 
-				if (sameParmSize) {
+				if (sameParmSize && sameReturnType) {
 					final int startLine = _ast.getLineNumber(node.getName()
 						.getStartPosition());
 					final int startOffset = node.getName().getStartPosition();

@@ -41,6 +41,6 @@ public class AssetRendererGetSummaryDecl extends JavaFileMigrator {
 	@Override
 	protected List<SearchResult> searchFile(File file, JavaFile javaFileChecker) {
 		return javaFileChecker.findMethodDeclaration("getSummary",
-				new String[] { "Locale" });
+				new String[] { "Locale" }, null);
 	}
 }
