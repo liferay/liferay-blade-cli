@@ -16,7 +16,7 @@
 
 package com.liferay.blade.eclipse.provider;
 
-import com.liferay.blade.api.CacheUtil;
+import com.liferay.blade.api.CUCache;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -30,9 +30,9 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.osgi.service.component.annotations.Component;
 
 @Component(
-	service = CacheUtil.class
+	service = CUCache.class
 )
-public class CUCache implements CacheUtil<CompilationUnit> {
+public class CUCacheJDT implements CUCache<CompilationUnit> {
 
 	private static final Map<File, WeakReference<CompilationUnit>> _map = new WeakHashMap<>();
 

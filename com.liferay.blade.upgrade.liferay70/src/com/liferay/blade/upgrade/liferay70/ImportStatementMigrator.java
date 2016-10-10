@@ -18,7 +18,7 @@ package com.liferay.blade.upgrade.liferay70;
 
 import com.liferay.blade.api.AutoMigrateException;
 import com.liferay.blade.api.AutoMigrator;
-import com.liferay.blade.api.CacheUtil;
+import com.liferay.blade.api.CUCache;
 import com.liferay.blade.api.JavaFile;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.SearchResult;
@@ -54,9 +54,9 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 	}
 
 	private void clearCache(File file) {
-		final ServiceReference<CacheUtil> sr = _context.getServiceReference(CacheUtil.class);
+		final ServiceReference<CUCache> sr = _context.getServiceReference(CUCache.class);
 
-		CacheUtil cache = _context.getService(sr);
+		CUCache cache = _context.getService(sr);
 
 		cache.unget(file);
 	}

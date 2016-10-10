@@ -16,7 +16,7 @@
 
 package com.liferay.blade.eclipse.provider;
 
-import com.liferay.blade.api.CacheUtil;
+import com.liferay.blade.api.CUCache;
 import com.liferay.blade.api.JavaFile;
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.util.FileHelper;
@@ -84,8 +84,8 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		try {
 			final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
-			final ServiceReference<CacheUtil> sr = context.getServiceReference( CacheUtil.class );
-			CacheUtil cache = context.getService( sr );
+			final ServiceReference<CUCache> sr = context.getServiceReference( CUCache.class );
+			CUCache cache = context.getService( sr );
 
 			_ast = (CompilationUnit) cache.getCU(file, getJavaSource());
 		} catch (Exception e) {

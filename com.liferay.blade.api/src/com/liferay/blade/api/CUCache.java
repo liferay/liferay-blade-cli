@@ -21,7 +21,7 @@ import java.io.File;
 import org.osgi.annotation.versioning.ProviderType;
 
 @ProviderType
-public interface CacheUtil<T> {
+public interface CUCache<T> {
 
 	public T getCU(File file, char[] javaSource);
 
