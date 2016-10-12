@@ -16,32 +16,19 @@
 
 package com.liferay.blade.cli;
 
-import aQute.bnd.osgi.Jar;
-import aQute.bnd.osgi.Processor;
-import aQute.bnd.osgi.Resource;
 import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
-import com.liferay.blade.cli.gradle.GradleTooling;
+import com.liferay.project.templates.ProjectTemplates;
+import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * @author Gregory Amerson
@@ -52,31 +39,6 @@ public class CreateCommand {
 	public static final String DESCRIPTION =
 		"Creates a new Liferay module project from several available " +
 			"templates.";
-
-	public static final List<String> TEMPLATE_NAMES = Arrays.asList(
-		"activator",
-		"api",
-		"contenttargetingreport",
-		"contenttargetingrule",
-		"contenttargetingtrackingaction",
-		"controlmenuentry",
-		"fragment",
-		"mvcportlet",
-		"panelapp",
-		"portlet",
-		"portletconfigurationicon",
-		"portletprovider",
-		"portlettoolbarcontributor",
-		"service",
-		"servicebuilder",
-		"servicewrapper",
-		"simulationpanelentry",
-		"templatecontextcontributor"
-	);
-
-	public static final String TEMPLATES_VERSION = "1.0.18";
-
-	private static File zipFile = null;
 
 	public CreateCommand(blade blade, CreateOptions options) {
 		_blade = blade;
@@ -94,7 +56,7 @@ public class CreateCommand {
 		String template = _options.template();
 
 		if (template == null) {
-			template = "mvcportlet";
+			template = "mvc-portlet";
 		}
 		else if (!isExistingTemplate(template)) {
 				addError(
@@ -103,203 +65,47 @@ public class CreateCommand {
 		}
 
 		String name = args.remove(0);
+
 		final File dir =
 			_options.dir() != null ? _options.dir() : getDefaultDir();
-		final File workDir = Processor.getFile(dir, name);
 
-		if(!checkDir(workDir)) {
+		final File checkDir = new File(dir, name);
+
+		if(!checkDir(checkDir)) {
 			addError(
-				"Create", name+" is not empty or it is a file." +
+				"Create", name + " is not empty or it is a file." +
 				" Please clean or delete it then run again");
 			return;
 		}
 
 		final boolean isWorkspace = Util.isWorkspace(dir);
 
-		name = workDir.getName();
+		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
-		final Pattern glob = Pattern.compile(
-			"^standalone/" + template + "/.*|\\...+/.*");
+		projectTemplatesArgs.setClassName(_options.classname());
+		projectTemplatesArgs.setDestinationDir(dir);
+		projectTemplatesArgs.setHostBundleSymbolicName(_options.hostbundlebsn());
+		projectTemplatesArgs.setHostBundleVersion(_options.hostbundleversion());
+		projectTemplatesArgs.setName(name);
+		projectTemplatesArgs.setPackageName(_options.packagename());
+		projectTemplatesArgs.setService(_options.service());
+		projectTemplatesArgs.setTemplate(template);
 
-		final Map<String, String> subs = new HashMap<>();
-		subs.put("templates/standalone/" + template + "/", "");
-		subs.put("_project_path_", workDir.getAbsolutePath());
-		subs.put("_name_", getPackageName(name));
-		subs.put("_NAME_", name);
-
-		final String packageName = _options.packagename();
-
-		if (isEmpty(packageName)) {
-			subs.put(
-				"_package_path_", getPackageName(name).replaceAll("\\.", "/"));
-			subs.put("_package_", getPackageName(name));
-		}
-		else {
-			subs.put("_package_path_", packageName.replaceAll("\\.", "/"));
-			subs.put("_package_", packageName);
-		}
-
-		String classname = _options.classname();
-
-		if (isEmpty(classname)) {
-			classname = getClassName(name);
-		}
-
-		String service = _options.service();
-
-		if ("service".equals(template)) {
-			if (isEmpty(service)) {
-				addError(
-					"Create",
-					"The service template requires the fully qualified name " +
-						"of service must be specified after the service " +
-						"argument.\nFor example: blade create -t service -s " +
-						"com.liferay.portal.kernel.events.LifecycleAction " +
-						"customPreAction");
-				return;
-			}
-
-			subs.put("_SERVICE_FULL_", service);
-			subs.put(
-				"_SERVICE_SHORT_",
-				service.substring(service.lastIndexOf('.') + 1));
-		}
-
-		if ("servicewrapper".equals(template)) {
-			if (isEmpty(service)) {
-				addError(
-					"Create",
-					"The servicewrapper template requires the fully qualified" +
-						" name of service must be specified after the service" +
-						" argument.\nFor example: blade create -t " +
-						"servicewrapper -s " +
-						"com.liferay.portal.service.UserLocalServiceWrapper " +
-						"customServiceWrapper");
-				return;
-			}
-
-			subs.put("_SERVICE_FULL_", service);
-			subs.put(
-				"_SERVICE_SHORT_",
-				service.substring(service.lastIndexOf('.') + 1));
-		}
-
-		if ("servicebuilder".equals(template)) {
-			if (isEmpty(packageName)) {
-				addError(
-					"Create",
-					"The servicebuilder template requires the name of the " +
-						"root package within which to create service builder " +
-						"classes must be specified.\nFor example: blade " +
-						"create -t servicebuilder -p " +
-						"com.liferay.guestbook guestbook");
-				return;
-			}
-
-			if (name.indexOf(".") > -1) {
-				subs.put("_api_", packageName + ".api");
-				subs.put("_service_", packageName + ".svc");
-				subs.put("_web_", packageName + ".web");
-			}
-			else {
-				subs.put("_api_", name + "-api");
-				subs.put("_service_", name + "-service");
-				subs.put("_web_", name + "-web");
-			}
-
-			if (isWorkspace) {
-				final Path workspacePath = Util.getWorkspaceDir(
-					dir).getAbsoluteFile().toPath();
-
-				final Path dirPath = dir.getAbsoluteFile().toPath();
-
-				final String relativePath = workspacePath.relativize(
-					dirPath).toString();
-
-				final String apiPath =
-					":" + relativePath.replaceAll("\\\\", "/").replaceAll("\\/", ":") + ":" + name;
-
-				subs.put("_api_path_", apiPath);
-			}
-			else {
-				subs.put("_api_path_", "");
-			}
-
-			subs.put("_portlet_", packageName + ".portlet");
-			subs.put(
-				"_portletpackage_",
-				packageName.replaceAll("\\.", "/") + "/portlet");
-		}
-		else if ("activator".equals(template)) {
-			if (!classname.contains("Activator")) {
-				classname += "Activator";
-			}
-		}
-
-		if ("portlet".equals(template) || "mvcportlet".equals(template)) {
-			if (classname.endsWith("Portlet")) {
-				classname = classname.replaceAll("Portlet$", "");
-			}
-		}
-
-		final String hostbundlebsn = _options.hostbundlebsn();
-
-		final String hostbundleversion = _options.hostbundleversion();
-
-		if ("fragment".equals(template)) {
-			if (isEmpty(hostbundlebsn) || isEmpty(hostbundleversion)) {
-				addError(
-					"Create",
-					"The fragment template requires the bundle symbolic name " +
-						"of the hostbundle and version must be specified.\n" +
-						"For example: blade create -t fragment -h " +
-						"com.liferay.login.web -H 1.0.0 name");
-				return;
-			}
-
-			subs.put("_HOST_BUNDLE_BSN_", hostbundlebsn);
-			subs.put("_HOST_BUNDLE_VERSION_", hostbundleversion);
-		}
-
-		subs.put("_CLASS_", classname);
-
-		String unNormalizedPortletFqn =
-			name.toLowerCase().replaceAll("-", ".") + "_" + classname;
-
-		subs.put(
-			"_portlet_fqn_",
-			unNormalizedPortletFqn.replaceAll("\\.", "_"));
-
-		File moduleTemplatesZip = getGradleTemplatesZip();
-
-		InputStream in = new FileInputStream(moduleTemplatesZip);
-
-		copy("standalone", template, workDir, in, glob, true, subs);
-
-		in.close();
+		new ProjectTemplates(projectTemplatesArgs);
 
 		if (isWorkspace) {
-			final Pattern buildGlob = Pattern.compile(
-				"^workspace/" + template + "/.*|\\...+/.*");
-
-			in = new FileInputStream(moduleTemplatesZip);
-
-			copy("workspace", template, workDir, in, buildGlob, true, subs);
-
-			in.close();
-
-			File settingsFile = new File(workDir, "settings.gradle");
+			File settingsFile = new File(dir, "settings.gradle");
 
 			if (settingsFile.exists()) {
 				settingsFile.delete();
 			}
 
-			IO.delete(new File(workDir, "gradlew"));
-			IO.delete(new File(workDir, "gradlew.bat"));
-			IO.delete(new File(workDir, "gradle"));
+			IO.delete(new File(dir, "gradlew"));
+			IO.delete(new File(dir, "gradlew.bat"));
+			IO.delete(new File(dir, "gradle"));
 		}
 		else {
-			File gradlew = new File(workDir, "gradlew");
+			File gradlew = new File(dir, "gradlew");
 
 			if (gradlew.exists()) {
 				gradlew.setExecutable(true);
@@ -308,7 +114,7 @@ public class CreateCommand {
 
 		_blade.out().println(
 			"Created the project " + name + " using the " + template +
-				" template in " + workDir);
+				" template in " + dir);
 	}
 
 	@Arguments(arg = {"[name]"})
@@ -356,25 +162,6 @@ public class CreateCommand {
 		public String template();
 	}
 
-	File getGradleTemplatesZip() throws Exception {
-		if (zipFile != null) {
-			return zipFile;
-		}
-
-		trace(
-			"Connecting to repository to find version " + TEMPLATES_VERSION +
-				" gradle templates.");
-
-		zipFile = GradleTooling.findLatestAvailableArtifact(
-			"group: 'com.liferay', " +
-				"name: 'com.liferay.gradle.templates', " + "version: '" +
-					TEMPLATES_VERSION + "', ext: 'jar'");
-
-		trace("Found gradle templates " + zipFile);
-
-		return zipFile;
-	}
-
 	private void addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
@@ -406,53 +193,6 @@ public class CreateCommand {
 		return true;
 	}
 
-	private void copy(
-			String type, String template, File workspaceDir, InputStream in,
-			Pattern glob, boolean overwrite, Map<String, String> subs)
-		throws Exception {
-
-		try (Jar jar = new Jar("dot", in)) {
-			for (Entry<String, Resource> e : jar.getResources().entrySet()) {
-				String path = e.getKey();
-
-				if (glob != null && !glob.matcher(path).matches())continue;
-
-				Resource r = e.getValue();
-
-				for (String key : subs.keySet()) {
-					path = path.replaceAll(key, subs.get(key));
-				}
-
-				path = path.replaceAll(type + "/" + template + "/", "");
-
-				File dest = Processor.getFile(workspaceDir, path);
-
-				if (overwrite || (dest.lastModified() < r.lastModified()) ||
-					(r.lastModified() <= 0)) {
-
-					File dp = dest.getParentFile();
-
-					if (!dp.exists() && !dp.mkdirs()) {
-						throw new Exception("Could not create directory " + dp);
-					}
-
-					IO.copy(r.openInputStream(), dest);
-
-					if (isTextFile(dest)) {
-						process(dest, subs);
-					}
-				}
-			}
-		}
-	}
-
-	private String getClassName(String name) {
-		name = WordUtils.capitalizeFully(name, ' ', '.', '-');
-		name = name.replaceAll("[- .]", "");
-
-		return name;
-	}
-
 	private File getDefaultDir() throws Exception {
 		File baseDir = _blade.getBase();
 
@@ -476,52 +216,21 @@ public class CreateCommand {
 		return containsDir(baseDir, modulesDir) ? baseDir : modulesDir;
 	}
 
-	private String getPackageName(String name) {
-		name = name.replaceAll("[- .]", ".");
-		name = name.toLowerCase();
-
-		return name;
-	}
-
 	private List<String> getTemplates() throws Exception {
 		List<String> templateNames = new ArrayList<>();
 
-		File templatesZip = getGradleTemplatesZip();
-
-		try (Jar jar = new Jar(templatesZip)) {
-			Map<String, Map<String, Resource>> directories =
-				jar.getDirectories();
-
-			for (String key : directories.keySet()) {
-				Path path = Paths.get(key);
-
-				if (path.getNameCount() == 2 && path.startsWith("standalone")) {
-					templateNames.add(path.getName(1).toString());
-				}
-			}
+		for (String templateName : getTemplateNames()) {
+			templateNames.add(templateName);
 		}
 
 		return templateNames;
 	}
 
-	private List<String> getTemplateNames() {
-		return TEMPLATE_NAMES;
+	private String[] getTemplateNames() throws Exception {
+		return ProjectTemplates.getTemplates();
 	}
 
-	private boolean isEmpty(String str) {
-		if (str == null) {
-			return true;
-		}
-
-		if (str.trim().isEmpty()) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean isExistingTemplate(String templateName) throws Exception
-	{
+	private boolean isExistingTemplate(String templateName) throws Exception {
 		List<String> templates = getTemplates();
 
 		for (String template : templates) {
@@ -533,46 +242,13 @@ public class CreateCommand {
 		return false;
 	}
 
-	private boolean isTextFile(File dest) {
-		String name = dest.getName();
-		int index = name.lastIndexOf(".");
-
-		if ( index > -1 ) {
-			return textExtensions.contains(
-					name.substring(index, name.length()));
-		}
-
-		return false;
-	}
-
 	private void listTemplates() throws Exception {
-		List<String> templateNames = getTemplateNames();
+		String[] templateNames = getTemplateNames();
 
 		for (String name : templateNames) {
 			_blade.out().println(name);
 		}
 	}
-
-	private void process(File dest, Map<String, String> subs) throws Exception {
-		String content = new String(IO.read(dest));
-		String newContent = content;
-
-		for (String sub : subs.keySet()) {
-			newContent = newContent.replaceAll(sub, subs.get(sub));
-		}
-
-		if (!content.equals(newContent)) {
-			IO.write(newContent.getBytes(), dest);
-		}
-	}
-
-	private void trace(String msg) {
-		_blade.trace("%s: %s", "create", msg);
-	}
-
-	private static final List<String> textExtensions = Arrays.asList(
-		".bnd", ".java", ".project", ".xml", ".jsp", ".css", ".jspf", ".js",
-		".properties", ".gradle", ".prefs");
 
 	private final blade _blade;
 	private final CreateOptions _options;

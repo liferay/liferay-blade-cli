@@ -36,11 +36,7 @@ public class InitCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		IO.delete(workspaceDir);
-
-		if (!workspaceDir.mkdirs()) {
-			fail("Unable to create workspace dir");
-		}
+		IO.delete(workspaceDir.getParentFile());
 	}
 
 	@Test
@@ -66,6 +62,10 @@ public class InitCommandTest {
 	public void testDefaultInitWorkspaceDirectoryHasFiles() throws Exception {
 		String[] args = {"-b", workspaceDir.getPath(), "init"};
 
+		if (!workspaceDir.mkdirs()) {
+			fail("Unable to create workspace dir");
+		}
+
 		assertTrue(new File(workspaceDir, "foo").createNewFile());
 
 		new bladenofail().run(args);
@@ -76,6 +76,10 @@ public class InitCommandTest {
 	@Test
 	public void testDefaultInitWorkspaceDirectoryHasFilesForce() throws Exception {
 		String[] args = {"-b", workspaceDir.getPath(), "init", "-f"};
+
+		if (!workspaceDir.mkdirs()) {
+			fail("Unable to create workspace dir");
+		}
 
 		assertTrue(new File(workspaceDir, "foo").createNewFile());
 
@@ -90,19 +94,6 @@ public class InitCommandTest {
 		if (SysProps.verifyBuilds) {
 			verifyGradleBuild();
 		}
-	}
-
-	@Test
-	public void testGetWorkspaceZip() throws Exception {
-		File workspaceZip = new InitCommand(new blade(), null).getWorkspaceZip();
-
-		assertTrue(workspaceZip.exists());
-
-		String workspaceName = workspaceZip.getName();
-
-		assertTrue(workspaceName.startsWith("com.liferay.gradle.plugins.workspace"));
-		assertTrue(workspaceName.endsWith("sources.jar"));
-		assertTrue(workspaceName.contains(InitCommand.WORKSPACE_VERSION));
 	}
 
 	@Test
@@ -136,7 +127,7 @@ public class InitCommandTest {
 	@Test
 	public void testInitWithNameWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {
-			"-b", workspaceDir.getPath(), "init", "newproject"
+			"-b", workspaceDir.getPath(), "init", "-f", "newproject"
 		};
 
 		assertTrue(new File(workspaceDir, "newproject").mkdirs());
@@ -169,6 +160,10 @@ public class InitCommandTest {
 		String[] args = {
 			"-b", workspaceDir.getPath(), "init", "newproject"
 		};
+
+		if (!workspaceDir.mkdirs()) {
+			fail("Unable to create workspace dir");
+		}
 
 		new bladenofail().run(args);
 

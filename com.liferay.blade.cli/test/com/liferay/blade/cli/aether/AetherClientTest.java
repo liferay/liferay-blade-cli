@@ -68,7 +68,7 @@ public class AetherClientTest {
 		assertTrue(file.exists());
 		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
 		assertTrue(name.endsWith("sources.jar"));
-		assertEquals(name, true, name.matches(".*-1\\.0\\.[0-9]+-.*"));
+		assertEquals(name, true, name.matches(".*-1\\.1\\.[0-9]+-.*"));
 	}
 
 }
