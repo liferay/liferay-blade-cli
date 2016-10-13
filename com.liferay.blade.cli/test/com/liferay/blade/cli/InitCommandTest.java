@@ -53,9 +53,7 @@ public class InitCommandTest {
 
 		assertFalse(new File(workspaceDir, "com").exists());
 
-		if (SysProps.verifyBuilds) {
-			verifyGradleBuild();
-		}
+		verifyGradleBuild();
 	}
 
 	@Test
@@ -91,9 +89,7 @@ public class InitCommandTest {
 
 		assertTrue(new File(workspaceDir, "modules").exists());
 
-		if (SysProps.verifyBuilds) {
-			verifyGradleBuild();
-		}
+		verifyGradleBuild();
 	}
 
 	@Test
