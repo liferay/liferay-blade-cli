@@ -25,9 +25,7 @@ import com.liferay.blade.cli.FileWatcher.Consumer;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.file.Path;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -42,14 +40,13 @@ public class FileWatcherTest {
 
 	@Before
 	public void setUp() throws Exception {
-		File testdir = IO.getFile("generated/watch");
-
 		if (testdir.exists()) {
 			IO.delete(testdir);
 			assertFalse(testdir.exists());
 		}
 
-		assertTrue(testdir.mkdirs());
+		testdir.mkdirs();
+		assertTrue(testdir.exists());
 		assertTrue(testfile.createNewFile());
 	}
 

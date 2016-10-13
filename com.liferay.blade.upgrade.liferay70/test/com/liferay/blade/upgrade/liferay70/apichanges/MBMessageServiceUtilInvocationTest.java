@@ -57,9 +57,8 @@ public class MBMessageServiceUtilInvocationTest {
 			assertEquals(8077, problem.startOffset);
 			assertEquals(8308, problem.endOffset);
 		} else {
-			assertEquals(7830, problem.startOffset);
-			assertEquals(8058, problem.endOffset);
-
+			assertTrue(problem.startOffset >= 7830 && problem.startOffset <= 7831);
+			assertTrue(problem.endOffset >= 8058 && problem.endOffset <= 8061);
 		}
 	}
 

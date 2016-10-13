@@ -72,8 +72,8 @@ public class DDMLegacyAPITest {
 			assertEquals(4886, problem.endOffset);
 		}
 		else {
-			assertEquals(4696, problem.startOffset);
-			assertEquals(4753, problem.endOffset);
+			assertTrue(problem.startOffset >= 4696 && problem.startOffset <= 4699);
+			assertTrue(problem.endOffset >= 4753 && problem.endOffset <= 4756);
 		}
 
 		problem = results.get(2);
@@ -85,8 +85,8 @@ public class DDMLegacyAPITest {
 			assertEquals(5234, problem.endOffset);
 		}
 		else {
-			assertEquals(5031, problem.startOffset);
-			assertEquals(5088, problem.endOffset);
+			assertTrue(problem.startOffset >= 5031 && problem.startOffset <= 5034);
+			assertTrue(problem.endOffset >= 5088 && problem.endOffset <= 5091);
 
 		}
 		problem = results.get(3);
@@ -111,8 +111,12 @@ public class DDMLegacyAPITest {
 			assertEquals(5690, problem.endOffset);
 		}
 		else {
-			assertEquals(5412, problem.startOffset);
-			assertEquals(5527, problem.endOffset);
+			assertTrue(
+				String.valueOf(problem.startOffset),
+				problem.startOffset >= 5412 && problem.startOffset <= 5415);
+			assertTrue(
+				String.valueOf(problem.endOffset),
+				problem.endOffset >= 5527 && problem.endOffset <= 5530);
 		}
 	}
 
