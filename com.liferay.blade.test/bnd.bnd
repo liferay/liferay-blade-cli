@@ -18,9 +18,7 @@ Test-Cases: ${test-cases}
 	org.apache.felix.gogo.runtime,\
 	org.apache.felix.scr,\
 	osgi.core,\
-	osgi.cmpn,\
-	com.liferay.blade.upgrade.liferay70;version=latest,\
-	com.liferay.blade.eclipse.provider;version=latest
+	osgi.cmpn
 
 -runbundles: \
 	biz.aQute.junit,\

@@ -61,6 +61,7 @@ Import-Package: \
 	*
 
 Private-Package: \
+	com.liferay.blade.eclipse.provider.*,\
 	dnl.utils.text.table.*,\
 	freemarker.*,\
 	org.apache.commons.lang.*,\
@@ -68,7 +69,3 @@ Private-Package: \
 	org.osgi.service.component.annotations;-split-package:=merge-first,\
 	org.osgi.service.metatype.annotations;-split-package:=merge-first,\
 	org.osgi.service.repository;-split-package:=merge-first
-	
-Export-Package: \
-	com.liferay.blade.eclipse.provider.templates,\
-	com.liferay.blade.eclipse.provider
