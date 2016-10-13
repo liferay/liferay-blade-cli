@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.api.Problem;
-import com.liferay.blade.upgrade.liferay70.apichanges.MVCPortletActionCommandImports;
 
 import java.io.File;
 import java.util.List;
@@ -30,6 +29,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -43,15 +43,13 @@ public class ActionCommandImportsTest {
 
 	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
-
-	FileMigrator fileMigrator;
-
 	ServiceReference<FileMigrator>[] fileMigrators;
 
 	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
+	public void beforeTest() throws Exception {
+		Filter filter = context.createFilter("(implName=MVCPortletActionCommandImports)");
+
+		ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, filter, null);
 
 		fileMigratorTracker.open();
 
@@ -64,17 +62,11 @@ public class ActionCommandImportsTest {
 
 	@Test
 	public void sayHelloActionCommandFile() throws Exception {
-		List<Problem> problems = null;
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(sayHelloActionCommandFile);
 
-			if (fmigrator instanceof MVCPortletActionCommandImports) {
-				problems = fmigrator.analyze(sayHelloActionCommandFile);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
 		assertEquals(1, problems.size());
@@ -82,18 +74,11 @@ public class ActionCommandImportsTest {
 
 	@Test
 	public void sayHelloActionCommandFile2() throws Exception {
-		List<Problem> problems = null;
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(sayHelloActionCommandFile2);
 
-			if (fmigrator instanceof MVCPortletActionCommandImports) {
-				problems = fmigrator.analyze(sayHelloActionCommandFile2);
-			}
-
-			context.ungetService(fm);
-		}
-
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
 		assertEquals(2, problems.size());
@@ -101,19 +86,13 @@ public class ActionCommandImportsTest {
 
 	@Test
 	public void sayHelloActionCommandFile2x() throws Exception {
-		List<Problem> problems = null;
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(sayHelloActionCommandFile);
 
-			if (fmigrator instanceof MVCPortletActionCommandImports) {
-				problems = fmigrator.analyze(sayHelloActionCommandFile);
+		problems = fmigrator.analyze(sayHelloActionCommandFile);
 
-				problems = fmigrator.analyze(sayHelloActionCommandFile);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
 		assertEquals(1, problems.size());
