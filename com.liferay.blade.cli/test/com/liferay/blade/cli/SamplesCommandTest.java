@@ -77,11 +77,9 @@ public class SamplesCommandTest {
 
 		assertTrue(buildFile.exists());
 
-		if (SysProps.verifyBuilds) {
-			BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "formatSource", "build");
-			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
-			GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.friendlyurl-1.0.0.jar");
-		}
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "formatSource", "build");
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.friendlyurl-1.0.0.jar");
 	}
 
 	@Test
@@ -107,11 +105,9 @@ public class SamplesCommandTest {
 		assertTrue(gradleWrapperProperties.exists());
 		assertTrue(gradleWrapperShell.exists());
 
-		if (SysProps.verifyBuilds) {
-			BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "formatSource", "build");
-			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
-			GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.authenticator.shiro-1.0.0.jar");
-		}
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "formatSource", "build");
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.authenticator.shiro-1.0.0.jar");
 	}
 
 	@Test
@@ -143,11 +139,9 @@ public class SamplesCommandTest {
 
 		File workspaceDir = new File(testDir, "test/workspace");
 
-		if (SysProps.verifyBuilds) {
-			BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "formatSource", "build");
-			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
-			GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.authfailure-1.0.0.jar");
-		}
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "formatSource", "build");
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.authfailure-1.0.0.jar");
 	}
 
 	@Test
@@ -164,11 +158,9 @@ public class SamplesCommandTest {
 
 		assertTrue(buildFile.exists());
 
-		if (SysProps.verifyBuilds) {
-			BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "formatSource", "build");
-			GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
-			GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.rest-1.0.0.jar");
-		}
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "formatSource", "build");
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.rest-1.0.0.jar");
 	}
 
 	@Test

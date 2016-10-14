@@ -48,7 +48,7 @@ public class LiferayUIFlagsTagsTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("LiferayUIFlagsTagsTest.jsp")) {
-				if (problem.lineNumber == 3 && problem.startOffset == 65 && problem.endOffset == 273) {
+				if (problem.lineNumber == 3 && problem.startOffset >= 65 && problem.endOffset >= 273) {
 					found = true;
 				}
 			}

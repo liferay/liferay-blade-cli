@@ -21,7 +21,8 @@ import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
-import com.liferay.blade.cli.gradle.GradleTooling;
+import com.liferay.project.templates.ProjectTemplates;
+import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -35,7 +36,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 
@@ -66,12 +66,12 @@ public class InitCommand {
 		_options = options;
 	}
 
-	public void execute() throws IOException {
+	public void execute() throws Exception {
 		final List<String> args = _options._arguments();
 
-		final String name = args.size() > 0 ? args.get(0) : null;
+		String name = args.size() > 0 ? args.get(0) : null;
 
-		final File destDir = name != null ? new File(
+		File destDir = name != null ? new File(
 			_blade.getBase(), name) : _blade.getBase();
 
 		trace("Using destDir " + destDir);
@@ -149,60 +149,24 @@ public class InitCommand {
 			}
 		}
 
-		if (!destDir.exists() && !destDir.mkdirs()) {
-			addError(
-				"Unable to make directory at " + destDir.getAbsolutePath());
-			return;
+		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
+
+		if (name == null) {
+			name = destDir.getName();
 		}
 
-		final File workspaceZip;
+		destDir = destDir.getParentFile();
 
-		try {
-			workspaceZip = getWorkspaceZip();
-		}
-		catch (Exception e) {
-			addError("Could not get workspace template: " + e.getMessage());
-			return;
+		projectTemplatesArgs.setDestinationDir(destDir);
+
+		if (_options.force() || _options.upgrade()) {
+			projectTemplatesArgs.setForce(true);
 		}
 
-		try(ZipFile zip = new ZipFile(workspaceZip)) {
-			trace("Extracting workspace into destDir.");
+		projectTemplatesArgs.setName(name);
+		projectTemplatesArgs.setTemplate("workspace");
 
-			Util.unzip(workspaceZip, destDir, "samples/");
-		}
-		catch (IOException ioe) {
-			addError(
-				"Unable to unzip contents of workspace to dir: " +
-					ioe.getMessage());
-			return;
-		}
-
-		if (!new File(destDir, "gradlew").setExecutable(true)) {
-			trace("Unable to make gradlew executable.");
-		}
-	}
-
-	File getWorkspaceZip() throws Exception {
-		trace("Connecting to repository to find latest workspace template.");
-
-		/*final Artifact workspacePluginArtifact =
-			new AetherClient().findLatestAvailableArtifact(
-				"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
-
-		trace(
-			"Found workspace template version " +
-				workspacePluginArtifact.getVersion());
-
-		final File zipFile = workspacePluginArtifact.getFile(); */
-
-		File zipFile = GradleTooling.findLatestAvailableArtifact(
-			"group: 'com.liferay', " +
-				"name: 'com.liferay.gradle.plugins.workspace', " +
-					"version: '" + WORKSPACE_VERSION + "', classifier: 'sources', ext: 'jar'");
-
-		trace("Found workspace template " + zipFile);
-
-		return zipFile;
+		new ProjectTemplates(projectTemplatesArgs);
 	}
 
 	@Arguments(arg = "[name]")

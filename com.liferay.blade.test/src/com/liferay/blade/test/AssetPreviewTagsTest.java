@@ -48,8 +48,8 @@ public class AssetPreviewTagsTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("AssetPreviewTest.jsp")
-					&& problem.lineNumber == 7 && problem.startOffset == 230
-					&& problem.endOffset == 310) {
+					&& problem.lineNumber == 7 && problem.startOffset >= 230
+					&& problem.endOffset >= 310) {
 
 				found = true;
 			}

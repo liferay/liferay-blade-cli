@@ -1,4 +1,4 @@
-Bundle-Version: 1.0.5.${tstamp}
+Bundle-Version: 1.0.6.${tstamp}
 
 JPM-Command: blade
 
@@ -171,6 +171,7 @@ Private-Package:\
 	biz.aQute.bndlib,\
 	biz.aQute.repository,\
 	com.liferay.blade.gradle.model;version=latest,\
+	com.liferay.project.templates;version=2.0.0,\
 	jcl.over.slf4j,\
 	org.apache.commons.io,\
 	org.apache.commons.lang3,\
@@ -203,6 +204,7 @@ Private-Package:\
 -dependson: com.liferay.blade.gradle
 
 -includeresource: \
+	@com.liferay.project.templates-*.jar,\
 	deps.zip,\
 	wrapper.zip
 

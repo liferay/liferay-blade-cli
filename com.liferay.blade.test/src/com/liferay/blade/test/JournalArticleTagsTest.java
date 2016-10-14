@@ -48,7 +48,7 @@ public class JournalArticleTagsTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("JournalArticleTagsTest.jsp")) {
-				if (problem.lineNumber == 4 && problem.startOffset == 164 && problem.endOffset == 324) {
+				if (problem.lineNumber == 4 && problem.startOffset >= 164 && problem.endOffset >= 324) {
 					found = true;
 				}
 			}
