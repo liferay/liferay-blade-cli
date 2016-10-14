@@ -68,8 +68,8 @@ public class DDMLegacyAPITest {
 		assertEquals(134, problem.startLine);
 
 		if (PlatformUtil.isWindows()) {
-			assertEquals(4829, problem.startOffset);
-			assertEquals(4886, problem.endOffset);
+			assertTrue(problem.startOffset >= 4829 && problem.startOffset <= 4832);
+			assertTrue(problem.endOffset >= 4886 && problem.endOffset <= 4889);
 		}
 		else {
 			assertTrue(problem.startOffset >= 4696 && problem.startOffset <= 4699);
@@ -81,8 +81,8 @@ public class DDMLegacyAPITest {
 		assertEquals(147, problem.startLine);
 
 		if (PlatformUtil.isWindows()) {
-			assertEquals(5177, problem.startOffset);
-			assertEquals(5234, problem.endOffset);
+			assertTrue(problem.startOffset >= 5177 && problem.startOffset <= 5180);
+			assertTrue(problem.endOffset >= 5234 && problem.endOffset <= 5237);
 		}
 		else {
 			assertTrue(problem.startOffset >= 5031 && problem.startOffset <= 5034);
@@ -94,8 +94,8 @@ public class DDMLegacyAPITest {
 		assertEquals(37, problem.startLine);
 
 		if (PlatformUtil.isWindows()) {
-			assertEquals(1789, problem.startOffset);
-			assertEquals(1859, problem.endOffset);
+			assertTrue(problem.startOffset >= 1789 && problem.startOffset <= 1792);
+			assertTrue(problem.endOffset >= 1859 && problem.endOffset <= 1862);
 		}
 		else {
 			assertEquals(1753, problem.startOffset);
@@ -107,8 +107,8 @@ public class DDMLegacyAPITest {
 		assertEquals(162, problem.startLine);
 
 		if (PlatformUtil.isWindows()) {
-			assertEquals(5573, problem.startOffset);
-			assertEquals(5690, problem.endOffset);
+			assertTrue(problem.startOffset >= 5573 && problem.startOffset <= 5576);
+			assertTrue(problem.endOffset >= 5690 && problem.endOffset <= 5693);
 		}
 		else {
 			assertTrue(

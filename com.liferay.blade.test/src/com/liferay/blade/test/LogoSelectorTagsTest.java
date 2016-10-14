@@ -48,8 +48,8 @@ public class LogoSelectorTagsTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("LogoSelectorTagsTest.jsp")
-					&& problem.lineNumber == 11 && problem.startOffset == 595
-					&& problem.endOffset == 637) {
+					&& problem.lineNumber == 11 && problem.startOffset >= 595
+					&& problem.endOffset >= 637) {
 
 				found = true;
 			}

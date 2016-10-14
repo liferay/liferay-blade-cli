@@ -50,7 +50,7 @@ public class RepositoryServiceUtilTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("RepositoryServiceUtilTest.jsp")) {
-				if (problem.lineNumber == 9 && problem.startOffset == 104 && problem.endOffset == 171) {
+				if (problem.lineNumber == 9 && problem.startOffset >= 104 && problem.endOffset >= 171) {
 					found = true;
 				}
 			}

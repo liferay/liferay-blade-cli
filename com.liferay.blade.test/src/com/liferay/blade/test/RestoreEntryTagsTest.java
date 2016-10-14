@@ -48,7 +48,7 @@ public class RestoreEntryTagsTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("RestoreEntryTagsTest.jsp")) {
-				if (problem.lineNumber == 2 && problem.startOffset == 12 && problem.endOffset == 318) {
+				if (problem.lineNumber == 2 && problem.startOffset >= 12 && problem.endOffset >= 318) {
 					found = true;
 				}
 			}

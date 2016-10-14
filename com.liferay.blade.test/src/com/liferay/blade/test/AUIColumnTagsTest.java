@@ -48,7 +48,7 @@ public class AUIColumnTagsTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("AUIColumnTagTest.jsp")) {
-				if (problem.lineNumber == 2 && problem.startOffset == 58 && problem.endOffset == 461) {
+				if (problem.lineNumber == 2 && problem.startOffset >= 58 && problem.endOffset >= 461) {
 					found = true;
 				}
 			}
