@@ -80,6 +80,13 @@ public class ServerCommand {
 			String cmd, File dir, String serverType, ServerOptions options)
 		throws Exception {
 
+		if (!dir.exists() || dir.listFiles() == null) {
+			_blade.error(
+				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to create it.");
+
+			return;
+		}
+
 		for (File file : dir.listFiles()) {
 			String fileName = file.getName();
 
