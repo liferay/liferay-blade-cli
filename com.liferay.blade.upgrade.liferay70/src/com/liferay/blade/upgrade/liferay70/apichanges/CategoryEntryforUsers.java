@@ -35,7 +35,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.title=Deprecated Category Entry for Users",
 		"problem.summary=The category entry for Site Administration > Users has been deprecated in favor of Site Administration > Members.",
 		"problem.tickets=LPS-63466",
-		"problem.section=#deprecated-category-entry-for-users"
+		"problem.section=#deprecated-category-entry-for-users",
+		"implName=CategoryEntryforUsers"
 	},
 	service = FileMigrator.class
 )

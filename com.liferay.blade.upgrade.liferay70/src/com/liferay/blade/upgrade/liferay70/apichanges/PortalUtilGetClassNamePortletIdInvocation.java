@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-the-getclassnameportletidstring-method-from-portalutil-class",
 		"problem.summary=Removed the getClassNamePortletId(String) Method from PortalUtil Class",
 		"problem.tickets=LPS-50604",
+		"implName=PortalUtilGetClassNamePortletIdInvocation"
 	},
 	service = FileMigrator.class
 )

@@ -45,7 +45,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=In order to deploy this project to 7.0 the liferay-versions property must be set to 7.0.0+",
 		"problem.tickets=",
 		"problem.section=",
-		"auto.correct=property"
+		"auto.correct=property",
+		"implName=LiferayVersionsProperties"
 	},
 	service = {
 		FileMigrator.class,

@@ -32,7 +32,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.title=PHP Portlet Support",
 		"problem.summary=Removed PHP Portlet Support",
 		"problem.tickets=LPS-64052",
-		"problem.section=#removed-php-portlet-support"
+		"problem.section=#removed-php-portlet-support",
+		"implName=PHPPortletExtends"
 	},
 	service = FileMigrator.class
 )

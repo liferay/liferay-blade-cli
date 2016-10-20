@@ -34,6 +34,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-trash-logic-from-dlapphelperlocalservice-methods",
 		"problem.summary=Removed Trash Logic from DLAppHelperLocalService Methods",
 		"problem.tickets=LPS-47508",
+		"implName=DLAppHelperLocalServiceUtilInvocation"
 	},
 	service = FileMigrator.class
 )

@@ -34,6 +34,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#flagsentryservice-addentry-method-throws-portalexception",
 		"problem.summary=FlagsEntryService.addEntry Method Throws PortalException",
 		"problem.tickets=LPS-63109",
+		"implName=FlagsEntryServiceAddEntryInvocation"
 	},
 	service = FileMigrator.class
 )

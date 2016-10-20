@@ -33,7 +33,8 @@ import com.liferay.blade.upgrade.liferay70.JavaFileMigrator;
 		"problem.title=Removed the Ability to Specify Class Loaders in Scripting",
 		"problem.summary=Removed the Ability to Specify Class Loaders in Scripting.",
 		"problem.tickets=LPS-63180",
-		"problem.section=#removed-the-ability-to-specify-class-loaders-in-scripting"
+		"problem.section=#removed-the-ability-to-specify-class-loaders-in-scripting",
+		"implName=RemovedAbilitySpecifyClassLoaders"
 	},
 	service = FileMigrator.class
 )

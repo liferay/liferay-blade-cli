@@ -18,6 +18,7 @@ package com.liferay.blade.upgrade.liferay70;
 
 import com.liferay.blade.api.AutoMigrateException;
 import com.liferay.blade.api.AutoMigrator;
+import com.liferay.blade.api.CUCache;
 import com.liferay.blade.api.JavaFile;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.SearchResult;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.osgi.framework.ServiceReference;
 
 public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaFile> implements AutoMigrator {
 
@@ -47,6 +49,14 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 		for(int i = 0; i < imports.length; i++) {
 			_imports.put(imports[i], fixedImports[i]);
 		}
+	}
+
+	private void clearCache(File file) {
+		final ServiceReference<CUCache> sr = _context.getServiceReference(CUCache.class);
+
+		CUCache cache = _context.getService(sr);
+
+		cache.unget(file);
 	}
 
 	@Override
@@ -94,6 +104,8 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 				FileWriter writer = new FileWriter(file);
 				writer.write(sb.toString());
 				writer.close();
+
+				clearCache(file);
 			} catch (IOException e) {
 				throw new AutoMigrateException("Unable to auto-correct", e);
 			}

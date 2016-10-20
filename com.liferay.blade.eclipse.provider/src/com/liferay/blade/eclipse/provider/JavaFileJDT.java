@@ -16,6 +16,7 @@
 
 package com.liferay.blade.eclipse.provider;
 
+import com.liferay.blade.api.CUCache;
 import com.liferay.blade.api.JavaFile;
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.util.FileHelper;
@@ -38,6 +39,9 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -78,7 +82,12 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		_file = file;
 
 		try {
-			_ast = CUCache.getCU(file, getJavaSource());
+			final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+
+			final ServiceReference<CUCache> sr = context.getServiceReference( CUCache.class );
+			CUCache cache = context.getService( sr );
+
+			_ast = (CompilationUnit) cache.getCU(file, getJavaSource());
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}

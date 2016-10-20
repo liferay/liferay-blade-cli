@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#changed-the-usage-of-the-liferay-uirestore-entry-tag",
 		"problem.summary=Changed the Usage of the liferay-ui:restore-entry Tag",
 		"problem.tickets=LPS-54106",
+		"implName=RestoreEntryTags"
 	},
 	service = FileMigrator.class
 )

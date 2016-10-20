@@ -32,7 +32,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.title=Created a New getType Method That is Implemented in DLProcessor",
 		"problem.summary=The DLProcessor interface has a new method getType().",
 		"problem.tickets=LPS-53574",
-		"problem.section=#created-a-new-gettype-method-that-is-implemented-in-dlprocessor"
+		"problem.section=#created-a-new-gettype-method-that-is-implemented-in-dlprocessor",
+		"implName=DLProcessorGetType"
 	},
 	service = FileMigrator.class
 )

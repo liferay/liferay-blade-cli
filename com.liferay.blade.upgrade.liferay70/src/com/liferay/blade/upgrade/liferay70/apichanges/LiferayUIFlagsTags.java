@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#deprecated-the-liferay-uiflags-tag-and-replaced-with-liferay-flagsflags",
 		"problem.summary=Deprecated the liferay-ui:flags Tag and Replaced with liferay-flags:flags",
 		"problem.tickets=LPS-60967",
+		"implName=LiferayUIFlagsTags"
 	},
 	service = FileMigrator.class
 )

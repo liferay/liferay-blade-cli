@@ -28,6 +28,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=Replaced the Breadcrumb Portlet's Display Styles with ADTs",
 		"problem.tickets=LPS-53577",
 		"problem.section=#replaced-the-breadcrumb-portlets-display-styles-with-adts",
+		"implName=BreadcrumbProperties"
 	},
 	service = FileMigrator.class
 )

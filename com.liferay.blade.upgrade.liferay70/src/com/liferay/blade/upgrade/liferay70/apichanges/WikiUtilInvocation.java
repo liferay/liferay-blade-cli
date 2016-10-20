@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-the-getpageorderbycomparator-method-from-wikiutil",
 		"problem.summary=Removed the getPageOrderByComparator Method from WikiUtil",
 		"problem.tickets=LPS-60843",
+		"implName=WikiUtilInvocation"
 	},
 	service = FileMigrator.class
 )

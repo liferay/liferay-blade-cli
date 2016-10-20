@@ -33,7 +33,8 @@ import com.liferay.blade.upgrade.liferay70.JavaFileMigrator;
 		"problem.summary=Removed the WAP Functionality",
 		"problem.tickets=LPS-62920",
 		"problem.title=Removed the WAP Functionality",
-		"problem.section=#removed-the-wap-functionality"
+		"problem.section=#removed-the-wap-functionality",
+		"implName=RemoveWapFunctionality"
 	},
 	service = FileMigrator.class
 )

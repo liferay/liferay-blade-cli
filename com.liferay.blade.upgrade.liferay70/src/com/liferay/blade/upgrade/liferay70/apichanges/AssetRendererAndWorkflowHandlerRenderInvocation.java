@@ -34,7 +34,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=The method render has been removed from the interfaces AssetRenderer and WorkflowHandler.",
 		"problem.tickets=LPS-56705",
 		"problem.title=Removed render Method from AssetRenderer API and WorkflowHandler API",
-		"problem.section=#removed-render-method-from-assetrenderer-api-and-workflowhandler-api"
+		"problem.section=#removed-render-method-from-assetrenderer-api-and-workflowhandler-api",
+		"implName=AssetRendererAndWorkflowHandlerRenderInvocation"
 	},
 	service = FileMigrator.class
 )

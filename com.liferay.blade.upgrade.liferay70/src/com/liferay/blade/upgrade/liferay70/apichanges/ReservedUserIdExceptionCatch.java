@@ -32,7 +32,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.title=Replaced ReservedUserIdException with UserIdException Inner Classes",
 		"problem.summary=The ReservedUserIdException has been deprecated and replaced with UserIdException.MustNotBeReserved.",
 		"problem.tickets=LPS-53487",
-		"problem.section=#replaced-reserveduseridexception-with-useridexception-inner-classes"
+		"problem.section=#replaced-reserveduseridexception-with-useridexception-inner-classes",
+		"implName=ReservedUserIdExceptionCatch"
 	},
 	service = FileMigrator.class
 )

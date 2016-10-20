@@ -29,7 +29,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.tickets=LPS-50156",
 		"problem.title=Moved MVCPortlet, ActionCommand and ActionCommandCache from util-bridges.jar to portal-service.jar",
 		"problem.section=#moved-mvcportlet-actioncommand-and-actioncommandcache-from-util-bridges-jar",
-		"auto.correct=import"
+		"auto.correct=import",
+		"implName=MVCPortletActionCommandImports"
 	},
 	service = {
 		FileMigrator.class,

@@ -32,7 +32,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=All Microblogs APIs previously exposed as Liferay Portal API in 6.2 have been move out from portal-service into separate OSGi modules",
 		"problem.tickets=LPS-56041",
 		"problem.title=Microblogs APIs migrated to OSGi module",
-		"problem.section=#legacy"
+		"problem.section=#legacy",
+		"implName=MicroblogsLegacyAPI"
 	},
 	service = FileMigrator.class
 )

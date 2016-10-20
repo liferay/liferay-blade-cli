@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#the-auicolumn-taglib-has-been-removed-and-replaced-with-auicol-taglib",
 		"problem.summary=The aui:column taglib has been removed and replaced with aui:col taglib",
 		"problem.tickets=LPS-62208",
+		"implName=AUIColumnTags"
 	},
 	service = FileMigrator.class
 )

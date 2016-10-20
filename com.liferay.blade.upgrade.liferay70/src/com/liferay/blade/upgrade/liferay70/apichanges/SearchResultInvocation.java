@@ -34,6 +34,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-mbmessages-and-fileentrytuples-attributes-from-app-view-search-entr",
 		"problem.summary=Removed getMbMessages , getFileEntryTuples and addMbMessage Methods from SearchResult Class",
 		"problem.tickets=LPS-55886",
+		"implName=SearchResultInvocation"
 	},
 	service = FileMigrator.class
 )

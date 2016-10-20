@@ -31,6 +31,7 @@ import org.osgi.service.component.annotations.Component;
 				+ "an option from the Portal Settings section of the Control Panel.",
 		"problem.tickets=LPS-54956",
 		"problem.section=#removed-userslastnamerequired-from-portal-properties-in-favor-of-language-p",
+		"implName=UsersLastNameRequiredProperties"
 	},
 	service = FileMigrator.class
 )

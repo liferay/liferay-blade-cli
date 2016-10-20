@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#deprecated-the-liferay-portleticon-back-tag-with-no-direct-replacement",
 		"problem.summary=Deprecated the liferay-portlet:icon-back Tag with No Direct Replacement",
 		"problem.tickets=LPS-63101",
+		"implName=DeprecatedLiferaySecurityEncryptTag"
 	},
 	service = FileMigrator.class
 )

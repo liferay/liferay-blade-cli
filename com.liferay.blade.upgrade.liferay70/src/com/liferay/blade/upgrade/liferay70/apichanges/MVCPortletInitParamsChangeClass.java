@@ -32,7 +32,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.title=copy-request-parameters init-param default value change",
 		"problem.summary=The copy-request-parameters init parameter's default value is now set to true in all portlets that extend MVCPortlet.",
 		"problem.tickets=LPS-54798",
-		"problem.section=#changed-the-default-value-of-the-copy-request-parameters-init-parameter-for"
+		"problem.section=#changed-the-default-value-of-the-copy-request-parameters-init-parameter-for",
+		"implName=MVCPortletInitParamsChangeClass"
 	},
 	service = FileMigrator.class
 )

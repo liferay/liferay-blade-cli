@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-the-com-liferay-dynamic-data-mapping-util-ddmxmlutil-class",
 		"problem.summary=The class com.liferay.dynamic.data.mapping.util.DDMXMLUtil has been removed with no replacement",
 		"problem.tickets=LPS-63928",
+		"implName=DDMXMLUtilInvocation"
 	},
 	service = FileMigrator.class
 )

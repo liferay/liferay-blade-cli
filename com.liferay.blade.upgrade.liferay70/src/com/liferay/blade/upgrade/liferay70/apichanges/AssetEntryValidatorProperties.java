@@ -29,6 +29,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=Removed the asset.entry.validator Property",
 		"problem.tickets=LPS-64370",
 		"problem.section=#removed-the-asset-entry-validator-property",
+		"implName=AssetEntryValidatorProperties"
 	},
 	service = FileMigrator.class
 )

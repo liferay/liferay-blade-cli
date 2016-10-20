@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#changed-the-usage-of-asset-preview",
 		"problem.summary=Changed the Usage of Asset Preview",
 		"problem.tickets=LPS-53972",
+		"implName=AssetPreviewTags"
 	},
 	service = FileMigrator.class
 )
