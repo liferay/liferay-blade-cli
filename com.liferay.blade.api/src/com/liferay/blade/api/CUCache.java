@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.osgi.annotation.versioning.ProviderType;
 
+@SuppressWarnings("restriction")
 @ProviderType
 public interface CUCache<T> {
 

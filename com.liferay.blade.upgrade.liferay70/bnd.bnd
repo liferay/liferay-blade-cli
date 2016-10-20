@@ -47,7 +47,6 @@ Import-Package: \
 Private-Package: \
 	aQute.lib.io;-split-package:=merge-first,\
 	aQute.libg.glob;-split-package:=merge-first,\
-	com.liferay.blade.upgrade.liferay70.*,\
 	com.liferay.knowledge.base.markdown.converter.*,\
 	org.jsoup.*,\
 	org.objectweb.asm.*,\
@@ -59,3 +58,6 @@ Include-Resource: \
 	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/memory/SoftReferenceThreadLocal.class,\
 	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/CentralizedThreadLocal.class,\
 	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/GetterUtil.class
+Export-Package: \
+	com.liferay.blade.upgrade.liferay70.apichanges,\
+	com.liferay.blade.upgrade.liferay70
