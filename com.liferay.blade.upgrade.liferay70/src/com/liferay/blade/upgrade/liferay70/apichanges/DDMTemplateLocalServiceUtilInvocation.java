@@ -35,6 +35,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=Added Required Parameter resourceClassNameId for DDM Template Search Operations",
 		"problem.type=java,jsp",
 		"problem.tickets=LPS-52990",
+		"implName=DDMTemplateLocalServiceUtilInvocation"
 	},
 	service = FileMigrator.class
 )

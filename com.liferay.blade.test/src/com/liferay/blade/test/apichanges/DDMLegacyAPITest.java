@@ -23,57 +23,26 @@ import static org.junit.Assert.assertTrue;
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.test.Util;
-import com.liferay.blade.upgrade.liferay70.apichanges.DDMLegacyAPI;
 
 import java.io.File;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
-public class DDMLegacyAPITest {
+public class DDMLegacyAPITest extends APITestBase {
 
-	final File testFile = new File(
-			"projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/JournalArticleAssetRendererFactory.java");
-
-	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
-
-	FileMigrator fileMigrator;
-
-	ServiceReference<FileMigrator>[] fileMigrators;
-
-	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
-
-		fileMigratorTracker.open();
-
-		fileMigrators = fileMigratorTracker.getServiceReferences();
-
-		assertNotNull(fileMigrators);
-
-		assertTrue(fileMigrators.length > 0);
+	@Override
+	public int getExpectedNumber() {
+		return 5;
 	}
 
 	@Test
 	public void dDMLegacyAPITest() throws Exception {
-		List<Problem> problems = null;
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(getTestFile());
 
-			if (fmigrator instanceof DDMLegacyAPI) {
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
 		assertEquals(5, problems.size());
@@ -85,7 +54,8 @@ public class DDMLegacyAPITest {
 		if (Util.isWindows()) {
 			assertEquals(1704, problem.startOffset);
 			assertEquals(1779, problem.endOffset);
-		} else {
+		}
+		else {
 			assertEquals(1669, problem.startOffset);
 			assertEquals(1744, problem.endOffset);
 		}
@@ -95,11 +65,12 @@ public class DDMLegacyAPITest {
 		assertEquals(134, problem.lineNumber);
 
 		if (Util.isWindows()) {
-			assertEquals(4829, problem.startOffset);
-			assertEquals(4886, problem.endOffset);
-		} else {
-			assertEquals(4696, problem.startOffset);
-			assertEquals(4753, problem.endOffset);
+			assertTrue(problem.startOffset >= 4829 && problem.startOffset <= 4832);
+			assertTrue(problem.endOffset >= 4886 && problem.endOffset <= 4889);
+		}
+		else {
+			assertTrue(problem.startOffset >= 4696 && problem.startOffset <= 4699);
+			assertTrue(problem.endOffset >= 4753 && problem.endOffset <= 4756);
 		}
 
 		problem = problems.get(2);
@@ -107,11 +78,12 @@ public class DDMLegacyAPITest {
 		assertEquals(147, problem.lineNumber);
 
 		if (Util.isWindows()) {
-			assertEquals(5177, problem.startOffset);
-			assertEquals(5234, problem.endOffset);
-		} else {
-			assertEquals(5031, problem.startOffset);
-			assertEquals(5088, problem.endOffset);
+			assertTrue(problem.startOffset >= 5177 && problem.startOffset <= 5180);
+			assertTrue(problem.endOffset >= 5234 && problem.endOffset <= 5237);
+		}
+		else {
+			assertTrue(problem.startOffset >= 5031 && problem.startOffset <= 5034);
+			assertTrue(problem.endOffset >= 5088 && problem.endOffset <= 5091);
 
 		}
 		problem = problems.get(3);
@@ -119,9 +91,10 @@ public class DDMLegacyAPITest {
 		assertEquals(37, problem.lineNumber);
 
 		if (Util.isWindows()) {
-			assertEquals(1789, problem.startOffset);
-			assertEquals(1859, problem.endOffset);
-		} else {
+			assertTrue(problem.startOffset >= 1789 && problem.startOffset <= 1792);
+			assertTrue(problem.endOffset >= 1859 && problem.endOffset <= 1862);
+		}
+		else {
 			assertEquals(1753, problem.startOffset);
 			assertEquals(1823, problem.endOffset);
 		}
@@ -131,12 +104,27 @@ public class DDMLegacyAPITest {
 		assertEquals(162, problem.lineNumber);
 
 		if (Util.isWindows()) {
-			assertEquals(5573, problem.startOffset);
-			assertEquals(5690, problem.endOffset);
-		} else {
-			assertEquals(5412, problem.startOffset);
-			assertEquals(5527, problem.endOffset);
+			assertTrue(problem.startOffset >= 5573 && problem.startOffset <= 5576);
+			assertTrue(problem.endOffset >= 5690 && problem.endOffset <= 5693);
 		}
+		else {
+			assertTrue(
+				String.valueOf(problem.startOffset),
+				problem.startOffset >= 5412 && problem.startOffset <= 5415);
+			assertTrue(
+				String.valueOf(problem.endOffset),
+				problem.endOffset >= 5527 && problem.endOffset <= 5530);
+		}
+	}
+
+	@Override
+	public String getImplClassName() {
+		return "DDMLegacyAPI";
+	}
+
+	@Override
+	public File getTestFile() {
+		return new File("projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/JournalArticleAssetRendererFactory.java");
 	}
 
 }

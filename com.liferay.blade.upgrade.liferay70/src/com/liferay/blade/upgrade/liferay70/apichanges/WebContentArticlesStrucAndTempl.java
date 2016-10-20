@@ -35,7 +35,8 @@ import org.osgi.service.component.annotations.Component;
 			"A default structure and template named Basic Web Content was " +
 			"added to the global scope, and can be modified or deleted.",
 		"problem.tickets=LPS-45107",
-		"problem.section=#web-content-articles-now-require-a-structure-and-template"
+		"problem.section=#web-content-articles-now-require-a-structure-and-template",
+		"implName=WebContentArticlesStrucAndTempl"
 	},
 	service = FileMigrator.class
 )

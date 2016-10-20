@@ -16,84 +16,18 @@
 
 package com.liferay.blade.test.apichanges;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import com.liferay.blade.api.FileMigrator;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.upgrade.liferay70.apichanges.PortletsPackage;
-
 import java.io.File;
-import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
+public class PortletsPackageTest extends APITestBase {
 
-public class PortletsPackageTest {
-	final File testFile = new File("projects/filetests/PortletsPackageTest.java");
-
-	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
-
-	FileMigrator fileMigrator;
-
-	ServiceReference<FileMigrator>[] fileMigrators;
-
-	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
-
-		fileMigratorTracker.open();
-
-		fileMigrators = fileMigratorTracker.getServiceReferences();
-
-		assertNotNull(fileMigrators);
-
-		assertTrue(fileMigrators.length > 0);
+	@Override
+	public String getImplClassName() {
+		return "PortletsPackage";
 	}
 
-	@Test
-	public void portalPropertiesAnalyzeTest() throws Exception {
-		List<Problem> problems = null;
-
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
-
-			if (fmigrator instanceof PortletsPackage) {
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
-
-		assertNotNull(problems);
-		assertEquals(1, problems.size());
-	}
-
-	@Test
-	public void portalPropertiesAnalyzeTest2() throws Exception {
-		List<Problem> problems = null;
-
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
-
-			if (fmigrator instanceof PortletsPackage) {
-				problems = fmigrator.analyze(testFile);
-
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
-
-		assertNotNull(problems);
-		assertEquals(1, problems.size());
+	@Override
+	public File getTestFile() {
+		return new File("projects/filetests/PortletsPackageTest.java");
 	}
 
 }

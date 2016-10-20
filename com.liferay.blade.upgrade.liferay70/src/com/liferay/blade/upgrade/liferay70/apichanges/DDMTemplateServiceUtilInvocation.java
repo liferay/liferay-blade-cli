@@ -34,6 +34,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#added-required-parameter-resourceclassnameid-for-ddm-template-search-operat",
 		"problem.summary=Added Required Parameter resourceClassNameId for DDM Template Search Operations",
 		"problem.tickets=LPS-52990",
+		"implName=DDMTemplateServiceUtilInvocation"
 	},
 	service = FileMigrator.class
 )

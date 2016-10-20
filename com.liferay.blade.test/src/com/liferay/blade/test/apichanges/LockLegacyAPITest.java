@@ -18,61 +18,40 @@ package com.liferay.blade.test.apichanges;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.test.Util;
-import com.liferay.blade.upgrade.liferay70.apichanges.LockLegacyAPI;
 
 import java.io.File;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
-public class LockLegacyAPITest {
-	final File testFile = new File(
-			"projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/LockProtectedAction.java");
+public class LockLegacyAPITest extends APITestBase {
 
-	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+	@Override
+	public int getExpectedNumber() {
+		return 4;
+	}
 
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
+	@Override
+	public String getImplClassName() {
+		return "LockLegacyAPI";
+	}
 
-	FileMigrator fileMigrator;
-
-	ServiceReference<FileMigrator>[] fileMigrators;
-
-	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
-
-		fileMigratorTracker.open();
-
-		fileMigrators = fileMigratorTracker.getServiceReferences();
-
-		assertNotNull(fileMigrators);
-
-		assertTrue(fileMigrators.length > 0);
+	@Override
+	public File getTestFile() {
+		return new File("projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/LockProtectedAction.java");
 	}
 
 	@Test
 	public void lockLegacyAPITest() throws Exception {
-		List<Problem> problems = null;
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(getTestFile());
 
-			if (fmigrator instanceof LockLegacyAPI) {
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
 		assertEquals(4, problems.size());

@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#changes-in-exceptions-thrown-by-user-services",
 		"problem.summary=Changes in Exceptions Thrown by User Services",
 		"problem.tickets=LPS-47130",
+		"implName=UserServicesThrownExceptionsChanges"
 	},
 	service = FileMigrator.class
 )

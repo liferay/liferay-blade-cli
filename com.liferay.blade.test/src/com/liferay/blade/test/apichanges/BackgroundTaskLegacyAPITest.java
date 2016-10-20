@@ -18,61 +18,30 @@ package com.liferay.blade.test.apichanges;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.test.Util;
-import com.liferay.blade.upgrade.liferay70.apichanges.BackgroundTaskLegacyAPI;
 
 import java.io.File;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
-public class BackgroundTaskLegacyAPITest {
-	final File testFile = new File(
-			"projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/DLFileNameBackgroundTaskServiceImpl.java");
+public class BackgroundTaskLegacyAPITest extends APITestBase {
 
-	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
-
-	FileMigrator fileMigrator;
-
-	ServiceReference<FileMigrator>[] fileMigrators;
-
-	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
-
-		fileMigratorTracker.open();
-
-		fileMigrators = fileMigratorTracker.getServiceReferences();
-
-		assertNotNull(fileMigrators);
-
-		assertTrue(fileMigrators.length > 0);
+	@Override
+	public int getExpectedNumber() {
+		return 2;
 	}
 
 	@Test
-	public void backgroundTaskLegacyAPITest() throws Exception {
-		List<Problem> problems = null;
+	public void testFull() throws Exception {
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(getTestFile());
 
-			if (fmigrator instanceof BackgroundTaskLegacyAPI) {
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
 		assertEquals(2, problems.size());
@@ -101,6 +70,17 @@ public class BackgroundTaskLegacyAPITest {
 			assertEquals(728, problem.startOffset);
 			assertEquals(783, problem.endOffset);
 		}
+	}
+
+
+	@Override
+	public String getImplClassName() {
+		return "BackgroundTaskLegacyAPI";
+	}
+
+	@Override
+	public File getTestFile() {
+		return new File("projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/DLFileNameBackgroundTaskServiceImpl.java");
 	}
 
 }

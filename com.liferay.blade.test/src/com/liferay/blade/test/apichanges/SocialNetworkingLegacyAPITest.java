@@ -18,63 +18,43 @@ package com.liferay.blade.test.apichanges;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.test.Util;
-import com.liferay.blade.upgrade.liferay70.apichanges.SocialNetworkingLegacyAPI;
 
 import java.io.File;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
-public class SocialNetworkingLegacyAPITest {
-	final File testFile = new File(
-			"projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/GroupModelListener.java");
+public class SocialNetworkingLegacyAPITest  extends APITestBase {
+
+	@Override
+	public int getExpectedNumber() {
+		return 2;
+	}
+
+	@Override
+	public String getImplClassName() {
+		return "SocialNetworkingLegacyAPI";
+	}
+
+	@Override
+	public File getTestFile() {
+		return new File("projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/GroupModelListener.java");
+	}
+
 	final File testFile2 = new File(
 			"projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/MeetupsPortlet.java");
 
-	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
-
-	FileMigrator fileMigrator;
-
-	ServiceReference<FileMigrator>[] fileMigrators;
-
-	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
-
-		fileMigratorTracker.open();
-
-		fileMigrators = fileMigratorTracker.getServiceReferences();
-
-		assertNotNull(fileMigrators);
-
-		assertTrue(fileMigrators.length > 0);
-	}
-
 	@Test
-	public void socialNetworkingLegacyAPITest() throws Exception {
-		List<Problem> problems = null;
+	public void testFull() throws Exception {
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(getTestFile());
 
-			if (fmigrator instanceof SocialNetworkingLegacyAPI) {
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
 		assertEquals(2, problems.size());
@@ -102,23 +82,20 @@ public class SocialNetworkingLegacyAPITest {
 			assertEquals(1056, problem.startOffset);
 			assertEquals(1119, problem.endOffset);
 		}
+	}
 
-		problems = null;
+	@Test
+	public void testFull2() throws Exception {
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(testFile2);
 
-			if (fmigrator instanceof SocialNetworkingLegacyAPI) {
-				problems = fmigrator.analyze(testFile2);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
 		assertEquals(6, problems.size());
 
-		problem = problems.get(0);
+		Problem problem = problems.get(0);
 
 		assertEquals(24, problem.lineNumber);
 

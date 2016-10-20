@@ -32,7 +32,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=Changed the AssetRenderer API to Include the PortletRequest and PortletResponse Parameters",
 		"problem.tickets=LPS-44639,LPS-44894",
 		"problem.title=AssetRenderer API Changes",
-		"problem.section=#changed-the-assetrenderer-and-indexer-apis-to-include-the-portletrequest-an"
+		"problem.section=#changed-the-assetrenderer-and-indexer-apis-to-include-the-portletrequest-an",
+		"implName=AssetRendererGetSummaryDecl"
 	},
 	service = FileMigrator.class
 )

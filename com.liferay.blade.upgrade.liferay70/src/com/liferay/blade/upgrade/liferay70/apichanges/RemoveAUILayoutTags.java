@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-the-auilayout-tag-with-no-direct-replacement",
 		"problem.summary=Removed the aui:layout Tag with No Direct Replacement",
 		"problem.tickets=LPS-62935",
+		"implName=RemoveAUILayoutTags"
 	},
 	service = FileMigrator.class
 )

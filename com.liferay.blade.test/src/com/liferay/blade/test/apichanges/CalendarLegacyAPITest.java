@@ -18,61 +18,30 @@ package com.liferay.blade.test.apichanges;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.test.Util;
-import com.liferay.blade.upgrade.liferay70.apichanges.CalendarLegacyAPI;
 
 import java.io.File;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
-public class CalendarLegacyAPITest {
-	final File testFile = new File(
-			"projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/CalendarPortlet.java");
+public class CalendarLegacyAPITest extends APITestBase{
 
-	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
-
-	FileMigrator fileMigrator;
-
-	ServiceReference<FileMigrator>[] fileMigrators;
-
-	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
-
-		fileMigratorTracker.open();
-
-		fileMigrators = fileMigratorTracker.getServiceReferences();
-
-		assertNotNull(fileMigrators);
-
-		assertTrue(fileMigrators.length > 0);
+	@Override
+	public int getExpectedNumber() {
+		return 7;
 	}
 
 	@Test
 	public void calendarLegacyAPITest() throws Exception {
-		List<Problem> problems = null;
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(getTestFile());
 
-			if (fmigrator instanceof CalendarLegacyAPI) {
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
 		assertEquals(7, problems.size());
@@ -160,6 +129,16 @@ public class CalendarLegacyAPITest {
 			assertEquals(2121, problem.startOffset);
 			assertEquals(2177, problem.endOffset);
 		}
+	}
+
+	@Override
+	public String getImplClassName() {
+		return "CalendarLegacyAPI";
+	}
+
+	@Override
+	public File getTestFile() {
+		return new File("projects/legacy-apis-ant-portlet/docroot/WEB-INF/src/com/liferay/CalendarPortlet.java");
 	}
 
 }

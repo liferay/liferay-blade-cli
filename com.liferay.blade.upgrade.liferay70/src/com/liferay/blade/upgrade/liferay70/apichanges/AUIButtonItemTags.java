@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-the-auibutton-item-tag-and-replaced-with-auibutton",
 		"problem.summary=Removed the aui:button-item Tag and Replaced with aui:button",
 		"problem.tickets=LPS-62922",
+		"implName=AUIButtonItemTags"
 	},
 	service = FileMigrator.class
 )

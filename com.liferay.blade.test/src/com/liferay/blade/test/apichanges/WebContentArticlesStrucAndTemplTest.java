@@ -16,66 +16,23 @@
 
 package com.liferay.blade.test.apichanges;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import com.liferay.blade.api.FileMigrator;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.upgrade.liferay70.apichanges.WebContentArticlesStrucAndTempl;
-
 import java.io.File;
-import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
+public class WebContentArticlesStrucAndTemplTest extends APITestBase {
 
-public class WebContentArticlesStrucAndTemplTest {
-
-	final File testFile = new File(
-			"projects/filetests/WebContentArticlesStrucAndTemplTestFile.java");
-
-	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
-
-	FileMigrator fileMigrator;
-
-	ServiceReference<FileMigrator>[] fileMigrators;
-
-	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
-
-		fileMigratorTracker.open();
-
-		fileMigrators = fileMigratorTracker.getServiceReferences();
-
-		assertNotNull(fileMigrators);
-
-		assertTrue(fileMigrators.length > 0);
+	@Override
+	public int getExpectedNumber() {
+		return 2;
 	}
 
-	@Test
-	public void reservedUserIdExceptionJavaTest() throws Exception {
-		List<Problem> problems = null;
+	@Override
+	public String getImplClassName() {
+		return "WebContentArticlesStrucAndTempl";
+	}
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
-
-			if (fmigrator instanceof WebContentArticlesStrucAndTempl) {
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
-
-		assertNotNull(problems);
-		assertEquals(2, problems.size());
+	@Override
+	public File getTestFile() {
+		return new File("projects/filetests/WebContentArticlesStrucAndTemplTestFile.java");
 	}
 
 }

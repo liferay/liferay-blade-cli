@@ -34,6 +34,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-the-tags-that-start-with-portleticon-",
 		"problem.summary=Removed the Tags that Start with portlet:icon-",
 		"problem.tickets=LPS-54620",
+		"implName=PortletIconTags"
 	},
 	service = FileMigrator.class
 )

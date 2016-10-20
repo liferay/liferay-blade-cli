@@ -35,6 +35,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-permissionclassname-permissionclasspk-and-permissionowner-parameter",
 		"problem.summary=Removed permissionClassName, permissionClassPK, and permissionOwner Parameters from MBMessage API",
 		"problem.tickets=LPS-55877",
+		"implName=MBMessageServiceUtilInvocation"
 	},
 	service = FileMigrator.class
 )

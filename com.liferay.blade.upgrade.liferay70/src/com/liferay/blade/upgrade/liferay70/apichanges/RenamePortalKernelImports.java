@@ -35,7 +35,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.tickets=LPS-61952",
 		"problem.title=Renamed Packages to Fix the Split Packages Problem",
 		"problem.section=#renamed-packages-to-fix-the-split-packages-problem",
-		"auto.correct=import"
+		"auto.correct=import",
+		"implName=RenamePortalKernelImports"
 	},
 	service = {
 		FileMigrator.class,

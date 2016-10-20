@@ -34,6 +34,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-the-dlfileentrytypesddmstructures-mapping-table",
 		"problem.summary=Removed the DLFileEntryTypes_DDMStructures Mapping Table",
 		"problem.tickets=LPS-56660",
+		"implName=DLFileEntryTypeDDMStructureInvocation"
 	},
 	service = FileMigrator.class
 )

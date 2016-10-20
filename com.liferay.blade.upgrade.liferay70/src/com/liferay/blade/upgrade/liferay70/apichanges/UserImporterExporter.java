@@ -34,6 +34,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#user-operation-and-importer-exporter-classes-and-utilities-have-been-moved-",
 		"problem.summary==User Operation and Importer/Exporter Classes and Utilities Moved or Removed",
 		"problem.tickets=LPS-63205",
+		"implName=UserImporterExporter"
 	},
 	service = FileMigrator.class
 )

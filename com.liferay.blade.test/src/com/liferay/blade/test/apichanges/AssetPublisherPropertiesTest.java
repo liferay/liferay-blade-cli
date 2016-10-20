@@ -18,21 +18,16 @@ package com.liferay.blade.test.apichanges;
 
 import java.io.File;
 
-public class UserServicesThrownExceptionsChangesTest  extends APITestBase {
-
-	@Override
-	public int getExpectedNumber() {
-		return 2;
-	}
+public class AssetPublisherPropertiesTest extends APITestBase {
 
 	@Override
 	public String getImplClassName() {
-		return "UserServicesThrownExceptionsChanges";
+		return "AssetPublisherProperties";
 	}
 
 	@Override
 	public File getTestFile() {
-		return new File("projects/filetests/UserServicesThrownExceptionsChangesTest.java");
+		return new File("projects/test-portlet/docroot/WEB-INF/src/portal.properties");
 	}
 
 }

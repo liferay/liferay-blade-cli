@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-the-liferay-uinavigation-tag-and-replaced-with-liferay-site-navigationnavigation-tag",
 		"problem.summary=Removed the liferay-ui:navigation Tag and Replaced with liferay-site-navigation:navigation Tag",
 		"problem.tickets=LPS-60328",
+		"implName=NavigationTags"
 	},
 	service = FileMigrator.class
 )

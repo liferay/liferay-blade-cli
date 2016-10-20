@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#removed-methods-getgrouplocalrepositoryimpl-and-getlocalrepositoryimpl-from",
 		"problem.summary=Removed Methods getGroupLocalRepositoryImpl and getLocalRepositoryImpl from RepositoryLocalService and RepositoryService",
 		"problem.tickets=LPS-55566",
+		"implName=RepositoryServiceUtilGetRepositoryImplInvocation"
 	},
 	service = FileMigrator.class
 )

@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#renamed-uri-attribute-used-to-generate-aui-tag-library",
 		"problem.summary=We should use the new AUI URI declaration:http://liferay.com/tld/aui",
 		"problem.tickets=LPS-57809",
+		"implName=AUILiferayTags"
 	},
 	service = FileMigrator.class
 )

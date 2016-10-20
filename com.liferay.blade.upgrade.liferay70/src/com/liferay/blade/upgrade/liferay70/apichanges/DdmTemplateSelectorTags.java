@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#changed-usage-of-the-liferay-uiddm-template-selector-tag",
 		"problem.summary=The attribute classNameId of the liferay-ui:ddm-template-selector taglib tag has been renamed className",
 		"problem.tickets=LPS-53790",
+		"implName=DdmTemplateSelectorTags"
 	},
 	service = FileMigrator.class
 )

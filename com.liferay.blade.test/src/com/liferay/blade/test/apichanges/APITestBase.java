@@ -18,11 +18,9 @@ package com.liferay.blade.test.apichanges;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.api.Problem;
-import com.liferay.blade.upgrade.liferay70.apichanges.AssetPublisherProperties;
 
 import java.io.File;
 import java.util.List;
@@ -30,25 +28,22 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-public class AssetPublisherPropertiesPropertiesTest {
-	final File testFile =
-		new File("projects/test-portlet/docroot/WEB-INF/src/portal.properties");
+public abstract class APITestBase {
 
 	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
-
-	FileMigrator fileMigrator;
 
 	ServiceReference<FileMigrator>[] fileMigrators;
 
 	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
+	public void beforeTest() throws Exception {
+		Filter filter = context.createFilter("(implName=" + getImplClassName() + ")");
+
+		ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, filter, null);
 
 		fileMigratorTracker.open();
 
@@ -56,45 +51,41 @@ public class AssetPublisherPropertiesPropertiesTest {
 
 		assertNotNull(fileMigrators);
 
-		assertTrue(fileMigrators.length > 0);
+		assertEquals(1, fileMigrators.length);
+	}
+
+	public abstract String getImplClassName();
+
+	public abstract File getTestFile();
+
+	public int getExpectedNumber() {
+		return 1;
 	}
 
 	@Test
-	public void assetPublisherPropertiesAnalyzeTest() throws Exception {
-		List<Problem> problems = null;
+	public void test() throws Exception {
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(getTestFile());
 
-			if (fmigrator instanceof AssetPublisherProperties) {
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
-		assertEquals(1, problems.size());
+		assertEquals(getExpectedNumber(), problems.size());
 	}
 
 	@Test
-	public void assetPublisherAnalyzeTest2() throws Exception {
-		List<Problem> problems = null;
+	public void test2() throws Exception {
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
+		List<Problem> problems = fmigrator.analyze(getTestFile());
 
-			if (fmigrator instanceof AssetPublisherProperties) {
-				problems = fmigrator.analyze(testFile);
+		problems = fmigrator.analyze(getTestFile());
 
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
+		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
-		assertEquals(1, problems.size());
+		assertEquals(getExpectedNumber(), problems.size());
 	}
 
 }

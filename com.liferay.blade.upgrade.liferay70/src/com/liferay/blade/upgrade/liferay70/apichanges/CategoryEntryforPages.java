@@ -35,7 +35,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.title=Deprecated Category Entry for Pages",
 		"problem.summary=The category entry for Site Administration > Pages has been deprecated in favor of Site Administration > Navigation.",
 		"problem.tickets=LPS-63667",
-		"problem.section=#deprecated-category-entry-for-pages"
+		"problem.section=#deprecated-category-entry-for-pages",
+		"implName=CategoryEntryforPages"
 	},
 	service = FileMigrator.class
 )

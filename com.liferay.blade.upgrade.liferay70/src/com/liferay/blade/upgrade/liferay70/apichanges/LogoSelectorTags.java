@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#the-liferay-uilogo-selector-tag-requires-parameter-changes",
 		"problem.summary=Removed the editLogoURL of liferay-ui:logo-selector Tag",
 		"problem.tickets=LPS-42645",
+		"implName=LogoSelectorTags"
 	},
 	service = FileMigrator.class
 )

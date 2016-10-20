@@ -16,85 +16,18 @@
 
 package com.liferay.blade.test.apichanges;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import com.liferay.blade.api.FileMigrator;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.upgrade.liferay70.apichanges.AssetRendererGetSummaryDecl;
-
 import java.io.File;
-import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
+public class AssetRendererGetSummaryDeclTest extends APITestBase {
 
-public class AssetRendererGetSummaryDeclTest {
-
-	final File testFile = new File(
-		"projects/knowledge-base-portlet-6.2.x/docroot/WEB-INF/src/com/liferay/knowledgebase/admin/asset/KBArticleAssetRenderer.java");
-
-	final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-
-	ServiceTracker<FileMigrator, FileMigrator> fileMigratorTracker;
-
-	FileMigrator fileMigrator;
-
-	ServiceReference<FileMigrator>[] fileMigrators;
-
-	@Before
-	public void beforeTest() {
-		fileMigratorTracker = new ServiceTracker<FileMigrator, FileMigrator>(context, FileMigrator.class, null);
-
-		fileMigratorTracker.open();
-
-		fileMigrators = fileMigratorTracker.getServiceReferences();
-
-		assertNotNull(fileMigrators);
-
-		assertTrue(fileMigrators.length > 0);
+	@Override
+	public String getImplClassName() {
+		return "AssetRendererGetSummaryDecl";
 	}
 
-	@Test
-	public void assetRendererAPIsAnalyzeTest() throws Exception {
-		List<Problem> problems = null;
-
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
-
-			if (fmigrator instanceof AssetRendererGetSummaryDecl) {
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
-
-		assertNotNull(problems);
-		assertEquals(1, problems.size());
+	@Override
+	public File getTestFile() {
+		return new File("projects/knowledge-base-portlet-6.2.x/docroot/WEB-INF/src/com/liferay/knowledgebase/admin/asset/KBArticleAssetRenderer.java");
 	}
 
-	@Test
-	public void assetRendererAPIsAnalyzeTestTwice() throws Exception {
-		List<Problem> problems = null;
-
-		for (ServiceReference<FileMigrator> fm : fileMigrators) {
-			final FileMigrator fmigrator = context.getService(fm);
-
-			if (fmigrator instanceof AssetRendererGetSummaryDecl) {
-				problems = fmigrator.analyze(testFile);
-
-				problems = fmigrator.analyze(testFile);
-			}
-
-			context.ungetService(fm);
-		}
-
-		assertNotNull(problems);
-		assertEquals(1, problems.size());
-	}
 }

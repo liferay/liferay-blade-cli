@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.section=#replaced-the-reserveduserscreennameexception-with-userscreennameexception-m",
 		"problem.summary=Replaced the ReservedUserScreenNameException with UserScreenNameException.MustNotBeReserved in UserLocalService",
 		"problem.tickets=LPS-53113",
+		"implName=ReplacedReservedUserScreenNameException"
 	},
 	service = FileMigrator.class
 )

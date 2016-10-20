@@ -32,7 +32,8 @@ import org.osgi.service.component.annotations.Component;
 		"problem.summary=The getURLView method of AssetRenderer returns String instead of PortletURL",
 		"problem.tickets=LPS-61853",
 		"problem.title=AssetRenderer API Changes",
-		"problem.section=#the-geturlview-method-of-assetrenderer-returns-string-instead-of-portleturl"
+		"problem.section=#the-geturlview-method-of-assetrenderer-returns-string-instead-of-portleturl",
+		"implName=AssetRendererGetURLViewDecl"
 	},
 	service = FileMigrator.class
 )
