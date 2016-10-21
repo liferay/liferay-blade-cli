@@ -25,7 +25,6 @@ import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -216,22 +215,12 @@ public class CreateCommand {
 		return containsDir(baseDir, modulesDir) ? baseDir : modulesDir;
 	}
 
-	private List<String> getTemplates() throws Exception {
-		List<String> templateNames = new ArrayList<>();
-
-		for (String templateName : getTemplateNames()) {
-			templateNames.add(templateName);
-		}
-
-		return templateNames;
-	}
-
 	private String[] getTemplateNames() throws Exception {
 		return ProjectTemplates.getTemplates();
 	}
 
 	private boolean isExistingTemplate(String templateName) throws Exception {
-		List<String> templates = getTemplates();
+		String[] templates = getTemplateNames();
 
 		for (String template : templates) {
 			if (templateName.equals(template)) {
