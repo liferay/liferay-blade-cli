@@ -771,6 +771,30 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateTheme() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "theme", "theme-test"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/theme-test";
+
+		checkFileExists(projectPath);
+
+		checkFileDoesNotExists(projectPath + "/bnd.bnd");
+
+		checkFileExists(projectPath + "/src/main/webapp/css/_custom.scss");
+
+		File properties = checkFileExists(
+			projectPath + "/src/main/webapp/WEB-INF/liferay-plugin-package.properties");
+
+		contains(properties, ".*^name=theme-test.*");
+
+		verifyBuild(projectPath, projectPath, "theme-test.war");
+	}
+
+	@Test
 	public void testCreateWorkspaceGradleFragment() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules/extensions", "-t",
