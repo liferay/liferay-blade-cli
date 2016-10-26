@@ -263,11 +263,7 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 	private class JSPTranslatorPrime extends JSPTranslator {
 		@Override
 		protected void handleIncludeFile(String filename) {
-			try {
-				super.handleIncludeFile(filename);
-			} catch (Exception e) {
-				// suppress errors in handling include files
-			}
+			//don't process include files to avoid redundant results and wrong line number
 		}
 	}
 
