@@ -54,8 +54,8 @@ public class CreateCommand {
 
 		String name = args.size() > 0 ? args.get(0) : null;
 
-		if(name == null) {
-			addError("Create", "SYNOPSIS: create [options] <[name]>");
+		if (name == null) {
+			addError("Create", "SYNOPSIS\n\t create [options] <[name]>");
 			return;
 		}
 
