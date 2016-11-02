@@ -52,6 +52,13 @@ public class CreateCommand {
 
 		List<String> args = _options._arguments();
 
+		String name = args.size() > 0 ? args.get(0) : null;
+
+		if (name == null) {
+			addError("Create", "SYNOPSIS\n\t create [options] <[name]>");
+			return;
+		}
+
 		String template = _options.template();
 
 		if (template == null) {
@@ -62,8 +69,6 @@ public class CreateCommand {
 					"Create", "the template "+template+" is not in the list");
 				return;
 		}
-
-		String name = args.remove(0);
 
 		final File dir =
 			_options.dir() != null ? _options.dir() : getDefaultDir();
