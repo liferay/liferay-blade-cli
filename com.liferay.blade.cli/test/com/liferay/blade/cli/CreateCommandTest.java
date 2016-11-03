@@ -795,6 +795,26 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateThemeContributor() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "theme-contributor", "-C", "foobar",
+			"theme-contributor-test"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/theme-contributor-test";
+
+		checkFileExists(projectPath);
+
+		File bnd = checkFileExists(projectPath + "/bnd.bnd");
+
+		contains(bnd, ".*Liferay-Theme-Contributor-Type: foobar.*");
+
+		verifyBuild(projectPath, projectPath, "theme.contributor.test-1.0.0.jar");
+	}
+
+	@Test
 	public void testCreateWorkspaceGradleFragment() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules/extensions", "-t",

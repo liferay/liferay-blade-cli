@@ -87,6 +87,7 @@ public class CreateCommand {
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
 		projectTemplatesArgs.setClassName(_options.classname());
+		projectTemplatesArgs.setContributorType(_options.contributorType());
 		projectTemplatesArgs.setDestinationDir(dir);
 		projectTemplatesArgs.setHostBundleSymbolicName(_options.hostbundlebsn());
 		projectTemplatesArgs.setHostBundleVersion(_options.hostbundleversion());
@@ -131,6 +132,12 @@ public class CreateCommand {
 					"name."
 		)
 		public String classname();
+
+		@Description(
+			"Used to identify your module as a Theme Contributor. Also, used " +
+			"to add the Liferay-Theme-Contributor-Type and Web-ContextPath " +
+			"bundle headers.")
+		public String contributorType();
 
 		@Description("The directory where to create the new project.")
 		public File dir();
