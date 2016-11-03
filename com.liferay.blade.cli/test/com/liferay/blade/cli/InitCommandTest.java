@@ -20,22 +20,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import aQute.lib.io.IO;
-
 import java.io.File;
 import java.io.IOException;
 
 import org.gradle.testkit.runner.BuildTask;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
+
+import aQute.lib.io.IO;
 
 /**
  * @author Gregory Amerson
  */
 public class InitCommandTest {
 
-	@Before
-	public void setUp() throws Exception {
+	@After
+	public void cleanUp() throws Exception {
 		IO.delete(workspaceDir.getParentFile());
 	}
 

@@ -19,10 +19,6 @@ package com.liferay.blade.cli;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import aQute.lib.io.IO;
-
-import com.liferay.blade.cli.FileWatcher.Consumer;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,9 +26,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.liferay.blade.cli.FileWatcher.Consumer;
+
+import aQute.lib.io.IO;
 
 /**
  * @author Greg Amerson
@@ -41,14 +42,17 @@ public class FileWatcherTest {
 
 	@Before
 	public void setUp() throws Exception {
+		testdir.mkdirs();
+		assertTrue(testdir.exists());
+		assertTrue(testfile.createNewFile());
+	}
+
+	@After
+	public void cleanUp() throws Exception {
 		if (testdir.exists()) {
 			IO.delete(testdir);
 			assertFalse(testdir.exists());
 		}
-
-		testdir.mkdirs();
-		assertTrue(testdir.exists());
-		assertTrue(testfile.createNewFile());
 	}
 
 	@Test
