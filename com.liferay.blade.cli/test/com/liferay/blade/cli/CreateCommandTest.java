@@ -20,6 +20,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import aQute.bnd.header.Parameters;
+import aQute.bnd.osgi.Domain;
+import aQute.bnd.osgi.Jar;
+import aQute.lib.io.IO;
+
+import com.liferay.project.templates.ProjectTemplates;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,16 +41,10 @@ import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
 import org.gradle.testkit.runner.BuildTask;
+import org.gradle.tooling.internal.consumer.ConnectorServices;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.liferay.project.templates.ProjectTemplates;
-
-import aQute.bnd.header.Parameters;
-import aQute.bnd.osgi.Domain;
-import aQute.bnd.osgi.Jar;
-import aQute.lib.io.IO;
 
 /**
  * @author Gregory Amerson
@@ -60,6 +61,8 @@ public class CreateCommandTest {
 
 	@After
 	public void cleanUp() throws Exception {
+		ConnectorServices.reset();
+
 		if (testdir.exists()) {
 			IO.delete(testdir);
 			assertFalse(testdir.exists());
