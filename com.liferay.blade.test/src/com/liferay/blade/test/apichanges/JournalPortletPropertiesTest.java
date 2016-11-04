@@ -18,21 +18,21 @@ package com.liferay.blade.test.apichanges;
 
 import java.io.File;
 
-public class DLAppServiceUtilInvocationTest extends APITestBase{
+public class JournalPortletPropertiesTest extends APITestBase {
 
 	@Override
 	public int getExpectedNumber() {
-		return 11;
+		return 49;
 	}
 
 	@Override
 	public String getImplClassName() {
-		return "DLAppServiceUtilInvocation";
+		return "JournalPortletProperties";
 	}
 
 	@Override
 	public File getTestFile() {
-		return new File("projects/test-ext/docroot/WEB-INF/ext-impl/src/com/liferay/test/DLAppServiceUtilTest.java");
+		return new File("projects/portal-impl-6.2.x/src/portal.properties");
 	}
 
 }

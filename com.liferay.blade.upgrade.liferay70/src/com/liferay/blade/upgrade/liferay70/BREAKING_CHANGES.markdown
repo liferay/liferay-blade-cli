@@ -77,7 +77,7 @@ New way:
     <liferay-ui:logo-selector
         currentLogoURL="<%= selUser.getPortraitURL(themeDisplay) %>"
         defaultLogoURL="<%= UserConstants.getPortraitURL(themeDisplay.getPathImage(), selUser.isMale(), 0) %>"
-        hasUpdateLogoPermission='<%= UsersAdminUtil.hasUpdateFieldPermission(selUser, "portrait") %>'
+        hasUpdateLogoPermission='<%= UsersAdminUtil.hasUpdateFieldPermission(permissionChecker, null, selUser, "portrait") %>'
         imageId="<%= selUser.getPortraitId() %>"
         logoDisplaySelector=".user-logo"
         maxFileSize="<%= PrefsPropsUtil.getLong(PropsKeys.USERS_IMAGE_MAX_SIZE) / 1024 %>"
@@ -1368,6 +1368,9 @@ The following portal properties (and the equivalent `PropsKeys` and
 - `company.settings.form.identification`
 - `company.settings.form.miscellaneous`
 - `company.settings.form.social`
+- `journal.article.form.add`
+- `journal.article.form.update`
+- `journal.article.form.default.values`
 - `layout.form.add`
 - `layout.form.update`
 - `layout.set.form.update`
@@ -4083,22 +4086,79 @@ different parts of the portal.
 
 ---------------------------------------
 
+### Removed the swfupload and video_player Utilities [](id=removed-the-swfupload-and-videoplayer-utilities)
+- **Date:** 2016-May-13
+- **JIRA Ticket:** LPS-54111
+
+#### What changed? [](id=what-changed-102)
+
+The utilities `swfupload` and `video_player` have been removed.
+
+#### Who is affected? [](id=who-is-affected-102)
+
+This affects anyone who is using the `swfupload` AlloyUI module or any of the
+associated `swfupload_f*.swf` and `mpw_player.swf` flash movies.
+
+#### How should I update my code? [](id=how-should-i-update-my-code-102)
+
+There are better, more standard ways to achieve upload currently. For instance,
+you can use [A.Uploader](http://alloyui.com/api/classes/Uploader.html) to manage
+your uploads consistently across browsers.
+
+For audio/video reproduction, you should update your code to use
+[A.Audio](http://alloyui.com/api/classes/A.Audio.html) and
+[A.Video](http://alloyui.com/api/classes/A.Video.html).
+
+#### Why was this change made? [](id=why-was-this-change-made-102)
+
+This change removes outdated code no longer being used in the platform. In
+addition, this change avoids future security issues from outdated flash movies.
+
+---------------------------------------
+
+### Moved Journal Portlet Properties to OSGi Configuration [](id=moved-journal-portlet-properties-to-osgi-configuration)
+- **Date:** 2016-Jul-29
+- **JIRA Ticket:** LPS-58672
+
+#### What changed? [](id=what-changed-103)
+
+All Journal portlet properties have been moved to an OSGI configuration.
+
+#### Who is affected? [](id=who-is-affected-103)
+
+This affects anyone who is overriding the Journal portlet's `portlet.properties`
+file.
+
+#### How should I update my code? [](id=how-should-i-update-my-code-103)
+
+Instead of overriding the Journal portlet's `portlet.properties` file, you can
+manage the properties from Portal's configuration administrator. This can be
+accessed by navigating to Liferay's Control Panel &rarr; *System Settings*
+&rarr; *Web Experience* and selecting the appropriate Web Content category.
+
+#### Why was this change made? [](id=why-was-this-change-made-103)
+
+This change was made as part of modularization efforts to ease portlet
+configuration changes.
+
+---------------------------------------
+
 ### Classes in portal-service.jar moved [](id=classes-in-portal-service-jar-moved)
 - **Date:** 2016-Jun-24
 - **JIRA Ticket:** no ticket number
 
-#### What changed? [](id=what-changed-102)
+#### What changed? [](id=what-changed-104)
 
 Many classes from former Liferay 6 JAR file portal-service.jar have been moved into application and framework API modules.
 
-#### Who is affected? [](id=who-is-affected-102)
+#### Who is affected? [](id=who-is-affected-104)
 
 Any code that uses the moved classes.
 
-#### How should I update my code? [](id=how-should-i-update-my-code-102)
+#### How should I update my code? [](id=how-should-i-update-my-code-104)
 
 You should change the package name via "correct automatically" in liferay-ide upgrade tool or you can do it manully. Then add denpencies for them. For more information, see [https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/classes-moved-from-portal-service-jar](https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/classes-moved-from-portal-service-jar)
 
-#### Why was this change made? [](id=why-was-this-change-made-102)
+#### Why was this change made? [](id=why-was-this-change-made-104)
 
 To leverage the benefits of modularization in Liferay 7.
