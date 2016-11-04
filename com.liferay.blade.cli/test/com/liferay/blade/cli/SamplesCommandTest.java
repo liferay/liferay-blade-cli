@@ -19,8 +19,6 @@ package com.liferay.blade.cli;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import aQute.lib.io.IO;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
@@ -28,9 +26,12 @@ import java.nio.file.Files;
 
 import org.gradle.testkit.runner.BuildTask;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import aQute.lib.io.IO;
 
 /**
  * @author David Truong
@@ -46,11 +47,6 @@ public class SamplesCommandTest {
 	@Before
 	public void setUp() throws Exception {
 		testDir = Files.createTempDirectory("samplestest").toFile();
-
-		if (testDir.exists()) {
-			IO.delete(testDir);
-			assertFalse(testDir.exists());
-		}
 	}
 
 	@After
@@ -59,6 +55,11 @@ public class SamplesCommandTest {
 			IO.delete(testDir);
 			assertFalse(testDir.exists());
 		}
+	}
+
+	@AfterClass
+	public static void cleanUpClass() throws Exception {
+		IO.delete(new File("bin_test/wrapper.zip"));
 	}
 
 	@Test

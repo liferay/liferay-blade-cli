@@ -18,28 +18,26 @@ package com.liferay.blade.cli;
 
 import static org.junit.Assert.assertFalse;
 
-import aQute.lib.io.IO;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
-
 import java.nio.file.Files;
 
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import aQute.lib.io.IO;
 
 /**
  * @author David Truong
  */
 public class MigrateThemeCommandTest {
+	private File testdir = IO.getFile("generated/test");
 
-	@Before
-	public void setUp() throws Exception {
-		File testdir = IO.getFile("generated/test");
-
+	@After
+	public void cleanUp() throws Exception {
 		if (testdir.exists()) {
 			IO.delete(testdir);
 			assertFalse(testdir.exists());
