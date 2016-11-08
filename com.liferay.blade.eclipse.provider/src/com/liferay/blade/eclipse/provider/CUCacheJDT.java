@@ -30,11 +30,19 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.osgi.service.component.annotations.Component;
 
 @Component(
+	property = {
+		"type=jdt"
+	},
 	service = CUCache.class
 )
 public class CUCacheJDT implements CUCache<CompilationUnit> {
 
 	private static final Map<File, WeakReference<CompilationUnit>> _map = new WeakHashMap<>();
+
+	@Override
+	public CompilationUnit getCU(File file) {
+		return null;
+	}
 
 	public CompilationUnit getCU(File file, char[] javaSource) {
 		synchronized (_map) {

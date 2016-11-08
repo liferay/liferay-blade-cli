@@ -24,6 +24,8 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface CUCache<T> {
 
+	public T getCU(File file);
+
 	public T getCU(File file, char[] javaSource);
 
 	public void unget(File file);

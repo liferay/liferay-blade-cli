@@ -16,31 +16,27 @@
 
 package com.liferay.blade.eclipse.provider;
 
+import com.liferay.blade.api.CUCache;
 import com.liferay.blade.api.JSPFile;
 import com.liferay.blade.api.JavaFile;
 import com.liferay.blade.api.SearchResult;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jst.jsp.core.internal.java.JSPTranslation;
-import org.eclipse.jst.jsp.core.internal.java.JSPTranslator;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredDocument;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMDocument;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.w3c.dom.NodeList;
 
@@ -53,6 +49,7 @@ import org.w3c.dom.NodeList;
 		JSPFile.class
 	}
 )
+@SuppressWarnings("rawtypes")
 public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 
 	public JSPFileWTP() {
@@ -60,52 +57,6 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 
 	public JSPFileWTP(File file) {
 		super(file);
-
-		getTranslation(file);
-	}
-
-	private JSPTranslationPrime createJSPTranslation() {
-		IDOMModel jspModel = null;
-
-		try {
-			// try to find the file in the current workspace, if it can't find it then fall back to copy
-
-			final IFile jspFile = getIFile(getFile());
-
-			jspModel = (IDOMModel) StructuredModelManager.getModelManager()
-					.getModelForRead(jspFile);
-			final IDOMDocument domDocument = jspModel.getDocument();
-			final IDOMNode domNode = (IDOMNode) domDocument
-					.getDocumentElement();
-
-			final IProgressMonitor npm = new NullProgressMonitor();
-			final JSPTranslator translator = new JSPTranslatorPrime();
-
-			if (domNode != null) {
-				translator.reset((IDOMNode) domDocument.getDocumentElement(),
-						npm);
-			} else {
-				translator.reset((IDOMNode) domDocument.getFirstChild(), npm);
-			}
-
-			translator.translate();
-
-			final IJavaProject javaProject = JavaCore
-					.create(jspFile.getProject());
-
-			_translation = new JSPTranslationPrime(javaProject, translator,
-					jspFile);
-
-			return _translation;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (jspModel != null) {
-				jspModel.releaseFromRead();
-			}
-		}
-
-		return null;
 	}
 
 	@Override
@@ -115,13 +66,11 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 		IDOMModel jspModel = null;
 
 		try {
-			final JSPTranslationPrime translation = getTranslation(getFile());
-
-			final int jspStartOffset = translation.getJspOffset(startOffset);
-			final int jspEndOffset = translation.getJspOffset(endOffset);
+			final int jspStartOffset = _translation.getJspOffset(startOffset);
+			final int jspEndOffset = _translation.getJspOffset(endOffset);
 
 			jspModel = (IDOMModel) StructuredModelManager.getModelManager()
-					.getModelForRead(translation._jspFile);
+					.getModelForRead(_translation.getJspFile());
 			final IDOMDocument domDocument = jspModel.getDocument();
 
 			final IStructuredDocument structuredDocument = domDocument
@@ -147,37 +96,11 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 
 	@Override
 	protected char[] getJavaSource() {
-		JSPTranslation translation = getTranslation(getFile());
-
-		return translation.getJavaText().toCharArray();
-	}
-
-	private JSPTranslationPrime getTranslation(File file) {
-		try {
-			synchronized (_map) {
-				WeakReference<JSPTranslationPrime> translationRef = _map.get(file);
-
-				if (translationRef == null || translationRef.get() == null) {
-					final JSPTranslationPrime newTranslation = createJSPTranslation();
-
-					_map.put(file, new WeakReference<JSPTranslationPrime>(newTranslation));
-
-					_translation = newTranslation;
-				}
-				else {
-					_translation = translationRef.get();
-				}
-			}
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}
-
-		return _translation;
+		return _translation.getJavaText().toCharArray();
 	}
 
 	@Override
 	public List<SearchResult> findJSPTags(String tagName , String[] attrNames , String[] attrValues) {
-
 		if (tagName == null || tagName.isEmpty()) {
 			throw new IllegalArgumentException("tagName can not be null or empty");
 		}
@@ -188,7 +111,7 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 
 		final List<SearchResult> searchResults = new ArrayList<>();
 
-		final IFile jspFile = getTranslation(getFile())._jspFile;
+		final IFile jspFile = _translation.getJspFile();
 
 		IDOMModel jspModel = null;
 
@@ -245,29 +168,22 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 		return searchResults;
 	}
 
-	/**
-	 * A simple subclass to hold a reference to the original jspFile
-	 */
-	private class JSPTranslationPrime extends JSPTranslation {
+	public void setFile(File file) {
+		try {
+			final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
-		private IFile _jspFile;
+			final Collection<ServiceReference<CUCache>> sr = context.getServiceReferences(CUCache.class, "(type=wtp)");
 
-		public JSPTranslationPrime(IJavaProject javaProject,
-				JSPTranslator translator, IFile jspFile) {
-			super(javaProject, translator);
+			CUCache cache = (CUCache) context.getService((ServiceReference) sr.toArray()[0]);
 
-			_jspFile = jspFile;
+			_translation = (JSPTranslationPrime) cache.getCU(file);
 		}
-	}
-
-	private class JSPTranslatorPrime extends JSPTranslator {
-		@Override
-		protected void handleIncludeFile(String filename) {
-			//don't process include files to avoid redundant results and wrong line number
+		catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
-	}
 
-	private static Map<File, WeakReference<JSPTranslationPrime>> _map = new WeakHashMap<>();
+		super.setFile(file);
+	}
 
 	private JSPTranslationPrime _translation;
 }
