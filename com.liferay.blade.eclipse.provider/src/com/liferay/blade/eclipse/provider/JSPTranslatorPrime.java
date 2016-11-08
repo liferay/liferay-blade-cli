@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.api;
+package com.liferay.blade.eclipse.provider;
 
-import java.io.File;
+import org.eclipse.jst.jsp.core.internal.java.JSPTranslator;
 
-import org.eclipse.core.resources.IFile;
-
-public interface SourceFile {
-
-	IFile getIFile(File file);
-
-	void setFile(File file);
-
+public class JSPTranslatorPrime extends JSPTranslator {
+	@Override
+	protected void handleIncludeFile(String filename) {
+		// don't process include files to avoid redundant results and wrong line
+		// number
+	}
 }

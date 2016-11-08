@@ -27,7 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 public class WorkspaceFile implements SourceFile {
-	
+
 	File _file;
 	WorkspaceHelper _helper = new WorkspaceHelper();
 

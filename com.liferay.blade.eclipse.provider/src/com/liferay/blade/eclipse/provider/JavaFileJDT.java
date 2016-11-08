@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -53,6 +54,7 @@ import org.osgi.service.component.annotations.Component;
 	},
 	service = JavaFile.class
 )
+@SuppressWarnings("rawtypes")
 public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 
 	private static final String[] SERVICE_API_SUFFIXES =  {
@@ -84,8 +86,11 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		try {
 			final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
-			final ServiceReference<CUCache> sr = context.getServiceReference( CUCache.class );
-			CUCache cache = context.getService( sr );
+			final Collection<ServiceReference<CUCache>> sr = context.getServiceReferences(CUCache.class, "(type=java)");
+
+			ServiceReference<CUCache> ref = sr.iterator().next();
+
+			CUCache cache = context.getService(ref);
 
 			_ast = (CompilationUnit) cache.getCU(file, getJavaSource());
 		} catch (Exception e) {
