@@ -40,10 +40,6 @@ public class CUCacheJDT implements CUCache<CompilationUnit> {
 	private static final Map<File, WeakReference<CompilationUnit>> _map = new WeakHashMap<>();
 
 	@Override
-	public CompilationUnit getCU(File file) {
-		return null;
-	}
-
 	public CompilationUnit getCU(File file, char[] javaSource) {
 		synchronized (_map) {
 			WeakReference<CompilationUnit> astRef = _map.get(file);
@@ -61,6 +57,7 @@ public class CUCacheJDT implements CUCache<CompilationUnit> {
 		}
 	}
 
+	@Override
 	public void unget(File file) {
 		synchronized (_map) {
 			_map.remove(file);

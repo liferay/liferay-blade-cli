@@ -50,7 +50,7 @@ public class CUCacheWTP implements CUCache<JSPTranslationPrime> {
 	private static final Map<File, WeakReference<JSPTranslationPrime>> _map = new WeakHashMap<>();
 
 	@Override
-	public JSPTranslationPrime getCU(File file) {
+	public JSPTranslationPrime getCU(File file, char[] javavSource) {
 		try {
 			synchronized (_map) {
 				WeakReference<JSPTranslationPrime> translationRef = _map.get(file);
@@ -72,10 +72,7 @@ public class CUCacheWTP implements CUCache<JSPTranslationPrime> {
 		}
 	}
 
-	public JSPTranslationPrime getCU(File file, char[] javaSource) {
-		return null;
-	}
-
+	@Override
 	public void unget(File file) {
 		synchronized (_map) {
 			_map.remove(file);
