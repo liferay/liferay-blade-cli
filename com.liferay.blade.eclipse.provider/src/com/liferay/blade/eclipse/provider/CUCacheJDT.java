@@ -31,7 +31,7 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(
 	property = {
-		"type=jdt"
+		"type=java"
 	},
 	service = CUCache.class
 )

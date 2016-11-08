@@ -168,15 +168,17 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 		return searchResults;
 	}
 
+	@Override
 	public void setFile(File file) {
 		try {
 			final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
-			final Collection<ServiceReference<CUCache>> sr = context.getServiceReferences(CUCache.class, "(type=wtp)");
+			final Collection<ServiceReference<CUCache>> sr = context.getServiceReferences(CUCache.class, "(type=jsp)");
 
-			CUCache cache = (CUCache) context.getService((ServiceReference) sr.toArray()[0]);
+			ServiceReference<CUCache> ref = sr.iterator().next();
+			CUCache cache = context.getService(ref);
 
-			_translation = (JSPTranslationPrime) cache.getCU(file);
+			_translation = (JSPTranslationPrime) cache.getCU(file, null);
 		}
 		catch (Exception e) {
 			throw new IllegalArgumentException(e);

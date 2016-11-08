@@ -41,7 +41,7 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(
 	property = {
-		"type=wtp"
+		"type=jsp"
 	},
 	service = CUCache.class
 )

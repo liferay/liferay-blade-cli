@@ -86,9 +86,11 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		try {
 			final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
-			final Collection<ServiceReference<CUCache>> sr = context.getServiceReferences(CUCache.class, "(type=jdt)");
+			final Collection<ServiceReference<CUCache>> sr = context.getServiceReferences(CUCache.class, "(type=java)");
 
-			CUCache cache = (CUCache) context.getService((ServiceReference) sr.toArray()[0]);
+			ServiceReference<CUCache> ref = sr.iterator().next();
+
+			CUCache cache = context.getService(ref);
 
 			_ast = (CompilationUnit) cache.getCU(file, getJavaSource());
 		} catch (Exception e) {
