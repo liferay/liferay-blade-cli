@@ -69,6 +69,7 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 			"com.liferay.portal.security.permission.comparator",
 			"com.liferay.portal.security.pwd",
 			"com.liferay.portal.security.xml",
+			"com.liferay.portal.service",
 			"com.liferay.portal.service.configuration",
 			"com.liferay.portal.service.http",
 			"com.liferay.portal.service.permission",
@@ -118,8 +119,7 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 			"com.liferay.portlet.ratings.model",
 			"com.liferay.portlet.ratings.service",
 			"com.liferay.portlet.ratings.service.persistence",
-			"com.liferay.portlet.ratings.transformer",
-			"com.liferay.portal.service"
+			"com.liferay.portlet.ratings.transformer"
 	};
 
 	private final static String[] IMPORTS_FIXED = new String[] {
@@ -146,6 +146,7 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 			"com.liferay.portal.kernel.security.permission.comparator",
 			"com.liferay.portal.kernel.security.pwd",
 			"com.liferay.portal.kernel.security.xml",
+			"com.liferay.portal.kernel.service",
 			"com.liferay.portal.kernel.service.configuration",
 			"com.liferay.portal.kernel.service.http",
 			"com.liferay.portal.kernel.service.permission",
@@ -195,8 +196,7 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 			"com.liferay.ratings.kernel.model",
 			"com.liferay.ratings.kernel.service",
 			"com.liferay.ratings.kernel.service.persistence",
-			"com.liferay.ratings.kernel.transformer",
-			"com.liferay.portal.kernel.service"
+			"com.liferay.ratings.kernel.transformer"
 	};
 
 	public RenamePortalKernelImports() {
