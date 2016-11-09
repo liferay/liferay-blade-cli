@@ -70,7 +70,7 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 
 	@Override
 	public void correctProblems(File file, List<Problem> problems) throws AutoMigrateException {
-		final List<String> importsToRewrite = new ArrayList<>();
+		final Map<Integer,String> importsToRewrite = new HashMap<>();
 
 		for (Problem problem : problems) {
 			if (problem.autoCorrectContext instanceof String) {
@@ -80,7 +80,7 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 					final String importValue = importData.substring(PREFIX.length());
 
 					if (_imports.containsKey(importValue)) {
-						importsToRewrite.add(importValue);
+						importsToRewrite.put(problem.getLineNumber(), importValue);
 					}
 				}
 			}
@@ -95,13 +95,12 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 				String[] editedLines = new String[lines.length];
 				System.arraycopy(lines, 0, editedLines, 0, lines.length);
 
-				for (String importToRewrite : importsToRewrite) {
-					for (int i = 0; i < editedLines.length; i++) {
-						editedLines[i] = editedLines[i].
-								replaceAll("import\\s+" + importToRewrite, "import " + _imports.get(importToRewrite));
-						editedLines[i] = editedLines[i].
-								replaceAll("import\\s*=\\s*\"" + importToRewrite, "import=\"" + _imports.get(importToRewrite));
-					}
+				for (int lineNumber : importsToRewrite.keySet()) {
+					String importName = importsToRewrite.get(lineNumber);
+					editedLines[lineNumber - 1] = editedLines[lineNumber - 1].replaceAll("import\\s+" + importName,
+							"import " + _imports.get(importName));
+					editedLines[lineNumber - 1] = editedLines[lineNumber - 1]
+							.replaceAll("import\\s*=\\s*\"" + importName, "import=\"" + _imports.get(importName));
 				}
 
 				StringBuilder sb = new StringBuilder();

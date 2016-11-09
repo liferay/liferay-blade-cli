@@ -69,6 +69,7 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 			"com.liferay.portal.security.permission.comparator",
 			"com.liferay.portal.security.pwd",
 			"com.liferay.portal.security.xml",
+			"com.liferay.portal.service",
 			"com.liferay.portal.service.configuration",
 			"com.liferay.portal.service.http",
 			"com.liferay.portal.service.permission",
@@ -118,8 +119,7 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 			"com.liferay.portlet.ratings.model",
 			"com.liferay.portlet.ratings.service",
 			"com.liferay.portlet.ratings.service.persistence",
-			"com.liferay.portlet.ratings.transformer",
-			"com.liferay.portal.service"
+			"com.liferay.portlet.ratings.transformer"
 	};
 
 	private final static String[] IMPORTS_FIXED = new String[] {
@@ -146,6 +146,7 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 			"com.liferay.portal.kernel.security.permission.comparator",
 			"com.liferay.portal.kernel.security.pwd",
 			"com.liferay.portal.kernel.security.xml",
+			"com.liferay.portal.kernel.service",
 			"com.liferay.portal.kernel.service.configuration",
 			"com.liferay.portal.kernel.service.http",
 			"com.liferay.portal.kernel.service.permission",
@@ -155,7 +156,7 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 			"com.liferay.portal.kernel.util.comparator",
 			"com.liferay.portal.kernel.verify.model",
 			"com.liferay.portal.kernel.webserver",
-			"com.liferay.kernel.portlet",
+			"com.liferay.portal.kernel.portlet",
 			"com.liferay.admin.kernel.util",
 			"com.liferay.announcements.kernel",
 			"com.liferay.asset.kernel",
@@ -195,8 +196,7 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 			"com.liferay.ratings.kernel.model",
 			"com.liferay.ratings.kernel.service",
 			"com.liferay.ratings.kernel.service.persistence",
-			"com.liferay.ratings.kernel.transformer",
-			"com.liferay.portal.kernel.service"
+			"com.liferay.ratings.kernel.transformer"
 	};
 
 	public RenamePortalKernelImports() {
@@ -207,29 +207,26 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 	public List<SearchResult> searchFile(File file, JavaFile javaFile) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
-		for (String importName : getImports().keySet()) {
-			final List<SearchResult> importResult = javaFile.findImports(importName, IMPORTS);
+		final List<SearchResult> importResult = javaFile.findImports(IMPORTS);
 
-			if (importResult.size() != 0) {
-				for (SearchResult result : importResult) {
-					// make sure that our import is not in list of fixed imports
-					boolean skip = false;
+		if (importResult.size() != 0) {
+			for (SearchResult result : importResult) {
+				// make sure that our import is not in list of fixed imports
+				boolean skip = false;
 
-					if (result.searchContext != null) {
-						for (String fixed : IMPORTS_FIXED) {
-							if (result.searchContext.contains(fixed)) {
-								skip = true;
-								break;
-							}
+				if (result.searchContext != null) {
+					for (String fixed : IMPORTS_FIXED) {
+						if (result.searchContext.contains(fixed)) {
+							skip = true;
+							break;
 						}
-					}
-
-					if (!skip) {
-						result.autoCorrectContext = getPrefix() + importName;
-						searchResults.add(result);
 					}
 				}
 
+				if (!skip) {
+					result.autoCorrectContext = getPrefix() + getImportNameFromResult(result);
+					searchResults.add(result);
+				}
 			}
 		}
 
@@ -246,6 +243,18 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 		}
 
 		return newList;
+	}
+
+	private String getImportNameFromResult(SearchResult result) {
+		String searchContext = result.searchContext;
+
+		if (searchContext != null) {
+			int offSet = result.endOffset - result.startOffset;
+			return searchContext.substring(0, offSet);
+
+		}
+
+		return "";
 	}
 
 }

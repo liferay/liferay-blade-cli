@@ -214,7 +214,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 	}
 
 	@Override
-	public List<SearchResult> findImports(final String importName , final String[] imports) {
+	public List<SearchResult> findImports(final String[] imports) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
 		_ast.accept(new ASTVisitor() {
@@ -223,25 +223,29 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 			public boolean visit(ImportDeclaration node) {
 				String searchContext = node.getName().getFullyQualifiedName();
 
-				if (searchContext.startsWith(importName)) {
-					final List<String> importsList = new ArrayList<>(Arrays.asList(imports));
+				for (String importName : imports) {
+					if (searchContext.startsWith(importName)) {
+						final List<String> importsList = new ArrayList<>(Arrays.asList(imports));
 
-					String greedyImport = importName;
-					importsList.remove(importName);
+						String greedyImport = importName;
+						importsList.remove(importName);
 
-					for (String anotherImport : importsList) {
-						if (node.getName().toString().contains(anotherImport)
-								&& anotherImport.length() > importName.length()) {
-							greedyImport = anotherImport;
+						for (String anotherImport : importsList) {
+							if (node.getName().toString().contains(anotherImport)
+									&& anotherImport.length() > importName.length()) {
+								greedyImport = anotherImport;
+							}
 						}
+
+						int startLine = _ast.getLineNumber(node.getName().getStartPosition());
+						int startOffset = node.getName().getStartPosition();
+						int endLine = _ast
+								.getLineNumber(node.getName().getStartPosition() + node.getName().getLength());
+						int endOffset = node.getName().getStartPosition() + greedyImport.length();
+
+						searchResults.add(
+								createSearchResult(searchContext, startOffset, endOffset, startLine, endLine, true));
 					}
-
-					int startLine = _ast.getLineNumber(node.getName().getStartPosition());
-					int startOffset = node.getName().getStartPosition();
-					int endLine = _ast.getLineNumber(node.getName().getStartPosition() + node.getName().getLength());
-					int endOffset = node.getName().getStartPosition() + greedyImport.length();
-
-					searchResults.add(createSearchResult(searchContext, startOffset, endOffset, startLine, endLine, true));
 				}
 
 				return false;

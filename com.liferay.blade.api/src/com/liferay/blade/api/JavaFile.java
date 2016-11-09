@@ -29,7 +29,7 @@ public interface JavaFile extends SourceFile {
 
 	SearchResult findImport(String importName);
 
-	List<SearchResult> findImports(String importName, String[] imports);
+	List<SearchResult> findImports(String[] imports);
 
 	List<SearchResult> findMethodDeclaration(String name, String[] params, String returnType);
 
