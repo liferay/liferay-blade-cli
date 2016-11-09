@@ -22,7 +22,6 @@ clean.doFirst {
 }
 
 test {
-	systemProperty 'verifyBuilds', System.getProperty('verifyBuilds', 'false')
 	dependsOn createDepsZip, createWrapperZip
 }
 

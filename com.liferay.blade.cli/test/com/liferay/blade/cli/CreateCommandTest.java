@@ -28,6 +28,7 @@ import aQute.lib.io.IO;
 import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
@@ -796,6 +797,13 @@ public class CreateCommandTest {
 			projectPath + "/src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
 		contains(properties, ".*^name=theme-test.*");
+
+		File buildFile = new File(projectPath + "/build.gradle");
+
+		FileWriter fileWriter = new FileWriter(buildFile, true);
+		BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
+		bufferWriter.write("\nbuildTheme { jvmArgs \"-Djava.awt.headless=true\" }");
+		bufferWriter.close();
 
 		verifyBuild(projectPath, projectPath, "theme-test.war");
 	}
