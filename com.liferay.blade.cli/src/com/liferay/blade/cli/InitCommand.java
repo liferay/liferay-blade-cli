@@ -27,17 +27,29 @@ import com.liferay.project.templates.ProjectTemplatesArgs;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @author Gregory Amerson
@@ -46,7 +58,6 @@ import org.apache.commons.io.FileUtils;
 public class InitCommand {
 
 	private final static String _PLUGINS_SDK_7_ZIP = "com.liferay.portal.plugins.sdk-7.0-ga3-20160804222206210.zip";
-	private final static String _PLUGINS_SDK_7_NAME = "com.liferay.portal.plugins.sdk-7.0-ga3";
 	private final static String _PLUGINS_SDK_7_URL =
 		"http://downloads.sourceforge.net/project/lportal/Liferay%20Portal/7.0.2%20GA3/" +
 			_PLUGINS_SDK_7_ZIP;
@@ -95,21 +106,15 @@ public class InitCommand {
 							FileUtils.copyURLToFile(new URL(_PLUGINS_SDK_7_URL), sdk7zip);
 						}
 
-						File sdk7temp = new File(_blade.getCacheDir(), _PLUGINS_SDK_7_NAME);
-
-						if (!sdk7temp.exists()) {
-							try {
-								Util.unzip(sdk7zip, sdk7temp, null);
-							}
-							catch (Exception e) {
-								addError("Opening zip file error, "
-									+ "please delete zip file: " +
-										sdk7zip.getPath());
-								return;
-							}
+						try {
+							Util.unzip(sdk7zip, destDir, "com.liferay.portal.plugins.sdk-7.0/");
 						}
-
-						File sdk7 = new File(sdk7temp, "com.liferay.portal.plugins.sdk-7.0");
+						catch (Exception e) {
+							addError("Opening zip file error, "
+								+ "please delete zip file: " +
+									sdk7zip.getPath());
+							return;
+						}
 
 						for (String fileName : _SDK_6_GA5_FILES) {
 							File file = new File(destDir, fileName);
@@ -118,8 +123,6 @@ public class InitCommand {
 								file.delete();
 							}
 						}
-
-						IO.copy(sdk7, destDir);
 					}
 					else {
 						addError("Unable to run blade init in plugins sdk 6.2, please add -u (--upgrade)"
@@ -131,8 +134,14 @@ public class InitCommand {
 				trace("Found plugins-sdk, moving contents to new subdirectory " +
 					"and initing workspace.");
 
-				moveContentsToDir(
-					destDir, new File(destDir, "plugins-sdk"), "plugins-sdk");
+				File pluginsSdkDir = new File(destDir, "plugins-sdk");
+
+				moveContentsToDir(destDir, pluginsSdkDir);
+
+				if (_options.upgrade()) {
+					// go through all portlets hooks layout templates and themes and switch to wars with workspace
+					movePluginsToWarsFolder(pluginsSdkDir, new File(destDir, "wars"));
+				}
 			}
 			else if (destDir.list().length > 0) {
 				if (_options.force()) {
@@ -167,6 +176,123 @@ public class InitCommand {
 		projectTemplatesArgs.setTemplate("workspace");
 
 		new ProjectTemplates(projectTemplatesArgs);
+	}
+
+	private void movePluginsToWarsFolder(File pluginsSdkDir, File warsDir) throws Exception {
+		warsDir.mkdirs();
+
+		FileFilter containsDocrootFilter = new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory() && new File(pathname, "docroot").exists();
+			}
+		};
+
+		Set<File> javaPlugins = new HashSet<>();
+
+		Collections.addAll(javaPlugins, new File(pluginsSdkDir, "hooks").listFiles(containsDocrootFilter));
+		Collections.addAll(javaPlugins, new File(pluginsSdkDir, "portlets").listFiles(containsDocrootFilter));
+		Collections.addAll(javaPlugins, new File(pluginsSdkDir, "webs").listFiles(containsDocrootFilter));
+
+		for (File javaPlugin : javaPlugins) {
+			Files.move(javaPlugin.toPath(), warsDir.toPath().resolve(javaPlugin.getName()));
+
+			File warDir = new File(warsDir, javaPlugin.getName());
+
+			File src = new File(warDir, "src/main/java");
+
+			src.mkdirs();
+
+			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
+
+			if (docrootSrc.exists()) {
+				for(File docrootSrcFile : docrootSrc.listFiles()) {
+					Files.move(docrootSrcFile.toPath(), src.toPath().resolve(docrootSrcFile.getName()));
+				}
+
+				docrootSrc.delete();
+			}
+
+			File webapp = new File(warDir, "src/main/webapp");
+
+			webapp.mkdirs();
+
+			File docroot = new File(warDir, "docroot");
+
+			for(File docrootFile : docroot.listFiles()) {
+				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()));
+			}
+
+			IO.delete(docroot);
+			IO.delete(new File(warDir, "build.xml"));
+			IO.delete(new File(warDir, ".classpath"));
+			IO.delete(new File(warDir, ".project"));
+			IO.delete(new File(warDir, ".settings"));
+			IO.delete(new File(warDir, "ivy.xml.MD5"));
+
+			List<String> dependencies = new ArrayList<>();
+			dependencies.add("compileOnly group: \"com.liferay.portal\", name: \"com.liferay.portal.kernel\", version: \"2.0.0\"");
+			dependencies.add("compileOnly group: \"javax.portlet\", name: \"portlet-api\", version: \"2.0\"");
+			dependencies.add("compileOnly group: \"javax.servlet\", name: \"javax.servlet-api\", version: \"3.0.1\"");
+
+			File ivyFile = new File(warDir, "ivy.xml");
+
+			if (ivyFile.exists()) {
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document doc = dBuilder.parse(ivyFile);
+				Element documentElement = doc.getDocumentElement();
+				documentElement.normalize();
+
+				NodeList depElements = documentElement.getElementsByTagName("dependency");
+
+				if (depElements != null && depElements.getLength() > 0) {
+					for (int i = 0; i < depElements.getLength(); i++) {
+						Node depElement = depElements.item(i);
+
+						String name = getAttr(depElement, "name");
+						String org = getAttr(depElement, "org");
+						String rev = getAttr(depElement, "rev");
+
+						if (name != null && org != null && rev != null) {
+							dependencies.add(MessageFormat.format("compile group: ''{0}'', name: ''{1}'', version: ''{2}''", org, name, rev));
+						}
+					}
+				}
+
+				ivyFile.delete();
+			}
+
+			StringBuilder depsContent = new StringBuilder();
+
+			depsContent.append("dependencies {\n");
+
+			for (String dep : dependencies) {
+				depsContent.append("\t" + dep + "\n");
+			}
+
+			depsContent.append("}");
+
+			File gradleFile = new File(warDir, "build.gradle");
+
+			IO.write(depsContent.toString().getBytes(), gradleFile);
+		}
+	}
+
+	private String getAttr(Node item, String attrName) {
+		if (item != null) {
+			NamedNodeMap attrs = item.getAttributes();
+
+			if (attrs != null) {
+				Node attr = attrs.getNamedItem(attrName);
+
+				if (attr != null) {
+					return attr.getNodeValue();
+				}
+			}
+		}
+
+		return null;
 	}
 
 	@Arguments(arg = "[name]")
@@ -242,31 +368,22 @@ public class InitCommand {
 		return false;
 	}
 
-	private void moveContentsToDir(File src, File dest, final String sdkDirName)
+	private void moveContentsToDir(File src, File dest)
 		throws IOException {
 
-		Path tempDir = Files.createTempDirectory("temp-plugins-sdk");
-
-		FileFilter fileFilter = new FileFilter() {
-
+		File[] filesToCopy = src.listFiles(new FilenameFilter() {
 			@Override
-			public boolean accept(File pathname) {
-				return
-					(!pathname.getName().equals(sdkDirName) ||
-						!pathname.getName().startsWith("."));
+			public boolean accept(File dir, String name) {
+				return !name.equals(".git");
 			}
+		});
 
-		};
+		dest.mkdirs();
 
-		FileUtils.copyDirectory(src, tempDir.toFile(), fileFilter, true);
-
-		String[] copied = tempDir.toFile().list();
-
-		for (String name : copied) {
-			IO.delete(new File(src, name));
+		for( File fileToCopy : filesToCopy) {
+			IO.copy(fileToCopy, new File(dest, fileToCopy.getName()));
+			IO.deleteWithException(fileToCopy);
 		}
-
-		FileUtils.moveDirectory(tempDir.toFile(), dest);
 	}
 
 	private void trace(String msg) {

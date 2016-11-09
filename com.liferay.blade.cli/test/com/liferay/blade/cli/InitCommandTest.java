@@ -16,18 +16,22 @@
 
 package com.liferay.blade.cli;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import aQute.lib.io.IO;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.gradle.testkit.runner.BuildTask;
 import org.junit.After;
 import org.junit.Test;
-
-import aQute.lib.io.IO;
 
 /**
  * @author Gregory Amerson
@@ -37,6 +41,127 @@ public class InitCommandTest {
 	@After
 	public void cleanUp() throws Exception {
 		IO.delete(workspaceDir.getParentFile());
+	}
+
+	@Test
+	public void testMovePluginsToWars() throws Exception {
+		File testdir = IO.getFile("generated/testMovePluginsToWars");
+
+		if (testdir.exists()) {
+			IO.deleteWithException(testdir);
+			assertFalse(testdir.exists());
+		}
+
+		Util.unzip(new File("test-projects/plugins-sdk-with-git.zip"), testdir);
+
+		assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+
+		new bladenofail().run(args);
+
+		File sampleExpandoHook = new File(projectDir, "wars/sample-expando-hook");
+
+		assertTrue(sampleExpandoHook.exists());
+
+		assertFalse(new File(projectDir, "plugins-sdk/hooks/sample-expando-hook").exists());
+
+		File sampleServletFilterHook = new File(projectDir, "wars/sample-servlet-filter-hook");
+
+		assertTrue(sampleServletFilterHook.exists());
+
+		assertFalse(new File(projectDir, "plugins-sdk/hooks/sample-servlet-filter-hook").exists());
+
+		File sampleJspPortlet = new File(projectDir, "wars/sample-jsp-portlet");
+
+		assertTrue(sampleJspPortlet.exists());
+
+		assertFalse(new File(projectDir, "plugins-sdk/portlets/sample-jsp-portlet").exists());
+
+		File sampleDaoPortlet = new File(projectDir, "wars/sample-dao-portlet");
+
+		assertTrue(sampleDaoPortlet.exists());
+
+		assertFalse(new File(projectDir, "plugins-sdk/portlets/sample-dao-portlet").exists());
+
+		contains(
+			new File(projectDir, "wars/sample-dao-portlet/build.gradle"),
+			".*compile group: 'c3p0', name: 'c3p0', version: '0.9.0.4'.*",
+			".*compile group: 'mysql', name: 'mysql-connector-java', version: '5.0.7'.*");
+
+		contains(
+			new File(projectDir, "wars/sample-tapestry-portlet/build.gradle"),
+			".*compile group: 'hivemind', name: 'hivemind', version: '1.1'.*",
+			".*compile group: 'hivemind', name: 'hivemind-lib', version: '1.1'.*",
+			".*compile group: 'org.apache.tapestry', name: 'tapestry-annotations', version: '4.1'.*",
+			".*compile group: 'org.apache.tapestry', name: 'tapestry-framework', version: '4.1'.*",
+			".*compile group: 'org.apache.tapestry', name: 'tapestry-portlet', version: '4.1'.*");
+
+		assertFalse(new File(projectDir, "wars/sample-tapestry-portlet/ivy.xml").exists());
+	}
+
+	@Test
+	public void testBladeInitUpgradePluginsSDKTo70() throws Exception {
+		File testdir = IO.getFile("generated/testUpgradePluginsSDKTo70");
+
+		if (testdir.exists()) {
+			IO.deleteWithException(testdir);
+			assertFalse(testdir.exists());
+		}
+
+		testdir.mkdirs();
+
+		Util.unzip(new File("test-projects/plugins-sdk-with-git.zip"), testdir);
+
+		assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+
+		new bladenofail().run(args);
+
+		File buildProperties = new File(projectDir, "plugins-sdk/build.properties");
+
+		Properties props = new Properties();
+
+		props.load(new FileInputStream(buildProperties));
+
+		String version = props.getProperty("lp.version");
+
+		assertEquals("7.0.0", version);
+	}
+
+	@Test
+	public void testBladeInitDontLoseGitDirectory() throws Exception {
+		File testdir = IO.getFile("generated/testBladeInitDontLoseGitDirectory");
+
+		if (testdir.exists()) {
+			IO.deleteWithException(testdir);
+			assertFalse(testdir.exists());
+		}
+
+		testdir.mkdirs();
+
+		Util.unzip(new File("test-projects/plugins-sdk-with-git.zip"), testdir);
+
+		assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+
+		new bladenofail().run(args);
+
+		File gitdir = IO.getFile(projectDir, ".git");
+
+		assertTrue(gitdir.exists());
+
+		File oldGitIgnore = IO.getFile(projectDir, "plugins-sdk/.gitignore");
+
+		assertTrue(oldGitIgnore.exists());
 	}
 
 	@Test
@@ -206,6 +331,20 @@ public class InitCommandTest {
 		assertTrue(new File(dir, "build-common-plugin.xml").createNewFile());
 	}
 
+	private void contains(File file, String... patterns) throws Exception {
+		String content = new String(IO.read(file));
+
+		for (String pattern : patterns) {
+			contains(content, pattern);
+		}
+	}
+
+	private void contains(String content, String pattern) throws Exception {
+		assertTrue(
+			Pattern.compile(
+				pattern,
+				Pattern.MULTILINE | Pattern.DOTALL).matcher(content).matches());
+	}
 	private final File workspaceDir = IO.getFile("generated/test/workspace");
 
 }
