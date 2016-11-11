@@ -392,6 +392,10 @@ public class Util {
 		return process;
 	}
 
+	public static void unzip(File srcFile, File destDir) throws IOException {
+		unzip(srcFile, destDir, null);
+	}
+
 	public static void unzip(File srcFile, File destDir, String entryToStart)
 		throws IOException {
 
@@ -422,6 +426,16 @@ public class Util {
 				}
 
 				final File f = new File(destDir, entryName);
+
+				if (f.exists()) {
+					IO.delete(f);
+
+					if (f.exists()) {
+						throw new IOException(
+							"Could not delete " + f.getAbsolutePath());
+					}
+				}
+
 				final File dir = f.getParentFile();
 
 				if (!dir.exists() && !dir.mkdirs()) {

@@ -39,9 +39,15 @@ public class CreateCommand {
 		"Creates a new Liferay module project from several available " +
 			"templates.";
 
+
 	public CreateCommand(blade blade, CreateOptions options) {
 		_blade = blade;
 		_options = options;
+	}
+
+	CreateCommand(blade blade) {
+		_blade = blade;
+		_options = null;
 	}
 
 	public void execute() throws Exception {
@@ -96,6 +102,16 @@ public class CreateCommand {
 		projectTemplatesArgs.setService(_options.service());
 		projectTemplatesArgs.setTemplate(template);
 
+		execute(projectTemplatesArgs, isWorkspace);
+
+		_blade.out().println(
+			"Created the project " + projectTemplatesArgs.getName() + " using the " +
+					projectTemplatesArgs.getTemplate() + " template in " + dir);
+	}
+
+	void execute(ProjectTemplatesArgs projectTemplatesArgs, boolean isWorkspace) throws Exception {
+		File dir = projectTemplatesArgs.getDestinationDir();
+
 		new ProjectTemplates(projectTemplatesArgs);
 
 		if (isWorkspace) {
@@ -116,10 +132,6 @@ public class CreateCommand {
 				gradlew.setExecutable(true);
 			}
 		}
-
-		_blade.out().println(
-			"Created the project " + name + " using the " + template +
-				" template in " + dir);
 	}
 
 	@Arguments(arg = {"[name]"})
