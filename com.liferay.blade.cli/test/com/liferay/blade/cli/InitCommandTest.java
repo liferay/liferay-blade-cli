@@ -58,7 +58,7 @@ public class InitCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"-b", projectDir.getPath(), "init", "-u", "-o"};
 
 		new bladenofail().run(args);
 
@@ -88,7 +88,7 @@ public class InitCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"-b", projectDir.getPath(), "init", "-u", "-o"};
 
 		new bladenofail().run(args);
 
@@ -124,7 +124,7 @@ public class InitCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"-b", projectDir.getPath(), "init", "-u", "-o"};
 
 		new bladenofail().run(args);
 

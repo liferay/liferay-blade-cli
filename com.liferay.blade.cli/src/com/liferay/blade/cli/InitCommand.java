@@ -31,8 +31,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.CopyOption;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -173,7 +178,7 @@ public class InitCommand {
 
 		new ProjectTemplates(projectTemplatesArgs);
 
-		if (_options.upgrade()) {
+		if (_options.optimize()) {
 			// go through all portlets hooks layout templates and themes and switch to wars with workspace
 			File pluginsSdkDir = new File(destDir, "plugins-sdk");
 
@@ -346,21 +351,20 @@ public class InitCommand {
 
 			File webapp = new File(newThemeDir, "src/main/webapp");
 
-			for(File docrootFile : diffsDir.listFiles()) {
-				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()), StandardCopyOption.REPLACE_EXISTING);
-			}
+			Files.walkFileTree(diffsDir.toPath(), new CopyDirVisitor(diffsDir.toPath(), webapp.toPath(), StandardCopyOption.REPLACE_EXISTING));
 
 			File webinfDir = new File(docroot, "WEB-INF");
 
 			File newWebinfDir = new File(webapp, "WEB-INF");
 
-			if (webinfDir.exists() && webinfDir.listFiles() != null) {
-				for (File file : webinfDir.listFiles()) {
-					Files.move(file.toPath(), newWebinfDir.toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
-				}
-			}
+			Files.walkFileTree(webinfDir.toPath(), new CopyDirVisitor(webinfDir.toPath(), newWebinfDir.toPath(), StandardCopyOption.REPLACE_EXISTING));
 
-			File[] others = docroot.listFiles();
+			File[] others = docroot.listFiles( new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return !"_diffs".equals(name) && !"WEB-INF".equals(name);
+				}
+			});
 
 			if (others != null && others.length > 0) {
 				File backup = new File(newThemeDir, "docroot_backup");
@@ -374,6 +378,41 @@ public class InitCommand {
 
 			IO.delete(theme);
 		}
+	}
+
+	private static class CopyDirVisitor extends SimpleFileVisitor<Path>
+	{
+	    private final Path fromPath;
+	    private final Path toPath;
+	    private final CopyOption copyOption;
+
+	    public CopyDirVisitor(Path fromPath, Path toPath, CopyOption copyOption)
+	    {
+	        this.fromPath = fromPath;
+	        this.toPath = toPath;
+	        this.copyOption = copyOption;
+	    }
+
+	    @Override
+	    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException
+	    {
+	        Path targetPath = toPath.resolve(fromPath.relativize(dir));
+
+	        if( !Files.exists(targetPath) )
+	        {
+	            Files.createDirectory(targetPath);
+	        }
+
+	        return FileVisitResult.CONTINUE;
+	    }
+
+	    @Override
+	    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
+	    {
+	        Files.copy(file, toPath.resolve(fromPath.relativize(file)), copyOption);
+
+	        return FileVisitResult.CONTINUE;
+	    }
 	}
 
 	private String getAttr(Node item, String attrName) {
@@ -402,6 +441,9 @@ public class InitCommand {
 
 		@Description("force to refresh workspace template")
 		public boolean refresh();
+
+		@Description("optimize projects by converting them to standard war layouts")
+		public boolean optimize();
 
 		@Description("upgrade plugins-sdk from 6.2 to 7.0")
 		public boolean upgrade();
