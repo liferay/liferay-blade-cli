@@ -44,6 +44,72 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testMoveLayouttplToWars() throws Exception {
+		File testdir = IO.getFile("generated/testMoveLayouttplToWars");
+
+		if (testdir.exists()) {
+			IO.deleteWithException(testdir);
+			assertFalse(testdir.exists());
+		}
+
+		Util.unzip(new File("test-projects/plugins-sdk-with-git.zip"), testdir);
+
+		assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+
+		new bladenofail().run(args);
+
+		File layoutWar = new File(projectDir, "wars/1-2-1-columns-layouttpl");
+
+		assertTrue(layoutWar.exists());
+
+		assertFalse(new File(layoutWar, "build.xml").exists());
+
+		assertFalse(new File(layoutWar, "build.gradle").exists());
+
+		assertFalse(new File(layoutWar, "docroot").exists());
+	}
+
+	@Test
+	public void testMoveThemesToWars() throws Exception {
+		File testdir = IO.getFile("generated/testMoveThemesToWar");
+
+		if (testdir.exists()) {
+			IO.deleteWithException(testdir);
+			assertFalse(testdir.exists());
+		}
+
+		Util.unzip(new File("test-projects/plugins-sdk-with-git.zip"), testdir);
+
+		assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+
+		new bladenofail().run(args);
+
+		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
+
+		assertTrue(theme.exists());
+
+		assertFalse(new File(theme, "build.xml").exists());
+
+		assertTrue(new File(theme, "build.gradle").exists());
+
+		assertFalse(new File(theme, "docroot").exists());
+
+		assertTrue(new File(theme, "src/main/webapp").exists());
+
+		assertFalse(new File(theme, "src/main/webapp/_diffs").exists());
+
+		assertFalse(new File(projectDir, "plugins-sdk/themes/sample-styled-minimal-theme").exists());
+	}
+
+	@Test
 	public void testMovePluginsToWars() throws Exception {
 		File testdir = IO.getFile("generated/testMovePluginsToWars");
 

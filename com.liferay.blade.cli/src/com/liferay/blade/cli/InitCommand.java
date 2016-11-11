@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -137,11 +138,6 @@ public class InitCommand {
 				File pluginsSdkDir = new File(destDir, "plugins-sdk");
 
 				moveContentsToDir(destDir, pluginsSdkDir);
-
-				if (_options.upgrade()) {
-					// go through all portlets hooks layout templates and themes and switch to wars with workspace
-					movePluginsToWarsFolder(pluginsSdkDir, new File(destDir, "wars"));
-				}
 			}
 			else if (destDir.list().length > 0) {
 				if (_options.force()) {
@@ -164,9 +160,9 @@ public class InitCommand {
 			name = destDir.getName();
 		}
 
-		destDir = destDir.getParentFile();
+		File destParentDir = destDir.getParentFile();
 
-		projectTemplatesArgs.setDestinationDir(destDir);
+		projectTemplatesArgs.setDestinationDir(destParentDir);
 
 		if (_options.force() || _options.upgrade()) {
 			projectTemplatesArgs.setForce(true);
@@ -176,6 +172,13 @@ public class InitCommand {
 		projectTemplatesArgs.setTemplate("workspace");
 
 		new ProjectTemplates(projectTemplatesArgs);
+
+		if (_options.upgrade()) {
+			// go through all portlets hooks layout templates and themes and switch to wars with workspace
+			File pluginsSdkDir = new File(destDir, "plugins-sdk");
+
+			movePluginsToWarsFolder(pluginsSdkDir, new File(destDir, "wars"));
+		}
 	}
 
 	private void movePluginsToWarsFolder(File pluginsSdkDir, File warsDir) throws Exception {
@@ -276,6 +279,100 @@ public class InitCommand {
 			File gradleFile = new File(warDir, "build.gradle");
 
 			IO.write(depsContent.toString().getBytes(), gradleFile);
+		}
+
+		Set<File> layoutPlugins = new HashSet<>();
+
+		Collections.addAll(layoutPlugins, new File(pluginsSdkDir, "layouttpl").listFiles(containsDocrootFilter));
+
+		for (File layoutPlugin : layoutPlugins) {
+			Files.move(layoutPlugin.toPath(), warsDir.toPath().resolve(layoutPlugin.getName()));
+
+			File warDir = new File(warsDir, layoutPlugin.getName());
+
+			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
+
+			if (docrootSrc.exists()) {
+				throw new IllegalStateException(
+					"layouttpl project " + layoutPlugin.getName() + " contains java src at " +
+							docrootSrc.getAbsolutePath() + ". Please remove it before continuing.");
+			}
+
+			File webapp = new File(warDir, "src/main/webapp");
+
+			webapp.mkdirs();
+
+			File docroot = new File(warDir, "docroot");
+
+			for(File docrootFile : docroot.listFiles()) {
+				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()));
+			}
+
+			IO.delete(docroot);
+			IO.delete(new File(warDir, "build.xml"));
+			IO.delete(new File(warDir, ".classpath"));
+			IO.delete(new File(warDir, ".project"));
+			IO.delete(new File(warDir, ".settings"));
+		}
+
+		Set<File> themes = new HashSet<>();
+
+		Collections.addAll(themes, new File(pluginsSdkDir, "themes").listFiles(containsDocrootFilter));
+
+		for (File theme : themes) {
+			CreateCommand createCommand = new CreateCommand(_blade);
+
+			ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
+
+			projectTemplatesArgs.setDestinationDir(warsDir);
+			projectTemplatesArgs.setName(theme.getName());
+			projectTemplatesArgs.setTemplate("theme");
+
+			createCommand.execute(projectTemplatesArgs, true);
+
+			File docroot = new File(theme, "docroot");
+
+			File diffsDir = new File(docroot, "_diffs");
+
+			if (!diffsDir.exists()) {
+				throw new IllegalStateException(
+					"theme " + theme.getName() + " does not contain a docroot/_diffs folder.  "
+							+ "Please correct it and try again.");
+			}
+
+			// only copy _diffs and WEB-INF
+
+			File newThemeDir = new File(warsDir, theme.getName());
+
+			File webapp = new File(newThemeDir, "src/main/webapp");
+
+			for(File docrootFile : diffsDir.listFiles()) {
+				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+			}
+
+			File webinfDir = new File(docroot, "WEB-INF");
+
+			File newWebinfDir = new File(webapp, "WEB-INF");
+
+			if (webinfDir.exists() && webinfDir.listFiles() != null) {
+				for (File file : webinfDir.listFiles()) {
+					Files.move(file.toPath(), newWebinfDir.toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+				}
+			}
+
+			File[] others = docroot.listFiles();
+
+			if (others != null && others.length > 0) {
+				File backup = new File(newThemeDir, "docroot_backup");
+
+				backup.mkdirs();
+
+				for (File other : others) {
+					Files.move(other.toPath(), backup.toPath().resolve(other.getName()));
+				}
+			}
+
+			IO.delete(theme);
 		}
 	}
 
