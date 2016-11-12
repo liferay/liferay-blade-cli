@@ -48,7 +48,7 @@ public class DdmTemplateSelectorTagsTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("DdmTemplateSelectorTagsTest.jsp")) {
-				if (problem.lineNumber == 70 && problem.startOffset >= 2538 && problem.endOffset >= 2621) {
+				if (problem.lineNumber == 70 && problem.startOffset >= 2538 && problem.endOffset >= 2549) {
 					found = true;
 				}
 			}

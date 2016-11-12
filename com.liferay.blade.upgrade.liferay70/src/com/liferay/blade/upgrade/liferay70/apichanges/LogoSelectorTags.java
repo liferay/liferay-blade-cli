@@ -40,10 +40,8 @@ import org.osgi.service.component.annotations.Component;
 public class LogoSelectorTags extends JSPFileMigrator {
 
 	@Override
-	protected List<SearchResult> searchFile(File file,
-			JSPFile jspFileChecker) {
-
-		return jspFileChecker.findJSPTags("liferay-ui:logo-selector",
-				new String[] { "editLogoURL" } , null);
+	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
+		return jspFileChecker.findJSPTags("liferay-ui:logo-selector", new String[] { "editLogoURL" });
 	}
+
 }

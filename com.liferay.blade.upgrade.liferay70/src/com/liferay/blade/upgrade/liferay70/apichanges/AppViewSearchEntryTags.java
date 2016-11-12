@@ -41,8 +41,7 @@ public class AppViewSearchEntryTags extends JSPFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
-
-		return jspFileChecker.findJSPTags("liferay-ui:app-view-search-entry",
-				new String[] { "mbMessages", "fileEntryTuples" }, null);
+		return jspFileChecker.findJSPTags(
+			"liferay-ui:app-view-search-entry", new String[] { "mbMessages", "fileEntryTuples" } );
 	}
 }

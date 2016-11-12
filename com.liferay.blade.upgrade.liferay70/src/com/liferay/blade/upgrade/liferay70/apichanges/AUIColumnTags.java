@@ -40,9 +40,7 @@ import org.osgi.service.component.annotations.Component;
 public class AUIColumnTags extends JSPFileMigrator {
 
 	@Override
-	protected List<SearchResult> searchFile(File file,
-			JSPFile jspFileChecker) {
-
-		return jspFileChecker.findJSPTags("aui:column", null, null);
+	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
+		return jspFileChecker.findJSPTags("aui:column");
 	}
 }

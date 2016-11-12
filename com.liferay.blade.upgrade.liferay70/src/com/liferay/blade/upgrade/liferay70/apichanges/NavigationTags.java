@@ -41,6 +41,7 @@ public class NavigationTags extends JSPFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
-		return jspFileChecker.findJSPTags("liferay-ui:navigation", null, null);
+		return jspFileChecker.findJSPTags("liferay-ui:navigation");
 	}
+
 }

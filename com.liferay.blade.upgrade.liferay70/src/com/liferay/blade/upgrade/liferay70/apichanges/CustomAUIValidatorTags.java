@@ -41,7 +41,7 @@ public class CustomAUIValidatorTags extends JSPFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
-		return jspFileChecker.findJSPTags("aui:validator",
-				new String[] { "name" },new String[] { "custom" });
+		return jspFileChecker.findJSPTags("aui:validator", new String[] { "name" }, new String[] { "custom" });
 	}
+
 }

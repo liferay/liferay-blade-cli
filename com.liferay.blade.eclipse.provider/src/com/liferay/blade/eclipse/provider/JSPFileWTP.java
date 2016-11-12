@@ -100,72 +100,148 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 	}
 
 	@Override
-	public List<SearchResult> findJSPTags(String tagName , String[] attrNames , String[] attrValues) {
+	public List<SearchResult> findJSPTags(String tagName) {
 		if (tagName == null || tagName.isEmpty()) {
 			throw new IllegalArgumentException("tagName can not be null or empty");
 		}
 
-		if ((attrNames != null && attrValues != null) && attrNames.length != attrValues.length) {
+		final List<SearchResult> searchResults = new ArrayList<>();
+
+		final NodeList nodeList = getTagNodes(tagName);
+
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			final IDOMNode domNode = (IDOMNode) nodeList.item(i);
+
+			int startOffset = domNode.getStartOffset();
+			int endOffset = domNode.getEndOffset();
+			int jspStartLine = getJspLine(startOffset);
+			int jspEndLine = getJspLine(endOffset);
+
+			searchResults.add(super.createSearchResult(null, startOffset, endOffset, jspStartLine, jspEndLine, true));
+		}
+
+		return searchResults;
+	}
+
+	@Override
+	public List<SearchResult> findJSPTags(String tagName, String[] attrNames) {
+		if (tagName == null || tagName.isEmpty() || attrNames == null || attrNames.length == 0) {
+			throw new IllegalArgumentException("tagName can not be null or empty");
+		}
+
+		final List<SearchResult> searchResults = new ArrayList<>();
+
+		final NodeList nodeList = getTagNodes(tagName);
+
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			final IDOMNode domNode = (IDOMNode) nodeList.item(i);
+
+			for (String attrName : attrNames) {
+				final IDOMNode attrNode = (IDOMNode) domNode.getAttributes().getNamedItem(attrName);
+
+				if (attrNode != null) {
+					int startOffset = attrNode.getStartOffset();
+					int endOffset = startOffset + attrName.length();
+					int jspStartLine = getJspLine(startOffset);
+					int jspEndLine = getJspLine(endOffset);
+
+					searchResults.add(
+						super.createSearchResult(null, startOffset, endOffset, jspStartLine, jspEndLine, true));
+				}
+			}
+		}
+
+		return searchResults;
+	}
+
+	@Override
+	public List<SearchResult> findJSPTags(String tagName, String[] attrNames, String[] attrValues) {
+		if (tagName == null || tagName.isEmpty() || attrNames == null || attrNames.length == 0 || attrValues == null
+				|| attrValues.length == 0) {
+			throw new IllegalArgumentException("tagName can not be null or empty");
+		}
+
+		if (attrNames.length != attrValues.length) {
 			throw new IllegalArgumentException("If attrValues is specified it must match the attrNames array in lengh");
 		}
 
 		final List<SearchResult> searchResults = new ArrayList<>();
 
+		final NodeList nodeList = getTagNodes(tagName);
+
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			final IDOMNode domNode = (IDOMNode) nodeList.item(i);
+
+			for (int j = 0; j < attrNames.length; j++) {
+				final IDOMNode attrNode = (IDOMNode) domNode.getAttributes().getNamedItem(attrNames[j]);
+
+				if (attrNode != null) {
+					if (attrValues != null && !(attrValues[j].equals(attrNode.getNodeValue()))) {
+						continue;
+					}
+
+					int startOffset = attrNode.getStartOffset() + attrNames[j].length() + 2;
+					int endOffset = startOffset + attrValues[j].length();
+					int jspStartLine = getJspLine(startOffset);
+					int jspEndLine = getJspLine(endOffset);
+
+					searchResults.add(
+						super.createSearchResult(null, startOffset, endOffset, jspStartLine, jspEndLine, true));
+				}
+			}
+		}
+
+		return searchResults;
+	}
+
+	private int getJspLine(int offset) {
 		final IFile jspFile = _translation.getJspFile();
 
 		IDOMModel jspModel = null;
+		IDOMDocument domDocument = null;
 
 		try {
-			jspModel = (IDOMModel) StructuredModelManager
-				.getModelManager().getModelForRead(jspFile);
-			final IDOMDocument domDocument = jspModel.getDocument();
+			jspModel = (IDOMModel) StructuredModelManager.getModelManager().getModelForRead(jspFile);
 
-			final IStructuredDocument structuredDocument = domDocument
-					.getStructuredDocument();
+			domDocument = jspModel.getDocument();
 
-			final NodeList nodeList = domDocument.getElementsByTagName(tagName);
-
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				final IDOMNode domNode = (IDOMNode) nodeList.item(i);
-
-				if (attrNames == null) {
-					int startOffset = domNode.getStartOffset();
-					int endOffset = domNode.getEndOffset();
-					int jspStartLine = structuredDocument.getLineOfOffset(startOffset) + 1;
-					int jspEndLine = structuredDocument.getLineOfOffset(endOffset) + 1;
-					searchResults.add(super.createSearchResult(null,
-							startOffset,endOffset, jspStartLine,jspEndLine, true));
-
-				} else {
-					for (int j = 0; j < attrNames.length; j++) {
-						final IDOMNode attrNode = (IDOMNode) domNode
-								.getAttributes().getNamedItem(attrNames[j]);
-
-						if (attrNode != null) {
-							if (attrValues != null && !(attrValues[j].equals(attrNode.getNodeValue()))) {
-								continue;
-							}
-
-							int startOffset = attrNode.getStartOffset();
-							int endOffset = attrNode.getEndOffset();
-							int jspStartLine = structuredDocument.getLineOfOffset(startOffset) + 1;
-							int jspEndLine = structuredDocument.getLineOfOffset(endOffset) + 1;
-
-							searchResults.add(super.createSearchResult(null,
-									startOffset, endOffset, jspStartLine,jspEndLine, true));
-						}
-					}
-				}
-			}
-		} catch (IOException | CoreException e) {
+			return domDocument.getStructuredDocument().getLineOfOffset(offset) + 1;
+		}
+		catch (IOException | CoreException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (jspModel != null) {
 				jspModel.releaseFromRead();
 			}
 		}
 
-		return searchResults;
+		return 0;
+	}
+
+	private NodeList getTagNodes(String tagName) {
+		final IFile jspFile = _translation.getJspFile();
+
+		IDOMModel jspModel = null;
+		IDOMDocument domDocument = null;
+
+		try {
+			jspModel = (IDOMModel) StructuredModelManager.getModelManager().getModelForRead(jspFile);
+
+			domDocument = jspModel.getDocument();
+
+			return domDocument.getElementsByTagName(tagName);
+		}
+		catch (IOException | CoreException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (jspModel != null) {
+				jspModel.releaseFromRead();
+			}
+		}
+
+		return null;
 	}
 
 	@Override
@@ -188,4 +264,5 @@ public class JSPFileWTP extends JavaFileJDT implements JSPFile {
 	}
 
 	private JSPTranslationPrime _translation;
+
 }

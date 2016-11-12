@@ -41,7 +41,7 @@ public class AUILiferayTags extends JSPFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
-		return jspFileChecker.findJSPTags("jsp:directive.taglib",
-				new String[] { "uri" },new String[] { "http://alloy.liferay.com/tld/aui" });
+		return jspFileChecker.findJSPTags("jsp:directive.taglib", new String[] { "uri" },
+			new String[] { "http://alloy.liferay.com/tld/aui" });
 	}
 }

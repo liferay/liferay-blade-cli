@@ -41,6 +41,7 @@ public class RemoveAUILayoutTags extends JSPFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
-		return jspFileChecker.findJSPTags("aui:layout", null, null);
+		return jspFileChecker.findJSPTags("aui:layout");
 	}
+
 }
