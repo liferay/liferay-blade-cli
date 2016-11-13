@@ -43,6 +43,6 @@ public class DdmTemplateSelectorTags extends JSPFileMigrator {
 	protected List<SearchResult> searchFile(File file,
 			JSPFile jspFileChecker) {
 
-		return jspFileChecker.findJSPTags("liferay-ui:ddm-template-selector", new String[]{"classNameId"}, null);
+		return jspFileChecker.findJSPTags("liferay-ui:ddm-template-selector", new String[]{"classNameId"} );
 	}
 }

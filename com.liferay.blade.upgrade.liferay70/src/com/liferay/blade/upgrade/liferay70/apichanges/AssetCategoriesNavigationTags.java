@@ -41,6 +41,6 @@ public class AssetCategoriesNavigationTags extends JSPFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
-		return jspFileChecker.findJSPTags("liferay-ui:asset-categories-navigation", null, null);
+		return jspFileChecker.findJSPTags("liferay-ui:asset-categories-navigation");
 	}
 }

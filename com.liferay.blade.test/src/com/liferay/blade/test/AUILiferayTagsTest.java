@@ -48,7 +48,7 @@ public class AUILiferayTagsTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("AUILiferayTagTest.jsp")) {
-				if (problem.lineNumber == 1 && problem.startOffset == 11 && problem.endOffset == 50) {
+				if (problem.lineNumber == 1 && problem.startOffset == 16 && problem.endOffset == 48) {
 					found = true;
 				}
 			}

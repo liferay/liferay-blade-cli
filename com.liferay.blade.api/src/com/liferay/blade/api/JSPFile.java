@@ -20,6 +20,10 @@ import java.util.List;
 
 public interface JSPFile extends JavaFile {
 
-	List<SearchResult> findJSPTags(String tagName , String[] attrNames , String[] attrValues);
+	List<SearchResult> findJSPTags(String tagName);
+
+	List<SearchResult> findJSPTags(String tagName, String[] attrNames);
+
+	List<SearchResult> findJSPTags(String tagName, String[] attrNames, String[] attrValues);
 
 }

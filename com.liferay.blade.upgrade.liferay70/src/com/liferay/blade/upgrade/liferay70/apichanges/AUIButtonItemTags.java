@@ -41,6 +41,6 @@ public class AUIButtonItemTags extends JSPFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
-		return jspFileChecker.findJSPTags("aui:button-item", null, null);
+		return jspFileChecker.findJSPTags("aui:button-item");
 	}
 }

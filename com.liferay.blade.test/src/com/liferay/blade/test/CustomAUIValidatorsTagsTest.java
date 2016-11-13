@@ -48,8 +48,8 @@ public class CustomAUIValidatorsTagsTest {
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("CustomAUIValidatorsTest.jsp")
-					&& problem.lineNumber == 314 && problem.startOffset >= 11381
-					&& problem.endOffset >= 11394) {
+					&& problem.lineNumber == 314 && problem.startOffset >= 11387
+					&& problem.endOffset >= 11393) {
 
 				found = true;
 			}

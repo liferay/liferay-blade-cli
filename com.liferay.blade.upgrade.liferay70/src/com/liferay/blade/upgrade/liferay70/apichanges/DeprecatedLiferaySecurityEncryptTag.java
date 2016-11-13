@@ -41,6 +41,6 @@ public class DeprecatedLiferaySecurityEncryptTag extends JSPFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
-		return jspFileChecker.findJSPTags("liferay-security:encrypt", null, null);
+		return jspFileChecker.findJSPTags("liferay-security:encrypt");
 	}
 }

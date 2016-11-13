@@ -40,9 +40,7 @@ import org.osgi.service.component.annotations.Component;
 public class RestoreEntryTags extends JSPFileMigrator {
 
 	@Override
-	protected List<SearchResult> searchFile(File file,
-			JSPFile jspFileChecker) {
-
-		return jspFileChecker.findJSPTags("liferay-ui:restore-entry", null, null);
+	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
+		return jspFileChecker.findJSPTags("liferay-ui:restore-entry");
 	}
 }

@@ -40,9 +40,8 @@ import org.osgi.service.component.annotations.Component;
 public class LiferayUIFlagsTags extends JSPFileMigrator {
 
 	@Override
-	protected List<SearchResult> searchFile(File file,
-			JSPFile jspFileChecker) {
-
-		return jspFileChecker.findJSPTags("liferay-ui:flags", null, null);
+	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
+		return jspFileChecker.findJSPTags("liferay-ui:flags");
 	}
+
 }

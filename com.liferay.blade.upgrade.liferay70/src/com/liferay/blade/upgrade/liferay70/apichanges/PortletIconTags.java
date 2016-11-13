@@ -57,14 +57,11 @@ public class PortletIconTags extends JSPFileMigrator {
 	};
 
 	@Override
-	protected List<SearchResult> searchFile(File file,
-			JSPFile jspFileChecker) {
-
+	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
 		final List<SearchResult> searchResults = new ArrayList<SearchResult>();
 
 		for (String jspTag : jspTags) {
-			final List<SearchResult> jspTagResults = jspFileChecker
-					.findJSPTags(jspTag, null, null);
+			final List<SearchResult> jspTagResults = jspFileChecker.findJSPTags(jspTag);
 
 			if (jspTagResults.size() != 0) {
 				searchResults.addAll(jspTagResults);

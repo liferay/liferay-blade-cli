@@ -41,6 +41,6 @@ public class DeprecatedLiferayPortletIconBackTags extends JSPFileMigrator {
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JSPFile jspFileChecker) {
-		return jspFileChecker.findJSPTags("liferay-portlet:icon-back", null, null);
+		return jspFileChecker.findJSPTags("liferay-portlet:icon-back");
 	}
 }
