@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author David Truong
+ * @author Gregory Amerson
  */
 public class Workspace {
 
@@ -48,6 +49,11 @@ public class Workspace {
 
 	public static final String DEFAULT_THEMES_DIR_PROPERTY =
 		"liferay.workspace.themes.dir";
+
+	public static final String DEFAULT_WARS_DIR = "wars";
+
+	public static final String DEFAULT_WARS_DIR_PROPERTY =
+		"liferay.workspace.wars.dir";
 
 	public static final Pattern PATTERN_WORKSPACE_PLUGIN = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$",

@@ -29,6 +29,7 @@ import com.liferay.blade.cli.GradleCommand.GradleOptions;
 import com.liferay.blade.cli.InitCommand.InitOptions;
 import com.liferay.blade.cli.InstallCommand.InstallOptions;
 import com.liferay.blade.cli.MigrateThemeCommand.MigrateThemeOptions;
+import com.liferay.blade.cli.MigrateWarCommand.MigrateWarOptions;
 import com.liferay.blade.cli.OpenCommand.OpenOptions;
 import com.liferay.blade.cli.SamplesCommand.SamplesOptions;
 import com.liferay.blade.cli.ServerCommand.ServerOptions;
@@ -98,6 +99,11 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	@Description(MigrateThemeCommand.DESCRIPTION)
 	public void _migrateTheme(MigrateThemeOptions options) throws Exception {
 		new MigrateThemeCommand(this, options).execute();
+	}
+
+	@Description(MigrateWarCommand.DESCRIPTION)
+	public void _migrateWar(MigrateWarOptions options) throws Exception {
+		new MigrateWarCommand(this, options).execute();
 	}
 
 	@Description(OpenCommand.DESCRIPTION)
