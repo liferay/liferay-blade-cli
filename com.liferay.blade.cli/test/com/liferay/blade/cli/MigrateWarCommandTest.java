@@ -86,11 +86,15 @@ public class MigrateWarCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u", "-o"};
+		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
 
 		new bladenofail().run(args);
 
 		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
+
+		args = new String[] {"-b", projectDir.getPath(), "migrateWar", "sample-styled-minimal-theme"};
+
+		new bladenofail().run(args);
 
 		assertTrue(theme.exists());
 
@@ -105,6 +109,26 @@ public class MigrateWarCommandTest {
 		assertFalse(new File(theme, "src/main/webapp/_diffs").exists());
 
 		assertFalse(new File(projectDir, "plugins-sdk/themes/sample-styled-minimal-theme").exists());
+
+		args = new String[] {"-b", projectDir.getPath(), "migrateWar", "sample-styled-advanced-theme"};
+
+		new bladenofail().run(args);
+
+		File advancedTheme = new File(projectDir, "wars/sample-styled-advanced-theme");
+
+		assertTrue(advancedTheme.exists());
+
+		assertFalse(new File(advancedTheme, "build.xml").exists());
+
+		assertTrue(new File(advancedTheme, "build.gradle").exists());
+
+		assertFalse(new File(advancedTheme, "docroot").exists());
+
+		assertTrue(new File(advancedTheme, "src/main/webapp").exists());
+
+		assertFalse(new File(advancedTheme, "src/main/webapp/_diffs").exists());
+
+		assertFalse(new File(projectDir, "plugins-sdk/themes/sample-styled-advanced-theme").exists());
 	}
 
 	@Test
@@ -173,10 +197,18 @@ public class MigrateWarCommandTest {
 	public void testReadIvyXml() throws Exception {
 		File projectDir = setupWorkspace("readIvyXml");
 
+		String[] args = {"-b", projectDir.getPath(), "migrateWar", "sample-dao-portlet"};
+
+		new bladenofail().run(args);
+
 		contains(
 			new File(projectDir, "wars/sample-dao-portlet/build.gradle"),
 			".*compile group: 'c3p0', name: 'c3p0', version: '0.9.0.4'.*",
 			".*compile group: 'mysql', name: 'mysql-connector-java', version: '5.0.7'.*");
+
+		args = new String[] {"-b", projectDir.getPath(), "migrateWar", "sample-tapestry-portlet"};
+
+		new bladenofail().run(args);
 
 		contains(
 			new File(projectDir, "wars/sample-tapestry-portlet/build.gradle"),

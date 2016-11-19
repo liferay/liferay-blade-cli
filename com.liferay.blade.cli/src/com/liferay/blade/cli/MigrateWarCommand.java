@@ -82,10 +82,10 @@ public class MigrateWarCommand {
 
 		_pluginsSdkDir = new File(projectDir, pluginsSdkDirPath);
 		_hooksDir = new File(_pluginsSdkDir, "hooks");
-		_layouttplDir = new File(_pluginsSdkDir + "layouttpl");
-		_portletsDir = new File(_pluginsSdkDir + "portlets");
-		_websDir = new File(_pluginsSdkDir + "webs");
-		_themesDir = new File(_pluginsSdkDir + "themes");
+		_layouttplDir = new File(_pluginsSdkDir, "layouttpl");
+		_portletsDir = new File(_pluginsSdkDir, "portlets");
+		_websDir = new File(_pluginsSdkDir, "webs");
+		_themesDir = new File(_pluginsSdkDir, "themes");
 
 		String warsDirPath = null;
 
@@ -180,7 +180,7 @@ public class MigrateWarCommand {
 				migrateLayoutPlugin(pluginDir);
 			}
 			else if(pluginPath.startsWith(_themesDir.toPath())) {
-				migrateLayoutPlugin(pluginDir);
+				migrateThemePlugin(pluginDir);
 			}
 		}
 	}
