@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 import org.gradle.testkit.runner.BuildTask;
 import org.junit.After;
@@ -41,131 +40,6 @@ public class InitCommandTest {
 	@After
 	public void cleanUp() throws Exception {
 		IO.delete(workspaceDir.getParentFile());
-	}
-
-	@Test
-	public void testMoveLayouttplToWars() throws Exception {
-		File testdir = IO.getFile("generated/testMoveLayouttplToWars");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			assertFalse(testdir.exists());
-		}
-
-		Util.unzip(new File("test-projects/plugins-sdk-with-git.zip"), testdir);
-
-		assertTrue(testdir.exists());
-
-		File projectDir = new File(testdir, "plugins-sdk-with-git");
-
-		String[] args = {"-b", projectDir.getPath(), "init", "-u", "-o"};
-
-		new bladenofail().run(args);
-
-		File layoutWar = new File(projectDir, "wars/1-2-1-columns-layouttpl");
-
-		assertTrue(layoutWar.exists());
-
-		assertFalse(new File(layoutWar, "build.xml").exists());
-
-		assertFalse(new File(layoutWar, "build.gradle").exists());
-
-		assertFalse(new File(layoutWar, "docroot").exists());
-	}
-
-	@Test
-	public void testMoveThemesToWars() throws Exception {
-		File testdir = IO.getFile("generated/testMoveThemesToWar");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			assertFalse(testdir.exists());
-		}
-
-		Util.unzip(new File("test-projects/plugins-sdk-with-git.zip"), testdir);
-
-		assertTrue(testdir.exists());
-
-		File projectDir = new File(testdir, "plugins-sdk-with-git");
-
-		String[] args = {"-b", projectDir.getPath(), "init", "-u", "-o"};
-
-		new bladenofail().run(args);
-
-		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
-
-		assertTrue(theme.exists());
-
-		assertFalse(new File(theme, "build.xml").exists());
-
-		assertTrue(new File(theme, "build.gradle").exists());
-
-		assertFalse(new File(theme, "docroot").exists());
-
-		assertTrue(new File(theme, "src/main/webapp").exists());
-
-		assertFalse(new File(theme, "src/main/webapp/_diffs").exists());
-
-		assertFalse(new File(projectDir, "plugins-sdk/themes/sample-styled-minimal-theme").exists());
-	}
-
-	@Test
-	public void testMovePluginsToWars() throws Exception {
-		File testdir = IO.getFile("generated/testMovePluginsToWars");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			assertFalse(testdir.exists());
-		}
-
-		Util.unzip(new File("test-projects/plugins-sdk-with-git.zip"), testdir);
-
-		assertTrue(testdir.exists());
-
-		File projectDir = new File(testdir, "plugins-sdk-with-git");
-
-		String[] args = {"-b", projectDir.getPath(), "init", "-u", "-o"};
-
-		new bladenofail().run(args);
-
-		File sampleExpandoHook = new File(projectDir, "wars/sample-expando-hook");
-
-		assertTrue(sampleExpandoHook.exists());
-
-		assertFalse(new File(projectDir, "plugins-sdk/hooks/sample-expando-hook").exists());
-
-		File sampleServletFilterHook = new File(projectDir, "wars/sample-servlet-filter-hook");
-
-		assertTrue(sampleServletFilterHook.exists());
-
-		assertFalse(new File(projectDir, "plugins-sdk/hooks/sample-servlet-filter-hook").exists());
-
-		File sampleJspPortlet = new File(projectDir, "wars/sample-jsp-portlet");
-
-		assertTrue(sampleJspPortlet.exists());
-
-		assertFalse(new File(projectDir, "plugins-sdk/portlets/sample-jsp-portlet").exists());
-
-		File sampleDaoPortlet = new File(projectDir, "wars/sample-dao-portlet");
-
-		assertTrue(sampleDaoPortlet.exists());
-
-		assertFalse(new File(projectDir, "plugins-sdk/portlets/sample-dao-portlet").exists());
-
-		contains(
-			new File(projectDir, "wars/sample-dao-portlet/build.gradle"),
-			".*compile group: 'c3p0', name: 'c3p0', version: '0.9.0.4'.*",
-			".*compile group: 'mysql', name: 'mysql-connector-java', version: '5.0.7'.*");
-
-		contains(
-			new File(projectDir, "wars/sample-tapestry-portlet/build.gradle"),
-			".*compile group: 'hivemind', name: 'hivemind', version: '1.1'.*",
-			".*compile group: 'hivemind', name: 'hivemind-lib', version: '1.1'.*",
-			".*compile group: 'org.apache.tapestry', name: 'tapestry-annotations', version: '4.1'.*",
-			".*compile group: 'org.apache.tapestry', name: 'tapestry-framework', version: '4.1'.*",
-			".*compile group: 'org.apache.tapestry', name: 'tapestry-portlet', version: '4.1'.*");
-
-		assertFalse(new File(projectDir, "wars/sample-tapestry-portlet/ivy.xml").exists());
 	}
 
 	@Test
@@ -397,20 +271,6 @@ public class InitCommandTest {
 		assertTrue(new File(dir, "build-common-plugin.xml").createNewFile());
 	}
 
-	private void contains(File file, String... patterns) throws Exception {
-		String content = new String(IO.read(file));
-
-		for (String pattern : patterns) {
-			contains(content, pattern);
-		}
-	}
-
-	private void contains(String content, String pattern) throws Exception {
-		assertTrue(
-			Pattern.compile(
-				pattern,
-				Pattern.MULTILINE | Pattern.DOTALL).matcher(content).matches());
-	}
 	private final File workspaceDir = IO.getFile("generated/test/workspace");
 
 }

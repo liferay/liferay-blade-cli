@@ -25,37 +25,17 @@ import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.CopyOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * @author Gregory Amerson
@@ -177,258 +157,6 @@ public class InitCommand {
 		projectTemplatesArgs.setTemplate("workspace");
 
 		new ProjectTemplates(projectTemplatesArgs);
-
-		if (_options.optimize()) {
-			// go through all portlets hooks layout templates and themes and switch to wars with workspace
-			File pluginsSdkDir = new File(destDir, "plugins-sdk");
-
-			movePluginsToWarsFolder(pluginsSdkDir, new File(destDir, "wars"));
-		}
-	}
-
-	private void movePluginsToWarsFolder(File pluginsSdkDir, File warsDir) throws Exception {
-		warsDir.mkdirs();
-
-		FileFilter containsDocrootFilter = new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.isDirectory() && new File(pathname, "docroot").exists();
-			}
-		};
-
-		Set<File> javaPlugins = new HashSet<>();
-
-		Collections.addAll(javaPlugins, new File(pluginsSdkDir, "hooks").listFiles(containsDocrootFilter));
-		Collections.addAll(javaPlugins, new File(pluginsSdkDir, "portlets").listFiles(containsDocrootFilter));
-		Collections.addAll(javaPlugins, new File(pluginsSdkDir, "webs").listFiles(containsDocrootFilter));
-
-		for (File javaPlugin : javaPlugins) {
-			Files.move(javaPlugin.toPath(), warsDir.toPath().resolve(javaPlugin.getName()));
-
-			File warDir = new File(warsDir, javaPlugin.getName());
-
-			File src = new File(warDir, "src/main/java");
-
-			src.mkdirs();
-
-			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
-
-			if (docrootSrc.exists()) {
-				for(File docrootSrcFile : docrootSrc.listFiles()) {
-					Files.move(docrootSrcFile.toPath(), src.toPath().resolve(docrootSrcFile.getName()));
-				}
-
-				docrootSrc.delete();
-			}
-
-			File webapp = new File(warDir, "src/main/webapp");
-
-			webapp.mkdirs();
-
-			File docroot = new File(warDir, "docroot");
-
-			for(File docrootFile : docroot.listFiles()) {
-				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()));
-			}
-
-			IO.delete(docroot);
-			IO.delete(new File(warDir, "build.xml"));
-			IO.delete(new File(warDir, ".classpath"));
-			IO.delete(new File(warDir, ".project"));
-			IO.delete(new File(warDir, ".settings"));
-			IO.delete(new File(warDir, "ivy.xml.MD5"));
-
-			List<String> dependencies = new ArrayList<>();
-			dependencies.add("compileOnly group: \"com.liferay.portal\", name: \"com.liferay.portal.kernel\", version: \"2.0.0\"");
-			dependencies.add("compileOnly group: \"javax.portlet\", name: \"portlet-api\", version: \"2.0\"");
-			dependencies.add("compileOnly group: \"javax.servlet\", name: \"javax.servlet-api\", version: \"3.0.1\"");
-
-			File ivyFile = new File(warDir, "ivy.xml");
-
-			if (ivyFile.exists()) {
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				Document doc = dBuilder.parse(ivyFile);
-				Element documentElement = doc.getDocumentElement();
-				documentElement.normalize();
-
-				NodeList depElements = documentElement.getElementsByTagName("dependency");
-
-				if (depElements != null && depElements.getLength() > 0) {
-					for (int i = 0; i < depElements.getLength(); i++) {
-						Node depElement = depElements.item(i);
-
-						String name = getAttr(depElement, "name");
-						String org = getAttr(depElement, "org");
-						String rev = getAttr(depElement, "rev");
-
-						if (name != null && org != null && rev != null) {
-							dependencies.add(MessageFormat.format("compile group: ''{0}'', name: ''{1}'', version: ''{2}''", org, name, rev));
-						}
-					}
-				}
-
-				ivyFile.delete();
-			}
-
-			StringBuilder depsContent = new StringBuilder();
-
-			depsContent.append("dependencies {\n");
-
-			for (String dep : dependencies) {
-				depsContent.append("\t" + dep + "\n");
-			}
-
-			depsContent.append("}");
-
-			File gradleFile = new File(warDir, "build.gradle");
-
-			IO.write(depsContent.toString().getBytes(), gradleFile);
-		}
-
-		Set<File> layoutPlugins = new HashSet<>();
-
-		Collections.addAll(layoutPlugins, new File(pluginsSdkDir, "layouttpl").listFiles(containsDocrootFilter));
-
-		for (File layoutPlugin : layoutPlugins) {
-			Files.move(layoutPlugin.toPath(), warsDir.toPath().resolve(layoutPlugin.getName()));
-
-			File warDir = new File(warsDir, layoutPlugin.getName());
-
-			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
-
-			if (docrootSrc.exists()) {
-				throw new IllegalStateException(
-					"layouttpl project " + layoutPlugin.getName() + " contains java src at " +
-							docrootSrc.getAbsolutePath() + ". Please remove it before continuing.");
-			}
-
-			File webapp = new File(warDir, "src/main/webapp");
-
-			webapp.mkdirs();
-
-			File docroot = new File(warDir, "docroot");
-
-			for(File docrootFile : docroot.listFiles()) {
-				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()));
-			}
-
-			IO.delete(docroot);
-			IO.delete(new File(warDir, "build.xml"));
-			IO.delete(new File(warDir, ".classpath"));
-			IO.delete(new File(warDir, ".project"));
-			IO.delete(new File(warDir, ".settings"));
-		}
-
-		Set<File> themes = new HashSet<>();
-
-		Collections.addAll(themes, new File(pluginsSdkDir, "themes").listFiles(containsDocrootFilter));
-
-		for (File theme : themes) {
-			CreateCommand createCommand = new CreateCommand(_blade);
-
-			ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
-
-			projectTemplatesArgs.setDestinationDir(warsDir);
-			projectTemplatesArgs.setName(theme.getName());
-			projectTemplatesArgs.setTemplate("theme");
-
-			createCommand.execute(projectTemplatesArgs, true);
-
-			File docroot = new File(theme, "docroot");
-
-			File diffsDir = new File(docroot, "_diffs");
-
-			if (!diffsDir.exists()) {
-				throw new IllegalStateException(
-					"theme " + theme.getName() + " does not contain a docroot/_diffs folder.  "
-							+ "Please correct it and try again.");
-			}
-
-			// only copy _diffs and WEB-INF
-
-			File newThemeDir = new File(warsDir, theme.getName());
-
-			File webapp = new File(newThemeDir, "src/main/webapp");
-
-			Files.walkFileTree(diffsDir.toPath(), new CopyDirVisitor(diffsDir.toPath(), webapp.toPath(), StandardCopyOption.REPLACE_EXISTING));
-
-			File webinfDir = new File(docroot, "WEB-INF");
-
-			File newWebinfDir = new File(webapp, "WEB-INF");
-
-			Files.walkFileTree(webinfDir.toPath(), new CopyDirVisitor(webinfDir.toPath(), newWebinfDir.toPath(), StandardCopyOption.REPLACE_EXISTING));
-
-			File[] others = docroot.listFiles( new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return !"_diffs".equals(name) && !"WEB-INF".equals(name);
-				}
-			});
-
-			if (others != null && others.length > 0) {
-				File backup = new File(newThemeDir, "docroot_backup");
-
-				backup.mkdirs();
-
-				for (File other : others) {
-					Files.move(other.toPath(), backup.toPath().resolve(other.getName()));
-				}
-			}
-
-			IO.delete(theme);
-		}
-	}
-
-	private static class CopyDirVisitor extends SimpleFileVisitor<Path>
-	{
-	    private final Path fromPath;
-	    private final Path toPath;
-	    private final CopyOption copyOption;
-
-	    public CopyDirVisitor(Path fromPath, Path toPath, CopyOption copyOption)
-	    {
-	        this.fromPath = fromPath;
-	        this.toPath = toPath;
-	        this.copyOption = copyOption;
-	    }
-
-	    @Override
-	    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException
-	    {
-	        Path targetPath = toPath.resolve(fromPath.relativize(dir));
-
-	        if( !Files.exists(targetPath) )
-	        {
-	            Files.createDirectory(targetPath);
-	        }
-
-	        return FileVisitResult.CONTINUE;
-	    }
-
-	    @Override
-	    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-	    {
-	        Files.copy(file, toPath.resolve(fromPath.relativize(file)), copyOption);
-
-	        return FileVisitResult.CONTINUE;
-	    }
-	}
-
-	private String getAttr(Node item, String attrName) {
-		if (item != null) {
-			NamedNodeMap attrs = item.getAttributes();
-
-			if (attrs != null) {
-				Node attr = attrs.getNamedItem(attrName);
-
-				if (attr != null) {
-					return attr.getNodeValue();
-				}
-			}
-		}
-
-		return null;
 	}
 
 	@Arguments(arg = "[name]")
@@ -441,9 +169,6 @@ public class InitCommand {
 
 		@Description("force to refresh workspace template")
 		public boolean refresh();
-
-		@Description("optimize projects by converting them to standard war layouts")
-		public boolean optimize();
 
 		@Description("upgrade plugins-sdk from 6.2 to 7.0")
 		public boolean upgrade();
