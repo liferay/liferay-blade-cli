@@ -193,6 +193,18 @@ public class MigrateWarCommandTest {
 
 		return projectDir;
 	}
+
+	@Test
+	public void testThemeDocrootBackup() throws Exception {
+		File projectDir = setupWorkspace("testThemeDocrootBackup");
+
+		String[] args = {"-b", projectDir.getPath(), "migrateWar", "sample-html4-theme"};
+
+		new bladenofail().run(args);
+
+		assertTrue(new File(projectDir, "wars/sample-html4-theme/docroot_backup/other/afile").exists());
+	}
+
 	@Test
 	public void testReadIvyXml() throws Exception {
 		File projectDir = setupWorkspace("readIvyXml");

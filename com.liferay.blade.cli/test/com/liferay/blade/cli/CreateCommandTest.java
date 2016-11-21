@@ -763,7 +763,7 @@ public class CreateCommandTest {
 		checkFileExists(projectPath + "/bnd.bnd");
 
 		File componentFile = checkFileExists(
-			projectPath + "/src/main/java/blade/test/theme/contributor/" +
+			projectPath + "/src/main/java/blade/test/context/contributor/" +
 				"BladeTestTemplateContextContributor.java");
 
 		contains(
