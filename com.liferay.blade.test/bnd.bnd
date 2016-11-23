@@ -68,6 +68,7 @@ Test-Cases: ${test-cases}
 	javax.xml
 
 Import-Package: \
+	com.liferay.blade.api;version=2.0.0,\
 	org.osgi.framework;version=1.5,\
 	*
 -runproperties: debug=true

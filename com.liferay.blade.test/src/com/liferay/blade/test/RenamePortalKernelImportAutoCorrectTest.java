@@ -63,7 +63,7 @@ public class RenamePortalKernelImportAutoCorrectTest {
 
 		int problemsFixed = ((AutoMigrator)migrator).correctProblems( testfile, problems );
 
-		assertEquals(10, problemsFixed);
+		assertEquals(11, problemsFixed);
 
 		File dest = new File(tmpfolder, "Updated.java");
 
