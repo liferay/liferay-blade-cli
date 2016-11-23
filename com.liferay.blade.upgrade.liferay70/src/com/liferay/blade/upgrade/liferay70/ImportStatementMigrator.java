@@ -69,10 +69,13 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 	}
 
 	@Override
-	public void correctProblems(File file, List<Problem> problems) throws AutoMigrateException {
+	public int correctProblems(File file, List<Problem> problems) throws AutoMigrateException {
+		int problemsFixed = 0;
 		final Map<Integer,String> importsToRewrite = new HashMap<>();
 
 		for (Problem problem : problems) {
+			boolean problemFound = false;
+
 			if (problem.autoCorrectContext instanceof String) {
 				final String importData = problem.autoCorrectContext;
 
@@ -81,8 +84,13 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 
 					if (_imports.containsKey(importValue)) {
 						importsToRewrite.put(problem.getLineNumber(), importValue);
+						problemFound = true;
 					}
 				}
+			}
+
+			if (problemFound) {
+				problemsFixed++;
 			}
 		}
 
@@ -114,10 +122,14 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 				writer.close();
 
 				clearCache(file);
+
+				return problemsFixed;
 			} catch (IOException e) {
 				throw new AutoMigrateException("Unable to auto-correct", e);
 			}
 		}
+
+		return 0;
 	}
 
 	protected IFile getJavaFile(File file) {

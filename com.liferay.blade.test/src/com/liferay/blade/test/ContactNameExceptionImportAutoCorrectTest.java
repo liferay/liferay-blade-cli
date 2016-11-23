@@ -62,7 +62,9 @@ public class ContactNameExceptionImportAutoCorrectTest {
 
 		assertEquals(3, problems.size());
 
-		((AutoMigrator)migrator).correctProblems( testfile, problems );
+		int problemsFixed = ((AutoMigrator)migrator).correctProblems( testfile, problems );
+
+		assertEquals(10, problemsFixed);
 
 		File dest = new File(tmpfolder, "Updated.java");
 
