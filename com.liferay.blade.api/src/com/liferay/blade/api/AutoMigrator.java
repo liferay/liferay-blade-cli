@@ -24,6 +24,6 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface AutoMigrator {
 
-	public void correctProblems(File file, List<Problem> problems) throws AutoMigrateException;
+	public int correctProblems(File file, List<Problem> problems) throws AutoMigrateException;
 
 }

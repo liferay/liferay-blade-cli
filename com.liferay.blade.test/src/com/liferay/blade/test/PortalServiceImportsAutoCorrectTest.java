@@ -62,7 +62,9 @@ public class PortalServiceImportsAutoCorrectTest {
 
 		assertEquals(2, problems.size());
 
-		((AutoMigrator)migrator).correctProblems( testfile, problems );
+		int problemsFixed = ((AutoMigrator)migrator).correctProblems( testfile, problems );
+
+		assertEquals(2, problemsFixed);
 
 		File dest = new File(tmpfolder, "Updated.java");
 

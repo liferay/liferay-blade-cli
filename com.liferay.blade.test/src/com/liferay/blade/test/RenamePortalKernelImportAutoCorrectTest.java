@@ -1,4 +1,3 @@
-
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -62,7 +61,9 @@ public class RenamePortalKernelImportAutoCorrectTest {
 
 		assertEquals(11, problems.size());
 
-		((AutoMigrator)migrator).correctProblems( testfile, problems );
+		int problemsFixed = ((AutoMigrator)migrator).correctProblems( testfile, problems );
+
+		assertEquals(11, problemsFixed);
 
 		File dest = new File(tmpfolder, "Updated.java");
 

@@ -18,14 +18,11 @@ package com.liferay.blade.cli.jmx;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -139,7 +136,7 @@ public class JMXLocalConnector {
 	}
 
 	public JMXLocalConnector(String objectName) throws MalformedURLException {
-		this(new JMXServiceURL(objectName));
+		this(new JMXServiceURL(getLocalConnectorAddress(objectName)));
 	}
 
 	protected MBeanServerConnection mBeanServerConnection;
@@ -242,8 +239,7 @@ public class JMXLocalConnector {
 			String objectNameValue, MBeanServerConnection mBeanServerConnection)
 		throws IOException, MalformedObjectNameException {
 
-		final ObjectName objectName = new ObjectName(
-			objectNameValue + ":type=framework,*");
+		final ObjectName objectName = new ObjectName(objectNameValue);
 
 		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(
 			objectName, null);

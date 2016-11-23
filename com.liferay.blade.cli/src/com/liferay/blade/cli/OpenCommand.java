@@ -23,7 +23,6 @@ import aQute.lib.getopt.Options;
 import com.liferay.blade.cli.jmx.IDEConnector;
 
 import java.io.File;
-
 import java.util.Collections;
 
 /**
@@ -49,22 +48,7 @@ public class OpenCommand {
 			return;
 		}
 
-		IDEConnector connector = null;
-
-		try {
-			connector = new IDEConnector();
-		}
-		catch (Exception e) {
-
-			// ignore
-
-		}
-
-		if (connector == null) {
-			addError(
-				"open", "Unable to connect to Eclipse/Liferay IDE instance.");
-			return;
-		}
+		IDEConnector connector = new IDEConnector();
 
 		if (fileName.isDirectory()) {
 			Object retval = connector.openDir(fileName);

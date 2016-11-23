@@ -98,7 +98,7 @@ public class LiferayVersionsProperties extends PropertiesFileMigrator implements
 	}
 
 	@Override
-	public void correctProblems(File file, List<Problem> problems) throws AutoMigrateException {
+	public int correctProblems(File file, List<Problem> problems) throws AutoMigrateException {
 		try {
 			String contents = new String(IO.read(file));
 
@@ -106,6 +106,7 @@ public class LiferayVersionsProperties extends PropertiesFileMigrator implements
 					.getService(_context.getBundleContext().getServiceReference(JavaFile.class));
 			final IFile propertiesFile = javaFile.getIFile(file);
 
+			int problemsFixed = 0;
 			for (Problem problem : problems) {
 				if (problem.autoCorrectContext instanceof String) {
 					final String propertyData = problem.autoCorrectContext;
@@ -114,15 +115,18 @@ public class LiferayVersionsProperties extends PropertiesFileMigrator implements
 						final String propertyValue = propertyData.substring(PREFIX.length());
 
 						contents = contents.replaceAll(propertyValue+".*", propertyValue + "=7.0.0+");
+						problemsFixed++;
 					}
 				}
 			}
 
 			propertiesFile.setContents(new ByteArrayInputStream(contents.getBytes()), IResource.FORCE, null);
 
+			return problemsFixed;
 		} catch (CoreException | IOException e) {
-			e.printStackTrace();
 		}
+
+		return 0;
 	}
 
 }
