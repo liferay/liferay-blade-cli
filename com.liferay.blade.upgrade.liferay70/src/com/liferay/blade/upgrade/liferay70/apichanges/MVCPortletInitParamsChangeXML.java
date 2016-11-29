@@ -51,10 +51,10 @@ public class MVCPortletInitParamsChangeXML extends XMLFileMigrator {
 
 		final List<SearchResult> results = new ArrayList<>();
 
-		results.addAll(xmlFileChecker.findTag(
+		results.addAll(xmlFileChecker.findElement(
 			"portlet-class", "com.liferay.util.bridges.mvc.MVCPortlet"));
 
-		results.addAll(xmlFileChecker.findTag(
+		results.addAll(xmlFileChecker.findElement(
 			"name", "copy-request-parameters"));
 
 		return results;
