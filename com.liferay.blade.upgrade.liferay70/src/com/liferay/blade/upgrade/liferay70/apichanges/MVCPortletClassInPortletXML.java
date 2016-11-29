@@ -52,7 +52,10 @@ import org.w3c.dom.Text;
 		"implName=MVCPortletClassInPortletXML",
 		"auto.correct=portlet-xml-portlet-class"
 	},
-	service = FileMigrator.class
+	service = {
+		AutoMigrator.class,
+		FileMigrator.class
+	}
 )
 public class MVCPortletClassInPortletXML extends XMLFileMigrator implements AutoMigrator {
 
