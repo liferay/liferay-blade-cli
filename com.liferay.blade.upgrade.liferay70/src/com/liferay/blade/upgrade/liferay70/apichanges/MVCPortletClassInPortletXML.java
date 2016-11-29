@@ -16,17 +16,31 @@
 
 package com.liferay.blade.upgrade.liferay70.apichanges;
 
+import aQute.lib.io.IO;
+
+import com.liferay.blade.api.AutoMigrateException;
+import com.liferay.blade.api.AutoMigrator;
 import com.liferay.blade.api.FileMigrator;
+import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.api.XMLFile;
 import com.liferay.blade.upgrade.liferay70.XMLFileMigrator;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.wst.sse.core.StructuredModelManager;
+import org.eclipse.wst.sse.core.internal.provisional.IndexedRegion;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMElement;
+import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.osgi.service.component.annotations.Component;
+import org.w3c.dom.Text;
 
 @Component(
 	property = {
@@ -35,11 +49,14 @@ import org.osgi.service.component.annotations.Component;
 		"problem.tickets=LPS-50156",
 		"problem.title=Moved MVCPortlet, ActionCommand and ActionCommandCache from util-bridges.jar to portal-service.jar",
 		"problem.section=#moved-mvcportlet-actioncommand-and-actioncommandcache-from-util-bridges-jar",
-		"implName=MVCPortletClassInPortletXML"
+		"implName=MVCPortletClassInPortletXML",
+		"auto.correct=portlet-xml-portlet-class"
 	},
 	service = FileMigrator.class
 )
-public class MVCPortletClassInPortletXML extends XMLFileMigrator {
+public class MVCPortletClassInPortletXML extends XMLFileMigrator implements AutoMigrator {
+
+	private static final String KEY = "portlet-xml-portlet-class";
 
 	@Override
 	protected List<SearchResult> searchFile(File file, XMLFile xmlFileChecker) {
@@ -50,9 +67,83 @@ public class MVCPortletClassInPortletXML extends XMLFileMigrator {
 
 		final List<SearchResult> results = new ArrayList<>();
 
-		results.addAll(xmlFileChecker.findTag(
-			"portlet-class", "com.liferay.util.bridges.mvc.MVCPortlet"));
+		Collection<SearchResult> tags = xmlFileChecker.findElement(
+			"portlet-class", "com.liferay.util.bridges.mvc.MVCPortlet");
+
+		for (SearchResult tagResult : tags ) {
+			tagResult.autoCorrectContext = KEY;
+		}
+
+		results.addAll(tags);
 
 		return results;
 	}
+
+	@Override
+	public int correctProblems(File file, List<Problem> problems) throws AutoMigrateException {
+		int corrected = 0;
+		IFile xmlFile = getXmlFile(file);
+		IDOMModel xmlModel = null;
+
+		if (xmlFile != null) {
+			try {
+				xmlModel = (IDOMModel) StructuredModelManager.getModelManager().getModelForEdit(xmlFile);
+
+				List<IDOMElement> elementsToCorrect = new ArrayList<>();
+
+				for (Problem problem : problems) {
+					if (KEY.equals(problem.autoCorrectContext)) {
+						IndexedRegion region = xmlModel.getIndexedRegion(problem.startOffset);
+
+						if (region instanceof IDOMElement) {
+							IDOMElement element = (IDOMElement) region;
+
+							elementsToCorrect.add(element);
+						}
+					}
+				}
+
+				for (IDOMElement element : elementsToCorrect)  {
+					xmlModel.aboutToChangeModel();
+
+					removeChildren(element);
+
+					Text textContent = element.getOwnerDocument().createTextNode(
+							"com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet");
+
+					element.appendChild(textContent);
+
+					xmlModel.changedModel();
+
+					corrected++;
+				}
+
+				xmlModel.save();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (xmlModel != null) {
+					xmlModel.releaseFromEdit();
+				}
+			}
+		}
+
+		if (corrected > 0) {
+			try {
+				IO.copy(xmlFile.getContents(), file);
+			} catch (IOException | CoreException e) {
+				throw new AutoMigrateException("Error writing corrected file.", e);
+			}
+		}
+
+		return corrected;
+	}
+
+	private void removeChildren(IDOMElement element) {
+		while (element.hasChildNodes()) {
+			element.removeChild(element.getFirstChild());
+		}
+	}
+
 }

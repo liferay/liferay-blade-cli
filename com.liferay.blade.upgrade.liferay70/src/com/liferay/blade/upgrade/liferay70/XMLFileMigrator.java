@@ -18,11 +18,20 @@ package com.liferay.blade.upgrade.liferay70;
 
 import com.liferay.blade.api.XMLFile;
 
+import java.io.File;
+
+import org.eclipse.core.resources.IFile;
+
 public abstract class XMLFileMigrator extends AbstractFileMigrator<XMLFile> {
 
 	public XMLFileMigrator() {
 		super(XMLFile.class);
 	}
 
+	protected IFile getXmlFile(File file) {
+		final XMLFile xmlFileService = _context.getService(_context.getServiceReference(XMLFile.class));
+
+		return xmlFileService.getIFile(file);
+	}
 
 }
