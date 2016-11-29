@@ -56,6 +56,13 @@ public class GradleExec {
 		return process.waitFor();
 	}
 
+	public int executeGradleCommand(String cmd, File dir) throws Exception {
+		Process process = Util.startProcess(
+			_blade, "\"" + _executable + "\" " + cmd, dir, true);
+
+		return process.waitFor();
+	}
+
 	private blade _blade;
 	private String _executable;
 
