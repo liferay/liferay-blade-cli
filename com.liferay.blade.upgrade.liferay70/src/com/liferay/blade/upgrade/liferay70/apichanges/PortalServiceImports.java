@@ -33,8 +33,8 @@ import org.osgi.service.component.annotations.Component;
 		"implName=PortalServiceImports"
 	},
 	service = {
-		FileMigrator.class,
-		AutoMigrator.class
+		AutoMigrator.class,
+		FileMigrator.class
 	}
 )
 public class PortalServiceImports extends ImportStatementMigrator {

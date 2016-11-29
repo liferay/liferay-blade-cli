@@ -26,7 +26,6 @@ import com.liferay.blade.util.NullProgressMonitor;
 import java.io.File;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -35,7 +34,6 @@ import org.osgi.framework.ServiceReference;
 public class InitJSPParseTest {
 
 	@Test
-	@Ignore
 	public void initParseErrorCheck() throws Exception {
 		ServiceReference<Migration> sr = context
 				.getServiceReference(Migration.class);
@@ -44,13 +42,13 @@ public class InitJSPParseTest {
 
 		List<Problem> problems = m.findProblems(new File("jsptests/jukebox-portlet/"), new NullProgressMonitor());
 
-		assertEquals(401, problems.size());
+		assertEquals(397, problems.size());
 
 		boolean found = false;
 
 		for (Problem problem : problems) {
 			if (problem.file.getName().endsWith("view_search.jsp")) {
-				if (problem.lineNumber == 109 && problem.startOffset == 3697 && problem.endOffset == 3752) {
+				if (problem.lineNumber == 109 && problem.startOffset == 3718 && problem.endOffset == 3746) {
 					found = true;
 				}
 			}

@@ -49,8 +49,8 @@ import org.osgi.service.component.annotations.Component;
 		"implName=LiferayVersionsProperties"
 	},
 	service = {
-		FileMigrator.class,
-		AutoMigrator.class
+		AutoMigrator.class,
+		FileMigrator.class
 	}
 )
 public class LiferayVersionsProperties extends PropertiesFileMigrator implements AutoMigrator {

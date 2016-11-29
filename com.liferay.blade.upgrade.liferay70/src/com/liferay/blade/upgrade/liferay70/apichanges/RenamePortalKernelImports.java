@@ -39,8 +39,8 @@ import org.osgi.service.component.annotations.Component;
 		"implName=RenamePortalKernelImports"
 	},
 	service = {
-		FileMigrator.class,
-		AutoMigrator.class
+		AutoMigrator.class,
+		FileMigrator.class
 	}
 )
 public class RenamePortalKernelImports extends ImportStatementMigrator {

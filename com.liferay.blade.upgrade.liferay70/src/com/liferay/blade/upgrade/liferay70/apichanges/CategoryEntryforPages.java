@@ -51,7 +51,7 @@ public class CategoryEntryforPages extends XMLFileMigrator {
 
 		final List<SearchResult> results = new ArrayList<>();
 
-		results.addAll(xmlFileChecker.findTag(
+		results.addAll(xmlFileChecker.findElement(
 			"control-panel-entry-category", "site_administration.pages"));
 
 		return results;
