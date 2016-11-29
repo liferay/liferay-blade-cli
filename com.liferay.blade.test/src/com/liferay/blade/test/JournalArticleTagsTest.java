@@ -17,7 +17,7 @@
 package com.liferay.blade.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 import com.liferay.blade.api.Migration;
 import com.liferay.blade.api.Problem;
@@ -44,19 +44,17 @@ public class JournalArticleTagsTest {
 
 		assertEquals(1, problems.size());
 
-		boolean found = false;
+		Problem problem = problems.get(0);
 
-		for (Problem problem : problems) {
-			if (problem.file.getName().endsWith("JournalArticleTagsTest.jsp")) {
-				if (problem.lineNumber == 4 && problem.startOffset >= 164 && problem.endOffset >= 324) {
-					found = true;
-				}
-			}
-		}
+		assertTrue(problem.file.getName().endsWith("JournalArticleTagsTest.jsp"));
 
-		if (!found) {
-			fail();
-		}
+		assertEquals(4, problem.lineNumber);
+
+		assertEquals(164, problem.startOffset);
+
+		assertEquals(324, problem.endOffset);
+
+		assertEquals("LPS-69321", problem.ticket);
 	}
 
 	private final BundleContext context = FrameworkUtil.getBundle(

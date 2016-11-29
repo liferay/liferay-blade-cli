@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Component;
 		"problem.title=Removed the liferay-ui:journal-article tag",
 		"problem.section=#removed-the-liferay-uijournal-article-tag",
 		"problem.summary=Removed the liferay-ui:journal-article Tag",
-		"problem.tickets=LPS-56383",
+		"problem.tickets=LPS-69321",
 		"implName=JournalArticleTags"
 	},
 	service = FileMigrator.class
