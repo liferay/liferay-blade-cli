@@ -16,7 +16,16 @@
 
 package com.liferay.blade.test.apichanges;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import com.liferay.blade.api.FileMigrator;
+import com.liferay.blade.api.Problem;
+
 import java.io.File;
+import java.util.List;
+
+import org.junit.Test;
 
 /**
  * @author Andy Wu
@@ -31,6 +40,23 @@ public class MVCPortletClassInPortletXMLTest extends APITestBase {
 	@Override
 	public File getTestFile() {
 		return new File("projects/test-portlet/docroot/WEB-INF/portlet.xml");
+	}
+
+	@Override
+	public int getExpectedNumber() {
+		return 2;
+	}
+
+	@Test
+	public void testPortletXmlFileLineNumbers() throws Exception {
+		assertNotNull(fileMigrators[0]);
+
+		FileMigrator fmigrator = context.getService(fileMigrators[0]);
+
+		List<Problem> problems = fmigrator.analyze(getTestFile());
+
+		assertEquals(7, problems.get(0).lineNumber);
+		assertEquals(37, problems.get(1).lineNumber);
 	}
 
 }
