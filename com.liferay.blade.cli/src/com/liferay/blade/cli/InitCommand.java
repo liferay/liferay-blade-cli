@@ -235,10 +235,12 @@ public class InitCommand {
 	private void moveContentsToDir(File src, File dest)
 		throws IOException {
 
+		final String ignoreName = dest.getName();
+
 		File[] filesToCopy = src.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return !name.equals(".git");
+				return !name.equals(".git") && !name.equals(ignoreName);
 			}
 		});
 
