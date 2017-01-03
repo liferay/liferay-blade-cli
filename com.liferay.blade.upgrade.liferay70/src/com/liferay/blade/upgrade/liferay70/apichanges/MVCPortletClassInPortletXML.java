@@ -132,7 +132,8 @@ public class MVCPortletClassInPortletXML extends XMLFileMigrator implements Auto
 			}
 		}
 
-		if (corrected > 0) {
+        if( corrected > 0 && !xmlFile.getLocation().toFile().equals( file ) )
+        {
 			try {
 				IO.copy(xmlFile.getContents(), file);
 			} catch (IOException | CoreException e) {
