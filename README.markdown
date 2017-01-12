@@ -34,10 +34,9 @@ Once this script finishes you will have the `blade` command in your path.
 ### (Windows) Install JPM then install blade
 For Windows you must use the separate windows installer for jpm4j first and then install blade.
 
-```
 Visit the JPM4J [Windows installation](https://www.jpm4j.org/#!/md/windows) setup guide.
-```
-next install blade
+
+Next install blade
 ```
 $ jpm install com.liferay.blade.cli
 ```
