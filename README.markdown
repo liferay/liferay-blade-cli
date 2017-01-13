@@ -11,7 +11,7 @@ In order to install blade cli tool, jpm4j much first be installed.
 ### Using JPM
 
 ```
-$ (sudo) jpm install com.liferay.blade.cli
+$ (sudo) jpm install https://releases.liferay.com/tools/blade-cli/2.0.1.201612161126/plugins/com.liferay.blade.cli_2.0.1.201612161126.jar
 ```
 
 OR Install from newly built jar if you build from source.
