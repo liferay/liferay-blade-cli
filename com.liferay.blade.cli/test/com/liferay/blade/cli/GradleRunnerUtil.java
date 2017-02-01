@@ -57,7 +57,7 @@ public class GradleRunnerUtil {
 	public static void verifyGradleRunnerOutput (BuildTask buildtask) {
 		assertNotNull(buildtask);
 
-		assertEquals(buildtask.getOutcome(), TaskOutcome.SUCCESS);
+		assertEquals(TaskOutcome.SUCCESS, buildtask.getOutcome());
 	}
 
 	public static void verifyBuildOutput (String projectPath, String fileName) {
