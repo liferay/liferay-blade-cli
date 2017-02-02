@@ -16,7 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -54,10 +53,12 @@ public class GradleRunnerUtil {
 		return buildtask;
 	}
 
-	public static void verifyGradleRunnerOutput (BuildTask buildtask) {
-		assertNotNull(buildtask);
+	public static void verifyGradleRunnerOutput (BuildTask buildTask) {
+		assertNotNull(buildTask);
 
-		assertEquals(TaskOutcome.SUCCESS, buildtask.getOutcome());
+		TaskOutcome outcome = buildTask.getOutcome();
+
+		assertTrue(outcome.equals(TaskOutcome.SUCCESS) || outcome.equals(TaskOutcome.UP_TO_DATE));
 	}
 
 	public static void verifyBuildOutput (String projectPath, String fileName) {
