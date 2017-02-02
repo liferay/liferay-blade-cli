@@ -858,7 +858,7 @@ public class CreateCommandTest {
 			checkFileExists(projectPath + "/loginHook/build.gradle"),
 			".*^apply plugin: \"com.liferay.plugin\".*");
 
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/loginHook", "loginhook-1.0.0.jar");
 
@@ -898,7 +898,7 @@ public class CreateCommandTest {
 			checkFileExists(projectPath + "/gradle.test/build.gradle"),
 			".*^apply plugin: \"com.liferay.plugin\".*");
 
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/gradle.test", "gradle.test-1.0.0.jar");
 
@@ -940,7 +940,7 @@ public class CreateCommandTest {
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/sample/sample-api", "com.liferay.sample.api-1.0.0.jar");
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/sample/sample-service", "com.liferay.sample.service-1.0.0.jar");
@@ -978,7 +978,7 @@ public class CreateCommandTest {
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/workspace-sample/workspace-sample-api",
 				"com.sample.api-1.0.0.jar");
@@ -1020,7 +1020,7 @@ public class CreateCommandTest {
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/sample/sample-api", "com.liferay.sample.api-1.0.0.jar");
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/sample/sample-service", "com.liferay.sample.service-1.0.0.jar");
@@ -1066,7 +1066,7 @@ public class CreateCommandTest {
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/workspace.sample/workspace.sample-api",
 				"com.sample.api-1.0.0.jar");
@@ -1105,7 +1105,7 @@ public class CreateCommandTest {
 
 		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
 
@@ -1145,7 +1145,7 @@ public class CreateCommandTest {
 
 		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo.refresh-1.0.0.jar");
 
