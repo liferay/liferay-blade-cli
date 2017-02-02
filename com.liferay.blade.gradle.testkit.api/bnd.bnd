@@ -1,5 +1,5 @@
-Bundle-Version: 2.14
+Bundle-Version: 3.0
 
--includeresource: @gradle-test-kit-2.14.jar
+-includeresource: @gradle-test-kit-3.0.jar
 
 Export-Package: org.gradle.testkit.runner
