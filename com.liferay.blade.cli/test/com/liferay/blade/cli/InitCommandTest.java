@@ -274,7 +274,7 @@ public class InitCommandTest {
 
 		String projectPath = workspaceDir.getPath() + "/modules";
 
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "clean", "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "build");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 
