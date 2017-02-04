@@ -140,7 +140,7 @@ public class SamplesCommandTest {
 
 		File workspaceDir = new File(testDir, "test/workspace");
 
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "formatSource", "build");
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "formatSource", "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.authfailure-1.0.0.jar");
 	}
