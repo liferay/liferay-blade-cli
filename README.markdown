@@ -2,44 +2,11 @@
 
 [![Build Status](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/badge/icon)](https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/)
 
-The Blade CLI is a command line java tool that can be used to help bootstrap Liferay 7 module development.  It is installed using a java package manager called [jpm4j](https://www.jpm4j.org).
+The Blade CLI is a command line java tool that can be used to help bootstrap Liferay 7 module development.
 
-## Install 
+## Installation
 
-In order to install blade cli tool, jpm4j much first be installed.
-
-### Using JPM
-
-```
-$ (sudo) jpm install https://releases.liferay.com/tools/blade-cli/2.0.1.201612161126/plugins/com.liferay.blade.cli_2.0.1.201612161126.jar
-```
-
-OR Install from newly built jar if you build from source.
-
-```
-$ (sudo) jpm install -fl com.liferay.blade.cli/generated/com.liferay.blade.cli.jar
-```
-
-
-### (Mac, Linux) Install Blade
-For Mac, Linux you can install both jpm and blade executables with a single command:
-
-```
-$ curl https://raw.githubusercontent.com/liferay/liferay-blade-cli/master/installers/global | sudo sh
-```
-Feel free to [view the source of that script](https://github.com/liferay/liferay-blade-cli/blob/master/installers/global) so you know what it is doing before you pass it to `sudo` :)
-
-Once this script finishes you will have the `blade` command in your path.
-
-### (Windows) Install JPM then install blade
-For Windows you must use the separate windows installer for jpm4j first and then install blade.
-
-Visit the JPM4J [Windows installation](https://www.jpm4j.org/#!/md/windows) setup guide.
-
-Next install blade
-```
-$ jpm install com.liferay.blade.cli
-```
+Please refer to documentation on Liferay Developer Network here: https://dev.liferay.com/develop/tutorials/-/knowledge_base/7-0/installing-blade-cli
 
 ### How to Build Blade CLI Jar from Sources
 
@@ -65,11 +32,17 @@ Current available commands
 The ```create``` command allows you to create new Liferay 7 module projects based on gradle.
 
 ```
-$ blade create -t mvcportlet helloworld 
+$ blade create -t mvc-portlet helloworld
 ```
 
 This will create a new helloworld portlet module project that contains an OSGi component built by a gradle script.
  To see all the options of the create command just run ```$blade create -h``` for all options.
+
+ If you would like to see all available templates use `create -l` command.
+
+ ```
+ $ blade create -l
+ ```
 
 ### Deploy
 
@@ -85,7 +58,7 @@ In Liferay 7, Gradle is now the standard build tool for many of our projects.  I
 The ```gw``` command allows you to invoke the gradle wrapper from any directory easily.
 
 ```
-$ blade gw deploy 
+$ blade gw deploy
 ```
 
 ###  Help
@@ -93,7 +66,7 @@ $ blade gw deploy
 Get help on a specific command
 
 ```
-$ blade help create 
+$ blade help create
 ```
 
 ###  Init
@@ -118,7 +91,7 @@ $ blade install
 Migrate a plugins sdk theme to new workspace theme project
 
 ```
-$ blade migrateTheme my-theme 
+$ blade migrateTheme my-theme
 ```
 
 ### Open   
@@ -126,7 +99,7 @@ $ blade migrateTheme my-theme
 Opens or imports a file or project in Liferay IDE.
 
 ```
-$ blade open 
+$ blade open
 ```
 
 ###  Samples
@@ -138,16 +111,16 @@ You can use blade to grab any of the samples easily.
 This will give you the list of samples available.
 
 ```
-$ blade samples 
+$ blade samples
 ```
 
 This will get you the friendly url sample.
 
 ```
-$ blade samples blade.friendlyurl 
+$ blade samples blade.friendlyurl
 ```
 
-### Server 
+### Server
 
 Start or stop server defined by your Liferay project
 
@@ -173,7 +146,7 @@ Search for all services that provide javax.portlet.Portlet
 $ blade sh services | grep javax.portlet.Portlet
 ```
 
-### Update 
+### Update
 
 This command updates blade to latest version
 
