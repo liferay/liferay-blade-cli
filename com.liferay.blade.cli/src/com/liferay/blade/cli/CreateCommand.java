@@ -19,7 +19,6 @@ package com.liferay.blade.cli;
 import aQute.lib.getopt.Arguments;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
-import aQute.lib.io.IO;
 
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
@@ -76,8 +75,17 @@ public class CreateCommand {
 				return;
 		}
 
-		final File dir =
-			_options.dir() != null ? _options.dir() : getDefaultDir();
+		File dir;
+
+		if(_options.dir() != null) {
+			dir = new File(_options.dir().getAbsolutePath());
+		}
+		else if (template.equals("theme")) {
+			dir = getDefaultWarsDir();
+		}
+		else {
+			dir = getDefaultModulesDir();
+		}
 
 		final File checkDir = new File(dir, name);
 
@@ -87,8 +95,6 @@ public class CreateCommand {
 				" Please clean or delete it then run again");
 			return;
 		}
-
-		final boolean isWorkspace = Util.isWorkspace(dir);
 
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
@@ -102,35 +108,24 @@ public class CreateCommand {
 		projectTemplatesArgs.setService(_options.service());
 		projectTemplatesArgs.setTemplate(template);
 
-		execute(projectTemplatesArgs, isWorkspace);
+		execute(projectTemplatesArgs);
 
 		_blade.out().println(
-			"Created the project " + projectTemplatesArgs.getName() + " using the " +
-					projectTemplatesArgs.getTemplate() + " template in " + dir);
+			"Created the project " + projectTemplatesArgs.getName() +
+			" using the " + projectTemplatesArgs.getTemplate() +
+			" template in " + dir.getAbsolutePath());
 	}
 
-	void execute(ProjectTemplatesArgs projectTemplatesArgs, boolean isWorkspace) throws Exception {
+	void execute(ProjectTemplatesArgs projectTemplatesArgs) throws Exception {
 		File dir = projectTemplatesArgs.getDestinationDir();
+		String name = projectTemplatesArgs.getName();
 
 		new ProjectTemplates(projectTemplatesArgs);
 
-		if (isWorkspace) {
-			File settingsFile = new File(dir, "settings.gradle");
+		File gradlew = new File(dir, name+"/gradlew");
 
-			if (settingsFile.exists()) {
-				settingsFile.delete();
-			}
-
-			IO.delete(new File(dir, "gradlew"));
-			IO.delete(new File(dir, "gradlew.bat"));
-			IO.delete(new File(dir, "gradle"));
-		}
-		else {
-			File gradlew = new File(dir, "gradlew");
-
-			if (gradlew.exists()) {
-				gradlew.setExecutable(true);
-			}
+		if(gradlew.exists()) {
+			gradlew.setExecutable(true);
 		}
 	}
 
@@ -216,7 +211,7 @@ public class CreateCommand {
 		return true;
 	}
 
-	private File getDefaultDir() throws Exception {
+	private File getDefaultModulesDir() throws Exception {
 		File baseDir = _blade.getBase();
 
 		if (!Util.isWorkspace(baseDir)) {
@@ -237,6 +232,33 @@ public class CreateCommand {
 		File modulesDir = new File(projectDir, modulesDirValue);
 
 		return containsDir(baseDir, modulesDir) ? baseDir : modulesDir;
+	}
+
+	private File getDefaultWarsDir() throws Exception {
+		File baseDir = _blade.getBase();
+
+		if (!Util.isWorkspace(baseDir)) {
+			return baseDir;
+		}
+
+		Properties properties = Util.getGradleProperties(baseDir);
+
+		String warsDirValue = (String)properties.get(
+			Workspace.DEFAULT_WARS_DIR_PROPERTY);
+
+		if (warsDirValue == null) {
+			warsDirValue = Workspace.DEFAULT_WARS_DIR;
+		}
+
+		if(warsDirValue.contains(",")) {
+			warsDirValue = warsDirValue.split(",")[0];
+		}
+
+		File projectDir = Util.getWorkspaceDir(_blade);
+
+		File warsDir = new File(projectDir, warsDirValue);
+
+		return containsDir(baseDir, warsDir) ? baseDir : warsDir;
 	}
 
 	private String[] getTemplateNames() throws Exception {

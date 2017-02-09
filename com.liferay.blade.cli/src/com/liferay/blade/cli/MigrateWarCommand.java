@@ -215,7 +215,7 @@ public class MigrateWarCommand {
 		projectTemplatesArgs.setName(themePlugin.getName());
 		projectTemplatesArgs.setTemplate("theme");
 
-		createCommand.execute(projectTemplatesArgs, true);
+		createCommand.execute(projectTemplatesArgs);
 
 		File docroot = new File(themePlugin, "docroot");
 
