@@ -16,18 +16,12 @@
 
 package com.liferay.blade.eclipse.provider;
 
-import com.liferay.blade.api.CUCache;
-import com.liferay.blade.api.MigrationConstants;
-
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -39,13 +33,15 @@ import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.eclipse.wst.xml.core.internal.provisional.document.IDOMNode;
 import org.osgi.service.component.annotations.Component;
 
+import com.liferay.blade.api.CUCache;
+
 @Component(
 	property = {
 		"type=jsp"
 	},
 	service = CUCache.class
 )
-public class CUCacheWTP implements CUCache<JSPTranslationPrime> {
+public class CUCacheWTP extends BaseCUCache implements CUCache<JSPTranslationPrime> {
 
 	private static final Map<File, WeakReference<JSPTranslationPrime>> _map = new WeakHashMap<>();
 
@@ -119,41 +115,5 @@ public class CUCacheWTP implements CUCache<JSPTranslationPrime> {
 		return null;
 	}
 
-	public IFile getIFile(File file) {
-		IFile retval = null;
-
-		// first try to find this file in the current workspace
-		final IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(file.toURI());
-
-		// if there are multiple files in this workspace use the shortest path
-		if (files != null && files.length == 1) {
-			retval = files[0];
-		}
-		else if (files != null && files.length > 0) {
-			for (IFile ifile : files) {
-				if (retval == null) {
-					retval = ifile;
-				}
-				else {
-					// prefer the path that is shortest (to avoid a nested
-					// version)
-					if (ifile.getFullPath().segmentCount() < retval.getFullPath().segmentCount()) {
-						retval = ifile;
-					}
-				}
-			}
-		}
-
-		if (retval == null) {
-			try {
-				retval = new WorkspaceHelper().createIFile(MigrationConstants.HELPER_PROJECT_NAME, file);
-			}
-			catch (CoreException | IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return retval;
-	}
 
 }

@@ -43,7 +43,7 @@ public abstract class AbstractFileMigrator<T extends SourceFile> implements File
 	String _problemSummary;
 	String _problemTickets;
 	String _sectionKey;
-	final Class<T> _type;
+	final protected Class<T> _type;
 
 	public AbstractFileMigrator(Class<T> type) {
 		_type = type;

@@ -1,0 +1,12 @@
+[
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "Validator_IW",
+		"deprecatedVersion": "none",
+		"methodName": "isNotNull",
+		"parameters": [
+			"java.lang.Object[]"
+		],
+		"javadoc": "/** \n * @deprecated\n */\n"
+	}
+]

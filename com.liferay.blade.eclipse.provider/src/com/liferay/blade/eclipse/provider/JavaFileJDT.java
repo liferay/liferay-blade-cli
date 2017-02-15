@@ -385,7 +385,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 
 								if (argType != null) {
 									// can resolve the type
-									if (typeMatch(methodParamTypes[i], argType.getQualifiedName())) {
+									if (typeMatch(methodParamTypes[i], argType.getName())) {
 										// type matched
 										continue;
 									}
@@ -448,6 +448,59 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		});
 
 		return searchResults;
+	}
+
+	private boolean typeMatch(String expectType, String paramType) {
+		boolean match = false;
+
+		if (expectType.endsWith(paramType) || paramType.endsWith(expectType)) {
+			match = true;
+		}
+		else if (expectType.equals("Object") || expectType.equals("java.lang.Object") || expectType.equals("T")
+				|| expectType.equals("E") || expectType.equals("U")) {
+			match = true;
+		}
+		else if (expectType.equals("long")) {
+			if (paramType.equals("long") || paramType.equals("Long") || paramType.equals("java.lang.Long")
+					|| paramType.equals("int") || paramType.equals("short") || paramType.equals("btye"))
+				match = true;
+		}
+		else if (expectType.equals("Long") || expectType.equals("java.lang.Long")) {
+			if (paramType.equals("long") || paramType.equals("Long") || paramType.equals("java.lang.Long")) {
+				match = true;
+			}
+		}
+		else if (expectType.equals("int")) {
+			if (paramType.equals("int") || paramType.equals("Integer") || paramType.equals("java.lang.Integer")
+					|| paramType.equals("short") || paramType.equals("btye"))
+				match = true;
+		}
+		else if (expectType.equals("Integer") || expectType.equals("java.lang.Integer")) {
+			if (paramType.equals("int") || paramType.equals("Integer") || paramType.equals("java.lang.Integer")) {
+				match = true;
+			}
+		}
+		else if (expectType.equals("short")) {
+			if (paramType.equals("short") || paramType.equals("Short") || paramType.endsWith("java.lang.Short")
+					|| paramType.equals("btye"))
+				match = true;
+		}
+		else if (expectType.equals("Short") || expectType.equals("java.lang.Short")) {
+			if (paramType.equals("short") || paramType.equals("Short") || paramType.equals("java.lang.Short")) {
+				match = true;
+			}
+		}
+		else if (expectType.equals("btye")) {
+			if (paramType.equals("btye") || paramType.equals("Btye") || paramType.endsWith("java.lang.Btye"))
+				match = true;
+		}
+		else if (expectType.equals("Btye") || expectType.equals("java.lang.Btye")) {
+			if (paramType.equals("btype") || paramType.equals("Btye") || paramType.equals("java.lang.Btye")) {
+				match = true;
+			}
+		}
+
+		return match;
 	}
 
 	@Override

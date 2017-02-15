@@ -23,6 +23,7 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -35,7 +36,7 @@ import org.osgi.service.component.annotations.Component;
 	},
 	service = CUCache.class
 )
-public class CUCacheJDT implements CUCache<CompilationUnit> {
+public class CUCacheJDT extends BaseCUCache implements CUCache<CompilationUnit> {
 
 	private static final Map<File, WeakReference<CompilationUnit>> _map = new WeakHashMap<>();
 
@@ -45,7 +46,7 @@ public class CUCacheJDT implements CUCache<CompilationUnit> {
 			WeakReference<CompilationUnit> astRef = _map.get(file);
 
 			if (astRef == null || astRef.get() == null) {
-				final CompilationUnit newAst = createCompilationUnit(file.getName(), javaSource);
+				final CompilationUnit newAst = createCompilationUnit(file, javaSource);
 
 				_map.put(file, new WeakReference<CompilationUnit>(newAst));
 
@@ -65,8 +66,10 @@ public class CUCacheJDT implements CUCache<CompilationUnit> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private CompilationUnit createCompilationUnit(String unitName, char[] javaSource) {
+	private CompilationUnit createCompilationUnit(File javaFile, char[] javaSource) {
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
+
+		parser.setProject(JavaCore.create(getIFile(javaFile).getProject()));
 
 		Map<String, String> options = JavaCore.getOptions();
 
@@ -74,13 +77,8 @@ public class CUCacheJDT implements CUCache<CompilationUnit> {
 
 		parser.setCompilerOptions(options);
 
-		//setUnitName for resolve bindings
-		parser.setUnitName(unitName);
-
-		String[] sources = { "" };
-		String[] classpath = { "" };
-		//setEnvironment for resolve bindings even if the args is empty
-		parser.setEnvironment(classpath, sources, new String[] { "UTF-8" }, true);
+		// setUnitName for resolve bindings
+		parser.setUnitName(getIFile(javaFile).getFullPath().toPortableString());
 
 		parser.setResolveBindings(true);
 		parser.setStatementsRecovery(true);

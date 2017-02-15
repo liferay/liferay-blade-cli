@@ -25,3 +25,4 @@ org.osgi:osgi.cmpn:6.0.0
 org.slf4j:jcl-over-slf4j:1.7.21
 org.slf4j:slf4j-api:1.7.21
 org.slf4j:slf4j-simple:1.7.21
+org.json:json:20160810
