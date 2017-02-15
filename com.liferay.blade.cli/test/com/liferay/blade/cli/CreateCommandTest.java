@@ -1077,6 +1077,40 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceModuleLocation() throws Exception {
+		String[] args = {"-b", "generated/test/workspace", "create", "foo"};
+
+		File workspace = new File("generated/test/workspace");
+
+		makeWorkspace(workspace);
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/workspace/modules";
+
+		checkFileExists(projectPath + "/foo");
+
+		checkFileExists(projectPath + "/foo/bnd.bnd");
+
+		File portletFile = checkFileExists(
+			projectPath + "/foo/src/main/java/foo/portlet/FooPortlet.java");
+
+		contains(
+			portletFile, ".*^public class FooPortlet extends MVCPortlet.*$");
+
+		File gradleBuildFile = checkFileExists(
+			projectPath + "/foo/build.gradle");
+
+		lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
+
+		verifyImportPackage(new File(projectPath + "/foo/build/libs/foo-1.0.0.jar"));
+	}
+
+	@Test
 	public void testCreateWorkspaceProjectAllDefaults() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test/workspace/modules/apps", "foo"
@@ -1150,6 +1184,35 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo.refresh-1.0.0.jar");
 
 		verifyImportPackage(new File(projectPath + "/build/libs/foo.refresh-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateWorkspaceThemeLocation() throws Exception {
+		String[] args = {
+				"-b", "generated/test/workspace", "create", "-t", "theme",
+				"theme-test"};
+		File workspace = new File("generated/test/workspace");
+
+		makeWorkspace(workspace);
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/workspace/wars/theme-test";
+
+		checkFileExists(projectPath);
+
+		checkFileDoesNotExists(projectPath + "/bnd.bnd");
+
+		checkFileExists(projectPath + "/src/main/webapp/css/_custom.scss");
+
+		File properties = checkFileExists(
+			projectPath + "/src/main/webapp/WEB-INF/liferay-plugin-package.properties");
+
+		contains(properties, ".*^name=theme-test.*");
+
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "war");
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+		GradleRunnerUtil.verifyBuildOutput(projectPath, "theme-test.war");
 	}
 
 	@Test
