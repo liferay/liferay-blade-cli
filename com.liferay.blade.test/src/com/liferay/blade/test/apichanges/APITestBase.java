@@ -71,6 +71,7 @@ public abstract class APITestBase {
 		context.ungetService(fileMigrators[0]);
 
 		assertNotNull(problems);
+
 		assertEquals(getExpectedNumber(), problems.size());
 	}
 

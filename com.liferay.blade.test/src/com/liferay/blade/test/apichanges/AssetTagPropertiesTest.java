@@ -46,7 +46,7 @@ public class AssetTagPropertiesTest extends APITestBase {
 
 	@Override
 	public int getExpectedNumber() {
-		return 2;
+		return 4;
 	}
 
 	@Override

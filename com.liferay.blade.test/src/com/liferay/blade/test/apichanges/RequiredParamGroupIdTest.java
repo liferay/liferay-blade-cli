@@ -22,7 +22,7 @@ public class RequiredParamGroupIdTest extends APITestBase {
 
 	@Override
 	public int getExpectedNumber() {
-		return 14;
+		return 3;
 	}
 
 	@Override

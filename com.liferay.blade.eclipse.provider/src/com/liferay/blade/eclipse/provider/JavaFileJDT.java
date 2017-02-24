@@ -365,7 +365,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 						// not strictly check the type and will check equals later
 						( (typeHint != null && type != null && type.getName().endsWith(typeHint))  ||
 						// with no typeHint then expressions can be used to match Static invocation
-						 (typeHint == null && expression != null && expression.toString().equals(expressionValue)))) {
+						 (typeHint == null && expression != null && expression.toString().equals(expressionValue))) ) {
 
 					boolean argumentsMatch = false;
 
@@ -384,24 +384,26 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 								ITypeBinding argType = arg.resolveTypeBinding();
 
 								if (argType != null) {
-									//can resolve the type
-									 if( argType.getName().equals(methodParamTypes[i])) {
-										 //type matched
+									// can resolve the type
+									if (typeMatch(methodParamTypes[i], argType.getQualifiedName())) {
+										// type matched
 										continue;
-									 } else {
-										 //type unmatched
-										 possibleMatch = false;
-										 typeMatched = false;
-										 break;
-									 }
-								} else{
+									}
+									else {
+										// type unmatched
+										possibleMatch = false;
+										typeMatched = false;
+										break;
+									}
+								}
+								else{
 									possibleMatch = false;
 									//there are two cases :
 									//typeUnresolved : means that  all resolved type is matched and there is unsolved type , need to set fullMatch false
 									//typeUnmatched : means that some resolved type is unmatched , no need to add SearchResult
 
-									//do not add searchResults now , just record the state and continue
-									//because there maybe unmatched type later which will  break this case
+									//do not add searchResults now, just record the state and continue
+									//because there maybe unmatched type later which will break this case
 									typeUnresolved = true;
 								}
 							}
@@ -590,6 +592,88 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		}
 
 		return null;
+	}
+
+	private boolean typeMatch(String expectType, String paramType) {
+		boolean match = false;
+
+		if (expectType.equals(paramType)) {
+			match = true;
+		}
+		else if (paramType.equals("null")) {
+			match = true;
+		}
+		else if (expectType.contains(".") && !paramType.contains(".") && expectType.endsWith(paramType)) {
+			match = true;
+		}
+		else if (!expectType.contains(".") && paramType.contains(".") && paramType.endsWith(expectType)) {
+			match = true;
+		}
+		else if (expectType.endsWith("Object[]") && paramType.endsWith("[]")) {
+			match = true;
+		}
+		else if ((expectType.equals("Object") || expectType.equals("java.lang.Object"))
+				&& !(paramType.equals("Object[]") || paramType.equals("java.lang.Object[]"))) {
+			match = true;
+		}
+		else if (expectType.equals("long")) {
+			if (paramType.equals("long") || paramType.equals("Long") || paramType.equals("java.lang.Long")
+					|| paramType.equals("int") || paramType.equals("Integer") || paramType.equals("java.lang.Integer")
+					|| paramType.equals("short") || paramType.equals("Short") || paramType.equals("java.lang.Short")
+					|| paramType.equals("byte") || paramType.equals("Byte") || paramType.equals("java.lang.Byte"))
+				match = true;
+		}
+		else if (expectType.equals("Long") || expectType.equals("java.lang.Long")) {
+			if (paramType.equals("long") || paramType.equals("Long") || paramType.equals("java.lang.Long")) {
+				match = true;
+			}
+		}
+		else if (expectType.equals("int")) {
+			if (paramType.equals("int") || paramType.equals("Integer") || paramType.equals("java.lang.Integer")
+					|| paramType.equals("short") || paramType.equals("Short") || paramType.equals("java.lang.Short")
+					|| paramType.equals("byte") || paramType.equals("Byte") || paramType.equals("java.lang.Byte"))
+				match = true;
+		}
+		else if (expectType.equals("Integer") || expectType.equals("java.lang.Integer")) {
+			if (paramType.equals("int") || paramType.equals("Integer") || paramType.equals("java.lang.Integer")) {
+				match = true;
+			}
+		}
+		else if (expectType.equals("short")) {
+			if (paramType.equals("short") || paramType.equals("Short") || paramType.equals("java.lang.Short")
+					|| paramType.equals("byte") || paramType.equals("Byte") || paramType.equals("java.lang.Byte"))
+				match = true;
+		}
+		else if (expectType.equals("Short") || expectType.equals("java.lang.Short")) {
+			if (paramType.equals("short") || paramType.equals("Short") || paramType.equals("java.lang.Short")) {
+				match = true;
+			}
+		}
+		else if (expectType.equals("byte") || expectType.equals("Byte") || expectType.equals("java.lang.Byte")) {
+			if (paramType.equals("byte") || paramType.equals("Byte") || paramType.equals("java.lang.Byte"))
+				match = true;
+		}
+		else if (expectType.equals("double")) {
+			if (paramType.equals("double") || paramType.equals("Double") || paramType.equals("java.lang.Double")
+					|| paramType.equals("float") || paramType.equals("Float") || paramType.equals("java.lang.Float"))
+				match = true;
+		}
+		else if (expectType.equals("Double") || expectType.equals("java.lang.Double")) {
+			if (paramType.equals("double") || paramType.equals("Double") || paramType.equals("java.lang.Double")) {
+				match = true;
+			}
+		}
+		else if (expectType.equals("float") || expectType.equals("Float") || expectType.equals("java.lang.Float")) {
+			if (paramType.equals("float") || paramType.equals("Float") || paramType.equals("java.lang.Float"))
+				match = true;
+		}
+		else if (expectType.equals("char") || expectType.equals("Character")
+				|| expectType.equals("java.lang.Character")) {
+			if (paramType.equals("char") || paramType.equals("Character") || paramType.equals("java.lang.Character"))
+				match = true;
+		}
+
+		return match;
 	}
 
 }
