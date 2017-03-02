@@ -55,8 +55,8 @@ public class RequiredParamGroupId  extends JavaFileMigrator {
 
 		result.addAll(javaFileChecker.findMethodInvocations(null,
 				"AssetCategoryServiceUtil", "addCategory",
-				new String[] { "long", "Map<Locale,String>",
-						"Map<Locale,String>", "long", "String[]",
+				new String[] { "long", "java.util.Map<java.util.Locale,java.lang.String>",
+						"java.util.Map<java.util.Locale,java.lang.String>", "long", "String[]",
 						"ServiceContext" }));
 
 		result.addAll(javaFileChecker.findMethodInvocations(null,
@@ -65,8 +65,8 @@ public class RequiredParamGroupId  extends JavaFileMigrator {
 
 		result.addAll(javaFileChecker.findMethodInvocations(null,
 				"AssetCategoryLocalServiceUtil", "addCategory",
-				new String[] { "long", "long", "Map<Locale,String>",
-						"Map<Locale,String>", "long", "String[]",
+				new String[] { "long", "long", "java.util.Map<java.util.Locale,java.lang.String>",
+						"java.util.Map<java.util.Locale,java.lang.String>", "long", "String[]",
 						"ServiceContext" }));
 
 		result.addAll(javaFileChecker.findMethodInvocations(null,
@@ -76,14 +76,14 @@ public class RequiredParamGroupId  extends JavaFileMigrator {
 		result.addAll(
 				javaFileChecker.findMethodInvocations(null,
 						"AssetVocabularyServiceUtil", "addVocabulary",
-						new String[] { "Map<Locale,String>",
-								"Map<Locale,String>", "String",
+						new String[] { "java.util.Map<java.util.Locale,java.lang.String>",
+								"java.util.Map<java.util.Locale,java.lang.String>", "String",
 								"ServiceContext" }));
 		result.addAll(
 				javaFileChecker.findMethodInvocations(null,
 						"AssetVocabularyServiceUtil", "addVocabulary",
-						new String[] { "String", "Map<Locale,String>",
-								"Map<Locale,String>", "String",
+						new String[] { "String", "java.util.Map<java.util.Locale,java.lang.String>",
+								"java.util.Map<java.util.Locale,java.lang.String>", "String",
 								"ServiceContext" }));
 
 		result.addAll(javaFileChecker.findMethodInvocations(null,
@@ -93,14 +93,14 @@ public class RequiredParamGroupId  extends JavaFileMigrator {
 		result.addAll(
 				javaFileChecker.findMethodInvocations(null,
 						"AssetVocabularyLocalServiceUtil", "addVocabulary",
-						new String[] { "long", "Map<Locale,String>",
-								"Map<Locale,String>", "String",
+						new String[] { "long", "java.util.Map<java.util.Locale,java.lang.String>",
+								"java.util.Map<java.util.Locale,java.lang.String>", "String",
 								"ServiceContext" }));
 		result.addAll(
 				javaFileChecker.findMethodInvocations(null,
 						"AssetVocabularyLocalServiceUtil", "addVocabulary",
-						new String[] { "long", "String", "Map<Locale,String>",
-								"Map<Locale,String>", "String",
+						new String[] { "long", "String", "java.util.Map<java.util.Locale,java.lang.String>",
+								"java.util.Map<java.util.Locale,java.lang.String>", "String",
 								"ServiceContext" }));
 		result.addAll(javaFileChecker.findMethodInvocations(null,
 				"AssetVocabularyLocalServiceUtil", "addVocabulary",

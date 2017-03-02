@@ -74,27 +74,27 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 				.findMethodInvocations(null, "JournalArticleLocalServiceUtil",
 						"addArticle", new String[] { "long", "long", "long",
 								"long", "long", "String", "boolean", "double",
-								"Map<Locale,String>", "Map<Locale,String>",
+								"java.util.Map<java.util.Locale,java.lang.String>", "java.util.Map<java.util.Locale,java.lang.String>",
 								"String", "String", "String", "String",
 								"String", "int", "int", "int", "int", "int",
 								"int", "int", "int", "int", "int", "boolean",
 								"int", "int", "int", "int", "int", "boolean",
 								"boolean", "boolean", "String", "File",
-								"Map<String,byte[]>", "String",
+								"java.util.Map<java.lang.String,byte[]>", "String",
 								"ServiceContext" });
 
 		searchResults.addAll(journalArticleLocalServiceUtil);
 
 		journalArticleLocalServiceUtil = javaFileChecker.findMethodInvocations(
 				null, "JournalArticleLocalServiceUtil", "search", new String[] {
-						"long", "long", "List<Long>", "long", "String",
+						"long", "long", "java.util.List<java.lang.Long>", "long", "String",
 						"Double", "String", "String", "String", "Date", "Date",
 						"int", "Date", "int", "int", "OrderByComparator" });
 		searchResults.addAll(journalArticleLocalServiceUtil);
 
 		journalArticleLocalServiceUtil = javaFileChecker.findMethodInvocations(
 				null, "JournalArticleLocalServiceUtil", "search", new String[] {
-						"long", "long", "List<Long>", "long", "String",
+						"long", "long", "java.util.List<java.lang.Long>", "long", "String",
 						"Double", "String", "String", "String", "String",
 						"String", "String", "Date", "Date", "int", "Date",
 						"boolean", "int", "int", "OrderByComparator" });
@@ -102,7 +102,7 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 
 		journalArticleLocalServiceUtil = javaFileChecker.findMethodInvocations(
 				null, "JournalArticleLocalServiceUtil", "search", new String[] {
-						"long", "long", "List<Long>", "long", "String",
+						"long", "long", "java.util.List<java.lang.Long>", "long", "String",
 						"Double", "String", "String", "String", "String",
 						"String[]", "String[]", "Date", "Date", "int", "Date",
 						"boolean", "int", "int", "OrderByComparator" });
@@ -110,7 +110,7 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 
 		journalArticleLocalServiceUtil = javaFileChecker.findMethodInvocations(
 				null, "JournalArticleLocalServiceUtil", "search", new String[] {
-						"long", "long", "List<Long>", "long", "String",
+						"long", "long", "java.util.List<Long>", "long", "String",
 						"String", "String", "String", "String", "String",
 						"String", "String", "LinkedHashMap<String,Object>",
 						"boolean", "int", "int", "Sort" });
@@ -118,14 +118,14 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 
 		journalArticleLocalServiceUtil = javaFileChecker.findMethodInvocations(
 				null, "JournalArticleLocalServiceUtil", "searchCount",
-				new String[] { "long", "long", "List<Long>", "long", "String",
+				new String[] { "long", "long", "java.util.List<java.lang.Long>", "long", "String",
 						"Double", "String", "String", "String", "Date", "Date",
 						"int", "Date" });
 		searchResults.addAll(journalArticleLocalServiceUtil);
 
 		journalArticleLocalServiceUtil = javaFileChecker.findMethodInvocations(
 				null, "JournalArticleLocalServiceUtil", "searchCount",
-				new String[] { "long", "long", "List<Long>", "long", "String",
+				new String[] { "long", "long", "java.util.List<java.lang.Long>", "long", "String",
 						"Double", "String", "String", "String", "String",
 						"String", "String", "Date", "Date", "int", "Date",
 						"boolean" });
@@ -133,7 +133,7 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 
 		journalArticleLocalServiceUtil = javaFileChecker.findMethodInvocations(
 				null, "JournalArticleLocalServiceUtil", "searchCount",
-				new String[] { "long", "long", "List<Long>", "long", "String",
+				new String[] { "long", "long", "java.util.List<java.lang.Long>", "long", "String",
 						"Double", "String", "String", "String", "String",
 						"String[]", "String[]", "Date", "Date", "int", "Date",
 						"boolean" });
@@ -142,12 +142,12 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 		journalArticleLocalServiceUtil = javaFileChecker.findMethodInvocations(
 				null, "JournalArticleLocalServiceUtil", "updateArticle",
 				new String[] { "long", "long", "long", "String", "double",
-						"Map<Locale,String>", "Map<Locale,String>", "String",
+						"java.util.Map<java.util.Locale,java.lang.String>", "java.util.Map<java.util.Locale,java.lang.String>", "String",
 						"String", "String", "String", "String", "int", "int",
 						"int", "int", "int", "int", "int", "int", "int", "int",
 						"boolean", "int", "int", "int", "int", "int",
 						"boolean", "boolean", "boolean", "String", "File",
-						"Map<String,byte[]>", "String", "ServiceContext" });
+						"java.util.Map<java.lang.String,byte[]>", "String", "ServiceContext" });
 		searchResults.addAll(journalArticleLocalServiceUtil);
 
 		// JournalArticleServiceUtil
@@ -155,20 +155,20 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 				.findMethodInvocations(null, "JournalArticleServiceUtil",
 						"addArticle", new String[] { "long", "long", "long",
 								"long", "String", "boolean",
-								"Map<Locale,String>", "Map<Locale,String>",
+								"java.util.Map<java.util.Locale,java.lang.String>", "java.util.Map<java.util.Locale,java.lang.String>",
 								"String", "String", "String", "String",
 								"String", "int", "int", "int", "int", "int",
 								"int", "int", "int", "int", "int", "boolean",
 								"int", "int", "int", "int", "int", "boolean",
 								"boolean", "boolean", "String", "File",
-								"Map<String,byte[]>", "String",
+								"java.util.Map<java.lang.String,byte[]>", "String",
 								"ServiceContext" });
 		searchResults.addAll(journalArticleServiceUtil);
 
 		journalArticleServiceUtil = javaFileChecker.findMethodInvocations(null,
 				"JournalArticleServiceUtil", "addArticle", new String[] {
 						"long", "long", "long", "long", "String", "boolean",
-						"Map<Locale,String>", "Map<Locale,String>", "String",
+						"java.util.Map<java.util.Locale,java.lang.String>", "java.util.Map<java.util.Locale,java.lang.String>", "String",
 						"String", "String", "String", "String", "int", "int",
 						"int", "int", "int", "int", "int", "int", "int", "int",
 						"boolean", "int", "int", "int", "int", "int",
@@ -177,14 +177,14 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 
 		journalArticleServiceUtil = javaFileChecker.findMethodInvocations(null,
 				"JournalArticleServiceUtil", "search", new String[] { "long",
-						"long", "List<Long>", "long", "String", "Double",
+						"long", "java.util.List<Long>", "long", "String", "Double",
 						"String", "String", "String", "Date", "Date", "int",
 						"Date", "int", "int", "OrderByComparator" });
 		searchResults.addAll(journalArticleServiceUtil);
 
 		journalArticleServiceUtil = javaFileChecker.findMethodInvocations(null,
 				"JournalArticleServiceUtil", "search", new String[] { "long",
-						"long", "List<Long>", "long", "String", "Double",
+						"long", "java.util.List<java.lang.Long>", "long", "String", "Double",
 						"String", "String", "String", "String", "String",
 						"String", "Date", "Date", "int", "Date", "boolean",
 						"int", "int", "OrderByComparator" });
@@ -192,7 +192,7 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 
 		journalArticleServiceUtil = javaFileChecker.findMethodInvocations(null,
 				"JournalArticleServiceUtil", "search", new String[] { "long",
-						"long", "List<Long>", "long", "String", "Double",
+						"long", "java.util.List<java.lang.Long>", "long", "String", "Double",
 						"String", "String", "String", "String", "String[]",
 						"String[]", "Date", "Date", "int", "Date", "boolean",
 						"int", "int", "OrderByComparator" });
@@ -200,14 +200,14 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 
 		journalArticleServiceUtil = javaFileChecker.findMethodInvocations(null,
 				"JournalArticleServiceUtil", "searchCount", new String[] {
-						"long", "long", "List<Long>", "long", "String",
+						"long", "long", "java.util.List<Long>", "long", "String",
 						"Double", "String", "String", "String", "Date", "Date",
 						"int", "Date" });
 		searchResults.addAll(journalArticleServiceUtil);
 
 		journalArticleServiceUtil = javaFileChecker.findMethodInvocations(null,
 				"JournalArticleServiceUtil", "searchCount", new String[] {
-						"long", "long", "List<Long>", "long", "String",
+						"long", "long", "java.util.List<Long>", "long", "String",
 						"Double", "String", "String", "String", "String",
 						"String", "String", "Date", "Date", "int", "Date",
 						"boolean" });
@@ -215,7 +215,7 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 
 		journalArticleServiceUtil = javaFileChecker.findMethodInvocations(null,
 				"JournalArticleServiceUtil", "searchCount", new String[] {
-						"long", "long", "List<Long>", "long", "String",
+						"long", "long", "java.util.List<Long>", "long", "String",
 						"Double", "String", "String", "String", "String",
 						"String[]", "String[]", "Date", "Date", "int", "Date",
 						"boolean" });
@@ -224,12 +224,12 @@ public class WebContentTypeRemoved extends JavaFileMigrator {
 		journalArticleServiceUtil = javaFileChecker.findMethodInvocations(null,
 				"JournalArticleServiceUtil", "updateArticle", new String[] {
 						"long", "long", "String", "double",
-						"Map<Locale,String>", "Map<Locale,String>", "String",
+						"java.util.Map<java.util.Locale,java.lang.String>", "java.util.Map<java.util.Locale,java.lang.String>", "String",
 						"String", "String", "String", "String", "int", "int",
 						"int", "int", "int", "int", "int", "int", "int", "int",
 						"boolean", "int", "int", "int", "int", "int",
 						"boolean", "boolean", "boolean", "String", "File",
-						"Map<String,byte[]>", "String", "ServiceContext" });
+						"java.util.Map<java.lang.String,byte[]>", "String", "ServiceContext" });
 		searchResults.addAll(journalArticleServiceUtil);
 
 		// JournalFeedLocalServiceUtil

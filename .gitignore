@@ -2,3 +2,4 @@
 .idea
 .metadata
 **/*.iml
+.settings

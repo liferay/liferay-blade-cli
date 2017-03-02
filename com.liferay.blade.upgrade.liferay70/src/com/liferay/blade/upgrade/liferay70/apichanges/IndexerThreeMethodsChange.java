@@ -64,23 +64,11 @@ public class IndexerThreeMethodsChange  extends JavaFileMigrator {
 				new String[] { "Document", "Object" });
 		searchResults.addAll(invocations);
 
-		invocations = javaFileChecker.findMethodInvocations("indexer", null,
-				"addRelatedEntryFields", new String[] { "Document", "Object" });
+		invocations = javaFileChecker.findMethodInvocations("Indexer", null,
+				"reindexDDMStructures", new String[] { "java.util.List<java.lang.Long>" });
 		searchResults.addAll(invocations);
 
 		invocations = javaFileChecker.findMethodInvocations("Indexer", null,
-				"reindexDDMStructures", new String[] { "List<Long>" });
-		searchResults.addAll(invocations);
-
-		invocations = javaFileChecker.findMethodInvocations("indexer", null,
-				"reindexDDMStructures", new String[] { "List<Long>" });
-		searchResults.addAll(invocations);
-
-		invocations = javaFileChecker.findMethodInvocations("Indexer", null,
-				"getQueryString", new String[] { "SearchContext", "Query" });
-		searchResults.addAll(invocations);
-
-		invocations = javaFileChecker.findMethodInvocations("indexer", null,
 				"getQueryString", new String[] { "SearchContext", "Query" });
 		searchResults.addAll(invocations);
 
