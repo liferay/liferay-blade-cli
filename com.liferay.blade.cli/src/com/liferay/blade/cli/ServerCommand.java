@@ -171,17 +171,28 @@ public class ServerCommand {
 			File catalinaOut = new File(logs, "catalina.out");
 			catalinaOut.createNewFile();
 
-			Process process = Util.startProcess(
+			final Process process = Util.startProcess(
 				_blade, executable + startCommand, new File(dir, "bin"),
 				enviroment);
 
-			process.waitFor();
+			Runtime runtime = Runtime.getRuntime();
+
+			runtime.addShutdownHook(new Thread() {
+				public void run() {
+					try {
+						process.waitFor();
+					} catch (InterruptedException e) {
+						_blade.error("Could not wait for process to end " +
+							"before shutting down");
+					}
+				}
+			});
 
 			if (startOptions.background() && startOptions.tail()) {
-				process = Util.startProcess(
+				Process tailProcess = Util.startProcess(
 					_blade, "tail -f catalina.out", logs, enviroment);
 
-				process.waitFor();
+				tailProcess.waitFor();
 			}
 		}
 		else if (cmd.equals("stop")) {
