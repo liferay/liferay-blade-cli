@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"file.extensions=jsp,jspf",
 		"problem.title=The aui:column taglib has been removed and replaced with aui:col taglib",
-		"problem.section=#the-auicolumn-taglib-has-been-removed-and-replaced-with-auicol-taglib",
+		"problem.section=#removed-the-auicolumn-tag-and-replaced-with-auicol",
 		"problem.summary=The aui:column taglib has been removed and replaced with aui:col taglib",
 		"problem.tickets=LPS-62208",
 		"implName=AUIColumnTags"
