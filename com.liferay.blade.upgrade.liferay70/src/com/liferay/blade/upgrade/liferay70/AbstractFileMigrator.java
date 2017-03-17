@@ -72,6 +72,10 @@ public abstract class AbstractFileMigrator<T extends SourceFile> implements File
 		if (searchResults != null) {
 			String sectionHtml = MarkdownParser.getSection("BREAKING_CHANGES.markdown", _sectionKey);
 
+			if (sectionHtml != null && sectionHtml.equals("#legacy")) {
+				sectionHtml = _problemSummary;
+			}
+
 			for (SearchResult searchResult : searchResults) {
 				String fileExtension = new Path(file.getAbsolutePath()).getFileExtension();
 

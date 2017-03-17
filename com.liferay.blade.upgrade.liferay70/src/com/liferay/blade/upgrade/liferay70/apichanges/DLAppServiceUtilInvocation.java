@@ -31,7 +31,7 @@ import com.liferay.blade.upgrade.liferay70.JavaFileMigrator;
 		property = {
 			"file.extensions=java,jsp,jspf",
 			"problem.title=Moved Recycle Bin Logic Into a New DLTrashService Interface",
-			"problem.section=#moved-recycle-bin-logic-into-a-new-dltrashservice interface",
+			"problem.section=#moved-recycle-bin-logic-into-a-new-dltrashservice-interface",
 			"problem.summary=Moved Recycle Bin Logic Into a New DLTrashService Interface",
 			"problem.tickets=LPS-60810",
 			"implName=DLAppServiceUtilInvocation"
