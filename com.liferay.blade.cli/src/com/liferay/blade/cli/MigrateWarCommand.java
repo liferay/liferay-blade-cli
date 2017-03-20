@@ -16,18 +16,10 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-import aQute.lib.io.IO;
-
-import com.liferay.project.templates.ProjectTemplatesArgs;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +42,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.liferay.project.templates.ProjectTemplatesArgs;
+
+import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
+import aQute.lib.io.IO;
 
 /**
  * @author Gregory Amerson
@@ -259,36 +258,6 @@ public class MigrateWarCommand {
 		}
 
 		IO.delete(themePlugin);
-	}
-
-	private static class CopyDirVisitor extends SimpleFileVisitor<Path> {
-	    private final Path fromPath;
-	    private final Path toPath;
-	    private final CopyOption copyOption;
-
-	    public CopyDirVisitor(Path fromPath, Path toPath, CopyOption copyOption) {
-	        this.fromPath = fromPath;
-	        this.toPath = toPath;
-	        this.copyOption = copyOption;
-	    }
-
-	    @Override
-	    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-	        Path targetPath = toPath.resolve(fromPath.relativize(dir));
-
-	        if( !Files.exists(targetPath) ) {
-	            Files.createDirectory(targetPath);
-	        }
-
-	        return FileVisitResult.CONTINUE;
-	    }
-
-	    @Override
-	    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-	        Files.copy(file, toPath.resolve(fromPath.relativize(file)), copyOption);
-
-	        return FileVisitResult.CONTINUE;
-	    }
 	}
 
 	private void migrateLayoutPlugin(File layoutPlugin) throws Exception {

@@ -2,7 +2,6 @@
 
 -runbundles: \
 	aQute.libg;version=latest,\
-	com.liferay.blade.api,\
 	com.liferay.blade.eclipse.provider;version=latest,\
 	com.liferay.blade.upgrade.liferay70;version=latest
 
