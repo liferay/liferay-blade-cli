@@ -140,7 +140,7 @@ public class MigrateServiceBuilderCommand {
 		projectTemplatesArgs.setName(sbProject.getName());
 		projectTemplatesArgs.setTemplate("service-builder");
 
-		createCommand.execute(projectTemplatesArgs, true);
+		createCommand.execute(projectTemplatesArgs);
 
 		File sbServiceProject = new File(sbProject, sbProjectName + "-service");
 
