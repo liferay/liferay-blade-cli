@@ -22,6 +22,7 @@ import com.liferay.blade.api.MigrationListener;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.ProgressMonitor;
 import com.liferay.blade.api.Reporter;
+import com.liferay.blade.util.FileHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,6 +54,7 @@ public class ProjectMigrationService implements Migration {
 	private BundleContext _context;
 	private ServiceTracker<FileMigrator, FileMigrator> _fileMigratorTracker;
 	private ServiceTracker<MigrationListener, MigrationListener> _migrationListenerTracker;
+	private FileHelper _fileHelper = new FileHelper();
 
 	@Activate
 	public void activate(BundleContext context) {
@@ -67,6 +69,15 @@ public class ProjectMigrationService implements Migration {
 
 	protected FileVisitResult analyzeFile(
 		File file, List<Problem> problems, ProgressMonitor monitor) {
+		try {
+			String fileContent = _fileHelper.readFile(file);
+
+			if(fileContent == null || fileContent.trim().length() < 1) {
+				return FileVisitResult.CONTINUE;
+			}
+		} catch (Exception e) {
+			return FileVisitResult.CONTINUE;
+		}
 
 		String fileName = file.toPath().getFileName().toString();
 		String extension = fileName.substring(
