@@ -1,9 +1,8 @@
-
-javac.source: 					1.7
-javac.target: 					1.7
+javac.source: 					1.8
+javac.target: 					1.8
 Service-Component: 				*
 -dsannotations: 				*
--runee:							JavaSE-1.7
+-runee:							JavaSE-1.8
 -runfw:							org.eclipse.osgi
 
 -runproperties.eqnx: 				\
@@ -19,7 +18,7 @@ debug-bundles: \
 	osgi.identity;filter:='(osgi.identity=org.apache.felix.log)',\
 	osgi.identity;filter:='(osgi.identity=org.apache.felix.gogo.command)',\
 	osgi.identity;filter:='(osgi.identity=org.apache.felix.gogo.shell)'
-	
+
 #
 # Required for testing, these packages are added
 # to the path by aQute.junit
@@ -72,7 +71,7 @@ test-cases: 					${classes;NAMED;*Test}
 
 test-reports: test-results
 
-# 
+#
 # Augments for the Repository Indexer
 #
 

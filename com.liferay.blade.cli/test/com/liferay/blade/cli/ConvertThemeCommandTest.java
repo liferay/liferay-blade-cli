@@ -18,6 +18,8 @@ package com.liferay.blade.cli;
 
 import static org.junit.Assert.assertFalse;
 
+import aQute.lib.io.IO;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
@@ -28,12 +30,11 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import aQute.lib.io.IO;
-
 /**
  * @author David Truong
  */
-public class MigrateThemeCommandTest {
+public class ConvertThemeCommandTest {
+
 	private File testdir = IO.getFile("generated/test");
 
 	@After
@@ -46,7 +47,7 @@ public class MigrateThemeCommandTest {
 
 	@Test
 	public void testListThemes() throws Exception {
-		String[] args = {"-b", "generated/test/workspace", "migrateTheme"};
+		String[] args = {"-b", "generated/test/workspace", "convert", "-l"};
 
 		createWorkspace();
 
@@ -57,14 +58,14 @@ public class MigrateThemeCommandTest {
 
 		String content = baos.toString();
 
-		Assert.assertTrue(content.contains("compass-theme"));
+		Assert.assertTrue(content, content.contains("compass-theme"));
 	}
 
 	@Test
 	@Ignore
 	public void testMigrateCompassTheme() throws Exception {
 		String[] args = {
-			"-b", "generated/test/workspace", "migrateTheme", "-a"
+			"-b", "generated/test/workspace", "convert", "-a"
 		};
 
 		File workspace = createWorkspace();

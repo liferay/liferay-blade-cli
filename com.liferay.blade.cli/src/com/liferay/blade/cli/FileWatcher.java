@@ -29,7 +29,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package com.liferay.blade.cli;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;

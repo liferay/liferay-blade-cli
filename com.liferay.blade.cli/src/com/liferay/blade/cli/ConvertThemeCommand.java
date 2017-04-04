@@ -16,14 +16,10 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
+import com.liferay.blade.cli.ConvertCommand.ConvertOptions;
 
 import java.io.File;
-
 import java.nio.file.Files;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -37,12 +33,12 @@ import org.apache.commons.lang3.text.WordUtils;
 /**
  * @author David Truong
  */
-public class MigrateThemeCommand {
+public class ConvertThemeCommand {
 
 	public static final String DESCRIPTION =
 		"Migrate a plugins sdk theme to new workspace theme project";
 
-	public MigrateThemeCommand(blade blade, MigrateThemeOptions options)
+	public ConvertThemeCommand(blade blade, ConvertOptions options)
 		throws Exception {
 
 		_blade = blade;
@@ -158,15 +154,6 @@ public class MigrateThemeCommand {
 		}
 	}
 
-	@Arguments(arg = "[name]")
-	@Description(DESCRIPTION)
-	public interface MigrateThemeOptions extends Options {
-
-		@Description("Migrate all themes")
-		public boolean all();
-
-	}
-
 	private boolean compassSupport(String themePath) throws Exception {
 		File themeDir = new File(themePath);
 
@@ -190,7 +177,7 @@ public class MigrateThemeCommand {
 	private blade _blade;
 	private final Pattern
 		_compassImport = Pattern.compile("@import\\s*['\"]compass['\"];");
-	private MigrateThemeOptions _options;
+	private ConvertOptions _options;
 	private File _pluginsSDKThemesDir;
 	private File _themesDir;
 
