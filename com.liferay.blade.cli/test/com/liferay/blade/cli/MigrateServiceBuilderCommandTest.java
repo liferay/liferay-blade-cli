@@ -19,20 +19,19 @@ package com.liferay.blade.cli;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import aQute.lib.io.IO;
+
 import java.io.File;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Test;
-
-import aQute.lib.io.IO;
 
 /**
  * @author Terry Jia
  */
 public class MigrateServiceBuilderCommandTest {
 
-	public static final String SB_PROJECT_NAME = "sample-service-builder-portlet"; 
+	public static final String SB_PROJECT_NAME = "sample-service-builder-portlet";
 
 	@After
 	public void cleanUp() throws Exception {
@@ -58,7 +57,7 @@ public class MigrateServiceBuilderCommandTest {
 
 		new bladenofail().run(args);
 
-		args = new String[] {"-b", projectDir.getPath(), "migrateWar", SB_PROJECT_NAME};
+		args = new String[] {"-b", projectDir.getPath(), "upgrade", SB_PROJECT_NAME};
 
 		new bladenofail().run(args);
 
@@ -96,7 +95,8 @@ public class MigrateServiceBuilderCommandTest {
 		File bndBnd = new File(sbApiDir, "bnd.bnd");
 
 		assertTrue(bndBnd.exists());
-		String bndContent = FileUtils.readFileToString(bndBnd);
+
+		String bndContent = new String(IO.read(bndBnd));
 
 		assertTrue(bndContent.indexOf("com.liferay.sampleservicebuilder.util.comparator") > 0);
 	}

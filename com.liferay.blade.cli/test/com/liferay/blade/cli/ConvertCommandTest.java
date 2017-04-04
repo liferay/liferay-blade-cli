@@ -30,7 +30,7 @@ import org.junit.Test;
 /**
  * @author Gregory Amerson
  */
-public class MigrateWarCommandTest {
+public class ConvertCommandTest {
 
 	@After
 	public void cleanUp() throws Exception {
@@ -56,7 +56,7 @@ public class MigrateWarCommandTest {
 
 		new bladenofail().run(args);
 
-		args = new String[] {"-b", projectDir.getPath(), "migrateWar", "1-2-1-columns-layouttpl"};
+		args = new String[] {"-b", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl"};
 
 		new bladenofail().run(args);
 
@@ -92,7 +92,7 @@ public class MigrateWarCommandTest {
 
 		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
 
-		args = new String[] {"-b", projectDir.getPath(), "migrateWar", "sample-styled-minimal-theme"};
+		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-styled-minimal-theme"};
 
 		new bladenofail().run(args);
 
@@ -110,7 +110,7 @@ public class MigrateWarCommandTest {
 
 		assertFalse(new File(projectDir, "plugins-sdk/themes/sample-styled-minimal-theme").exists());
 
-		args = new String[] {"-b", projectDir.getPath(), "migrateWar", "sample-styled-advanced-theme"};
+		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-styled-advanced-theme"};
 
 		new bladenofail().run(args);
 
@@ -150,7 +150,7 @@ public class MigrateWarCommandTest {
 
 		new bladenofail().run(args);
 
-		args = new String[] {"-b", projectDir.getPath(), "migrateWar", "sample-application-adapter-hook"};
+		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-application-adapter-hook"};
 
 		new bladenofail().run(args);
 
@@ -160,7 +160,7 @@ public class MigrateWarCommandTest {
 
 		assertFalse(new File(projectDir, "plugins-sdk/hooks/sample-application-adapter-hook").exists());
 
-		args = new String[] {"-b", projectDir.getPath(), "migrateWar", "sample-servlet-filter-hook"};
+		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-servlet-filter-hook"};
 
 		new bladenofail().run(args);
 
@@ -198,7 +198,7 @@ public class MigrateWarCommandTest {
 	public void testThemeDocrootBackup() throws Exception {
 		File projectDir = setupWorkspace("testThemeDocrootBackup");
 
-		String[] args = {"-b", projectDir.getPath(), "migrateWar", "sample-html4-theme"};
+		String[] args = {"-b", projectDir.getPath(), "convert", "sample-html4-theme"};
 
 		new bladenofail().run(args);
 
@@ -209,7 +209,7 @@ public class MigrateWarCommandTest {
 	public void testReadIvyXml() throws Exception {
 		File projectDir = setupWorkspace("readIvyXml");
 
-		String[] args = {"-b", projectDir.getPath(), "migrateWar", "sample-dao-portlet"};
+		String[] args = {"-b", projectDir.getPath(), "convert", "sample-dao-portlet"};
 
 		new bladenofail().run(args);
 
@@ -218,7 +218,7 @@ public class MigrateWarCommandTest {
 			".*compile group: 'c3p0', name: 'c3p0', version: '0.9.0.4'.*",
 			".*compile group: 'mysql', name: 'mysql-connector-java', version: '5.0.7'.*");
 
-		args = new String[] {"-b", projectDir.getPath(), "migrateWar", "sample-tapestry-portlet"};
+		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-tapestry-portlet"};
 
 		new bladenofail().run(args);
 
