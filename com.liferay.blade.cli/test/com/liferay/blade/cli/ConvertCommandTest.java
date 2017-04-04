@@ -38,6 +38,32 @@ public class ConvertCommandTest {
 	}
 
 	@Test
+	public void testAll() throws Exception {
+		File testdir = IO.getFile("generated/testUpgradePluginsSDKTo70");
+
+		if (testdir.exists()) {
+			IO.deleteWithException(testdir);
+			assertFalse(testdir.exists());
+		}
+
+		testdir.mkdirs();
+
+		Util.unzip(new File("test-projects/plugins-sdk-with-git.zip"), testdir);
+
+		assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+
+		new bladenofail().run(args);
+
+		args = new String[] {"-b", projectDir.getPath(), "convert", "-a"};
+
+		new bladenofail().run(args);
+	}
+
+	@Test
 	public void testMoveLayouttplToWars() throws Exception {
 		File testdir = IO.getFile("generated/testMoveLayouttplToWars");
 

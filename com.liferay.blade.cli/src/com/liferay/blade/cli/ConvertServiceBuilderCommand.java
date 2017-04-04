@@ -16,11 +16,9 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.ConvertCommand.ConvertOptions;
 import com.liferay.blade.cli.util.BndProperties;
 import com.liferay.blade.cli.util.BndPropertiesValue;
 import com.liferay.blade.cli.util.Constants;
@@ -46,12 +44,11 @@ import org.xml.sax.SAXException;
 /**
  * @author Terry Jia
  */
-public class MigrateServiceBuilderCommand {
+public class ConvertServiceBuilderCommand {
 
-	public static final String DESCRIPTION = "Migrate service builder to new workspace Module project";
+	public static final String DESCRIPTION = "Convert a service builder project to new Liferay Workspace module projects";
 
-	public MigrateServiceBuilderCommand(blade blade, MigrateServiceBuilderOptions options) throws Exception {
-
+	public ConvertServiceBuilderCommand(blade blade, ConvertOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
 
@@ -259,11 +256,6 @@ public class MigrateServiceBuilderCommand {
 		System.out.println("Migrate files done, then you should fix breaking changes and re-run build-service task.");
 	}
 
-	@Arguments(arg = { "[name]", "[service-builder-project-name]" })
-	@Description(DESCRIPTION)
-	public interface MigrateServiceBuilderOptions extends Options {
-	}
-
 	private class ServiceBuilder {
 		public static final String DEFAULT_SERVICE_IMPL = "service/impl/";
 		public static final String DEFAULT_MODEL_IMPL = "model/impl/";
@@ -308,6 +300,6 @@ public class MigrateServiceBuilderCommand {
 	private blade _blade;
 	private final File _warsDir;
 	private final File _moduleDir;
-	private MigrateServiceBuilderOptions _options;
+	private ConvertOptions _options;
 
 }

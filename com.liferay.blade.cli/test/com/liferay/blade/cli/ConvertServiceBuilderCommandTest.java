@@ -29,7 +29,7 @@ import org.junit.Test;
 /**
  * @author Terry Jia
  */
-public class MigrateServiceBuilderCommandTest {
+public class ConvertServiceBuilderCommandTest {
 
 	public static final String SB_PROJECT_NAME = "sample-service-builder-portlet";
 
@@ -39,7 +39,7 @@ public class MigrateServiceBuilderCommandTest {
 	}
 
 	@Test
-	public void testMigrateServiceBuilder() throws Exception {
+	public void testConvertServiceBuilder() throws Exception {
 		File testdir = IO.getFile("generated/testMigrateServiceBuilder");
 
 		if (testdir.exists()) {
@@ -57,7 +57,7 @@ public class MigrateServiceBuilderCommandTest {
 
 		new bladenofail().run(args);
 
-		args = new String[] {"-b", projectDir.getPath(), "upgrade", SB_PROJECT_NAME};
+		args = new String[] {"-b", projectDir.getPath(), "convert", SB_PROJECT_NAME};
 
 		new bladenofail().run(args);
 
@@ -71,7 +71,7 @@ public class MigrateServiceBuilderCommandTest {
 
 		assertFalse(new File(sbWar, "docroot").exists());
 
-		args = new String[] {"-b", projectDir.getPath(), "migrateSB", SB_PROJECT_NAME};
+		args = new String[] {"-b", projectDir.getPath(), "convert", SB_PROJECT_NAME};
 
 		new bladenofail().run(args);
 
