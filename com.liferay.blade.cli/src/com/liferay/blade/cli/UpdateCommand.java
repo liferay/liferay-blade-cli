@@ -32,11 +32,11 @@ public class UpdateCommand {
 	public void execute() throws Exception {
 		if (Util.isWindows()) {
 			_blade.out().println("blade update cannot execute successfully because of Windows file locking. Please use following command:");
-			_blade.out().println("\tjpm install -f com.liferay.blade.cli");
+			_blade.out().println("\tjpm install -f https://releases.liferay.com/tools/blade-cli/latest/blade.jar");
 		}
 		else {
 			Process process = Util.startProcess(
-				_blade, "jpm install -f com.liferay.blade.cli");
+				_blade, "jpm install -f https://releases.liferay.com/tools/blade-cli/latest/blade.jar");
 
 			int errCode = process.waitFor();
 
