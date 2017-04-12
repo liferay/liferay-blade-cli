@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 public class bladenofail extends blade {
 
 	public bladenofail() throws UnsupportedEncodingException {
+		this(System.out);
 	}
 
 	public bladenofail(PrintStream out) throws UnsupportedEncodingException {
