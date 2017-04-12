@@ -206,7 +206,12 @@ public class ConvertCommand {
 				convertToLayoutWarProject(pluginDir);
 			}
 			else if(pluginPath.startsWith(_themesDir.toPath())) {
-				convertToThemeBuilderWarProject(pluginDir);
+				if (_options.themeBuilder()) {
+					convertToThemeBuilderWarProject(pluginDir);
+				}
+				else {
+					convertToThemeProject(pluginDir);
+				}
 			}
 		}
 	}
