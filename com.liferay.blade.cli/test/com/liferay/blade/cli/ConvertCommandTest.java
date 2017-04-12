@@ -118,7 +118,7 @@ public class ConvertCommandTest {
 
 		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-styled-minimal-theme"};
+		args = new String[] {"-b", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme"};
 
 		new bladenofail().run(args);
 
@@ -136,7 +136,7 @@ public class ConvertCommandTest {
 
 		assertFalse(new File(projectDir, "plugins-sdk/themes/sample-styled-minimal-theme").exists());
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-styled-advanced-theme"};
+		args = new String[] {"-b", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
 
 		new bladenofail().run(args);
 
@@ -224,7 +224,7 @@ public class ConvertCommandTest {
 	public void testThemeDocrootBackup() throws Exception {
 		File projectDir = setupWorkspace("testThemeDocrootBackup");
 
-		String[] args = {"-b", projectDir.getPath(), "convert", "sample-html4-theme"};
+		String[] args = {"-b", projectDir.getPath(), "convert", "-t", "sample-html4-theme"};
 
 		new bladenofail().run(args);
 
