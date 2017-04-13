@@ -61,6 +61,12 @@ public class ConvertCommandTest {
 		args = new String[] {"-b", projectDir.getPath(), "convert", "-a"};
 
 		new bladenofail().run(args);
+
+		assertTrue(new File(testdir, "plugins-sdk-with-git/modules/sample-service-builder-portlet-sb/sample-service-builder-portlet-sb-api").exists());
+
+		assertTrue(new File(testdir, "plugins-sdk-with-git/modules/sample-service-builder-portlet-sb/sample-service-builder-portlet-sb-service").exists());
+
+		assertTrue(new File(testdir, "plugins-sdk-with-git/wars/sample-service-builder-portlet").exists());
 	}
 
 	@Test
