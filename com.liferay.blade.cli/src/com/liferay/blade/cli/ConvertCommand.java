@@ -17,6 +17,7 @@
 package com.liferay.blade.cli;
 
 import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.CommandLine;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
@@ -36,6 +37,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -232,7 +234,11 @@ public class ConvertCommand {
 	private void convertToServiceBuilderWarProject(File pluginDir) {
 		try {
 			convertToWarProject(pluginDir);
-			new ConvertServiceBuilderCommand(_blade, _options).execute();
+
+			ConvertOptions options =
+				new CommandLine(_blade).getOptions(ConvertOptions.class, Collections.singletonList(pluginDir.getName()));
+
+			new ConvertServiceBuilderCommand(_blade, options).execute();
 		}
 		catch (Exception e) {
 			_blade.error("Error upgrading project %s\n%s", pluginDir.getName(), e.getMessage());
