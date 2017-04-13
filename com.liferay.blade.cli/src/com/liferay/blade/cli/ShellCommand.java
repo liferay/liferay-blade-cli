@@ -75,7 +75,7 @@ public class ShellCommand {
 
 		String response = telnetClient.send(cmd);
 
-		_blade.out().print(response);
+		_blade.out().println(response);
 
 		telnetClient.close();
 	}
