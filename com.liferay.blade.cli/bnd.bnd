@@ -167,9 +167,9 @@ Private-Package:\
 	org.slf4j.impl
 
 -buildpath: \
-	aQute.libg,\
-	biz.aQute.bndlib,\
-	biz.aQute.repository,\
+	aQute.libg;version=3.4.0,\
+	biz.aQute.bndlib;version=3.4.0,\
+	biz.aQute.repository;version=3.4.0,\
 	com.liferay.blade.gradle.model;version=latest,\
 	com.liferay.project.templates;version=2.1.2,\
 	jcl.over.slf4j,\

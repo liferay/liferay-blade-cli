@@ -29,6 +29,11 @@
 		locations=${bnd_repourl}/index.xml.gz; \
 		max_stale = 1800
 
+-plugin.bndmavenrepo = \
+	aQute.bnd.repository.maven.provider.MavenBndRepository; \
+		snapshotUrl=https://bndtools.ci.cloudbees.com/job/bnd.master/lastSuccessfulBuild/artifact/dist/bundles; \
+		name=bndmavenrepo
+
 -plugin.gradlelibs = \
 	aQute.bnd.repository.maven.provider.MavenBndRepository; \
 		releaseUrl=https://repo.gradle.org/gradle/libs-releases; \
