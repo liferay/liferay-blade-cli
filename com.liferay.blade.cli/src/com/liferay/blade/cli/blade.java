@@ -164,6 +164,12 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		return err;
 	}
 
+	public File getBundleDir() {
+		String userHome = System.getProperty("user.home");
+
+		return IO.getFile(userHome + "/.liferay/bundles");
+	}
+
 	public File getCacheDir() {
 		String userHome = System.getProperty("user.home");
 

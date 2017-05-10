@@ -43,10 +43,11 @@ import org.apache.commons.io.FileUtils;
  */
 public class InitCommand {
 
-	private final static String _PLUGINS_SDK_ZIP = "com.liferay.portal.plugins.sdk-1.0.6.zip";
+	private final static String _INSTALLER_PLUGINS_SDK_PATH = "com.liferay.portal.plugins.sdk-1.0.9-withdependencies";
+	private final static String _INSTALLER_PLUGINS_SDK_ZIP = _INSTALLER_PLUGINS_SDK_PATH + ".zip";
 	private final static String _PLUGINS_SDK_URL =
-		"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public/com/liferay/portal/com.liferay.portal.plugins.sdk/1.0.6/" +
-			_PLUGINS_SDK_ZIP;
+		"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public/com/liferay/portal/com.liferay.portal.plugins.sdk/1.0.9/" +
+			_INSTALLER_PLUGINS_SDK_ZIP;
 
 	private final static String[] _SDK_6_GA5_FILES = {
 		"app-servers.gradle", "build.gradle", "build-plugins.gradle",
@@ -84,14 +85,15 @@ public class InitCommand {
 							"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory " +
 								"and initing workspace.");
 
-						File sdk7zip = new File (_blade.getCacheDir(), _PLUGINS_SDK_ZIP);
+						File sdk7zip = new File (_blade.getBundleDir(), _INSTALLER_PLUGINS_SDK_ZIP);
 
 						if (!sdk7zip.exists()) {
+							trace("Downloading " + _PLUGINS_SDK_URL);
 							FileUtils.copyURLToFile(new URL(_PLUGINS_SDK_URL), sdk7zip);
 						}
 
 						try {
-							Util.unzip(sdk7zip, destDir, "com.liferay.portal.plugins.sdk-1.0.6/");
+							Util.unzip(sdk7zip, destDir, _INSTALLER_PLUGINS_SDK_PATH + "/");
 						}
 						catch (Exception e) {
 							addError("Opening zip file error, "
