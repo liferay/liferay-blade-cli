@@ -43,10 +43,10 @@ import org.apache.commons.io.FileUtils;
  */
 public class InitCommand {
 
-	private final static String _PLUGINS_SDK_ZIP = "com.liferay.portal.plugins.sdk-1.0.7.zip";
-	private final static String _INSTALLER_PLUGINS_SDK_ZIP = "com.liferay.portal.plugins.sdk-1.0.7-withdependencies.zip";
+	private final static String _PLUGINS_SDK_ZIP = "com.liferay.portal.plugins.sdk-1.0.9.zip";
+	private final static String _INSTALLER_PLUGINS_SDK_ZIP = "com.liferay.portal.plugins.sdk-1.0.9-withdependencies.zip";
 	private final static String _PLUGINS_SDK_URL =
-		"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public/com/liferay/portal/com.liferay.portal.plugins.sdk/1.0.7/" +
+		"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public/com/liferay/portal/com.liferay.portal.plugins.sdk/1.0.9/" +
 			_PLUGINS_SDK_ZIP;
 
 	private final static String[] _SDK_6_GA5_FILES = {
