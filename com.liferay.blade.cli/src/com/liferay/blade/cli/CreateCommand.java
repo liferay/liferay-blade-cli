@@ -22,10 +22,15 @@ import aQute.lib.getopt.Options;
 
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -262,7 +267,12 @@ public class CreateCommand {
 	}
 
 	private String[] getTemplateNames() throws Exception {
-		return ProjectTemplates.getTemplates();
+		// Extract the list of template names
+		List<String> templateNames =
+			new ArrayList<>(ProjectTemplates.getTemplates().keySet());
+
+		// return the list as an array
+		return templateNames.toArray(new String[templateNames.size()]);
 	}
 
 	private boolean isExistingTemplate(String templateName) throws Exception {
@@ -278,11 +288,34 @@ public class CreateCommand {
 	}
 
 	private void listTemplates() throws Exception {
-		String[] templateNames = getTemplateNames();
+		// get the map of name/description pairs
+		Map<String,String> templates = ProjectTemplates.getTemplates();
 
+		// build a list of names so we can sort
+		List<String> templateNames = new ArrayList<>(templates.keySet());
+
+		// sort the names
+		Collections.sort(templateNames);
+
+		// find the longest length name for padding purposes
+		int longest = 0;
 		for (String name : templateNames) {
-			_blade.out().println(name);
+			longest = Integer.max(longest, name.length());
 		}
+
+		// add a colon and a space so they're not touching
+		longest += 2;
+
+		// for each name, will need to output it.
+		for (String name : templateNames) {
+			// right pad the name
+			_blade.out().print(StringUtils.rightPad(name + ':', longest));
+
+			// add the template description
+			_blade.out().println(templates.get(name));
+		}
+
+		// done
 	}
 
 	private final blade _blade;

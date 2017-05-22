@@ -1228,7 +1228,10 @@ public class CreateCommandTest {
 
 		String templateList = new String(output.toByteArray());
 
-		for (String templateName : ProjectTemplates.getTemplates()) {
+		List<String> templateNames =
+			new ArrayList<>(ProjectTemplates.getTemplates().keySet());
+
+		for (String templateName : templateNames) {
 			assertTrue(templateList.contains(templateName));
 		}
 	}
