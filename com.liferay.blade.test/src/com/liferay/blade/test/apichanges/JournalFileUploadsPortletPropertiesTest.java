@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.upgrade.liferay70;
+package com.liferay.blade.test.apichanges;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import java.io.File;
 
-import java.util.Map;
+public class JournalFileUploadsPortletPropertiesTest extends APITestBase {
 
-import org.junit.Test;
-
-public class MarkdownParserTest {
-
-	@Test
-	public void parseBreakingChanges() throws Exception {
-		Map<String, String> tags = MarkdownParser.parse("BREAKING_CHANGES.markdown");
-
-		assertNotNull(tags);
-		assertEquals(119, tags.size());
+	@Override
+	public int getExpectedNumber() {
+		return 2;
 	}
+
+	@Override
+	public String getImplClassName() {
+		return "JournalFileUploadsPortletProperties";
+	}
+
+	@Override
+	public File getTestFile() {
+		return new File(
+			"projects/test-portlet/journal-portlet/portal.properties");
+	}
+
 }
