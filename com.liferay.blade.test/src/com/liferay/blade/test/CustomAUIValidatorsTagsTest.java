@@ -42,7 +42,7 @@ public class CustomAUIValidatorsTagsTest {
 
 		List<Problem> problems = m.findProblems(new File("jsptests/custom-aui-validators/"), new NullProgressMonitor());
 
-		assertEquals(1, problems.size());
+		assertEquals(3, problems.size());
 
 		boolean found = false;
 
