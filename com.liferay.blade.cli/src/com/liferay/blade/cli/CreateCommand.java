@@ -291,7 +291,10 @@ public class CreateCommand {
 
 		Collections.sort(templateNames);
 
-		String longestString = templateNames.stream().max(Comparator.comparingInt(String::length)).get();
+		Comparator<String> compareLength =
+			Comparator.comparingInt(String::length);
+
+		String longestString = templateNames.stream().max(compareLength).get();
 
 		int padLength = longestString.length() + 2;
 
