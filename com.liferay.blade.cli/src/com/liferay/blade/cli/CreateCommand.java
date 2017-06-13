@@ -22,9 +22,6 @@ import aQute.lib.getopt.Options;
 
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +29,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Gregory Amerson
@@ -267,12 +266,9 @@ public class CreateCommand {
 	}
 
 	private String[] getTemplateNames() throws Exception {
-		// Extract the list of template names
-		List<String> templateNames =
-			new ArrayList<>(ProjectTemplates.getTemplates().keySet());
+		Map<String, String> templates = ProjectTemplates.getTemplates();
 
-		// return the list as an array
-		return templateNames.toArray(new String[templateNames.size()]);
+		return templates.keySet().toArray(new String[0]);
 	}
 
 	private boolean isExistingTemplate(String templateName) throws Exception {
