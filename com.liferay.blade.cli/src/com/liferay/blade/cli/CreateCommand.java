@@ -26,6 +26,7 @@ import com.liferay.project.templates.ProjectTemplatesArgs;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -55,7 +56,7 @@ public class CreateCommand {
 
 	public void execute() throws Exception {
 		if (_options.listtemplates()) {
-			listTemplates();
+			printTemplates();
 			return;
 		}
 
@@ -283,35 +284,22 @@ public class CreateCommand {
 		return false;
 	}
 
-	private void listTemplates() throws Exception {
-		// get the map of name/description pairs
+	private void printTemplates() throws Exception {
 		Map<String,String> templates = ProjectTemplates.getTemplates();
 
-		// build a list of names so we can sort
 		List<String> templateNames = new ArrayList<>(templates.keySet());
 
-		// sort the names
 		Collections.sort(templateNames);
 
-		// find the longest length name for padding purposes
-		int longest = 0;
+		String longestString = templateNames.stream().max(Comparator.comparingInt(String::length)).get();
+
+		int padLength = longestString.length() + 2;
+
 		for (String name : templateNames) {
-			longest = Integer.max(longest, name.length());
-		}
+			_blade.out().print(StringUtils.rightPad(name, padLength));
 
-		// add a colon and a space so they're not touching
-		longest += 2;
-
-		// for each name, will need to output it.
-		for (String name : templateNames) {
-			// right pad the name
-			_blade.out().print(StringUtils.rightPad(name + ':', longest));
-
-			// add the template description
 			_blade.out().println(templates.get(name));
 		}
-
-		// done
 	}
 
 	private final blade _blade;
