@@ -749,6 +749,27 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateSpringMvcPortlet() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "spring-mvc-portlet", "-p", "test.spring.portlet", "spring-test"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/spring-test";
+
+		checkFileExists(projectPath);
+
+		checkFileExists(
+			projectPath + "/src/main/java/test/spring/portlet/portlet/" +
+				"SpringTestPortletViewController.java");
+
+		checkFileExists(projectPath + "/build.gradle");
+
+		verifyBuild(projectPath, projectPath, "spring-test.war");
+	}
+
+	@Test
 	public void testCreateTemplateContextContributor() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "template-context-contributor", "blade-test"
