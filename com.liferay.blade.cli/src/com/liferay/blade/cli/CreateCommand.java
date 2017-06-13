@@ -24,9 +24,14 @@ import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Gregory Amerson
@@ -51,7 +56,7 @@ public class CreateCommand {
 
 	public void execute() throws Exception {
 		if (_options.listtemplates()) {
-			listTemplates();
+			printTemplates();
 			return;
 		}
 
@@ -262,7 +267,9 @@ public class CreateCommand {
 	}
 
 	private String[] getTemplateNames() throws Exception {
-		return ProjectTemplates.getTemplates();
+		Map<String, String> templates = ProjectTemplates.getTemplates();
+
+		return templates.keySet().toArray(new String[0]);
 	}
 
 	private boolean isExistingTemplate(String templateName) throws Exception {
@@ -277,11 +284,24 @@ public class CreateCommand {
 		return false;
 	}
 
-	private void listTemplates() throws Exception {
-		String[] templateNames = getTemplateNames();
+	private void printTemplates() throws Exception {
+		Map<String,String> templates = ProjectTemplates.getTemplates();
+
+		List<String> templateNames = new ArrayList<>(templates.keySet());
+
+		Collections.sort(templateNames);
+
+		Comparator<String> compareLength =
+			Comparator.comparingInt(String::length);
+
+		String longestString = templateNames.stream().max(compareLength).get();
+
+		int padLength = longestString.length() + 2;
 
 		for (String name : templateNames) {
-			_blade.out().println(name);
+			_blade.out().print(StringUtils.rightPad(name, padLength));
+
+			_blade.out().println(templates.get(name));
 		}
 	}
 
