@@ -83,9 +83,9 @@ public class SamplesCommand {
 
 		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
-		File liferayGradleSamples = new File(bladeRepo, "liferay-gradle");
+		File gradleSamples = new File(bladeRepo, "gradle");
 
-		for (File file : liferayGradleSamples.listFiles()) {
+		for (File file : gradleSamples.listFiles()) {
 			String fileName = file.getName();
 
 			if (file.isDirectory() && fileName.equals(sampleName)) {
@@ -141,11 +141,11 @@ public class SamplesCommand {
 	private void listSamples() {
 		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
-		File liferayGradleSamples = new File(bladeRepo, "liferay-gradle");
+		File gradleSamples = new File(bladeRepo, "gradle");
 
 		List<String> samples = new ArrayList<>();
 
-		for (File file : liferayGradleSamples.listFiles()) {
+		for (File file : gradleSamples.listFiles()) {
 			String fileName = file.getName();
 
 			if (file.isDirectory() && fileName.startsWith("blade.")) {
@@ -242,7 +242,7 @@ public class SamplesCommand {
 
 		if (!Util.isWorkspace(dir)) {
 			File parentBuildGradleFile = new File(
-				bladeRepo, "liferay-gradle/build.gradle");
+				bladeRepo, "gradle/build.gradle");
 
 			String parentBuildScript = parseGradleScript(
 				Util.read(parentBuildGradleFile), "buildscript", false);
