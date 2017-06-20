@@ -23,9 +23,7 @@ import aQute.lib.getopt.Options;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-
 import java.nio.file.Files;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -262,13 +260,13 @@ public class SamplesCommand {
 	}
 
 	private static final String _BLADE_REPO_ARCHIVE_NAME =
-		"liferay-blade-samples-master.zip";
+		"liferay-blade-samples-2.x.zip";
 
 	private static final String _BLADE_REPO_NAME =
-		"liferay-blade-samples-master";
+		"liferay-blade-samples-2.x";
 
 	private static final String _BLADE_REPO_URL =
-		"https://github.com/liferay/liferay-blade-samples/archive/master.zip";
+		"https://github.com/liferay/liferay-blade-samples/archive/2.x.zip";
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
