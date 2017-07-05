@@ -1,7 +1,7 @@
 biz.aQute.bnd:aQute.libg:3.3.0
 biz.aQute.bnd:biz.aQute.remote.api:3.3.0
 com.liferay:com.liferay.knowledge.base.markdown.converter:1.0.4
-com.liferay:com.liferay.project.templates:3.0.0
+com.liferay:com.liferay.project.templates:3.0.2
 com.liferay.portal:com.liferay.portal.kernel:2.2.0
 commons-io:commons-io:2.5
 org.apache.commons:commons-lang3:3.4

@@ -26,6 +26,7 @@ import aQute.lib.io.IO;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Properties;
 
 import org.gradle.testkit.runner.BuildTask;
@@ -212,13 +213,19 @@ public class InitCommandTest {
 			"-b", workspaceDir.getPath(), "init", "-f", "newproject"
 		};
 
-		assertTrue(new File(workspaceDir, "newproject").mkdirs());
+		File newproject = new File(workspaceDir, "newproject");
+
+		assertTrue(newproject.mkdirs());
 
 		new bladenofail().run(args);
 
-		assertTrue(new File(workspaceDir, "newproject/build.gradle").exists());
+		assertTrue(new File(newproject, "build.gradle").exists());
 
-		assertTrue(new File(workspaceDir, "newproject/modules").exists());
+		assertTrue(new File(newproject, "modules").exists());
+
+		String contents = new String(Files.readAllBytes(new File(newproject, "settings.gradle").toPath()));
+
+		assertTrue(contents, contents.contains("1.5.0"));
 	}
 
 	@Test
