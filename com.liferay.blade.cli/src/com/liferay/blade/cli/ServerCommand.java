@@ -240,8 +240,18 @@ public class ServerCommand {
 				serverType = "tomcat";
 			}
 
-			commandServer(
-				cmd, new File(rootDir, liferayHomePath), serverType, options);
+			File tempLiferayHome = new File(liferayHomePath);
+			File liferayHomeDir = null;
+
+			if (tempLiferayHome.isAbsolute()) {
+				liferayHomeDir = tempLiferayHome.getCanonicalFile();
+			}
+			else {
+				File tempFile = new File(rootDir, liferayHomePath);
+				liferayHomeDir = tempFile.getCanonicalFile();
+			}
+
+			commandServer(cmd, liferayHomeDir, serverType, options);
 		}
 		else {
 			try {
