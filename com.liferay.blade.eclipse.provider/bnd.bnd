@@ -68,4 +68,6 @@ Private-Package: \
 	org.apache.commons.lang3.*,\
 	org.osgi.service.component.annotations;-split-package:=merge-first,\
 	org.osgi.service.metatype.annotations;-split-package:=merge-first,\
-	org.osgi.service.repository;-split-package:=merge-first
+	org.osgi.service.repository;-split-package:=merge-first,\
+	org.osgi.util.promise;-split-package:=merge-first,\
+	org.osgi.util.function;-split-package:=merge-first
