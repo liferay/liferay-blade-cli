@@ -55,6 +55,11 @@ public class ProjectMigrationService implements Migration {
 	private ServiceTracker<FileMigrator, FileMigrator> _fileMigratorTracker;
 	private ServiceTracker<MigrationListener, MigrationListener> _migrationListenerTracker;
 	private FileHelper _fileHelper = new FileHelper();
+	private final static String DEPRECATED_61_METHODS_INVOCATION = "DeprecatedVersion61MethodsInvocation";
+	private final static String DEPRECATED_62_METHODS_INVOCATION = "DeprecatedVersion62MethodsInvocation";
+	private final static String DEPRECATED_70_METHODS_INVOCATION = "DeprecatedVersion70MethodsInvocation";
+	private final static String DEPRECATED_VERSION_NONE_METHODS_INVOCATION = "DeprecatedVersionNoneMethodsInvocation";
+	private final static String DEPRECATED_VERSION = "DeprecatedVersion";
 
 	@Activate
 	public void activate(BundleContext context) {
@@ -67,8 +72,9 @@ public class ProjectMigrationService implements Migration {
 		_fileMigratorTracker.open();
 	}
 
-	protected FileVisitResult analyzeFile(
-		File file, List<Problem> problems, ProgressMonitor monitor) {
+	protected FileVisitResult analyzeFile(File file, List<Problem> problems,
+			final boolean isFindDeprecatedMethodsService, final String currentDeprecatedMethodsVersion,
+			ProgressMonitor monitor) {
 		try {
 			String fileContent = _fileHelper.readFile(file);
 
@@ -101,18 +107,33 @@ public class ProjectMigrationService implements Migration {
 				if (fileExtensions != null && fileExtensions.contains(extension)) {
 					final FileMigrator fmigrator = _context.getService(fm);
 
-					try {
-						final List<Problem> fileProblems = fmigrator.analyze(
-							file);
+					if (isFindDeprecatedMethodsService
+							&& fmigrator.getClass().getName().contains(currentDeprecatedMethodsVersion)) {
+						try {
+							final List<Problem> fileProblems = fmigrator.analyze(file);
 
-						if ( fileProblems != null &&
-							fileProblems.size() > 0) {
-
-							problems.addAll(fileProblems);
+							if (fileProblems.size() > 0) {
+								problems.addAll(fileProblems);
+							}
 						}
+						catch (Exception e) {
+						}
+
+						_context.ungetService(fm);
+
+						break;
 					}
-					catch (Exception e) {
-						e.printStackTrace();
+					else if (!isFindDeprecatedMethodsService
+							&& !fmigrator.getClass().getName().contains(DEPRECATED_VERSION)) {
+						try {
+							final List<Problem> fileProblems = fmigrator.analyze(file);
+
+							if (fileProblems != null && fileProblems.size() > 0) {
+								problems.addAll(fileProblems);
+							}
+						}
+						catch (Exception e) {
+						}
 					}
 
 					_context.ungetService(fm);
@@ -123,6 +144,101 @@ public class ProjectMigrationService implements Migration {
 		return FileVisitResult.CONTINUE;
 	}
 
+
+	@Override
+	public List<Problem> findAllVersionDeprecatedMethods( File projectDir, ProgressMonitor monitor ) {
+		monitor.beginTask("Searching for deprecated methods in " + projectDir, -1);
+
+		List<Problem> allProblems = new ArrayList<>();
+		List<Problem> problem61 = find61DeprecatedMethods(projectDir, monitor);
+		List<Problem> problem62 = find62DeprecatedMethods(projectDir, monitor);
+		List<Problem> problem70 = find70DeprecatedMethods(projectDir, monitor);
+		List<Problem> problemNoneVersion = findNoneVersionDeprecatedMethods(projectDir, monitor);
+
+		allProblems.addAll(problem61);
+		allProblems.addAll(problem62);
+		allProblems.addAll(problem70);
+		allProblems.addAll(problemNoneVersion);
+
+		return allProblems;
+	}
+
+	@Override
+	public List<Problem> find61DeprecatedMethods(File projectDir, ProgressMonitor monitor) {
+		monitor.beginTask("Searching for Liferay 6.1 deprecated methods in " + projectDir, -1);
+
+		final List<Problem> problems = new ArrayList<>();
+
+		String currentDeprecatedMethodsInvocation = DEPRECATED_61_METHODS_INVOCATION;
+
+		monitor.beginTask("Analyzing files", -1);
+
+		walkFiles(projectDir, problems, true, currentDeprecatedMethodsInvocation, monitor);
+
+		updateListeners(problems);
+
+		monitor.done();
+
+		return problems;
+	}
+
+	@Override
+	public List<Problem> find62DeprecatedMethods(File projectDir, ProgressMonitor monitor) {
+		monitor.beginTask("Searching for Liferay 6.2 deprecated methods in " + projectDir, -1);
+
+		final List<Problem> problems = new ArrayList<>();
+
+		String currentDeprecatedMethodsInvocation = DEPRECATED_62_METHODS_INVOCATION;
+
+		monitor.beginTask("Analyzing files", -1);
+
+		walkFiles(projectDir, problems, true, currentDeprecatedMethodsInvocation, monitor);
+
+		updateListeners(problems);
+
+		monitor.done();
+
+		return problems;
+	}
+
+	@Override
+	public List<Problem> find70DeprecatedMethods(File projectDir, ProgressMonitor monitor) {
+		monitor.beginTask("Searching for Liferay 7.0 deprecated methods in " + projectDir, -1);
+
+		final List<Problem> problems = new ArrayList<>();
+
+		String currentDeprecatedMethodsInvocation = DEPRECATED_70_METHODS_INVOCATION;
+
+		monitor.beginTask("Analyzing files", -1);
+
+		walkFiles(projectDir, problems, true, currentDeprecatedMethodsInvocation, monitor);
+
+		updateListeners(problems);
+
+		monitor.done();
+
+		return problems;
+	}
+
+	@Override
+	public List<Problem> findNoneVersionDeprecatedMethods(File projectDir, ProgressMonitor monitor) {
+		monitor.beginTask("Searching for none version deprecated methods in " + projectDir, -1);
+
+		final List<Problem> problems = new ArrayList<>();
+
+		String currentDeprecatedMethodsInvocation = DEPRECATED_VERSION_NONE_METHODS_INVOCATION;
+
+		monitor.beginTask("Analyzing files", -1);
+
+		walkFiles(projectDir, problems, true, currentDeprecatedMethodsInvocation, monitor);
+
+		updateListeners(problems);
+
+		monitor.done();
+
+		return problems;
+	}
+
 	@Override
 	public List<Problem> findProblems(final File projectDir, final ProgressMonitor monitor) {
 		monitor.beginTask("Searching for migration problems in " + projectDir, -1);
@@ -131,7 +247,7 @@ public class ProjectMigrationService implements Migration {
 
 		monitor.beginTask("Analyzing files", -1);
 
-		walkFiles(projectDir, problems, monitor);
+		walkFiles(projectDir, problems, false, null, monitor);
 
 		updateListeners(problems);
 
@@ -153,7 +269,7 @@ public class ProjectMigrationService implements Migration {
 				return Collections.emptyList();
 			}
 
-			analyzeFile(file, problems, monitor);
+			analyzeFile(file, problems, false, null, monitor);
 		}
 
 		updateListeners(problems);
@@ -222,7 +338,9 @@ public class ProjectMigrationService implements Migration {
 			}
 		}
 	}
-	private void walkFiles(final File dir, final List<Problem> problems, final ProgressMonitor monitor) {
+
+	private void walkFiles(final File dir, final List<Problem> problems, final boolean isDeprecatedMethodsService,
+			final String currentDeprecatedMethodsInvocation, final ProgressMonitor monitor) {
 		final FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
 
 			@Override
@@ -247,8 +365,8 @@ public class ProjectMigrationService implements Migration {
 
 				if (file.isFile())
 				{
-					FileVisitResult result =
-						analyzeFile(file, problems, monitor);
+					FileVisitResult result = analyzeFile(file, problems, isDeprecatedMethodsService,
+							currentDeprecatedMethodsInvocation, monitor);
 
 					if (result.equals(FileVisitResult.TERMINATE)) {
 						return result;

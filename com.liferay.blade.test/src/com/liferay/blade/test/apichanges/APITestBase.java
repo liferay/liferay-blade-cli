@@ -26,7 +26,6 @@ import java.io.File;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
@@ -77,7 +76,6 @@ public abstract class APITestBase {
 	}
 
 	@Test
-	@Ignore
 	public void test2() throws Exception {
 		FileMigrator fmigrator = context.getService(fileMigrators[0]);
 

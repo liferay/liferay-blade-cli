@@ -1,20 +1,9 @@
-/**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.liferay.blade.upgrade.liferay70.deprecatedmethods;
+
+import com.liferay.blade.api.JavaFile;
+import com.liferay.blade.api.Problem;
+import com.liferay.blade.api.SearchResult;
+import com.liferay.blade.upgrade.liferay70.JavaFileMigrator;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,33 +15,19 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.Path;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.osgi.service.component.annotations.Component;
 
-import com.liferay.blade.api.FileMigrator;
-import com.liferay.blade.api.JavaFile;
-import com.liferay.blade.api.Problem;
-import com.liferay.blade.api.SearchResult;
-import com.liferay.blade.upgrade.liferay70.JavaFileMigrator;
+public abstract class AbstractDeprecatedMethodsInvocation extends JavaFileMigrator {
 
-@Component(
-	property = {
-		"file.extensions=java,jsp,jspf",
-		"implName=DeprecatedMethodsInvocation"
-	},
-	service = FileMigrator.class
-)
-public class DeprecatedMethodsInvocation extends JavaFileMigrator {
-
-	private static JSONObject tempMethod;
+	private static JSONObject tempMethod = null;
 
 	@Override
 	public List<Problem> analyze(File file) {
 		final List<Problem> problems = new ArrayList<>();
 
-		JSONArray methods = getDeprecatedMethods();
+		JSONArray DeprecatedMethods = getDeprecatedMethods();
 
-		for (int i=0;i<methods.length();i++) {
-			tempMethod = methods.getJSONObject(i);
+		for (int i = 0; i < DeprecatedMethods.length(); i++) {
+			tempMethod = DeprecatedMethods.getJSONObject(i);
 
 			final List<SearchResult> searchResults = searchFile(file, createFileChecker(_type, file));
 
@@ -72,31 +47,21 @@ public class DeprecatedMethodsInvocation extends JavaFileMigrator {
 	}
 
 	public JSONArray getDeprecatedMethods() {
-		InputStream in = null;
+		String jsonFilePath = getJsonFilePath();
 
-		try {
-			//in = getClass().getResourceAsStream("/com/liferay/blade/upgrade/liferay70/deprecatedmethods/deprecatedMethods62.json");
-			in = getClass().getResourceAsStream("/com/liferay/blade/upgrade/liferay70/deprecatedmethods/deprecatedMethodsNoneVersionFile.json");
+		try (InputStream in = getClass().getResourceAsStream(jsonFilePath)) {
 
-			String jsonContext = IOUtils.toString(in);
+			String jsonContext = IOUtils.toString(in, "UTF-8");
 
 			return new JSONArray(jsonContext);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (in != null) {
-				try {
-					in.close();
-				}
-				catch (IOException e) {
-				}
-			}
+		catch (IOException e) {
 		}
 
 		return null;
 	}
+
+	protected abstract String getJsonFilePath();
 
 	@Override
 	protected List<SearchResult> searchFile(File file, JavaFile fileChecker) {

@@ -29,6 +29,16 @@ public interface Migration {
 
 	int DETAIL_SHORT = 1 << 1;
 
+	public List<Problem> findAllVersionDeprecatedMethods(File projectDir, ProgressMonitor monitor);
+
+	public List<Problem> find61DeprecatedMethods(File projectDir, ProgressMonitor monitor);
+
+	public List<Problem> find62DeprecatedMethods(File projectDir, ProgressMonitor monitor);
+
+	public List<Problem> find70DeprecatedMethods(File projectDir, ProgressMonitor monitor);
+
+	public List<Problem> findNoneVersionDeprecatedMethods(File projectDir, ProgressMonitor monitor);
+
 	public List<Problem> findProblems(File projectDir, ProgressMonitor monitor);
 
 	public List<Problem> findProblems(Set<File> files, ProgressMonitor monitor);
