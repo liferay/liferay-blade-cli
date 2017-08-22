@@ -87,7 +87,7 @@ public class CreateCommandTest {
 
 		new bladenofail().run(gradleArgs);
 
-		checkBasicGradleFiles(projectPath);
+		checkGradleBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(
@@ -103,7 +103,7 @@ public class CreateCommandTest {
 
 		new bladenofail().run(mavenArgs);
 
-		checkBasicMavenFiles(projectPath);
+		checkMavenBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(
@@ -129,7 +129,7 @@ public class CreateCommandTest {
 
 		new bladenofail().run(gradleArgs);
 
-		checkBasicGradleFiles(projectPath);
+		checkGradleBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(
@@ -155,7 +155,7 @@ public class CreateCommandTest {
 
 		new bladenofail().run(mavenArgs);
 
-		checkBasicMavenFiles(projectPath);
+		checkMavenBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(
@@ -194,7 +194,7 @@ public class CreateCommandTest {
 
 		new bladenofail().run(gradleArgs);
 
-		checkBasicGradleFiles(projectPath);
+		checkGradleBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(projectPath + "/bnd.bnd"),
@@ -217,7 +217,7 @@ public class CreateCommandTest {
 
 		new bladenofail().run(mavenArgs);
 
-		checkBasicMavenFiles(projectPath);
+		checkMavenBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(projectPath + "/bnd.bnd"),
@@ -246,7 +246,7 @@ public class CreateCommandTest {
 
 		new bladenofail().run(gradleArgs);
 
-		checkBasicGradleFiles(projectPath);
+		checkGradleBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
@@ -272,7 +272,7 @@ public class CreateCommandTest {
 
 		new bladenofail().run(mavenArgs);
 
-		checkBasicMavenFiles(projectPath);
+		checkMavenBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
@@ -1358,27 +1358,19 @@ public class CreateCommandTest {
 		checkFileDoesNotExists(projectPath);
 	}
 
-	private void checkBasicGradleFiles(String projectPath) {
+	private void checkGradleBuildFiles(String projectPath) {
 		checkFileExists(projectPath);
-
 		checkFileExists(projectPath + "/bnd.bnd");
-
 		checkFileExists(projectPath + "/build.gradle");
-
 		checkFileExists(projectPath + "/gradlew");
-
 		checkFileExists(projectPath + "/gradlew.bat");
 	}
 
-	private void checkBasicMavenFiles(String projectPath) {
+	private void checkMavenBuildFiles(String projectPath) {
 		checkFileExists(projectPath);
-
 		checkFileExists(projectPath + "/bnd.bnd");
-
 		checkFileExists(projectPath + "/pom.xml");
-
 		checkFileExists(projectPath + "/mvnw");
-
 		checkFileExists(projectPath + "/mvnw.cmd");
 	}
 
@@ -1397,8 +1389,6 @@ public class CreateCommandTest {
 
 		return file;
 	}
-
-
 
 	private void contains(File file, String pattern) throws Exception {
 		String content = new String(IO.read(file));

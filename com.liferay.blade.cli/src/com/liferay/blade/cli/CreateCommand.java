@@ -114,10 +114,10 @@ public class CreateCommand {
 		projectTemplatesArgs.setService(_options.service());
 		projectTemplatesArgs.setTemplate(template);
 
-		boolean mavenBuildType = "maven".equals(_options.buildType());
+		boolean mavenBuild = "maven".equals(_options.build());
 
-		projectTemplatesArgs.setGradle(!mavenBuildType);
-		projectTemplatesArgs.setMaven(mavenBuildType);
+		projectTemplatesArgs.setGradle(!mavenBuild);
+		projectTemplatesArgs.setMaven(mavenBuild);
 
 		execute(projectTemplatesArgs);
 
@@ -145,8 +145,8 @@ public class CreateCommand {
 
 		@Description(
 			"Specify the build type of the project. " +
-				"Available options are gradle(default) and maven.")
-	    public String buildType();
+				"Available options are gradle, maven. (gradle is default)")
+	    public String build();
 
 		@Description(
 			"If a class is generated in the project, provide the name of the " +
