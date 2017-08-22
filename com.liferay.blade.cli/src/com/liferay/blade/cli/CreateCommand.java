@@ -121,13 +121,9 @@ public class CreateCommand {
 
 		execute(projectTemplatesArgs);
 
-		_blade.out().println("Project created success!");
-		_blade.out().println("Name: " + projectTemplatesArgs.getName());
-		_blade.out().println("Template: " + projectTemplatesArgs.getTemplate());
 		_blade.out().println(
-			"BuildType: " +
-				(projectTemplatesArgs.isGradle() ? "Gradle" : "Maven"));
-		_blade.out().println("Path: " + dir.getAbsolutePath());
+			"Successfully created project " + projectTemplatesArgs.getName() + 
+				" in " + dir.getAbsolutePath());
 	}
 
 	void execute(ProjectTemplatesArgs projectTemplatesArgs) throws Exception {
