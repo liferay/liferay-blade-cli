@@ -114,15 +114,10 @@ public class CreateCommand {
 		projectTemplatesArgs.setService(_options.service());
 		projectTemplatesArgs.setTemplate(template);
 
-		projectTemplatesArgs.setGradle(true);
-		projectTemplatesArgs.setMaven(false);
+		boolean mavenBuildType = "maven".equals(_options.buildType());
 
-		String buildType = _options.buildType();
-
-		if (buildType != null && buildType.equals("maven")) {
-			projectTemplatesArgs.setMaven(true);
-			projectTemplatesArgs.setGradle(false);
-		}
+		projectTemplatesArgs.setGradle(!mavenBuildType);
+		projectTemplatesArgs.setMaven(mavenBuildType);
 
 		execute(projectTemplatesArgs);
 
