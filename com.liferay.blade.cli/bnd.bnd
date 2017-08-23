@@ -206,7 +206,8 @@ Private-Package:\
 -includeresource: \
 	@com.liferay.project.templates-*.jar,\
 	deps.zip,\
-	wrapper.zip
+	wrapper.zip,\
+	mvnw.cmd
 
 -sources: false
 
