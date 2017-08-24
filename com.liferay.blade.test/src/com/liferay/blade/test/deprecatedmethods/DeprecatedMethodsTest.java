@@ -30,7 +30,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-public class DeprecatedVersion70MethodsInvocationTest {
+public class DeprecatedMethodsTest {
 
 	@Test
 	public void findProblems() throws Exception {
@@ -38,15 +38,11 @@ public class DeprecatedVersion70MethodsInvocationTest {
 
 		Migration m = context.getService(sr);
 
-		List<Problem> problems70 = m.find70DeprecatedMethods(
-				new File("projects/deprecated-methods-test/ProfileIndexer.java"), new NullProgressMonitor());
+		List<Problem> problems61 = 
+			m.findProblems(new File("projects/deprecated-methods-test"), 
+				new NullProgressMonitor());
 
-		assertEquals(5, problems70.size());
-
-		List<Problem> problemsAllVersion = m.findAllVersionDeprecatedMethods(
-				new File("projects/deprecated-methods-test/ProfileIndexer.java"), new NullProgressMonitor());
-
-		assertEquals(5, problemsAllVersion.size());
+		assertEquals(8, problems61.size());
 	}
 
 	private final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
