@@ -114,12 +114,16 @@ public class CreateCommand {
 		projectTemplatesArgs.setService(_options.service());
 		projectTemplatesArgs.setTemplate(template);
 
+		boolean mavenBuild = "maven".equals(_options.build());
+
+		projectTemplatesArgs.setGradle(!mavenBuild);
+		projectTemplatesArgs.setMaven(mavenBuild);
+
 		execute(projectTemplatesArgs);
 
 		_blade.out().println(
-			"Created the project " + projectTemplatesArgs.getName() +
-			" using the " + projectTemplatesArgs.getTemplate() +
-			" template in " + dir.getAbsolutePath());
+			"Successfully created project " + projectTemplatesArgs.getName() + 
+				" in " + dir.getAbsolutePath());
 	}
 
 	void execute(ProjectTemplatesArgs projectTemplatesArgs) throws Exception {
@@ -138,6 +142,11 @@ public class CreateCommand {
 	@Arguments(arg = {"[name]"})
 	@Description(DESCRIPTION)
 	public interface CreateOptions extends Options {
+
+		@Description(
+			"Specify the build type of the project. " +
+				"Available options are gradle, maven. (gradle is default)")
+	    public String build();
 
 		@Description(
 			"If a class is generated in the project, provide the name of the " +

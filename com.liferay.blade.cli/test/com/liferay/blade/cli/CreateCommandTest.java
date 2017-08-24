@@ -41,6 +41,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.tooling.internal.consumer.ConnectorServices;
 import org.junit.After;
@@ -57,7 +58,7 @@ public class CreateCommandTest {
 	public void setUp() throws Exception {
 		testdir.mkdirs();
 
-		new File(testdir, "afile").createNewFile();
+		assertTrue(new File(testdir, "afile").createNewFile());
 	}
 
 	@After
@@ -72,17 +73,21 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateActivator() throws Exception {
-		String[] args = {
-			"create", "-d", "generated/test", "-t", "activator", "bar-activator"
+		String[] gradleArgs = {
+			"create", "-d", "generated/test", "-t", "activator",
+			"bar-activator"
 		};
 
-		new bladenofail().run(args);
+		String[] mavenArgs = {
+			"create", "-d", "generated/test", "-b", "maven", "-t", "activator",
+			"bar-activator"
+		};
 
 		String projectPath = "generated/test/bar-activator";
 
-		checkFileExists(projectPath);
+		new bladenofail().run(gradleArgs);
 
-		checkFileExists(projectPath + "/bnd.bnd");
+		checkGradleBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(
@@ -92,23 +97,39 @@ public class CreateCommandTest {
 		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "bar.activator-1.0.0.jar");
-
 		verifyImportPackage(new File(projectPath + "/build/libs/bar.activator-1.0.0.jar"));
+
+		FileUtils.deleteDirectory(IO.getFile(projectPath));
+
+		new bladenofail().run(mavenArgs);
+
+		checkMavenBuildFiles(projectPath);
+
+		contains(
+			checkFileExists(
+				projectPath + "/src/main/java/bar/activator/BarActivator.java"),
+			".*^public class BarActivator implements BundleActivator.*$");
+
+		MavenRunnerUtil.executeMavenPackage(projectPath, new String[]{"clean", "package"});
+		MavenRunnerUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
+		verifyImportPackage(new File(projectPath + "/target/bar-activator-1.0.0.jar"));
 	}
 
 	@Test
 	public void testCreateApi() throws Exception {
-		String[] args = {
+		String[] gradleArgs = {
 			"create", "-d", "generated/test", "-t", "api", "foo"
 		};
 
-		new bladenofail().run(args);
+		String[] mavenArgs = {
+			"create", "-d", "generated/test", "-b", "maven", "-t", "api", "foo"
+		};
 
 		String projectPath = "generated/test/foo";
 
-		checkFileExists(projectPath);
+		new bladenofail().run(gradleArgs);
 
-		checkFileExists(projectPath + "/bnd.bnd");
+		checkGradleBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(
@@ -129,20 +150,51 @@ public class CreateCommandTest {
 				"foo.api;version=\"1.0.0\"",
 				jar.getManifest().getMainAttributes().getValue("Export-Package"));
 		}
+
+		FileUtils.deleteDirectory(IO.getFile(projectPath));
+
+		new bladenofail().run(mavenArgs);
+
+		checkMavenBuildFiles(projectPath);
+
+		contains(
+			checkFileExists(
+				projectPath + "/src/main/java/foo/api/Foo.java"),
+				".*^public interface Foo.*");
+
+		contains(
+			checkFileExists(
+				projectPath + "/src/main/resources/foo/api/packageinfo"),
+				"version 1.0.0");
+
+		MavenRunnerUtil.executeMavenPackage(projectPath, new String[]{"clean", "package"});
+		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		verifyImportPackage(new File(projectPath + "/target/foo-1.0.0.jar"));
+
+		try (Jar jar = new Jar(new File(projectPath + "/target/foo-1.0.0.jar"))) {
+			assertEquals(
+				"foo.api;version=\"1.0.0\"",
+				jar.getManifest().getMainAttributes().getValue("Export-Package"));
+		}
 	}
 
 	@Test
-	public void testCreateGradleFragment() throws Exception {
-		String[] args = {
+	public void testCreateFragment() throws Exception {
+		String[] gradleArgs = {
 			"create", "-d", "generated/test", "-t", "fragment", "-h",
 			"com.liferay.login.web", "-H", "1.0.0", "loginHook"
 		};
 
-		new bladenofail().run(args);
+		String[] mavenArgs = {
+			"create", "-d", "generated/test", "-b", "maven", "-t", "fragment", "-h",
+			"com.liferay.login.web", "-H", "1.0.0", "loginHook"
+		};
 
 		String projectPath = "generated/test/loginHook";
 
-		checkFileExists(projectPath);
+		new bladenofail().run(gradleArgs);
+
+		checkGradleBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(projectPath + "/bnd.bnd"),
@@ -160,25 +212,41 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "loginhook-1.0.0.jar");
 
 		verifyImportPackage(new File(projectPath + "/build/libs/loginhook-1.0.0.jar"));
+
+		FileUtils.deleteDirectory(IO.getFile(projectPath));
+
+		new bladenofail().run(mavenArgs);
+
+		checkMavenBuildFiles(projectPath);
+
+		contains(
+			checkFileExists(projectPath + "/bnd.bnd"),
+			new String[] {
+				".*^Bundle-SymbolicName: loginhook.*$",
+				".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$"
+			});
+
+		MavenRunnerUtil.executeMavenPackage(projectPath, new String[]{"clean", "package"});
+		MavenRunnerUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
+		verifyImportPackage(new File(projectPath + "/target/loginHook-1.0.0.jar"));
 	}
 
 	@Test
-	public void testCreateGradleMVCPortletProject() throws Exception {
-		String[] args = {
+	public void testCreateMVCPortlet() throws Exception {
+		String[] gradleArgs = {
 			"create", "-d", "generated/test", "-t", "mvc-portlet", "foo"
 		};
 
-		new bladenofail().run(args);
+		String[] mavenArgs = {
+			"create", "-d", "generated/test", "-b", "maven", "-t",
+			"mvc-portlet", "foo"
+		};
 
 		String projectPath = "generated/test/foo";
 
-		checkFileExists(projectPath);
+		new bladenofail().run(gradleArgs);
 
-		checkFileExists(projectPath + "/bnd.bnd");
-
-		checkFileExists(projectPath + "/gradlew");
-
-		checkFileExists(projectPath + "/gradlew.bat");
+		checkGradleBuildFiles(projectPath);
 
 		contains(
 			checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
@@ -199,6 +267,26 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
 		verifyImportPackage(new File(projectPath + "/build/libs/foo-1.0.0.jar"));
+
+		FileUtils.deleteDirectory(IO.getFile(projectPath));
+
+		new bladenofail().run(mavenArgs);
+
+		checkMavenBuildFiles(projectPath);
+
+		contains(
+			checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
+			".*^public class FooPortlet extends MVCPortlet.*$");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		checkFileExists(
+			projectPath + "/src/main/resources/META-INF/resources/init.jsp");
+
+		MavenRunnerUtil.executeMavenPackage(projectPath, new String[]{"clean", "package"});
+		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		verifyImportPackage(new File(projectPath + "/target/foo-1.0.0.jar"));
 	}
 
 	@Test
@@ -1268,6 +1356,22 @@ public class CreateCommandTest {
 		String projectPath = "generated/test/wrong-activator";
 
 		checkFileDoesNotExists(projectPath);
+	}
+
+	private void checkGradleBuildFiles(String projectPath) {
+		checkFileExists(projectPath);
+		checkFileExists(projectPath + "/bnd.bnd");
+		checkFileExists(projectPath + "/build.gradle");
+		checkFileExists(projectPath + "/gradlew");
+		checkFileExists(projectPath + "/gradlew.bat");
+	}
+
+	private void checkMavenBuildFiles(String projectPath) {
+		checkFileExists(projectPath);
+		checkFileExists(projectPath + "/bnd.bnd");
+		checkFileExists(projectPath + "/pom.xml");
+		checkFileExists(projectPath + "/mvnw");
+		checkFileExists(projectPath + "/mvnw.cmd");
 	}
 
 	private File checkFileDoesNotExists(String path) {
