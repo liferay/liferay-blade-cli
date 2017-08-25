@@ -49,7 +49,7 @@ public class FileSetMigrationTest {
 
 		List<Problem> problems = m.findProblems(fileset, new NullProgressMonitor());
 
-		assertEquals(3, problems.size());
+		assertEquals(4, problems.size());
 
 		boolean found = false;
 

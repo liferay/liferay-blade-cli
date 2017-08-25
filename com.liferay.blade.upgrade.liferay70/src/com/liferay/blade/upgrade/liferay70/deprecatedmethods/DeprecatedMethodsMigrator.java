@@ -1,5 +1,6 @@
 package com.liferay.blade.upgrade.liferay70.deprecatedmethods;
 
+import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.api.JavaFile;
 import com.liferay.blade.api.Problem;
 import com.liferay.blade.api.SearchResult;
@@ -15,7 +16,15 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.Path;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.osgi.service.component.annotations.Component;
 
+@Component(
+		property = {
+			"file.extensions=java,jsp,jspf",
+			"implName=DeprecatedMethodsInvocation"
+		},
+		service = FileMigrator.class
+	)
 public class DeprecatedMethodsMigrator extends JavaFileMigrator {
 
 	private static JSONObject tempMethod = null;

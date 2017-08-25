@@ -42,7 +42,7 @@ public class DeprecatedMethodsTest {
 			m.findProblems(new File("projects/deprecated-methods-test"), 
 				new NullProgressMonitor());
 
-		assertEquals(59, problems.size());
+		assertEquals(131, problems.size());
 	}
 
 	private final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
