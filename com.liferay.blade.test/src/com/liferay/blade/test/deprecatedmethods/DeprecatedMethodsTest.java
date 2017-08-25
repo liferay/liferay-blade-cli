@@ -38,11 +38,11 @@ public class DeprecatedMethodsTest {
 
 		Migration m = context.getService(sr);
 
-		List<Problem> problems61 = 
+		List<Problem> problems = 
 			m.findProblems(new File("projects/deprecated-methods-test"), 
 				new NullProgressMonitor());
 
-		assertEquals(8, problems61.size());
+		assertEquals(59, problems.size());
 	}
 
 	private final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
