@@ -35,7 +35,7 @@ import org.osgi.service.component.annotations.Component;
 	},
 	service = CUCache.class
 )
-public class CUCacheJDT implements CUCache<CompilationUnit> {
+public class CUCacheJDT extends BaseCUCache implements CUCache<CompilationUnit> {
 
 	private static final Map<File, WeakReference<CompilationUnit>> _map = new WeakHashMap<>();
 

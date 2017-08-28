@@ -28,7 +28,9 @@
 	org.parboiled.java,\
 	org.pegdown,\
 	osgi.cmpn,\
-	osgi.core
+	osgi.core,\
+	json,\
+	org.apache.commons.io
 
 -testpath: \
 	biz.aQute.junit
@@ -52,7 +54,9 @@ Private-Package: \
 	org.jsoup.*,\
 	org.objectweb.asm.*,\
 	org.parboiled.*;-split-package:=merge-first,\
-	org.pegdown.*;-split-package:=merge-first
+	org.pegdown.*;-split-package:=merge-first,\
+	org.json.*;-split-package:=merge-first,\
+	org.apache.commons.*;-split-package:=merge-first
 
 Include-Resource: \
 	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/StringBundler.class,\

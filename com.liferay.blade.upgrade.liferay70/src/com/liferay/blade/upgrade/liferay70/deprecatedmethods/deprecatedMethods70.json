@@ -1,0 +1,1593 @@
+[
+	{
+		"packageName": "package com.liferay.portal.model;\n",
+		"className": "GroupWrapper",
+		"deprecatedVersion": "7.0",
+		"methodName": "getChildrenWithLayouts",
+		"parameters": [
+			"boolean",
+			"int",
+			"int"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t#getChildrenWithLayouts(boolean, int, int, OrderByComparator}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.model;\n",
+		"className": "GroupWrapper",
+		"deprecatedVersion": "7.0",
+		"methodName": "isChild",
+		"parameters": [
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #hasAncestor}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.model;\n",
+		"className": "Group",
+		"deprecatedVersion": "7.0",
+		"methodName": "getChildrenWithLayouts",
+		"parameters": [
+			"boolean",
+			"int",
+			"int"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t#getChildrenWithLayouts(boolean, int, int, OrderByComparator}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.model;\n",
+		"className": "Group",
+		"deprecatedVersion": "7.0",
+		"methodName": "isChild",
+		"parameters": [
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #hasAncestor}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.servlet;\n",
+		"className": "MetaInfoCacheServletResponse",
+		"deprecatedVersion": "7.0",
+		"methodName": "finishResponse",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #finishResponse(boolean)}}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "BaseIndexer",
+		"deprecatedVersion": "7.0",
+		"methodName": "filterSearch",
+		"parameters": [
+			"Hits",
+			"PermissionChecker",
+			"SearchContext"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "SearchEngineUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "addDocument",
+		"parameters": [
+			"String",
+			"long",
+			"Document"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #addDocument(String,long,Document,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "SearchEngineUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "addDocuments",
+		"parameters": [
+			"String",
+			"long",
+			"Collection<Document>"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #addDocuments(String,long,Collection,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "SearchEngineUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "deleteDocument",
+		"parameters": [
+			"String",
+			"long",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deleteDocument(String,long,String,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "SearchEngineUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "deleteDocuments",
+		"parameters": [
+			"String",
+			"long",
+			"Collection<String>"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deleteDocuments(String,long,Collection,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "SearchEngineUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "deletePortletDocuments",
+		"parameters": [
+			"String",
+			"long",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deletePortletDocuments(String,long,String,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "SearchEngineUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "updateDocument",
+		"parameters": [
+			"String",
+			"long",
+			"Document"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #updateDocument(String,long,Document,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "SearchEngineUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "updateDocuments",
+		"parameters": [
+			"String",
+			"long",
+			"Collection<Document>"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #updateDocuments(String,long,Collection,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "DocumentImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "addNumber",
+		"parameters": [
+			"String",
+			"String",
+			"Class<?"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.search;\n",
+		"className": "DocumentImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "addNumber",
+		"parameters": [
+			"String",
+			"String[]",
+			"Class<?"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.staging;\n",
+		"className": "Staging",
+		"deprecatedVersion": "7.0",
+		"methodName": "checkDefaultLayoutSetBranches",
+		"parameters": [
+			"long",
+			"Group",
+			"boolean",
+			"boolean",
+			"boolean",
+			"ServiceContext"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             com.liferay.portal.service.StagingLocalServiceUtil#\n\t *             checkDefaultLayoutSetBranches(long, Group, boolean, boolean,\n\t *             boolean, ServiceContext))}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.staging;\n",
+		"className": "Staging",
+		"deprecatedVersion": "7.0",
+		"methodName": "deleteRecentLayoutRevisionId",
+		"parameters": [
+			"User",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deleteRecentLayoutRevisionId(long,long,long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.staging;\n",
+		"className": "StagingUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "checkDefaultLayoutSetBranches",
+		"parameters": [
+			"long",
+			"Group",
+			"boolean",
+			"boolean",
+			"boolean",
+			"ServiceContext"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             com.liferay.portal.service.StagingLocalServiceUtil#\n\t *             checkDefaultLayoutSetBranches(long, Group, boolean, boolean,\n\t *             boolean, ServiceContext))}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.staging;\n",
+		"className": "StagingUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "deleteRecentLayoutRevisionId",
+		"parameters": [
+			"User",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deleteRecentLayoutRevisionId(long,long,long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.scheduler;\n",
+		"className": "SchedulerEntry",
+		"deprecatedVersion": "7.0",
+		"methodName": "getEventListener",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.scheduler;\n",
+		"className": "SchedulerEntry",
+		"deprecatedVersion": "7.0",
+		"methodName": "setEventListener",
+		"parameters": [
+			"MessageListener"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.scheduler;\n",
+		"className": "SchedulerEntryImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getEventListener",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.scheduler;\n",
+		"className": "SchedulerEntryImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "setEventListener",
+		"parameters": [
+			"MessageListener"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "SystemProperties",
+		"deprecatedVersion": "7.0",
+		"methodName": "getArray",
+		"parameters": [
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "SystemProperties",
+		"deprecatedVersion": "7.0",
+		"methodName": "reload",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "UnicodeProperties",
+		"deprecatedVersion": "7.0",
+		"methodName": "toSortedString",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #toString}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "TimeZoneComparator",
+		"deprecatedVersion": "7.0",
+		"methodName": "TimeZoneComparator",
+		"parameters": [
+			"Locale"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #TimeZoneComparator()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "TreePathUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "rebuildTree",
+		"parameters": [
+			"long",
+			"long",
+			"TreeModelFinder<?>"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #rebuildTree(long, long,\n\t *             String, TreeModelFinder<?>)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "TreePathUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "rebuildTree",
+		"parameters": [
+			"Session",
+			"long",
+			"String",
+			"String",
+			"String",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "TreePathUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "rebuildTree",
+		"parameters": [
+			"Session",
+			"long",
+			"String",
+			"String",
+			"String",
+			"boolean",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "Html",
+		"deprecatedVersion": "7.0",
+		"methodName": "replaceMsWordCharacters",
+		"parameters": [
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataHandlerStatusMessageSenderUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "sendStatusMessage",
+		"parameters": [
+			"String",
+			"ManifestSummary"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #sendStatusMessage(String,String[],ManifestSummary)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataHandlerStatusMessageSender",
+		"deprecatedVersion": "7.0",
+		"methodName": "sendStatusMessage",
+		"parameters": [
+			"String",
+			"ManifestSummary"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #sendStatusMessage(String,String[],ManifestSummary)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataContext",
+		"deprecatedVersion": "7.0",
+		"methodName": "addReferenceElement",
+		"parameters": [
+			"ClassedModel",
+			"Element",
+			"ClassedModel",
+			"Class<?>",
+			"String",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataContext",
+		"deprecatedVersion": "7.0",
+		"methodName": "getAssetCategoryIdsMap",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataContext",
+		"deprecatedVersion": "7.0",
+		"methodName": "getExportDataElement",
+		"parameters": [
+			"ClassedModel",
+			"Class<?>"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getExportDataElement(ClassedModel,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataContext",
+		"deprecatedVersion": "7.0",
+		"methodName": "getOldPlid",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataContext",
+		"deprecatedVersion": "7.0",
+		"methodName": "getReferenceDataElements",
+		"parameters": [
+			"Element",
+			"Class<?>"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataContext",
+		"deprecatedVersion": "7.0",
+		"methodName": "getScopedPrimaryKeys",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataContext",
+		"deprecatedVersion": "7.0",
+		"methodName": "getZipEntries",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataContext",
+		"deprecatedVersion": "7.0",
+		"methodName": "getZipFolderEntries",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "PortletDataContext",
+		"deprecatedVersion": "7.0",
+		"methodName": "isPathNotExportedInScope",
+		"parameters": [
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "StagedModelDataHandlerUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "exportReferenceStagedModel",
+		"parameters": [
+			"PortletDataContext",
+			"T",
+			"Class<?>",
+			"U",
+			"Class<?>",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #exportReferenceStagedModel(PortletDataContext,StagedModel,StagedModel,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.lar;\n",
+		"className": "StagedModelDataHandlerUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "exportReferenceStagedModel",
+		"parameters": [
+			"PortletDataContext",
+			"T",
+			"Element",
+			"U",
+			"Class<?>",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #exportReferenceStagedModel(PortletDataContext,StagedModel,StagedModel,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionThreadLocal",
+		"deprecatedVersion": "7.0",
+		"methodName": "isFlushEnabled",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #isFlushResourceBlockEnabled(long,long,String)} and{@link #isFlushResourcePermissionEnabled(String,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionThreadLocal",
+		"deprecatedVersion": "7.0",
+		"methodName": "setIndexEnabled",
+		"parameters": [
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #setFlushResourceBlockEnabled(long,long,String,boolean)}and  {@link #setFlushResourcePermissionEnabled(String,String,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBag",
+		"deprecatedVersion": "7.0",
+		"methodName": "getGroups",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBag#getGroups()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBag",
+		"deprecatedVersion": "7.0",
+		"methodName": "getUserGroups",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBag#getUserGroups()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBag",
+		"deprecatedVersion": "7.0",
+		"methodName": "getUserOrgGroups",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBag#getUserOrgGroups()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBag",
+		"deprecatedVersion": "7.0",
+		"methodName": "getUserOrgs",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBag#getUserOrgs()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBag",
+		"deprecatedVersion": "7.0",
+		"methodName": "getUserUserGroupGroups",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBag#getUserUserGroupGroups()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.util;\n",
+		"className": "PortalUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "getComputerAddress",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getComputerAddresses()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.util;\n",
+		"className": "Portal",
+		"deprecatedVersion": "7.0",
+		"methodName": "getComputerAddress",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getComputerAddresses()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.service;\n",
+		"className": "JournalFolderServiceUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"java.util.List<java.lang.Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.service;\n",
+		"className": "JournalFolderServiceWrapper",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"java.util.List<java.lang.Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.service;\n",
+		"className": "JournalFolderService",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"java.util.List<java.lang.Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.bookmarks.service;\n",
+		"className": "BookmarksFolderService",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"java.util.List<java.lang.Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.bookmarks.service;\n",
+		"className": "BookmarksFolderServiceWrapper",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"java.util.List<java.lang.Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.bookmarks.service;\n",
+		"className": "BookmarksFolderServiceUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"java.util.List<java.lang.Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.trash.util;\n",
+		"className": "TrashUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "addBaseModelBreadcrumbEntries",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long",
+			"PortletURL"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             #addBaseModelBreadcrumbEntries(HttpServletRequest,\n\t *             LiferayPortletResponse, String, long, PortletURL}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.trash.util;\n",
+		"className": "TrashUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "addContainerModelBreadcrumbEntries",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long",
+			"PortletURL"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             #addContainerModelBreadcrumbEntries(HttpServletRequest,\n\t *             LiferayPortletResponse, String, long, PortletURL}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.trash.util;\n",
+		"className": "Trash",
+		"deprecatedVersion": "7.0",
+		"methodName": "addBaseModelBreadcrumbEntries",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long",
+			"PortletURL"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             #addBaseModelBreadcrumbEntries(HttpServletRequest,\n\t *             LiferayPortletResponse, String, long, PortletURL}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.trash.util;\n",
+		"className": "Trash",
+		"deprecatedVersion": "7.0",
+		"methodName": "addContainerModelBreadcrumbEntries",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long",
+			"PortletURL"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             #addContainerModelBreadcrumbEntries(HttpServletRequest,\n\t *             LiferayPortletResponse, String, long, PortletURL}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.dynamicdatalists.util;\n",
+		"className": "DDL",
+		"deprecatedVersion": "7.0",
+		"methodName": "isEditable",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.dynamicdatalists.util;\n",
+		"className": "DDL",
+		"deprecatedVersion": "7.0",
+		"methodName": "isEditable",
+		"parameters": [
+			"PortletPreferences",
+			"String",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.dynamicdatalists.util;\n",
+		"className": "DDLUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "isEditable",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.dynamicdatalists.util;\n",
+		"className": "DDLUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "isEditable",
+		"parameters": [
+			"PortletPreferences",
+			"String",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary;\n",
+		"className": "InvalidFolderException",
+		"deprecatedVersion": "7.0",
+		"methodName": "InvalidFolderException",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #InvalidFolderException(int,long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary;\n",
+		"className": "InvalidFolderException",
+		"deprecatedVersion": "7.0",
+		"methodName": "InvalidFolderException",
+		"parameters": [
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #InvalidFolderException(int,long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary;\n",
+		"className": "InvalidFolderException",
+		"deprecatedVersion": "7.0",
+		"methodName": "InvalidFolderException",
+		"parameters": [
+			"String",
+			"Throwable"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #InvalidFolderException(int,long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary;\n",
+		"className": "InvalidFolderException",
+		"deprecatedVersion": "7.0",
+		"methodName": "InvalidFolderException",
+		"parameters": [
+			"Throwable"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #InvalidFolderException(int,long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFolderServiceUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"java.util.List<java.lang.Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFolderLocalServiceWrapper",
+		"deprecatedVersion": "7.0",
+		"methodName": "deleteAll",
+		"parameters": [
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deleteAllByGroup(long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFolderLocalServiceUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "deleteAll",
+		"parameters": [
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deleteAllByGroup(long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFolderService",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"java.util.List<java.lang.Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFolderLocalService",
+		"deprecatedVersion": "7.0",
+		"methodName": "deleteAll",
+		"parameters": [
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deleteAllByGroup(long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFileEntryLocalServiceWrapper",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"java.lang.String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFileEntryLocalServiceWrapper",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"java.lang.String",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFileEntryLocalServiceWrapper",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"java.lang.String",
+			"boolean",
+			"int"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String,boolean,int)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFileEntryLocalServiceUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"java.lang.String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFileEntryLocalServiceUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"java.lang.String",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFileEntryLocalServiceUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"java.lang.String",
+			"boolean",
+			"int"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String,boolean,int)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFolderServiceWrapper",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"java.util.List<java.lang.Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFileEntryLocalService",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"java.lang.String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFileEntryLocalService",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"java.lang.String",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service;\n",
+		"className": "DLFileEntryLocalService",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"java.lang.String",
+			"boolean",
+			"int"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String,boolean,int)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.model.impl;\n",
+		"className": "GroupImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getChildrenWithLayouts",
+		"parameters": [
+			"boolean",
+			"int",
+			"int"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             #getChildrenWithLayouts(boolean, int, int, OrderByComparator}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.model.impl;\n",
+		"className": "GroupImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "isChild",
+		"parameters": [
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #hasAncestor}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.events;\n",
+		"className": "AddDefaultDocumentLibraryStructuresAction",
+		"deprecatedVersion": "7.0",
+		"methodName": "addDLFileEntryType",
+		"parameters": [
+			"long",
+			"long",
+			"String",
+			"List<String>",
+			"ServiceContext"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #addDLFileEntryType(long,long,String,String,List,ServiceContext)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.events;\n",
+		"className": "AddDefaultDocumentLibraryStructuresAction",
+		"deprecatedVersion": "7.0",
+		"methodName": "getLocalizationMap",
+		"parameters": [
+			"String",
+			"Locale"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getLocalizationMap(String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.servlet.filters.gzip;\n",
+		"className": "GZipResponse",
+		"deprecatedVersion": "7.0",
+		"methodName": "finishResponse",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #finishResponse(boolean)}}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.search.lucene;\n",
+		"className": "LuceneHelper",
+		"deprecatedVersion": "7.0",
+		"methodName": "cleanUp",
+		"parameters": [
+			"IndexSearcher"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #releaseIndexSearcher(long,IndexSearcher)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.search.lucene;\n",
+		"className": "LuceneHelper",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSearcher",
+		"parameters": [
+			"long",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getIndexSearcher(long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.search.lucene;\n",
+		"className": "LuceneHelperUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "cleanUp",
+		"parameters": [
+			"IndexSearcher"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #releaseIndexSearcher(long,IndexSearcher)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.search.lucene;\n",
+		"className": "LuceneHelperUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSearcher",
+		"parameters": [
+			"long",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getIndexSearcher(long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.search.lucene;\n",
+		"className": "LuceneHelperImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "cleanUp",
+		"parameters": [
+			"IndexSearcher"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #releaseIndexSearcher(long,IndexSearcher)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.search.lucene;\n",
+		"className": "LuceneHelperImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSearcher",
+		"parameters": [
+			"long",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getIndexSearcher(long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBagImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getGroups",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBagImpl#getGroups()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBagImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getUserGroups",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBagImpl#getUserGroups()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBagImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getUserOrgGroups",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBagImpl#getUserOrgGroups()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBagImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getUserOrgs",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBagImpl#getUserOrgs()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.security.permission;\n",
+		"className": "PermissionCheckerBagImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getUserUserGroupGroups",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link UserPermissionCheckerBagImpl#getUserUserGroupGroups()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.staging;\n",
+		"className": "StagingImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "checkDefaultLayoutSetBranches",
+		"parameters": [
+			"long",
+			"Group",
+			"boolean",
+			"boolean",
+			"boolean",
+			"ServiceContext"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link StagingLocalServiceUtil#\n\t *             checkDefaultLayoutSetBranches(long, Group, boolean, boolean,\n\t *             boolean, ServiceContext))}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.staging;\n",
+		"className": "StagingImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "deleteRecentLayoutRevisionId",
+		"parameters": [
+			"User",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deleteRecentLayoutRevisionId(long,long,long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.upload;\n",
+		"className": "UploadPortletRequestImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "UploadPortletRequestImpl",
+		"parameters": [
+			"UploadServletRequest",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #UploadPortletRequestImpl(UploadServletRequest,PortletRequest,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.util;\n",
+		"className": "PortalImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getComputerAddress",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getComputerAddresses()}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataContextImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "addReferenceElement",
+		"parameters": [
+			"ClassedModel",
+			"Element",
+			"ClassedModel",
+			"Class<?>",
+			"String",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataContextImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getAssetCategoryIdsMap",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataContextImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getExportDataElement",
+		"parameters": [
+			"ClassedModel",
+			"Class<?>"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getExportDataElement(ClassedModel,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataContextImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getOldPlid",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataContextImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getReferenceDataElements",
+		"parameters": [
+			"Element",
+			"Class<?>"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataContextImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getScopedPrimaryKeys",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataContextImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getZipEntries",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataContextImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getZipFolderEntries",
+		"parameters": [],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataContextImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "isPathNotExportedInScope",
+		"parameters": [
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.lar;\n",
+		"className": "PortletDataHandlerStatusMessageSenderImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "sendStatusMessage",
+		"parameters": [
+			"String",
+			"ManifestSummary"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #sendStatusMessage(String,String[],ManifestSummary)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.service.impl;\n",
+		"className": "JournalFolderServiceImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"List<Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.service.http;\n",
+		"className": "JournalFolderServiceSoap",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"Long[]",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.service.persistence;\n",
+		"className": "JournalArticleFinderImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "countByG_U_F_C",
+		"parameters": [
+			"long",
+			"long",
+			"List<Long>",
+			"long",
+			"QueryDefinition"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #countByG_F_C(long,List,long,QueryDefinition)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.service.persistence;\n",
+		"className": "JournalArticleFinderImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "filterCountByG_U_F_C",
+		"parameters": [
+			"long",
+			"long",
+			"List<Long>",
+			"long",
+			"QueryDefinition"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #filterCountByG_F_C(long,List,long,QueryDefinition)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.service.persistence;\n",
+		"className": "JournalArticleFinderImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "filterFindByG_U_F_C",
+		"parameters": [
+			"long",
+			"long",
+			"List<Long>",
+			"long",
+			"QueryDefinition"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #filterFindByG_F_C(long,List,long,QueryDefinition)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.service.persistence;\n",
+		"className": "JournalArticleFinderImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "findByG_U_F_C",
+		"parameters": [
+			"long",
+			"long",
+			"List<Long>",
+			"long",
+			"QueryDefinition"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #findByG_F_C(long,List,long,QueryDefinition)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.journal.lar;\n",
+		"className": "JournalPortletDataHandler",
+		"deprecatedVersion": "7.0",
+		"methodName": "getDDMTemplateActionableDynamicQuery",
+		"parameters": [
+			"final"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getDDMTemplateActionableDynamicQuery(PortletDataContext,List,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.bookmarks.service.impl;\n",
+		"className": "BookmarksFolderServiceImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"List<Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.bookmarks.service.http;\n",
+		"className": "BookmarksFolderServiceSoap",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"Long[]",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.trash.util;\n",
+		"className": "TrashImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "addBaseModelBreadcrumbEntries",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long",
+			"PortletURL"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             #addBaseModelBreadcrumbEntries(HttpServletRequest,\n\t *             LiferayPortletResponse, String, long, PortletURL}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.trash.util;\n",
+		"className": "TrashImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "addContainerModelBreadcrumbEntries",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long",
+			"PortletURL"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             #addContainerModelBreadcrumbEntries(HttpServletRequest,\n\t *             LiferayPortletResponse, String, long, PortletURL}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.trash.util;\n",
+		"className": "TrashImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "addBreadcrumbEntries",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long",
+			"String",
+			"PortletURL"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link\n\t *             #addBreadcrumbEntries(HttpServletRequest,\n\t *             LiferayPortletResponse, String, long, String, PortletURL}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.dynamicdatalists.util;\n",
+		"className": "DDLImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "isEditable",
+		"parameters": [
+			"HttpServletRequest",
+			"String",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.dynamicdatalists.util;\n",
+		"className": "DDLImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "isEditable",
+		"parameters": [
+			"PortletPreferences",
+			"String",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service.impl;\n",
+		"className": "DLFileEntryLocalServiceImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service.impl;\n",
+		"className": "DLFileEntryLocalServiceImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"String",
+			"boolean"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service.impl;\n",
+		"className": "DLFileEntryLocalServiceImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileAsStream",
+		"parameters": [
+			"long",
+			"long",
+			"String",
+			"boolean",
+			"int"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getFileAsStream(long,String,boolean,int)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service.impl;\n",
+		"className": "DLFileEntryLocalServiceImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getFileEntriesCount",
+		"parameters": [
+			"long",
+			"DateRange",
+			"long",
+			"QueryDefinition"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service.impl;\n",
+		"className": "DLFolderServiceImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"List<Long>",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service.impl;\n",
+		"className": "DLFolderLocalServiceImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "deleteAll",
+		"parameters": [
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #deleteAllByGroup(long)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service.http;\n",
+		"className": "DLFolderServiceSoap",
+		"deprecatedVersion": "7.0",
+		"methodName": "getSubfolderIds",
+		"parameters": [
+			"Long[]",
+			"long",
+			"long"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, replaced by {@link #getSubfolderIds(List,long,long,boolean)}\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet.documentlibrary.service.persistence;\n",
+		"className": "DLFileEntryFinderImpl",
+		"deprecatedVersion": "7.0",
+		"methodName": "countByG_M_R",
+		"parameters": [
+			"long",
+			"DateRange",
+			"long",
+			"QueryDefinition"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0, with no direct replacement\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.service;\n",
+		"className": "ServiceTestUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "addResourcePermission",
+		"parameters": [
+			"Role",
+			"String",
+			"int",
+			"String",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.service;\n",
+		"className": "ServiceTestUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "addResourcePermission",
+		"parameters": [
+			"String",
+			"String",
+			"int",
+			"String",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.service;\n",
+		"className": "ServiceTestUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "addRole",
+		"parameters": [
+			"String",
+			"int"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.service;\n",
+		"className": "ServiceTestUtil",
+		"deprecatedVersion": "7.0",
+		"methodName": "addRole",
+		"parameters": [
+			"String",
+			"int",
+			"String",
+			"int",
+			"String",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated As of 7.0.0\n */\n"
+	}
+]

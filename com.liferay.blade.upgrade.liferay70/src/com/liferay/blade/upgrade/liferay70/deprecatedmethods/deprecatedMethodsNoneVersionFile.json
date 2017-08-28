@@ -1,0 +1,57 @@
+[
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "Validator_IW",
+		"deprecatedVersion": "none",
+		"methodName": "isNotNull",
+		"parameters": [
+			"java.lang.Object[]"
+		],
+		"javadoc": "/** \n * @deprecated\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "Validator_IW",
+		"deprecatedVersion": "none",
+		"methodName": "isNull",
+		"parameters": [
+			"java.lang.Object[]"
+		],
+		"javadoc": "/** \n * @deprecated\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "StringUtil_IW",
+		"deprecatedVersion": "none",
+		"methodName": "highlight",
+		"parameters": [
+			"java.lang.String",
+			"java.lang.String"
+		],
+		"javadoc": "/** \n * @deprecated\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portal.kernel.util;\n",
+		"className": "StringUtil_IW",
+		"deprecatedVersion": "none",
+		"methodName": "highlight",
+		"parameters": [
+			"java.lang.String",
+			"java.lang.String",
+			"java.lang.String",
+			"java.lang.String"
+		],
+		"javadoc": "/** \n * @deprecated\n */\n"
+	},
+	{
+		"packageName": "package com.liferay.portlet;\n",
+		"className": "PortletPreferencesWrapper",
+		"deprecatedVersion": "none",
+		"methodName": "PortletPreferencesWrapper",
+		"parameters": [
+			"PortletPreferences",
+			"String"
+		],
+		"javadoc": "/** \n * @deprecated\n */\n"
+	}
+]

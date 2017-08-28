@@ -603,10 +603,7 @@ public class JavaFileJDT extends WorkspaceFile implements JavaFile {
 		else if (paramType.equals("null")) {
 			match = true;
 		}
-		else if (expectType.contains(".") && !paramType.contains(".") && expectType.endsWith(paramType)) {
-			match = true;
-		}
-		else if (!expectType.contains(".") && paramType.contains(".") && paramType.endsWith(expectType)) {
+		else if (expectType.endsWith(paramType) || paramType.endsWith(expectType)) {
 			match = true;
 		}
 		else if (expectType.endsWith("Object[]") && paramType.endsWith("[]")) {
