@@ -77,7 +77,7 @@ public abstract class PropertiesFileMigrator implements FileMigrator {
 						_problemType, _problemTickets, file,
 						searchResult.startLine, searchResult.startOffset,
 						searchResult.endOffset, sectionHtml, searchResult.autoCorrectContext,
-						Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID));
+						Problem.STATUS_NOT_RESOLVED, Problem.DEFAULT_MARKER_ID, Problem.MARKER_ERROR));
 				}
 			}
 		}

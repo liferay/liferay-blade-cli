@@ -9,7 +9,7 @@
 			"int",
 			"int"
 		],
-		"javadoc": "@deprecated As of 7.0.0, replaced by {@link\n\t#getChildrenWithLayouts(boolean, int, int, OrderByComparator}"
+		"javadoc": "@deprecated As of 7.0.0, replaced by {#getChildrenWithLayouts(boolean, int, int, OrderByComparator}"
 	},
 	{
 		"packageName": "com.liferay.portal.model",
@@ -31,7 +31,7 @@
 			"int",
 			"int"
 		],
-		"javadoc": "@deprecated As of 7.0.0, replaced by {@link\n\t#getChildrenWithLayouts(boolean, int, int, OrderByComparator}"
+		"javadoc": "@deprecated As of 7.0.0, replaced by {#getChildrenWithLayouts(boolean, int, int, OrderByComparator}"
 	},
 	{
 		"packageName": "com.liferay.portal.model",
