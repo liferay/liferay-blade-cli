@@ -25,6 +25,8 @@ public class Problem {
 	public static final int STATUS_RESOLVED = 1;
 	public static final int STATUS_IGNORE = 2;
 	public static final long DEFAULT_MARKER_ID = -1;
+	public static final int MARKER_WARNING = 1;
+	public static final int MARKER_ERROR = 2;
 
 	public Problem() {
 	}
@@ -32,17 +34,17 @@ public class Problem {
 	public Problem( String title, String summary, String type,
 			String ticket, File file,
 			int lineNumber, int startOffset, int endOffset,
-			String html, String autoCorrectContext, int status, long markerId) {
+			String html, String autoCorrectContext, int status, long markerId, int markerType ) {
 
 		this( UUID.randomUUID().toString(), title, summary, type, ticket, file,
 				lineNumber, startOffset, endOffset, html, autoCorrectContext,
-				status, markerId );
+				status, markerId, markerType );
 	}
 
 	public Problem( String uuid, String title, String summary, String type,
 			String ticket, File file,
 			int lineNumber, int startOffset, int endOffset,
-			String html, String autoCorrectContext, int status, long markerId) {
+			String html, String autoCorrectContext, int status, long markerId, int markerType) {
 
 		this.uuid = uuid;
 		this.title = title;
@@ -57,6 +59,7 @@ public class Problem {
 		this.autoCorrectContext = autoCorrectContext;
 		this.status = status;
 		this.markerId = markerId;
+		this.markerType = markerType;
 	}
 
 	public String uuid;
@@ -73,6 +76,7 @@ public class Problem {
 	public String autoCorrectContext;
 	public int status;
 	public long markerId;
+	public int markerType;
 
 	public String getUuid() {
         return uuid;
@@ -178,6 +182,14 @@ public class Problem {
 		this.markerId = markerId;
 	}
 
+	public int getMarkerType(){
+		return markerType;
+	}
+
+	public void setMarkerType(int markerType) {
+		this.markerType = markerType;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -230,6 +242,8 @@ public class Problem {
 		if (status != other.status)
 			return false;
 		if (markerId != other.markerId)
+			return false;
+		if(markerType != other.markerType)
 			return false;
 
 		return true;
