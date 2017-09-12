@@ -42,7 +42,7 @@ public class AssetPreviewTagsTest {
 
 		List<Problem> problems = m.findProblems(new File("jsptests/asset-preview/"), new NullProgressMonitor());
 
-		assertEquals(2, problems.size());
+		assertEquals(1, problems.size());
 
 		boolean found = false;
 
