@@ -155,7 +155,7 @@
 		"parameters": [
 			"String",
 			"String",
-			"Class<?"
+			"Class<?>"
 		],
 		"javadoc": "@deprecated As of 7.0.0"
 	},
@@ -167,7 +167,7 @@
 		"parameters": [
 			"String",
 			"String[]",
-			"Class<?"
+			"Class<?>"
 		],
 		"javadoc": "@deprecated As of 7.0.0"
 	},

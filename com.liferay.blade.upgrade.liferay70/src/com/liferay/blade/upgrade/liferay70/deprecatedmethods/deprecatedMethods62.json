@@ -803,26 +803,6 @@
 	},
 	{
 		"packageName": "com.liferay.portal.kernel.util",
-		"className": "Validator",
-		"deprecatedVersion": "6.2",
-		"methodName": "isNotNull",
-		"parameters": [
-			"Object[]"
-		],
-		"javadoc": "@deprecated As of 6.2.0, replaced by {ArrayUtil#isNotEmpty(Object[])}"
-	},
-	{
-		"packageName": "com.liferay.portal.kernel.util",
-		"className": "Validator",
-		"deprecatedVersion": "6.2",
-		"methodName": "isNull",
-		"parameters": [
-			"Object[]"
-		],
-		"javadoc": "@deprecated As of 6.2.0, replaced by {ArrayUtil#isEmpty(Object[])}"
-	},
-	{
-		"packageName": "com.liferay.portal.kernel.util",
 		"className": "FriendlyURLNormalizer",
 		"deprecatedVersion": "6.2",
 		"methodName": "normalize",
@@ -840,7 +820,7 @@
 		"parameters": [
 			"String",
 			"String",
-			"Class<?>..."
+			"Class<?>"
 		],
 		"javadoc": "@deprecated As of 6.2.0, replaced by {#MethodKey(Class,String,Class)}"
 	},
