@@ -17,7 +17,6 @@
 package com.liferay.blade.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import com.liferay.blade.api.Migration;
 import com.liferay.blade.api.Problem;
@@ -31,35 +30,19 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-public class InitJSPParseTest {
+public class TrashEmptyTagsTest {
 
 	@Test
-	public void initParseErrorCheck() throws Exception {
-		ServiceReference<Migration> sr = context
-				.getServiceReference(Migration.class);
+	public void findProblems() throws Exception {
+		ServiceReference<Migration> sr = context.getServiceReference(Migration.class);
 
 		Migration m = context.getService(sr);
 
-		List<Problem> problems = m.findProblems(new File("jsptests/jukebox-portlet/"), new NullProgressMonitor());
+		List<Problem> problems = m.findProblems(new File("jsptests/liferay-ui-trash-empty/"), new NullProgressMonitor());
 
-		assertEquals(399, problems.size());
-
-		boolean found = false;
-
-		for (Problem problem : problems) {
-			if (problem.file.getName().endsWith("view_search.jsp")) {
-				if (problem.lineNumber == 109 && problem.startOffset == 3718 && problem.endOffset == 3746) {
-					found = true;
-				}
-			}
-		}
-
-		if (!found) {
-			fail();
-		}
+		assertEquals(1, problems.size());
 	}
 
-	private final BundleContext context = FrameworkUtil.getBundle(
-		this.getClass()).getBundleContext();
+	private final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 
 }
