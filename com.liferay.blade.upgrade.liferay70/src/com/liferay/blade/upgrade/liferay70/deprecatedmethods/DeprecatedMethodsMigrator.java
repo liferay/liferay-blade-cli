@@ -71,7 +71,6 @@ public class DeprecatedMethodsMigrator extends JavaFileMigrator {
 		String[] jsonFilePaths = new String[] {
 			fqn + "deprecatedMethods62.json",
 			fqn + "deprecatedMethods61.json",
-			fqn + "deprecatedMethods70.json",
 			fqn + "deprecatedMethodsNoneVersionFile.json"
 		};
 		
