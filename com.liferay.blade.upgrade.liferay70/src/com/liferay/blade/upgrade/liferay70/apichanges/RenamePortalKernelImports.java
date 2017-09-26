@@ -98,10 +98,10 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 	// };
 
 	public RenamePortalKernelImports() {
-		super(new String[0], new String[0]);
+		super(getImports());
 	}
 
-	public Map<String, String> getImports() {
+	private static Map<String, String> getImports() {
 		PackageRenameHelper helper = new PackageRenameHelper();
 		Map<String, String> imports = new HashMap<String, String>();
 

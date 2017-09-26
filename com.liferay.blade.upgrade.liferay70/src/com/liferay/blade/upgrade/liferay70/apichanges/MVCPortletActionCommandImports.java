@@ -20,6 +20,9 @@ import com.liferay.blade.api.AutoMigrator;
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.upgrade.liferay70.ImportStatementMigrator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.osgi.service.component.annotations.Component;
 
 @Component(
@@ -51,8 +54,17 @@ public class MVCPortletActionCommandImports extends ImportStatementMigrator {
 			"com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet"
 	};
 
+	private final static Map<String, String> importFixes;
+
+	static {
+		importFixes = new HashMap<>();
+
+		for (int i = 0; i < IMPORTS.length; i++) {
+			importFixes.put(IMPORTS[i], IMPORTS_FIXED[i]);
+		}
+	}
 	public MVCPortletActionCommandImports() {
-		super(IMPORTS, IMPORTS_FIXED);
+		super(importFixes);
 	}
 
 }

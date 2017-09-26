@@ -20,6 +20,9 @@ import com.liferay.blade.api.AutoMigrator;
 import com.liferay.blade.api.FileMigrator;
 import com.liferay.blade.upgrade.liferay70.ImportStatementMigrator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.osgi.service.component.annotations.Component;
 
 @Component(
@@ -1443,8 +1446,18 @@ public class PortalServiceImports extends ImportStatementMigrator {
 		"com.liferay.wiki.model.WikiPageWrapper"
 	};
 
+	private final static Map<String, String> importFixes;
+
+	static {
+		importFixes = new HashMap<>();
+
+		for (int i = 0; i < IMPORTS.length; i++) {
+			importFixes.put(IMPORTS[i], IMPORTS_FIXED[i]);
+		}
+	}
+
 	public PortalServiceImports() {
-		super(IMPORTS, IMPORTS_FIXED);
+		super(importFixes);
 	}
 
 }
