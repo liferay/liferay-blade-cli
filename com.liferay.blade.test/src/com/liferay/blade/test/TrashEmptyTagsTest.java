@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.test.deprecatedmethods;
+package com.liferay.blade.test;
+
+import static org.junit.Assert.assertEquals;
 
 import com.liferay.blade.api.Migration;
 import com.liferay.blade.api.Problem;
@@ -23,14 +25,12 @@ import com.liferay.blade.util.NullProgressMonitor;
 import java.io.File;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-public class DeprecatedMethodsTest {
+public class TrashEmptyTagsTest {
 
 	@Test
 	public void findProblems() throws Exception {
@@ -38,11 +38,9 @@ public class DeprecatedMethodsTest {
 
 		Migration m = context.getService(sr);
 
-		List<Problem> problems = 
-			m.findProblems(new File("projects/deprecated-methods-test"), 
-				new NullProgressMonitor());
+		List<Problem> problems = m.findProblems(new File("jsptests/liferay-ui-trash-empty/"), new NullProgressMonitor());
 
-		assertEquals(125, problems.size());
+		assertEquals(1, problems.size());
 	}
 
 	private final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
