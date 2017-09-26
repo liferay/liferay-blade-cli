@@ -72,11 +72,6 @@ public class RenamePortalKernelImportAutoCorrectTest {
 		problems = migrator.analyze(dest);
 
 		assertEquals(0, problems.size());
-
-		// Wrong? import should be "java.io.File" or "java.io.*" but couldn't be "java.io"
-		// String contents = new String(IO.read(dest));
-
-		// assertTrue(contents.contains("import com.liferay.portal.kernel.portlet;"));
 	}
 
 	private final BundleContext context = FrameworkUtil.getBundle(

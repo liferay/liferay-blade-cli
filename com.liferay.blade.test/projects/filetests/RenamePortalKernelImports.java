@@ -2,8 +2,6 @@ package com.test;
 
 import com.liferay.portal.model.Role;
 import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
-// Wrong import? I didn't find this class under this package in 6.2.x source code, there is "RoleLocalServiceUtil" but in another package.
-import com.liferay.portal.service.http.RoleLocalServiceUtil;
 import com.liferay.portlet.PortletURLFactoryUtil;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.asset.model.BaseAssetRenderer;
