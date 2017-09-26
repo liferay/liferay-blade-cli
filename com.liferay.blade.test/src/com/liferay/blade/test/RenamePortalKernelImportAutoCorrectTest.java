@@ -59,11 +59,11 @@ public class RenamePortalKernelImportAutoCorrectTest {
 			}
 		}
 
-		assertEquals(11, problems.size());
+		assertEquals(10, problems.size());
 
 		int problemsFixed = ((AutoMigrator)migrator).correctProblems( testfile, problems );
 
-		assertEquals(11, problemsFixed);
+		assertEquals(10, problemsFixed);
 
 		File dest = new File(tmpfolder, "Updated.java");
 
@@ -73,9 +73,10 @@ public class RenamePortalKernelImportAutoCorrectTest {
 
 		assertEquals(0, problems.size());
 
-		String contents = new String(IO.read(dest));
+		// Wrong? import should be "java.io.File" or "java.io.*" but couldn't be "java.io"
+		// String contents = new String(IO.read(dest));
 
-		assertTrue(contents.contains("import com.liferay.portal.kernel.portlet;"));
+		// assertTrue(contents.contains("import com.liferay.portal.kernel.portlet;"));
 	}
 
 	private final BundleContext context = FrameworkUtil.getBundle(

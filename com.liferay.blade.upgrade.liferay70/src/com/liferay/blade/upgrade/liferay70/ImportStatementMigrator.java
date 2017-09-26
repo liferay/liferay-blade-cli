@@ -82,7 +82,7 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 				if (importData != null && importData.startsWith(PREFIX)) {
 					final String importValue = importData.substring(PREFIX.length());
 
-					if (_imports.containsKey(importValue)) {
+					if (getImports().containsKey(importValue)) {
 						importsToRewrite.put(problem.getLineNumber(), importValue);
 						problemFound = true;
 					}
@@ -106,9 +106,9 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 				for (int lineNumber : importsToRewrite.keySet()) {
 					String importName = importsToRewrite.get(lineNumber);
 					editedLines[lineNumber - 1] = editedLines[lineNumber - 1].replaceAll("import\\s+" + importName,
-							"import " + _imports.get(importName));
+							"import " + getImports().get(importName));
 					editedLines[lineNumber - 1] = editedLines[lineNumber - 1]
-							.replaceAll("import\\s*=\\s*\"" + importName, "import=\"" + _imports.get(importName));
+							.replaceAll("import\\s*=\\s*\"" + importName, "import=\"" + getImports().get(importName));
 				}
 
 				StringBuilder sb = new StringBuilder();
@@ -166,7 +166,7 @@ public abstract class ImportStatementMigrator extends AbstractFileMigrator<JavaF
 	public List<SearchResult> searchFile(File file, JavaFile javaFile) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
-		for (String importName : _imports.keySet()) {
+		for (String importName : getImports().keySet()) {
 			final SearchResult importResult = javaFile.findImport(importName);
 
 			if (importResult != null) {

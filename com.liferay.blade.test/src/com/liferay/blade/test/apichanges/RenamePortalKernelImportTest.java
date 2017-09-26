@@ -22,7 +22,7 @@ public class RenamePortalKernelImportTest extends APITestBase {
 
 	@Override
 	public int getExpectedNumber() {
-		return 6;
+		return 5;
 	}
 
 	@Override
