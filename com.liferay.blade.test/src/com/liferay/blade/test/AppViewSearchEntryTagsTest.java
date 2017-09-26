@@ -40,7 +40,7 @@ public class AppViewSearchEntryTagsTest {
 
 		List<Problem> problems = m.findProblems(new File("jsptests/app-view-search-entry/"), new NullProgressMonitor());
 
-		assertEquals(2, problems.size());
+		assertEquals(3, problems.size());
 	}
 
 	private final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();

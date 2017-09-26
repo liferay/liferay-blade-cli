@@ -44,7 +44,7 @@ public class PortletConfigGetFormatMethods extends JavaFileMigrator {
 	protected List<SearchResult> searchFile(File file, JavaFile javaFileChecker) {
 		final List<SearchResult> searchResults = new ArrayList<>();
 
-		// get methods
+		//LanguageUtil get methods
 		List<SearchResult> invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "get",
 				new String[] { "PortletConfig", "Locale", "String" });
 
@@ -55,7 +55,36 @@ public class PortletConfigGetFormatMethods extends JavaFileMigrator {
 
 		searchResults.addAll(invocations);
 
-		//format methods
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "get",
+				new String[] { "PageContext", "String" });
+
+		searchResults.addAll(invocations);
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "get",
+				new String[] { "PageContext", "String", "String" });
+
+		searchResults.addAll(invocations);
+
+		//UnicodeLanguageUtil get methods
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "get",
+				new String[] { "PortletConfig", "Locale", "String" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "get",
+				new String[] { "PortletConfig", "Locale", "String", "String" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "get",
+				new String[] { "PageContext", "String" });
+
+		searchResults.addAll(invocations);
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "get",
+				new String[] { "PageContext", "String", "String" });
+
+		searchResults.addAll(invocations);
+
+		//LanguageUtil format methods
 		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "format",
 				new String[] { "PortletConfig", "Locale", "String", "Object" });
 
@@ -73,6 +102,124 @@ public class PortletConfigGetFormatMethods extends JavaFileMigrator {
 
 		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "format",
 				new String[] { "PortletConfig", "Locale", "String", "Object[]", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "format",
+				new String[] { "PageContext", "String", "LanguageWrapper" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "format",
+				new String[] { "PageContext", "String", "LanguageWrapper", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "format",
+				new String[] { "PageContext", "String", "LanguageWrapper[]" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "format",
+				new String[] { "PageContext", "String", "LanguageWrapper[]", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "format",
+				new String[] { "PageContext", "String", "Object" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "format",
+				new String[] { "PageContext", "String", "Object[]" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "format",
+				new String[] { "PageContext", "String", "Object[]", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		//LanguageUtil getTimeDescription methods
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "getTimeDescription",
+				new String[] { "PageContext", "long" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "getTimeDescription",
+				new String[] { "PageContext", "long", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "LanguageUtil", "getTimeDescription",
+				new String[] { "PageContext", "Long" });
+
+		searchResults.addAll(invocations);
+
+		//UnicodeLanguageUtil format methods
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PortletConfig", "Locale", "String", "Object" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PortletConfig", "Locale", "String", "Object", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PortletConfig", "Locale", "String", "Object[]" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PortletConfig", "Locale", "String", "Object[]", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PageContext", "String", "LanguageWrapper" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PageContext", "String", "LanguageWrapper", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PageContext", "String", "LanguageWrapper[]" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PageContext", "String", "LanguageWrapper[]", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PageContext", "String", "Object" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PageContext", "String", "Object[]" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "format",
+				new String[] { "PageContext", "String", "Object[]", "boolean" });
+
+		searchResults.addAll(invocations);
+
+		//UnicodeLanguageUtil getTimeDescription methods
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "getTimeDescription",
+				new String[] { "PageContext", "long" });
+
+		searchResults.addAll(invocations);
+
+		invocations = javaFileChecker.findMethodInvocations(null, "UnicodeLanguageUtil", "getTimeDescription",
+				new String[] { "PageContext", "Long" });
 
 		searchResults.addAll(invocations);
 
