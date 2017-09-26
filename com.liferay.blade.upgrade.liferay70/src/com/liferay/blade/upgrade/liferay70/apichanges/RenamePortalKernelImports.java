@@ -22,7 +22,11 @@ import com.liferay.blade.api.JavaFile;
 import com.liferay.blade.api.SearchResult;
 import com.liferay.blade.upgrade.liferay70.ImportStatementMigrator;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,13 +106,77 @@ public class RenamePortalKernelImports extends ImportStatementMigrator {
 	}
 
 	private static Map<String, String> getImports() {
-		PackageRenameHelper helper = new PackageRenameHelper();
-		Map<String, String> imports = new HashMap<String, String>();
+		Map<String, String> imports = new HashMap<>();
 
-		for (int i = 0; i < helper.getOldImports().length; i++) {
-			imports.put(helper.getOldImports()[i], helper.getNewImports()[i]);
+		String[][] csv = _readCSV();
+
+		String[] oldImports = getOldImports(csv);
+		String[] fixedImports = getFixedImports(csv);
+
+		for (int i = 0; i < oldImports.length; i++) {
+			imports.put(oldImports[i], fixedImports[i]);
 		}
+
 		return imports;
+	}
+
+	public static String[] getOldImports(String[][] packageChangeMap) {
+		String[] _oldImports = new String[packageChangeMap.length];
+
+		for (int i = 0; i < packageChangeMap.length; i++) {
+			_oldImports[i] = packageChangeMap[i][0];
+		}
+
+		return _oldImports;
+	}
+
+	public static String[] getFixedImports(String[][] packageChangeMap) {
+		String[] _newImports = new String[packageChangeMap.length];
+
+		for (int i = 0; i < packageChangeMap.length; i++) {
+			_newImports[i] = packageChangeMap[i][1];
+		}
+
+		return _newImports;
+	}
+
+	public static String[][] _readCSV() {
+		try (InputStream in = RenamePortalKernelImports.class.getResourceAsStream("/com/liferay/blade/upgrade/liferay70/apichanges/kernel-rename.csv")) {
+			List<String> lines = new ArrayList<>();
+
+			try (BufferedReader bufferedReader =
+					new BufferedReader(new InputStreamReader(in))) {
+
+				String line;
+
+				while ((line = bufferedReader.readLine()) != null) {
+					StringBuffer contents = new StringBuffer(line);
+
+					lines.add(contents.toString());
+				}
+			}
+			catch (Exception e) {
+			}
+
+			String[] lineArray = lines.toArray(new String[lines.size()]);
+
+			String[][] results = new String[lineArray.length][2];
+
+			for (int i = 0; i < lineArray.length; i++) {
+				String line = lineArray[i];
+
+				String[] columns = line.split(",");
+
+				results[i][0] = columns[0];
+				results[i][1] = columns[1];
+			}
+
+			return results;
+
+		} catch (IOException e) {
+		}
+
+		return null;
 	}
 
 	@Override
