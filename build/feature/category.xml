@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/com.liferay.blade.tools_@master-version@" id="com.liferay.blade.tools" version="@master-version@">
-      <category name="com.liferay.blade.tools.category"/>
-   </feature>
-   <category-def name="com.liferay.blade.tools.category" label="Blade Tools"/>
-</site>
