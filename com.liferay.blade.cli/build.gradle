@@ -21,10 +21,23 @@ clean.doFirst {
 	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
 }
 
-test {
-	dependsOn createDepsZip, createWrapperZip
-}
-
 jar {
 	from createDepsZip, createWrapperZip
+}
+
+task downloadPortal(type: Download) {
+	src 'https://cdn.lfrs.sl/releases.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip'
+	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip')
+	onlyIfNewer true
+}
+
+task unzipPortal(dependsOn: downloadPortal, type: Copy) {
+	from zipTree(downloadPortal.dest)
+	into buildDir
+}
+
+test {
+	dependsOn createDepsZip, createWrapperZip, unzipPortal
+	
+	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
 }
