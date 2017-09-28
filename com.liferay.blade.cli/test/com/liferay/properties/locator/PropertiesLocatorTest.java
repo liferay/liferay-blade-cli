@@ -39,7 +39,7 @@ public class PropertiesLocatorTest {
 		PropertiesLocatorArgs args = new PropertiesLocatorArgs();
 
 		args.setBundleDir(_liferayHome);
-		args.setPropertiesFile(new File("resources/6.2-fix-pack-131/portal.properties"));
+		args.setPropertiesFile(new File("test-resources/6.2-fix-pack-131/portal.properties"));
 		args.setQuiet(true);
 
 		PropertiesLocator propertiesLocator = new PropertiesLocator(args);
@@ -56,7 +56,7 @@ public class PropertiesLocatorTest {
 		File outputFile = tempFolder.newFile("out");
 
 		String[] args = {
-			"-p", "resources/6.2-fix-pack-131/portal.properties", "-d", _liferayHome.getAbsolutePath(), "-o",
+			"-p", "test-resources/6.2-fix-pack-131/portal.properties", "-d", _liferayHome.getAbsolutePath(), "-o",
 			outputFile.getAbsolutePath()
 		};
 

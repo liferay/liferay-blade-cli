@@ -28,7 +28,6 @@ import org.objectweb.asm.Opcodes;
 /**
  * @author Alberto Chaparro
  */
-@SuppressWarnings("restriction")
 public class ConfigurationClassData {
 
 	public ConfigurationClassData(InputStream is) throws IOException {
@@ -59,7 +58,7 @@ public class ConfigurationClassData {
 	private class ConfigClassVisitor extends ClassVisitor {
 
 		public ConfigClassVisitor() {
-			super(Opcodes.ASM4);
+			super(Opcodes.ASM5);
 		}
 
 		@Override
@@ -89,7 +88,7 @@ public class ConfigurationClassData {
 	private class MethodAnnotationScanner extends MethodVisitor {
 
 		public MethodAnnotationScanner(String fieldName) {
-			super(Opcodes.ASM4);
+			super(Opcodes.ASM5);
 
 			_fieldName = fieldName;
 		}
