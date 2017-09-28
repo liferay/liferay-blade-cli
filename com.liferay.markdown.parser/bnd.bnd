@@ -1,0 +1,28 @@
+-buildpath: \
+	com.liferay.knowledge.base.markdown.converter,\
+	com.liferay.portal.kernel,\
+	org.objectweb.asm,\
+	org.objectweb.asm.analysis,\
+	org.objectweb.asm.tree,\
+	org.objectweb.asm.util,\
+	org.parboiled.core,\
+	org.parboiled.java,\
+	org.pegdown,\
+	org.jsoup
+
+Bundle-SymbolicName: com.liferay.markdown.parser;singleton:=true
+
+Bundle-Version: 1.0.1.${tstamp}
+
+Private-Package: \
+	com.liferay.knowledge.base.markdown.converter.*,\
+	org.jsoup.*,\
+	org.objectweb.asm.*,\
+	org.parboiled.*;-split-package:=merge-first,\
+	org.pegdown.*;-split-package:=merge-first
+
+Include-Resource: \
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/StringBundler.class,\
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/memory/SoftReferenceThreadLocal.class,\
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/CentralizedThreadLocal.class,\
+	@com.liferay.portal.kernel-*.jar!/com/liferay/portal/kernel/util/GetterUtil.class
