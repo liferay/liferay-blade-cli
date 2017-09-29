@@ -20,9 +20,7 @@ import java.util.SortedSet;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Gregory Amerson
@@ -53,7 +51,7 @@ public class PropertiesLocatorTest {
 
 	@Test
 	public void testPropertiesLocatorOutputFile() throws Exception {
-		File outputFile = tempFolder.newFile("out");
+		File outputFile = new File(_buildDir, "testProperties.out");
 
 		String[] args = {
 			"-p", "test-resources/6.2-fix-pack-131/portal.properties", "-d", _liferayHome.getAbsolutePath(), "-o",
@@ -68,9 +66,7 @@ public class PropertiesLocatorTest {
 		Assert.assertEquals(expectedOutput.replaceAll("\\r", ""), testOutput.replaceAll("\\r", ""));
 	}
 
-	@Rule
-	public TemporaryFolder tempFolder = new TemporaryFolder();
-
+	private static final File _buildDir = new File(System.getProperty("buildDir"));
 	private static final File _liferayHome = new File(System.getProperty("liferay.home"));
 
 }

@@ -51,5 +51,6 @@ task unzipPortal(dependsOn: downloadPortal, type: Copy) {
 test {
 	dependsOn createDepsZip, createWrapperZip, unzipPortal
 	
+	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
 }
