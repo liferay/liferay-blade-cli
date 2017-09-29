@@ -60,6 +60,7 @@ import java.util.zip.ZipFile;
  * @author Alberto Chaparro
  * @author Gregory Amerson
  */
+@SuppressWarnings("restriction")
 public class PropertiesLocator {
 
 	public static void main(String[] args) throws Exception {
@@ -321,17 +322,25 @@ public class PropertiesLocator {
 					_outputFile.print("\t");
 					_outputFile.println(property + " can match with the following OSGI properties:");
 				}
-			).flatMap(
-				problem -> problem.getReplacements().stream()
+			).map(
+				problem -> problem.getReplacements()
 			).forEach(
-				replacement -> {
-					String path = replacement.first();
+				replacements -> {
+					Stream<Pair<String, String>> replacementsStream = replacements.stream();
 
-					String configFileName = StringUtil.replace(
-						path, StringPool.FORWARD_SLASH.charAt(0), StringPool.PERIOD.charAt(0));
+					replacementsStream.sorted(
+						(r1, r2) -> r1.first().compareTo(r2.first())
+					).forEach(
+						replacement -> {
+							String path = replacement.first();
 
-					_outputFile.print("\t\t");
-					_outputFile.println(replacement.second() + " from " + configFileName);
+							String configFileName = StringUtil.replace(
+								path, StringPool.FORWARD_SLASH.charAt(0), StringPool.PERIOD.charAt(0));
+
+							_outputFile.print("\t\t");
+							_outputFile.println(replacement.second() + " from " + configFileName);
+						}
+					);
 				}
 			);
 		}

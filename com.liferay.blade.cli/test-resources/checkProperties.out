@@ -69,82 +69,82 @@ Some properties have been moved to a module portlet.properties:
 
 Properties moved to OSGI configuration:
 	auth.verifier.BasicAuthHeaderAutoLogin.hosts.allowed can match with the following OSGI properties:
-		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.BasicAuthHeaderAutoLogin.urls.excludes can match with the following OSGI properties:
-		urlsExcludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		urlsExcludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		urlsExcludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		urlsExcludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsExcludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		urlsExcludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsExcludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		urlsExcludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsExcludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.BasicAuthHeaderAutoLogin.urls.includes can match with the following OSGI properties:
-		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.DigestAuthenticationAuthVerifier.hosts.allowed can match with the following OSGI properties:
-		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.DigestAuthenticationAuthVerifier.urls.includes can match with the following OSGI properties:
-		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.ParameterAutoLogin.hosts.allowed can match with the following OSGI properties:
-		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.ParameterAutoLogin.urls.includes can match with the following OSGI properties:
-		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.PortalSessionAuthVerifier.hosts.allowed can match with the following OSGI properties:
-		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.PortalSessionAuthVerifier.urls.includes can match with the following OSGI properties:
-		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.TunnelingServletAuthVerifier.hosts.allowed can match with the following OSGI properties:
-		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	auth.verifier.TunnelingServletAuthVerifier.urls.includes can match with the following OSGI properties:
-		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
-		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
 		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
 	blogs.display.templates.config can match with the following OSGI properties:
 		displayTemplatesConfig from com.liferay.blogs.configuration.BlogsConfiguration
 	blogs.entry.check.interval can match with the following OSGI properties:
@@ -198,11 +198,11 @@ Properties moved to OSGI configuration:
 	dl.repository.cmis.delete.depth can match with the following OSGI properties:
 		deleteDepth from com.liferay.document.library.repository.cmis.configuration.CMISRepositoryConfiguration
 	dl.store.cmis.credentials.password can match with the following OSGI properties:
-		jackrabbitCredentialsPassword from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
 		credentialsPassword from com.liferay.portal.store.cmis.configuration.CMISStoreConfiguration
+		jackrabbitCredentialsPassword from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
 	dl.store.cmis.credentials.username can match with the following OSGI properties:
-		jackrabbitCredentialsUsername from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
 		credentialsUsername from com.liferay.portal.store.cmis.configuration.CMISStoreConfiguration
+		jackrabbitCredentialsUsername from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
 	dl.store.cmis.repository.url can match with the following OSGI properties:
 		repositoryUrl from com.liferay.portal.store.cmis.configuration.CMISStoreConfiguration
 	dl.store.cmis.system.root.dir can match with the following OSGI properties:
@@ -432,29 +432,29 @@ Properties moved to OSGI configuration:
 	monitoring.show.per.request.data.sample can match with the following OSGI properties:
 		showPerRequestDataSample from com.liferay.portal.monitoring.configuration.MonitoringConfiguration
 	navigation.display.style.default can match with the following OSGI properties:
+		displayStyle from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
 		displayStyle from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
 		displayStyleGroupId from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.directory.web.configuration.SitesDirectoryPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
 		displayStyle from com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuPortletInstanceConfiguration
 		displayStyleGroupId from com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuPortletInstanceConfiguration
 		displayStyle from com.liferay.site.navigation.site.map.web.configuration.SiteNavigationSiteMapPortletInstanceConfiguration
 		displayStyleGroupId from com.liferay.site.navigation.site.map.web.configuration.SiteNavigationSiteMapPortletInstanceConfiguration
-		displayStyle from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
-		displayStyleGroupId from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
-		displayStyle from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
-		displayStyleGroupId from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
-		displayStyle from com.liferay.site.navigation.directory.web.configuration.SitesDirectoryPortletInstanceConfiguration
 	navigation.display.style.options can match with the following OSGI properties:
+		displayStyle from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
 		displayStyle from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
 		displayStyleGroupId from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.directory.web.configuration.SitesDirectoryPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
 		displayStyle from com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuPortletInstanceConfiguration
 		displayStyleGroupId from com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuPortletInstanceConfiguration
 		displayStyle from com.liferay.site.navigation.site.map.web.configuration.SiteNavigationSiteMapPortletInstanceConfiguration
 		displayStyleGroupId from com.liferay.site.navigation.site.map.web.configuration.SiteNavigationSiteMapPortletInstanceConfiguration
-		displayStyle from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
-		displayStyleGroupId from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
-		displayStyle from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
-		displayStyleGroupId from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
-		displayStyle from com.liferay.site.navigation.directory.web.configuration.SitesDirectoryPortletInstanceConfiguration
 	nested.portlets.layout.template.default can match with the following OSGI properties:
 		layoutTemplateId from com.liferay.nested.portlets.web.configuration.NestedPortletsPortletInstanceConfiguration
 	nested.portlets.layout.template.unsupported can match with the following OSGI properties:
@@ -477,23 +477,23 @@ Properties moved to OSGI configuration:
 	open.sso.last.name.attr can match with the following OSGI properties:
 		lastNameAttr from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 	open.sso.ldap.import.enabled can match with the following OSGI properties:
-		importFromLDAP from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 		importFromLDAP from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		importFromLDAP from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 		importFromLDAP from com.liferay.portal.security.sso.token.configuration.TokenConfiguration
 	open.sso.login.url can match with the following OSGI properties:
-		loginURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 		loginURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		loginURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 	open.sso.logout.on.session.expiration can match with the following OSGI properties:
-		logoutOnSessionExpiration from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 		logoutOnSessionExpiration from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		logoutOnSessionExpiration from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 	open.sso.logout.url can match with the following OSGI properties:
-		logoutURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 		logoutURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		logoutURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 	open.sso.screen.name.attr can match with the following OSGI properties:
 		screenNameAttr from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 	open.sso.service.url can match with the following OSGI properties:
-		serviceURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 		serviceURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		serviceURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 	request.header.auth.hosts.allowed can match with the following OSGI properties:
 		authHostsAllowed from com.liferay.portal.security.auto.login.request.header.module.configuration.RequestHeaderAutoLoginConfiguration
 	request.header.auth.import.from.ldap can match with the following OSGI properties:
