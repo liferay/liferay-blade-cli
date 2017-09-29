@@ -65,7 +65,7 @@ public class PropertiesLocatorTest {
 		String expectedOutput = new String(Files.readAllBytes(new File("test-resources/checkProperties.out").toPath()));
 		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
 
-		Assert.assertEquals(expectedOutput, testOutput);
+		Assert.assertEquals(expectedOutput.replaceAll("\\r", ""), testOutput.replaceAll("\\r", ""));
 	}
 
 	@Rule
