@@ -143,6 +143,7 @@ Private-Package:\
 	aQute.libg.qtokens;-split-package:=merge-first,\
 	aQute.service.reporter;-split-package:=merge-first,\
 	com.liferay.blade.cli.*,\
+	com.liferay.properties.locator,\
 	com.liferay.blade.gradle.model,\
 	org.apache.commons.io,\
 	org.apache.commons.io.filefilter,\
@@ -196,6 +197,7 @@ Private-Package:\
 	org.eclipse.aether.transport.http,\
 	org.eclipse.aether.transport.wagon,\
 	org.eclipse.aether.util,\
+	org.objectweb.asm,\
 	osgi.core,\
 	slf4j.simple,\
 	slf4j.api,\

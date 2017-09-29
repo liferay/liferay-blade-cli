@@ -1,0 +1,2129 @@
+Checking the location for old properties in the new version
+-----------------------------------------------------------
+Following portal properties present an exception:
+	asset.categories.navigation.display.templates.config has been removed.  Overwrite the method in the ADT handler. See LPS-67466
+	asset.publisher.display.templates.config has been removed.  Overwrite the method in the ADT handler. See LPS-67466
+	asset.tags.navigation.display.templates.config has been removed.  Overwrite the method in the ADT handler. See LPS-67466
+	breadcrumb.display.style.default has been modularized.   ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbWebTemplateConfiguration. More information at Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts
+	breadcrumb.display.style.options has been removed.  Any DDM template as ddmTemplate_BREADCRUMB-HORIZONTAL-FTL can be used. More information at Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts
+	sitemap.display.templates.config has been removed.  Overwrite the method in the ADT handler. See LPS-67466
+	wiki.display.templates.config has been removed.  Overwrite the method in the ADT handler. See LPS-67466
+
+Some properties have been moved to a module portlet.properties:
+	asset.browser.search.with.database can match with the following portlet properties:
+		search.with.database from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.browser.web-1.0.17.jar/portlet.properties
+	asset.categories.navigation.display.templates.config can match with the following portlet properties:
+		display.templates.config from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.categories.navigation.web-1.0.11.jar/portlet.properties
+	asset.publisher.check.interval can match with the following portlet properties:
+		check.interval from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.display.style.default can match with the following portlet properties:
+		display.style.default from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.display.styles can match with the following portlet properties:
+		display.styles from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.display.templates.config can match with the following portlet properties:
+		display.templates.config from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.dynamic.subscription.limit can match with the following portlet properties:
+		dynamic.subscription.limit from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.email.asset.entry.added.body can match with the following portlet properties:
+		email.asset.entry.added.body from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.email.asset.entry.added.enabled can match with the following portlet properties:
+		email.asset.entry.added.enabled from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.email.asset.entry.added.subject can match with the following portlet properties:
+		email.asset.entry.added.subject from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.email.from.address can match with the following portlet properties:
+		email.from.address from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.email.from.name can match with the following portlet properties:
+		email.from.name from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.permission.checking.configurable can match with the following portlet properties:
+		permission.checking.configurable from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.publisher.search.with.index can match with the following portlet properties:
+		search.with.index from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.publisher.web-1.5.3.jar/portlet.properties
+	asset.tags.navigation.display.templates.config can match with the following portlet properties:
+		display.templates.config from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.asset.tags.navigation.web-2.0.8.jar/portlet.properties
+	dynamic.data.lists.error.template[ftl] can match with the following portlet properties:
+		dynamic.data.lists.error.template[ftl] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.lists.web-1.1.23.jar/portlet.properties
+	dynamic.data.lists.error.template[vm] can match with the following portlet properties:
+		dynamic.data.lists.error.template[vm] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.lists.web-1.1.23.jar/portlet.properties
+	dynamic.data.lists.storage.type can match with the following portlet properties:
+		dynamic.data.lists.storage.type from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.lists.web-1.1.23.jar/portlet.properties
+	dynamic.data.mapping.template.language.content[ftl] can match with the following portlet properties:
+		dynamic.data.mapping.template.language.content[ftl] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
+	dynamic.data.mapping.template.language.content[vm] can match with the following portlet properties:
+		dynamic.data.mapping.template.language.content[vm] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
+	dynamic.data.mapping.template.language.content[xsl] can match with the following portlet properties:
+		dynamic.data.mapping.template.language.content[xsl] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
+	dynamic.data.mapping.template.language.default can match with the following portlet properties:
+		dynamic.data.mapping.template.language.content[xsl] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
+		dynamic.data.mapping.template.language.content[vm] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
+		dynamic.data.mapping.template.language.content[ftl] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
+	journal.content.publish.to.live.by.default can match with the following portlet properties:
+		publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.journal.content.web-1.1.14.jar/portlet.properties
+	journal.publish.to.live.by.default can match with the following portlet properties:
+		publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.journal.content.web-1.1.14.jar/portlet.properties
+	journal.publish.version.history.by.default can match with the following portlet properties:
+		publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.journal.content.web-1.1.14.jar/portlet.properties
+	ldap.import.interval can match with the following portlet properties:
+		draft.export.import.configuration.check.interval from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.exportimport.web-1.0.26.jar/portlet.properties
+	polls.publish.to.live.by.default can match with the following portlet properties:
+		publish.to.live.by.default from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.polls.service-3.0.17.jar/portlet.properties
+
+Properties moved to OSGI configuration:
+	auth.verifier.BasicAuthHeaderAutoLogin.hosts.allowed can match with the following OSGI properties:
+		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.BasicAuthHeaderAutoLogin.urls.excludes can match with the following OSGI properties:
+		urlsExcludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		urlsExcludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		urlsExcludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsExcludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsExcludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsExcludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.BasicAuthHeaderAutoLogin.urls.includes can match with the following OSGI properties:
+		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.DigestAuthenticationAuthVerifier.hosts.allowed can match with the following OSGI properties:
+		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.DigestAuthenticationAuthVerifier.urls.includes can match with the following OSGI properties:
+		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.ParameterAutoLogin.hosts.allowed can match with the following OSGI properties:
+		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.ParameterAutoLogin.urls.includes can match with the following OSGI properties:
+		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.PortalSessionAuthVerifier.hosts.allowed can match with the following OSGI properties:
+		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.PortalSessionAuthVerifier.urls.includes can match with the following OSGI properties:
+		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.TunnelingServletAuthVerifier.hosts.allowed can match with the following OSGI properties:
+		hostsAllowed from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		hostsAllowed from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	auth.verifier.TunnelingServletAuthVerifier.urls.includes can match with the following OSGI properties:
+		urlsIncludes from com.liferay.portal.security.auth.verifier.basic.auth.header.module.configuration.BasicAuthHeaderAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.digest.authentication.module.configuration.DigestAuthenticationAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.module.configuration.BaseAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.portal.session.module.configuration.PortalSessionAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.request.parameter.module.configuration.RequestParameterAuthVerifierConfiguration
+		urlsIncludes from com.liferay.portal.security.auth.verifier.tunnel.module.configuration.TunnelAuthVerifierConfiguration
+	blogs.display.templates.config can match with the following OSGI properties:
+		displayTemplatesConfig from com.liferay.blogs.configuration.BlogsConfiguration
+	blogs.entry.check.interval can match with the following OSGI properties:
+		entryCheckInterval from com.liferay.blogs.configuration.BlogsConfiguration
+	blogs.image.small.max.size can match with the following OSGI properties:
+		smallImageWidth from com.liferay.blogs.configuration.BlogsGroupServiceConfiguration
+	blogs.linkback.job.interval can match with the following OSGI properties:
+		linkbackJobInterval from com.liferay.blogs.configuration.BlogsConfiguration
+	bookmarks.email.entry.added.body can match with the following OSGI properties:
+		emailEntryAddedBody from com.liferay.bookmarks.configuration.BookmarksGroupServiceConfiguration
+	bookmarks.email.entry.added.enabled can match with the following OSGI properties:
+		emailEntryAddedEnabled from com.liferay.bookmarks.configuration.BookmarksGroupServiceConfiguration
+	bookmarks.email.entry.added.subject can match with the following OSGI properties:
+		emailEntryAddedSubject from com.liferay.bookmarks.configuration.BookmarksGroupServiceConfiguration
+	bookmarks.email.entry.updated.body can match with the following OSGI properties:
+		emailEntryUpdatedBody from com.liferay.bookmarks.configuration.BookmarksGroupServiceConfiguration
+	bookmarks.email.entry.updated.enabled can match with the following OSGI properties:
+		emailEntryUpdatedEnabled from com.liferay.bookmarks.configuration.BookmarksGroupServiceConfiguration
+	bookmarks.email.entry.updated.subject can match with the following OSGI properties:
+		emailEntryUpdatedSubject from com.liferay.bookmarks.configuration.BookmarksGroupServiceConfiguration
+	bookmarks.email.from.address can match with the following OSGI properties:
+		emailFromAddress from com.liferay.bookmarks.configuration.BookmarksGroupServiceConfiguration
+	bookmarks.email.from.name can match with the following OSGI properties:
+		emailFromName from com.liferay.bookmarks.configuration.BookmarksGroupServiceConfiguration
+	breadcrumb.display.style.default can match with the following OSGI properties:
+		displayStyle from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+	breadcrumb.display.style.options can match with the following OSGI properties:
+		displayStyle from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+	breadcrumb.show.guest.group can match with the following OSGI properties:
+		showGuestGroup from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+	breadcrumb.show.parent.groups can match with the following OSGI properties:
+		showParentGroups from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+	cas.import.from.ldap can match with the following OSGI properties:
+		importFromLDAP from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	cas.login.url can match with the following OSGI properties:
+		loginURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	cas.logout.on.session.expiration can match with the following OSGI properties:
+		logoutOnSessionExpiration from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	cas.logout.url can match with the following OSGI properties:
+		logoutURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	cas.no.such.user.redirect.url can match with the following OSGI properties:
+		noSuchUserRedirectURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	cas.server.name can match with the following OSGI properties:
+		serverName from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	cas.server.url can match with the following OSGI properties:
+		serverURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	cas.service.url can match with the following OSGI properties:
+		serviceURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	dl.repository.cmis.delete.depth can match with the following OSGI properties:
+		deleteDepth from com.liferay.document.library.repository.cmis.configuration.CMISRepositoryConfiguration
+	dl.store.cmis.credentials.password can match with the following OSGI properties:
+		credentialsPassword from com.liferay.portal.store.cmis.configuration.CMISStoreConfiguration
+		jackrabbitCredentialsPassword from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	dl.store.cmis.credentials.username can match with the following OSGI properties:
+		credentialsUsername from com.liferay.portal.store.cmis.configuration.CMISStoreConfiguration
+		jackrabbitCredentialsUsername from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	dl.store.cmis.repository.url can match with the following OSGI properties:
+		repositoryUrl from com.liferay.portal.store.cmis.configuration.CMISStoreConfiguration
+	dl.store.cmis.system.root.dir can match with the following OSGI properties:
+		systemRootDir from com.liferay.portal.store.cmis.configuration.CMISStoreConfiguration
+	dl.store.file.system.root.dir can match with the following OSGI properties:
+		systemRootDir from com.liferay.portal.store.cmis.configuration.CMISStoreConfiguration
+	dl.store.jcr.move.version.labels can match with the following OSGI properties:
+		moveVersionLabels from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	dl.store.s3.access.key can match with the following OSGI properties:
+		accessKey from com.liferay.portal.store.s3.configuration.S3StoreConfiguration
+	dl.store.s3.bucket.name can match with the following OSGI properties:
+		bucketName from com.liferay.portal.store.s3.configuration.S3StoreConfiguration
+	dl.store.s3.part.size can match with the following OSGI properties:
+		minimumUploadPartSize from com.liferay.portal.store.s3.configuration.S3StoreConfiguration
+	dl.store.s3.secret.key can match with the following OSGI properties:
+		secretKey from com.liferay.portal.store.s3.configuration.S3StoreConfiguration
+	dl.store.s3.temp.dir.clean.up.expunge can match with the following OSGI properties:
+		cacheDirCleanUpExpunge from com.liferay.portal.store.s3.configuration.S3StoreConfiguration
+	dl.store.s3.temp.dir.clean.up.frequency can match with the following OSGI properties:
+		cacheDirCleanUpFrequency from com.liferay.portal.store.s3.configuration.S3StoreConfiguration
+	dynamic.data.lists.record.set.force.autogenerate.key can match with the following OSGI properties:
+		autogenerateStructureKey from com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration
+		autogenerateTemplateKey from com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration
+	dynamic.data.mapping.image.extensions can match with the following OSGI properties:
+		smallImageExtensions from com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfiguration
+	dynamic.data.mapping.image.small.max.size can match with the following OSGI properties:
+		smallImageMaxSize from com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfiguration
+	dynamic.data.mapping.structure.force.autogenerate.key can match with the following OSGI properties:
+		autogenerateStructureKey from com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration
+	dynamic.data.mapping.template.force.autogenerate.key can match with the following OSGI properties:
+		autogenerateTemplateKey from com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration
+	facebook.connect.app.id can match with the following OSGI properties:
+		appId from com.liferay.portal.security.sso.facebook.connect.configuration.FacebookConnectConfiguration
+	facebook.connect.app.secret can match with the following OSGI properties:
+		appSecret from com.liferay.portal.security.sso.facebook.connect.configuration.FacebookConnectConfiguration
+	facebook.connect.graph.url can match with the following OSGI properties:
+		graphURL from com.liferay.portal.security.sso.facebook.connect.configuration.FacebookConnectConfiguration
+	facebook.connect.oauth.auth.url can match with the following OSGI properties:
+		oauthAuthURL from com.liferay.portal.security.sso.facebook.connect.configuration.FacebookConnectConfiguration
+	facebook.connect.oauth.redirect.url can match with the following OSGI properties:
+		oauthRedirectURL from com.liferay.portal.security.sso.facebook.connect.configuration.FacebookConnectConfiguration
+	facebook.connect.oauth.token.url can match with the following OSGI properties:
+		oauthTokenURL from com.liferay.portal.security.sso.facebook.connect.configuration.FacebookConnectConfiguration
+	facebook.connect.verified.account.required can match with the following OSGI properties:
+		verifiedAccountRequired from com.liferay.portal.security.sso.facebook.connect.configuration.FacebookConnectConfiguration
+	flags.email.body can match with the following OSGI properties:
+		emailBody from com.liferay.flags.configuration.FlagsGroupServiceConfiguration
+	flags.email.from.address can match with the following OSGI properties:
+		emailFromAddress from com.liferay.flags.configuration.FlagsGroupServiceConfiguration
+	flags.email.from.name can match with the following OSGI properties:
+		emailFromName from com.liferay.flags.configuration.FlagsGroupServiceConfiguration
+	flags.email.subject can match with the following OSGI properties:
+		emailSubject from com.liferay.flags.configuration.FlagsGroupServiceConfiguration
+	flags.guest.users.enabled can match with the following OSGI properties:
+		guestUsersEnabled from com.liferay.flags.configuration.FlagsGroupServiceConfiguration
+	freemarker.engine.allowed.classes can match with the following OSGI properties:
+		allowedClasses from com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration
+	freemarker.engine.localized.lookup can match with the following OSGI properties:
+		localizedLookup from com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration
+	freemarker.engine.macro.library can match with the following OSGI properties:
+		macroLibrary from com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration
+	freemarker.engine.resource.modification.check.interval can match with the following OSGI properties:
+		resourceModificationCheck from com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration
+	freemarker.engine.restricted.classes can match with the following OSGI properties:
+		restrictedClasses from com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration
+	freemarker.engine.restricted.variables can match with the following OSGI properties:
+		restrictedVariables from com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration
+	freemarker.engine.template.exception.handler can match with the following OSGI properties:
+		templateExceptionHandler from com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration
+	iframe.dynamic.url.enabled can match with the following OSGI properties:
+		dynamicUrlEnabled from com.liferay.iframe.web.configuration.IFramePortletInstanceConfiguration
+	jcr.initialize.on.startup can match with the following OSGI properties:
+		initializeOnStartup from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	jcr.jackrabbit.config.file.path can match with the following OSGI properties:
+		jackrabbitConfigFilePath from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	jcr.jackrabbit.credentials.password can match with the following OSGI properties:
+		jackrabbitCredentialsPassword from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	jcr.jackrabbit.credentials.username can match with the following OSGI properties:
+		jackrabbitCredentialsUsername from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	jcr.jackrabbit.repository.home can match with the following OSGI properties:
+		jackrabbitRepositoryHome from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	jcr.jackrabbit.repository.root can match with the following OSGI properties:
+		jackrabbitRepositoryRoot from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	jcr.node.documentlibrary can match with the following OSGI properties:
+		nodeDocumentlibrary from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	jcr.workspace.name can match with the following OSGI properties:
+		workspaceName from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	jcr.wrap.session can match with the following OSGI properties:
+		wrapSession from com.liferay.portal.store.jcr.configuration.JCRStoreConfiguration
+	journal.article.check.interval can match with the following OSGI properties:
+		checkInterval from com.liferay.journal.configuration.JournalServiceConfiguration
+		checkInterval from com.liferay.journal.web.configuration.JournalWebConfiguration
+	journal.article.comments.enabled can match with the following OSGI properties:
+		articleCommentsEnabled from com.liferay.journal.configuration.JournalServiceConfiguration
+	journal.article.database.keyword.search.content can match with the following OSGI properties:
+		databaseContentKeywordSearchEnabled from com.liferay.journal.configuration.JournalServiceConfiguration
+	journal.article.expire.all.versions can match with the following OSGI properties:
+		expireAllArticleVersionsEnabled from com.liferay.journal.configuration.JournalServiceConfiguration
+	journal.article.force.autogenerate.id can match with the following OSGI properties:
+		journalArticleForceAutogenerateId from com.liferay.journal.web.configuration.JournalWebConfiguration
+	journal.article.storage.type can match with the following OSGI properties:
+		journalArticleStorageType from com.liferay.journal.configuration.JournalServiceConfiguration
+	journal.article.token.page.break can match with the following OSGI properties:
+		journalArticlePageBreakToken from com.liferay.journal.configuration.JournalServiceConfiguration
+	journal.article.view.permission.check.enabled can match with the following OSGI properties:
+		articleViewPermissionsCheckEnabled from com.liferay.journal.configuration.JournalServiceConfiguration
+	journal.articles.index.all.versions can match with the following OSGI properties:
+		indexAllArticleVersionsEnabled from com.liferay.journal.configuration.JournalServiceConfiguration
+	journal.articles.search.with.index can match with the following OSGI properties:
+		journalArticlesSearchWithIndex from com.liferay.journal.web.configuration.JournalWebConfiguration
+	journal.content.search.show.listed can match with the following OSGI properties:
+		showListed from com.liferay.journal.content.search.web.configuration.JournalContentSearchPortletInstanceConfiguration
+	journal.default.display.view can match with the following OSGI properties:
+		defaultDisplayView from com.liferay.journal.web.configuration.JournalWebConfiguration
+	journal.display.views can match with the following OSGI properties:
+		displayViews from com.liferay.journal.web.configuration.JournalWebConfiguration
+	journal.email.article.added.body can match with the following OSGI properties:
+		emailArticleAddedBody from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.added.enabled can match with the following OSGI properties:
+		emailArticleAddedEnabled from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.added.subject can match with the following OSGI properties:
+		emailArticleAddedSubject from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.approval.denied.body can match with the following OSGI properties:
+		emailArticleApprovalDeniedBody from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.approval.denied.enabled can match with the following OSGI properties:
+		emailArticleApprovalDeniedEnabled from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.approval.denied.subject can match with the following OSGI properties:
+		emailArticleApprovalDeniedSubject from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.approval.granted.body can match with the following OSGI properties:
+		emailArticleApprovalGrantedBody from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.approval.granted.enabled can match with the following OSGI properties:
+		emailArticleApprovalGrantedEnabled from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.approval.granted.subject can match with the following OSGI properties:
+		emailArticleApprovalGrantedSubject from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.approval.requested.body can match with the following OSGI properties:
+		emailArticleApprovalRequestedBody from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.approval.requested.enabled can match with the following OSGI properties:
+		emailArticleApprovalRequestedEnabled from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.approval.requested.subject can match with the following OSGI properties:
+		emailArticleApprovalRequestedSubject from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.review.body can match with the following OSGI properties:
+		emailArticleReviewBody from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.review.enabled can match with the following OSGI properties:
+		emailArticleReviewEnabled from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.review.subject can match with the following OSGI properties:
+		emailArticleReviewSubject from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.updated.body can match with the following OSGI properties:
+		emailArticleUpdatedBody from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.updated.enabled can match with the following OSGI properties:
+		emailArticleUpdatedEnabled from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.article.updated.subject can match with the following OSGI properties:
+		emailArticleUpdatedSubject from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.from.address can match with the following OSGI properties:
+		emailFromAddress from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.email.from.name can match with the following OSGI properties:
+		emailFromName from com.liferay.journal.configuration.JournalGroupServiceConfiguration
+	journal.feed.force.autogenerate.id can match with the following OSGI properties:
+		journalFeedForceAutogenerateId from com.liferay.journal.web.configuration.JournalWebConfiguration
+	journal.folder.icon.check.count can match with the following OSGI properties:
+		folderIconCheckCountEnabled from com.liferay.journal.configuration.JournalServiceConfiguration
+	journal.sync.content.search.on.startup can match with the following OSGI properties:
+		syncContentSearchOnStartup from com.liferay.journal.configuration.JournalServiceConfiguration
+	ldap.auth.password.encryption.algorithm can match with the following OSGI properties:
+		passwordEncryptionAlgorithm from com.liferay.portal.security.ldap.authenticator.configuration.LDAPAuthConfiguration
+	ldap.error.password.age can match with the following OSGI properties:
+		errorPasswordAgeKeywords from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.error.password.expired can match with the following OSGI properties:
+		errorPasswordExpiredKeywords from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.error.password.history can match with the following OSGI properties:
+		errorPasswordHistoryKeywords from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.error.password.not.changeable can match with the following OSGI properties:
+		errorPasswordNotChangeableKeywords from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.error.password.syntax can match with the following OSGI properties:
+		errorPasswordSyntaxKeywords from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.error.password.trivial can match with the following OSGI properties:
+		errorPasswordTrivialTextKeywords from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.error.user.lockout can match with the following OSGI properties:
+		errorUserLockoutKeywords from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.export.enabled can match with the following OSGI properties:
+		exportEnabled from com.liferay.portal.security.ldap.exportimport.configuration.LDAPExportConfiguration
+	ldap.export.group.enabled can match with the following OSGI properties:
+		exportGroupEnabled from com.liferay.portal.security.ldap.exportimport.configuration.LDAPExportConfiguration
+	ldap.factory.initial can match with the following OSGI properties:
+		factoryInitial from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.import.create.role.per.group can match with the following OSGI properties:
+		importCreateRolePerGroup from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.import.enabled can match with the following OSGI properties:
+		importEnabled from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.import.group.cache.enabled can match with the following OSGI properties:
+		importGroupCacheEnabled from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.import.group.search.filter.enabled can match with the following OSGI properties:
+		groupSearchFilterEnabled from com.liferay.portal.security.ldap.configuration.LDAPServerConfiguration
+	ldap.import.lock.expiration.time can match with the following OSGI properties:
+		importLockExpirationTime from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.import.method can match with the following OSGI properties:
+		importMethod from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.import.on.startup can match with the following OSGI properties:
+		importOnStartup from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.import.user.password.autogenerated can match with the following OSGI properties:
+		importUserPasswordAutogenerated from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.import.user.password.default can match with the following OSGI properties:
+		importUserPasswordDefault from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.import.user.password.enabled can match with the following OSGI properties:
+		importUserPasswordEnabled from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.import.user.sync.strategy can match with the following OSGI properties:
+		importUserSyncStrategy from com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration
+	ldap.page.size can match with the following OSGI properties:
+		pageSize from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.password.policy.enabled can match with the following OSGI properties:
+		passwordPolicyEnabled from com.liferay.portal.security.ldap.authenticator.configuration.LDAPAuthConfiguration
+	ldap.range.size can match with the following OSGI properties:
+		rangeSize from com.liferay.portal.security.ldap.configuration.SystemLDAPConfiguration
+	ldap.user.ignore.attributes can match with the following OSGI properties:
+		userIgnoreAttributes from com.liferay.portal.security.ldap.configuration.LDAPServerConfiguration
+	message.boards.expire.ban.job.interval can match with the following OSGI properties:
+		expireBanJobInterval from com.liferay.message.boards.configuration.MBConfiguration
+	monitoring.portal.request can match with the following OSGI properties:
+		monitorPortalRequest from com.liferay.portal.monitoring.configuration.MonitoringConfiguration
+	monitoring.portlet.action.request can match with the following OSGI properties:
+		monitorPortletActionRequest from com.liferay.portal.monitoring.configuration.MonitoringConfiguration
+	monitoring.portlet.event.request can match with the following OSGI properties:
+		monitorPortletEventRequest from com.liferay.portal.monitoring.configuration.MonitoringConfiguration
+	monitoring.portlet.render.request can match with the following OSGI properties:
+		monitorPortletRenderRequest from com.liferay.portal.monitoring.configuration.MonitoringConfiguration
+	monitoring.portlet.resource.request can match with the following OSGI properties:
+		monitorPortletResourceRequest from com.liferay.portal.monitoring.configuration.MonitoringConfiguration
+	monitoring.show.per.request.data.sample can match with the following OSGI properties:
+		showPerRequestDataSample from com.liferay.portal.monitoring.configuration.MonitoringConfiguration
+	navigation.display.style.default can match with the following OSGI properties:
+		displayStyle from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.directory.web.configuration.SitesDirectoryPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.site.map.web.configuration.SiteNavigationSiteMapPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.site.map.web.configuration.SiteNavigationSiteMapPortletInstanceConfiguration
+	navigation.display.style.options can match with the following OSGI properties:
+		displayStyle from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.asset.categories.navigation.web.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.breadcrumb.web.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.directory.web.configuration.SitesDirectoryPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.language.web.configuration.SiteNavigationLanguagePortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.menu.web.configuration.SiteNavigationMenuPortletInstanceConfiguration
+		displayStyle from com.liferay.site.navigation.site.map.web.configuration.SiteNavigationSiteMapPortletInstanceConfiguration
+		displayStyleGroupId from com.liferay.site.navigation.site.map.web.configuration.SiteNavigationSiteMapPortletInstanceConfiguration
+	nested.portlets.layout.template.default can match with the following OSGI properties:
+		layoutTemplateId from com.liferay.nested.portlets.web.configuration.NestedPortletsPortletInstanceConfiguration
+	nested.portlets.layout.template.unsupported can match with the following OSGI properties:
+		layoutTemplateId from com.liferay.nested.portlets.web.configuration.NestedPortletsPortletInstanceConfiguration
+		layoutTemplatesUnsupported from com.liferay.nested.portlets.web.configuration.NestedPortletsPortletInstanceConfiguration
+	ntlm.auth.domain.controller can match with the following OSGI properties:
+		domainController from com.liferay.portal.security.sso.ntlm.configuration.NtlmConfiguration
+	ntlm.auth.domain.controller.name can match with the following OSGI properties:
+		domainControllerName from com.liferay.portal.security.sso.ntlm.configuration.NtlmConfiguration
+	ntlm.auth.negotiate.flags can match with the following OSGI properties:
+		negotiateFlags from com.liferay.portal.security.sso.ntlm.configuration.NtlmConfiguration
+	ntlm.auth.service.account can match with the following OSGI properties:
+		serviceAccount from com.liferay.portal.security.sso.ntlm.configuration.NtlmConfiguration
+	ntlm.auth.service.password can match with the following OSGI properties:
+		servicePassword from com.liferay.portal.security.sso.ntlm.configuration.NtlmConfiguration
+	open.sso.email.address.attr can match with the following OSGI properties:
+		emailAddressAttr from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
+	open.sso.first.name.attr can match with the following OSGI properties:
+		firstNameAttr from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
+	open.sso.last.name.attr can match with the following OSGI properties:
+		lastNameAttr from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
+	open.sso.ldap.import.enabled can match with the following OSGI properties:
+		importFromLDAP from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		importFromLDAP from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
+		importFromLDAP from com.liferay.portal.security.sso.token.configuration.TokenConfiguration
+	open.sso.login.url can match with the following OSGI properties:
+		loginURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		loginURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
+	open.sso.logout.on.session.expiration can match with the following OSGI properties:
+		logoutOnSessionExpiration from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		logoutOnSessionExpiration from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
+	open.sso.logout.url can match with the following OSGI properties:
+		logoutURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		logoutURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
+	open.sso.screen.name.attr can match with the following OSGI properties:
+		screenNameAttr from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
+	open.sso.service.url can match with the following OSGI properties:
+		serviceURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+		serviceURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
+	request.header.auth.hosts.allowed can match with the following OSGI properties:
+		authHostsAllowed from com.liferay.portal.security.auto.login.request.header.module.configuration.RequestHeaderAutoLoginConfiguration
+	request.header.auth.import.from.ldap can match with the following OSGI properties:
+		importFromLDAP from com.liferay.portal.security.auto.login.request.header.module.configuration.RequestHeaderAutoLoginConfiguration
+	rss.feed.refresh.time can match with the following OSGI properties:
+		feedTime from com.liferay.rss.web.configuration.RSSWebCacheConfiguration
+	social.activity.contribution.increments can match with the following OSGI properties:
+		contributionIncrements from com.liferay.social.activity.configuration.SocialActivityGroupServiceConfiguration
+	social.activity.contribution.limit.values can match with the following OSGI properties:
+		contributionLimitValues from com.liferay.social.activity.configuration.SocialActivityGroupServiceConfiguration
+	social.activity.participation.increments can match with the following OSGI properties:
+		participationIncrements from com.liferay.social.activity.configuration.SocialActivityGroupServiceConfiguration
+	social.activity.participation.limit.values can match with the following OSGI properties:
+		participationLimitValues from com.liferay.social.activity.configuration.SocialActivityGroupServiceConfiguration
+	velocity.engine.directive.if.to.string.null.check can match with the following OSGI properties:
+		directiveIfToStringNullCheck from com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration
+	velocity.engine.logger.category can match with the following OSGI properties:
+		loggerCategory from com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration
+	velocity.engine.resource.modification.check.interval can match with the following OSGI properties:
+		resourceModificationCheckInterval from com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration
+	velocity.engine.restricted.classes can match with the following OSGI properties:
+		restrictedClasses from com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration
+	velocity.engine.restricted.packages can match with the following OSGI properties:
+		restrictedPackages from com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration
+	velocity.engine.restricted.variables can match with the following OSGI properties:
+		restrictedVariables from com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration
+	velocity.engine.velocimacro.library can match with the following OSGI properties:
+		velocimacroLibrary from com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration
+	wiki.email.from.address can match with the following OSGI properties:
+		emailFromAddress from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.email.from.name can match with the following OSGI properties:
+		emailFromName from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.email.page.added.body can match with the following OSGI properties:
+		emailPageAddedBody from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.email.page.added.enabled can match with the following OSGI properties:
+		emailPageAddedEnabled from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.email.page.added.signature can match with the following OSGI properties:
+		emailPageAddedBody from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+		emailPageAddedEnabled from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+		emailPageAddedSubject from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.email.page.added.subject can match with the following OSGI properties:
+		emailPageAddedSubject from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.email.page.updated.body can match with the following OSGI properties:
+		emailPageUpdatedBody from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.email.page.updated.enabled can match with the following OSGI properties:
+		emailPageUpdatedEnabled from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.email.page.updated.signature can match with the following OSGI properties:
+		emailPageUpdatedBody from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+		emailPageUpdatedEnabled from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+		emailPageUpdatedSubject from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.email.page.updated.subject can match with the following OSGI properties:
+		emailPageUpdatedSubject from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.front.page.name can match with the following OSGI properties:
+		frontPageName from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.initial.node.name can match with the following OSGI properties:
+		initialNodeName from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.page.comments.enabled can match with the following OSGI properties:
+		pageCommentsEnabled from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.page.minor.edit.add.social.activity can match with the following OSGI properties:
+		pageMinorEditAddSocialActivity from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.page.minor.edit.send.email can match with the following OSGI properties:
+		pageMinorEditSendEmail from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.page.ratings.enabled can match with the following OSGI properties:
+		emailPageAddedEnabled from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+		emailPageUpdatedEnabled from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+		pageCommentsEnabled from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+		enablePageRatings from com.liferay.wiki.web.configuration.WikiPortletInstanceConfiguration
+	wiki.parsers.creole.supported.protocols can match with the following OSGI properties:
+		parsersCreoleSupportedProtocols from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	wiki.rss.abstract.length can match with the following OSGI properties:
+		rssAbstractLength from com.liferay.wiki.configuration.WikiGroupServiceConfiguration
+	xsl.content.valid.url.prefixes can match with the following OSGI properties:
+		validUrlPrefixes from com.liferay.xsl.content.web.configuration.XSLContentConfiguration
+	xsl.content.xml.doctype.declaration.allowed can match with the following OSGI properties:
+		xmlDoctypeDeclarationAllowed from com.liferay.xsl.content.web.configuration.XSLContentConfiguration
+	xsl.content.xml.external.general.entities.allowed can match with the following OSGI properties:
+		xmlExternalGeneralEntitiesAllowed from com.liferay.xsl.content.web.configuration.XSLContentConfiguration
+	xsl.content.xml.external.parameter.entities.allowed can match with the following OSGI properties:
+		xmlExternalParameterEntitiesAllowed from com.liferay.xsl.content.web.configuration.XSLContentConfiguration
+	xsl.content.xsl.secure.processing.enabled can match with the following OSGI properties:
+		xslSecureProcessingEnabled from com.liferay.xsl.content.web.configuration.XSLContentConfiguration
+	xsl.template.secure.processing.enabled can match with the following OSGI properties:
+		xslSecureProcessingEnabled from com.liferay.xsl.content.web.configuration.XSLContentConfiguration
+
+We haven't found a new property for the following old properties (check if you still need them or check the documentation to find a replacement):
+	aim.login
+	aim.password
+	asset.entry.validator
+	asset.publisher.asset.entry.query.processors
+	asset.publisher.filter.unlistable.entries
+	asset.publisher.query.form.configuration
+	asset.tag.permissions.enabled
+	asset.tag.properties.default
+	asset.tag.properties.enabled
+	asset.tag.suggestions.enabled
+	audit.message.com.liferay.portal.model.Layout.VIEW
+	audit.message.scheduler.job
+	auth.failure
+	auth.max.failures
+	auth.pipeline.pre
+	auth.token.impl
+	auth.verifier.pipeline
+	auto.deploy.geronimo.dest.dir
+	auto.login.hooks
+	bookmarks.publish.to.live.by.default
+	cas.auth.enabled
+	ch.qos.cal10n.api,com.bea.*,com.oracle.*,javax.jsp,org.jboss.*,#
+	cluster.executor.debug.enabled
+	com.ibm.*,org.objectweb.asm.*
+	com.liferay.portal.service.http.TunnelUtil.verify.ssl.hostname
+	com.liferay.portal.servlet.filters.audit.AuditFilter
+	com.liferay.portal.servlet.filters.charbufferpool.CharBufferPoolFilter
+	com.liferay.portal.servlet.filters.monitoring.MonitoringFilter
+	com.liferay.portal.servlet.filters.secure.SecureFilter
+	com.liferay.portal.servlet.filters.sso.cas.CASFilter
+	com.liferay.portal.servlet.filters.validhtml.ValidHtmlFilter
+	com.liferay.portlet.blogs.util.BlogsOpenSearchImpl
+	com.liferay.portlet.bookmarks.util.BookmarksOpenSearchImpl
+	com.liferay.portlet.directory.util.DirectoryOpenSearchImpl
+	com.liferay.portlet.documentlibrary.util.DLOpenSearchImpl
+	com.liferay.portlet.journal.util.JournalOpenSearchImpl
+	com.liferay.portlet.messageboards.util.MBOpenSearchImpl
+	com.liferay.portlet.wiki.util.WikiOpenSearchImpl
+	com.mysql.jdbc,com.sun.security.auth.module,org.apache.naming.java
+	com.sun.el,com.sun.el.lang,com.sun.el.parser,com.sun.el.query,com.sun.el.util,org.apache.el,org.apache.el.lang,org.apache.el.parser,org.apache.el.util,#
+	com.sun.el,javax.el,javax.mail.glassfish,javax.servlet,javax.servlet.jsp,javax.servlet.jsp.jstl,org.apache.jasper.glassfish,org.apache.taglibs.standard.glassfish,org.eclipse.*,#
+	commons-logging,org.apache.commons.io,#
+	company.settings.form.configuration
+	company.settings.form.identification
+	company.settings.form.miscellaneous
+	control.panel.default.entry.class
+	control.panel.home.portlet.id
+	convert.processes
+	counter.increment.com.liferay.portal.model.Layout
+	default.wap.color.scheme.id
+	default.wap.theme.id
+	discussion.thread.view
+	dl.display.templates.config
+	dl.show.liferay.sync.message
+	dl.store.jcr.fetch.delay
+	dl.store.jcr.fetch.max.failures
+	dl.store.s3.jets3t[httpclient.max-connections]
+	dl.store.s3.jets3t[s3service.default-bucket-location]
+	dl.store.s3.jets3t[s3service.default-storage-class]
+	dl.store.s3.jets3t[s3service.s3-endpoint]
+	dockbar.add.portlets
+	dockbar.administrative.links.show.in.pop.up
+	dynamic.data.mapping.structure.private.field.datatype[_fieldsDisplay]
+	dynamic.data.mapping.structure.private.field.names
+	dynamic.data.mapping.structure.private.field.repeatable[_fieldsDisplay]
+	editor.ckeditor.version
+	editor.ckeditor.version.latest.chrome
+	editor.ckeditor.version.latest.firefox
+	editor.ckeditor.version.latest.ie
+	editor.ckeditor.version.latest.safari
+	editor.inline.editing.enabled
+	editor.wysiwyg.portal-web.docroot.html.portlet.asset_publisher.configuration.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.blogs.configuration.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.bookmarks.configuration.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.document_library.configuration.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.invitation.configuration.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.journal.configuration.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.journal.edit_article_content.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.journal.edit_article_content_xsd_el.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.login.configuration.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.configuration.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.portal_settings.email_notifications.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.shopping.configuration.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.wiki.edit.creole.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.wiki.edit.html.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.wiki.edit.mediawiki.jsp
+	ehcache.bootstrap.cache.loader.factory
+	ehcache.cache.event.listener.factory
+	ehcache.cache.manager.peer.provider.factory
+	ehcache.cache.manager.statistics.thread.pool.size
+	ehcache.multi.vm.config.location.peerProviderProperties
+	facebook.connect.auth.enabled
+	field.enable.com.liferay.portal.model.Contact.birthday
+	field.enable.com.liferay.portal.model.Contact.male
+	field.enable.com.liferay.portal.model.Organization.status
+	flags.reasons
+	freemarker.engine.restricted.packages
+	freemarker.engine.template.parsers
+	google.apps.password
+	google.apps.username
+	hibernate.cache.region.factory_class
+	hibernate.cache.use_minimal_puts
+	hibernate.cache.use_query_cache
+	hibernate.cache.use_second_level_cache
+	hibernate.cache.use_structured_entries
+	hot.deploy.hook.custom.jsp.verification.enabled
+	icon.menu.max.display.items
+	icq.jar
+	icq.login
+	icq.password
+	index.filter.search.limit
+	index.portal.field.analyzer.enabled
+	index.read.only
+	index.search.leading.wildcard.enabled
+	invitation.email.max.recipients
+	invitation.email.message.body
+	invitation.email.message.subject
+	javax.persistence.validation.mode
+	jcifs.netbios.cachePolicy
+	jcifs.smb.client.soTimeout
+	jdbc.default.removeAbandonedTimeout
+	jgroups.bind_addr
+	jgroups.mping.mcast_addr
+	journal.article.form.add
+	journal.article.form.default.values
+	journal.article.form.translate
+	journal.article.form.update
+	journal.article.types
+	journal.articles.page.delta.values
+	journal.browse.by.structures.sorted.by.name
+	journal.char.blacklist
+	journal.error.template[ftl]
+	journal.error.template[vm]
+	journal.error.template[xsl]
+	journal.lar.creation.strategy
+	journal.template.language.content[css]
+	journal.template.language.content[ftl]
+	journal.template.language.content[vm]
+	journal.template.language.content[xsl]
+	journal.transformer.listener
+	jpa.configs
+	jpa.load.time.weaver
+	jpa.provider
+	jpa.provider.property.eclipselink.allow-zero-id
+	json.deserializer.strict.mode
+	layout.configuration.action.delete[article]
+	layout.configuration.action.update[article]
+	layout.edit.page[article]
+	layout.edit.page[control_panel]
+	layout.first.pageable[article]
+	layout.first.pageable[control_panel]
+	layout.form.add
+	layout.form.update
+	layout.parallel.render.enable
+	layout.parentable[article]
+	layout.parentable[control_panel]
+	layout.reset.portlet.ids
+	layout.set.form.update
+	layout.sitemapable[article]
+	layout.types
+	layout.url.friendliable[article]
+	layout.url.friendliable[control_panel]
+	layout.url[article]
+	layout.url[control_panel]
+	layout.view.page[article]
+	layout.view.page[control_panel]
+	ldap.attrs.transformer.impl
+	ldap.auth.enabled
+	ldap.auth.method
+	ldap.auth.required
+	ldap.connection.com.sun.jndi.ldap.connect.pool
+	ldap.connection.com.sun.jndi.ldap.connect.timeout
+	ldap.connection.com.sun.jndi.ldap.read.timeout
+	ldap.referral
+	library.download.url.resin.jar
+	library.download.url.script-10.jar
+	liferay/dependency.js,liferay/events.js,liferay/language.js,liferay/liferay.js,liferay/util.js,#
+	liferay/dockbar.js,liferay/layout_exporter.js,liferay/session.js,#
+	liferay/portal.js,liferay/portlet.js,liferay/portlet_sharing.js,liferay/workflow.js,#
+	lock.expiration.time.com.liferay.portlet.documentlibrary.model.DLFileEntry
+	lock.expiration.time.com.liferay.portlet.documentlibrary.model.DLFolder
+	lock.expiration.time.com.liferay.portlet.messageboards.model.MBThread
+	lock.listeners
+	lucene.analyzer.max.tokens
+	lucene.buffer.size
+	lucene.cluster.index.loading.on.startup
+	lucene.cluster.index.loading.sync.timeout
+	lucene.cluster.index.loading.use.canonical.host.name
+	lucene.commit.batch.size
+	lucene.commit.time.interval
+	lucene.dir
+	lucene.file.extractor
+	lucene.file.extractor.regexp.strip
+	lucene.merge.factor
+	lucene.merge.policy
+	lucene.merge.scheduler
+	lucene.replicate.write
+	lucene.store.type
+	lucene.store.type.file.force.mmap
+	mail.hook.cyrus.add.user
+	mail.hook.cyrus.delete.user
+	mail.hook.cyrus.home
+	mail.hook.fusemail.account.type
+	mail.hook.fusemail.group.parent
+	mail.hook.fusemail.password
+	mail.hook.fusemail.url
+	mail.hook.fusemail.username
+	mail.hook.impl
+	membership.policy.organizations
+	membership.policy.roles
+	membership.policy.sites
+	membership.policy.user.groups
+	message.boards.email.message.added.signature
+	message.boards.email.message.updated.signature
+	message.boards.thread.previous.and.next.navigation.enabled
+	message.boards.thread.views
+	message.boards.thread.views.default
+	microsoft.translator.client.id
+	microsoft.translator.client.secret
+	mobile.device.styling.wap.enabled
+	module.framework.enabled
+	module.framework.initial.bundles
+	module.framework.system.bundle.ignored.fragments
+	monitoring.level.com.liferay.monitoring.Portal
+	monitoring.level.com.liferay.monitoring.Portlet
+	msn.login
+	msn.password
+	multicast.group.address["hibernate"]
+	multicast.group.port["hibernate"]
+	navigation.display.style[from-level-0]
+	navigation.display.style[from-level-1-to-all-sublevels]
+	navigation.display.style[from-level-1-with-title]
+	navigation.display.style[from-level-1]
+	navigation.display.style[from-level-2-with-title]
+	navigation.display.style[relative-with-breadcrumb]
+	net.sf.ehcache.configurationResourceName
+	net.sf.ehcache.configurationResourceName.peerProviderProperties
+	ntlm.auth.domain
+	ntlm.auth.enabled
+	open.id.auth.enabled
+	open.id.ax.schema[default]
+	open.id.ax.schema[yahoo]
+	open.id.ax.type.email[default]
+	open.id.ax.type.email[yahoo]
+	open.id.ax.type.firstname[default]
+	open.id.ax.type.fullname[yahoo]
+	open.id.ax.type.lastname[default]
+	open.id.providers
+	open.id.url[yahoo]
+	open.sso.auth.enabled
+	organizations.children.types[regular-organization]
+	organizations.country.enabled[location]
+	organizations.country.enabled[regular-organization]
+	organizations.country.required[location]
+	organizations.country.required[regular-organization]
+	organizations.form.add.identification
+	organizations.form.add.main
+	organizations.form.add.miscellaneous
+	organizations.form.update.identification
+	organizations.form.update.main
+	organizations.form.update.miscellaneous
+	organizations.indexer.enabled
+	organizations.rootable[location]
+	organizations.rootable[regular-organization]
+	passwords.toolkit
+	permissions.inline.sql.resource.block.query.threshhold
+	permissions.list.filter
+	permissions.thread.local.cache.max.size
+	persistence.provider
+	phone.number.format.impl
+	portal.instance.http.port
+	portal.instance.https.port
+	portal.security.manager.file.checker.default.read.paths[geronimo]
+	ratings.max.score[com.liferay.portlet.messageboards.model.MBDiscussion]
+	ratings.max.score[com.liferay.portlet.messageboards.model.MBMessage]
+	ratings.min.score[com.liferay.portlet.messageboards.model.MBDiscussion]
+	ratings.min.score[com.liferay.portlet.messageboards.model.MBMessage]
+	sandbox.deploy.dir
+	sandbox.deploy.enabled
+	sandbox.deploy.interval
+	sandbox.deploy.listeners
+	sanitizer.impl
+	sc.image.max.size
+	sc.image.thumbnail.max.height
+	sc.image.thumbnail.max.width
+	sc.product.comments.enabled
+	scripting.forbidden.classes
+	scripting.jruby.load.paths
+	search.container.page.iterator.page.values
+	search.facet.configuration
+	service.builder.service.read.only.prefixes
+	session.clicks.auth.token.enabled
+	setup.database.driverClassName[derby]
+	setup.database.driverClassName[ingres]
+	setup.database.url[derby]
+	setup.database.url[ingres]
+	shard.default.name
+	shard.selector
+	shopping.cart.min.qty.multiple
+	shopping.category.forward.to.cart
+	shopping.category.show.special.items
+	shopping.email.from.address
+	shopping.email.from.name
+	shopping.email.order.confirmation.body
+	shopping.email.order.confirmation.enabled
+	shopping.email.order.confirmation.subject
+	shopping.email.order.shipping.body
+	shopping.email.order.shipping.enabled
+	shopping.email.order.shipping.subject
+	shopping.image.extensions
+	shopping.image.large.max.size
+	shopping.image.medium.max.size
+	shopping.image.small.max.size
+	shopping.item.show.availability
+	shopping.order.comments.enabled
+	siteminder.auth.enabled
+	siteminder.import.from.ldap
+	siteminder.user.header
+	sites.form.add.advanced
+	sites.form.add.main
+	sites.form.add.miscellaneous
+	sites.form.add.seo
+	sites.form.update.advanced
+	sites.form.update.main
+	sites.form.update.miscellaneous
+	sites.form.update.seo
+	slf4j.api,#
+	social.activity.sets.bundling.enabled
+	sql.data.com.liferay.portal.model.Country.country.id
+	sql.data.com.liferay.portal.model.ListType.account.address
+	sql.data.com.liferay.portal.model.ListType.account.email.address
+	sql.data.com.liferay.portal.model.ListType.contact.email.address
+	sql.data.com.liferay.portal.model.ListType.organization.status
+	sql.data.com.liferay.portal.model.Region.region.id
+	staging.hibernate.cache.flush.frequency
+	staging.lock.enabled
+	staging.xstream.class.whitelist
+	staging.xstream.security.enabled
+	strip.css.sass.enabled
+	table.mapper.cache.mapping.table.names
+	tags.compiler.enabled
+	tck.url
+	terms.of.use.journal.article.group.id
+	terms.of.use.journal.article.id
+	translator.default.languages
+	translator.languages
+	upgrade.processes.5203
+	upgrade.processes.5208
+	upgrade.processes.5209
+	upgrade.processes.6000
+	upgrade.processes.6001
+	upgrade.processes.6002
+	upgrade.processes.6003
+	upgrade.processes.6004
+	upgrade.processes.6005
+	upgrade.processes.6006
+	upgrade.processes.6010
+	upgrade.processes.6011
+	user.groups.indexer.enabled
+	users.email.address.generator
+	users.email.address.validator
+	users.form.add.identification
+	users.form.add.main
+	users.form.add.miscellaneous
+	users.form.my.account.identification
+	users.form.my.account.main
+	users.form.my.account.miscellaneous
+	users.form.update.identification
+	users.form.update.main
+	users.form.update.miscellaneous
+	users.full.name.generator
+	users.full.name.validator
+	users.indexer.enabled
+	users.last.name.required
+	users.screen.name.generator
+	users.screen.name.validator
+	users.update.user.name.com.liferay.portlet.messageboards.model.MBMessage
+	vaadin.resources.path
+	vaadin.theme
+	vaadin.widgetset
+	value.object.entity.cache.enabled.com.liferay.portal.model.Layout
+	value.object.entity.cache.enabled.com.liferay.portal.model.User
+	value.object.finder.cache.enabled.com.liferay.portal.model.Layout
+	value.object.finder.cache.enabled.com.liferay.portal.model.User
+	value.object.listener.com.liferay.portal.model.Contact
+	value.object.listener.com.liferay.portal.model.Group
+	value.object.listener.com.liferay.portal.model.Layout
+	value.object.listener.com.liferay.portal.model.LayoutSet
+	value.object.listener.com.liferay.portal.model.PortletPreferences
+	value.object.listener.com.liferay.portal.model.ResourceBlock
+	value.object.listener.com.liferay.portal.model.ResourcePermission
+	value.object.listener.com.liferay.portal.model.Role
+	value.object.listener.com.liferay.portal.model.User
+	value.object.listener.com.liferay.portal.model.UserGroup
+	value.object.listener.com.liferay.portlet.dynamicdatamapping.model.DDMStructure
+	value.object.listener.com.liferay.portlet.journal.model.JournalArticle
+	velocity.engine.logger
+	velocity.engine.resource.parsers
+	wiki.formats
+	wiki.formats.configuration.main[creole]
+	wiki.formats.default
+	wiki.formats.edit.page[creole]
+	wiki.formats.edit.page[html]
+	wiki.formats.edit.page[mediawiki]
+	wiki.formats.edit.page[plain_text]
+	wiki.formats.engine[creole]
+	wiki.formats.engine[html]
+	wiki.formats.engine[mediawiki]
+	wiki.formats.engine[plain_text]
+	wiki.formats.help.page[creole]
+	wiki.formats.help.page[mediawiki]
+	wiki.formats.help.url[creole]
+	wiki.formats.help.url[mediawiki]
+	wiki.importers
+	wiki.importers.class[MediaWiki]
+	wiki.importers.page[MediaWiki]
+	wiki.page.titles.regexp
+	wiki.page.titles.remove.regexp
+	ym.login
+	ym.password
+
+The following properties still exist in the new portal.properties:
+	admin.analytics.types
+	admin.default.group.names
+	admin.default.organization.group.names
+	admin.default.role.names
+	admin.default.user.group.names
+	admin.email.from.address
+	admin.email.from.name
+	admin.email.password.reset.body
+	admin.email.password.reset.subject
+	admin.email.password.sent.body
+	admin.email.password.sent.subject
+	admin.email.user.added.body
+	admin.email.user.added.enabled
+	admin.email.user.added.no.password.body
+	admin.email.user.added.subject
+	admin.email.verification.body
+	admin.email.verification.subject
+	admin.mail.host.names
+	admin.obfuscated.properties
+	admin.reserved.email.addresses
+	admin.reserved.screen.names
+	admin.sync.default.associations
+	announcements.email.body
+	announcements.email.from.address
+	announcements.email.from.name
+	announcements.email.subject
+	announcements.email.to.address
+	announcements.email.to.name
+	announcements.entry.check.interval
+	announcements.entry.page.delta.values
+	announcements.entry.types
+	application.shutdown.events
+	application.startup.events
+	asset.categories.properties.default
+	asset.categories.search.hierarchical
+	asset.categories.selector.max.entries
+	asset.filter.search.limit
+	asset.vocabulary.default
+	atom.servlet.hosts.allowed
+	atom.servlet.https.required
+	aui/arraylist-add/arraylist-add.js,aui/arraylist-filter/arraylist-filter.js,aui/arraylist/arraylist.js,aui/array-extras/array-extras.js,aui/array-invoke/array-invoke.js,aui/attribute-base/attribute-base.js,aui/attribute-complex/attribute-complex.js,aui/attribute-core/attribute-core.js,aui/attribute-observable/attribute-observable.js,aui/attribute-extras/attribute-extras.js,aui/base-base/base-base.js,aui/base-pluginhost/base-pluginhost.js,aui/classnamemanager/classnamemanager.js,aui/datatype-xml-format/datatype-xml-format.js,aui/datatype-xml-parse/datatype-xml-parse.js,aui/dom-base/dom-base.js,aui/dom-core/dom-core.js,aui/dom-screen/dom-screen.js,aui/dom-style/dom-style.js,aui/event-base/event-base.js,aui/event-custom-base/event-custom-base.js,aui/event-custom-complex/event-custom-complex.js,aui/event-delegate/event-delegate.js,aui/event-focus/event-focus.js,aui/event-hover/event-hover.js,aui/event-key/event-key.js,aui/event-mouseenter/event-mouseenter.js,aui/event-mousewheel/event-mousewheel.js,aui/event-outside/event-outside.js,aui/event-resize/event-resize.js,aui/event-simulate/event-simulate.js,aui/event-synthetic/event-synthetic.js,aui/intl/intl.js,aui/io-base/io-base.js,aui/io-form/io-form.js,aui/io-queue/io-queue.js,aui/io-upload-iframe/io-upload-iframe.js,aui/io-xdr/io-xdr.js,aui/json-parse/json-parse.js,aui/json-stringify/json-stringify.js,aui/node-base/node-base.js,aui/node-core/node-core.js,aui/node-event-delegate/node-event-delegate.js,aui/node-event-simulate/node-event-simulate.js,aui/node-focusmanager/node-focusmanager.js,aui/node-pluginhost/node-pluginhost.js,aui/node-screen/node-screen.js,aui/node-style/node-style.js,aui/oop/oop.js,aui/plugin/plugin.js,aui/pluginhost-base/pluginhost-base.js,aui/pluginhost-config/pluginhost-config.js,aui/querystring-stringify-simple/querystring-stringify-simple.js,aui/queue-promote/queue-promote.js,aui/selector-css2/selector-css2.js,aui/selector-css3/selector-css3.js,aui/selector-native/selector-native.js,aui/selector/selector.js,aui/widget-base/widget-base.js,aui/widget-htmlparser/widget-htmlparser.js,aui/widget-skin/widget-skin.js,aui/widget-uievents/widget-uievents.js,aui/yui-throttle/yui-throttle.js,#
+	aui/async-queue/async-queue.js,aui/base-build/base-build.js,aui/cookie/cookie.js,aui/event-touch/event-touch.js,aui/overlay/overlay.js,aui/querystring-stringify/querystring-stringify.js,aui/widget-child/widget-child.js,aui/widget-position-align/widget-position-align.js,aui/widget-position-constrain/widget-position-constrain.js,aui/widget-position/widget-position.js,aui/widget-stack/widget-stack.js,aui/widget-stdmod/widget-stdmod.js,#
+	aui/aui-aria/aui-aria.js,aui/aui-io-plugin-deprecated/aui-io-plugin-deprecated.js,aui/aui-io-request/aui-io-request.js,aui/aui-loading-mask-deprecated/aui-loading-mask-deprecated.js,aui/aui-overlay-base-deprecated/aui-overlay-base-deprecated.js,aui/aui-overlay-context-deprecated/aui-overlay-context-deprecated.js,aui/aui-overlay-manager-deprecated/aui-overlay-manager-deprecated.js,aui/aui-overlay-mask-deprecated/aui-overlay-mask-deprecated.js,aui/aui-parse-content/aui-parse-content.js,#
+	aui/aui-base-core/aui-base-core.js,aui/aui-base-lang/aui-base-lang.js,#
+	aui/aui-classnamemanager/aui-classnamemanager.js,aui/aui-component/aui-component.js,aui/aui-debounce/aui-debounce.js,aui/aui-delayed-task-deprecated/aui-delayed-task-deprecated.js,aui/aui-event-base/aui-event-base.js,aui/aui-event-input/aui-event-input.js,aui/aui-form-validator/aui-form-validator.js,aui/aui-node-base/aui-node-base.js,aui/aui-node-html5/aui-node-html5.js,aui/aui-selector/aui-selector.js,aui/aui-timer/aui-timer.js,#
+	aui/aui/aui.js,aui/aui-base-html5-shiv/aui-base-html5-shiv.js,#
+	auth.forward.by.last.path
+	auth.forward.by.redirect
+	auth.forward.last.paths
+	auth.login.disabled
+	auth.login.disabled.path
+	auth.login.portlet.name
+	auth.login.prompt.enabled
+	auth.login.site.url
+	auth.mac.algorithm
+	auth.mac.allow
+	auth.mac.shared.key
+	auth.pipeline.enable.liferay.check
+	auth.public.paths
+	auth.simultaneous.logins
+	auth.token.check.enabled
+	auth.token.ignore.actions
+	auth.token.ignore.portlets
+	auth.token.length
+	auto.deploy.copy.commons.logging
+	auto.deploy.copy.log4j
+	auto.deploy.custom.portlet.xml
+	auto.deploy.default.dest.dir
+	auto.deploy.deploy.dir
+	auto.deploy.dest.dir
+	auto.deploy.enabled
+	auto.deploy.glassfish.dest.dir
+	auto.deploy.glassfish.jee.deployment.enabled
+	auto.deploy.glassfish.jee.df.classname
+	auto.deploy.glassfish.jee.dm.id
+	auto.deploy.glassfish.jee.dm.passwd
+	auto.deploy.glassfish.jee.dm.user
+	auto.deploy.interval
+	auto.deploy.jboss.dest.dir
+	auto.deploy.jboss.dest.dir[5]
+	auto.deploy.jboss.prefix
+	auto.deploy.jetty.dest.dir
+	auto.deploy.jonas.dest.dir
+	auto.deploy.listeners
+	auto.deploy.resin.dest.dir
+	auto.deploy.tomcat.conf.dir
+	auto.deploy.tomcat.dest.dir
+	auto.deploy.tomcat.lib.dir
+	auto.deploy.unpack.war
+	auto.deploy.weblogic.dest.dir
+	auto.deploy.websphere.dest.dir
+	auto.deploy.websphere.wsadmin.app.manager.install.options
+	auto.deploy.websphere.wsadmin.app.manager.list.options
+	auto.deploy.websphere.wsadmin.app.manager.query
+	auto.deploy.websphere.wsadmin.app.manager.update.options
+	auto.deploy.websphere.wsadmin.app.name.suffix
+	auto.deploy.websphere.wsadmin.properties.file.name
+	auto.login.ignore.hosts
+	auto.login.ignore.paths
+	axis.servlet.hosts.allowed
+	axis.servlet.https.required
+	basic.auth.password.required
+	blogs.email.entry.added.body
+	blogs.email.entry.added.enabled
+	blogs.email.entry.added.subject
+	blogs.email.entry.updated.body
+	blogs.email.entry.updated.enabled
+	blogs.email.entry.updated.subject
+	blogs.email.from.address
+	blogs.email.from.name
+	blogs.entry.comments.enabled
+	blogs.entry.page.delta.values
+	blogs.entry.previous.and.next.navigation.enabled
+	blogs.image.extensions
+	blogs.linkback.excerpt.length
+	blogs.page.abstract.length
+	blogs.ping.google.enabled
+	blogs.pingback.enabled
+	blogs.publish.to.live.by.default
+	blogs.rss.abstract.length
+	blogs.trackback.enabled
+	browser.cache.disabled
+	browser.cache.signed.in.disabled
+	browser.compatibility.ie.versions
+	browser.launcher.url
+	buffered.increment.enabled
+	buffered.increment.standby.queue.threshold
+	buffered.increment.standby.time.upper.limit
+	buffered.increment.threadpool.keep.alive.time
+	buffered.increment.threadpool.max.size
+	cache.clear.on.context.initialization
+	cache.clear.on.plugin.undeploy
+	cache.content.threshold.size
+	calendar.publish.to.live.by.default
+	captcha.check.portal.create_account
+	captcha.check.portal.send_password
+	captcha.check.portlet.message_boards.edit_category
+	captcha.check.portlet.message_boards.edit_message
+	captcha.engine.impl
+	captcha.engine.recaptcha.key.private
+	captcha.engine.recaptcha.key.public
+	captcha.engine.recaptcha.url.noscript
+	captcha.engine.recaptcha.url.script
+	captcha.engine.recaptcha.url.verify
+	captcha.engine.simplecaptcha.background.producers
+	captcha.engine.simplecaptcha.gimpy.renderers
+	captcha.engine.simplecaptcha.height
+	captcha.engine.simplecaptcha.noise.producers
+	captcha.engine.simplecaptcha.text.producers
+	captcha.engine.simplecaptcha.width
+	captcha.engine.simplecaptcha.word.renderers
+	captcha.max.challenges
+	cdn.dynamic.resources.enabled
+	cdn.host.http
+	cdn.host.https
+	cluster.link.autodetect.address
+	cluster.link.bind.addr["cluster-link-control"]
+	cluster.link.bind.addr["cluster-link-udp"]
+	cluster.link.channel.name.control
+	cluster.link.channel.name.transport.0
+	cluster.link.channel.properties.control
+	cluster.link.channel.properties.transport.0
+	cluster.link.channel.system.properties
+	cluster.link.enabled
+	cluster.link.node.bootup.response.timeout
+	clusterable.advice.call.master.timeout
+	com.liferay.portal.servlet.filters.absoluteredirects.AbsoluteRedirectsFilter
+	com.liferay.portal.servlet.filters.aggregate.AggregateFilter
+	com.liferay.portal.servlet.filters.authverifier.AuthVerifierFilter
+	com.liferay.portal.servlet.filters.autologin.AutoLoginFilter
+	com.liferay.portal.servlet.filters.cache.CacheFilter
+	com.liferay.portal.servlet.filters.dynamiccss.DynamicCSSFilter
+	com.liferay.portal.servlet.filters.etag.ETagFilter
+	com.liferay.portal.servlet.filters.gzip.GZipFilter
+	com.liferay.portal.servlet.filters.header.HeaderFilter
+	com.liferay.portal.servlet.filters.i18n.I18nFilter
+	com.liferay.portal.servlet.filters.ignore.IgnoreFilter
+	com.liferay.portal.servlet.filters.jsoncontenttype.JSONContentTypeFilter
+	com.liferay.portal.servlet.filters.language.LanguageFilter
+	com.liferay.portal.servlet.filters.servletauthorizing.ServletAuthorizingFilter
+	com.liferay.portal.servlet.filters.sessionid.SessionIdFilter
+	com.liferay.portal.servlet.filters.sessionmaxallowed.SessionMaxAllowedFilter
+	com.liferay.portal.servlet.filters.sso.ntlm.NtlmFilter
+	com.liferay.portal.servlet.filters.sso.ntlm.NtlmPostFilter
+	com.liferay.portal.servlet.filters.sso.opensso.OpenSSOFilter
+	com.liferay.portal.servlet.filters.strip.StripFilter
+	com.liferay.portal.servlet.filters.themepreview.ThemePreviewFilter
+	com.liferay.portal.servlet.filters.threaddump.ThreadDumpFilter
+	com.liferay.portal.servlet.filters.threadlocal.ThreadLocalFilter
+	com.liferay.portal.servlet.filters.unsyncprintwriterpool.UnsyncPrintWriterPoolFilter
+	com.liferay.portal.servlet.filters.uploadservletrequest.UploadServletRequestFilter
+	com.liferay.portal.servlet.filters.urlrewrite.UrlRewriteFilter
+	com.liferay.portal.servlet.filters.validhostname.ValidHostNameFilter
+	com.liferay.portal.servlet.filters.virtualhost.VirtualHostFilter
+	com.liferay.portal.sharepoint.SharepointFilter
+	com.liferay.portal.upload.LiferayFileItem.threshold.size
+	com.liferay.portal.upload.LiferayInputStream.threshold.size
+	com.liferay.portal.upload.UploadServletRequestImpl.max.size
+	com.liferay.portal.util.HttpImpl.timeout
+	combo.allowed.file.extensions
+	combo.check.timestamp
+	combo.check.timestamp.interval
+	company.default.home.url
+	company.default.name
+	company.default.time.zone
+	company.default.web.id
+	company.encryption.algorithm
+	company.encryption.key.size
+	company.login.prepopulate.domain
+	company.security.auth.requires.https
+	company.security.auth.type
+	company.security.auto.login
+	company.security.auto.login.max.age
+	company.security.login.form.autocomplete
+	company.security.password.reminder.query.form.autocomplete
+	company.security.send.password
+	company.security.send.password.reset.link
+	company.security.site.logo
+	company.security.strangers
+	company.security.strangers.verify
+	company.security.strangers.with.mx
+	company.settings.form.authentication
+	control.panel.layout.friendly.url
+	control.panel.layout.name
+	control.panel.layout.regular.theme.id
+	control.panel.navigation.max.sites
+	counter.increment
+	counter.jdbc.prefix
+	custom.sql.auto.escape.wildcards.enabled
+	custom.sql.configs
+	database.indexes.update.on.startup
+	database.mysql.engine
+	default.admin.email.address.prefix
+	default.admin.first.name
+	default.admin.last.name
+	default.admin.middle.name
+	default.admin.password
+	default.admin.screen.name
+	default.guest.public.layout.column-1
+	default.guest.public.layout.column-2
+	default.guest.public.layout.column-3
+	default.guest.public.layout.column-4
+	default.guest.public.layout.friendly.url
+	default.guest.public.layout.name
+	default.guest.public.layout.template.id
+	default.landing.page.path
+	default.layout.template.id
+	default.logout.page.path
+	default.regular.color.scheme.id
+	default.regular.theme.id
+	default.user.private.layout.column-1
+	default.user.private.layout.column-2
+	default.user.private.layout.column-3
+	default.user.private.layout.column-4
+	default.user.private.layout.friendly.url
+	default.user.private.layout.name
+	default.user.private.layout.template.id
+	default.user.public.layout.column-1
+	default.user.public.layout.column-2
+	default.user.public.layout.column-3
+	default.user.public.layout.column-4
+	default.user.public.layout.friendly.url
+	default.user.public.layout.name
+	default.user.public.layout.template.id
+	direct.servlet.context.enabled
+	direct.servlet.context.reload
+	discussion.comments.always.editable.by.owner
+	discussion.email.body
+	discussion.email.comments.added.enabled
+	discussion.email.subject
+	discussion.subscribe.by.default
+	dl.char.blacklist
+	dl.char.last.blacklist
+	dl.comparable.file.extensions
+	dl.default.display.view
+	dl.display.views
+	dl.email.file.entry.added.body
+	dl.email.file.entry.added.enabled
+	dl.email.file.entry.added.subject
+	dl.email.file.entry.updated.body
+	dl.email.file.entry.updated.enabled
+	dl.email.file.entry.updated.subject
+	dl.email.from.address
+	dl.email.from.name
+	dl.file.entry.comments.enabled
+	dl.file.entry.conversions.enabled
+	dl.file.entry.drafts.enabled
+	dl.file.entry.lock.policy
+	dl.file.entry.open.in.ms.office.manual.check.in.required
+	dl.file.entry.preview.audio.bit.rate[mp3]
+	dl.file.entry.preview.audio.bit.rate[ogg]
+	dl.file.entry.preview.audio.containers
+	dl.file.entry.preview.audio.mime.types
+	dl.file.entry.preview.audio.sample.rate[mp3]
+	dl.file.entry.preview.audio.sample.rate[ogg]
+	dl.file.entry.preview.auto.create.on.upgrade
+	dl.file.entry.preview.document.depth
+	dl.file.entry.preview.document.dpi
+	dl.file.entry.preview.document.max.height
+	dl.file.entry.preview.document.max.width
+	dl.file.entry.preview.enabled
+	dl.file.entry.preview.fork.process.enabled
+	dl.file.entry.preview.generation.timeout.ghostscript
+	dl.file.entry.preview.generation.timeout.pdfbox
+	dl.file.entry.preview.image.mime.types
+	dl.file.entry.preview.video.bit.rate[mp4]
+	dl.file.entry.preview.video.bit.rate[ogv]
+	dl.file.entry.preview.video.containers
+	dl.file.entry.preview.video.frame.rate.denominator[mp4]
+	dl.file.entry.preview.video.frame.rate.denominator[ogv]
+	dl.file.entry.preview.video.frame.rate.numerator[mp4]
+	dl.file.entry.preview.video.frame.rate.numerator[ogv]
+	dl.file.entry.preview.video.height
+	dl.file.entry.preview.video.mime.types
+	dl.file.entry.preview.video.width
+	dl.file.entry.previewable.processor.max.size
+	dl.file.entry.processors
+	dl.file.entry.raw.metadata.processor.excluded.mime.types
+	dl.file.entry.thumbnail.enabled
+	dl.file.entry.thumbnail.max.height
+	dl.file.entry.thumbnail.max.width
+	dl.file.entry.thumbnail.video.frame.percentage
+	dl.file.entry.type.ig.image.auto.create.on.upgrade
+	dl.file.entry.version.policy
+	dl.file.extensions
+	dl.file.extensions.strict.check
+	dl.file.generic.extensions[compressed]
+	dl.file.generic.extensions[document]
+	dl.file.generic.extensions[flash]
+	dl.file.generic.extensions[image]
+	dl.file.generic.extensions[music]
+	dl.file.generic.extensions[pdf]
+	dl.file.generic.extensions[presentation]
+	dl.file.generic.extensions[spreadsheet]
+	dl.file.generic.extensions[video]
+	dl.file.generic.names
+	dl.file.icons
+	dl.file.indexing.ignore.extensions
+	dl.file.indexing.interval
+	dl.file.indexing.max.size
+	dl.file.max.size
+	dl.file.rank.check.interval
+	dl.file.rank.enabled
+	dl.file.rank.max.size
+	dl.folder.icon.check.count
+	dl.name.blacklist
+	dl.publish.to.live.by.default
+	dl.repository.impl
+	dl.store.antivirus.enabled
+	dl.store.antivirus.impl
+	dl.store.file.impl.safe.file.name.2.ampersand
+	dl.store.file.impl.safe.file.name.2.close.parenthesis
+	dl.store.file.impl.safe.file.name.2.open.parenthesis
+	dl.store.file.impl.safe.file.name.2.semicolon
+	dl.store.impl
+	dynamic.resource.servlet.allowed.paths
+	editor.wysiwyg.default
+	editor.wysiwyg.portal-web.docroot.html.portlet.announcements.edit_entry.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.blogs.edit_entry.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.mail.edit.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.mail.edit_message.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.bb_code.jsp
+	editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.html.jsp
+	ehcache.blocking.cache.allowed
+	ehcache.bootstrap.cache.loader.enabled
+	ehcache.multi.vm.config.location
+	ehcache.portal.cache.manager.jmx.enabled
+	ehcache.single.vm.config.location
+	ehcache.socket.so.timeout
+	ehcache.socket.start.port
+	etag.response.size.max
+	field.editable.roles
+	field.editable.user.types
+	global.shutdown.events
+	global.startup.events
+	google.gadget.servlet.mapping
+	groups.complex.sql.class.names
+	gzip.compression.level
+	hibernate.bytecode.use_reflection_optimizer
+	hibernate.configs
+	hibernate.generate_statistics
+	hibernate.jdbc.batch_size
+	hibernate.jdbc.use_scrollable_resultset
+	hibernate.query.factory_class
+	hibernate.show_sql
+	hot.deploy.dependency.management.enabled
+	hot.deploy.listeners
+	hot.undeploy.enabled
+	hot.undeploy.interval
+	hot.undeploy.on.redeploy
+	http
+	http.header.version.verbosity
+	iframe.password.token.role
+	image.auto.scale
+	image.default.company.logo
+	image.default.organization.logo
+	image.default.spacer
+	image.default.user.female.portrait
+	image.default.user.male.portrait
+	image.hook.file.system.root.dir
+	image.io.use.disk.cache
+	imagemagick.enabled
+	imagemagick.global.search.path[apple]
+	imagemagick.global.search.path[unix]
+	imagemagick.global.search.path[windows]
+	imagemagick.resource.limit.area
+	imagemagick.resource.limit.map
+	imagemagick.resource.limit.memory
+	include-and-override
+	index.date.format.pattern
+	index.dump.compression.enabled
+	index.on.startup
+	index.on.startup.delay
+	index.on.upgrade
+	index.permission.filter.search.amplification.factor
+	index.search.collated.spell.check.result.enabled
+	index.search.collated.spell.check.result.scores.threshold
+	index.search.highlight.enabled
+	index.search.highlight.fragment.size
+	index.search.highlight.snippet.size
+	index.search.limit
+	index.search.query.indexing.enabled
+	index.search.query.indexing.threshold
+	index.search.query.suggestion.enabled
+	index.search.query.suggestion.max
+	index.search.query.suggestion.scores.threshold
+	index.search.scoring.enabled
+	index.search.spell.checker.dictionary[en_US]
+	index.search.spell.checker.dictionary[es_ES]
+	index.search.spell.checker.supported.locales
+	index.search.writer.max.queue.size
+	index.sortable.text.fields
+	index.sortable.text.fields.truncated.length
+	index.with.thread
+	intraband.impl
+	intraband.mailbox.reaper.thread.enabled
+	intraband.mailbox.storage.life
+	intraband.timeout.default
+	intraband.welder.impl
+	intraband.welder.socket.buffer.size
+	intraband.welder.socket.keep.alive
+	intraband.welder.socket.reuse.address
+	intraband.welder.socket.server.start.port
+	intraband.welder.socket.so.linger
+	intraband.welder.socket.so.timeout
+	intraband.welder.socket.tcp.no.delay
+	invoker.filter.chain.cache.size
+	invoker.filter.uri.max.length
+	javadoc.manager.enabled
+	javascript.barebone.enabled
+	javascript.barebone.files
+	javascript.bundle.dependencies[javascript.everything.files]
+	javascript.bundle.dir[javascript.barebone.files]
+	javascript.bundle.dir[javascript.everything.files]
+	javascript.bundle.ids
+	javascript.everything.files
+	javascript.fast.load
+	javascript.log.enabled
+	jdbc.default.acquireIncrement
+	jdbc.default.acquireRetryAttempts
+	jdbc.default.acquireRetryDelay
+	jdbc.default.connectionCustomizerClassName
+	jdbc.default.driverClassName
+	jdbc.default.fairQueue
+	jdbc.default.idleConnectionTestPeriod
+	jdbc.default.initialPoolSize
+	jdbc.default.jdbcInterceptors
+	jdbc.default.jmxEnabled
+	jdbc.default.liferay.pool.provider
+	jdbc.default.maxActive
+	jdbc.default.maxIdleTime
+	jdbc.default.maxPoolSize
+	jdbc.default.minIdle
+	jdbc.default.minPoolSize
+	jdbc.default.numHelperThreads
+	jdbc.default.password
+	jdbc.default.timeBetweenEvictionRunsMillis
+	jdbc.default.url
+	jdbc.default.useEquals
+	jdbc.default.username
+	journal.image.extensions
+	journal.image.small.max.size
+	json.service.auth.token.enabled
+	json.service.auth.token.hosts.allowed
+	json.service.invalid.class.names
+	json.service.invalid.method.names
+	json.servlet.hosts.allowed
+	json.servlet.https.required
+	json.web.service.enabled
+	jsonws.servlet.hosts.allowed
+	jsonws.servlet.https.required
+	jsonws.web.service.invalid.http.methods
+	jsonws.web.service.paths.excludes
+	jsonws.web.service.paths.includes
+	jsonws.web.service.strict.http.method
+	jsp.writer.buffer.size
+	layout.ajax.render.enable
+	layout.clone.impl
+	layout.comments.enabled
+	layout.default.p_l_reset
+	layout.default.template.id
+	layout.edit.page
+	layout.edit.page[embedded]
+	layout.edit.page[link_to_layout]
+	layout.edit.page[panel]
+	layout.edit.page[url]
+	layout.first.pageable
+	layout.first.pageable[embedded]
+	layout.first.pageable[link_to_layout]
+	layout.first.pageable[panel]
+	layout.first.pageable[url]
+	layout.friendly.url.keywords
+	layout.friendly.url.private.group.servlet.mapping
+	layout.friendly.url.private.user.servlet.mapping
+	layout.friendly.url.public.servlet.mapping
+	layout.guest.show.max.icon
+	layout.guest.show.min.icon
+	layout.manage.pages.initial.children
+	layout.parallel.render.thread.pool.allow.core.thread.timeout
+	layout.parallel.render.thread.pool.core.thread.count
+	layout.parallel.render.thread.pool.keep.alive.time
+	layout.parallel.render.thread.pool.max.queue.size
+	layout.parallel.render.thread.pool.max.thread.count
+	layout.parallel.render.timeout
+	layout.parentable
+	layout.parentable[embedded]
+	layout.parentable[link_to_layout]
+	layout.parentable[panel]
+	layout.parentable[url]
+	layout.prototype.link.enabled.default
+	layout.prototype.merge.fail.threshold
+	layout.prototype.merge.lock.max.time
+	layout.remember.maximized.window.state
+	layout.set.prototype.merge.fail.threshold
+	layout.set.prototype.merge.lock.max.time
+	layout.set.prototype.propagate.logo
+	layout.show.http.status
+	layout.show.portlet.access.denied
+	layout.show.portlet.inactive
+	layout.sitemapable
+	layout.sitemapable[embedded]
+	layout.sitemapable[link_to_layout]
+	layout.sitemapable[url]
+	layout.static.portlets.all
+	layout.template.cache.enabled
+	layout.url
+	layout.url.friendliable
+	layout.url.friendliable[embedded]
+	layout.url.friendliable[link_to_layout]
+	layout.url.friendliable[panel]
+	layout.url.friendliable[url]
+	layout.url[embedded]
+	layout.url[link_to_layout]
+	layout.url[panel]
+	layout.url[url]
+	layout.user.private.layouts.auto.create
+	layout.user.private.layouts.enabled
+	layout.user.private.layouts.power.user.required
+	layout.user.public.layouts.auto.create
+	layout.user.public.layouts.enabled
+	layout.user.public.layouts.power.user.required
+	layout.view.page
+	layout.view.page[embedded]
+	layout.view.page[link_to_layout]
+	layout.view.page[panel]
+	layout.view.page[url]
+	liferay.home
+	liferay/address.js,liferay/form.js,liferay/form_placeholders.js,liferay/icon.js,liferay/menu.js,liferay/notice.js,liferay/poller.js
+	liferay/aui_sandbox.js,#
+	liferay/browser_selectors.js,liferay/modules.js,#
+	liferay/deprecated.js
+	live.users.enabled
+	locale.default.request
+	locale.prepend.friendly.url.style
+	locale.use.default.if.not.available
+	locales
+	locales.beta
+	locales.enabled
+	lock.expiration.time.com.liferay.portal.kernel.staging.Staging
+	login.create.account.allow.custom.password
+	login.dialog.disabled
+	login.email.from.address
+	login.email.from.name
+	login.events.post
+	login.events.pre
+	login.form.navigation.post
+	login.form.navigation.pre
+	login.secure.forgot.password
+	logout.events.post
+	logout.events.pre
+	look.and.feel.modifiable
+	mail.audit.trail
+	mail.batch.size
+	mail.hook.sendmail.add.user
+	mail.hook.sendmail.change.password
+	mail.hook.sendmail.delete.user
+	mail.hook.sendmail.home
+	mail.hook.sendmail.virtusertable
+	mail.hook.sendmail.virtusertable.refresh
+	mail.hook.shell.script
+	mail.mx.update
+	mail.session.mail.pop3.host
+	mail.session.mail.pop3.password
+	mail.session.mail.pop3.port
+	mail.session.mail.pop3.user
+	mail.session.mail.smtp.auth
+	mail.session.mail.smtp.host
+	mail.session.mail.smtp.password
+	mail.session.mail.smtp.port
+	mail.session.mail.smtp.user
+	mail.session.mail.store.protocol
+	mail.session.mail.transport.protocol
+	mail.throws.exception.on.failure
+	main.servlet.hosts.allowed
+	main.servlet.https.required
+	membership.policy.auto.verify
+	memory.scheduler.org.quartz.jobStore.class
+	memory.scheduler.org.quartz.scheduler.instanceId
+	memory.scheduler.org.quartz.scheduler.instanceName
+	memory.scheduler.org.quartz.scheduler.jobFactory.class
+	memory.scheduler.org.quartz.threadPool.class
+	memory.scheduler.org.quartz.threadPool.threadCount
+	memory.scheduler.org.quartz.threadPool.threadPriority
+	message.boards.anonymous.posting.enabled
+	message.boards.category.display.styles
+	message.boards.category.display.styles.default
+	message.boards.email.bulk
+	message.boards.email.from.address
+	message.boards.email.from.name
+	message.boards.email.html.format
+	message.boards.email.message.added.body
+	message.boards.email.message.added.enabled
+	message.boards.email.message.added.subject
+	message.boards.email.message.updated.body
+	message.boards.email.message.updated.enabled
+	message.boards.email.message.updated.subject
+	message.boards.expire.ban.interval
+	message.boards.message.formats
+	message.boards.message.formats.default
+	message.boards.pingback.enabled
+	message.boards.publish.to.live.by.default
+	message.boards.rss.abstract.length
+	message.boards.subscribe.by.default
+	mime.types.content.disposition.inline
+	mime.types.web.images
+	minifier.enabled
+	minifier.inline.content.cache.size
+	minifier.inline.content.cache.skip.css
+	minifier.inline.content.cache.skip.javascript
+	mobile.device.rules.publish.to.live.by.default
+	mobile.device.rules.rule.group.copy.postfix
+	mobile.device.session.cache.enabled
+	model.hints.configs
+	model.tree.rebuild.query.results.batch.size
+	module.framework.auto.deploy.dirs
+	module.framework.auto.deploy.interval
+	module.framework.base.dir
+	module.framework.beginning.start.level
+	module.framework.portal.dir
+	module.framework.properties.felix.fileinstall.bundles.new.start
+	module.framework.properties.felix.fileinstall.bundles.startActivationPolicy
+	module.framework.properties.felix.fileinstall.bundles.startTransient
+	module.framework.properties.gosh.args
+	module.framework.properties.org.osgi.framework.bootdelegation
+	module.framework.register.liferay.services
+	module.framework.runtime.start.level
+	module.framework.services.ignored.interfaces
+	module.framework.state.dir
+	module.framework.system.packages.extra
+	multi.value.map.com.liferay.portal.convert.ConvertPermissionAlgorithm.convertResourcePermission
+	multi.value.map.com.liferay.portal.convert.ConvertPermissionAlgorithm.convertRoles
+	multicast.group.address["cluster-link-control"]
+	multicast.group.address["cluster-link-mping"]
+	multicast.group.address["cluster-link-udp"]
+	multicast.group.address["multi-vm"]
+	multicast.group.port["cluster-link-control"]
+	multicast.group.port["cluster-link-mping"]
+	multicast.group.port["cluster-link-udp"]
+	multicast.group.port["multi-vm"]
+	my.sites.directory.site.excludes
+	my.sites.display.style
+	my.sites.max.elements
+	my.sites.show.private.sites.with.no.layouts
+	my.sites.show.public.sites.with.no.layouts
+	my.sites.show.user.private.sites.with.no.layouts
+	my.sites.show.user.public.sites.with.no.layouts
+	netvibes.servlet.mapping
+	notifications.max.events
+	omniadmin.users
+	openoffice.cache.enabled
+	openoffice.conversion.source.extensions[drawing]
+	openoffice.conversion.source.extensions[presentation]
+	openoffice.conversion.source.extensions[spreadsheet]
+	openoffice.conversion.source.extensions[text]
+	openoffice.conversion.target.extensions[drawing]
+	openoffice.conversion.target.extensions[presentation]
+	openoffice.conversion.target.extensions[spreadsheet]
+	openoffice.conversion.target.extensions[text]
+	openoffice.server.enabled
+	openoffice.server.host
+	openoffice.server.port
+	organizations.assignment.strict
+	organizations.membership.strict
+	organizations.search.with.index
+	organizations.types
+	passwords.default.policy.allow.dictionary.words
+	passwords.default.policy.change.required
+	passwords.default.policy.changeable
+	passwords.default.policy.check.syntax
+	passwords.default.policy.expireable
+	passwords.default.policy.grace.limit
+	passwords.default.policy.history
+	passwords.default.policy.history.count
+	passwords.default.policy.lockout
+	passwords.default.policy.lockout.duration
+	passwords.default.policy.max.age
+	passwords.default.policy.max.failure
+	passwords.default.policy.min.age
+	passwords.default.policy.min.alphanumeric
+	passwords.default.policy.min.length
+	passwords.default.policy.min.lowercase
+	passwords.default.policy.min.numbers
+	passwords.default.policy.min.symbols
+	passwords.default.policy.min.uppercase
+	passwords.default.policy.name
+	passwords.default.policy.regex
+	passwords.default.policy.reset.failure.count
+	passwords.default.policy.reset.ticket.max.age
+	passwords.default.policy.warning.time
+	passwords.digest.encoding
+	passwords.encryption.algorithm
+	passwords.passwordpolicytoolkit.generator
+	passwords.passwordpolicytoolkit.generator.charset.lowercase
+	passwords.passwordpolicytoolkit.generator.charset.numbers
+	passwords.passwordpolicytoolkit.generator.charset.symbols
+	passwords.passwordpolicytoolkit.generator.charset.uppercase
+	passwords.passwordpolicytoolkit.static
+	passwords.passwordpolicytoolkit.validator.charset.lowercase
+	passwords.passwordpolicytoolkit.validator.charset.numbers
+	passwords.passwordpolicytoolkit.validator.charset.symbols
+	passwords.passwordpolicytoolkit.validator.charset.uppercase
+	passwords.regexptoolkit.charset
+	passwords.regexptoolkit.length
+	passwords.regexptoolkit.pattern
+	permissions.check.guest.enabled
+	permissions.checker
+	permissions.custom.attribute.read.check.by.default
+	permissions.custom.attribute.write.check.by.default
+	permissions.inline.sql.check.enabled
+	permissions.object.blocking.cache
+	permissions.propagation.enabled
+	permissions.role.resource.permission.query.threshold
+	permissions.view.dynamic.inheritance
+	persisted.scheduler.org.quartz.dataSource.ds.connectionProvider.class
+	persisted.scheduler.org.quartz.jobStore.class
+	persisted.scheduler.org.quartz.jobStore.dataSource
+	persisted.scheduler.org.quartz.jobStore.misfireThreshold
+	persisted.scheduler.org.quartz.jobStore.tablePrefix
+	persisted.scheduler.org.quartz.jobStore.useProperties
+	persisted.scheduler.org.quartz.scheduler.instanceId
+	persisted.scheduler.org.quartz.scheduler.instanceName
+	persisted.scheduler.org.quartz.scheduler.jobFactory.class
+	persisted.scheduler.org.quartz.scheduler.skipUpdateCheck
+	persisted.scheduler.org.quartz.threadPool.class
+	persisted.scheduler.org.quartz.threadPool.threadCount
+	persisted.scheduler.org.quartz.threadPool.threadPriority
+	phone.number.format.international.regexp
+	phone.number.format.usa.regexp
+	plugin.notifications.enabled
+	plugin.repositories.trusted
+	plugin.repositories.untrusted
+	plugin.types
+	poller.notifications.timeout
+	poller.request.timeout
+	pop.server.notifications.enabled
+	pop.server.notifications.interval
+	pop.server.subdomain
+	portal.impersonation.default.url
+	portal.impersonation.enable
+	portal.instance.protocol
+	portal.jaas.auth.type
+	portal.jaas.enable
+	portal.jaas.plain.password
+	portal.jaas.strict.password
+	portal.proxy.path
+	portal.resiliency.enabled
+	portal.resiliency.portlet.show.footer
+	portal.resiliency.spi.agent.client.pool.max.size
+	portal.security.manager.file.checker.default.read.paths[glassfish]
+	portal.security.manager.file.checker.default.read.paths[jetty]
+	portal.security.manager.file.checker.default.read.paths[resin]
+	portal.security.manager.file.checker.default.read.paths[weblogic]
+	portal.security.manager.file.checker.default.read.paths[websphere]
+	portal.security.manager.pacl.policy.checker[com.liferay.portal.kernel.security.pacl.permission.PortalHookPermission]
+	portal.security.manager.pacl.policy.checker[com.liferay.portal.kernel.security.pacl.permission.PortalMessageBusPermission]
+	portal.security.manager.pacl.policy.checker[com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission]
+	portal.security.manager.pacl.policy.checker[com.liferay.portal.kernel.security.pacl.permission.PortalServicePermission]
+	portal.security.manager.pacl.policy.checker[java.awt.AWTPermission]
+	portal.security.manager.pacl.policy.checker[java.io.FilePermission]
+	portal.security.manager.pacl.policy.checker[java.io.SerializablePermission]
+	portal.security.manager.pacl.policy.checker[java.lang.RuntimePermission]
+	portal.security.manager.pacl.policy.checker[java.lang.reflect.ReflectPermission]
+	portal.security.manager.pacl.policy.checker[java.net.NetPermission]
+	portal.security.manager.pacl.policy.checker[java.net.SocketPermission]
+	portal.security.manager.pacl.policy.checker[java.security.SecurityPermission]
+	portal.security.manager.pacl.policy.checker[java.sql.SQLPermission]
+	portal.security.manager.pacl.policy.checker[java.util.PropertyPermission]
+	portal.security.manager.pacl.policy.checker[javax.management.MBeanPermission]
+	portal.security.manager.pacl.policy.checker[javax.management.MBeanServerPermission]
+	portal.security.manager.pacl.policy.checker[javax.management.MBeanTrustPermission]
+	portal.security.manager.pacl.policy.checker[javax.management.remote.SubjectDelegationPermission]
+	portal.security.manager.pacl.policy.checker[javax.net.ssl.SSLPermission]
+	portal.security.manager.preload.classloader.classes
+	portal.security.manager.strategy
+	portlet.add.default.resource.check.enabled
+	portlet.add.default.resource.check.whitelist
+	portlet.add.default.resource.check.whitelist.actions
+	portlet.container.restrict
+	portlet.cross.layout.invocation.mode
+	portlet.css.enabled
+	portlet.display.templates.help[ftl]
+	portlet.display.templates.help[vm]
+	portlet.event.distribution
+	portlet.filters.system
+	portlet.interrupted.request.whitelist
+	portlet.interrupted.request.whitelist.actions
+	portlet.preferences.cache.key.threshold.size
+	portlet.preferences.strict.store
+	portlet.public.render.parameter.distribution
+	portlet.resource.id.banned.paths.regexp
+	portlet.url.anchor.enable
+	portlet.url.append.parameters
+	portlet.url.escape.xml
+	portlet.url.generate.by.path.enabled
+	portlet.url.refresh.url.reserved.parameters
+	portlet.virtual.path
+	portlet.xml.validate
+	preference.validate.on.startup
+	ratings.default.number.of.stars
+	recent.content.max.display.items
+	redirect.url.domains.allowed
+	redirect.url.ips.allowed
+	redirect.url.security.mode
+	request.header.ignore.init.params
+	request.shared.attributes
+	request.unwrap.packages
+	resource.actions.configs
+	resource.actions.read.portlet.resources
+	resource.repositories.root
+	rest.proxy.url.prefixes.allowed
+	robots.txt.with.sitemap
+	robots.txt.without.sitemap
+	roles.name.allow.numeric
+	roles.organization.subtypes
+	roles.regular.subtypes
+	roles.site.subtypes
+	rss.connection.timeout
+	rss.feed.display.style.default
+	rss.feed.type.default
+	rss.feed.types
+	rss.feeds.enabled
+	rss.feeds.hosts.allowed
+	rss.feeds.https.required
+	rss.publish.to.live.by.default
+	rtl.css.excluded.paths.regexp
+	scheduler.description.max.length
+	scheduler.enabled
+	scheduler.group.name.max.length
+	scheduler.job.name.max.length
+	schema.run.enabled
+	scripting.jruby.compile.mode
+	scripting.jruby.compile.threshold
+	search.container.page.default.delta
+	search.container.page.delta.values
+	search.container.page.iterator.max.pages
+	search.container.show.pagination.bottom
+	search.container.show.pagination.top
+	servlet.service.events.post
+	servlet.service.events.pre
+	servlet.service.events.pre.error.page
+	servlet.session.create.events
+	servlet.session.destroy.events
+	session.clicks.max.allowed.values
+	session.clicks.max.size.terms
+	session.cookie.use.full.hostname
+	session.disabled
+	session.enable.persistent.cookies
+	session.enable.phishing.protection
+	session.enable.url.with.session.id
+	session.id.delimiter
+	session.id.weblogic.delimiter
+	session.max.allowed
+	session.phishing.protected.attributes
+	session.shared.attributes
+	session.shared.attributes.excludes
+	session.store.password
+	session.test.cookie.support
+	session.timeout
+	session.timeout.auto.extend
+	session.timeout.redirect.on.expire
+	session.timeout.warning
+	session.tracker.friendly.paths.enabled
+	session.tracker.ignore.paths
+	session.tracker.memory.enabled
+	session.tracker.persistence.enabled
+	session.verify.serializable.attribute
+	setup.database.driverClassName[db2]
+	setup.database.driverClassName[hypersonic]
+	setup.database.driverClassName[mysql]
+	setup.database.driverClassName[oracle]
+	setup.database.driverClassName[postgresql]
+	setup.database.driverClassName[sqlserver]
+	setup.database.driverClassName[sybase]
+	setup.database.jar.name[com.mysql.jdbc.Driver]
+	setup.database.jar.url[com.mysql.jdbc.Driver]
+	setup.database.types
+	setup.database.url[db2]
+	setup.database.url[hypersonic]
+	setup.database.url[mysql]
+	setup.database.url[oracle]
+	setup.database.url[postgresql]
+	setup.database.url[sqlserver]
+	setup.database.url[sybase]
+	setup.wizard.enabled
+	sharepoint.storage.class[document_library]
+	sharepoint.storage.tokens
+	shutdown.programmatically.exit
+	sites.content.sharing.through.administrators.enabled
+	sites.content.sharing.with.children.enabled
+	sites.control.panel.members.visible
+	sites.email.from.address
+	sites.email.from.name
+	sites.email.membership.reply.body
+	sites.email.membership.reply.subject
+	sites.email.membership.request.body
+	sites.email.membership.request.subject
+	sites.sitemap.default.change.frequency
+	sites.sitemap.default.priority
+	social.activity.counter.period.length
+	social.activity.filter.search.limit
+	social.activity.lock.retry.delay
+	social.activity.lock.timeout
+	social.activity.sets.enabled
+	social.activity.sets.selector
+	social.bookmark.jsp[facebook]
+	social.bookmark.jsp[plusone]
+	social.bookmark.jsp[twitter]
+	social.bookmark.types
+	source.forge.mirrors
+	spring.configs
+	spring.hibernate.configuration.proxy.factory.preload.classloader.classes
+	spring.hibernate.data.source
+	spring.hibernate.session.delegated
+	spring.hibernate.session.factory
+	spring.hibernate.session.factory.preload.classloader.classes
+	spring.remoting.servlet.hosts.allowed
+	spring.remoting.servlet.https.required
+	sprite.file.name
+	sprite.properties.file.name
+	sprite.root.dir
+	sql.data.max.parameters
+	staging.delete.temp.lar.on.failure
+	staging.delete.temp.lar.on.success
+	staging.remote.transfer.buffer.size
+	strip.ignore.paths
+	strip.js.language.attribute.support.enabled
+	strip.mime.types
+	struts.portlet.ignored.parameters.regexp
+	struts.portlet.request.processor
+	system.groups
+	system.organization.role.Organization.Administrator.description
+	system.organization.role.Organization.Owner.description
+	system.organization.role.Organization.User.description
+	system.organization.roles
+	system.role.Administrator.description
+	system.role.Guest.description
+	system.role.Owner.description
+	system.role.Power.User.description
+	system.role.User.description
+	system.roles
+	system.site.role.Site.Administrator.description
+	system.site.role.Site.Member.description
+	system.site.role.Site.Owner.description
+	system.site.roles
+	terms.of.use.required
+	text.extraction.fork.process.enabled
+	text.extraction.fork.process.mime.types
+	theme.css.fast.load
+	theme.images.fast.load
+	theme.jsp.override.enabled
+	theme.loader.new.theme.id.on.import
+	theme.loader.storage.path
+	theme.portlet.decorate.default
+	theme.portlet.sharing.default
+	theme.shortcut.icon
+	theme.sync.on.group
+	theme.virtual.path
+	thread.dump.speed.threshold
+	time.zones
+	transaction.isolation.counter
+	transaction.isolation.portal
+	transaction.manager.impl
+	transaction.manager.property.globalRollbackOnParticipationFailure
+	transactional.cache.enable
+	transactional.cache.names
+	translations.disabled
+	trash.enabled
+	trash.entries.max.age
+	trash.entry.check.interval
+	trash.search.limit
+	tunnel.servlet.hosts.allowed
+	tunnel.servlet.https.required
+	tunneling.servlet.encryption.algorithm
+	upgrade.database.transactions.disabled
+	upgrade.processes
+	upgrade.processes.6012
+	upgrade.processes.6100
+	upgrade.processes.6101
+	upgrade.processes.6102
+	upgrade.processes.6110
+	upgrade.processes.6120
+	upgrade.processes.6130
+	upgrade.processes.6200
+	upgrade.processes.6201
+	upgrade.processes.6202
+	upgrade.processes.6203
+	upgrade.processes.6204
+	upgrade.processes.6205
+	upgrade.processes.master
+	user.groups.copy.layouts.to.user.personal.site
+	user.groups.name.allow.numeric
+	user.groups.search.with.index
+	user.notification.event.confirmation.enabled
+	users.admin.organization.column.limit
+	users.admin.role.column.limit
+	users.admin.user.group.column.limit
+	users.delete
+	users.email.address.auto.suffix
+	users.email.address.required
+	users.export.csv.fields
+	users.image.check.token
+	users.image.max.height
+	users.image.max.size
+	users.image.max.width
+	users.list.views
+	users.reminder.queries.custom.question.enabled
+	users.reminder.queries.enabled
+	users.reminder.queries.questions
+	users.reminder.queries.required
+	users.screen.name.allow.numeric
+	users.screen.name.always.autogenerate
+	users.search.with.index
+	users.update.last.login
+	value.object.entity.blocking.cache
+	value.object.entity.cache.enabled
+	value.object.entity.thread.local.cache.max.size
+	value.object.finder.blocking.cache
+	value.object.finder.cache.enabled
+	value.object.finder.cache.enabled.Users_Roles
+	value.object.finder.thread.local.cache.max.size
+	verify.database.transactions.disabled
+	verify.frequency
+	verify.patch.levels.disabled
+	verify.process.concurrency.threshold
+	verify.processes
+	virtual.hosts.default.site.name
+	virtual.hosts.ignore.extensions
+	virtual.hosts.ignore.hosts
+	virtual.hosts.ignore.paths
+	virtual.hosts.valid.hosts
+	web.server.display.node
+	web.server.host
+	web.server.http.port
+	web.server.https.port
+	web.server.proxy.legacy.mode
+	web.server.servlet.accept.ranges.mime.types
+	web.server.servlet.check.image.gallery
+	web.server.servlet.directory.indexing.enabled
+	web.server.servlet.max.range.fields
+	web.server.servlet.version.verbosity
+	webdav.ignore
+	webdav.nonce.expiration
+	webdav.servlet.hosts.allowed
+	webdav.servlet.https.required
+	weblogic.request.wrap.non.serializable
+	widget.servlet.mapping
+	xml.security.enabled
+	xml.validation.enabled
+	xuggler.enabled
+	xuggler.ffpreset.8x8dct
+	xuggler.ffpreset.bf
+	xuggler.ffpreset.cmp
+	xuggler.ffpreset.coder
+	xuggler.ffpreset.flags
+	xuggler.ffpreset.i_qfactor
+	xuggler.ffpreset.mbtree
+	xuggler.ffpreset.me_method
+	xuggler.ffpreset.me_range
+	xuggler.ffpreset.qcomp
+	xuggler.ffpreset.qdiff
+	xuggler.ffpreset.qmax
+	xuggler.ffpreset.qmin
+	xuggler.ffpreset.sc_threshold
+	xuggler.ffpreset.subq
+	xuggler.ffpreset.trellis
+	xuggler.ffpreset.wpredp
+	xuggler.jar.file[32-linux]
+	xuggler.jar.file[32-mac]
+	xuggler.jar.file[32-win]
+	xuggler.jar.file[64-linux]
+	xuggler.jar.file[64-mac]
+	xuggler.jar.file[64-win]
+	xuggler.jar.name[32-linux]
+	xuggler.jar.name[32-mac]
+	xuggler.jar.name[32-win]
+	xuggler.jar.name[64-linux]
+	xuggler.jar.name[64-mac]
+	xuggler.jar.name[64-win]
+	xuggler.jar.options
+	xuggler.jar.url
+	yui.compressor.css.line.break
+	yui.compressor.js.disable.optimizations
+	yui.compressor.js.line.break
+	yui.compressor.js.munge
+	yui.compressor.js.preserve.all.semicolons
+	yui.compressor.js.verbose
