@@ -525,8 +525,12 @@ public class PropertiesLocator {
 
 					Path relativePath = bundlePath.relativize(modulePath);
 
+					String path = relativePath.toString();
+
+					path = path.replaceAll("\\\\", "/");
+
 					_outputFile.print("\t\t");
-					_outputFile.println(replacement.second() + " from " + relativePath);
+					_outputFile.println(replacement.second() + " from " + path);
 				}
 			);
 		}
