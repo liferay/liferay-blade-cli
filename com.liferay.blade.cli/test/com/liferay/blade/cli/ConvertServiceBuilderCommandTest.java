@@ -141,10 +141,10 @@ public class ConvertServiceBuilderCommandTest {
 
 		File moduleDir = new File(projectDir, "modules");
 
-		File newSbDir = new File(moduleDir, SB_PROJECT_NAME + "-sb");
+		File newSbDir = new File(moduleDir, "sample-service-builder");
 
-		File sbServiceDir = new File(newSbDir, SB_PROJECT_NAME + "-sb-service");
-		File sbApiDir = new File(newSbDir, SB_PROJECT_NAME + "-sb-api");
+		File sbServiceDir = new File(newSbDir, "sample-service-builder-service");
+		File sbApiDir = new File(newSbDir, "sample-service-builder-api");
 
 		assertTrue(sbServiceDir.exists());
 		assertTrue(sbApiDir.exists());
@@ -162,7 +162,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		String bndContent = new String(IO.read(bndBnd));
 
-		assertTrue(bndContent.indexOf("com.liferay.sampleservicebuilder.util.comparator") > 0);
+		assertTrue(bndContent, bndContent.contains("com.liferay.sampleservicebuilder.exception"));
 	}
 
 	private final File workspaceDir = IO.getFile("generated/test/workspace");
