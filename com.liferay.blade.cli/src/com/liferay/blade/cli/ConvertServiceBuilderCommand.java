@@ -16,37 +16,31 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.ConvertCommand.ConvertOptions;
-import com.liferay.blade.cli.util.BndProperties;
-import com.liferay.blade.cli.util.BndPropertiesValue;
 import com.liferay.blade.cli.util.Constants;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 /**
  * @author Terry Jia
  */
 public class ConvertServiceBuilderCommand {
 
-	public static final String DESCRIPTION = "Convert a service builder project to new Liferay Workspace module projects";
+	public static final String DESCRIPTION = "Convert a service builder project to new Liferay Workspace projects";
 
 	public ConvertServiceBuilderCommand(blade blade, ConvertOptions options) throws Exception {
 		_blade = blade;
@@ -87,7 +81,7 @@ public class ConvertServiceBuilderCommand {
 		final String projectName = !args.isEmpty() ? args.get(0) : null;
 
 		if (!Util.isWorkspace(_blade)) {
-			_blade.error("Please execute this in a Liferay Workspace Project");
+			_blade.error("Please execute command in a Liferay Workspace project");
 
 			return;
 		}
@@ -109,7 +103,7 @@ public class ConvertServiceBuilderCommand {
 		File serviceFile = new File(project, "src/main/webapp/WEB-INF/service.xml");
 
 		if (!serviceFile.exists()) {
-			_blade.error("There is no service.xml file in project " + projectName);
+			_blade.error("There is no service.xml file in " + projectName);
 
 			return;
 		}
@@ -117,7 +111,12 @@ public class ConvertServiceBuilderCommand {
 		String sbProjectName = !args.isEmpty() && args.size() >= 2 ? args.get(1) : null;
 
 		if (sbProjectName == null) {
-			sbProjectName = projectName + "-sb";
+			if (projectName.endsWith("-portlet")) {
+				sbProjectName = projectName.substring(0, projectName.indexOf("-portlet"));
+			}
+			else {
+				sbProjectName = projectName;
+			}
 		}
 
 		File sbProject = new File(_moduleDir, sbProjectName);
@@ -129,26 +128,26 @@ public class ConvertServiceBuilderCommand {
 			return;
 		}
 
+		ServiceBuilder oldServiceBuilderXml = new ServiceBuilder(serviceFile);
+
 		CreateCommand createCommand = new CreateCommand(_blade);
 
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
 		projectTemplatesArgs.setDestinationDir(_moduleDir);
 		projectTemplatesArgs.setName(sbProject.getName());
+		projectTemplatesArgs.setPackageName(oldServiceBuilderXml.getPackagePath());
 		projectTemplatesArgs.setTemplate("service-builder");
 
 		createCommand.execute(projectTemplatesArgs);
 
 		File sbServiceProject = new File(sbProject, sbProjectName + "-service");
 
-		// copy service.xml
-		File emptyServiceXml = new File(sbServiceProject, ServiceBuilder.SERVICE_XML);
+		File newServiceXml = new File(sbServiceProject, ServiceBuilder.SERVICE_XML);
 
-		IO.delete(emptyServiceXml);
+		Files.move(serviceFile.toPath(), newServiceXml.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-		IO.copy(serviceFile, emptyServiceXml);
-
-		ServiceBuilder serviceBuilderXml = new ServiceBuilder(serviceFile);
+		ServiceBuilder serviceBuilderXml = new ServiceBuilder(newServiceXml);
 
 		String sbPackageName = serviceBuilderXml.getPackagePath();
 
@@ -158,108 +157,96 @@ public class ConvertServiceBuilderCommand {
 
 		File newSBFolder = new File(sbServiceProject, Constants.DEFAULT_JAVA_SRC + packageName);
 
-		File oldServiceImplFolder = new File(oldSBFolder, ServiceBuilder.DEFAULT_SERVICE_IMPL);
-		File newServiceImplFolder = new File(newSBFolder, ServiceBuilder.DEFAULT_SERVICE_IMPL);
+		File oldServiceImplFolder = new File(oldSBFolder, "service");
+		File newServiceImplFolder = new File(newSBFolder, "service");
 
-		// copy local service impl class and service impl class
 		if (oldServiceImplFolder.exists()) {
 			newServiceImplFolder.mkdirs();
 
-			Files.walkFileTree(oldServiceImplFolder.toPath(), new CopyDirVisitor(oldServiceImplFolder.toPath(),
-				newServiceImplFolder.toPath(), StandardCopyOption.REPLACE_EXISTING));
+			Files.move(oldServiceImplFolder.toPath(), newServiceImplFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
 
-		System.out.println("Copid local-service impl class and service impl class.");
+		File oldModelImplFolder = new File(oldSBFolder, "model");
+		File newModelImplFolder = new File(newSBFolder, "model");
 
-		File oldModelImplFolder = new File(oldSBFolder, ServiceBuilder.DEFAULT_MODEL_IMPL);
-		File newModelImplFolder = new File(newSBFolder, ServiceBuilder.DEFAULT_MODEL_IMPL);
-
-		// copy model impl class
 		if (oldModelImplFolder.exists()) {
 			newModelImplFolder.mkdirs();
 
-			Files.walkFileTree(oldModelImplFolder.toPath(), new CopyDirVisitor(oldModelImplFolder.toPath(),
-				newModelImplFolder.toPath(), StandardCopyOption.REPLACE_EXISTING));
+			Files.move(oldModelImplFolder.toPath(), newModelImplFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
-
-		System.out.println("Copid model impl class.");
 
 		File oldMetaInfFolder = new File(project, Constants.DEFAULT_JAVA_SRC + ServiceBuilder.META_INF);
 		File newMetaInfFolder = new File(sbServiceProject, Constants.DEFAULT_RESOURCES_SRC + ServiceBuilder.META_INF);
 
-		// copy portlet-model-hints.xml
 		if (oldMetaInfFolder.exists()) {
 			newMetaInfFolder.mkdirs();
 
-			IO.copy(new File(oldMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML),
-				new File(newMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML));
+			Files.move(new File(oldMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML).toPath(),
+				new File(newMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML).toPath());
 		}
-
-		System.out.println("Copid portlet-model-hints.xml");
 
 		File oldSrcFolder = new File(project, Constants.DEFAULT_JAVA_SRC);
 		File newResourcesSrcFolder = new File(sbServiceProject, Constants.DEFAULT_RESOURCES_SRC);
 
-		// copy service.properties
 		if (oldSrcFolder.exists()) {
 			newResourcesSrcFolder.mkdirs();
 
-			IO.copy(new File(oldSrcFolder, ServiceBuilder.SERVICE_PROPERTIES),
-				new File(newResourcesSrcFolder, ServiceBuilder.SERVICE_PROPERTIES));
+			Files.move(new File(oldSrcFolder, ServiceBuilder.SERVICE_PROPERTIES).toPath(),
+				new File(newResourcesSrcFolder, ServiceBuilder.SERVICE_PROPERTIES).toPath());
 		}
-
-		System.out.println("Copid service.properties");
 
 		File sbApiProject = new File(sbProject, sbProjectName + "-api");
 		File oldApiFolder = new File(project, Constants.DEFAULT_WEBAPP_SRC + ServiceBuilder.API_62);
 
-		File oldComparatorFolder = new File(oldApiFolder, packageName + "/" + ServiceBuilder.DEFAULT_COMPARATOR);
-		File newComparatorFolder = new File(new File(sbApiProject, Constants.DEFAULT_JAVA_SRC),
-			packageName + "/" + ServiceBuilder.DEFAULT_COMPARATOR);
+		if (oldApiFolder.exists()) {
+			File newApiFolder = new File(sbApiProject, Constants.DEFAULT_JAVA_SRC);
 
-		if (oldComparatorFolder.exists()) {
-			newComparatorFolder.mkdirs();
+			newApiFolder.mkdirs();
 
-			Files.walkFileTree(oldComparatorFolder.toPath(), new CopyDirVisitor(oldComparatorFolder.toPath(),
-				newComparatorFolder.toPath(), StandardCopyOption.REPLACE_EXISTING));
-
-			System.out.println("Copid comparator class");
+			for (File oldApiFile : oldApiFolder.listFiles()) {
+				Files.move(oldApiFile.toPath(), newApiFolder.toPath().resolve(oldApiFile.getName()));
+			}
 		}
 
-		// fix the bnd.bnd export package issue and see LPS-69637
-		File bndFile = new File(sbApiProject, "bnd.bnd");
+		oldApiFolder.delete();
 
-		if (bndFile.exists()) {
-			BndProperties bndPro = new BndProperties();
+		// go through all api folders and make sure to add a packageinfo file
 
-			try {
-				bndPro.load(new FileInputStream(bndFile));
+		Stream<Path> srcPaths = Files.walk(sbApiProject.toPath().resolve(Constants.DEFAULT_JAVA_SRC));
 
-				BndPropertiesValue e = (BndPropertiesValue) bndPro.get("Export-Package");
-
-				String formatedValue = e.getFormatedValue();
-				formatedValue = formatedValue + ",\\" + "\n\t" + sbPackageName + ".util.comparator";
-
-				e.setFormatedValue(formatedValue);
-				e.setOriginalValue("");
-
-				bndPro.addValue("Export-Package", e);
-
-				bndPro.store(new FileOutputStream(bndFile), null);
+		srcPaths.map(
+			path -> path.toFile()
+		).filter(
+			file -> file.isFile() && file.getName().endsWith(".java") && isInExportedApiFolder(file)
+		).map(
+			file -> file.toPath().resolveSibling("packageinfo").toFile()
+		).filter(
+			file -> !file.exists()
+		).forEach(
+			file -> {
+				try {
+					Files.write(file.toPath(), new String("version 1.0.0").getBytes());
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			catch (IOException e) {
-			}
+		);
 
-			System.out.println("need to fix bnd.bnd issue and see LPS-69637.");
-		}
+		srcPaths.close();
 
-		System.out.println("Migrate files done, then you should fix breaking changes and re-run build-service task.");
+		System.out.println("Migrating files done, then you should fix breaking changes and re-run build-service task.");
+	}
+
+	private boolean isInExportedApiFolder(File file) {
+		File dir = file.getParentFile();
+
+		String dirName = dir.getName();
+
+		return dirName.equals("exception") || dirName.equals("model") || dirName.equals("service") || dirName.equals("persistence");
 	}
 
 	private class ServiceBuilder {
-		public static final String DEFAULT_SERVICE_IMPL = "service/impl/";
-		public static final String DEFAULT_MODEL_IMPL = "model/impl/";
-		public static final String DEFAULT_COMPARATOR = "util/comparator";
 		public static final String META_INF = "META-INF/";
 		public static final String API_62 = "WEB-INF/service/";
 		public static final String PORTLET_MODEL_HINTS_XML = "portlet-model-hints.xml";
@@ -269,26 +256,18 @@ public class ConvertServiceBuilderCommand {
 		File _serviceXml;
 		Element _rootElement;
 
-		public ServiceBuilder(File serviceXml) {
+		public ServiceBuilder(File serviceXml) throws Exception {
 			_serviceXml = serviceXml;
 			parse();
 		}
 
-		private void parse() {
+		private void parse() throws Exception {
 			if ((_rootElement == null) && (_serviceXml != null) && (_serviceXml.exists())) {
-				try {
-					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-					Document doc = dBuilder.parse(_serviceXml);
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document doc = dBuilder.parse(_serviceXml);
 
-					_rootElement = doc.getDocumentElement();
-				}
-				catch (ParserConfigurationException e) {
-				}
-				catch (SAXException e) {
-				}
-				catch (IOException e) {
-				}
+				_rootElement = doc.getDocumentElement();
 			}
 		}
 

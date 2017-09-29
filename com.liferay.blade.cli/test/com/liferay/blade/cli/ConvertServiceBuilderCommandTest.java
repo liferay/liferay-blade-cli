@@ -19,12 +19,12 @@ package com.liferay.blade.cli;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import aQute.lib.io.IO;
-
 import java.io.File;
 
 import org.junit.After;
 import org.junit.Test;
+
+import aQute.lib.io.IO;
 
 /**
  * @author Terry Jia
@@ -36,6 +36,70 @@ public class ConvertServiceBuilderCommandTest {
 	@After
 	public void cleanUp() throws Exception {
 		IO.delete(workspaceDir.getParentFile());
+	}
+
+	@Test
+	public void testConvertServiceBuilderTasksPortletDefaultName() throws Exception {
+		File testdir = IO.getFile("generated/test-tasks-portlet-conversion");
+
+		if (testdir.exists()) {
+			IO.deleteWithException(testdir);
+			assertFalse(testdir.exists());
+		}
+
+		String[] args = {"-b", testdir.getPath(), "init", "-u"};
+
+		new bladenofail().run(args);
+
+		File pluginsSdkDir = new File(testdir, "plugins-sdk");
+
+		IO.copy(new File("test-projects/tasks-plugins-sdk"), pluginsSdkDir);
+
+		assertTrue(new File(testdir, "plugins-sdk/portlets/tasks-portlet").exists());
+
+		String[] convertArgs = {"-b", testdir.getPath(), "convert", "tasks-portlet"};
+
+		new bladenofail().run(convertArgs);
+
+		assertTrue(new File(testdir, "modules/tasks/tasks-api/build.gradle").exists());
+
+		assertTrue(new File(testdir, "modules/tasks/tasks-api/src/main/java/com/liferay/tasks/exception").exists());
+
+		assertTrue(new File(testdir, "modules/tasks/tasks-service/src/main/java/com/liferay/tasks/model/impl/TasksEntryModelImpl.java").exists());
+
+		assertTrue(new File(testdir, "modules/tasks/tasks-service/src/main/java/com/liferay/tasks/service/impl/TasksEntryServiceImpl.java").exists());
+
+		assertTrue(new File(testdir, "modules/tasks/tasks-service/service.xml").exists());
+
+		assertFalse(new File(testdir, "wars/tasks-portlet/src/main/webapp/WEB-INF/service.xml").exists());
+
+		assertTrue(new File(testdir, "wars/tasks-portlet/src/main/webapp/WEB-INF/portlet.xml").exists());
+	}
+
+	@Test
+	public void testConvertServiceBuilderTasksPortletCustomName() throws Exception {
+		File testdir = IO.getFile("generated/test-tasks-portlet-conversion");
+
+		if (testdir.exists()) {
+			IO.deleteWithException(testdir);
+			assertFalse(testdir.exists());
+		}
+
+		String[] args = {"-b", testdir.getPath(), "init", "-u"};
+
+		new bladenofail().run(args);
+
+		File pluginsSdkDir = new File(testdir, "plugins-sdk");
+
+		IO.copy(new File("test-projects/tasks-plugins-sdk"), pluginsSdkDir);
+
+		assertTrue(new File(testdir, "plugins-sdk/portlets/tasks-portlet").exists());
+
+		String[] convertArgs = {"-b", testdir.getPath(), "convert", "tasks-portlet", "foo"};
+
+		new bladenofail().run(convertArgs);
+
+		assertTrue(new File(testdir, "modules/foo/foo-api/build.gradle").exists());
 	}
 
 	@Test

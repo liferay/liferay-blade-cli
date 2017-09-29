@@ -16,12 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.CommandLine;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-import aQute.lib.io.IO;
-
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
@@ -37,7 +31,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -51,6 +44,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.CommandLine;
+import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
+import aQute.lib.io.IO;
 
 /**
  * @author Gregory Amerson
@@ -236,7 +235,7 @@ public class ConvertCommand {
 			convertToWarProject(pluginDir);
 
 			ConvertOptions options =
-				new CommandLine(_blade).getOptions(ConvertOptions.class, Collections.singletonList(pluginDir.getName()));
+				new CommandLine(_blade).getOptions(ConvertOptions.class, _options._arguments());
 
 			new ConvertServiceBuilderCommand(_blade, options).execute();
 		}
@@ -478,7 +477,7 @@ public class ConvertCommand {
 		return new File(pathname, "docroot/WEB-INF/service.xml").exists();
 	}
 
-	@Arguments(arg = "[project name]")
+	@Arguments(arg = { "plugin ...", "[name]" })
 	@Description(DESCRIPTION)
 	public interface ConvertOptions extends Options {
 
