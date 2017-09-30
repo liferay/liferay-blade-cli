@@ -152,6 +152,7 @@ Private-Package:\
 	org.apache.commons.lang3.exception,\
 	org.apache.commons.lang3.text,\
 	org.gradle.*,\
+	org.objectweb.asm.*,\
 	org.osgi.dto,\
 	org.osgi.framework;-split-package:=merge-first,\
 	org.osgi.framework.dto,\

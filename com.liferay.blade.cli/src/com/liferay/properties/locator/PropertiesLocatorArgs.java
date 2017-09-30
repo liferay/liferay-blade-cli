@@ -62,7 +62,7 @@ public class PropertiesLocatorArgs {
 		_quiet = quiet;
 	}
 
-	@Parameter(description = "Path to Liferay bundle.", names = {"-d", "--bundleDir"}, required = true)
+	@Parameter(description = "Path to Liferay server bundle directory.", names = {"-d", "--bundleDir"}, required = true)
 	private File _bundleDir;
 
 	@Parameter(description = "Print this message.", help = true, names = {"-h", "--help"})
@@ -74,7 +74,7 @@ public class PropertiesLocatorArgs {
 	)
 	private File _outputFile;
 
-	@Parameter(description = "Path to old portal-ext.properties.", names = {"-p", "--propertiesFile"}, required = true)
+	@Parameter(description = "Specify existing Liferay 6.x portal-ext.properties file.", names = {"-p", "--propertiesFile"}, required = true)
 	private File _propertiesFile;
 
 	@Parameter(description = "Don't write any output.", names = {"-q", "--quiet"})
