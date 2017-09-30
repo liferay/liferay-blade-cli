@@ -31,6 +31,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -156,21 +157,18 @@ public class ConvertCommand {
 		List<File> themePlugins = Arrays.asList(themeFiles != null ? themeFiles : new File[0]);
 
 		if (_options.all()) {
-			serviceBuilderPlugins.stream().forEach(
-					serviceBuilderPlugin -> convertToServiceBuilderWarProject(serviceBuilderPlugin));
-			portletPlugins.stream().forEach(portletPlugin -> convertToWarProject(portletPlugin));
-			hookPlugins.stream().forEach(hookPlugin -> convertToWarProject(hookPlugin));
-			webPlugins.stream().forEach(webPlugin -> convertToWarProject(webPlugin));
-			layoutPlugins.stream().forEach(layoutPlugin -> convertToLayoutWarProject(layoutPlugin));
+			serviceBuilderPlugins.stream().forEach(this::convertToServiceBuilderWarProject);
+			portletPlugins.stream().forEach(this::convertToWarProject);
+			hookPlugins.stream().forEach(this::convertToWarProject);
+			webPlugins.stream().forEach(this::convertToWarProject);
+			layoutPlugins.stream().forEach(this::convertToLayoutWarProject);
 
-			themePlugins.stream().forEach(themePlugin -> {
-				if (_options.themeBuilder()) {
-					convertToThemeBuilderWarProject(themePlugin);
-				}
-				else {
-					convertToThemeProject(themePlugin);
-				}
-			});
+			if (_options.themeBuilder()) {
+				themePlugins.stream().forEach(this::convertToThemeBuilderWarProject);
+			}
+			else {
+				themePlugins.stream().forEach(this::convertToThemeProject);
+			}
 		}
 		else if (_options.list()) {
 			_blade.out().println("The following is a list of projects available to convert:\n");
@@ -235,7 +233,8 @@ public class ConvertCommand {
 			convertToWarProject(pluginDir);
 
 			ConvertOptions options =
-				new CommandLine(_blade).getOptions(ConvertOptions.class, _options._arguments());
+				new CommandLine(_blade).getOptions(
+					ConvertOptions.class, Collections.singletonList(pluginDir.getName()));
 
 			new ConvertServiceBuilderCommand(_blade, options).execute();
 		}
