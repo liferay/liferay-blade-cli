@@ -232,9 +232,16 @@ public class ConvertCommand {
 		try {
 			convertToWarProject(pluginDir);
 
-			ConvertOptions options =
-				new CommandLine(_blade).getOptions(
-					ConvertOptions.class, Collections.singletonList(pluginDir.getName()));
+			final List<String> arguments; {
+				if (_options.all()) {
+					arguments = Collections.singletonList(pluginDir.getName());
+				}
+				else {
+					arguments = _options._arguments();
+				}
+			}
+
+			ConvertOptions options = new CommandLine(_blade).getOptions(ConvertOptions.class, arguments);
 
 			new ConvertServiceBuilderCommand(_blade, options).execute();
 		}
