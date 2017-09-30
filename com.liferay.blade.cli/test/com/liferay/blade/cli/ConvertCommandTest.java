@@ -62,9 +62,9 @@ public class ConvertCommandTest {
 
 		new bladenofail().run(args);
 
-		assertTrue(new File(testdir, "plugins-sdk-with-git/modules/sample-service-builder-portlet-sb/sample-service-builder-portlet-sb-api").exists());
+		assertTrue(new File(testdir, "plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-api").exists());
 
-		assertTrue(new File(testdir, "plugins-sdk-with-git/modules/sample-service-builder-portlet-sb/sample-service-builder-portlet-sb-service").exists());
+		assertTrue(new File(testdir, "plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-service").exists());
 
 		assertTrue(new File(testdir, "plugins-sdk-with-git/wars/sample-service-builder-portlet").exists());
 	}

@@ -16,12 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.CommandLine;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-import aQute.lib.io.IO;
-
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
@@ -51,6 +45,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import aQute.lib.getopt.Arguments;
+import aQute.lib.getopt.CommandLine;
+import aQute.lib.getopt.Description;
+import aQute.lib.getopt.Options;
+import aQute.lib.io.IO;
 
 /**
  * @author Gregory Amerson
@@ -157,21 +157,18 @@ public class ConvertCommand {
 		List<File> themePlugins = Arrays.asList(themeFiles != null ? themeFiles : new File[0]);
 
 		if (_options.all()) {
-			serviceBuilderPlugins.stream().forEach(
-					serviceBuilderPlugin -> convertToServiceBuilderWarProject(serviceBuilderPlugin));
-			portletPlugins.stream().forEach(portletPlugin -> convertToWarProject(portletPlugin));
-			hookPlugins.stream().forEach(hookPlugin -> convertToWarProject(hookPlugin));
-			webPlugins.stream().forEach(webPlugin -> convertToWarProject(webPlugin));
-			layoutPlugins.stream().forEach(layoutPlugin -> convertToLayoutWarProject(layoutPlugin));
+			serviceBuilderPlugins.stream().forEach(this::convertToServiceBuilderWarProject);
+			portletPlugins.stream().forEach(this::convertToWarProject);
+			hookPlugins.stream().forEach(this::convertToWarProject);
+			webPlugins.stream().forEach(this::convertToWarProject);
+			layoutPlugins.stream().forEach(this::convertToLayoutWarProject);
 
-			themePlugins.stream().forEach(themePlugin -> {
-				if (_options.themeBuilder()) {
-					convertToThemeBuilderWarProject(themePlugin);
-				}
-				else {
-					convertToThemeProject(themePlugin);
-				}
-			});
+			if (_options.themeBuilder()) {
+				themePlugins.stream().forEach(this::convertToThemeBuilderWarProject);
+			}
+			else {
+				themePlugins.stream().forEach(this::convertToThemeProject);
+			}
 		}
 		else if (_options.list()) {
 			_blade.out().println("The following is a list of projects available to convert:\n");
@@ -235,8 +232,16 @@ public class ConvertCommand {
 		try {
 			convertToWarProject(pluginDir);
 
-			ConvertOptions options =
-				new CommandLine(_blade).getOptions(ConvertOptions.class, Collections.singletonList(pluginDir.getName()));
+			final List<String> arguments; {
+				if (_options.all()) {
+					arguments = Collections.singletonList(pluginDir.getName());
+				}
+				else {
+					arguments = _options._arguments();
+				}
+			}
+
+			ConvertOptions options = new CommandLine(_blade).getOptions(ConvertOptions.class, arguments);
 
 			new ConvertServiceBuilderCommand(_blade, options).execute();
 		}
@@ -478,7 +483,7 @@ public class ConvertCommand {
 		return new File(pathname, "docroot/WEB-INF/service.xml").exists();
 	}
 
-	@Arguments(arg = "[project name]")
+	@Arguments(arg = { "plugin ...", "[name]" })
 	@Description(DESCRIPTION)
 	public interface ConvertOptions extends Options {
 
