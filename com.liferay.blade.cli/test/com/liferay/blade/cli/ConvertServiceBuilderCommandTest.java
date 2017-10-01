@@ -20,6 +20,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.nio.file.Files;
 
 import org.junit.After;
 import org.junit.Test;
@@ -74,6 +75,14 @@ public class ConvertServiceBuilderCommandTest {
 		assertFalse(new File(testdir, "wars/tasks-portlet/src/main/webapp/WEB-INF/service.xml").exists());
 
 		assertTrue(new File(testdir, "wars/tasks-portlet/src/main/webapp/WEB-INF/portlet.xml").exists());
+
+		File portletGradleFile = new File(testdir, "wars/tasks-portlet/build.gradle");
+
+		assertTrue(portletGradleFile.exists());
+
+		String content = new String(Files.readAllBytes(portletGradleFile.toPath()));
+
+		assertTrue(content.contains("compileOnly project(\":modules:tasks:tasks-api\")"));
 	}
 
 	@Test

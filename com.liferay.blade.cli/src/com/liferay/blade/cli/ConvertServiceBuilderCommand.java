@@ -76,7 +76,7 @@ public class ConvertServiceBuilderCommand {
 	}
 
 	public void execute() throws Exception {
-		final List<String> args = _options._arguments();
+	final List<String> args = _options._arguments();
 
 		final String projectName = !args.isEmpty() ? args.get(0) : null;
 
@@ -112,7 +112,7 @@ public class ConvertServiceBuilderCommand {
 
 		if (sbProjectName == null) {
 			if (projectName.endsWith("-portlet")) {
-				sbProjectName = projectName.substring(0, projectName.indexOf("-portlet"));
+				sbProjectName = projectName.replaceAll("-portlet$", "");
 			}
 			else {
 				sbProjectName = projectName;
@@ -234,6 +234,24 @@ public class ConvertServiceBuilderCommand {
 		);
 
 		srcPaths.close();
+
+		// add dependency on -api to portlet project
+		File gradleFile = new File(project, "build.gradle");
+
+		String gradleContent = new String(Files.readAllBytes(gradleFile.toPath()));
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("dependencies {\n");
+		sb.append("\tcompileOnly project(\":modules:");
+		sb.append(sbProject.getName());
+		sb.append(":");
+		sb.append(sbApiProject.getName());
+		sb.append("\")\n");
+
+		String updatedContent = gradleContent.replaceAll("dependencies \\{", sb.toString());
+
+		Files.write(gradleFile.toPath(), updatedContent.getBytes());
 
 		System.out.println("Migrating files done, then you should fix breaking changes and re-run build-service task.");
 	}
