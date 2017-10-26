@@ -255,19 +255,22 @@ public class InitCommand {
 			IO.copy(fileToCopy, new File(dest, fileToCopy.getName()));
 
 			Files.walkFileTree(fileToCopy.toPath(), new SimpleFileVisitor<Path>() {
+
 				@Override
 				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-					if (!dir.toFile().canWrite()) {
+					if (Util.isWindows() && !dir.toFile().canWrite()) {
 						Files.setAttribute(dir, "dos:readonly", false);
 					}
+
 					return FileVisitResult.CONTINUE;
 				}
 
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-					if (!file.toFile().canWrite()) {
+					if (Util.isWindows() && !file.toFile().canWrite()) {
 						Files.setAttribute(file, "dos:readonly", false);
 					}
+
 					return FileVisitResult.CONTINUE;
 				}
 			});
