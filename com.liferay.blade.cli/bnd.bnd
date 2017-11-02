@@ -173,7 +173,7 @@ Private-Package:\
 	biz.aQute.bndlib;version=3.4.0,\
 	biz.aQute.repository;version=3.4.0,\
 	com.liferay.blade.gradle.model;version=latest,\
-	com.liferay.project.templates;version=3.0.2,\
+	com.liferay.project.templates;version=3.1.0,\
 	jcl.over.slf4j,\
 	org.apache.commons.io,\
 	org.apache.commons.lang3,\
