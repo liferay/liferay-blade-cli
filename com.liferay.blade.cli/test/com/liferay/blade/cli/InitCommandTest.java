@@ -225,7 +225,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(new File(newproject, "settings.gradle").toPath()));
 
-		assertTrue(contents, contents.contains("1.5.0"));
+		assertTrue(contents, contents.contains("1.7.1"));
 	}
 
 	@Test
