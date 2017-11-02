@@ -672,6 +672,25 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateNpmAngular() throws Exception {
+		String[] args = {
+			"create", "-d", "generated/test", "-t", "npm-angular-portlet", "npmangular"
+		};
+
+		new bladenofail().run(args);
+
+		String projectPath = "generated/test/npmangular";
+
+		checkFileExists(projectPath + "/build.gradle");
+
+		File jsp = checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		contains(jsp, ".*<aui:script require=\"npmangular@1.0.0\">.*");
+
+		contains(jsp, ".*npmangular100.default.*");
+	}
+
+	@Test
 	public void testCreatePortletConfigurationIcon() throws Exception {
 		String[] args = {
 			"create", "-d", "generated/test", "-t", "portlet-configuration-icon", "-p", "blade.test", "icontest"
