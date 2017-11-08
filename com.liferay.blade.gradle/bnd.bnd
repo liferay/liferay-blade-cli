@@ -1,7 +1,0 @@
--buildpath: \
-	groovy,\
-	javax.inject,\
-	org.gradle:gradle-base-services-groovy,\
-	org.gradle:gradle-core,\
-	org.gradle:gradle-tooling-api
--sub: *.bnd

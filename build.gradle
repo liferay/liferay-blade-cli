@@ -1,39 +1,120 @@
-/*
- * Master Gradle build script
- *
- * Depends on bndPlugin property set by settings.gradle.
- * and bnd_* values from gradle.properties.
- */
+import de.undercouch.gradle.tasks.download.Download
 
-import aQute.bnd.build.Workspace
-import aQute.bnd.osgi.Constants
+apply plugin: 'biz.aQute.bnd.builder'
+apply plugin: 'com.liferay.source.formatter'
+apply plugin: 'java'
 
-/* Add bnd gradle plugin as a script dependency */
 buildscript {
 	dependencies {
-		classpath bndPlugin
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
+		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
+	}
+
+	repositories {
+		maven {
+			url "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
+		}
 	}
 }
 
-/* Initialize the bnd workspace */
-Workspace.setDriver(Constants.BNDDRIVER_GRADLE)
-Workspace.addGestalt(Constants.GESTALT_BATCH, null)
-ext.bndWorkspace = new Workspace(rootDir, bnd_cnf)
-if (bndWorkspace == null) {
-  throw new GradleException("Unable to load workspace ${rootDir}/${bnd_cnf}")
+checkSourceFormatting {
+        maxLineLength = 120
 }
-/* Set this property in the workspace */
-bndWorkspace.setProperty('bnd_repourl', uri(bnd_repourl).toString())
 
-ext.cnf = rootProject.project(bnd_cnf)
+formatSource {
+        maxLineLength = 120
+}
 
-/* Configure the subprojects */
-subprojects {
-  def bndProject = bndWorkspace.getProject(name)
-  if (bndProject != null) {
-    plugins.apply 'biz.aQute.bnd'
-    test.testLogging {
-      exceptionFormat 'full'
-    }
-  }
+dependencies {
+	compile group: "biz.aQute.bnd", name: "aQute.libg", version: "3.5.0"
+	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
+	compile group: "com.liferay", name: "com.liferay.project.templates", version: "3.1.0"
+	compile group: "commons-io", name: "commons-io", version: "2.5"
+	compile group: "org.apache.commons", name: "commons-lang3", version: "3.4"
+	compile group: "org.apache.maven", name: "maven-aether-provider", version: "3.3.9"
+	compile group: "org.apache.maven", name: "maven-settings", version: "3.3.9"
+	compile group: "org.apache.maven", name: "maven-settings-builder", version: "3.3.9"
+	compile group: "org.eclipse.aether", name: "aether-api", version: "1.0.2.v20150114"
+	compile group: "org.eclipse.aether", name: "aether-connector-basic", version: "1.0.2.v20150114"
+	compile group: "org.eclipse.aether", name: "aether-impl", version: "1.0.2.v20150114"
+	compile group: "org.eclipse.aether", name: "aether-spi", version: "1.0.2.v20150114"
+	compile group: "org.eclipse.aether", name: "aether-transport-classpath", version: "1.0.2.v20150114"
+	compile group: "org.eclipse.aether", name: "aether-transport-file", version: "1.0.2.v20150114"
+	compile group: "org.eclipse.aether", name: "aether-transport-http", version: "1.0.2.v20150114"
+	compile group: "org.eclipse.aether", name: "aether-transport-wagon", version: "1.0.2.v20150114"
+	compile group: "org.eclipse.aether", name: "aether-util", version: "1.0.2.v20150114"
+	compile group: "org.gradle", name: "gradle-core", version: "3.0"
+	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "3.0"
+	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"
+	compile name: "com.liferay.blade.gradle.model"
+	compile name: "com.liferay.blade.gradle.plugin"
+	compile name: "org.objectweb.asm-6.0.0"
+	compile name: "org.objectweb.asm.analysis-6.0.0"
+	compile name: "org.objectweb.asm.commons-6.0.0"
+	compile name: "org.objectweb.asm.tree-6.0.0"
+	compile name: "org.objectweb.asm.util-6.0.0"
+
+	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
+
+	testCompile gradleTestKit()
+	testCompile group: "junit", name: "junit", version: "4.12"
+}
+
+repositories {
+	flatDir {
+		dirs 'libs'
+	}
+
+	maven {
+		url "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
+	}
+
+	maven {
+		url "https://repo.gradle.org/gradle/libs-releases"
+	}
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+task createDepsZip(type:Zip) {
+	from "${projectDir}/libs/"
+	baseName = "deps"
+	destinationDir = new File("${projectDir}")
+	include "com.liferay.blade.gradle.*.jar"
+}
+
+task createWrapperZip(type:Zip) {
+	from "${projectDir}/"
+	baseName = "wrapper"
+	destinationDir = new File("${projectDir}")
+	include "gradle/**"
+	include "gradlew*"
+}
+
+clean.doFirst {
+	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
+}
+
+jar {
+	from createDepsZip, createWrapperZip
+}
+
+task downloadPortal(type: Download) {
+	src 'https://cdn.lfrs.sl/releases.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip'
+	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip')
+	onlyIfNewer true
+}
+
+task unzipPortal(dependsOn: downloadPortal, type: Copy) {
+	from zipTree(downloadPortal.dest)
+	into buildDir
+}
+
+test {
+	dependsOn createDepsZip, createWrapperZip, unzipPortal
+
+	systemProperty 'buildDir', "${buildDir}"
+	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
 }
