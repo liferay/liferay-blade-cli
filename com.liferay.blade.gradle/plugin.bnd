@@ -1,5 +1,0 @@
-Bundle-Version: 1.0.2.${tstamp}
-
-Private-Package: com.liferay.blade.gradle.plugin
-
--sources: false

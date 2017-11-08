@@ -1,5 +1,8 @@
-.gradle
-.idea
-.metadata
-**/*.iml
-.settings
+/.classpath
+/.gradle/
+/.project
+/.settings/
+/bin/
+/build/
+/deps.zip
+/wrapper.zip

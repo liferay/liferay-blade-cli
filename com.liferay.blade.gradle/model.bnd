@@ -1,5 +1,0 @@
-Bundle-Version: 1.1.1.${tstamp}
-
-Export-Package: com.liferay.blade.gradle.model
-
--sources: false
