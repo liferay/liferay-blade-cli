@@ -1,8 +1,10 @@
-/.classpath
-/.gradle/
-/.project
-/.settings/
-/bin/
-/build/
+*.iml
+.classpath
+.gradle
+.idea
+.project
+.settings
+bin
+build
 /deps.zip
 /wrapper.zip
