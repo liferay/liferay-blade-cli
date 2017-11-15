@@ -685,9 +685,9 @@ public class CreateCommandTest {
 
 		File jsp = checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
-		contains(jsp, ".*<aui:script require=\"npmangular@1.0.0\">.*");
+		contains(jsp, ".*<aui:script require=\"<%= bootstrapRequire %>\">.*");
 
-		contains(jsp, ".*npmangular100.default.*");
+		contains(jsp, ".*bootstrapRequire.default.*");
 	}
 
 	@Test
