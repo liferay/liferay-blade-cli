@@ -169,44 +169,6 @@ Private-Package:\
 	org.slf4j.spi;-split-package:=merge-first,\
 	org.slf4j.impl
 
--buildpath: \
-	aQute.libg;version=3.4.0,\
-	biz.aQute.bndlib;version=3.4.0,\
-	biz.aQute.repository;version=3.4.0,\
-	com.liferay.blade.gradle.model;version=latest,\
-	com.liferay.project.templates;version=3.1.1,\
-	jcl.over.slf4j,\
-	org.apache.commons.io,\
-	org.apache.commons.lang3,\
-	org.apache.httpcomponents.httpclient;version=4.3,\
-	org.apache.httpcomponents.httpcore;version=4.3,\
-	org.apache.maven.artifact,\
-	org.apache.maven.aether-provider,\
-	org.apache.maven.builder-support,\
-	org.apache.maven.model,\
-	org.apache.maven.model-builder,\
-	org.apache.maven.repository-metadata,\
-	org.apache.maven.settings,\
-	org.apache.maven.settings-builder,\
-	org.codehaus.plexus.utils,\
-	org.codehaus.plexus.interpolation,\
-	org.eclipse.aether.api,\
-	org.eclipse.aether.connector.basic,\
-	org.eclipse.aether.impl,\
-	org.eclipse.aether.spi,\
-	org.eclipse.aether.transport.classpath,\
-	org.eclipse.aether.transport.file,\
-	org.eclipse.aether.transport.http,\
-	org.eclipse.aether.transport.wagon,\
-	org.eclipse.aether.util,\
-	org.objectweb.asm,\
-	osgi.core,\
-	slf4j.simple,\
-	slf4j.api,\
-	org.gradle:gradle-tooling-api
-
--dependson: com.liferay.blade.gradle
-
 -includeresource: \
 	@com.liferay.project.templates-*.jar,\
 	deps.zip,\
@@ -214,7 +176,3 @@ Private-Package:\
 	mvnw.cmd
 
 -sources: false
-
--testpath: \
-	biz.aQute.junit,\
-	com.liferay.blade.gradle.testkit.api
