@@ -21,15 +21,14 @@ import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,19 +39,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
-
 /**
  * @author Gregory Amerson
  * @author Terry Jia
  */
 public class InitCommand {
-
-	private final static String _INSTALLER_PLUGINS_SDK_PATH = "com.liferay.portal.plugins.sdk-1.0.11-withdependencies";
-	private final static String _INSTALLER_PLUGINS_SDK_ZIP = _INSTALLER_PLUGINS_SDK_PATH + ".zip";
-	private final static String _PLUGINS_SDK_URL =
-		"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public/com/liferay/portal/com.liferay.portal.plugins.sdk/1.0.11/" +
-			_INSTALLER_PLUGINS_SDK_ZIP;
 
 	private final static String[] _SDK_6_GA5_FILES = {
 		"app-servers.gradle", "build.gradle", "build-plugins.gradle",
@@ -75,6 +66,10 @@ public class InitCommand {
 		File destDir = name != null ? new File(
 			_blade.getBase(), name) : _blade.getBase();
 
+		File temp = null;
+
+		boolean isPluginsSDK = isPluginsSDK(destDir);
+
 		trace("Using destDir " + destDir);
 
 		if (destDir.exists() && !destDir.isDirectory()) {
@@ -83,29 +78,12 @@ public class InitCommand {
 		}
 
 		if (destDir.exists()) {
-			if (isPluginsSDK(destDir)) {
+			if (isPluginsSDK) {
 				if (!isPluginsSDK70(destDir)) {
 					if (_options.upgrade()) {
 						trace(
 							"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory " +
 								"and initing workspace.");
-
-						File sdk7zip = new File (_blade.getBundleDir(), _INSTALLER_PLUGINS_SDK_ZIP);
-
-						if (!sdk7zip.exists()) {
-							trace("Downloading " + _PLUGINS_SDK_URL);
-							FileUtils.copyURLToFile(new URL(_PLUGINS_SDK_URL), sdk7zip);
-						}
-
-						try {
-							Util.unzip(sdk7zip, destDir, _INSTALLER_PLUGINS_SDK_PATH + "/");
-						}
-						catch (Exception e) {
-							addError("Opening zip file error, "
-								+ "please delete zip file: " +
-									sdk7zip.getPath());
-							return;
-						}
 
 						for (String fileName : _SDK_6_GA5_FILES) {
 							File file = new File(destDir, fileName);
@@ -125,9 +103,9 @@ public class InitCommand {
 				trace("Found plugins-sdk, moving contents to new subdirectory " +
 					"and initing workspace.");
 
-				File pluginsSdkDir = new File(destDir, "plugins-sdk");
+				temp = Files.createTempDirectory("orignal-sdk").toFile();
 
-				moveContentsToDir(destDir, pluginsSdkDir);
+				_moveContentsToDirectory(destDir, temp);
 			}
 			else if (destDir.list().length > 0) {
 				if (_options.force()) {
@@ -162,6 +140,30 @@ public class InitCommand {
 		projectTemplatesArgs.setTemplate("workspace");
 
 		new ProjectTemplates(projectTemplatesArgs);
+
+		if (isPluginsSDK) {
+			if (_options.upgrade()) {
+				GradleExec gradleExec = new GradleExec(_blade);
+
+				gradleExec.executeGradleCommand("upgradePluginsSDK");
+			}
+
+			File gitFile = new File(temp, ".git");
+
+			if (gitFile.exists()) {
+				File destGitFile = new File(destDir, ".git");
+
+				_moveContentsToDirectory(gitFile, destGitFile);
+
+				IO.deleteWithException(gitFile);
+			}
+
+			File pluginsSdkDir = new File(destDir, "plugins-sdk");
+
+			_moveContentsToDirectory(temp, pluginsSdkDir);
+
+			IO.deleteWithException(temp);
+		}
 	}
 
 	@Arguments(arg = "[name]")
@@ -237,27 +239,32 @@ public class InitCommand {
 		return false;
 	}
 
-	private void moveContentsToDir(File src, File dest)
-		throws IOException {
+	private void _moveContentsToDirectory(File src, File dest) throws IOException {
+		Path source = src.toPath().toAbsolutePath();
+		Path target = dest.toPath().toAbsolutePath();
 
-		final String ignoreName = dest.getName();
+		Files.walkFileTree(source,
+			new SimpleFileVisitor<Path>() {
 
-		File[] filesToCopy = src.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return !name.equals(".git") && !name.equals(ignoreName);
-			}
-		});
+				@Override
+				public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+					String dirName = dir.toFile().getName();
 
-		dest.mkdirs();
+					if (!dirName.equals(src.getName())) {
+						Files.delete(dir);
+					}
 
-		for (File fileToCopy : filesToCopy) {
-			IO.copy(fileToCopy, new File(dest, fileToCopy.getName()));
-
-			Files.walkFileTree(fileToCopy.toPath(), new SimpleFileVisitor<Path>() {
+					return FileVisitResult.CONTINUE;
+				}
 
 				@Override
 				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+					Path targetDir = target.resolve(source.relativize(dir));
+
+					if (!Files.exists(targetDir)) {
+						Files.createDirectory(targetDir);
+					}
+
 					if (Util.isWindows() && !dir.toFile().canWrite()) {
 						Files.setAttribute(dir, "dos:readonly", false);
 					}
@@ -267,16 +274,22 @@ public class InitCommand {
 
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+					Path targetFile = target.resolve(source.relativize(file));
+
+					if (!Files.exists(targetFile)) {
+						Files.copy(file, targetFile);
+					}
+
 					if (Util.isWindows() && !file.toFile().canWrite()) {
 						Files.setAttribute(file, "dos:readonly", false);
 					}
 
+					Files.delete(file);
+
 					return FileVisitResult.CONTINUE;
 				}
-			});
 
-			IO.deleteWithException(fileToCopy);
-		}
+			});
 	}
 
 	private void trace(String msg) {

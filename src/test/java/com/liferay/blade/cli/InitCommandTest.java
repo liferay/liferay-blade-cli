@@ -159,27 +159,6 @@ public class InitCommandTest {
 	}
 
 	@Test
-	public void testNestedCopyBug() throws Exception {
-		if (!workspaceDir.mkdirs()) {
-			fail("Unable to create workspace dir");
-		}
-
-		makeSDK(workspaceDir);
-
-		File childPluginsSDK = new File(workspaceDir, "plugins-sdk");
-
-		makeSDK(childPluginsSDK);
-
-		String[] args = {"-b", workspaceDir.getPath(), "init", "-u"};
-
-		new bladenofail().run(args);
-
-		assertFalse((new File(workspaceDir, "plugins-sdk/plugins-sdk").exists()));
-
-		assertTrue((new File(workspaceDir, "settings.gradle").exists()));
-	}
-
-	@Test
 	public void testInitInPluginsSDKDirectory() throws Exception {
 		String[] args = {"-b", workspaceDir.getPath(), "init", "-u"};
 
