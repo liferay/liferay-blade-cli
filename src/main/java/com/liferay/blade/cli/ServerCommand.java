@@ -80,13 +80,6 @@ public class ServerCommand {
 			String cmd, File dir, String serverType, ServerOptions options)
 		throws Exception {
 
-		if (!dir.exists() || dir.listFiles() == null) {
-			_blade.error(
-				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to create it.");
-
-			return;
-		}
-
 		for (File file : dir.listFiles()) {
 			String fileName = file.getName();
 
@@ -223,23 +216,6 @@ public class ServerCommand {
 				liferayHomePath = Workspace.DEFAULT_LIFERAY_HOME_DIR;
 			}
 
-			serverType = properties.getProperty(
-				Workspace.DEFAULT_BUNDLE_ARTIFACT_NAME_PROPERTY);
-
-			if (serverType == null) {
-				serverType = Workspace.DEFAULT_BUNDLE_ARTIFACT_NAME;
-			}
-
-			if (serverType.contains("jboss")) {
-				serverType = "jboss";
-			}
-			else if (serverType.contains("wildfly")) {
-				serverType = "wildfly";
-			}
-			else if (serverType.contains("tomcat")) {
-				serverType = "tomcat";
-			}
-
 			File tempLiferayHome = new File(liferayHomePath);
 			File liferayHomeDir = null;
 
@@ -249,6 +225,49 @@ public class ServerCommand {
 			else {
 				File tempFile = new File(rootDir, liferayHomePath);
 				liferayHomeDir = tempFile.getCanonicalFile();
+			}
+
+			if (!liferayHomeDir.exists() || !(liferayHomeDir.listFiles().length > 0)) {
+				_blade.error(" bundles folder does not exist or is empty in Liferay Workspace,"
+						+ "execute 'gradlew initBundle' in order to create it.");
+
+				return;
+			}
+
+			serverType = properties.getProperty(Workspace.DEFAULT_BUNDLE_ARTIFACT_NAME_PROPERTY);
+
+			if (serverType != null) {
+				if (serverType.contains("jboss")) {
+					serverType = "jboss";
+				}
+				else if (serverType.contains("wildfly")) {
+					serverType = "wildfly";
+				}
+				else if (serverType.contains("tomcat")) {
+					serverType = "tomcat";
+				}
+			}
+
+			if(serverType == null) {
+				for (File file : liferayHomeDir.listFiles()) {
+					if(file.isDirectory()) {
+						String fileName = file.getName();
+	
+						if (fileName.startsWith("jboss")) {
+							serverType = "jboss";
+						}
+						else if (fileName.startsWith("wildfly")) {
+							serverType = "wildfly";
+						}
+						else if (fileName.startsWith("tomcat")) {
+							serverType = "tomcat";
+						}
+					}
+				}
+			}
+
+			if (serverType == null) {
+				serverType = Workspace.DEFAULT_BUNDLE_ARTIFACT_NAME;
 			}
 
 			commandServer(cmd, liferayHomeDir, serverType, options);
