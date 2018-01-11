@@ -32,12 +32,7 @@ public class bladenofail extends blade {
 		_out = out;
 		_err = out;
 	}
-
-	@Override
-	public boolean check(String... pattern) {
-		return true;
-	}
-
+	
 	@Override
 	public PrintStream err() {
 		return _err;

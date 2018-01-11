@@ -16,6 +16,8 @@
 
 package com.liferay.blade.cli;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
@@ -45,10 +47,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.CommandLine;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
 /**
@@ -109,9 +107,8 @@ public class ConvertCommand {
 	}
 
 	public void execute() throws Exception {
-		final List<String> args = _options._arguments();
-
-		final String pluginName = args.size() > 0 ? args.get(0) : null;
+		
+		final String pluginName = _options.getName().isEmpty() ? null : _options.getName().iterator().next();
 
 		if (!Util.isWorkspace(_blade)) {
 			_blade.error("Please execute this in a Liferay Workspace project");
@@ -119,12 +116,11 @@ public class ConvertCommand {
 			return;
 		}
 
-		if (args.size() == 0 && (!_options.all() && !_options.list())) {
+		if (pluginName == null && (!_options.isAll() && !_options.isList())) {
 			_blade.error("Please specify a plugin name, list the projects with [-l] or specify all using option [-a]");
 
 			return;
 		}
-
 		final FileFilter containsDocrootFilter = new FileFilter() {
 			@Override
 			public boolean accept(File pathname) {
@@ -155,21 +151,21 @@ public class ConvertCommand {
 		List<File> webPlugins = Arrays.asList(webFiles != null ? webFiles : new File[0]);
 		List<File> themePlugins = Arrays.asList(themeFiles != null ? themeFiles : new File[0]);
 
-		if (_options.all()) {
+		if (_options.isAll()) {
 			serviceBuilderPlugins.stream().forEach(this::convertToServiceBuilderWarProject);
 			portletPlugins.stream().forEach(this::convertToWarProject);
 			hookPlugins.stream().forEach(this::convertToWarProject);
 			webPlugins.stream().forEach(this::convertToWarProject);
 			layoutPlugins.stream().forEach(this::convertToLayoutWarProject);
 
-			if (_options.themeBuilder()) {
+			if (_options.isThemeBuilder()) {
 				themePlugins.stream().forEach(this::convertToThemeBuilderWarProject);
 			}
 			else {
 				themePlugins.stream().forEach(this::convertToThemeProject);
 			}
 		}
-		else if (_options.list()) {
+		else if (_options.isList()) {
 			_blade.out().println("The following is a list of projects available to convert:\n");
 
 			Stream<File> plugins = concat(serviceBuilderPlugins.stream(), concat(portletPlugins.stream(), concat(hookPlugins.stream(), concat(webPlugins.stream(), concat(layoutPlugins.stream(), themePlugins.stream())))));
@@ -204,7 +200,7 @@ public class ConvertCommand {
 				convertToLayoutWarProject(pluginDir);
 			}
 			else if(pluginPath.startsWith(_themesDir.toPath())) {
-				if (_options.themeBuilder()) {
+				if (_options.isThemeBuilder()) {
 					convertToThemeBuilderWarProject(pluginDir);
 				}
 				else {
@@ -232,7 +228,7 @@ public class ConvertCommand {
 			convertToWarProject(pluginDir);
 
 			final List<String> arguments; {
-				if (_options.all()) {
+				if (_options.isAll()) {
 					arguments = new ArrayList<>();
 
 					String pluginName = pluginDir.getName();
@@ -244,13 +240,14 @@ public class ConvertCommand {
 					}
 				}
 				else {
-					arguments = _options._arguments();
+					arguments = _options.getName();
 				}
 			}
+			
+			ConvertOptions convertArgs = new ConvertOptions(_options.isAll(), _options.isList(), _options.isThemeBuilder(), arguments);
 
-			ConvertOptions options = new CommandLine(_blade).getOptions(ConvertOptions.class, arguments);
+			new ConvertServiceBuilderCommand(_blade, convertArgs).execute();
 
-			new ConvertServiceBuilderCommand(_blade, options).execute();
 		}
 		catch (Exception e) {
 			_blade.error("Error upgrading project %s\n%s", pluginDir.getName(), e.getMessage());
@@ -490,18 +487,57 @@ public class ConvertCommand {
 		return new File(pathname, "docroot/WEB-INF/service.xml").exists();
 	}
 
-	@Arguments(arg = { "plugin ...", "[name]" })
-	@Description(DESCRIPTION)
-	public interface ConvertOptions extends Options {
+	@Parameters(commandNames = {"convert"},
+		commandDescription = ConvertCommand.DESCRIPTION)
+	public static class ConvertOptions {
 
-		@Description("Migrate all plugin projects")
-		public boolean all();
+		public ConvertOptions() {
+			super();
+		}
+		
+		public ConvertOptions(boolean all, boolean list, boolean themeBuilder, List<String> name) {
+			super();
+			this.all = all;
+			this.list = list;
+			this.themeBuilder = themeBuilder;
+			this.name = name;
+		}
+		
+		public boolean isAll() {
+			return all;
+		}
 
-		@Description("List the projects available to be converted")
-		public boolean list();
+		public boolean isList() {
+			return list;
+		}
 
-		@Description("Use ThemeBuilder gradle plugin instead of NodeJS to convert theme project")
-		public boolean themeBuilder();
+		public boolean isThemeBuilder() {
+			return themeBuilder;
+		}
+		
+		public List<String> getName() {
+			return name;
+		}
+
+		@Parameter(
+			names = {"-a", "--all"},
+			description ="Migrate all plugin projects")
+		private boolean all;
+
+		@Parameter(
+			names = {"-l", "--list"},
+			description ="List the projects available to be converted")
+		private boolean list;
+
+		@Parameter(
+			names = {"-t", "--themeBuilder"},
+			description ="Use ThemeBuilder gradle plugin instead of NodeJS to convert theme project")
+		private boolean themeBuilder;
+		
+		@Parameter(
+			description ="[name]")
+		private List<String> name = new ArrayList<>();
+		
 	}
 
 	private final blade _blade;

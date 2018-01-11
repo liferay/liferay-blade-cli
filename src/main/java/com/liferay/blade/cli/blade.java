@@ -16,11 +16,11 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.consoleapp.AbstractConsoleApp;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
-import aQute.lib.io.IO;
-
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.ConvertCommand.ConvertOptions;
 import com.liferay.blade.cli.CreateCommand.CreateOptions;
 import com.liferay.blade.cli.DeployCommand.DeployOptions;
@@ -28,19 +28,26 @@ import com.liferay.blade.cli.GradleCommand.GradleOptions;
 import com.liferay.blade.cli.InitCommand.InitOptions;
 import com.liferay.blade.cli.InstallCommand.InstallOptions;
 import com.liferay.blade.cli.OpenCommand.OpenOptions;
+import com.liferay.blade.cli.OutputsCommand.OutputsOptions;
 import com.liferay.blade.cli.SamplesCommand.SamplesOptions;
-import com.liferay.blade.cli.ServerCommand.ServerOptions;
+import com.liferay.blade.cli.ServerStartCommand.ServerStartOptions;
+import com.liferay.blade.cli.ServerStopCommand.ServerStopOptions;
 import com.liferay.blade.cli.ShellCommand.ShellOptions;
+import com.liferay.blade.cli.UpdateCommand.UpdateOptions;
 import com.liferay.blade.cli.UpgradePropsCommand.UpgradePropsOptions;
+import com.beust.jcommander.JCommander.Builder;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Formatter;
-import java.util.Map;
+import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -50,89 +57,124 @@ import org.osgi.framework.Constants;
  * @author Gregory Amerson
  * @author David Truong
  */
-public class blade extends AbstractConsoleApp implements Runnable {
 
-	public static void main(String[] args) throws Exception {
-		new blade().run(args);
+public class blade implements Runnable {
+
+	public void run(String[] args) {
+		
+		List<Object> argsList = Arrays.asList(
+				new CreateOptions(),
+				new ConvertOptions(),
+				new DeployOptions(), 
+				new GradleOptions(),
+				new InitOptions(),
+				new InstallOptions(),
+				new OpenOptions(),
+				new OutputsOptions(),
+				new SamplesOptions(),
+				new ServerStartOptions(),
+				new ServerStopOptions(),
+				new ShellOptions(),
+				new UpdateOptions(),
+				new UpgradePropsOptions());
+		Builder builder=
+				JCommander.newBuilder();
+		 	for (Object o : argsList) {
+		 		builder.addCommand(o);
+		 	}
+		 JCommander commander =	builder
+		  .addObject(_bladeArgs)
+		  .build();
+		 commander
+		  .parse(args);
+		 	
+		 String command = commander.getParsedCommand();
+		 Object commandArgs = commander.getCommands().get(command).getObjects().get(0);
+		 
+		_command = command;
+		_commandArgs = commandArgs;
+		
+		run();
 	}
-
-	public blade() throws UnsupportedEncodingException {
-	}
-
-	public blade(Object target) throws UnsupportedEncodingException {
-		super(target);
-	}
-
-	@Description(CreateCommand.DESCRIPTION)
+	
 	public void _create(CreateOptions options) throws Exception {
 		new CreateCommand(this, options).execute();
 	}
 
-	@Description(DeployCommand.DESCRIPTION)
 	public void _deploy(DeployOptions options) throws Exception {
 		new DeployCommand(this, options).execute();
 	}
 
-	@Description(GradleCommand.DESCRIPTION)
 	public void _gw(GradleOptions options) throws Exception {
 		new GradleCommand(this, options).execute();
 	}
-
-	@Description("Get help on a specific command")
+	
+	public void error(String error) {
+		err().println(error);
+	}
+	
+	public void addErrors(String prefix, Collection<String> data) {
+		err().println("Error: " + prefix);
+		data.forEach(err()::println);
+	}
+	
+	public void error(String string, String name, String message) {
+		err().println(string + " [" + name + "]");
+		err().println(message);
+		
+	}
+	
+	public File getBase() {
+		return new File(_bladeArgs.getBase());
+	}
+	
 	public void _help(Options options) throws Exception {
 		options._help();
 	}
 
-	@Description(InitCommand.DESCRIPTION)
 	public void _init(InitOptions options) throws Exception {
 		new InitCommand(this, options).execute();
 	}
 
-	@Description(InstallCommand.DESCRIPTION)
 	public void _install(InstallOptions options) throws Exception {
 		new InstallCommand(this, options).execute();
 	}
 
-	@Description(OpenCommand.DESCRIPTION)
 	public void _open(OpenOptions options) throws Exception {
 		new OpenCommand(this, options).execute();
 	}
 
-	public void _outputs(Options options) throws Exception {
+	public BladeArgs getBladeArgs() {
+		return _bladeArgs;
+	}
+	public void _outputs(OutputsOptions options) throws Exception {
 		new OutputsCommand(this, options).execute();
 	}
 
-	@Description(SamplesCommand.DESCRIPTION)
 	public void _samples(SamplesOptions options) throws Exception {
 		new SamplesCommand(this, options).execute();
 	}
 
-	@Description(ServerCommand.DESCRIPTION)
-	public void _server(ServerOptions options) throws Exception {
-		ServerCommand serverCommand = new ServerCommand(this, options);
-		String help = options._command().subCmd(options, serverCommand);
-
-		if (help != null) {
-			out.println(help);
-		}
+	public void _serverStart(ServerStartOptions options) throws Exception {
+		new ServerStartCommand(this, options).execute();
+	}
+	
+	public void _serverStop(ServerStopOptions options) throws Exception {
+		new ServerStopCommand(this, options).execute();	
 	}
 
-	@Description(ShellCommand.DESCRIPTION)
 	public void _sh(ShellOptions options) throws Exception {
 		new ShellCommand(this, options).execute();
 	}
 
-	@Description(UpdateCommand.DESCRIPTION)
-	public void _update(Options options) throws Exception {
+	public void _update(UpdateOptions options) throws Exception {
 		new UpdateCommand(this, options).execute();
 	}
 
-	@Description(UpgradePropsCommand.DESCRIPTION)
 	public void _upgradeProps(UpgradePropsOptions options) throws Exception {
 		new UpgradePropsCommand(this, options);
 	}
 
-	@Description(ConvertCommand.DESCRIPTION)
 	public void _convert(ConvertOptions options) throws Exception {
 		new ConvertCommand(this, options).execute();
 	}
@@ -158,24 +200,20 @@ public class blade extends AbstractConsoleApp implements Runnable {
 		error("Could not locate version");
 	}
 
-	public void args(Object object, Map<String, Object> map) {
-		args = (String[])map.get("launcher.arguments");
-	}
-
 	public PrintStream err() {
 		return err;
 	}
 
-	public File getBundleDir() {
+	public Path getBundleDir() {
 		String userHome = System.getProperty("user.home");
 
-		return IO.getFile(userHome + "/.liferay/bundles");
+		return Paths.get(userHome, ".liferay", "bundles");
 	}
 
 	public File getCacheDir() {
 		String userHome = System.getProperty("user.home");
 
-		return IO.getFile(userHome + "/.blade/cache");
+		return Paths.get(userHome, ".blade", "cache").toFile();
 	}
 
 	public PrintStream out() {
@@ -185,22 +223,123 @@ public class blade extends AbstractConsoleApp implements Runnable {
 	@Override
 	public void run() {
 		try {
-			new blade().run(args);
-		}
-		catch (Exception e) {
+			switch (_command) {
+			case "create": {
+				_create((CreateOptions) _commandArgs);
+			}
+				break;
+			case "convert": {
+				_convert((ConvertOptions) _commandArgs);
+			}
+				break;
+			case "deploy": {
+				_deploy((DeployOptions) _commandArgs);
+			}
+				break;
+			case "gw": {
+				_gw((GradleOptions) _commandArgs);
+			}
+				break;
+			default:
+			case "help": {
+				// TODO: Print help here?
+			}
+				break;
+			case "init": {
+				_init((InitOptions) _commandArgs);
+			}
+				break;
+			case "install": {
+				_install((InstallOptions) _commandArgs);
+			}
+			case "open": {
+				_open((OpenOptions) _commandArgs);
+			}
+				break;
+			case "outputs": {
+				_outputs((OutputsOptions) _commandArgs);
+			}
+				break;
+			case "samples": {
+				_samples((SamplesOptions) _commandArgs);
+			}
+				break;
+			case "server start": {
+				_serverStart((ServerStartOptions) _commandArgs);
+
+			}
+				break;
+			case "server stop": {
+				_serverStop((ServerStopOptions) _commandArgs);
+			}
+				break;
+			case "sh": {
+				_sh((ShellOptions) _commandArgs);
+			}
+				break;
+			case "update": {
+				_update((UpdateOptions) _commandArgs);
+			}
+				break;
+			case "upgradeProps": {
+				_upgradeProps((UpgradePropsOptions) _commandArgs);
+			}
+				break;
+			case "version": {
+				// TODO: What is this supposed to do?
+			}
+				break;
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Override
 	public void trace(String s, Object... args) {
-		if (isTrace() && (tracer != null)) {
+		if (_bladeArgs.isTrace() && (tracer != null)) {
 			tracer.format("# " + s + "%n", args);
 			tracer.flush();
 		}
+
 	}
 
-	private String[] args;
-	private final Formatter tracer = new Formatter(System.out);
+	@Parameters(commandDescription = "Options valid for all commands. Must be given before sub command")
+	private static class BladeArgs {
+		
+		public boolean isTrace() {
+			return trace;
+		}
 
+		public String getBase() {
+			return base;
+		}
+
+		public String getFailok() {
+			return failok;
+		}
+
+		@Parameter(
+			names = {"-b", "--base"},
+			description ="Specify a new base directory (default working directory).")
+		private String base = ".";
+
+		@Parameter(
+			names = {"-f", "--failok"},
+			description ="Do not return error status for error that match this given regular expression.")
+		private String failok;
+			
+		@Parameter(
+			names = {"-t", "--trace"},
+			description ="Print exception stack traces when they occur.")
+		private boolean trace;
+
+		
+	}
+	
+	private String _command;
+	private BladeArgs _bladeArgs = new BladeArgs();
+	private Object _commandArgs;
+	private final Formatter tracer = new Formatter(System.out);
+	private PrintStream out = System.out;
+	private PrintStream err = System.err;
 }

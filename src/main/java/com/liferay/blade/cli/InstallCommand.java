@@ -16,13 +16,10 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * @author Gregory Amerson
@@ -35,8 +32,8 @@ public class InstallCommand {
 	public InstallCommand(blade blade, InstallOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
-		_host = options.host() != null ? options.host() : "localhost";
-		_port = options.port() != 0 ? options.port() : 11311;
+		_host = options.getHost() != null ? options.getHost() : "localhost";
+		_port = options.getPort() != 0 ? options.getPort() : 11311;
 	}
 
 	public void execute() throws Exception {
@@ -46,14 +43,11 @@ public class InstallCommand {
 			return;
 		}
 
-		final List<String> args = _options._arguments();
-
-		if (args.size() == 0) {
+		final String bundleFileName =  _options.getBundleFileName();
+		if (bundleFileName == null) {
 			addError("Must specify bundle file to install.");
 			return;
 		}
-
-		final String bundleFileName = args.get(0);
 
 		final File bundleFile = new File(_blade.getBase(), bundleFileName);
 
@@ -69,16 +63,34 @@ public class InstallCommand {
 		}
 	}
 
-	@Arguments(arg = {"bundleFile"})
-	@Description(DESCRIPTION)
-	public interface InstallOptions extends Options {
+	@Parameters(commandNames = {"install"},
+		commandDescription = InstallCommand.DESCRIPTION)
+	public static class InstallOptions {
+		public String getHost() {
+			return host;
+		}
 
-		@Description("The host to use to connect to gogo shell")
-		public String host();
+		public int getPort() {
+			return port;
+		}
 
-		@Description("The port to use to connect to gogo shell")
-		public int port();
+		public String getBundleFileName() {
+			return bundleFileName;
+		}
+		
+		@Parameter(
+			names = {"-h", "--host"},
+			description ="The host to use to connect to gogo shell")
+		private String host;
 
+
+		@Parameter(
+			names = {"-p", "--port"},
+			description ="The port to use to connect to gogo shell")
+		private int port;
+		
+		@Parameter(description ="Bundle File Name")
+		private String bundleFileName;
 	}
 
 	private void addError(String msg) {

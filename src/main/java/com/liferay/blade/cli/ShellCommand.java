@@ -16,13 +16,14 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * @author Gregory Amerson
@@ -35,8 +36,9 @@ public class ShellCommand {
 	public ShellCommand(blade blade, ShellOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
-		_host = options.host() != null ? options.host() : "localhost";
-		_port = options.port() != 0 ? options.port() : 11311;
+		
+		_host = options.getHost() != null ? options.getHost() : "localhost";
+		_port = options.getPort() != 0 ? options.getPort() : 11311;
 	}
 
 	public void execute() throws Exception {
@@ -48,21 +50,39 @@ public class ShellCommand {
 			return;
 		}
 
-		String gogoCommand = StringUtils.join(_options._arguments(), " ");
+		String gogoCommand = StringUtils.join(_options.getArgs(), " ");
 
 		executeCommand(gogoCommand);
 	}
 
-	@Arguments(arg = {"gogo-command", "args..."})
-	@Description(DESCRIPTION)
-	public interface ShellOptions extends Options {
+	@Parameters(commandNames = {"sh"},
+		commandDescription = ShellCommand.DESCRIPTION)
+	public static class ShellOptions {
 
-		@Description("")
-		public String host();
+		public String getHost() {
+			return host;
+		}
 
-		@Description("The port to use to connect to gogo shell")
-		public int port();
+		public int getPort() {
+			return port;
+		}
+		
+		public List<String> getArgs() {
+			return args;
+		}
 
+		@Parameter(
+			names = {"-p", "--port"},
+			description ="The port to use to connect to gogo shell")
+		private int port;
+
+		@Parameter(
+			names = {"-h", "--host"},
+			description ="The host to use to connect to gogo shell")
+		private String host;
+		
+		@Parameter
+		private List<String> args = new ArrayList<>();
 	}
 
 	private void addError(String prefix, String msg) {

@@ -16,7 +16,8 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Options;
+import com.beust.jcommander.Parameters;
+
 
 /**
  * @author Gregory Amerson
@@ -25,7 +26,7 @@ public class UpdateCommand {
 
 	public static final String DESCRIPTION = "Update blade to latest version";
 
-	public UpdateCommand(blade blade, Options options) throws Exception {
+	public UpdateCommand(blade blade, UpdateOptions options) throws Exception {
 		_blade = blade;
 	}
 
@@ -48,7 +49,13 @@ public class UpdateCommand {
 			}
 		}
 	}
+	
+	@Parameters(commandNames = {"update"},
+		commandDescription = UpdateCommand.DESCRIPTION)
+	public static class UpdateOptions {
 
+	}
+	
 	private blade _blade;
 
 }

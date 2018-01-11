@@ -16,11 +16,12 @@
 
 package com.liferay.blade.cli;
 
-import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Jar;
 import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.FileWatcher.Consumer;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
@@ -121,7 +122,7 @@ public class DeployCommand {
 		Set<File> outputFiles = GradleTooling.getOutputFiles(
 			_blade.getCacheDir(), _blade.getBase());
 
-		if (_options.watch()) {
+		if (_options.isWatch()) {
 			deployWatch(gradleExec, outputFiles);
 		}
 		else {
@@ -129,21 +130,22 @@ public class DeployCommand {
 		}
 	}
 
-	@Description(DESCRIPTION)
-	public interface DeployOptions extends Options {
 
-		//@Description("The host to use to connect to gogo shell")
-		//public String host();
-
-		//@Description("The port to use to connect to gogo shell")
-		//public int port();
-
-		@Description(
-			"Watches the deployed file for changes and will automatically " +
+	@Parameters(commandNames = {"deploy"},
+	commandDescription = DeployCommand.DESCRIPTION)
+	public static class DeployOptions {
+	
+		@Parameter(
+			names = {"-w", "--watch"},
+			description =
+				"Watches the deployed file for changes and will automatically " +
 				"redeploy"
-		)
-		public boolean watch();
-
+			)
+		private boolean watch;
+	
+		public boolean isWatch() {
+			return watch;
+		}
 	}
 
 
@@ -173,7 +175,7 @@ public class DeployCommand {
 
 			if(isFragment) {
 				hostBSN =
-						new Parameters(fragmentHost).keySet().iterator().next();
+						new aQute.bnd.header.Parameters(fragmentHost).keySet().iterator().next();
 			}
 		}
 

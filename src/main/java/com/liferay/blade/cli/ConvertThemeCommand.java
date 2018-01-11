@@ -77,7 +77,7 @@ public class ConvertThemeCommand {
 	}
 
 	public void execute() throws Exception {
-		final List<String> args = _options._arguments();
+		final List<String> args = _options.getName();
 
 		final String themeName = args.size() > 0 ? args.get(0) : null;
 
@@ -92,7 +92,7 @@ public class ConvertThemeCommand {
 
 			for (File file : _pluginsSDKThemesDir.listFiles()) {
 				if (file.isDirectory()) {
-					if (_options.all()) {
+					if (_options.isAll()) {
 						importTheme(file.getCanonicalPath());
 					}
 					else {
@@ -101,7 +101,7 @@ public class ConvertThemeCommand {
 				}
 			}
 
-			if (!_options.all()) {
+			if (!_options.isAll()) {
 				if (themes.size() > 0) {
 					String exampleTheme = themes.get(0);
 

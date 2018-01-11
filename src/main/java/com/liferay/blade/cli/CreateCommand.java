@@ -16,10 +16,8 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
@@ -55,21 +53,19 @@ public class CreateCommand {
 	}
 
 	public void execute() throws Exception {
-		if (_options.listtemplates()) {
+		if (_options.isListtemplates()) {
 			printTemplates();
 			return;
 		}
 
-		List<String> args = _options._arguments();
+		String name = _options.getName();
 
-		String name = args.size() > 0 ? args.get(0) : null;
-
-		if (name == null) {
+		if (name == null||name.isEmpty()) {
 			addError("Create", "SYNOPSIS\n\t create [options] <[name]>");
 			return;
 		}
 
-		String template = _options.template();
+		String template = _options.getTemplate();
 
 		if (template == null) {
 			template = "mvc-portlet";
@@ -82,8 +78,8 @@ public class CreateCommand {
 
 		File dir;
 
-		if(_options.dir() != null) {
-			dir = new File(_options.dir().getAbsolutePath());
+		if(_options.getDir() != null) {
+			dir = new File(_options.getDir().getAbsolutePath());
 		}
 		else if (template.equals("theme") || template.equals("layout-template")
 				|| template.equals("spring-mvc-portlet")) {
@@ -104,17 +100,17 @@ public class CreateCommand {
 
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
-		projectTemplatesArgs.setClassName(_options.classname());
-		projectTemplatesArgs.setContributorType(_options.contributorType());
+		projectTemplatesArgs.setClassName(_options.getClassname());
+		projectTemplatesArgs.setContributorType(_options.getContributorType());
 		projectTemplatesArgs.setDestinationDir(dir);
-		projectTemplatesArgs.setHostBundleSymbolicName(_options.hostbundlebsn());
-		projectTemplatesArgs.setHostBundleVersion(_options.hostbundleversion());
+		projectTemplatesArgs.setHostBundleSymbolicName(_options.getHostbundlebsn());
+		projectTemplatesArgs.setHostBundleVersion(_options.getHostbundleversion());
 		projectTemplatesArgs.setName(name);
-		projectTemplatesArgs.setPackageName(_options.packagename());
-		projectTemplatesArgs.setService(_options.service());
+		projectTemplatesArgs.setPackageName(_options.getPackagename());
+		projectTemplatesArgs.setService(_options.getService());
 		projectTemplatesArgs.setTemplate(template);
 
-		boolean mavenBuild = "maven".equals(_options.build());
+		boolean mavenBuild = "maven".equals(_options.getBuild());
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
 		projectTemplatesArgs.setMaven(mavenBuild);
@@ -139,60 +135,134 @@ public class CreateCommand {
 		}
 	}
 
-	@Arguments(arg = {"[name]"})
-	@Description(DESCRIPTION)
-	public interface CreateOptions extends Options {
-
-		@Description(
+	@Parameters(commandNames = {"create"},
+	commandDescription = CreateCommand.DESCRIPTION)
+	public static class CreateOptions {
+	
+		public String getBuild() {
+			return build;
+		}
+	
+		public String getClassname() {
+			return classname;
+		}
+	
+		public String getContributorType() {
+			return contributorType;
+		}
+	
+		public File getDir() {
+			return dir;
+		}
+	
+		public String getHostbundlebsn() {
+			return hostbundlebsn;
+		}
+	
+		public String getHostbundleversion() {
+			return hostbundleversion;
+		}
+	
+		public boolean isListtemplates() {
+			return listtemplates;
+		}
+	
+		public String getPackagename() {
+			return packagename;
+		}
+	
+		public String getName() {
+			return name;
+		}
+	
+		public void setName(String name) {
+			this.name = name;
+		}
+	
+		public String getService() {
+			return service;
+		}
+	
+		public String getTemplate() {
+			return template;
+		}
+	
+		@Parameter(
+			names = {"-b", "--build"},
+			description =
 			"Specify the build type of the project. " +
-				"Available options are gradle, maven. (gradle is default)")
-	    public String build();
-
-		@Description(
+			"Available options are gradle, maven. (gradle is default)")
+		private String build;
+		
+	
+		@Parameter(
+			names = {"-c", "--classname"},
+			description =
 			"If a class is generated in the project, provide the name of the " +
 				"class to be generated. If not provided defaults to Project " +
 					"name."
 		)
-		public String classname();
-
-		@Description(
+		private String classname;
+	
+		@Parameter(
+			names = {"C", "-C", "--contributorType"},
+			description =
 			"Used to identify your module as a Theme Contributor. Also, used " +
 			"to add the Liferay-Theme-Contributor-Type and Web-ContextPath " +
 			"bundle headers.")
-		public String contributorType();
-
-		@Description("The directory where to create the new project.")
-		public File dir();
-
-		@Description(
+		private String contributorType;
+	
+		@Parameter(
+			names = {"-d", "--dir"},
+			description ="The directory where to create the new project.")
+		private File dir;
+	
+		@Parameter(
+			names = {"-h", "--hostbundlebsn"},
+			description =
 			"If a new jsp hook fragment needs to be created, provide the name" +
 				" of the host bundle symbolic name."
 		)
-		public String hostbundlebsn();
-
-		@Description(
+		private String hostbundlebsn;
+	
+		@Parameter(
+			names = {"-H", "--hostbundleversion"},
+			description =
 			"If a new jsp hook fragment needs to be created, provide the name" +
 				" of the host bundle version."
 		)
-		public String hostbundleversion();
-
-		@Description("Prints a list of available project templates")
-		public boolean listtemplates();
-
-		public String packagename();
-
-		@Description(
+		private String hostbundleversion;
+	
+	
+		@Parameter(
+			names = {"-l", "--listtemplates"},
+			description ="Prints a list of available project templates")
+		private boolean listtemplates;
+	
+		@Parameter(
+			names = {"-p", "--packagename"},
+			description = "")
+		private String packagename;
+	
+		@Parameter(
+			names = {"-s", "--service"},
+			description =
 			"If a new DS component needs to be created, provide the name of " +
 				"the service to be implemented."
 		)
-		public String service();
-
-		@Description(
+		private String service;
+	
+		@Parameter(
+			names = {"-t", "--template"},
+			description =
 			"The project template to use when creating the project. To " +
 				"see the list of templates available use blade create <-l | " +
 					"--listtemplates>"
 		)
-		public String template();
+		private String template;
+		
+		@Parameter(description="<[name]>")
+		private String name;
 	}
 
 	private void addError(String prefix, String msg) {

@@ -16,11 +16,12 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.gradle.GradleExec;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,17 +39,25 @@ public class GradleCommand {
 	}
 
 	public void execute() throws Exception {
-		String gradleCommand = StringUtils.join(_options._arguments(), " ");
+		String gradleCommand = StringUtils.join(_options.getArgs(), " ");
 
 		GradleExec gradleExec = new GradleExec(_blade);
 
 		gradleExec.executeGradleCommand(gradleCommand);
 	}
 
-	@Arguments(arg = {"gradle-command", "args..."})
-	@Description(DESCRIPTION)
-	public interface GradleOptions extends Options {
+	@Parameters(commandNames = {"gw"},
+		commandDescription = GradleCommand.DESCRIPTION)
+	public static class GradleOptions {
+
+		public List<String> getArgs() {
+			return args;
+		}
+
+		@Parameter(description="[arguments]")
+		private List<String> args = new ArrayList<>();
 	}
+
 
 	private blade _blade;
 	private GradleOptions _options;

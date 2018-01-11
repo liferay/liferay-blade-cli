@@ -16,10 +16,8 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.jmx.IDEConnector;
 
 import java.io.File;
@@ -39,7 +37,7 @@ public class OpenCommand {
 	}
 
 	public void execute() throws Exception {
-		File fileName = new File(_options._arguments().get(0));
+		File fileName = _options.getFile();
 
 		if (!fileName.exists()) {
 			addError(
@@ -60,14 +58,27 @@ public class OpenCommand {
 		}
 	}
 
-	@Arguments(arg = "file or directory to open/import")
-	@Description(DESCRIPTION)
-	public interface OpenOptions extends Options {
+	@Parameters(commandNames = {"open"},
+		commandDescription = OpenCommand.DESCRIPTION)
+	public static class OpenOptions {
 
-		@Description("The workspace to open or import this file or project")
-		public String workspace();
+		public String getWorkspace() {
+			return workspace;
+		}
 
+		public File getFile() {
+			return file;
+		}
+
+		@Parameter(
+			names = {"-w", "--workspace"},
+			description ="The workspace to open or import this file or project")
+		private String workspace;
+		
+		@Parameter(description ="<file or directory to open/import>")
+		private File file;
 	}
+
 
 	private void addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));

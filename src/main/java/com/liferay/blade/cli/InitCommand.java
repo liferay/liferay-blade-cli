@@ -16,11 +16,10 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
@@ -59,9 +58,7 @@ public class InitCommand {
 	}
 
 	public void execute() throws Exception {
-		final List<String> args = _options._arguments();
-
-		String name = args.size() > 0 ? args.get(0) : null;
+		String name = _options.getName();
 
 		File destDir = name != null ? new File(
 			_blade.getBase(), name) : _blade.getBase();
@@ -80,7 +77,7 @@ public class InitCommand {
 		if (destDir.exists()) {
 			if (isPluginsSDK) {
 				if (!isPluginsSDK70(destDir)) {
-					if (_options.upgrade()) {
+					if (_options.isUpgrade()) {
 						trace(
 							"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory " +
 								"and initing workspace.");
@@ -108,7 +105,7 @@ public class InitCommand {
 				_moveContentsToDirectory(destDir, temp);
 			}
 			else if (destDir.list().length > 0) {
-				if (_options.force()) {
+				if (_options.isForce()) {
 					trace("Files found, initing anyways.");
 				}
 				else {
@@ -132,7 +129,7 @@ public class InitCommand {
 
 		projectTemplatesArgs.setDestinationDir(destParentDir);
 
-		if (_options.force() || _options.upgrade()) {
+		if (_options.isForce() || _options.isUpgrade()) {
 			projectTemplatesArgs.setForce(true);
 		}
 
@@ -142,7 +139,7 @@ public class InitCommand {
 		new ProjectTemplates(projectTemplatesArgs);
 
 		if (isPluginsSDK) {
-			if (_options.upgrade()) {
+			if (_options.isUpgrade()) {
 				GradleExec gradleExec = new GradleExec(_blade);
 
 				gradleExec.executeGradleCommand("upgradePluginsSDK");
@@ -166,19 +163,45 @@ public class InitCommand {
 		}
 	}
 
-	@Arguments(arg = "[name]")
-	@Description(DESCRIPTION)
-	public interface InitOptions extends Options {
+	@Parameters(commandNames = {"init"},
+	commandDescription = InitCommand.DESCRIPTION)
+	public static class InitOptions {
 
-		@Description(
-				"create anyway if there are files located at target folder")
-		public boolean force();
+		public String getName() {
+			return name;
+		}
 
-		@Description("force to refresh workspace template")
-		public boolean refresh();
+		public boolean isForce() {
+			return force;
+		}
 
-		@Description("upgrade plugins-sdk from 6.2 to 7.0")
-		public boolean upgrade();
+		public boolean isRefresh() {
+			return refresh;
+		}
+
+
+		public boolean isUpgrade() {
+			return upgrade;
+		}
+		
+		@Parameter(description = "[name]")
+		private String name;
+
+		@Parameter(
+			names = {"-f", "--force"},
+			description =
+			"create anyway if there are files located at target folder")
+		private boolean force;
+
+		@Parameter(
+			names = {"-r", "--refresh"},
+			description ="force to refresh workspace template")
+		private boolean refresh;
+
+		@Parameter(
+			names = {"-u", "--upgrade"},
+			description ="upgrade plugins-sdk from 6.2 to 7.0")
+		private boolean upgrade;
 	}
 
 	private void addError(String msg) {

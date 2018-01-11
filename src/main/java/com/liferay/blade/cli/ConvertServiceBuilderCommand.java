@@ -76,22 +76,21 @@ public class ConvertServiceBuilderCommand {
 	}
 
 	public void execute() throws Exception {
-	final List<String> args = _options._arguments();
 
-		final String projectName = !args.isEmpty() ? args.get(0) : null;
-
+		final String projectName = _options.getName().isEmpty() ? null : _options.getName().iterator().next();
+	
 		if (!Util.isWorkspace(_blade)) {
 			_blade.error("Please execute command in a Liferay Workspace project");
-
+	
 			return;
 		}
-
-		if (args.isEmpty()) {
+	
+		if (projectName == null) {
 			_blade.error("Please specify a plugin name");
-
+	
 			return;
 		}
-
+		
 		File project = new File(_warsDir, projectName);
 
 		if (!project.exists()) {
@@ -108,9 +107,11 @@ public class ConvertServiceBuilderCommand {
 			return;
 		}
 
+		List<String> args = _options.getName();
 		String sbProjectName = !args.isEmpty() && args.size() >= 2 ? args.get(1) : null;
 
-		if (sbProjectName == null) {
+		if (sbProjectName == null)
+		{
 			if (projectName.endsWith("-portlet")) {
 				sbProjectName = projectName.replaceAll("-portlet$", "");
 			}
@@ -118,6 +119,7 @@ public class ConvertServiceBuilderCommand {
 				sbProjectName = projectName;
 			}
 		}
+		
 
 		File sbProject = new File(_moduleDir, sbProjectName);
 
