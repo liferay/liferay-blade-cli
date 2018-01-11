@@ -24,8 +24,6 @@ import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import com.liferay.blade.cli.ConvertCommand.ConvertOptions;
-import com.liferay.blade.cli.CreateCommand.CreateOptions;
 import com.liferay.blade.cli.DeployCommand.DeployOptions;
 import com.liferay.blade.cli.GradleCommand.GradleOptions;
 import com.liferay.blade.cli.InitCommand.InitOptions;
@@ -64,11 +62,11 @@ import org.osgi.framework.Constants;
  */
 public class blade implements Runnable {
 
-	public void _convert(ConvertOptions options) throws Exception {
+	public void _convert(ConvertCommandArgs options) throws Exception {
 		new ConvertCommand(this, options).execute();
 	}
 
-	public void _create(CreateOptions options) throws Exception {
+	public void _create(CreateCommandArgs options) throws Exception {
 		new CreateCommand(this, options).execute();
 	}
 
@@ -193,10 +191,10 @@ public class blade implements Runnable {
 		try {
 			switch (_command) {
 			case "create": {
-				_create((CreateOptions) _commandArgs);
+				_create((CreateCommandArgs) _commandArgs);
 			} break;
 			case "convert": {
-				_convert((ConvertOptions) _commandArgs);
+				_convert((ConvertCommandArgs) _commandArgs);
 			} break;
 			case "deploy": {
 				_deploy((DeployOptions) _commandArgs);
@@ -255,8 +253,8 @@ public class blade implements Runnable {
 
 	public void run(String[] args) {
 		List<Object> argsList = Arrays.asList(
-				new CreateOptions(), new ConvertOptions(), new DeployOptions(), new GradleOptions(), new InitOptions(),
-				new InstallOptions(), new OpenOptions(), new OutputsOptions(), new SamplesOptions(),
+				new CreateCommandArgs(), new ConvertCommandArgs(), new DeployOptions(), new GradleOptions(),
+				new InitOptions(), new InstallOptions(), new OpenOptions(), new OutputsOptions(), new SamplesOptions(),
 				new ServerStartOptions(), new ServerStopOptions(), new ShellOptions(), new UpdateOptions(),
 				new UpgradePropsOptions());
 		Builder builder = JCommander.newBuilder();

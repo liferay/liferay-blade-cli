@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.ConvertCommand.ConvertOptions;
-
 import java.io.File;
 
 import java.nio.file.Files;
@@ -39,7 +37,7 @@ public class ConvertThemeCommand {
 
 	public static final String DESCRIPTION = "Migrate a plugins sdk theme to new workspace theme project";
 
-	public ConvertThemeCommand(blade blade, ConvertOptions options) throws Exception {
+	public ConvertThemeCommand(blade blade, ConvertCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 
@@ -167,7 +165,7 @@ public class ConvertThemeCommand {
 
 	private blade _blade;
 	private final Pattern _compassImport = Pattern.compile("@import\\s*['\"]compass['\"];");
-	private ConvertOptions _options;
+	private ConvertCommandArgs _options;
 	private File _pluginsSDKThemesDir;
 	private File _themesDir;
 

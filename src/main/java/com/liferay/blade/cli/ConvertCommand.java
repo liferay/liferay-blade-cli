@@ -18,9 +18,6 @@ package com.liferay.blade.cli;
 
 import aQute.lib.io.IO;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
@@ -65,7 +62,7 @@ public class ConvertCommand {
 		return Stream.concat(lhs, rhs);
 	}
 
-	public ConvertCommand(blade blade, ConvertOptions options) throws Exception {
+	public ConvertCommand(blade blade, ConvertCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 
@@ -232,50 +229,6 @@ public class ConvertCommand {
 		}
 	}
 
-	@Parameters(commandNames = {"convert"},
-		commandDescription = ConvertCommand.DESCRIPTION)
-	public static class ConvertOptions {
-
-		public ConvertOptions() {
-		}
-
-		public ConvertOptions(boolean all, boolean list, boolean themeBuilder, List<String> name) {
-		this.all = all; this.list = list; this.themeBuilder = themeBuilder; this.name = name;
-		}
-
-		public List<String> getName() {
-			return name;
-		}
-
-		public boolean isAll() {
-			return all;
-		}
-
-		public boolean isList() {
-			return list;
-		}
-
-		public boolean isThemeBuilder() {
-			return themeBuilder;
-		}
-
-		@Parameter(names = {"-a", "--all"}, description ="Migrate all plugin projects")
-		private boolean all;
-
-		@Parameter(names = {"-l", "--list"}, description ="List the projects available to be converted")
-		private boolean list;
-
-		@Parameter(description ="[name]")
-		private List<String> name = new ArrayList<>();
-
-		@Parameter(
-			names = {"-t", "--themeBuilder"},
-			description ="Use ThemeBuilder gradle plugin instead of NodeJS to convert theme project"
-		)
-		private boolean themeBuilder;
-
-	}
-
 	private void convertToLayoutWarProject(File layoutPluginDir) {
 		try {
 			_warsDir.mkdirs();
@@ -334,7 +287,7 @@ public class ConvertCommand {
 				}
 			}
 
-			ConvertOptions convertArgs = new ConvertOptions(
+			ConvertCommandArgs convertArgs = new ConvertCommandArgs(
 				_options.isAll(), _options.isList(), _options.isThemeBuilder(), arguments);
 
 			new ConvertServiceBuilderCommand(_blade, convertArgs).execute();
@@ -571,7 +524,7 @@ public class ConvertCommand {
 	private final blade _blade;
 	private final File _hooksDir;
 	private final File _layouttplDir;
-	private final ConvertOptions _options;
+	private final ConvertCommandArgs _options;
 	private final File _pluginsSdkDir;
 	private final File _portletsDir;
 	private final File _themesDir;

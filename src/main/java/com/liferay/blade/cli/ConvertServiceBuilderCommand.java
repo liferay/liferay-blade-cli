@@ -16,7 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.ConvertCommand.ConvertOptions;
 import com.liferay.blade.cli.util.Constants;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
@@ -44,7 +43,7 @@ public class ConvertServiceBuilderCommand {
 
 	public static final String DESCRIPTION = "Convert a service builder project to new Liferay Workspace projects";
 
-	public ConvertServiceBuilderCommand(blade blade, ConvertOptions options) throws Exception {
+	public ConvertServiceBuilderCommand(blade blade, ConvertCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 
@@ -111,9 +110,8 @@ public class ConvertServiceBuilderCommand {
 		List<String> args = _options.getName();
 		String sbProjectName = !args.isEmpty() && args.size() >= 2 ? args.get(1) : null;
 
-		if (sbProjectName == null)
-				{
-					if (projectName.endsWith("-portlet")) {
+		if (sbProjectName == null) {
+			if (projectName.endsWith("-portlet")) {
 				sbProjectName = projectName.replaceAll("-portlet$", "");
 			}
 			else {
@@ -184,7 +182,8 @@ public class ConvertServiceBuilderCommand {
 		if (oldMetaInfFolder.exists()) {
 			newMetaInfFolder.mkdirs();
 
-			Files.move(new File(oldMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML).toPath(),
+			Files.move(
+				new File(oldMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML).toPath(),
 				new File(newMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML).toPath());
 		}
 
@@ -194,7 +193,8 @@ public class ConvertServiceBuilderCommand {
 		if (oldSrcFolder.exists()) {
 			newResourcesSrcFolder.mkdirs();
 
-			Files.move(new File(oldSrcFolder, ServiceBuilder.SERVICE_PROPERTIES).toPath(),
+			Files.move(
+				new File(oldSrcFolder, ServiceBuilder.SERVICE_PROPERTIES).toPath(),
 				new File(newResourcesSrcFolder, ServiceBuilder.SERVICE_PROPERTIES).toPath());
 		}
 
@@ -276,7 +276,7 @@ public class ConvertServiceBuilderCommand {
 
 	private blade _blade;
 	private final File _moduleDir;
-	private ConvertOptions _options;
+	private ConvertCommandArgs _options;
 	private final File _warsDir;
 
 	private class ServiceBuilder {

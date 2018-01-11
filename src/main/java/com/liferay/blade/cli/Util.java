@@ -208,6 +208,26 @@ public class Util {
 		return false;
 	}
 
+	public static boolean isEmpty(Object[] array) {
+		if (array == null || array.length == 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean isEmpty(String string) {
+		if (string == null || string.isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean isNotEmpty(Object[] array) {
+		return !isEmpty(array);
+	}
+
 	public static boolean isWindows() {
 		return System.getProperty("os.name").toLowerCase().contains("windows");
 	}
