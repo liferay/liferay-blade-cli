@@ -18,6 +18,7 @@ package com.liferay.blade.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+
 import com.liferay.blade.cli.gradle.GradleExec;
 
 import java.util.ArrayList;
@@ -30,8 +31,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class GradleCommand {
 
-	public static final String DESCRIPTION =
-		"Execute gradle command using the gradle wrapper if detected";
+	public static final String DESCRIPTION = "Execute gradle command using the gradle wrapper if detected";
 
 	public GradleCommand(blade blade, GradleOptions options) throws Exception {
 		_blade = blade;
@@ -54,10 +54,10 @@ public class GradleCommand {
 			return args;
 		}
 
-		@Parameter(description="[arguments]")
+		@Parameter(description ="[arguments]")
 		private List<String> args = new ArrayList<>();
-	}
 
+	}
 
 	private blade _blade;
 	private GradleOptions _options;

@@ -18,11 +18,14 @@ package com.liferay.blade.cli.jmx;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -59,15 +62,14 @@ public class JMXLocalConnector {
 			if (toolsClassloader != null) {
 				Thread.currentThread().setContextClassLoader(toolsClassloader);
 
-				Class< ? > vmClass = toolsClassloader.loadClass(
-					"com.sun.tools.attach.VirtualMachine");
+				Class< ? > vmClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachine");
 
 				Method listMethod = vmClass.getMethod("list");
+
 				List<Object> vmds = (List<Object>)listMethod.invoke(null);
 
 				for (Object vmd : vmds) {
-					String localConnectorAddress = attach(
-						toolsClassloader, vmClass, vmd, objName);
+					String localConnectorAddress = attach(toolsClassloader, vmClass, vmd, objName);
 
 					if (localConnectorAddress != null) {
 						return localConnectorAddress;
@@ -85,23 +87,24 @@ public class JMXLocalConnector {
 
 			try {
 				if (toolsClassloader != null) {
-					Field nl = ClassLoader.class.getDeclaredField(
-						"nativeLibraries");
+					Field nl = ClassLoader.class.getDeclaredField("nativeLibraries");
+
 					nl.setAccessible(true);
 
-					Vector< ? > nativeLibs = (Vector< ? >)nl.get(
-						toolsClassloader);
+					Vector< ? > nativeLibs = (Vector< ? >)nl.get(toolsClassloader);
 
 					for (Object nativeLib : nativeLibs) {
 						Class<?> clazz = nativeLib.getClass();
 
 						Field nameField = clazz.getDeclaredField("name");
+
 						nameField.setAccessible(true);
 
 						String name = (String)nameField.get(nativeLib);
 
 						if (new File(name).getName().contains("attach")) {
 							Method f = clazz.getDeclaredMethod("finalize");
+
 							f.setAccessible(true);
 							f.invoke(nativeLib);
 						}
@@ -117,21 +120,17 @@ public class JMXLocalConnector {
 	}
 
 	public JMXLocalConnector(int port) throws MalformedURLException {
-		this(
-			new JMXServiceURL(
-				"service:jmx:rmi:///jndi/rmi://:" + port + "/jmxrmi"));
+		this(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://:" + port + "/jmxrmi"));
 	}
 
 	public JMXLocalConnector(JMXServiceURL serviceUrl) {
 		try {
-			final JMXConnector jmxConnector = JMXConnectorFactory.connect(
-				serviceUrl, null);
+			final JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceUrl, null);
 
 			mBeanServerConnection = jmxConnector.getMBeanServerConnection();
 		}
 		catch (Exception e) {
-			throw new IllegalArgumentException(
-				"Unable to get JMX connection", e);
+			throw new IllegalArgumentException("Unable to get JMX connection", e);
 		}
 	}
 
@@ -141,24 +140,21 @@ public class JMXLocalConnector {
 
 	protected MBeanServerConnection mBeanServerConnection;
 
-	private static String attach(
-		ClassLoader toolsClassloader, Class<?> vmClass, Object vmd,
-		String name) {
-
+	private static String attach(ClassLoader toolsClassloader, Class<?> vmClass, Object vmd, String name) {
 		try {
-			Class< ? > vmdClass = toolsClassloader.loadClass(
-				"com.sun.tools.attach.VirtualMachineDescriptor");
+			Class< ? > vmdClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
 			Method idMethod = vmdClass.getMethod("id");
+
 			String id = (String)idMethod.invoke(vmd);
 
 			Method attachMethod = vmClass.getMethod("attach", String.class);
+
 			Object vm = attachMethod.invoke(null, id);
 
 			try {
-				Method getAgentProperties = vmClass.getMethod(
-					"getAgentProperties");
-				Properties agentProperties =
-					(Properties)getAgentProperties.invoke(vm);
+				Method getAgentProperties = vmClass.getMethod("getAgentProperties");
+
+				Properties agentProperties = (Properties)getAgentProperties.invoke(vm);
 
 				String localConnectorAddress = agentProperties.getProperty(
 					"com.sun.management.jmxremote.localConnectorAddress");
@@ -167,31 +163,25 @@ public class JMXLocalConnector {
 					File agentJar = findJdkJar("management-agent.jar");
 
 					if (agentJar != null) {
-						Method loadAgent = vmClass.getMethod(
-							"loadAgent", String.class);
+						Method loadAgent = vmClass.getMethod("loadAgent", String.class);
+
 						loadAgent.invoke(vm, agentJar.getCanonicalPath());
 
-						agentProperties = (Properties)getAgentProperties.invoke(
-							vm);
+						agentProperties = (Properties)getAgentProperties.invoke(vm);
 
 						localConnectorAddress = agentProperties.getProperty(
-							"com.sun.management.jmxremote." +
-								"localConnectorAddress");
+							"com.sun.management.jmxremote." + "localConnectorAddress");
 					}
 				}
 
 				if (localConnectorAddress != null) {
-					final JMXServiceURL jmxServiceUrl = new JMXServiceURL(
-						localConnectorAddress);
-					final JMXConnector jmxConnector =
-						JMXConnectorFactory.connect(jmxServiceUrl, null);
+					final JMXServiceURL jmxServiceUrl = new JMXServiceURL(localConnectorAddress);
+					final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxServiceUrl, null);
 
-					final MBeanServerConnection mBeanServerConnection =
-						jmxConnector.getMBeanServerConnection();
+					final MBeanServerConnection mBeanServerConnection = jmxConnector.getMBeanServerConnection();
 
 					if (mBeanServerConnection != null) {
-						final ObjectName objectName = getObjectName(
-							name, mBeanServerConnection);
+						final ObjectName objectName = getObjectName(name, mBeanServerConnection);
 
 						if (objectName != null) {
 							return localConnectorAddress;
@@ -204,6 +194,7 @@ public class JMXLocalConnector {
 			}
 			finally {
 				Method detachMethod = vmClass.getMethod("detach");
+
 				detachMethod.invoke(vm);
 			}
 		}
@@ -235,14 +226,12 @@ public class JMXLocalConnector {
 		return retval;
 	}
 
-	private static ObjectName getObjectName(
-			String objectNameValue, MBeanServerConnection mBeanServerConnection)
+	private static ObjectName getObjectName(String objectNameValue, MBeanServerConnection mBeanServerConnection)
 		throws IOException, MalformedObjectNameException {
 
 		final ObjectName objectName = new ObjectName(objectNameValue);
 
-		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(
-			objectName, null);
+		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
 
 		if ((objectNames != null) && (objectNames.size() > 0)) {
 			return objectNames.iterator().next();
@@ -251,9 +240,7 @@ public class JMXLocalConnector {
 		return null;
 	}
 
-	private static ClassLoader getToolsClassLoader(ClassLoader parent)
-		throws IOException {
-
+	private static ClassLoader getToolsClassLoader(ClassLoader parent) throws IOException {
 		File toolsJar = findJdkJar("tools.jar");
 
 		if ((toolsJar != null) && toolsJar.exists()) {
@@ -266,7 +253,7 @@ public class JMXLocalConnector {
 				//
 			}
 
-			URL[] urls = new URL[] {toolsUrl};
+			URL[] urls = {toolsUrl};
 
 			return new URLClassLoader(urls, parent);
 		}

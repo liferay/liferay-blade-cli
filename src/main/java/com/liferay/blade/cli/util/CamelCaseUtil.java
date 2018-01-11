@@ -11,10 +11,7 @@ public class CamelCaseUtil {
 			char c = s.charAt(i);
 
 			if ((i > 0) && Character.isUpperCase(c)) {
-				if (!upperCase ||
-					((i < (s.length() - 1)) &&
-					 !Character.isUpperCase(s.charAt(i + 1)))) {
-
+				if (!upperCase || ((i < (s.length() - 1)) && !Character.isUpperCase(s.charAt(i + 1)))) {
 					sb.append(delimiter);
 				}
 

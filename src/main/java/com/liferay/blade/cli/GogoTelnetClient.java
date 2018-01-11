@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-
 package com.liferay.blade.cli;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import java.net.Socket;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,56 +46,14 @@ public class GogoTelnetClient implements AutoCloseable {
 		doHandshake();
 	}
 
-	private final Socket _socket;
-	private final DataInputStream _inputStream;
-	private final DataOutputStream _outputStream;
-
-	private static void assertCond(boolean condition) {
-		if (!condition) {
-			throw new AssertionError();
+	public void close() {
+		try {
+			_socket.close();
+			_inputStream.close();
+			_outputStream.close();
 		}
-	}
-	private void doHandshake() throws IOException {
-		// gogo server first sends 4 commands
-		readOneCommand();
-		readOneCommand();
-		readOneCommand();
-		readOneCommand();
-
-		// first we negotiate terminal type
-		// 255(IAC),251(WILL),24(terminal type)
-		sendCommand(255, 251, 24);
-
-		// server should respond
-		// 255(IAC),250(SB),24,1,255(IAC),240(SE)
-		readOneCommand();
-
-		// send the terminal type
-		//255(IAC),250(SB),24,0,'V','T','2','2','0',255(IAC),240(SE)
-		sendCommand(255, 250, 24, 0, 'V', 'T', '2', '2', '0', 255, 240);
-
-		// read gogo shell prompt
-		readUntilNextGogoPrompt();
-	}
-
-	private String readUntilNextGogoPrompt() throws IOException {
-		StringBuilder sb = new StringBuilder();
-
-		int c = _inputStream.read();
-
-		while (c != -1) {
-			sb.append((char) c);
-
-			if(sb.toString().endsWith("g! ")) {
-				break;
-			}
-
-			c = _inputStream.read();
+		catch (IOException ioe) {
 		}
-
-		String output = sb.substring(0, sb.length() - 3);
-
-		return output.trim();
 	}
 
 	public String send(String command) throws IOException {
@@ -114,10 +73,39 @@ public class GogoTelnetClient implements AutoCloseable {
 		return readUntilNextGogoPrompt();
 	}
 
-	private void sendCommand(int... codes) throws IOException {
-		for (int code : codes) {
-			_outputStream.write(code);
+	private static void assertCond(boolean condition) {
+		if (!condition) {
+			throw new AssertionError();
 		}
+	}
+
+	private void doHandshake() throws IOException {
+
+		// gogo server first sends 4 commands
+
+		readOneCommand();
+		readOneCommand();
+		readOneCommand();
+		readOneCommand();
+
+		// first we negotiate terminal type
+		// 255(IAC),251(WILL),24(terminal type)
+
+		sendCommand(255, 251, 24);
+
+		// server should respond
+		// 255(IAC),250(SB),24,1,255(IAC),240(SE)
+
+		readOneCommand();
+
+		// send the terminal type
+
+		//255(IAC),250(SB),24,0,'V','T','2','2','0',255(IAC),240(SE)
+		sendCommand(255, 250, 24, 0, 'V', 'T', '2', '2', '0', 255, 240);
+
+		// read gogo shell prompt
+
+		readUntilNextGogoPrompt();
 	}
 
 	private int[] readOneCommand() throws IOException {
@@ -133,7 +121,7 @@ public class GogoTelnetClient implements AutoCloseable {
 
 		bytes.add(second);
 
-		if (second == 250) { // SB
+		if (second == 250) {// SB
 			int option = _inputStream.read();
 
 			bytes.add(option);
@@ -168,6 +156,35 @@ public class GogoTelnetClient implements AutoCloseable {
 		return toIntArray(bytes);
 	}
 
+	private String readUntilNextGogoPrompt() throws IOException {
+		StringBuilder sb = new StringBuilder();
+
+		int c = _inputStream.read();
+
+		while (c != -1) {
+			sb.append((char)c);
+
+			if (sb.toString().endsWith("g! ")) {
+				break;
+			}
+
+			c = _inputStream.read();
+		}
+
+		String output = sb.substring(0, sb.length() - 3);
+
+		return output.trim();
+	}
+
+	private void sendCommand(int... codes) throws IOException {
+		for (int code : codes) {
+			_outputStream.write(code);
+		}
+	}
+
+	private final DataInputStream _inputStream;
+	private final DataOutputStream _outputStream;
+
 	static int[] toIntArray(List<Integer> list) {
 		int[] ret = new int[list.size()];
 		int i = 0;
@@ -179,13 +196,6 @@ public class GogoTelnetClient implements AutoCloseable {
 		return ret;
 	}
 
-	public void close() {
-		try {
-			_socket.close();
-			_inputStream.close();
-			_outputStream.close();
-		}
-		catch (IOException e) {
-		}
-	}
+	private final Socket _socket;
+
 }

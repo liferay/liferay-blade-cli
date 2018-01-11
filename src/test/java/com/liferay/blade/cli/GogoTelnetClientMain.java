@@ -28,8 +28,8 @@ public class GogoTelnetClientMain {
 			System.out.println(client.send("help"));
 			System.out.println(client.send("lb -s"));
 		}
-		catch (IOException e) {
-			e.printStackTrace();
+		catch (IOException ioe) {
+			ioe.printStackTrace();
 		}
 	}
 

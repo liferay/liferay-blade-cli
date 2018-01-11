@@ -16,13 +16,14 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Options;
-
 import com.beust.jcommander.Parameters;
+
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
+
 import java.nio.file.Path;
+
 import java.util.Set;
 
 /**
@@ -30,9 +31,7 @@ import java.util.Set;
  */
 public class OutputsCommand {
 
-	public OutputsCommand(blade blade, OutputsOptions options)
-		throws Exception {
-
+	public OutputsCommand(blade blade, OutputsOptions options) throws Exception {
 		_blade = blade;
 	}
 
@@ -41,11 +40,11 @@ public class OutputsCommand {
 		final Path basePath = base.toPath();
 		final Path basePathRoot = basePath.getRoot();
 
-		final Set<File> outputs = GradleTooling.getOutputFiles(
-			_blade.getCacheDir(), base);
+		final Set<File> outputs = GradleTooling.getOutputFiles(_blade.getCacheDir(), base);
 
 		for (File output : outputs) {
 			Path outputPath = output.toPath();
+
 			Path outputPathRoot = outputPath.getRoot();
 
 			Object print = null;
@@ -63,10 +62,8 @@ public class OutputsCommand {
 
 	@Parameters(commandNames = {"outputs"})
 	public static class OutputsOptions {
-
 	}
 
-	
 	private blade _blade;
 
 }

@@ -68,9 +68,7 @@ public class FileWatcher {
 		return (WatchEvent<T>)event;
 	}
 
-	public FileWatcher(Path baseDir, boolean recursive, Consumer<Path> consumer)
-		throws IOException {
-
+	public FileWatcher(Path baseDir, boolean recursive, Consumer<Path> consumer) throws IOException {
 		this(baseDir, null, recursive, consumer);
 	}
 
@@ -78,11 +76,7 @@ public class FileWatcher {
 	 * Creates a WatchService and registers the given directory
 	 * @param runnable
 	 */
-	public FileWatcher(
-			Path baseDir, Path fileToWatch, boolean recursive,
-			Consumer<Path> consumer)
-		throws IOException {
-
+	public FileWatcher(Path baseDir, Path fileToWatch, boolean recursive, Consumer<Path> consumer) throws IOException {
 		this.watcher = FileSystems.getDefault().newWatchService();
 		this.keys = new HashMap<>();
 		this.recursive = recursive;
@@ -209,9 +203,9 @@ public class FileWatcher {
 		Modifier modifier = null;
 
 		try {
-			Class<?> c = Class.forName(
-				"com.sun.nio.file.SensitivityWatchEventModifier");
+			Class<?> c = Class.forName("com.sun.nio.file.SensitivityWatchEventModifier");
 			Field f = c.getField("HIGH");
+
 			modifier = (Modifier)f.get(c);
 		}
 		catch (Exception e) {
@@ -220,9 +214,7 @@ public class FileWatcher {
 		WatchKey key;
 
 		if (modifier != null) {
-			key = dir.register(
-				watcher, new WatchEvent.Kind[] {ENTRY_CREATE, ENTRY_MODIFY},
-				modifier);
+			key = dir.register(watcher, new WatchEvent.Kind[] {ENTRY_CREATE, ENTRY_MODIFY}, modifier);
 		}
 		else {
 			key = dir.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
@@ -255,11 +247,9 @@ public class FileWatcher {
 			new SimpleFileVisitor<Path>() {
 
 				@Override
-				public FileVisitResult preVisitDirectory(
-						Path dir, BasicFileAttributes attrs)
-					throws IOException {
-
+				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 					register(dir);
+
 					return FileVisitResult.CONTINUE;
 				}
 

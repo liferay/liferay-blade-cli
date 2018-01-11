@@ -18,12 +18,7 @@ package com.liferay.blade.cli.util;
 /**
  * @author Simon Jiang
  */
-
 public class BndPropertiesValue {
-
-	private String originalValue;
-	private String formatedValue;
-	private boolean isMultiLine;
 
 	public BndPropertiesValue() {
 	}
@@ -38,38 +33,41 @@ public class BndPropertiesValue {
 		this.originalValue = originalValue;
 	}
 
-	public boolean isMultiLine() {
-		return isMultiLine;
+	public String getFormatedValue() {
+		return formatedValue;
 	}
-
-	public void setMultiLine(boolean isMultiLine) {
-		this.isMultiLine = isMultiLine;
-	}
-
-	private int keyIndex;
 
 	public int getKeyIndex() {
 		return keyIndex;
-	}
-
-	public void setKeyIndex(int keyIndex) {
-		this.keyIndex = keyIndex;
 	}
 
 	public String getOriginalValue() {
 		return originalValue;
 	}
 
-	public void setOriginalValue(String originalValue) {
-		this.originalValue = originalValue;
-	}
-
-	public String getFormatedValue() {
-		return formatedValue;
+	public boolean isMultiLine() {
+		return isMultiLine;
 	}
 
 	public void setFormatedValue(String formatedValue) {
 		this.formatedValue = formatedValue;
 	}
+
+	public void setKeyIndex(int keyIndex) {
+		this.keyIndex = keyIndex;
+	}
+
+	public void setMultiLine(boolean isMultiLine) {
+		this.isMultiLine = isMultiLine;
+	}
+
+	public void setOriginalValue(String originalValue) {
+		this.originalValue = originalValue;
+	}
+
+	private String formatedValue;
+	private boolean isMultiLine;
+	private int keyIndex;
+	private String originalValue;
 
 }

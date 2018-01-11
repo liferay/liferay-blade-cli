@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import aQute.lib.io.IO;
 
 import java.io.File;
+
 import java.util.Set;
 
 import org.junit.BeforeClass;
@@ -37,14 +38,12 @@ public class GradleToolingTest {
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		IO.copy(new File("deps.zip"), new File("build/classes/java/test/deps.zip"));
-		IO.copy(
-			new File("test-resources/projects/testws1"), new File("build/testws1"));
+		IO.copy(new File("test-resources/projects/testws1"), new File("build/testws1"));
 	}
 
 	@Test
 	public void testGetOutputFiles() throws Exception {
-		Set<File> files = GradleTooling.getOutputFiles(
-			new File("build"), new File("build/testws1"));
+		Set<File> files = GradleTooling.getOutputFiles(new File("build"), new File("build/testws1"));
 
 		assertNotNull(files);
 		assertEquals(1, files.size());
@@ -69,9 +68,9 @@ public class GradleToolingTest {
 
 	@Test
 	public void testIsNotLiferayModule() throws Exception {
-		boolean isModule = GradleTooling.isLiferayModule (
-			new File("build"), new File("build/testws1/modules"));
+		boolean isModule = GradleTooling.isLiferayModule (new File("build"), new File("build/testws1/modules"));
 
 		assertFalse(isModule);
 	}
+
 }

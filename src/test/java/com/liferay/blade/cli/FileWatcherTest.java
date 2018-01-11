@@ -19,9 +19,15 @@ package com.liferay.blade.cli;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import aQute.lib.io.IO;
+
+import com.liferay.blade.cli.FileWatcher.Consumer;
+
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.Path;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -31,21 +37,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.liferay.blade.cli.FileWatcher.Consumer;
-
-import aQute.lib.io.IO;
-
 /**
  * @author Greg Amerson
  */
 public class FileWatcherTest {
-
-	@Before
-	public void setUp() throws Exception {
-		testdir.mkdirs();
-		assertTrue(testdir.exists());
-		assertTrue(testfile.createNewFile());
-	}
 
 	@After
 	public void cleanUp() throws Exception {
@@ -55,8 +50,15 @@ public class FileWatcherTest {
 		}
 	}
 
-	@Test
+	@Before
+	public void setUp() throws Exception {
+		testdir.mkdirs();
+		assertTrue(testdir.exists());
+		assertTrue(testfile.createNewFile());
+	}
+
 	@Ignore
+	@Test
 	public void testFileWatcherMultipleFiles() throws Exception {
 		IO.write("foobar".getBytes(), testfile);
 
@@ -107,8 +109,8 @@ public class FileWatcherTest {
 		}
 	}
 
-	@Test
 	@Ignore
+	@Test
 	public void testFileWatcherSingleFile() throws Exception {
 		final boolean[] changed = new boolean[1];
 		final CountDownLatch latch = new CountDownLatch(1);
@@ -130,8 +132,7 @@ public class FileWatcherTest {
 			@Override
 			public void run() {
 				try {
-					new FileWatcher(
-						testdir.toPath(), testfile.toPath(), false, consumer);
+					new FileWatcher(testdir.toPath(), testfile.toPath(), false, consumer);
 				}
 				catch (IOException ioe) {
 				}

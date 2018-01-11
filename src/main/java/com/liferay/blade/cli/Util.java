@@ -19,6 +19,7 @@ package com.liferay.blade.cli;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
+
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 import aQute.lib.justif.Justif;
@@ -31,9 +32,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+
 import java.net.InetSocketAddress;
 import java.net.Socket;
+
 import java.nio.file.Files;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Formatter;
@@ -51,14 +55,12 @@ import java.util.zip.ZipFile;
  */
 public class Util {
 
-	public static final String APP_SERVER_PARENT_DIR_PROPERTY =
-		"app.server.parent.dir";
+	public static final String APP_SERVER_PARENT_DIR_PROPERTY = "app.server.parent.dir";
 
 	public static final String APP_SERVER_TYPE_PROPERTY = "app.server.type";
 
 	public static boolean canConnect(String host, int port) {
-		InetSocketAddress address = new InetSocketAddress(
-			host, Integer.valueOf(port));
+		InetSocketAddress address = new InetSocketAddress(host, Integer.valueOf(port));
 		InetSocketAddress local = new InetSocketAddress(0);
 
 		InputStream in = null;
@@ -72,7 +74,6 @@ public class Util {
 		}
 		catch (Exception e) {
 		}
-
 		finally {
 			if (in != null) {
 				try {
@@ -95,9 +96,7 @@ public class Util {
 
 				File dest = Processor.getFile(outputDir, path);
 
-				if ((dest.lastModified() < r.lastModified()) ||
-					(r.lastModified() <= 0)) {
-
+				if ((dest.lastModified() < r.lastModified()) || (r.lastModified() <= 0)) {
 					File dp = dest.getParentFile();
 
 					if (!dp.exists() && !dp.mkdirs()) {
@@ -110,9 +109,7 @@ public class Util {
 		}
 	}
 
-	public static File findParentFile(
-		File dir, String[] fileNames, boolean checkParents) {
-
+	public static File findParentFile(File dir, String[] fileNames, boolean checkParents) {
 		if (dir == null) {
 			return null;
 		}
@@ -133,8 +130,7 @@ public class Util {
 	}
 
 	public static List<Properties> getAppServerProperties(File dir) {
-		File projectRoot = findParentFile(
-			dir, _APP_SERVER_PROPERTIES_FILE_NAMES, true);
+		File projectRoot = findParentFile(dir, _APP_SERVER_PROPERTIES_FILE_NAMES, true);
 
 		List<Properties> properties = new ArrayList<>();
 
@@ -156,18 +152,13 @@ public class Util {
 	}
 
 	public static File getGradlePropertiesFile(File dir) {
-		File gradlePropertiesFile = new File(
-			getWorkspaceDir(dir), _GRADLE_PROPERTIES_FILE_NAME);
+		File gradlePropertiesFile = new File(getWorkspaceDir(dir), _GRADLE_PROPERTIES_FILE_NAME);
 
 		return gradlePropertiesFile;
 	}
 
 	public static File getGradleWrapper(File dir) {
-		File gradleRoot = findParentFile(
-			dir,
-			new String[] {
-				_GRADLEW_UNIX_FILE_NAME, _GRADLEW_WINDOWS_FILE_NAME },
-			true);
+		File gradleRoot = findParentFile(dir, new String[] {_GRADLEW_UNIX_FILE_NAME, _GRADLEW_WINDOWS_FILE_NAME}, true);
 
 		if (gradleRoot != null) {
 			if (isWindows()) {
@@ -199,18 +190,11 @@ public class Util {
 	}
 
 	public static File getWorkspaceDir(File dir) {
-		return findParentFile(
-			dir,
-			new String[] {
-				_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME
-			},
-			true);
+		return findParentFile(dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
 	}
 
 	public static boolean hasGradleWrapper(File dir) {
-		if (new File(dir, "gradlew").exists() &&
-			new File(dir, "gradlew.bat").exists()) {
-
+		if (new File(dir, "gradlew").exists() && new File(dir, "gradlew.bat").exists()) {
 			return true;
 		}
 		else {
@@ -244,8 +228,7 @@ public class Util {
 		try {
 			String script = read(gradleFile);
 
-			Matcher matcher = Workspace.PATTERN_WORKSPACE_PLUGIN.matcher(
-				script);
+			Matcher matcher = Workspace.PATTERN_WORKSPACE_PLUGIN.matcher(script);
 
 			if (matcher.find()) {
 				return true;
@@ -267,9 +250,7 @@ public class Util {
 		}
 	}
 
-	public static void printHelp(
-			blade blade, Options options, String cmd,
-			Class< ? extends Options> optionClass)
+	public static void printHelp(blade blade, Options options, String cmd, Class< ? extends Options> optionClass)
 		throws Exception {
 
 		Justif j = new Justif();
@@ -287,24 +268,22 @@ public class Util {
 		return new String(Files.readAllBytes(file.toPath()));
 	}
 
-	public static void readProcessStream(
-		final InputStream is, final PrintStream ps) {
-
+	public static void readProcessStream(final InputStream is, final PrintStream ps) {
 		Thread t = new Thread(new Runnable() {
+
 			@Override
 			public void run() {
 				try (InputStreamReader isr = new InputStreamReader(is);
-					 BufferedReader br = new BufferedReader(isr)) {
+					BufferedReader br = new BufferedReader(isr)) {
 
 					String line = null;
 
-					while ( (line = br.readLine()) != null) {
+					while ((line = br.readLine()) != null) {
 						ps.println(line);
 					}
 
 					is.close();
 				}
-
 				catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
@@ -336,30 +315,22 @@ public class Util {
 		processBuilder.command(commands);
 	}
 
-	public static Process startProcess(blade blade, String command)
-		throws Exception {
-
+	public static Process startProcess(blade blade, String command) throws Exception {
 		return startProcess(blade, command, blade.getBase(), null, true);
 	}
 
-	public static Process startProcess(
-			blade blade, String command, File dir, boolean inheritIO)
-		throws Exception {
-
+	public static Process startProcess(blade blade, String command, File dir, boolean inheritIO) throws Exception {
 		return startProcess(blade, command, dir, null, inheritIO);
 	}
 
-	public static Process startProcess(
-			blade blade, String command, File dir,
-			Map<String, String> environment)
+	public static Process startProcess(blade blade, String command, File dir, Map<String, String> environment)
 		throws Exception {
 
 		return startProcess(blade, command, dir, environment, true);
 	}
 
 	public static Process startProcess(
-			blade blade, String command, File dir,
-			Map<String, String> environment, boolean inheritIO)
+			blade blade, String command, File dir, Map<String, String> environment, boolean inheritIO)
 		throws Exception {
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
@@ -376,7 +347,7 @@ public class Util {
 
 		setShell(processBuilder, command);
 
-		if(inheritIO) {
+		if (inheritIO) {
 			processBuilder.inheritIO();
 		}
 
@@ -396,13 +367,15 @@ public class Util {
 		unzip(srcFile, destDir, null);
 	}
 
-	public static void unzip(File srcFile, File destDir, String entryToStart)
-		throws IOException {
-
+	public static void unzip(File srcFile, File destDir, String entryToStart) throws IOException {
 		try (final ZipFile zip = new ZipFile(srcFile)) {
 			final Enumeration<? extends ZipEntry> entries = zip.entries();
 
-			boolean foundStartEntry = entryToStart == null;
+			boolean foundStartEntry = false;
+
+			if (entryToStart == null) {
+				foundStartEntry = true;
+			}
 
 			while (entries.hasMoreElements()) {
 				final ZipEntry entry = entries.nextElement();
@@ -414,10 +387,7 @@ public class Util {
 					continue;
 				}
 
-				if (entry.isDirectory() ||
-					((entryToStart != null) &&
-					 !entryName.startsWith(entryToStart))) {
-
+				if (entry.isDirectory() || ((entryToStart != null) && !entryName.startsWith(entryToStart))) {
 					continue;
 				}
 
@@ -431,8 +401,7 @@ public class Util {
 					IO.delete(f);
 
 					if (f.exists()) {
-						throw new IOException(
-							"Could not delete " + f.getAbsolutePath());
+						throw new IOException("Could not delete " + f.getAbsolutePath());
 					}
 				}
 
@@ -444,7 +413,7 @@ public class Util {
 				}
 
 				try (final InputStream in = zip.getInputStream(entry);
-					 final FileOutputStream out = new FileOutputStream(f)) {
+					final FileOutputStream out = new FileOutputStream(f)) {
 
 					final byte[] bytes = new byte[1024];
 					int count = in.read(bytes);
@@ -464,19 +433,15 @@ public class Util {
 		"app.server." + System.getProperty("user.name") + ".properties",
 		"app.server." + System.getenv("COMPUTERNAME") + ".properties",
 		"app.server." + System.getenv("HOST") + ".properties",
-		"app.server." + System.getenv("HOSTNAME") + ".properties",
-		"app.server.properties",
+		"app.server." + System.getenv("HOSTNAME") + ".properties", "app.server.properties",
 		"build." + System.getProperty("user.name") + ".properties",
-		"build." + System.getenv("COMPUTERNAME") + ".properties",
-		"build." + System.getenv("HOST") + ".properties",
-		"build." + System.getenv("HOSTNAME") + ".properties",
-		"build.properties"
+		"build." + System.getenv("COMPUTERNAME") + ".properties", "build." + System.getenv("HOST") + ".properties",
+		"build." + System.getenv("HOSTNAME") + ".properties", "build.properties"
 	};
 
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
 
-	private static final String _GRADLE_PROPERTIES_FILE_NAME =
-		"gradle.properties";
+	private static final String _GRADLE_PROPERTIES_FILE_NAME = "gradle.properties";
 
 	private static final String _GRADLEW_UNIX_FILE_NAME = "gradlew";
 

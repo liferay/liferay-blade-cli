@@ -22,9 +22,11 @@ import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -76,21 +78,20 @@ public class ConvertServiceBuilderCommand {
 	}
 
 	public void execute() throws Exception {
-
 		final String projectName = _options.getName().isEmpty() ? null : _options.getName().iterator().next();
-	
+
 		if (!Util.isWorkspace(_blade)) {
 			_blade.error("Please execute command in a Liferay Workspace project");
-	
+
 			return;
 		}
-	
+
 		if (projectName == null) {
 			_blade.error("Please specify a plugin name");
-	
+
 			return;
 		}
-		
+
 		File project = new File(_warsDir, projectName);
 
 		if (!project.exists()) {
@@ -111,15 +112,14 @@ public class ConvertServiceBuilderCommand {
 		String sbProjectName = !args.isEmpty() && args.size() >= 2 ? args.get(1) : null;
 
 		if (sbProjectName == null)
-		{
-			if (projectName.endsWith("-portlet")) {
+				{
+					if (projectName.endsWith("-portlet")) {
 				sbProjectName = projectName.replaceAll("-portlet$", "");
 			}
 			else {
 				sbProjectName = projectName;
 			}
 		}
-		
 
 		File sbProject = new File(_moduleDir, sbProjectName);
 
@@ -165,7 +165,8 @@ public class ConvertServiceBuilderCommand {
 		if (oldServiceImplFolder.exists()) {
 			newServiceImplFolder.mkdirs();
 
-			Files.move(oldServiceImplFolder.toPath(), newServiceImplFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Files.move(
+				oldServiceImplFolder.toPath(), newServiceImplFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
 
 		File oldModelImplFolder = new File(oldSBFolder, "model");
@@ -229,8 +230,8 @@ public class ConvertServiceBuilderCommand {
 				try {
 					Files.write(file.toPath(), new String("version 1.0.0").getBytes());
 				}
-				catch (IOException e) {
-					e.printStackTrace();
+				catch (IOException ioe) {
+					ioe.printStackTrace();
 				}
 			}
 		);
@@ -238,6 +239,7 @@ public class ConvertServiceBuilderCommand {
 		srcPaths.close();
 
 		// add dependency on -api to portlet project
+
 		File gradleFile = new File(project, "build.gradle");
 
 		String gradleContent = new String(Files.readAllBytes(gradleFile.toPath()));
@@ -263,15 +265,31 @@ public class ConvertServiceBuilderCommand {
 
 		String dirName = dir.getName();
 
-		return dirName.equals("exception") || dirName.equals("model") || dirName.equals("service") || dirName.equals("persistence");
+		if (dirName.equals("exception") || dirName.equals("model") || dirName.equals("service") ||
+			dirName.equals("persistence")) {
+
+			return true;
+		}
+
+		return false;
 	}
 
+	private blade _blade;
+	private final File _moduleDir;
+	private ConvertOptions _options;
+	private final File _warsDir;
+
 	private class ServiceBuilder {
-		public static final String META_INF = "META-INF/";
+
 		public static final String API_62 = "WEB-INF/service/";
+
+		public static final String META_INF = "META-INF/";
+
 		public static final String PORTLET_MODEL_HINTS_XML = "portlet-model-hints.xml";
-		public static final String SERVICE_XML = "service.xml";
+
 		public static final String SERVICE_PROPERTIES = "service.properties";
+
+		public static final String SERVICE_XML = "service.xml";
 
 		File _serviceXml;
 		Element _rootElement;
@@ -281,24 +299,22 @@ public class ConvertServiceBuilderCommand {
 			parse();
 		}
 
+		public String getPackagePath() {
+			return _rootElement.getAttribute("package-path");
+		}
+
 		private void parse() throws Exception {
 			if ((_rootElement == null) && (_serviceXml != null) && (_serviceXml.exists())) {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+
 				Document doc = dBuilder.parse(_serviceXml);
 
 				_rootElement = doc.getDocumentElement();
 			}
 		}
 
-		public String getPackagePath() {
-			return _rootElement.getAttribute("package-path");
-		}
 	}
-
-	private blade _blade;
-	private final File _warsDir;
-	private final File _moduleDir;
-	private ConvertOptions _options;
 
 }

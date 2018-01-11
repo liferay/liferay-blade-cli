@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.eclipse.aether.artifact.Artifact;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -42,6 +43,7 @@ public class AetherClientTest {
 		assertNotNull(artifact);
 
 		File file = artifact.getFile();
+
 		String name = file.getName();
 
 		assertNotNull(file);
@@ -63,6 +65,7 @@ public class AetherClientTest {
 		assertNotNull(artifact);
 
 		File file = artifact.getFile();
+
 		String name = file.getName();
 
 		assertNotNull(file);

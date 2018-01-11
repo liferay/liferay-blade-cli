@@ -23,6 +23,7 @@ import aQute.lib.io.IO;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+
 import java.nio.file.Files;
 
 import org.junit.After;
@@ -34,8 +35,6 @@ import org.junit.Test;
  * @author David Truong
  */
 public class ConvertThemeCommandTest {
-
-	private File testdir = IO.getFile("build/test");
 
 	@After
 	public void cleanUp() throws Exception {
@@ -61,12 +60,10 @@ public class ConvertThemeCommandTest {
 		Assert.assertTrue(content, content.contains("compass-theme"));
 	}
 
-	@Test
 	@Ignore
+	@Test
 	public void testMigrateCompassTheme() throws Exception {
-		String[] args = {
-			"-b", "build/test/workspace", "convert", "-a"
-		};
+		String[] args = {"-b", "build/test/workspace", "convert", "-a"};
 
 		File workspace = createWorkspace();
 
@@ -75,8 +72,7 @@ public class ConvertThemeCommandTest {
 
 		new bladenofail(ps).run(args);
 
-		File oldCompassTheme = new File(
-			workspace, "plugins-sdk/themes/compass-theme");
+		File oldCompassTheme = new File(workspace, "plugins-sdk/themes/compass-theme");
 
 		Assert.assertTrue(!oldCompassTheme.exists());
 
@@ -101,9 +97,7 @@ public class ConvertThemeCommandTest {
 		Assert.assertTrue(json.contains("\"supportCompass\": false"));
 	}
 
-	private void createTheme(File workspace, String themeName, boolean compass)
-		throws Exception {
-
+	private void createTheme(File workspace, String themeName, boolean compass) throws Exception {
 		File theme = new File(workspace, "plugins-sdk/themes/" + themeName);
 
 		File diffs = new File(theme, "/docroot/_diffs/css");
@@ -132,8 +126,7 @@ public class ConvertThemeCommandTest {
 
 		String properties = "liferay-versions=7.0.0+";
 
-		File liferayPluginPackage = new File(
-			webInf, "liferay-plugin-package.properties");
+		File liferayPluginPackage = new File(webInf, "liferay-plugin-package.properties");
 
 		Files.write(liferayPluginPackage.toPath(), properties.getBytes());
 	}
@@ -156,5 +149,7 @@ public class ConvertThemeCommandTest {
 
 		return workspace;
 	}
+
+	private File testdir = IO.getFile("build/test");
 
 }

@@ -19,20 +19,23 @@ package com.liferay.blade.cli;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import aQute.lib.io.IO;
+
 import java.io.File;
+
 import java.nio.file.Files;
+
 import java.util.List;
 import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Test;
 
-import aQute.lib.io.IO;
-
 /**
  * @author David Truong
  */
 public class UtilTest {
+
 	@After
 	public void cleanUp() throws Exception {
 		testdir = IO.getFile("build/test");
@@ -49,9 +52,7 @@ public class UtilTest {
 
 		dir.mkdirs();
 
-		File appServerProperty1 = new File(
-			dir,
-			"app.server." + System.getProperty("user.name") + ".properties");
+		File appServerProperty1 = new File(dir, "app.server." + System.getProperty("user.name") + ".properties");
 
 		appServerProperty1.createNewFile();
 
@@ -114,4 +115,5 @@ public class UtilTest {
 	}
 
 	private File testdir;
+
 }

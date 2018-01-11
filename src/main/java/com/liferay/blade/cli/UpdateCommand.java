@@ -18,7 +18,6 @@ package com.liferay.blade.cli;
 
 import com.beust.jcommander.Parameters;
 
-
 /**
  * @author Gregory Amerson
  */
@@ -49,13 +48,12 @@ public class UpdateCommand {
 			}
 		}
 	}
-	
+
 	@Parameters(commandNames = {"update"},
 		commandDescription = UpdateCommand.DESCRIPTION)
 	public static class UpdateOptions {
-
 	}
-	
+
 	private blade _blade;
 
 }

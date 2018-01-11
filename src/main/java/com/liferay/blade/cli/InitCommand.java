@@ -20,6 +20,7 @@ import aQute.lib.io.IO;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
@@ -28,11 +29,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,13 +47,7 @@ import java.util.Properties;
  */
 public class InitCommand {
 
-	private final static String[] _SDK_6_GA5_FILES = {
-		"app-servers.gradle", "build.gradle", "build-plugins.gradle",
-		"build-themes.gradle", "sdk.gradle", "settings.gradle",
-		"util.gradle", "versions.gradle" };
-
-	public static final String DESCRIPTION =
-		"Initializes a new Liferay workspace";
+	public static final String DESCRIPTION = "Initializes a new Liferay workspace";
 
 	public InitCommand(blade blade, InitOptions options) throws Exception {
 		_blade = blade;
@@ -60,8 +57,7 @@ public class InitCommand {
 	public void execute() throws Exception {
 		String name = _options.getName();
 
-		File destDir = name != null ? new File(
-			_blade.getBase(), name) : _blade.getBase();
+		File destDir = name != null ? new File(_blade.getBase(), name) : _blade.getBase();
 
 		File temp = null;
 
@@ -91,14 +87,13 @@ public class InitCommand {
 						}
 					}
 					else {
-						addError("Unable to run blade init in plugins sdk 6.2, please add -u (--upgrade)"
-							+ " if you want to upgrade to 7.0");
+						addError("Unable to run blade init in plugins sdk 6.2, please add -u (--upgrade)" +
+							" if you want to upgrade to 7.0");
 						return;
 					}
 				}
 
-				trace("Found plugins-sdk, moving contents to new subdirectory " +
-					"and initing workspace.");
+				trace("Found plugins-sdk, moving contents to new subdirectory " + "and initing workspace.");
 
 				temp = Files.createTempDirectory("orignal-sdk").toFile();
 
@@ -112,8 +107,7 @@ public class InitCommand {
 					addError(
 						destDir.getAbsolutePath() +
 						" contains files, please move them before continuing " +
-							"or use -f (--force) option to init workspace " +
-								"anyways.");
+							"or use -f (--force) option to init workspace " + "anyways.");
 					return;
 				}
 			}
@@ -163,8 +157,7 @@ public class InitCommand {
 		}
 	}
 
-	@Parameters(commandNames = {"init"},
-	commandDescription = InitCommand.DESCRIPTION)
+	@Parameters(commandNames = {"init"}, commandDescription = InitCommand.DESCRIPTION)
 	public static class InitOptions {
 
 		public String getName() {
@@ -179,87 +172,22 @@ public class InitCommand {
 			return refresh;
 		}
 
-
 		public boolean isUpgrade() {
 			return upgrade;
 		}
-		
+
+		@Parameter(names = {"-f", "--force"}, description = "create anyway if there are files located at target folder")
+		private boolean force;
+
 		@Parameter(description = "[name]")
 		private String name;
 
-		@Parameter(
-			names = {"-f", "--force"},
-			description =
-			"create anyway if there are files located at target folder")
-		private boolean force;
-
-		@Parameter(
-			names = {"-r", "--refresh"},
-			description ="force to refresh workspace template")
+		@Parameter(names = {"-r", "--refresh"}, description ="force to refresh workspace template")
 		private boolean refresh;
 
-		@Parameter(
-			names = {"-u", "--upgrade"},
-			description ="upgrade plugins-sdk from 6.2 to 7.0")
+		@Parameter(names = {"-u", "--upgrade"}, description ="upgrade plugins-sdk from 6.2 to 7.0")
 		private boolean upgrade;
-	}
 
-	private void addError(String msg) {
-		_blade.addErrors("init", Collections.singleton(msg));
-	}
-
-	private boolean isPluginsSDK(File dir) {
-		if ((dir == null) || !dir.exists() || !dir.isDirectory()) {
-			return false;
-		}
-
-		List<String> names = Arrays.asList(dir.list());
-
-		return names != null &&
-			names.contains("portlets") &&
-			names.contains("hooks") &&
-			names.contains("layouttpl") &&
-			names.contains("themes") &&
-			names.contains("build.properties") &&
-			names.contains("build.xml") &&
-			names.contains("build-common.xml") &&
-			names.contains("build-common-plugin.xml");
-	}
-
-	private boolean isPluginsSDK70(File dir) {
-		if ((dir == null) || !dir.exists() || !dir.isDirectory()) {
-			return false;
-		}
-
-		File buildProperties = new File(dir, "build.properties");
-		Properties properties = new Properties();
-
-		InputStream in = null;
-
-		try {
-			in = new FileInputStream(buildProperties);
-
-			properties.load(in);
-
-			String sdkVersionValue = (String) properties.get("lp.version");
-
-			if (sdkVersionValue.equals("7.0.0")) {
-				return true;
-			}
-		}
-		catch (Exception e) {
-		}
-		finally {
-			if (in != null) {
-				try {
-					in.close();
-				}
-				catch (Exception e) {
-				}
-			}
-		}
-
-		return false;
 	}
 
 	private void _moveContentsToDirectory(File src, File dest) throws IOException {
@@ -315,9 +243,71 @@ public class InitCommand {
 			});
 	}
 
+	private void addError(String msg) {
+		_blade.addErrors("init", Collections.singleton(msg));
+	}
+
+	private boolean isPluginsSDK(File dir) {
+		if ((dir == null) || !dir.exists() || !dir.isDirectory()) {
+			return false;
+		}
+
+		List<String> names = Arrays.asList(dir.list());
+
+		if (names != null && names.contains("portlets") && names.contains("hooks") && names.contains("layouttpl") &&
+			names.contains("themes") && names.contains("build.properties") && names.contains("build.xml") &&
+			names.contains("build-common.xml") && names.contains("build-common-plugin.xml")) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean isPluginsSDK70(File dir) {
+		if ((dir == null) || !dir.exists() || !dir.isDirectory()) {
+			return false;
+		}
+
+		File buildProperties = new File(dir, "build.properties");
+		Properties properties = new Properties();
+
+		InputStream in = null;
+
+		try {
+			in = new FileInputStream(buildProperties);
+
+			properties.load(in);
+
+			String sdkVersionValue = (String)properties.get("lp.version");
+
+			if (sdkVersionValue.equals("7.0.0")) {
+				return true;
+			}
+		}
+		catch (Exception e) {
+		}
+		finally {
+			if (in != null) {
+				try {
+					in.close();
+				}
+				catch (Exception e) {
+				}
+			}
+		}
+
+		return false;
+	}
+
 	private void trace(String msg) {
 		_blade.trace("%s: %s", "init", msg);
 	}
+
+	private static final String[] _SDK_6_GA5_FILES = {
+		"app-servers.gradle", "build.gradle", "build-plugins.gradle", "build-themes.gradle", "sdk.gradle",
+		"settings.gradle", "util.gradle", "versions.gradle"
+	};
 
 	private final blade _blade;
 	private final InitOptions _options;

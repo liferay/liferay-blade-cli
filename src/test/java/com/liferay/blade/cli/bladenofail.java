@@ -32,7 +32,7 @@ public class bladenofail extends blade {
 		_out = out;
 		_err = out;
 	}
-	
+
 	@Override
 	public PrintStream err() {
 		return _err;

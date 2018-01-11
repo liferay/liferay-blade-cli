@@ -16,21 +16,27 @@
 
 package com.liferay.blade.cli;
 
+import aQute.lib.io.IO;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.text.MessageFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,8 +53,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import aQute.lib.io.IO;
-
 /**
  * @author Gregory Amerson
  */
@@ -57,9 +61,11 @@ public class ConvertCommand {
 	public static final String DESCRIPTION =
 		"Converts a plugins-sdk plugin project to a gradle WAR project in Liferay workspace";
 
-	public ConvertCommand(blade blade, ConvertOptions options)
-		throws Exception {
+	public static <T> Stream<T> concat(Stream<? extends T> lhs, Stream<? extends T> rhs) {
+		return Stream.concat(lhs, rhs);
+	}
 
+	public ConvertCommand(blade blade, ConvertOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
 
@@ -70,8 +76,7 @@ public class ConvertCommand {
 		String pluginsSdkDirPath = null;
 
 		if (gradleProperties != null) {
-			pluginsSdkDirPath = gradleProperties.getProperty(
-				Workspace.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+			pluginsSdkDirPath = gradleProperties.getProperty(Workspace.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
 		}
 
 		if (pluginsSdkDirPath == null) {
@@ -88,8 +93,7 @@ public class ConvertCommand {
 		String warsDirPath = null;
 
 		if (gradleProperties != null) {
-			warsDirPath = gradleProperties.getProperty(
-				Workspace.DEFAULT_WARS_DIR_PROPERTY);
+			warsDirPath = gradleProperties.getProperty(Workspace.DEFAULT_WARS_DIR_PROPERTY);
 		}
 
 		if (warsDirPath == null) {
@@ -100,14 +104,13 @@ public class ConvertCommand {
 
 		if (!_pluginsSdkDir.exists()) {
 			_blade.error("Plugins SDK folder " + pluginsSdkDirPath + " doesn't exist.\n" +
-					"Please edit gradle.properties and set " + Workspace.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+				"Please edit gradle.properties and set " + Workspace.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
 
 			return;
 		}
 	}
 
 	public void execute() throws Exception {
-		
 		final String pluginName = _options.getName().isEmpty() ? null : _options.getName().iterator().next();
 
 		if (!Util.isWorkspace(_blade)) {
@@ -121,18 +124,31 @@ public class ConvertCommand {
 
 			return;
 		}
+
 		final FileFilter containsDocrootFilter = new FileFilter() {
+
 			@Override
 			public boolean accept(File pathname) {
-				return pathname.isDirectory() && new File(pathname, "docroot").exists();
+				if (pathname.isDirectory() && new File(pathname, "docroot").exists()) {
+					return true;
+				}
+
+				return false;
 			}
+
 		};
 
 		final FileFilter serviceBuilderPluginsFilter = new FileFilter() {
+
 			@Override
 			public boolean accept(File pathname) {
-				return pathname.isDirectory() && new File(pathname, "docroot").exists() && hasServiceXmlFile(pathname);
+				if (pathname.isDirectory() && new File(pathname, "docroot").exists() && hasServiceXmlFile(pathname)) {
+					return true;
+				}
+
+				return false;
 			}
+
 		};
 
 		File[] serviceBuilderList = _portletsDir.listFiles(serviceBuilderPluginsFilter);
@@ -144,7 +160,8 @@ public class ConvertCommand {
 
 		List<File> serviceBuilderPlugins = Arrays.asList(serviceBuilderList != null ? serviceBuilderList : new File[0]);
 		List<File> portlets = Arrays.asList(portletList != null ? portletList : new File[0]);
-		List<File> portletPlugins = portlets.stream().filter(portletPlugin -> !serviceBuilderPlugins.contains(portletPlugin)).collect(Collectors.toList());
+		List<File> portletPlugins =
+			portlets.stream().filter(portletPlugin -> !serviceBuilderPlugins.contains(portletPlugin)).collect(Collectors.toList());
 
 		List<File> hookPlugins = Arrays.asList(hookFiles != null ? hookFiles : new File[0]);
 		List<File> layoutPlugins = Arrays.asList(layoutFiles != null ? layoutFiles : new File[0]);
@@ -168,7 +185,13 @@ public class ConvertCommand {
 		else if (_options.isList()) {
 			_blade.out().println("The following is a list of projects available to convert:\n");
 
-			Stream<File> plugins = concat(serviceBuilderPlugins.stream(), concat(portletPlugins.stream(), concat(hookPlugins.stream(), concat(webPlugins.stream(), concat(layoutPlugins.stream(), themePlugins.stream())))));
+			Stream<File> plugins = concat(
+				serviceBuilderPlugins.stream(),
+				concat(
+					portletPlugins.stream(),
+					concat(
+						hookPlugins.stream(),
+						concat(webPlugins.stream(), concat(layoutPlugins.stream(), themePlugins.stream())))));
 
 			plugins.forEach(plugin -> _blade.out().println("\t" + plugin.getName()));
 		}
@@ -191,15 +214,14 @@ public class ConvertCommand {
 					convertToWarProject(pluginDir);
 				}
 			}
-			if (pluginPath.startsWith(_hooksDir.toPath()) ||
-				pluginPath.startsWith(_websDir.toPath())) {
 
+			if (pluginPath.startsWith(_hooksDir.toPath()) || pluginPath.startsWith(_websDir.toPath())) {
 				convertToWarProject(pluginDir);
 			}
-			else if(pluginPath.startsWith(_layouttplDir.toPath())) {
+			else if (pluginPath.startsWith(_layouttplDir.toPath())) {
 				convertToLayoutWarProject(pluginDir);
 			}
-			else if(pluginPath.startsWith(_themesDir.toPath())) {
+			else if (pluginPath.startsWith(_themesDir.toPath())) {
 				if (_options.isThemeBuilder()) {
 					convertToThemeBuilderWarProject(pluginDir);
 				}
@@ -210,16 +232,84 @@ public class ConvertCommand {
 		}
 	}
 
-	public static <T> Stream<T> concat(Stream<? extends T> lhs, Stream<? extends T> rhs) {
-	    return Stream.concat(lhs, rhs);
+	@Parameters(commandNames = {"convert"},
+		commandDescription = ConvertCommand.DESCRIPTION)
+	public static class ConvertOptions {
+
+		public ConvertOptions() {
+		}
+
+		public ConvertOptions(boolean all, boolean list, boolean themeBuilder, List<String> name) {
+		this.all = all; this.list = list; this.themeBuilder = themeBuilder; this.name = name;
+		}
+
+		public List<String> getName() {
+			return name;
+		}
+
+		public boolean isAll() {
+			return all;
+		}
+
+		public boolean isList() {
+			return list;
+		}
+
+		public boolean isThemeBuilder() {
+			return themeBuilder;
+		}
+
+		@Parameter(names = {"-a", "--all"}, description ="Migrate all plugin projects")
+		private boolean all;
+
+		@Parameter(names = {"-l", "--list"}, description ="List the projects available to be converted")
+		private boolean list;
+
+		@Parameter(description ="[name]")
+		private List<String> name = new ArrayList<>();
+
+		@Parameter(
+			names = {"-t", "--themeBuilder"},
+			description ="Use ThemeBuilder gradle plugin instead of NodeJS to convert theme project"
+		)
+		private boolean themeBuilder;
+
 	}
 
-	private void convertToThemeProject(File themePlugin)  {
+	private void convertToLayoutWarProject(File layoutPluginDir) {
 		try {
-			new ConvertThemeCommand(_blade, _options).execute();
+			_warsDir.mkdirs();
+
+			Files.move(layoutPluginDir.toPath(), _warsDir.toPath().resolve(layoutPluginDir.getName()));
+
+			File warDir = new File(_warsDir, layoutPluginDir.getName());
+
+			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
+
+			if (docrootSrc.exists()) {
+				throw new IllegalStateException(
+					"layouttpl project " + layoutPluginDir.getName() + " contains java src at " +
+						docrootSrc.getAbsolutePath() + ". Please remove it before continuing.");
+			}
+
+			File webapp = new File(warDir, "src/main/webapp");
+
+			webapp.mkdirs();
+
+			File docroot = new File(warDir, "docroot");
+
+			for (File docrootFile : docroot.listFiles()) {
+				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()));
+			}
+
+			IO.delete(docroot);
+			IO.delete(new File(warDir, "build.xml"));
+			IO.delete(new File(warDir, ".classpath"));
+			IO.delete(new File(warDir, ".project"));
+			IO.delete(new File(warDir, ".settings"));
 		}
 		catch (Exception e) {
-			_blade.error("Error upgrading project %s\n%s", themePlugin.getName(), e.getMessage());
+			_blade.error("Error upgrading project %s\n%s", layoutPluginDir.getName(), e.getMessage());
 		}
 	}
 
@@ -243,38 +333,15 @@ public class ConvertCommand {
 					arguments = _options.getName();
 				}
 			}
-			
-			ConvertOptions convertArgs = new ConvertOptions(_options.isAll(), _options.isList(), _options.isThemeBuilder(), arguments);
+
+			ConvertOptions convertArgs = new ConvertOptions(
+				_options.isAll(), _options.isList(), _options.isThemeBuilder(), arguments);
 
 			new ConvertServiceBuilderCommand(_blade, convertArgs).execute();
-
 		}
 		catch (Exception e) {
 			_blade.error("Error upgrading project %s\n%s", pluginDir.getName(), e.getMessage());
 		}
-	}
-
-	private boolean isServiceBuilderPlugin(File pluginDir) {
-		return hasServiceXmlFile(pluginDir);
-	}
-
-	private File findPluginDir(final String pluginName) throws Exception {
-		final File[] pluginDir = new File[1];
-
-		Files.walkFileTree(_pluginsSdkDir.toPath(), new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-				if (dir.getName(dir.getNameCount() - 1).toString().equals(pluginName)) {
-					pluginDir[0] = dir.toFile();
-
-					return FileVisitResult.TERMINATE;
-				}
-
-				return FileVisitResult.CONTINUE;
-			}
-		});
-
-		return pluginDir[0];
 	}
 
 	private void convertToThemeBuilderWarProject(File themePlugin) {
@@ -297,8 +364,8 @@ public class ConvertCommand {
 
 			if (!diffsDir.exists()) {
 				throw new IllegalStateException(
-					"theme " + themePlugin.getName() + " does not contain a docroot/_diffs folder.  "
-							+ "Please correct it and try again.");
+					"theme " + themePlugin.getName() + " does not contain a docroot/_diffs folder.  " +
+						"Please correct it and try again.");
 			}
 
 			// only copy _diffs and WEB-INF
@@ -307,19 +374,29 @@ public class ConvertCommand {
 
 			File webapp = new File(newThemeDir, "src/main/webapp");
 
-			Files.walkFileTree(diffsDir.toPath(), new CopyDirVisitor(diffsDir.toPath(), webapp.toPath(), StandardCopyOption.REPLACE_EXISTING));
+			Files.walkFileTree(
+				diffsDir.toPath(),
+				new CopyDirVisitor(diffsDir.toPath(), webapp.toPath(), StandardCopyOption.REPLACE_EXISTING));
 
 			File webinfDir = new File(docroot, "WEB-INF");
 
 			File newWebinfDir = new File(webapp, "WEB-INF");
 
-			Files.walkFileTree(webinfDir.toPath(), new CopyDirVisitor(webinfDir.toPath(), newWebinfDir.toPath(), StandardCopyOption.REPLACE_EXISTING));
+			Files.walkFileTree(
+				webinfDir.toPath(),
+				new CopyDirVisitor(webinfDir.toPath(), newWebinfDir.toPath(), StandardCopyOption.REPLACE_EXISTING));
 
-			File[] others = docroot.listFiles( new FilenameFilter() {
+			File[] others = docroot.listFiles(new FilenameFilter() {
+
 				@Override
 				public boolean accept(File dir, String name) {
-					return !"_diffs".equals(name) && !"WEB-INF".equals(name);
+					if (!"_diffs".equals(name) && !"WEB-INF".equals(name)) {
+						return true;
+					}
+
+					return false;
 				}
+
 			});
 
 			if (others != null && others.length > 0) {
@@ -339,40 +416,12 @@ public class ConvertCommand {
 		}
 	}
 
-	private void convertToLayoutWarProject(File layoutPluginDir) {
+	private void convertToThemeProject(File themePlugin) {
 		try {
-			_warsDir.mkdirs();
-
-			Files.move(layoutPluginDir.toPath(), _warsDir.toPath().resolve(layoutPluginDir.getName()));
-
-			File warDir = new File(_warsDir, layoutPluginDir.getName());
-
-			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
-
-			if (docrootSrc.exists()) {
-				throw new IllegalStateException(
-					"layouttpl project " + layoutPluginDir.getName() + " contains java src at " +
-							docrootSrc.getAbsolutePath() + ". Please remove it before continuing.");
-			}
-
-			File webapp = new File(warDir, "src/main/webapp");
-
-			webapp.mkdirs();
-
-			File docroot = new File(warDir, "docroot");
-
-			for(File docrootFile : docroot.listFiles()) {
-				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()));
-			}
-
-			IO.delete(docroot);
-			IO.delete(new File(warDir, "build.xml"));
-			IO.delete(new File(warDir, ".classpath"));
-			IO.delete(new File(warDir, ".project"));
-			IO.delete(new File(warDir, ".settings"));
+			new ConvertThemeCommand(_blade, _options).execute();
 		}
 		catch (Exception e) {
-			_blade.error("Error upgrading project %s\n%s", layoutPluginDir.getName(), e.getMessage());
+			_blade.error("Error upgrading project %s\n%s", themePlugin.getName(), e.getMessage());
 		}
 	}
 
@@ -391,7 +440,7 @@ public class ConvertCommand {
 			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
 
 			if (docrootSrc.exists()) {
-				for(File docrootSrcFile : docrootSrc.listFiles()) {
+				for (File docrootSrcFile : docrootSrc.listFiles()) {
 					Files.move(docrootSrcFile.toPath(), src.toPath().resolve(docrootSrcFile.getName()));
 				}
 
@@ -404,7 +453,7 @@ public class ConvertCommand {
 
 			File docroot = new File(warDir, "docroot");
 
-			for(File docrootFile : docroot.listFiles()) {
+			for (File docrootFile : docroot.listFiles()) {
 				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()));
 			}
 
@@ -416,7 +465,8 @@ public class ConvertCommand {
 			IO.delete(new File(warDir, "ivy.xml.MD5"));
 
 			List<String> dependencies = new ArrayList<>();
-			dependencies.add("compileOnly group: \"com.liferay.portal\", name: \"com.liferay.portal.kernel\", version: \"2.0.0\"");
+			dependencies.add(
+				"compileOnly group: \"com.liferay.portal\", name: \"com.liferay.portal.kernel\", version: \"2.0.0\"");
 			dependencies.add("compileOnly group: \"javax.portlet\", name: \"portlet-api\", version: \"2.0\"");
 			dependencies.add("compileOnly group: \"javax.servlet\", name: \"javax.servlet-api\", version: \"3.0.1\"");
 
@@ -424,9 +474,13 @@ public class ConvertCommand {
 
 			if (ivyFile.exists()) {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+
 				Document doc = dBuilder.parse(ivyFile);
+
 				Element documentElement = doc.getDocumentElement();
+
 				documentElement.normalize();
 
 				NodeList depElements = documentElement.getElementsByTagName("dependency");
@@ -440,7 +494,9 @@ public class ConvertCommand {
 						String rev = getAttr(depElement, "rev");
 
 						if (name != null && org != null && rev != null) {
-							dependencies.add(MessageFormat.format("compile group: ''{0}'', name: ''{1}'', version: ''{2}''", org, name, rev));
+							dependencies.add(
+								MessageFormat.format(
+									"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", org, name, rev));
 						}
 					}
 				}
@@ -467,6 +523,27 @@ public class ConvertCommand {
 		}
 	}
 
+	private File findPluginDir(final String pluginName) throws Exception {
+		final File[] pluginDir = new File[1];
+
+		Files.walkFileTree(_pluginsSdkDir.toPath(), new SimpleFileVisitor<Path>() {
+
+			@Override
+			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+				if (dir.getName(dir.getNameCount() - 1).toString().equals(pluginName)) {
+					pluginDir[0] = dir.toFile();
+
+					return FileVisitResult.TERMINATE;
+				}
+
+				return FileVisitResult.CONTINUE;
+			}
+
+		});
+
+		return pluginDir[0];
+	}
+
 	private String getAttr(Node item, String attrName) {
 		if (item != null) {
 			NamedNodeMap attrs = item.getAttributes();
@@ -487,63 +564,14 @@ public class ConvertCommand {
 		return new File(pathname, "docroot/WEB-INF/service.xml").exists();
 	}
 
-	@Parameters(commandNames = {"convert"},
-		commandDescription = ConvertCommand.DESCRIPTION)
-	public static class ConvertOptions {
-
-		public ConvertOptions() {
-			super();
-		}
-		
-		public ConvertOptions(boolean all, boolean list, boolean themeBuilder, List<String> name) {
-			super();
-			this.all = all;
-			this.list = list;
-			this.themeBuilder = themeBuilder;
-			this.name = name;
-		}
-		
-		public boolean isAll() {
-			return all;
-		}
-
-		public boolean isList() {
-			return list;
-		}
-
-		public boolean isThemeBuilder() {
-			return themeBuilder;
-		}
-		
-		public List<String> getName() {
-			return name;
-		}
-
-		@Parameter(
-			names = {"-a", "--all"},
-			description ="Migrate all plugin projects")
-		private boolean all;
-
-		@Parameter(
-			names = {"-l", "--list"},
-			description ="List the projects available to be converted")
-		private boolean list;
-
-		@Parameter(
-			names = {"-t", "--themeBuilder"},
-			description ="Use ThemeBuilder gradle plugin instead of NodeJS to convert theme project")
-		private boolean themeBuilder;
-		
-		@Parameter(
-			description ="[name]")
-		private List<String> name = new ArrayList<>();
-		
+	private boolean isServiceBuilderPlugin(File pluginDir) {
+		return hasServiceXmlFile(pluginDir);
 	}
 
 	private final blade _blade;
-	private final ConvertOptions _options;
 	private final File _hooksDir;
 	private final File _layouttplDir;
+	private final ConvertOptions _options;
 	private final File _pluginsSdkDir;
 	private final File _portletsDir;
 	private final File _themesDir;

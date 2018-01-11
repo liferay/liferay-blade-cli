@@ -36,8 +36,7 @@ public class GradleExec {
 				_executable = gradlew.getCanonicalPath();
 			}
 			catch (Exception e) {
-				blade.out().println(
-					"Could not find gradle wrapper, using gradle");
+				blade.out().println("Could not find gradle wrapper, using gradle");
 
 				_executable = "gradle";
 			}
@@ -50,8 +49,7 @@ public class GradleExec {
 	}
 
 	public int executeGradleCommand(String cmd) throws Exception {
-		Process process = Util.startProcess(
-			_blade, "\"" + _executable + "\" " + cmd);
+		Process process = Util.startProcess(_blade, "\"" + _executable + "\" " + cmd);
 
 		return process.waitFor();
 	}

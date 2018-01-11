@@ -31,9 +31,9 @@ import org.codehaus.plexus.util.FileUtils;
 /**
  * @author Andy Wu
  */
-public class MavenRunnerUtil
-{
-    public static void executeMavenPackage (String projectPath , String[] phases) {
+public class MavenRunnerUtil {
+
+	public static void executeMavenPackage(String projectPath, String[] phases) {
 		assertNotNull(phases);
 		assertTrue(phases.length > 0);
 
@@ -56,17 +56,15 @@ public class MavenRunnerUtil
 		try {
 			Runtime runTime = Runtime.getRuntime();
 
-			if(isWindows) {
+			if (isWindows) {
 				File mvnw = new File("mvnw.cmd");
 				FileUtils.copyFile(mvnw, new File(projectPath+"/mvnw.cmd"));
 			}
 
 			Process process = runTime.exec(
-				(isWindows ? ".\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(),
-				null, new File(projectPath));
+				(isWindows ? ".\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(), null, new File(projectPath));
 
-			BufferedReader input = new BufferedReader(
-				new InputStreamReader(process.getInputStream()));
+			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
 			String line = null;
 
@@ -83,11 +81,12 @@ public class MavenRunnerUtil
 
 		assertEquals(0, exitValue);
 		assertTrue(isBuildSuccess);
-    }
+	}
 
-    public static void verifyBuildOutput (String projectPath, String fileName) {
+	public static void verifyBuildOutput(String projectPath, String fileName) {
 		File file = IO.getFile(projectPath + "/target/" + fileName);
 
 		assertTrue(file.exists());
 	}
+
 }

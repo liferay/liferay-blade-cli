@@ -16,6 +16,7 @@ package com.liferay.properties.locator;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+
 import com.liferay.blade.cli.util.ArrayUtil;
 import com.liferay.blade.cli.util.CamelCaseUtil;
 import com.liferay.blade.cli.util.ListUtil;
@@ -30,13 +31,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+
 import java.net.URL;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -589,12 +594,12 @@ public class PropertiesLocator {
 		else if (propertiesLocatorArgs.isQuiet()) {
 			return new PrintWriter(
 				new OutputStream() {
+
 					@Override
 					public void write(int b) {
 					}
 
-				}
-			);
+				});
 		}
 		else {
 			return new PrintWriter(System.out);

@@ -18,9 +18,11 @@ package com.liferay.blade.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+
 import com.liferay.blade.cli.jmx.IDEConnector;
 
 import java.io.File;
+
 import java.util.Collections;
 
 /**
@@ -28,8 +30,7 @@ import java.util.Collections;
  */
 public class OpenCommand {
 
-	public static final String DESCRIPTION =
-		"Opens or imports a file or project in Liferay IDE.";
+	public static final String DESCRIPTION = "Opens or imports a file or project in Liferay IDE.";
 
 	public OpenCommand(blade blade, OpenOptions options) throws Exception {
 		_blade = blade;
@@ -40,9 +41,7 @@ public class OpenCommand {
 		File fileName = _options.getFile();
 
 		if (!fileName.exists()) {
-			addError(
-				"open",
-				"Unable to find specified file " + fileName.getAbsolutePath());
+			addError("open", "Unable to find specified file " + fileName.getAbsolutePath());
 			return;
 		}
 
@@ -62,23 +61,21 @@ public class OpenCommand {
 		commandDescription = OpenCommand.DESCRIPTION)
 	public static class OpenOptions {
 
-		public String getWorkspace() {
-			return workspace;
-		}
-
 		public File getFile() {
 			return file;
 		}
 
-		@Parameter(
-			names = {"-w", "--workspace"},
-			description ="The workspace to open or import this file or project")
-		private String workspace;
-		
+		public String getWorkspace() {
+			return workspace;
+		}
+
 		@Parameter(description ="<file or directory to open/import>")
 		private File file;
-	}
 
+		@Parameter(names = {"-w", "--workspace"}, description ="The workspace to open or import this file or project")
+		private String workspace;
+
+	}
 
 	private void addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));

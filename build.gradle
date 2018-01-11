@@ -1,9 +1,5 @@
 import de.undercouch.gradle.tasks.download.Download
 
-apply plugin: 'biz.aQute.bnd.builder'
-apply plugin: 'com.liferay.source.formatter'
-apply plugin: 'java'
-
 buildscript {
 	dependencies {
 		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
@@ -18,12 +14,16 @@ buildscript {
 	}
 }
 
+apply plugin: 'biz.aQute.bnd.builder'
+apply plugin: 'com.liferay.source.formatter'
+apply plugin: 'java'
+
 checkSourceFormatting {
-        maxLineLength = 120
+	maxLineLength = 120
 }
 
 formatSource {
-        maxLineLength = 120
+	maxLineLength = 120
 }
 
 dependencies {
@@ -44,8 +44,8 @@ dependencies {
 	compile group: "org.eclipse.aether", name: "aether-transport-http", version: "1.0.2.v20150114"
 	compile group: "org.eclipse.aether", name: "aether-transport-wagon", version: "1.0.2.v20150114"
 	compile group: "org.eclipse.aether", name: "aether-util", version: "1.0.2.v20150114"
-	compile group: "org.gradle", name: "gradle-core", version: "3.0"
 	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "3.0"
+	compile group: "org.gradle", name: "gradle-core", version: "3.0"
 	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"
 	compile name: "com.liferay.blade.gradle.model"
 	compile name: "com.liferay.blade.gradle.plugin"
@@ -62,7 +62,6 @@ dependencies {
 	testCompile group: "junit", name: "junit", version: "4.12"
 }
 
-
 jar.baseName = 'blade'
 
 repositories {
@@ -78,9 +77,6 @@ repositories {
 		url "https://repo.gradle.org/gradle/libs-releases"
 	}
 }
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
 
 task createDepsZip(type:Zip) {
 	from "${projectDir}/libs/"
@@ -122,3 +118,6 @@ test {
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
 }
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"

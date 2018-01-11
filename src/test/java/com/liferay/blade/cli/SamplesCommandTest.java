@@ -24,9 +24,11 @@ import aQute.lib.io.IO;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+
 import java.nio.file.Files;
 
 import org.gradle.testkit.runner.BuildTask;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -37,16 +39,15 @@ import org.junit.Test;
  * @author David Truong
  */
 public class SamplesCommandTest {
-	private File testDir;
+
+	@AfterClass
+	public static void cleanUpClass() throws Exception {
+		IO.delete(new File("build/wrapper.zip"));
+	}
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		IO.copy(new File("wrapper.zip"), new File("build/classes/java/test/wrapper.zip"));
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		testDir = Files.createTempDirectory("samplestest").toFile();
 	}
 
 	@After
@@ -57,16 +58,14 @@ public class SamplesCommandTest {
 		}
 	}
 
-	@AfterClass
-	public static void cleanUpClass() throws Exception {
-		IO.delete(new File("build/wrapper.zip"));
+	@Before
+	public void setUp() throws Exception {
+		testDir = Files.createTempDirectory("samplestest").toFile();
 	}
 
 	@Test
 	public void testGetSample() throws Exception {
-		String[] args = {
-			"samples", "-d", testDir.getPath() + "/test", "blade.friendlyurl"
-		};
+		String[] args = {"samples", "-d", testDir.getPath() + "/test", "blade.friendlyurl"};
 
 		new bladenofail().run(args);
 
@@ -84,6 +83,25 @@ public class SamplesCommandTest {
 	}
 
 	@Test
+	public void testGetSampleWithDependencies() throws Exception {
+		String[] args = {"samples", "-d", testDir.getPath() + "/test", "blade.rest"};
+
+		new bladenofail().run(args);
+
+		File projectDir = new File(testDir, "test/blade.rest");
+
+		assertTrue(projectDir.exists());
+
+		File buildFile = IO.getFile(projectDir, "build.gradle");
+
+		assertTrue(buildFile.exists());
+
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "build");
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.rest-1.0.0.jar");
+	}
+
+	@Test
 	public void testGetSampleWithGradleWrapper() throws Exception {
 		String[] args = {"samples", "-d", testDir.getPath() + "/test", "blade.authenticator.shiro"};
 
@@ -95,7 +113,7 @@ public class SamplesCommandTest {
 
 		File buildFile = IO.getFile(projectDir, "build.gradle");
 
-		File gradleWrapperJar = IO.getFile(projectDir,  "gradle/wrapper/gradle-wrapper.jar");
+		File gradleWrapperJar = IO.getFile(projectDir, "gradle/wrapper/gradle-wrapper.jar");
 
 		File gradleWrapperProperties = IO.getFile(projectDir, "gradle/wrapper/gradle-wrapper.properties");
 
@@ -127,7 +145,7 @@ public class SamplesCommandTest {
 
 		File buildFile = IO.getFile(projectDir, "build.gradle");
 
-		File gradleWrapperJar = IO.getFile(projectDir,  "gradle/wrapper/gradle-wrapper.jar");
+		File gradleWrapperJar = IO.getFile(projectDir, "gradle/wrapper/gradle-wrapper.jar");
 
 		File gradleWrapperProperties = IO.getFile(projectDir, "gradle/wrapper/gradle-wrapper.properties");
 
@@ -146,25 +164,6 @@ public class SamplesCommandTest {
 	}
 
 	@Test
-	public void testGetSampleWithDependencies() throws Exception {
-		String[] args = {"samples", "-d", testDir.getPath() + "/test", "blade.rest"};
-
-		new bladenofail().run(args);
-
-		File projectDir = new File(testDir, "test/blade.rest");
-
-		assertTrue(projectDir.exists());
-
-		File buildFile = IO.getFile(projectDir, "build.gradle");
-
-		assertTrue(buildFile.exists());
-
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "build");
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
-		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.rest-1.0.0.jar");
-	}
-
-	@Test
 	public void testListSamples() throws Exception {
 		String[] args = {"samples"};
 
@@ -177,5 +176,7 @@ public class SamplesCommandTest {
 
 		assertTrue(content.contains("blade.portlet.ds"));
 	}
+
+	private File testDir;
 
 }

@@ -73,41 +73,32 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		for (BundleDTO osgiBundle : listBundles()) {
 			if (osgiBundle.symbolicName.equals(bsn)) {
 				bundleId = osgiBundle.id;
+
 				break;
 			}
 		}
 
 		if (bundleId > -1) {
-			mBeanServerConnection.invoke(
-				framework, "stopBundle", new Object[] {bundleId},
-				new String[] {"long"});
+			mBeanServerConnection.invoke(framework, "stopBundle", new Object[] {bundleId}, new String[] {"long"});
 
-			Object[] params = new Object[] {bundleId, bundleUrl};
+			Object[] params = {bundleId, bundleUrl};
 
 			mBeanServerConnection.invoke(
-				framework, "updateBundleFromURL", params,
-				new String[] {"long", String.class.getName()});
+				framework, "updateBundleFromURL", params, new String[] {"long", String.class.getName()});
 
-			mBeanServerConnection.invoke(
-				framework, "refreshBundle", new Object[] {bundleId},
-				new String[] {"long"});
+			mBeanServerConnection.invoke(framework, "refreshBundle", new Object[] {bundleId}, new String[] {"long"});
 		}
 		else {
-			Object[] params = new Object[] {bundleUrl, bundleUrl};
+			Object[] params = {bundleUrl, bundleUrl};
 
-			String[] signature = new String[] {
-				String.class.getName(), String.class.getName()
-			};
+			String[] signature = {String.class.getName(), String.class.getName()};
 
-			Object installed = mBeanServerConnection.invoke(
-				framework, "installBundleFromURL", params, signature);
+			Object installed = mBeanServerConnection.invoke(framework, "installBundleFromURL", params, signature);
 
 			bundleId = Long.parseLong(installed.toString());
 		}
 
-		mBeanServerConnection.invoke(
-			framework, "startBundle", new Object[] {bundleId},
-			new String[] {"long"});
+		mBeanServerConnection.invoke(framework, "startBundle", new Object[] {bundleId}, new String[] {"long"});
 
 		return bundleId;
 	}
@@ -123,13 +114,9 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		try {
 			final ObjectName bundleState = getBundleState();
 
-			final Object[] params = new Object[] {
-				new String[] {
-					"Identifier", "SymbolicName", "State", "Version"
-				}
-			};
+			final Object[] params = {new String[] {"Identifier", "SymbolicName", "State", "Version"}};
 
-			final String[] signature = new String[] {String[].class.getName()};
+			final String[] signature = {String[].class.getName()};
 
 			final TabularData data = (TabularData)mBeanServerConnection.invoke(
 				bundleState, "listBundles", params, signature);
@@ -163,12 +150,11 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 	public void uninstall(long id) throws Exception {
 		final ObjectName framework = getFramework(mBeanServerConnection);
 
-		Object[] objects = new Object[] {id};
+		Object[] objects = {id};
 
-		String[] params = new String[] {"long"};
+		String[] params = {"long"};
 
-		mBeanServerConnection.invoke(
-			framework, "uninstallBundle", objects, params);
+		mBeanServerConnection.invoke(framework, "uninstallBundle", objects, params);
 	}
 
 	/**
@@ -191,14 +177,11 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		throw new IllegalStateException("Unable to uninstall " + bsn);
 	}
 
-	private static ObjectName getFramework(
-			MBeanServerConnection mBeanServerConnection)
+	private static ObjectName getFramework(MBeanServerConnection mBeanServerConnection)
 		throws IOException, MalformedObjectNameException {
 
-		final ObjectName objectName = new ObjectName(
-			name + ":type=" + type + ",*");
-		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(
-			objectName, null);
+		final ObjectName objectName = new ObjectName(name + ":type=" + type + ",*");
+		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
 
 		if ((objectNames != null) && (objectNames.size() > 0)) {
 			return objectNames.iterator().next();
@@ -238,14 +221,10 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		return dto;
 	}
 
-	private ObjectName getBundleState()
-		throws IOException, MalformedObjectNameException {
-
+	private ObjectName getBundleState() throws IOException, MalformedObjectNameException {
 		ObjectName objectName = new ObjectName(name + ":type=bundleState,*");
 
-		return
-			mBeanServerConnection.queryNames(
-				objectName, null).iterator().next();
+		return mBeanServerConnection.queryNames(objectName, null).iterator().next();
 	}
 
 	private static final String name = "osgi.core";

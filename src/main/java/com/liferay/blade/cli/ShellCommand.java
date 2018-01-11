@@ -16,36 +16,33 @@
 
 package com.liferay.blade.cli;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 /**
  * @author Gregory Amerson
  */
 public class ShellCommand {
 
-	public static final String DESCRIPTION =
-		"Connects to Liferay and executes gogo command and returns output.";
+	public static final String DESCRIPTION = "Connects to Liferay and executes gogo command and returns output.";
 
 	public ShellCommand(blade blade, ShellOptions options) throws Exception {
 		_blade = blade;
 		_options = options;
-		
+
 		_host = options.getHost() != null ? options.getHost() : "localhost";
 		_port = options.getPort() != 0 ? options.getPort() : 11311;
 	}
 
 	public void execute() throws Exception {
-		if (!Util.canConnect(_host , _port)) {
-			addError(
-				"sh",
-				"Unable to connect to gogo shell on " + _host + ":" + _port);
+		if (!Util.canConnect(_host, _port)) {
+			addError("sh", "Unable to connect to gogo shell on " + _host + ":" + _port);
 
 			return;
 		}
@@ -59,6 +56,10 @@ public class ShellCommand {
 		commandDescription = ShellCommand.DESCRIPTION)
 	public static class ShellOptions {
 
+		public List<String> getArgs() {
+			return args;
+		}
+
 		public String getHost() {
 			return host;
 		}
@@ -66,23 +67,16 @@ public class ShellCommand {
 		public int getPort() {
 			return port;
 		}
-		
-		public List<String> getArgs() {
-			return args;
-		}
 
-		@Parameter(
-			names = {"-p", "--port"},
-			description ="The port to use to connect to gogo shell")
-		private int port;
-
-		@Parameter(
-			names = {"-h", "--host"},
-			description ="The host to use to connect to gogo shell")
-		private String host;
-		
 		@Parameter
 		private List<String> args = new ArrayList<>();
+
+		@Parameter(names = {"-h", "--host"}, description ="The host to use to connect to gogo shell")
+		private String host;
+
+		@Parameter(names = {"-p", "--port"}, description ="The port to use to connect to gogo shell")
+		private int port;
+
 	}
 
 	private void addError(String prefix, String msg) {
@@ -90,8 +84,7 @@ public class ShellCommand {
 	}
 
 	private void executeCommand(String cmd) throws Exception {
-		final GogoTelnetClient telnetClient =
-			new GogoTelnetClient(_host, _port);
+		final GogoTelnetClient telnetClient = new GogoTelnetClient(_host, _port);
 
 		String response = telnetClient.send(cmd);
 

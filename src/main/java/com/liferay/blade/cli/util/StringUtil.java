@@ -6,7 +6,13 @@ import java.util.List;
 
 public class StringUtil {
 
-	private static String[] _emptyStringArray = new String[0];
+	public static String replace(String s, char oldSub, char newSub) {
+		if (s == null) {
+			return null;
+		}
+
+		return s.replace(oldSub, newSub);
+	}
 
 	public static String[] split(String s, char delimiter) {
 		if (s == null) {
@@ -25,20 +31,9 @@ public class StringUtil {
 
 		return nodeValues.toArray(new String[nodeValues.size()]);
 	}
-	
-	public static String replace(String s, char oldSub, char newSub) {
-		if (s == null) {
-			return null;
-		}
 
-		return s.replace(oldSub, newSub);
-	}
-	
-	
 	public static String[] split(String s, String delimiter) {
-		if (s == null || (delimiter == null) ||
-			delimiter.equals(StringPool.BLANK)) {
-
+		if (s == null || (delimiter == null) || delimiter.equals(StringPool.BLANK)) {
 			return _emptyStringArray;
 		}
 
@@ -72,10 +67,8 @@ public class StringUtil {
 
 		return nodeValues.toArray(new String[nodeValues.size()]);
 	}
-	
-	private static void _split(
-		Collection<String> values, String s, int offset, char delimiter) {
 
+	private static void _split(Collection<String> values, String s, int offset, char delimiter) {
 		int pos = s.indexOf(delimiter, offset);
 
 		while (pos != -1) {
@@ -90,4 +83,7 @@ public class StringUtil {
 			values.add(s.substring(offset));
 		}
 	}
+
+	private static String[] _emptyStringArray = new String[0];
+
 }

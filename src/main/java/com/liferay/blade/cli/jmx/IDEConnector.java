@@ -37,23 +37,18 @@ public class IDEConnector extends JMXLocalConnector {
 	}
 
 	public Object openDir(File dir) throws Exception {
-		final ObjectName workspaceHelper = getWorkspaceHelper(
-			mBeanServerConnection);
+		final ObjectName workspaceHelper = getWorkspaceHelper(mBeanServerConnection);
 
 		return mBeanServerConnection.invoke(
-			workspaceHelper, "openDir",
-			new Object[] {dir.getAbsoluteFile().getAbsolutePath()},
+			workspaceHelper, "openDir", new Object[] {dir.getAbsoluteFile().getAbsolutePath()},
 			new String[] {String.class.getName()});
 	}
 
-	private static ObjectName getWorkspaceHelper(
-			MBeanServerConnection mBeanServerConnection)
+	private static ObjectName getWorkspaceHelper(MBeanServerConnection mBeanServerConnection)
 		throws IOException, MalformedObjectNameException {
 
-		final ObjectName objectName = new ObjectName(
-			name + ":type=" + type + ",*");
-		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(
-			objectName, null);
+		final ObjectName objectName = new ObjectName(name + ":type=" + type + ",*");
+		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
 
 		if ((objectNames != null) && (objectNames.size() > 0)) {
 			return objectNames.iterator().next();
