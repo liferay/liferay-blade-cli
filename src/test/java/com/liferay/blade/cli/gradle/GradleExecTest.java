@@ -16,8 +16,8 @@
 
 package com.liferay.blade.cli.gradle;
 
-import com.liferay.blade.cli.blade;
-import com.liferay.blade.cli.bladenofail;
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeNoFail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -33,9 +33,10 @@ public class GradleExecTest {
 	@Test
 	public void testGradleWrapper() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
 		PrintStream ps = new PrintStream(baos);
 
-		blade blade = new bladenofail(ps);
+		BladeCLI blade = new BladeNoFail(ps);
 
 		GradleExec gradleExec = new GradleExec(blade);
 

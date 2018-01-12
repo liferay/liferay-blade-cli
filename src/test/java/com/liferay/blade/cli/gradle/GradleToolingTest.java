@@ -42,7 +42,7 @@ public class GradleToolingTest {
 		Set<File> files = GradleTooling.getOutputFiles(new File("build"), new File("build/testws1"));
 
 		Assert.assertNotNull(files);
-		Assert.assertEquals(1, files.size());
+		Assert.assertEquals(files.toString(), 1, files.size());
 	}
 
 	@Test
@@ -56,17 +56,17 @@ public class GradleToolingTest {
 
 	@Test
 	public void testIsLiferayModule() throws Exception {
-		boolean isModule = GradleTooling.isLiferayModule (
+		boolean liferayModule = GradleTooling.isLiferayModule(
 			new File("build"), new File("build/testws1/modules/testportlet"));
 
-		Assert.assertTrue(isModule);
+		Assert.assertTrue(liferayModule);
 	}
 
 	@Test
 	public void testIsNotLiferayModule() throws Exception {
-		boolean isModule = GradleTooling.isLiferayModule (new File("build"), new File("build/testws1/modules"));
+		boolean liferayModule = GradleTooling.isLiferayModule(new File("build"), new File("build/testws1/modules"));
 
-		Assert.assertFalse(isModule);
+		Assert.assertFalse(liferayModule);
 	}
 
 }

@@ -35,7 +35,7 @@ public class ConvertServiceBuilderCommandTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		IO.delete(workspaceDir.getParentFile());
+		IO.delete(_workspaceDir.getParentFile());
 	}
 
 	@Test
@@ -55,11 +55,11 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		args = new String[] {"-b", projectDir.getPath(), "convert", SB_PROJECT_NAME};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File sbWar = new File(projectDir, "wars/sample-service-builder-portlet");
 
@@ -73,7 +73,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		args = new String[] {"-b", projectDir.getPath(), "convert", SB_PROJECT_NAME};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File moduleDir = new File(projectDir, "modules");
 
@@ -119,7 +119,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] args = {"-b", testdir.getPath(), "init", "-u"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File pluginsSdkDir = new File(testdir, "plugins-sdk");
 
@@ -129,7 +129,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] convertArgs = {"-b", testdir.getPath(), "convert", "tasks-portlet", "foo"};
 
-		new bladenofail().run(convertArgs);
+		new BladeNoFail().run(convertArgs);
 
 		Assert.assertTrue(new File(testdir, "modules/foo/foo-api/build.gradle").exists());
 	}
@@ -145,7 +145,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] args = {"-b", testdir.getPath(), "init", "-u"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File pluginsSdkDir = new File(testdir, "plugins-sdk");
 
@@ -155,7 +155,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] convertArgs = {"-b", testdir.getPath(), "convert", "tasks-portlet"};
 
-		new bladenofail().run(convertArgs);
+		new BladeNoFail().run(convertArgs);
 
 		Assert.assertTrue(new File(testdir, "modules/tasks/tasks-api/build.gradle").exists());
 
@@ -188,6 +188,6 @@ public class ConvertServiceBuilderCommandTest {
 		Assert.assertTrue(content.contains("compileOnly project(\":modules:tasks:tasks-api\")"));
 	}
 
-	private final File workspaceDir = IO.getFile("build/test/workspace");
+	private static final File _workspaceDir = IO.getFile("build/test/workspace");
 
 }

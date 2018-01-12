@@ -21,21 +21,24 @@ import com.beust.jcommander.Parameters;
 
 import java.io.File;
 
-@Parameters(commandNames = {"samples"}, commandDescription = SamplesCommand.DESCRIPTION)
+/**
+ * @author Gregory Amerson
+ */
+@Parameters(commandDescription = "Generate a sample project", commandNames = {"samples"})
 public class SamplesCommandArgs {
 
 	public File getDir() {
-		return dir;
+		return _dir;
 	}
 
 	public String getSampleName() {
-		return sampleName;
+		return _sampleName;
 	}
 
-	@Parameter(names = {"-d", "--dir"}, description ="The directory where to create the new project.")
-	private File dir;
+	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
+	private File _dir;
 
-	@Parameter(description ="name")
-	private String sampleName;
+	@Parameter(description = "name")
+	private String _sampleName;
 
 }

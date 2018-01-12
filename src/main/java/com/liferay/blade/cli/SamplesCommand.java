@@ -36,9 +36,7 @@ import org.apache.commons.lang3.text.WordUtils;
  */
 public class SamplesCommand {
 
-	public static final String DESCRIPTION = "Generate a sample project";
-
-	public SamplesCommand(blade blade, SamplesCommandArgs options) throws Exception {
+	public SamplesCommand(BladeCLI blade, SamplesCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 	}
@@ -46,19 +44,19 @@ public class SamplesCommand {
 	public void execute() throws Exception {
 		final String sampleName = _options.getSampleName();
 
-		if (downloadBladeRepoIfNeeded()) {
-			extractBladeRepo();
+		if (_downloadBladeRepoIfNeeded()) {
+			_extractBladeRepo();
 		}
 
 		if (sampleName == null) {
-			listSamples();
+			_listSamples();
 		}
 		else {
-			copySample(sampleName);
+			_copySample(sampleName);
 		}
 	}
 
-	private void addGradleWrapper(File dest) throws Exception {
+	private void _addGradleWrapper(File dest) throws Exception {
 		InputStream in = SamplesCommand.class.getResourceAsStream("/wrapper.zip");
 
 		Util.copy(in, dest);
@@ -66,7 +64,7 @@ public class SamplesCommand {
 		new File(dest, "gradlew").setExecutable(true);
 	}
 
-	private void copySample(String sampleName) throws Exception {
+	private void _copySample(String sampleName) throws Exception {
 		File workDir = _options.getDir();
 
 		if (workDir == null) {
@@ -85,20 +83,20 @@ public class SamplesCommand {
 
 				FileUtils.copyDirectory(file, dest);
 
-				updateBuildGradle(dest);
+				_updateBuildGradle(dest);
 
 				if (!Util.hasGradleWrapper(dest)) {
-					addGradleWrapper(dest);
+					_addGradleWrapper(dest);
 				}
 			}
 		}
 	}
 
-	private String deindent(String s) {
+	private String _deindent(String s) {
 		return s.replaceAll("(?m)^\t", "");
 	}
 
-	private boolean downloadBladeRepoIfNeeded() throws Exception {
+	private boolean _downloadBladeRepoIfNeeded() throws Exception {
 		File bladeRepoArchive = new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
 		Date now = new Date();
@@ -114,13 +112,13 @@ public class SamplesCommand {
 		return false;
 	}
 
-	private void extractBladeRepo() throws Exception {
+	private void _extractBladeRepo() throws Exception {
 		File bladeRepoArchive = new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
 		Util.unzip(bladeRepoArchive, _blade.getCacheDir(), null);
 	}
 
-	private void listSamples() {
+	private void _listSamples() {
 		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
 		File gradleSamples = new File(bladeRepo, "gradle");
@@ -135,15 +133,16 @@ public class SamplesCommand {
 			}
 		}
 
-		_blade.out().println(
-			"Please provide the sample project name to create, " + "e.g. \"blade samples blade.rest\"\n");
+		_blade.out().println("Please provide the sample project name to create, e.g. \"blade samples blade.rest\"\n");
 		_blade.out().println("Currently available samples:");
 		_blade.out().println(WordUtils.wrap(StringUtils.join(samples, ", "), 80));
 	}
 
-	private String parseGradleScript(String script, String section, boolean contentsOnly) {
+	private String _parseGradleScript(String script, String section, boolean contentsOnly) {
 		int begin = script.indexOf(section + " {");
+
 		int end = begin;
+
 		int count = 0;
 
 		if (contentsOnly) {
@@ -174,15 +173,17 @@ public class SamplesCommand {
 		String newScript = script.substring(begin, end);
 
 		if (contentsOnly) {
-			return deindent(newScript);
+			return _deindent(newScript);
 		}
 
 		return newScript;
 	}
 
-	private String removeGradleSection(String script, String section) {
+	private String _removeGradleSection(String script, String section) {
 		int begin = script.indexOf(section + " {");
+
 		int end = begin;
+
 		int count = 0;
 
 		if (begin == -1) {
@@ -206,10 +207,10 @@ public class SamplesCommand {
 			}
 		}
 
-		return removeGradleSection(script.substring(0, begin) + script.substring(end, script.length()), section);
+		return _removeGradleSection(script.substring(0, begin) + script.substring(end, script.length()), section);
 	}
 
-	private void updateBuildGradle(File dir) throws Exception {
+	private void _updateBuildGradle(File dir) throws Exception {
 		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
 		File sampleGradleFile = new File(dir, "build.gradle");
@@ -219,11 +220,11 @@ public class SamplesCommand {
 		if (!Util.isWorkspace(dir)) {
 			File parentBuildGradleFile = new File(bladeRepo, "gradle/build.gradle");
 
-			String parentBuildScript = parseGradleScript(Util.read(parentBuildGradleFile), "buildscript", false);
+			String parentBuildScript = _parseGradleScript(Util.read(parentBuildGradleFile), "buildscript", false);
 
-			String parentSubprojectsScript = parseGradleScript(Util.read(parentBuildGradleFile), "subprojects", true);
+			String parentSubprojectsScript = _parseGradleScript(Util.read(parentBuildGradleFile), "subprojects", true);
 
-			parentSubprojectsScript = removeGradleSection(parentSubprojectsScript, "buildscript");
+			parentSubprojectsScript = _removeGradleSection(parentSubprojectsScript, "buildscript");
 
 			System.out.println(parentSubprojectsScript);
 
@@ -241,7 +242,7 @@ public class SamplesCommand {
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
-	private final blade _blade;
+	private final BladeCLI _blade;
 	private final SamplesCommandArgs _options;
 
 }

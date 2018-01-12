@@ -26,29 +26,29 @@ import java.util.List;
  * @author Gregory Amerson
  */
 @Parameters(
-	commandNames = {"sh"}, commandDescription = "Connects to Liferay and executes gogo command and returns output."
+	commandDescription = "Connects to Liferay and executes gogo command and returns output.", commandNames = {"sh"}
 )
 public class ShellCommandArgs {
 
 	public List<String> getArgs() {
-		return args;
+		return _args;
 	}
 
 	public String getHost() {
-		return host;
+		return _host;
 	}
 
 	public int getPort() {
-		return port;
+		return _port;
 	}
 
 	@Parameter
-	private List<String> args = new ArrayList<>();
+	private List<String> _args = new ArrayList<>();
 
-	@Parameter(names = {"-h", "--host"}, description ="The host to use to connect to gogo shell")
-	private String host;
+	@Parameter(description = "The host to use to connect to gogo shell", names = {"-h", "--host"})
+	private String _host;
 
-	@Parameter(names = {"-p", "--port"}, description ="The port to use to connect to gogo shell")
-	private int port;
+	@Parameter(description = "The port to use to connect to gogo shell", names = {"-p", "--port"})
+	private int _port;
 
 }

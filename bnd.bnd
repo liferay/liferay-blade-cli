@@ -3,7 +3,7 @@ Bundle-Version: 3.0.0.${tstamp}
 
 JPM-Command: blade
 
-Main-Class: com.liferay.blade.cli.blade
+Main-Class: com.liferay.blade.cli.BladeCLI
 
 Private-Package:\
 	aQute.bnd.deployer.http,\

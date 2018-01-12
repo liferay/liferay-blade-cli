@@ -21,7 +21,7 @@ package com.liferay.blade.cli;
  */
 public class UpdateCommand {
 
-	public UpdateCommand(blade blade, UpdateCommandArgs args) throws Exception {
+	public UpdateCommand(BladeCLI blade, UpdateCommandArgs args) throws Exception {
 		_blade = blade;
 	}
 
@@ -47,6 +47,6 @@ public class UpdateCommand {
 		}
 	}
 
-	private blade _blade;
+	private BladeCLI _blade;
 
 }

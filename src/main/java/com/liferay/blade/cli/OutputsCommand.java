@@ -29,13 +29,15 @@ import java.util.Set;
  */
 public class OutputsCommand {
 
-	public OutputsCommand(blade blade, OutputsCommandArgs options) throws Exception {
+	public OutputsCommand(BladeCLI blade, OutputsCommandArgs args) throws Exception {
 		_blade = blade;
 	}
 
 	public void execute() throws Exception {
 		final File base = _blade.getBase();
+
 		final Path basePath = base.toPath();
+
 		final Path basePathRoot = basePath.getRoot();
 
 		final Set<File> outputs = GradleTooling.getOutputFiles(_blade.getCacheDir(), base);
@@ -58,6 +60,6 @@ public class OutputsCommand {
 		}
 	}
 
-	private blade _blade;
+	private BladeCLI _blade;
 
 }

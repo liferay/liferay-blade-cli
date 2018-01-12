@@ -36,11 +36,11 @@ public class UtilTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		testdir = IO.getFile("build/test");
+		_testdir = IO.getFile("build/test");
 
-		if (testdir.exists()) {
-			IO.delete(testdir);
-			Assert.assertFalse(testdir.exists());
+		if (_testdir.exists()) {
+			IO.delete(_testdir);
+			Assert.assertFalse(_testdir.exists());
 		}
 	}
 
@@ -112,6 +112,6 @@ public class UtilTest {
 		Assert.assertTrue(Util.isWorkspace(workspace));
 	}
 
-	private File testdir;
+	private File _testdir;
 
 }

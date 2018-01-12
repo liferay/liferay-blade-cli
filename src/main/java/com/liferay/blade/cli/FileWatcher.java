@@ -77,22 +77,18 @@ public class FileWatcher {
 	 * @param runnable
 	 */
 	public FileWatcher(Path baseDir, Path fileToWatch, boolean recursive, Consumer<Path> consumer) throws IOException {
-		this.watcher = FileSystems.getDefault().newWatchService();
-		this.keys = new HashMap<>();
-		this.recursive = recursive;
+		_watcher = FileSystems.getDefault().newWatchService();
+		_keys = new HashMap<>();
+		_recursive = recursive;
 
 		System.out.format("Scanning %s\n", baseDir);
 
 		if (recursive) {
-			registerAll(baseDir);
+			_registerAll(baseDir);
 		}
 		else {
-			register(baseDir);
+			_register(baseDir);
 		}
-
-		// enable trace after initial registration
-
-		this.trace = true;
 
 		processEvents(fileToWatch, consumer);
 	}
@@ -110,13 +106,13 @@ public class FileWatcher {
 			WatchKey key;
 
 			try {
-				key = watcher.take();
+				key = _watcher.take();
 			}
 			catch (InterruptedException ie) {
 				return;
 			}
 
-			Path dir = keys.get(key);
+			Path dir = _keys.get(key);
 
 			if (dir == null) {
 				System.err.println("WatchKey not recognized!!");
@@ -137,7 +133,9 @@ public class FileWatcher {
 				// Context for directory entry event is the file name of entry
 
 				WatchEvent<Path> ev = cast(event);
+
 				Path name = ev.context();
+
 				Path child = dir.resolve(name);
 
 				if ((child.equals(fileToWatch) || (fileToWatch == null)) &&
@@ -149,10 +147,10 @@ public class FileWatcher {
 				// if directory is created, and watching recursively, then
 				// register it and its sub-directories
 
-				if (recursive && (kind == ENTRY_CREATE)) {
+				if (_recursive && (kind == ENTRY_CREATE)) {
 					try {
 						if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
-							registerAll(child);
+							_registerAll(child);
 						}
 					}
 					catch (IOException ioe) {
@@ -163,7 +161,7 @@ public class FileWatcher {
 				}
 			}
 
-			if (reportModified.size() > 0) {
+			if (!reportModified.isEmpty()) {
 				for (Path modified : reportModified) {
 					try {
 						consumer.consume(modified);
@@ -179,11 +177,11 @@ public class FileWatcher {
 			boolean valid = key.reset();
 
 			if (!valid) {
-				keys.remove(key);
+				_keys.remove(key);
 
 				// all directories are inaccessible
 
-				if (keys.isEmpty()) {
+				if (_keys.isEmpty()) {
 					break;
 				}
 			}
@@ -199,11 +197,12 @@ public class FileWatcher {
 	/**
 	 * Register the given directory with the WatchService
 	 */
-	private void register(Path dir) throws IOException {
+	private void _register(Path dir) throws IOException {
 		Modifier modifier = null;
 
 		try {
 			Class<?> c = Class.forName("com.sun.nio.file.SensitivityWatchEventModifier");
+
 			Field f = c.getField("HIGH");
 
 			modifier = (Modifier)f.get(c);
@@ -214,31 +213,20 @@ public class FileWatcher {
 		WatchKey key;
 
 		if (modifier != null) {
-			key = dir.register(watcher, new WatchEvent.Kind[] {ENTRY_CREATE, ENTRY_MODIFY}, modifier);
+			key = dir.register(_watcher, new WatchEvent.Kind[] {ENTRY_CREATE, ENTRY_MODIFY}, modifier);
 		}
 		else {
-			key = dir.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+			key = dir.register(_watcher, ENTRY_CREATE, ENTRY_MODIFY);
 		}
 
-		if (trace) {
-			Path prev = keys.get(key);
-
-			if (prev == null) {
-			}
-			else {
-				if (!dir.equals(prev)) {
-				}
-			}
-		}
-
-		keys.put(key, dir);
+		_keys.put(key, dir);
 	}
 
 	/**
 	 * Register the given directory, and all its sub-directories, with the
 	 * WatchService.
 	 */
-	private void registerAll(final Path start) throws IOException {
+	private void _registerAll(final Path start) throws IOException {
 
 		// register directory and sub-directories
 
@@ -248,7 +236,7 @@ public class FileWatcher {
 
 				@Override
 				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-					register(dir);
+					_register(dir);
 
 					return FileVisitResult.CONTINUE;
 				}
@@ -256,9 +244,8 @@ public class FileWatcher {
 			});
 	}
 
-	private final Map<WatchKey, Path> keys;
-	private final boolean recursive;
-	private boolean trace = false;
-	private final WatchService watcher;
+	private final Map<WatchKey, Path> _keys;
+	private final boolean _recursive;
+	private final WatchService _watcher;
 
 }

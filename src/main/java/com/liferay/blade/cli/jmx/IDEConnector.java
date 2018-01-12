@@ -33,31 +33,33 @@ import javax.management.ObjectName;
 public class IDEConnector extends JMXLocalConnector {
 
 	public IDEConnector() throws MalformedURLException {
-		super(name + ":type=" + type + ",*");
+		super(_NAME + ":type=" + _TYPE + ",*");
 	}
 
 	public Object openDir(File dir) throws Exception {
-		final ObjectName workspaceHelper = getWorkspaceHelper(mBeanServerConnection);
+		final ObjectName workspaceHelper = _getWorkspaceHelper(mBeanServerConnection);
 
 		return mBeanServerConnection.invoke(
 			workspaceHelper, "openDir", new Object[] {dir.getAbsoluteFile().getAbsolutePath()},
 			new String[] {String.class.getName()});
 	}
 
-	private static ObjectName getWorkspaceHelper(MBeanServerConnection mBeanServerConnection)
+	private static ObjectName _getWorkspaceHelper(MBeanServerConnection mBeanServerConnection)
 		throws IOException, MalformedObjectNameException {
 
-		final ObjectName objectName = new ObjectName(name + ":type=" + type + ",*");
+		final ObjectName objectName = new ObjectName(_NAME + ":type=" + _TYPE + ",*");
+
 		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
 
-		if ((objectNames != null) && (objectNames.size() > 0)) {
+		if ((objectNames != null) && !objectNames.isEmpty()) {
 			return objectNames.iterator().next();
 		}
 
 		return null;
 	}
 
-	private static final String name = "com.liferay.ide.ui";
-	private static final String type = "WorkspaceHelper";
+	private static final String _NAME = "com.liferay.ide.ui";
+
+	private static final String _TYPE = "WorkspaceHelper";
 
 }

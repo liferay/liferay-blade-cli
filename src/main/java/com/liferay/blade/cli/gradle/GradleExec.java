@@ -16,8 +16,8 @@
 
 package com.liferay.blade.cli.gradle;
 
+import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.Util;
-import com.liferay.blade.cli.blade;
 
 import java.io.File;
 
@@ -26,7 +26,7 @@ import java.io.File;
  */
 public class GradleExec {
 
-	public GradleExec(blade blade) {
+	public GradleExec(BladeCLI blade) {
 		_blade = blade;
 
 		File gradlew = Util.getGradleWrapper(blade.getBase());
@@ -54,7 +54,7 @@ public class GradleExec {
 		return process.waitFor();
 	}
 
-	private blade _blade;
+	private BladeCLI _blade;
 	private String _executable;
 
 }

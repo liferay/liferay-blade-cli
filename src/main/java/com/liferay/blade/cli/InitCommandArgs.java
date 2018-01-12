@@ -22,35 +22,35 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandNames = {"init"}, commandDescription = "Initializes a new Liferay workspace")
+@Parameters(commandDescription = "Initializes a new Liferay workspace", commandNames = {"init"})
 public class InitCommandArgs {
 
 	public String getName() {
-		return name;
+		return _name;
 	}
 
 	public boolean isForce() {
-		return force;
+		return _force;
 	}
 
 	public boolean isRefresh() {
-		return refresh;
+		return _refresh;
 	}
 
 	public boolean isUpgrade() {
-		return upgrade;
+		return _upgrade;
 	}
 
-	@Parameter(names = {"-f", "--force"}, description = "create anyway if there are files located at target folder")
-	private boolean force;
+	@Parameter(description = "create anyway if there are files located at target folder", names = {"-f", "--force"})
+	private boolean _force;
 
 	@Parameter(description = "[name]")
-	private String name;
+	private String _name;
 
-	@Parameter(names = {"-r", "--refresh"}, description ="force to refresh workspace template")
-	private boolean refresh;
+	@Parameter(description = "force to refresh workspace template", names = {"-r", "--refresh"})
+	private boolean _refresh;
 
-	@Parameter(names = {"-u", "--upgrade"}, description ="upgrade plugins-sdk from 6.2 to 7.0")
-	private boolean upgrade;
+	@Parameter(description = "upgrade plugins-sdk from 6.2 to 7.0", names = {"-u", "--upgrade"})
+	private boolean _upgrade;
 
 }

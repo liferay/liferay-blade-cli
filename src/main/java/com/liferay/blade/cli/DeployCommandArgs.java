@@ -23,17 +23,17 @@ import com.beust.jcommander.Parameters;
  * @author Gregory Amerson
  */
 @Parameters(
-	commandNames = {"deploy"}, commandDescription = "Builds and deploys bundles to the Liferay module framework."
+	commandDescription = "Builds and deploys bundles to the Liferay module framework.", commandNames = {"deploy"}
 )
 public class DeployCommandArgs {
 
 	public boolean isWatch() {
-		return watch;
+		return _watch;
 	}
 
 	@Parameter(
-		names = {"-w", "--watch"}, description = "Watches the deployed file for changes and will automatically redeploy"
+		description = "Watches the deployed file for changes and will automatically redeploy", names = {"-w", "--watch"}
 	)
-	private boolean watch;
+	private boolean _watch;
 
 }

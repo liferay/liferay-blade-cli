@@ -27,30 +27,30 @@ public class InstallCommand {
 
 	public static final String DESCRIPTION = "Installs a bundle into Liferay module framework.";
 
-	public InstallCommand(blade blade, InstallCommandArgs options) throws Exception {
+	public InstallCommand(BladeCLI blade, InstallCommandArgs options) throws Exception {
 		_blade = blade;
-		_options = options;
+		_args = options;
 		_host = options.getHost() != null ? options.getHost() : "localhost";
 		_port = options.getPort() != 0 ? options.getPort() : 11311;
 	}
 
 	public void execute() throws Exception {
 		if (!Util.canConnect(_host, _port)) {
-			addError("Unable to connect to gogo shell on " + _host + ":" + _port);
+			_addError("Unable to connect to gogo shell on " + _host + ":" + _port);
 			return;
 		}
 
-		final String bundleFileName = _options.getBundleFileName();
+		final String bundleFileName = _args.getBundleFileName();
 
 		if (bundleFileName == null) {
-			addError("Must specify bundle file to install.");
+			_addError("Must specify bundle file to install.");
 			return;
 		}
 
 		final File bundleFile = new File(_blade.getBase(), bundleFileName);
 
 		if (!bundleFile.exists()) {
-			addError(bundleFile + "doesn't exist.");
+			_addError(bundleFile + "doesn't exist.");
 			return;
 		}
 
@@ -61,17 +61,17 @@ public class InstallCommand {
 		}
 	}
 
-	private void addError(String msg) {
-		addError("install", msg);
+	private void _addError(String msg) {
+		_addError("install", msg);
 	}
 
-	private void addError(String prefix, String msg) {
+	private void _addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private final blade _blade;
+	private final InstallCommandArgs _args;
+	private final BladeCLI _blade;
 	private final String _host;
-	private final InstallCommandArgs _options;
 	private final int _port;
 
 }

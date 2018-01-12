@@ -43,9 +43,9 @@ public class ConvertServiceBuilderCommand {
 
 	public static final String DESCRIPTION = "Convert a service builder project to new Liferay Workspace projects";
 
-	public ConvertServiceBuilderCommand(blade blade, ConvertCommandArgs options) throws Exception {
+	public ConvertServiceBuilderCommand(BladeCLI blade, ConvertCommandArgs options) throws Exception {
 		_blade = blade;
-		_options = options;
+		_args = options;
 
 		File projectDir = Util.getWorkspaceDir(_blade);
 
@@ -77,7 +77,9 @@ public class ConvertServiceBuilderCommand {
 	}
 
 	public void execute() throws Exception {
-		final String projectName = _options.getName().isEmpty() ? null : _options.getName().iterator().next();
+		List<String> name = _args.getName();
+
+		final String projectName = name.isEmpty() ? null : name.iterator().next();
 
 		if (!Util.isWorkspace(_blade)) {
 			_blade.error("Please execute command in a Liferay Workspace project");
@@ -107,7 +109,8 @@ public class ConvertServiceBuilderCommand {
 			return;
 		}
 
-		List<String> args = _options.getName();
+		List<String> args = name;
+
 		String sbProjectName = !args.isEmpty() && args.size() >= 2 ? args.get(1) : null;
 
 		if (sbProjectName == null) {
@@ -220,9 +223,15 @@ public class ConvertServiceBuilderCommand {
 		srcPaths.map(
 			path -> path.toFile()
 		).filter(
-			file -> file.isFile() && file.getName().endsWith(".java") && isInExportedApiFolder(file)
+			file -> file.isFile() && file.getName().endsWith(".java") && _isInExportedApiFolder(file)
 		).map(
-			file -> file.toPath().resolveSibling("packageinfo").toFile()
+			file -> {
+				Path filePath = file.toPath();
+
+				Path sibling = filePath.resolveSibling("packageinfo");
+
+				return sibling.toFile();
+			}
 		).filter(
 			file -> !file.exists()
 		).forEach(
@@ -260,7 +269,7 @@ public class ConvertServiceBuilderCommand {
 		System.out.println("Migrating files done, then you should fix breaking changes and re-run build-service task.");
 	}
 
-	private boolean isInExportedApiFolder(File file) {
+	private static boolean _isInExportedApiFolder(File file) {
 		File dir = file.getParentFile();
 
 		String dirName = dir.getName();
@@ -274,12 +283,12 @@ public class ConvertServiceBuilderCommand {
 		return false;
 	}
 
-	private blade _blade;
+	private ConvertCommandArgs _args;
+	private BladeCLI _blade;
 	private final File _moduleDir;
-	private ConvertCommandArgs _options;
 	private final File _warsDir;
 
-	private class ServiceBuilder {
+	private static class ServiceBuilder {
 
 		public static final String API_62 = "WEB-INF/service/";
 
@@ -291,19 +300,16 @@ public class ConvertServiceBuilderCommand {
 
 		public static final String SERVICE_XML = "service.xml";
 
-		File _serviceXml;
-		Element _rootElement;
-
 		public ServiceBuilder(File serviceXml) throws Exception {
 			_serviceXml = serviceXml;
-			parse();
+			_parse();
 		}
 
 		public String getPackagePath() {
 			return _rootElement.getAttribute("package-path");
 		}
 
-		private void parse() throws Exception {
+		private void _parse() throws Exception {
 			if ((_rootElement == null) && (_serviceXml != null) && _serviceXml.exists()) {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 
@@ -314,6 +320,9 @@ public class ConvertServiceBuilderCommand {
 				_rootElement = doc.getDocumentElement();
 			}
 		}
+
+		private Element _rootElement;
+		private File _serviceXml;
 
 	}
 

@@ -44,7 +44,7 @@ import java.util.Properties;
  */
 public class InitCommand {
 
-	public InitCommand(blade blade, InitCommandArgs options) throws Exception {
+	public InitCommand(BladeCLI blade, InitCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 	}
@@ -56,22 +56,22 @@ public class InitCommand {
 
 		File temp = null;
 
-		boolean isPluginsSDK = isPluginsSDK(destDir);
+		boolean pluginsSDK = _isPluginsSDK(destDir);
 
-		trace("Using destDir " + destDir);
+		_trace("Using destDir " + destDir);
 
 		if (destDir.exists() && !destDir.isDirectory()) {
-			addError(destDir.getAbsolutePath() + " is not a directory.");
+			_addError(destDir.getAbsolutePath() + " is not a directory.");
 			return;
 		}
 
 		if (destDir.exists()) {
-			if (isPluginsSDK) {
-				if (!isPluginsSDK70(destDir)) {
+			if (pluginsSDK) {
+				if (!_isPluginsSDK70(destDir)) {
 					if (_options.isUpgrade()) {
-						trace(
-							"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory " +
-								"and initing workspace.");
+						_trace(
+							"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory and initing " +
+								"workspace.");
 
 						for (String fileName : _SDK_6_GA5_FILES) {
 							File file = new File(destDir, fileName);
@@ -82,14 +82,14 @@ public class InitCommand {
 						}
 					}
 					else {
-						addError(
-							"Unable to run blade init in plugins sdk 6.2, please add -u (--upgrade) if you want " +
-								"to upgrade to 7.0");
+						_addError(
+							"Unable to run blade init in plugins sdk 6.2, please add -u (--upgrade) if you want to " +
+								"upgrade to 7.0");
 						return;
 					}
 				}
 
-				trace("Found plugins-sdk, moving contents to new subdirectory and initing workspace.");
+				_trace("Found plugins-sdk, moving contents to new subdirectory and initing workspace.");
 
 				temp = Files.createTempDirectory("orignal-sdk").toFile();
 
@@ -97,13 +97,13 @@ public class InitCommand {
 			}
 			else if (destDir.list().length > 0) {
 				if (_options.isForce()) {
-					trace("Files found, initing anyways.");
+					_trace("Files found, initing anyways.");
 				}
 				else {
-					addError(
+					_addError(
 						destDir.getAbsolutePath() +
-						" contains files, please move them before continuing " +
-							"or use -f (--force) option to init workspace " + "anyways.");
+							" contains files, please move them before continuing or use -f (--force) option to init " +
+								"workspace anyways.");
 					return;
 				}
 			}
@@ -128,7 +128,7 @@ public class InitCommand {
 
 		new ProjectTemplates(projectTemplatesArgs);
 
-		if (isPluginsSDK) {
+		if (pluginsSDK) {
 			if (_options.isUpgrade()) {
 				GradleExec gradleExec = new GradleExec(_blade);
 
@@ -151,6 +151,63 @@ public class InitCommand {
 
 			IO.deleteWithException(temp);
 		}
+	}
+
+	private void _addError(String msg) {
+		_blade.addErrors("init", Collections.singleton(msg));
+	}
+
+	private boolean _isPluginsSDK(File dir) {
+		if ((dir == null) || !dir.exists() || !dir.isDirectory()) {
+			return false;
+		}
+
+		List<String> names = Arrays.asList(dir.list());
+
+		if ((names != null) && names.contains("portlets") && names.contains("hooks") && names.contains("layouttpl") &&
+			names.contains("themes") && names.contains("build.properties") && names.contains("build.xml") &&
+			names.contains("build-common.xml") && names.contains("build-common-plugin.xml")) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isPluginsSDK70(File dir) {
+		if ((dir == null) || !dir.exists() || !dir.isDirectory()) {
+			return false;
+		}
+
+		File buildProperties = new File(dir, "build.properties");
+		Properties properties = new Properties();
+
+		InputStream in = null;
+
+		try {
+			in = new FileInputStream(buildProperties);
+
+			properties.load(in);
+
+			String sdkVersionValue = (String)properties.get("lp.version");
+
+			if (sdkVersionValue.equals("7.0.0")) {
+				return true;
+			}
+		}
+		catch (Exception e) {
+		}
+		finally {
+			if (in != null) {
+				try {
+					in.close();
+				}
+				catch (Exception e) {
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private void _moveContentsToDirectory(File src, File dest) throws IOException {
@@ -207,64 +264,7 @@ public class InitCommand {
 			});
 	}
 
-	private void addError(String msg) {
-		_blade.addErrors("init", Collections.singleton(msg));
-	}
-
-	private boolean isPluginsSDK(File dir) {
-		if ((dir == null) || !dir.exists() || !dir.isDirectory()) {
-			return false;
-		}
-
-		List<String> names = Arrays.asList(dir.list());
-
-		if ((names != null) && names.contains("portlets") && names.contains("hooks") && names.contains("layouttpl") &&
-			names.contains("themes") && names.contains("build.properties") && names.contains("build.xml") &&
-			names.contains("build-common.xml") && names.contains("build-common-plugin.xml")) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean isPluginsSDK70(File dir) {
-		if ((dir == null) || !dir.exists() || !dir.isDirectory()) {
-			return false;
-		}
-
-		File buildProperties = new File(dir, "build.properties");
-		Properties properties = new Properties();
-
-		InputStream in = null;
-
-		try {
-			in = new FileInputStream(buildProperties);
-
-			properties.load(in);
-
-			String sdkVersionValue = (String)properties.get("lp.version");
-
-			if (sdkVersionValue.equals("7.0.0")) {
-				return true;
-			}
-		}
-		catch (Exception e) {
-		}
-		finally {
-			if (in != null) {
-				try {
-					in.close();
-				}
-				catch (Exception e) {
-				}
-			}
-		}
-
-		return false;
-	}
-
-	private void trace(String msg) {
+	private void _trace(String msg) {
 		_blade.trace("%s: %s", "init", msg);
 	}
 
@@ -273,7 +273,7 @@ public class InitCommand {
 		"settings.gradle", "util.gradle", "versions.gradle"
 	};
 
-	private final blade _blade;
+	private final BladeCLI _blade;
 	private final InitCommandArgs _options;
 
 }

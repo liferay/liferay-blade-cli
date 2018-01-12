@@ -46,11 +46,11 @@ import java.util.Properties;
 public class BndProperties extends Properties {
 
 	public void addKeyList(final String key) {
-		if (keyList.contains(key)) {
+		if (_keyList.contains(key)) {
 			return;
 		}
 
-		keyList.add(key);
+		_keyList.add(key);
 	}
 
 	public void addValue(final String key, final BndPropertiesValue newBdValue) {
@@ -100,7 +100,8 @@ public class BndProperties extends Properties {
 
 	public String getReader(Reader a) throws IOException {
 		StringWriter sw = new StringWriter();
-		char[] buffer = new char[PAGE_SIZE];
+		char[] buffer = new char[_PAGE_SIZE];
+
 		int size = a.read(buffer);
 
 		while (size > 0) {
@@ -128,7 +129,7 @@ public class BndProperties extends Properties {
 		String buffer;
 
 		while ((buffer = reader.readLine()) != null) {
-			String line = convert(buffer.getBytes(), UTF8);
+			String line = _convert(buffer.getBytes(), _UTF8);
 
 			BndPropertiesValue bnd = new BndPropertiesValue();
 			char c = 0;
@@ -159,6 +160,7 @@ public class BndProperties extends Properties {
 			}
 
 			StringBuilder key = needsEscape ? new StringBuilder() : null;
+
 			while ((pos < line.length()) && !Character.isWhitespace(c = line.charAt(pos++)) && (c != '=') &&
 				   (c != ':')) {
 
@@ -183,31 +185,34 @@ public class BndProperties extends Properties {
 					}
 					else {
 						c = line.charAt(pos++);
+
 						switch (c) {
-						case 'n':
-							key.append('\n');
+							case 'n':
+								key.append('\n');
 
-							break;
-						case 't':
-							key.append('\t');
+								break;
+							case 't':
+								key.append('\t');
 
-							break;
-						case 'r':
-							key.append('\r');
+								break;
+							case 'r':
+								key.append('\r');
 
-							break;
-						case 'u':
-							if ((pos + 4) <= line.length()) {
-								char uni = (char)Integer.parseInt(line.substring(pos, pos + 4), 16);
-								key.append(uni);
-								pos += 4;
-							}
+								break;
+							case 'u':
+								if ((pos + 4) <= line.length()) {
+									char uni = (char)Integer.parseInt(line.substring(pos, pos + 4), 16);
 
-							break;
-						default:
-							key.append(c);
+									key.append(uni);
 
-							break;
+									pos += 4;
+								}
+
+								break;
+							default:
+								key.append(c);
+
+								break;
 						}
 					}
 				}
@@ -216,10 +221,10 @@ public class BndProperties extends Properties {
 				}
 			}
 
-			boolean isDelim = false;
+			boolean delim = false;
 
 			if ((c == ':') || (c == '=')) {
-				isDelim = true;
+				delim = true;
 			}
 
 			String keyString;
@@ -227,7 +232,7 @@ public class BndProperties extends Properties {
 			if (needsEscape) {
 				keyString = key.toString();
 			}
-			else if (isDelim || Character.isWhitespace(c)) {
+			else if (delim || Character.isWhitespace(c)) {
 				keyString = line.substring(start, pos - 1);
 			}
 			else {
@@ -238,7 +243,7 @@ public class BndProperties extends Properties {
 				pos++;
 			}
 
-			if (!isDelim && ((c == ':') || (c == '='))) {
+			if (!delim && ((c == ':') || (c == '='))) {
 				pos++;
 				while ((pos < line.length()) && Character.isWhitespace(c = line.charAt(pos))) {
 					pos++;
@@ -273,6 +278,7 @@ public class BndProperties extends Properties {
 						// The line continues on the next line.
 
 						line = reader.readLine();
+
 						formatedElement.append(line);
 
 						// We might have seen a backslash at the end of
@@ -284,6 +290,7 @@ public class BndProperties extends Properties {
 						}
 
 						pos = 0;
+
 						while ((pos < line.length()) && Character.isWhitespace(c = line.charAt(pos))) {
 							pos++;
 						}
@@ -292,34 +299,37 @@ public class BndProperties extends Properties {
 					}
 					else {
 						c = line.charAt(pos++);
+
 						switch (c) {
-						case 'n':
-							element.append('\n');
-							formatedElement.append('\n');
+							case 'n':
+								element.append('\n');
+								formatedElement.append('\n');
 
-							break;
-						case 't':
-							element.append('\t');
-							formatedElement.append('\t');
+								break;
+							case 't':
+								element.append('\t');
+								formatedElement.append('\t');
 
-							break;
-						case 'r':
-							element.append('\r');
-							formatedElement.append('\r');
+								break;
+							case 'r':
+								element.append('\r');
+								formatedElement.append('\r');
 
-							break;
-						case 'u':
-							if ((pos + 4) <= line.length()) {
-								char uni = (char)Integer.parseInt(line.substring(pos, pos + 4), 16);
-								element.append(uni);
-								pos += 4;
-							}
+								break;
+							case 'u':
+								if ((pos + 4) <= line.length()) {
+									char uni = (char)Integer.parseInt(line.substring(pos, pos + 4), 16);
 
-							break;
-						default:
-							element.append(c);
+									element.append(uni);
 
-							break;
+									pos += 4;
+								}
+
+								break;
+							default:
+								element.append(c);
+
+								break;
 						}
 					}
 				}
@@ -348,18 +358,19 @@ public class BndProperties extends Properties {
 
 		StringBuilder s = new StringBuilder();
 
-		for (String keyString : keyList) {
-			formatForOutput(keyString, s, true);
+		for (String keyString : _keyList) {
+			_formatForOutput(keyString, s, true);
 			s.append(": ");
 
 			Object value = get(keyString);
 
 			if (value instanceof BndPropertiesValue) {
 				final BndPropertiesValue bndValue = (BndPropertiesValue)value;
+
 				writer.println(s.append(bndValue.getFormatedValue()));
 			}
 			else {
-				formatForOutput((String)value, s, false);
+				_formatForOutput((String)value, s, false);
 				writer.println(s);
 			}
 		}
@@ -367,10 +378,11 @@ public class BndProperties extends Properties {
 		writer.flush();
 	}
 
-	private String convert(byte[] buffer, Charset charset) throws IOException {
+	private String _convert(byte[] buffer, Charset charset) throws IOException {
 		CharsetDecoder decoder = charset.newDecoder();
 		ByteBuffer bb = ByteBuffer.wrap(buffer);
 		CharBuffer cb = CharBuffer.allocate(buffer.length * 4);
+
 		CoderResult result = decoder.decode(bb, cb, true);
 
 		if (!result.isError()) {
@@ -380,7 +392,7 @@ public class BndProperties extends Properties {
 		throw new CharacterCodingException();
 	}
 
-	private void formatForOutput(String str, StringBuilder buffer, boolean key) {
+	private void _formatForOutput(String str, StringBuilder buffer, boolean key) {
 		if (key) {
 			buffer.setLength(0);
 			buffer.ensureCapacity(str.length());
@@ -394,45 +406,46 @@ public class BndProperties extends Properties {
 
 		for (int i = 0; i < size; i++) {
 			char c = str.charAt(i);
+
 			switch (c) {
-			case '\n':
-				buffer.append("\\n");
+				case '\n':
+					buffer.append("\\n");
 
-				break;
-			case '\r':
-				buffer.append("\\r");
+					break;
+				case '\r':
+					buffer.append("\\r");
 
-				break;
-			case '\t':
-				buffer.append("\\t");
+					break;
+				case '\t':
+					buffer.append("\\t");
 
-				break;
-			case ' ':
-				buffer.append(head ? "\\ " : " ");
+					break;
+				case ' ':
+					buffer.append(head ? "\\ " : " ");
 
-				break;
+					break;
 
-			// case '\\':
+					// case '\\':
 
-			case '!':
-			case '#':
+				case '!':
+				case '#':
 
-				// case '=':
-				// case ':':
+					// case '=':
+					// case ':':
 
-				buffer.append('\\').append(c);
+					buffer.append('\\').append(c);
 
-				break;
-			default:
-				if ((c < ' ') || (c > '~')) {
-					String hex = Integer.toHexString(c);
+					break;
+				default:
+					if ((c < ' ') || (c > '~')) {
+						String hex = Integer.toHexString(c);
 
-					buffer.append("\\u0000".substring(0, 6 - hex.length()));
-					buffer.append(hex);
-				}
-				else {
-					buffer.append(c);
-				}
+						buffer.append("\\u0000".substring(0, 6 - hex.length()));
+						buffer.append(hex);
+					}
+					else {
+						buffer.append(c);
+					}
 			}
 
 			if (c != ' ') {
@@ -441,12 +454,11 @@ public class BndProperties extends Properties {
 		}
 	}
 
+	private static final int _PAGE_SIZE = 4096;
+
+	private static final Charset _UTF8 = Charset.forName("UTF-8");
+
+	private static final List<String> _keyList = new ArrayList<>();
 	private static final long serialVersionUID = 1L;
-
-	private final int PAGE_SIZE = 4096;
-
-	private Charset UTF8 = Charset.forName("UTF-8");
-
-	private List<String> keyList = new ArrayList<>();
 
 }

@@ -36,13 +36,14 @@ public class MavenRunnerUtil {
 		Assert.assertTrue(phases.length > 0);
 
 		String os = System.getProperty("os.name");
-		boolean isWindows = false;
+
+		boolean windows = false;
 
 		if (os.toLowerCase().startsWith("win")) {
-			isWindows = true;
+			windows = true;
 		}
 
-		boolean isBuildSuccess = false;
+		boolean buildSuccess = false;
 		int exitValue = 1;
 
 		StringBuilder commandBuilder = new StringBuilder();
@@ -54,13 +55,14 @@ public class MavenRunnerUtil {
 		try {
 			Runtime runTime = Runtime.getRuntime();
 
-			if (isWindows) {
+			if (windows) {
 				File mvnw = new File("mvnw.cmd");
-				FileUtils.copyFile(mvnw, new File(projectPath+"/mvnw.cmd"));
+
+				FileUtils.copyFile(mvnw, new File(projectPath + "/mvnw.cmd"));
 			}
 
 			Process process = runTime.exec(
-				(isWindows ? ".\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(), null, new File(projectPath));
+				(windows ? ".\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(), null, new File(projectPath));
 
 			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
@@ -68,7 +70,7 @@ public class MavenRunnerUtil {
 
 			while ((line = input.readLine()) != null) {
 				if (line.contains("BUILD SUCCESS")) {
-					isBuildSuccess = true;
+					buildSuccess = true;
 				}
 			}
 
@@ -78,7 +80,7 @@ public class MavenRunnerUtil {
 		}
 
 		Assert.assertEquals(0, exitValue);
-		Assert.assertTrue(isBuildSuccess);
+		Assert.assertTrue(buildSuccess);
 	}
 
 	public static void verifyBuildOutput(String projectPath, String fileName) {

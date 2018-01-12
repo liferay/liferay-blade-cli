@@ -25,45 +25,51 @@ import java.util.List;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandNames = {"convert"}, commandDescription = ConvertCommand.DESCRIPTION)
+@Parameters(
+	commandDescription = "Converts a plugins-sdk plugin project to a gradle WAR project in Liferay workspace",
+	commandNames = {"convert"}
+)
 public class ConvertCommandArgs {
 
 	public ConvertCommandArgs() {
 	}
 
 	public ConvertCommandArgs(boolean all, boolean list, boolean themeBuilder, List<String> name) {
-	this.all = all; this.list = list; this.themeBuilder = themeBuilder; this.name = name;
+		_all = all;
+		_list = list;
+		_themeBuilder = themeBuilder;
+		_name = name;
 	}
 
 	public List<String> getName() {
-		return name;
+		return _name;
 	}
 
 	public boolean isAll() {
-		return all;
+		return _all;
 	}
 
 	public boolean isList() {
-		return list;
+		return _list;
 	}
 
 	public boolean isThemeBuilder() {
-		return themeBuilder;
+		return _themeBuilder;
 	}
 
-	@Parameter(names = {"-a", "--all"}, description ="Migrate all plugin projects")
-	private boolean all;
+	@Parameter(description = "Migrate all plugin projects", names = {"-a", "--all"})
+	private boolean _all;
 
-	@Parameter(names = {"-l", "--list"}, description ="List the projects available to be converted")
-	private boolean list;
+	@Parameter(description = "List the projects available to be converted", names = {"-l", "--list"})
+	private boolean _list;
 
-	@Parameter(description ="[name]")
-	private List<String> name = new ArrayList<>();
+	@Parameter(description = "name")
+	private List<String> _name = new ArrayList<>();
 
 	@Parameter(
-		names = {"-t", "--themeBuilder"},
-		description ="Use ThemeBuilder gradle plugin instead of NodeJS to convert theme project"
+		description = "Use ThemeBuilder gradle plugin instead of NodeJS to convert theme project",
+		names = {"-t", "--theme-builder"}
 	)
-	private boolean themeBuilder;
+	private boolean _themeBuilder;
 
 }

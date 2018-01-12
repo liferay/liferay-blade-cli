@@ -144,8 +144,8 @@ public class PropertiesLocator {
 
 			_outputFile.println();
 			_outputFile.println(
-				"We haven't found a new property for the following old properties (check if you still " +
-					"need them or check the documentation to find a replacement):");
+				"We haven't found a new property for the following old properties (check if you still need them or " +
+					"check the documentation to find a replacement):");
 
 			Stream<PropertyProblem> problemsStream = problems.stream();
 
@@ -201,15 +201,15 @@ public class PropertiesLocator {
 		Map<String, ConfigurationClassData> configClassesMap = new HashMap<>();
 
 		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
-			paths.map(
-				path -> path.toFile()
-			).filter(
+			Stream<File> files = paths.map(path -> path.toFile());
+
+			files.filter(
 				file -> {
 					String absolutePath = file.getAbsolutePath();
 
 					return ((absolutePath.endsWith(".jar")) ||
-							 (absolutePath.endsWith(".lpkg"))) &&
-							 (!absolutePath.contains("/osgi/state/"));
+						 (absolutePath.endsWith(".lpkg"))) &&
+						 (!absolutePath.contains("/osgi/state/"));
 				}
 			).forEach(
 				file -> {
@@ -286,7 +286,9 @@ public class PropertiesLocator {
 
 		SortedSet<PropertyProblem> updatedProblems = new TreeSet<>();
 
-		problems.stream().filter(
+		Stream<PropertyProblem> problemsStream = problems.stream();
+
+		problemsStream.filter(
 			problem -> problem.getType() == PropertyProblemType.MISSING
 		).forEach(
 			problem -> {
@@ -363,15 +365,24 @@ public class PropertiesLocator {
 		// We don't need to analyze war files since, they are still like in previous versions so properties
 		// still remain in the same place
 
-		Predicate<Path> ignoreStateFilter = path -> !path.toString().contains("/osgi/state/");
-		Predicate<Path> lpkgFilter = path -> path.toString().endsWith(".lpkg");
+		Predicate<Path> ignoreStateFilter = p -> {
+			String path = p.toString();
+
+			return !path.contains("/osgi/state/");
+		};
+
+		Predicate<Path> lpkgFilter = p -> {
+			String path = p.toString();
+
+			return path.endsWith(".lpkg");
+		};
 
 		Path searchPathRoot = bundlePath.resolve("osgi");
 
 		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
-			paths.filter(
-				ignoreStateFilter
-			).map(
+			Stream<Path> filter = paths.filter(ignoreStateFilter);
+
+			filter.map(
 				jarPath -> jarPath.toAbsolutePath().toString()
 			).filter(
 				PropertiesLocator::_isLiferayJar
@@ -408,11 +419,11 @@ public class PropertiesLocator {
 		}
 
 		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
-			paths.filter(
-				ignoreStateFilter
-			).filter(
-				lpkgFilter
-			).map(
+			Stream<Path> filter = paths.filter(ignoreStateFilter);
+
+			Stream<Path> filter2 = filter.filter(lpkgFilter);
+
+			filter2.map(
 				lpkgPath -> lpkgPath.toAbsolutePath().toString()
 			).forEach(
 				lpkgAbsolutePath -> {
@@ -859,10 +870,8 @@ public class PropertiesLocator {
 				PropertyProblem updatedProblem = new PropertyProblem(
 					property, PropertyProblemType.MODULARIZED,
 					" ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.configuration." +
-							"SiteNavigationBreadcrumbWebTemplateConfiguration. More information at Breaking " +
-								"Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/" +
-									"knowledge_base/7-0/breaking-changes#" +
-										"replaced-the-breadcrumb-portlets-display-styles-with-adts",
+						"SiteNavigationBreadcrumbWebTemplateConfiguration. More information at Breaking Changes for " +
+							"Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts",
 					null);
 
 				informationToPrint.add(updatedProblem);
@@ -873,8 +882,8 @@ public class PropertiesLocator {
 				PropertyProblem updatedProblem = new PropertyProblem(
 					property, PropertyProblemType.REMOVED,
 					"Any DDM template as ddmTemplate_BREADCRUMB-HORIZONTAL-FTL can be used. More information at " +
-					"Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/" +
-					"7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts", null);
+						"Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts",
+					null);
 
 				informationToPrint.add(updatedProblem);
 

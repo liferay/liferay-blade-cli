@@ -42,28 +42,28 @@ public class FileWatcherTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		if (testdir.exists()) {
-			IO.delete(testdir);
-			Assert.assertFalse(testdir.exists());
+		if (_testdir.exists()) {
+			IO.delete(_testdir);
+			Assert.assertFalse(_testdir.exists());
 		}
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		testdir.mkdirs();
-		Assert.assertTrue(testdir.exists());
-		Assert.assertTrue(testfile.createNewFile());
+		_testdir.mkdirs();
+		Assert.assertTrue(_testdir.exists());
+		Assert.assertTrue(_testfile.createNewFile());
 	}
 
 	@Ignore
 	@Test
 	public void testFileWatcherMultipleFiles() throws Exception {
-		IO.write("foobar".getBytes(), testfile);
+		IO.write("foobar".getBytes(), _testfile);
 
 		final Map<Path, Boolean> changed = new HashMap<>();
 
-		changed.put(testfile.toPath(), false);
-		changed.put(testsecondfile.toPath(), false);
+		changed.put(_testfile.toPath(), false);
+		changed.put(_testsecondfile.toPath(), false);
 
 		final CountDownLatch latch = new CountDownLatch(2);
 
@@ -82,7 +82,7 @@ public class FileWatcherTest {
 			@Override
 			public void run() {
 				try {
-					new FileWatcher(testdir.toPath(), false, consumer);
+					new FileWatcher(_testdir.toPath(), false, consumer);
 				}
 				catch (IOException ioe) {
 				}
@@ -97,13 +97,13 @@ public class FileWatcherTest {
 
 		Thread.sleep(2000);
 
-		IO.write("touch".getBytes(), testfile);
-		IO.write("second file content".getBytes(), testsecondfile);
+		IO.write("touch".getBytes(), _testfile);
+		IO.write("second file content".getBytes(), _testsecondfile);
 
 		latch.await();
 
-		for (Path path : changed.keySet()) {
-			Assert.assertTrue(changed.get(path));
+		for (Map.Entry<Path, Boolean> entry : changed.entrySet()) {
+			Assert.assertTrue(entry.getValue());
 		}
 	}
 
@@ -130,7 +130,7 @@ public class FileWatcherTest {
 			@Override
 			public void run() {
 				try {
-					new FileWatcher(testdir.toPath(), testfile.toPath(), false, consumer);
+					new FileWatcher(_testdir.toPath(), _testfile.toPath(), false, consumer);
 				}
 				catch (IOException ioe) {
 				}
@@ -145,15 +145,15 @@ public class FileWatcherTest {
 
 		Thread.sleep(1000);
 
-		IO.write("touch".getBytes(), testfile);
+		IO.write("touch".getBytes(), _testfile);
 
 		latch.await();
 
 		Assert.assertTrue(changed[0]);
 	}
 
-	private final File testdir = IO.getFile("build/watch");
-	private final File testfile = new File(testdir, "file.txt");
-	private final File testsecondfile = new File(testdir, "second.txt");
+	private static final File _testdir = IO.getFile("build/watch");
+	private static final File _testfile = new File(_testdir, "file.txt");
+	private static final File _testsecondfile = new File(_testdir, "second.txt");
 
 }

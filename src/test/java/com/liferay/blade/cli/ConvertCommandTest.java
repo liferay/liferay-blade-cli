@@ -33,7 +33,7 @@ public class ConvertCommandTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		IO.delete(workspaceDir.getParentFile());
+		IO.delete(_workspaceDir.getParentFile());
 	}
 
 	@Test
@@ -55,11 +55,11 @@ public class ConvertCommandTest {
 
 		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		args = new String[] {"-b", projectDir.getPath(), "convert", "-a"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		Assert.assertTrue(
 			new File(
@@ -90,11 +90,11 @@ public class ConvertCommandTest {
 
 		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		args = new String[] {"-b", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File layoutWar = new File(projectDir, "wars/1-2-1-columns-layouttpl");
 
@@ -124,11 +124,11 @@ public class ConvertCommandTest {
 
 		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-application-adapter-hook"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File sampleExpandoHook = new File(projectDir, "wars/sample-application-adapter-hook");
 
@@ -138,7 +138,7 @@ public class ConvertCommandTest {
 
 		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-servlet-filter-hook"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File sampleServletFilterHook = new File(projectDir, "wars/sample-servlet-filter-hook");
 
@@ -164,13 +164,13 @@ public class ConvertCommandTest {
 
 		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
 
 		args = new String[] {"-b", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		Assert.assertTrue(theme.exists());
 
@@ -188,7 +188,7 @@ public class ConvertCommandTest {
 
 		args = new String[] {"-b", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File advancedTheme = new File(projectDir, "wars/sample-styled-advanced-theme");
 
@@ -209,22 +209,22 @@ public class ConvertCommandTest {
 
 	@Test
 	public void testReadIvyXml() throws Exception {
-		File projectDir = setupWorkspace("readIvyXml");
+		File projectDir = _setupWorkspace("readIvyXml");
 
 		String[] args = {"-b", projectDir.getPath(), "convert", "sample-dao-portlet"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
-		contains(
+		_contains(
 			new File(projectDir, "wars/sample-dao-portlet/build.gradle"),
 			".*compile group: 'c3p0', name: 'c3p0', version: '0.9.0.4'.*",
 			".*compile group: 'mysql', name: 'mysql-connector-java', version: '5.0.7'.*");
 
 		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-tapestry-portlet"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
-		contains(
+		_contains(
 			new File(projectDir, "wars/sample-tapestry-portlet/build.gradle"),
 			".*compile group: 'hivemind', name: 'hivemind', version: '1.1'.*",
 			".*compile group: 'hivemind', name: 'hivemind-lib', version: '1.1'.*",
@@ -237,28 +237,30 @@ public class ConvertCommandTest {
 
 	@Test
 	public void testThemeDocrootBackup() throws Exception {
-		File projectDir = setupWorkspace("testThemeDocrootBackup");
+		File projectDir = _setupWorkspace("testThemeDocrootBackup");
 
 		String[] args = {"-b", projectDir.getPath(), "convert", "-t", "sample-html4-theme"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		Assert.assertTrue(new File(projectDir, "wars/sample-html4-theme/docroot_backup/other/afile").exists());
 	}
 
-	private void contains(File file, String... patterns) throws Exception {
+	private void _contains(File file, String... patterns) throws Exception {
 		String content = new String(IO.read(file));
 
 		for (String pattern : patterns) {
-			contains(content, pattern);
+			_contains(content, pattern);
 		}
 	}
 
-	private void contains(String content, String pattern) throws Exception {
-		Assert.assertTrue(Pattern.compile(pattern, Pattern.MULTILINE | Pattern.DOTALL).matcher(content).matches());
+	private void _contains(String content, String regex) throws Exception {
+		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
+
+		Assert.assertTrue(pattern.matcher(content).matches());
 	}
 
-	private File setupWorkspace(String name) throws Exception {
+	private File _setupWorkspace(String name) throws Exception {
 		File testdir = IO.getFile("build/" + name);
 
 		if (testdir.exists()) {
@@ -274,13 +276,13 @@ public class ConvertCommandTest {
 
 		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		Assert.assertTrue(new File(projectDir, "plugins-sdk").exists());
 
 		return projectDir;
 	}
 
-	private final File workspaceDir = IO.getFile("build/test/workspace");
+	private static final File _workspaceDir = IO.getFile("build/test/workspace");
 
 }

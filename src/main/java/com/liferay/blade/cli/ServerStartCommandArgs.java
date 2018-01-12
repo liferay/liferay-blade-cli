@@ -22,28 +22,28 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandNames = {"server start"}, commandDescription = "Start server defined by your Liferay project")
+@Parameters(commandDescription = "Start server defined by your Liferay project", commandNames = {"server start"})
 public class ServerStartCommandArgs {
 
 	public boolean isBackground() {
-		return background;
+		return _background;
 	}
 
 	public boolean isDebug() {
-		return debug;
+		return _debug;
 	}
 
 	public boolean isTail() {
-		return tail;
+		return _tail;
 	}
 
-	@Parameter(names = {"-b", "--background"}, description ="Start server in background")
-	private boolean background;
+	@Parameter(description = "Start server in background", names = {"-b", "--background"})
+	private boolean _background;
 
-	@Parameter(names = {"-d", "--debug"}, description ="Start server in debug mode")
-	private boolean debug;
+	@Parameter(description = "Start server in debug mode", names = {"-d", "--debug"})
+	private boolean _debug;
 
-	@Parameter(names = {"-t", "--tail"}, description ="Tail a running server")
-	private boolean tail;
+	@Parameter(description = "Tail a running server", names = {"-t", "--tail"})
+	private boolean _tail;
 
 }

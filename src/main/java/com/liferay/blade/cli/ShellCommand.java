@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ShellCommand {
 
-	public ShellCommand(blade blade, ShellCommandArgs options) throws Exception {
+	public ShellCommand(BladeCLI blade, ShellCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 
@@ -35,21 +35,21 @@ public class ShellCommand {
 
 	public void execute() throws Exception {
 		if (!Util.canConnect(_host, _port)) {
-			addError("sh", "Unable to connect to gogo shell on " + _host + ":" + _port);
+			_addError("sh", "Unable to connect to gogo shell on " + _host + ":" + _port);
 
 			return;
 		}
 
 		String gogoCommand = StringUtils.join(_options.getArgs(), " ");
 
-		executeCommand(gogoCommand);
+		_executeCommand(gogoCommand);
 	}
 
-	private void addError(String prefix, String msg) {
+	private void _addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private void executeCommand(String cmd) throws Exception {
+	private void _executeCommand(String cmd) throws Exception {
 		final GogoTelnetClient telnetClient = new GogoTelnetClient(_host, _port);
 
 		String response = telnetClient.send(cmd);
@@ -59,7 +59,7 @@ public class ShellCommand {
 		telnetClient.close();
 	}
 
-	private final blade _blade;
+	private final BladeCLI _blade;
 	private final String _host;
 	private final ShellCommandArgs _options;
 	private final int _port;

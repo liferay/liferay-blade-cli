@@ -25,111 +25,111 @@ import java.io.File;
  * @author Gregory Amerson
  */
 @Parameters(
-	commandNames = {"create"},
-	commandDescription = "Creates a new Liferay module project from several available templates."
+	commandDescription = "Creates a new Liferay module project from several available templates.",
+	commandNames = {"create"}
 )
 public class CreateCommandArgs {
 
 	public String getBuild() {
-		return build;
+		return _build;
 	}
 
 	public String getClassname() {
-		return classname;
+		return _classname;
 	}
 
 	public String getContributorType() {
-		return contributorType;
+		return _contributorType;
 	}
 
 	public File getDir() {
-		return dir;
+		return _dir;
 	}
 
-	public String getHostbundlebsn() {
-		return hostbundlebsn;
+	public String getHostBundleBSN() {
+		return _hostBundleBSN;
 	}
 
-	public String getHostbundleversion() {
-		return hostbundleversion;
+	public String getHostBundleVersion() {
+		return _hostBundleVersion;
 	}
 
 	public String getName() {
-		return name;
+		return _name;
 	}
 
-	public String getPackagename() {
-		return packagename;
+	public String getPackageName() {
+		return _packageName;
 	}
 
 	public String getService() {
-		return service;
+		return _service;
 	}
 
 	public String getTemplate() {
-		return template;
+		return _template;
 	}
 
 	public boolean isListTemplates() {
-		return listTemplates;
+		return _listTemplates;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		_name = name;
 	}
 
 	@Parameter(
-		names = {"-b", "--build"},
-		description = "Specify the build type of the project. Available options are gradle, maven. (gradle is default)"
+		description = "Specify the build type of the project. Available options are gradle, maven. (gradle is default)",
+		names = {"-b", "--build"}
 	)
-	private String build;
+	private String _build;
 
 	@Parameter(
-		names = {"-c", "--classname"},
-		description = "If a class is generated in the project, provide the name of the class to be generated. If not provided defaults to project name."
+		description = "If a class is generated in the project, provide the name of the class to be generated. If not provided defaults to project name.",
+		names = {"-c", "--classname"}
 	)
-	private String classname;
+	private String _classname;
 
 	@Parameter(
-		names = {"-C", "--contributor-type"},
-		description = "Used to identify your module as a Theme Contributor. Also, used to add the Liferay-Theme-Contributor-Type and Web-ContextPath bundle headers."
+		description = "Used to identify your module as a Theme Contributor. Also, used to add the Liferay-Theme-Contributor-Type and Web-ContextPath bundle headers.",
+		names = {"-C", "--contributor-type"}
 	)
-	private String contributorType;
+	private String _contributorType;
 
-	@Parameter(names = {"-d", "--dir"}, description ="The directory where to create the new project.")
-	private File dir;
+	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
+	private File _dir;
 
 	@Parameter(
-		names = {"-h", "--host-bundle-bsn"},
-		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle symbolic name."
+		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle symbolic name.",
+		names = {"-h", "--host-bundle-bsn"}
 	)
-	private String hostbundlebsn;
+	private String _hostBundleBSN;
 
 	@Parameter(
-		names = {"-H", "--host-bundle-version"},
-		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle version."
+		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle version.",
+		names = {"-H", "--host-bundle-version"}
 	)
-	private String hostbundleversion;
+	private String _hostBundleVersion;
 
-	@Parameter(names = {"-l", "--list-templates"}, description ="Prints a list of available project templates")
-	private boolean listTemplates;
+	@Parameter(description = "Prints a list of available project templates", names = {"-l", "--list-templates"})
+	private boolean _listTemplates;
 
-	@Parameter(description ="The project name")
-	private String name;
+	@Parameter(description = "The project name")
+	private String _name;
 
 	@Parameter(names = {"-p", "--package-name"})
-	private String packagename;
+	private String _packageName;
 
 	@Parameter(
-		names = {"-s", "--service"},
-		description = "If a new DS component needs to be created, provides the name of the service to be implemented."
+		description = "If a new DS component needs to be created, provides the name of the service to be implemented.",
+		names = {"-s", "--service"}
 	)
-	private String service;
+	private String _service;
 
 	@Parameter(
-		names = {"-t", "--template"},
-		description = "The project template to use when creating the project. To see the list of templates available use blade create <-l | --list-templates>"
+		description = "The project template to use when creating the project. To see the list of templates available use blade create <-l | --list-templates>",
+		names = {"-t", "--template"}
 	)
-	private String template;
+	private String _template;
 
 }

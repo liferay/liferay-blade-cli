@@ -26,17 +26,17 @@ import com.beust.jcommander.Parameters;
 public class BladeArgs {
 
 	public String getBase() {
-		return base;
+		return _base;
 	}
 
 	public boolean isTrace() {
-		return trace;
+		return _trace;
 	}
 
-	@Parameter(names = {"-b", "--base"}, description ="Specify a new base directory (default working directory).")
-	private String base = ".";
+	@Parameter(description = "Specify a new base directory (default working directory).", names = {"-b", "--base"})
+	private String _base = ".";
 
-	@Parameter(names = {"-t", "--trace"}, description ="Print exception stack traces when they occur.")
-	private boolean trace;
+	@Parameter(description = "Print exception stack traces when they occur.", names = {"-t", "--trace"})
+	private boolean _trace;
 
 }

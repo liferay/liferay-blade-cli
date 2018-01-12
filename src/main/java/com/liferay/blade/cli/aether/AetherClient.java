@@ -62,7 +62,7 @@ public class AetherClient {
 	}
 
 	public AetherClient(String[] repoUrls) {
-		this(repoUrls, lookupLocalRepoDir().getPath());
+		this(repoUrls, _lookupLocalRepoDir().getPath());
 	}
 
 	public AetherClient(String[] repoUrls, String localRepositoryPath) {
@@ -71,16 +71,18 @@ public class AetherClient {
 	}
 
 	public Artifact findLatestAvailableArtifact(String groupIdArtifactId) throws ArtifactResolutionException {
-		final RepositorySystem system = newRepositorySystem();
-		final List<RemoteRepository> repos = repos();
+		final RepositorySystem system = _newRepositorySystem();
+		final List<RemoteRepository> repos = _repos();
 		final String range = "[0,)";
+
 		final Artifact artifactRange = new DefaultArtifact(groupIdArtifactId + ":" + range);
 
 		final VersionRangeRequest rangeRequest = new VersionRangeRequest();
+
 		rangeRequest.setArtifact(artifactRange);
 		rangeRequest.setRepositories(repos);
 
-		final RepositorySystemSession session = newRepositorySystemSession(system, _localRepositoryPath);
+		final RepositorySystemSession session = _newRepositorySystemSession(system, _localRepositoryPath);
 
 		Version version = null;
 
@@ -107,11 +109,11 @@ public class AetherClient {
 		return artifact;
 	}
 
-	private static Settings buildSettings() {
+	private static Settings _buildSettings() {
 		SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
 
-		request.setGlobalSettingsFile(DEFAULT_GLOBAL_SETTINGS_FILE);
-		request.setUserSettingsFile(USER_MAVEN_DEFAULT_USER_SETTINGS_FILE);
+		request.setGlobalSettingsFile(_DEFAULT_GLOBAL_SETTINGS_FILE);
+		request.setUserSettingsFile(_USER_MAVEN_DEFAULT_USER_SETTINGS_FILE);
 
 		try {
 			DefaultSettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
@@ -125,21 +127,21 @@ public class AetherClient {
 		}
 	}
 
-	private static File lookupLocalRepoDir() {
-		String localRepoPathSetting = buildSettings().getLocalRepository();
+	private static File _lookupLocalRepoDir() {
+		String localRepoPathSetting = _buildSettings().getLocalRepository();
 
 		if (localRepoPathSetting == null) {
-			return new File(USER_MAVEN_CONFIGURATION_HOME, "repository");
+			return new File(_USER_MAVEN_CONFIGURATION_HOME, "repository");
 		}
 
 		return new File(localRepoPathSetting);
 	}
 
-	private static RemoteRepository newRemoteRepository(String url) {
+	private static RemoteRepository _newRemoteRepository(String url) {
 		return new RemoteRepository.Builder("blade", "default", url).build();
 	}
 
-	private static RepositorySystem newRepositorySystem() {
+	private static RepositorySystem _newRepositorySystem() {
 		DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
 
 		locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
@@ -162,7 +164,7 @@ public class AetherClient {
 		return system;
 	}
 
-	private static DefaultRepositorySystemSession newRepositorySystemSession(
+	private static DefaultRepositorySystemSession _newRepositorySystemSession(
 		RepositorySystem system, String localRepositoryPath) {
 
 		final DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
@@ -177,25 +179,25 @@ public class AetherClient {
 		return session;
 	}
 
-	private List<RemoteRepository> repos() {
+	private List<RemoteRepository> _repos() {
 		final List<RemoteRepository> repos = new ArrayList<>();
 
 		for (String repoUrl : _repoUrls) {
-			repos.add(newRemoteRepository(repoUrl));
+			repos.add(_newRemoteRepository(repoUrl));
 		}
 
 		return Collections.unmodifiableList(repos);
 	}
 
-	private static final File DEFAULT_GLOBAL_SETTINGS_FILE = new File(
+	private static final File _DEFAULT_GLOBAL_SETTINGS_FILE = new File(
 		System.getProperty("maven.home", System.getProperty("user.dir", "")), "conf/settings.xml");
 
-	private static final String USER_HOME = System.getProperty("user.home");
+	private static final String _USER_HOME = System.getProperty("user.home");
 
-	private static final File USER_MAVEN_CONFIGURATION_HOME = new File(USER_HOME, ".m2");
+	private static final File _USER_MAVEN_CONFIGURATION_HOME = new File(_USER_HOME, ".m2");
 
-	private static final File USER_MAVEN_DEFAULT_USER_SETTINGS_FILE = new File(
-		USER_MAVEN_CONFIGURATION_HOME, "settings.xml");
+	private static final File _USER_MAVEN_DEFAULT_USER_SETTINGS_FILE = new File(
+		_USER_MAVEN_CONFIGURATION_HOME, "settings.xml");
 
 	private static final String[] _defaultRepoUrls =
 		{"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"};

@@ -25,50 +25,50 @@ public class BndPropertiesValue {
 	}
 
 	public BndPropertiesValue(String value) {
-		this.formatedValue = value;
-		this.originalValue = value;
+		_formatedValue = value;
+		_originalValue = value;
 	}
 
 	public BndPropertiesValue(String formatedValue, String originalValue) {
-		this.formatedValue = formatedValue;
-		this.originalValue = originalValue;
+		_formatedValue = formatedValue;
+		_originalValue = originalValue;
 	}
 
 	public String getFormatedValue() {
-		return formatedValue;
+		return _formatedValue;
 	}
 
 	public int getKeyIndex() {
-		return keyIndex;
+		return _keyIndex;
 	}
 
 	public String getOriginalValue() {
-		return originalValue;
+		return _originalValue;
 	}
 
 	public boolean isMultiLine() {
-		return isMultiLine;
+		return _multiLine;
 	}
 
 	public void setFormatedValue(String formatedValue) {
-		this.formatedValue = formatedValue;
+		_formatedValue = formatedValue;
 	}
 
 	public void setKeyIndex(int keyIndex) {
-		this.keyIndex = keyIndex;
+		_keyIndex = keyIndex;
 	}
 
-	public void setMultiLine(boolean isMultiLine) {
-		this.isMultiLine = isMultiLine;
+	public void setMultiLine(boolean multiLine) {
+		_multiLine = multiLine;
 	}
 
 	public void setOriginalValue(String originalValue) {
-		this.originalValue = originalValue;
+		_originalValue = originalValue;
 	}
 
-	private String formatedValue;
-	private boolean isMultiLine;
-	private int keyIndex;
-	private String originalValue;
+	private String _formatedValue;
+	private int _keyIndex;
+	private boolean _multiLine;
+	private String _originalValue;
 
 }

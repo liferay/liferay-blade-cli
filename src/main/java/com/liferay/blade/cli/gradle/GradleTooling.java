@@ -38,33 +38,35 @@ import org.gradle.tooling.ProjectConnection;
 public class GradleTooling {
 
 	public static Set<File> getOutputFiles(File cacheDir, File buildDir) throws Exception {
-		final CustomModel model = getModel(CustomModel.class, cacheDir, buildDir);
+		final CustomModel model = _getModel(CustomModel.class, cacheDir, buildDir);
 
 		return model.getOutputFiles();
 	}
 
 	public static Set<String> getPluginClassNames(File cacheDir, File buildDir) throws Exception {
-		final CustomModel model = getModel(CustomModel.class, cacheDir, buildDir);
+		final CustomModel model = _getModel(CustomModel.class, cacheDir, buildDir);
 
 		return model.getPluginClassNames();
 	}
 
 	public static boolean isLiferayModule(File cacheDir, File buildDir) throws Exception {
-		final CustomModel model = getModel(CustomModel.class, cacheDir, buildDir);
+		final CustomModel model = _getModel(CustomModel.class, cacheDir, buildDir);
 
 		return model.isLiferayModule();
 	}
 
-	private static <T> T getModel(Class<T> modelClass, File cacheDir, File projectDir) throws Exception {
+	private static <T> T _getModel(Class<T> modelClass, File cacheDir, File projectDir) throws Exception {
 		T retval = null;
 
 		final GradleConnector connector = GradleConnector.newConnector();
+
 		connector.forProjectDirectory(projectDir);
 
 		ProjectConnection connection = null;
 
 		try {
 			connection = connector.connect();
+
 			ModelBuilder<T> modelBuilder = connection.model(modelClass);
 
 			final File depsDir = new File(cacheDir, "deps");

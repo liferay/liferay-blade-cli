@@ -27,13 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author David Truong
  */
 public class ServerStopCommand {
 
-	public ServerStopCommand(blade blade, ServerStopCommandArgs options) {
+	public ServerStopCommand(BladeCLI blade, ServerStopCommandArgs options) {
 		_blade = blade;
 	}
 
@@ -43,6 +44,8 @@ public class ServerStopCommand {
 		File rootDir = gradleWrapper.getParent().toFile();
 
 		String serverType = null;
+
+		Path rootDirPath = rootDir.toPath();
 
 		if (Util.isWorkspace(rootDir)) {
 			Properties properties = Util.getGradleProperties(rootDir);
@@ -76,12 +79,12 @@ public class ServerStopCommand {
 				liferayHomeDir = tempLiferayHome.normalize();
 			}
 			else {
-				Path tempFile = rootDir.toPath().resolve(tempLiferayHome);
+				Path tempFile = rootDirPath.resolve(tempLiferayHome);
 
 				liferayHomeDir = tempFile.normalize();
 			}
 
-			commandServer(liferayHomeDir, serverType);
+			_commandServer(liferayHomeDir, serverType);
 		}
 		else {
 			try {
@@ -94,8 +97,10 @@ public class ServerStopCommand {
 						String appServerParentDirTemp = properties.getProperty(Util.APP_SERVER_PARENT_DIR_PROPERTY);
 
 						if ((appServerParentDirTemp != null) && !appServerParentDirTemp.equals("")) {
+							Path rootDirRealPath = rootDirPath.toRealPath();
+
 							appServerParentDirTemp = appServerParentDirTemp.replace(
-								"${project.dir}", rootDir.toPath().toRealPath().toString());
+								"${project.dir}", rootDirRealPath.toString());
 
 							appServerParentDir = appServerParentDirTemp;
 						}
@@ -111,10 +116,10 @@ public class ServerStopCommand {
 				}
 
 				if (appServerParentDir.startsWith("/") || appServerParentDir.contains(":")) {
-					commandServer(Paths.get(appServerParentDir), serverType);
+					_commandServer(Paths.get(appServerParentDir), serverType);
 				}
 				else {
-					commandServer(rootDir.toPath().resolve(appServerParentDir), serverType);
+					_commandServer(rootDirPath.resolve(appServerParentDir), serverType);
 				}
 			}
 			catch (Exception e) {
@@ -123,41 +128,42 @@ public class ServerStopCommand {
 		}
 	}
 
-	private void commandServer(Path dir, String serverType) throws Exception {
-		if (Files.notExists(dir) || !Files.list(dir).findAny().isPresent()) {
-			_blade.error(
-				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to" +
-					" create it.");
+	private void _commandServer(Path dir, String serverType) throws Exception {
+		try (Stream<Path> list = Files.list(dir)) {
+			if (Files.notExists(dir) || !list.findAny().isPresent()) {
+				_blade.error(
+					" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
+						"create it.");
 
-			return;
-		}
+				return;
+			}
 
-		for (Path file : Files.list(dir).collect(Collectors.toList()))
-		{
-			Path fileName = file.getFileName();
+			for (Path file : list.collect(Collectors.toList())) {
+				Path fileName = file.getFileName();
 
-			if (fileName.startsWith(serverType) && Files.isDirectory(file)) {
-				if (serverType.equals("tomcat")) {
-					commmandTomcat(file);
+				if (fileName.startsWith(serverType) && Files.isDirectory(file)) {
+					if (serverType.equals("tomcat")) {
+						_commmandTomcat(file);
 
-					return;
-				}
-				else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
-					commmandJBossWildfly(file);
+						return;
+					}
+					else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
+						_commmandJBossWildfly();
 
-					return;
+						return;
+					}
 				}
 			}
-		}
 
-		_blade.error(serverType + " not supported");
+			_blade.error(serverType + " not supported");
+		}
 	}
 
-	private void commmandJBossWildfly(Path dir) throws Exception {
+	private void _commmandJBossWildfly() throws Exception {
 		_blade.error("JBoss/Wildfly supports start command and debug flag");
 	}
 
-	private void commmandTomcat(Path dir) throws Exception {
+	private void _commmandTomcat(Path dir) throws Exception {
 		Map<String, String> enviroment = new HashMap<>();
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
@@ -168,12 +174,12 @@ public class ServerStopCommand {
 			executable = "catalina.bat";
 		}
 
-			Process process = Util.startProcess(
-				_blade, executable + " stop 60 -force", dir.resolve("bin").toFile(), enviroment);
+		Process process = Util.startProcess(
+			_blade, executable + " stop 60 -force", dir.resolve("bin").toFile(), enviroment);
 
-			process.waitFor();
+		process.waitFor();
 	}
 
-	private blade _blade;
+	private BladeCLI _blade;
 
 }

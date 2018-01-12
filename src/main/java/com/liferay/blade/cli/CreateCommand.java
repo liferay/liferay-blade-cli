@@ -27,6 +27,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,74 +39,70 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class CreateCommand {
 
-	public CreateCommand(blade blade, CreateCommandArgs options) {
+	public CreateCommand(BladeCLI blade, CreateCommandArgs args) {
 		_blade = blade;
-		_options = options;
-	}
-
-	CreateCommand(blade blade) {
-		_blade = blade;
-		_options = null;
+		_args = args;
 	}
 
 	public void execute() throws Exception {
-		if (_options.isListTemplates()) {
-			printTemplates();
+		if (_args.isListTemplates()) {
+			_printTemplates();
 			return;
 		}
 
-		String name = _options.getName();
+		String name = _args.getName();
 
 		if (Util.isEmpty(name)) {
-			addError("Create", "SYNOPSIS\n\t create [options] <[name]>");
+			_addError("Create", "SYNOPSIS\n\t create [options] <[name]>");
 			return;
 		}
 
-		String template = _options.getTemplate();
+		String template = _args.getTemplate();
 
 		if (template == null) {
 			template = "mvc-portlet";
 		}
-		else if (!isExistingTemplate(template)) {
-			addError("Create", "the template "+template+" is not in the list"); return;
+		else if (!_isExistingTemplate(template)) {
+			_addError("Create", "The template " + template + " is not in the list");
+
+			return;
 		}
 
 		File dir;
 
-		if (_options.getDir() != null) {
-			dir = new File(_options.getDir().getAbsolutePath());
+		if (_args.getDir() != null) {
+			dir = new File(_args.getDir().getAbsolutePath());
 		}
 		else if (template.equals("theme") || template.equals("layout-template") ||
 				 template.equals("spring-mvc-portlet")) {
 
-			dir = getDefaultWarsDir();
+			dir = _getDefaultWarsDir();
 		}
 		else {
-			dir = getDefaultModulesDir();
+			dir = _getDefaultModulesDir();
 		}
 
 		final File checkDir = new File(dir, name);
 
-		if (!checkDir(checkDir)) {
-			addError(
-				"Create", name + " is not empty or it is a file." +
-				" Please clean or delete it then run again");
+		if (!_checkDir(checkDir)) {
+			_addError("Create", name + " is not empty or it is a file. Please clean or delete it then run again");
+
 			return;
 		}
 
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
-		projectTemplatesArgs.setClassName(_options.getClassname());
-		projectTemplatesArgs.setContributorType(_options.getContributorType());
+		projectTemplatesArgs.setClassName(_args.getClassname());
+		projectTemplatesArgs.setContributorType(_args.getContributorType());
 		projectTemplatesArgs.setDestinationDir(dir);
-		projectTemplatesArgs.setHostBundleSymbolicName(_options.getHostbundlebsn());
-		projectTemplatesArgs.setHostBundleVersion(_options.getHostbundleversion());
+		projectTemplatesArgs.setHostBundleSymbolicName(_args.getHostBundleBSN());
+		projectTemplatesArgs.setHostBundleVersion(_args.getHostBundleVersion());
 		projectTemplatesArgs.setName(name);
-		projectTemplatesArgs.setPackageName(_options.getPackagename());
-		projectTemplatesArgs.setService(_options.getService());
+		projectTemplatesArgs.setPackageName(_args.getPackageName());
+		projectTemplatesArgs.setService(_args.getService());
 		projectTemplatesArgs.setTemplate(template);
 
-		boolean mavenBuild = "maven".equals(_options.getBuild());
+		boolean mavenBuild = "maven".equals(_args.getBuild());
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
 		projectTemplatesArgs.setMaven(mavenBuild);
@@ -115,24 +113,25 @@ public class CreateCommand {
 			"Successfully created project " + projectTemplatesArgs.getName() + " in " + dir.getAbsolutePath());
 	}
 
-	void execute(ProjectTemplatesArgs projectTemplatesArgs) throws Exception {
+	protected CreateCommand(BladeCLI blade) {
+		_blade = blade;
+		_args = null;
+	}
+
+	protected void execute(ProjectTemplatesArgs projectTemplatesArgs) throws Exception {
 		File dir = projectTemplatesArgs.getDestinationDir();
 		String name = projectTemplatesArgs.getName();
 
 		new ProjectTemplates(projectTemplatesArgs);
 
-		File gradlew = new File(dir, name+"/gradlew");
+		File gradlew = new File(dir, name + "/gradlew");
 
 		if (gradlew.exists()) {
 			gradlew.setExecutable(true);
 		}
 	}
 
-	private void addError(String prefix, String msg) {
-		_blade.addErrors(prefix, Collections.singleton(msg));
-	}
-
-	private boolean checkDir(File file) {
+	private static boolean _checkDir(File file) {
 		if (file.exists()) {
 			if (!file.isDirectory()) {
 				return false;
@@ -149,7 +148,7 @@ public class CreateCommand {
 		return true;
 	}
 
-	private boolean containsDir(File currentDir, File parentDir) throws Exception {
+	private static boolean _containsDir(File currentDir, File parentDir) throws Exception {
 		String currentPath = currentDir.getCanonicalPath();
 
 		String parentPath = parentDir.getCanonicalPath();
@@ -157,7 +156,19 @@ public class CreateCommand {
 		return currentPath.startsWith(parentPath);
 	}
 
-	private File getDefaultModulesDir() throws Exception {
+	private static String[] _getTemplateNames() throws Exception {
+		Map<String, String> templates = ProjectTemplates.getTemplates();
+
+		Set<String> keySet = templates.keySet();
+
+		return keySet.toArray(new String[0]);
+	}
+
+	private void _addError(String prefix, String msg) {
+		_blade.addErrors(prefix, Collections.singleton(msg));
+	}
+
+	private File _getDefaultModulesDir() throws Exception {
 		File baseDir = _blade.getBase();
 
 		if (!Util.isWorkspace(baseDir)) {
@@ -176,14 +187,14 @@ public class CreateCommand {
 
 		File modulesDir = new File(projectDir, modulesDirValue);
 
-		if (containsDir(baseDir, modulesDir)) {
+		if (_containsDir(baseDir, modulesDir)) {
 			return baseDir;
 		}
 
 		return modulesDir;
 	}
 
-	private File getDefaultWarsDir() throws Exception {
+	private File _getDefaultWarsDir() throws Exception {
 		File baseDir = _blade.getBase();
 
 		if (!Util.isWorkspace(baseDir)) {
@@ -206,21 +217,15 @@ public class CreateCommand {
 
 		File warsDir = new File(projectDir, warsDirValue);
 
-		if (containsDir(baseDir, warsDir)) {
+		if (_containsDir(baseDir, warsDir)) {
 			return baseDir;
 		}
 
 		return warsDir;
 	}
 
-	private String[] getTemplateNames() throws Exception {
-		Map<String, String> templates = ProjectTemplates.getTemplates();
-
-		return templates.keySet().toArray(new String[0]);
-	}
-
-	private boolean isExistingTemplate(String templateName) throws Exception {
-		String[] templates = getTemplateNames();
+	private boolean _isExistingTemplate(String templateName) throws Exception {
+		String[] templates = _getTemplateNames();
 
 		for (String template : templates) {
 			if (templateName.equals(template)) {
@@ -231,7 +236,7 @@ public class CreateCommand {
 		return false;
 	}
 
-	private void printTemplates() throws Exception {
+	private void _printTemplates() throws Exception {
 		Map<String, String> templates = ProjectTemplates.getTemplates();
 
 		List<String> templateNames = new ArrayList<>(templates.keySet());
@@ -240,7 +245,11 @@ public class CreateCommand {
 
 		Comparator<String> compareLength = Comparator.comparingInt(String::length);
 
-		String longestString = templateNames.stream().max(compareLength).get();
+		Stream<String> stream = templateNames.stream();
+
+		String longestString = stream.max(
+			compareLength
+		).get();
 
 		int padLength = longestString.length() + 2;
 
@@ -251,7 +260,7 @@ public class CreateCommand {
 		}
 	}
 
-	private final blade _blade;
-	private final CreateCommandArgs _options;
+	private final CreateCommandArgs _args;
+	private final BladeCLI _blade;
 
 }

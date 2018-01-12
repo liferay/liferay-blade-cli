@@ -41,13 +41,14 @@ public class AetherClientTest {
 
 		File file = artifact.getFile();
 
-		String name = file.getName();
-
 		Assert.assertNotNull(file);
 		Assert.assertTrue(file.exists());
+		Assert.assertTrue(file.getPath().contains("test-resources/localrepo"));
+
+		String name = file.getName();
+
 		Assert.assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
 		Assert.assertTrue(name.endsWith("sources.jar"));
-		Assert.assertTrue(file.getPath().contains("test-resources/localrepo"));
 		Assert.assertTrue(name.contains("1.0.8"));
 	}
 
@@ -63,10 +64,11 @@ public class AetherClientTest {
 
 		File file = artifact.getFile();
 
-		String name = file.getName();
-
 		Assert.assertNotNull(file);
 		Assert.assertTrue(file.exists());
+
+		String name = file.getName();
+
 		Assert.assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
 		Assert.assertTrue(name.endsWith("sources.jar"));
 		Assert.assertEquals(name, true, name.matches(".*-1\\.[0-9]+\\.[0-9]+-.*"));

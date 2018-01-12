@@ -25,35 +25,35 @@ import java.io.File;
  * @author Gregory Amerson
  */
 @Parameters(
-	commandNames = {"upgradeProps"},
-	commandDescription = "Helps to upgrade portal properties from Liferay server 6.x to 7.x versions"
+	commandDescription = "Helps to upgrade portal properties from Liferay server 6.x to 7.x versions",
+	commandNames = {"upgradeProps"}
 )
 public class UpgradePropsOptions {
 
 	public File getBundleDir() {
-		return bundleDir;
+		return _bundleDir;
 	}
 
 	public File getOutputFile() {
-		return outputFile;
+		return _outputFile;
 	}
 
 	public File getPropertiesFile() {
-		return propertiesFile;
+		return _propertiesFile;
 	}
 
-	@Parameter(names = {"-d", "--bundleDir"}, description ="Liferay server bundle directory.")
-	private File bundleDir;
+	@Parameter(description = "Liferay server bundle directory.", names = {"-d", "--bundle-dir"})
+	private File _bundleDir;
 
 	@Parameter(
-		names = {"-o", "--outputFile"},
-		description ="If specified, write out report to this file, otherwise uses stdout."
+		description = "If specified, write out report to this file, otherwise uses stdout.",
+		names = {"-o", "--output-file"}
 	)
-	private File outputFile;
+	private File _outputFile;
 
 	@Parameter(
-		names = {"-p", "--propertiesFile"}, description ="Specify existing Liferay 6.x portal-ext.properties file."
+		description = "Specify existing Liferay 6.x portal-ext.properties file.", names = {"-p", "--properties-file"}
 	)
-	private File propertiesFile;
+	private File _propertiesFile;
 
 }

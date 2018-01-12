@@ -22,28 +22,28 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandNames = {"install"}, commandDescription = InstallCommand.DESCRIPTION)
+@Parameters(commandDescription = InstallCommand.DESCRIPTION, commandNames = {"install"})
 public class InstallCommandArgs {
 
 	public String getBundleFileName() {
-		return bundleFileName;
+		return _bundleFileName;
 	}
 
 	public String getHost() {
-		return host;
+		return _host;
 	}
 
 	public int getPort() {
-		return port;
+		return _port;
 	}
 
-	@Parameter(description ="Bundle File Name")
-	private String bundleFileName;
+	@Parameter(description = "Bundle File Name")
+	private String _bundleFileName;
 
-	@Parameter(names = {"-h", "--host"}, description ="The host to use to connect to gogo shell")
-	private String host;
+	@Parameter(description = "The host to use to connect to gogo shell", names = {"-h", "--host"})
+	private String _host;
 
-	@Parameter(names = {"-p", "--port"}, description ="The port to use to connect to gogo shell")
-	private int port;
+	@Parameter(description = "The port to use to connect to gogo shell", names = {"-p", "--port"})
+	private int _port;
 
 }

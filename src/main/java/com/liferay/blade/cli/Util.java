@@ -185,7 +185,7 @@ public class Util {
 		}
 	}
 
-	public static File getWorkspaceDir(blade blade) {
+	public static File getWorkspaceDir(BladeCLI blade) {
 		return getWorkspaceDir(blade.getBase());
 	}
 
@@ -209,7 +209,7 @@ public class Util {
 	}
 
 	public static boolean isEmpty(List<?> list) {
-		if ((list == null) || (list.size() == 0)) {
+		if ((list == null) || list.isEmpty()) {
 			return true;
 		}
 
@@ -241,10 +241,12 @@ public class Util {
 	}
 
 	public static boolean isWindows() {
-		return System.getProperty("os.name").toLowerCase().contains("windows");
+		String osName = System.getProperty("os.name");
+
+		return osName.toLowerCase().contains("windows");
 	}
 
-	public static boolean isWorkspace(blade blade) {
+	public static boolean isWorkspace(BladeCLI blade) {
 		return isWorkspace(blade.getBase());
 	}
 
@@ -282,7 +284,7 @@ public class Util {
 		}
 	}
 
-	public static void printHelp(blade blade, Options options, String cmd, Class< ? extends Options> optionClass)
+	public static void printHelp(BladeCLI blade, Options options, String cmd, Class< ? extends Options> optionClass)
 		throws Exception {
 
 		Justif j = new Justif();
@@ -332,7 +334,7 @@ public class Util {
 
 		List<String> commands = new ArrayList<>();
 
-		if (Util.isWindows()) {
+		if (isWindows()) {
 			commands.add("cmd.exe");
 			commands.add("/c");
 		}
@@ -348,22 +350,22 @@ public class Util {
 		processBuilder.command(commands);
 	}
 
-	public static Process startProcess(blade blade, String command) throws Exception {
+	public static Process startProcess(BladeCLI blade, String command) throws Exception {
 		return startProcess(blade, command, blade.getBase(), null, true);
 	}
 
-	public static Process startProcess(blade blade, String command, File dir, boolean inheritIO) throws Exception {
+	public static Process startProcess(BladeCLI blade, String command, File dir, boolean inheritIO) throws Exception {
 		return startProcess(blade, command, dir, null, inheritIO);
 	}
 
-	public static Process startProcess(blade blade, String command, File dir, Map<String, String> environment)
+	public static Process startProcess(BladeCLI blade, String command, File dir, Map<String, String> environment)
 		throws Exception {
 
 		return startProcess(blade, command, dir, environment, true);
 	}
 
 	public static Process startProcess(
-			blade blade, String command, File dir, Map<String, String> environment, boolean inheritIO)
+			BladeCLI blade, String command, File dir, Map<String, String> environment, boolean inheritIO)
 		throws Exception {
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
@@ -442,6 +444,7 @@ public class Util {
 
 				if (!dir.exists() && !dir.mkdirs()) {
 					final String msg = "Could not create dir: " + dir.getPath();
+
 					throw new IOException(msg);
 				}
 
@@ -449,6 +452,7 @@ public class Util {
 					final FileOutputStream out = new FileOutputStream(f)) {
 
 					final byte[] bytes = new byte[1024];
+
 					int count = in.read(bytes);
 
 					while (count != -1) {

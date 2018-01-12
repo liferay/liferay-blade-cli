@@ -35,11 +35,9 @@ import org.apache.commons.lang3.text.WordUtils;
  */
 public class ConvertThemeCommand {
 
-	public static final String DESCRIPTION = "Migrate a plugins sdk theme to new workspace theme project";
-
-	public ConvertThemeCommand(blade blade, ConvertCommandArgs options) throws Exception {
+	public ConvertThemeCommand(BladeCLI blade, ConvertCommandArgs args) throws Exception {
 		_blade = blade;
-		_options = options;
+		_args = args;
 
 		File projectDir = Util.getWorkspaceDir(_blade);
 
@@ -71,9 +69,9 @@ public class ConvertThemeCommand {
 	}
 
 	public void execute() throws Exception {
-		final List<String> args = _options.getName();
+		final List<String> args = _args.getName();
 
-		final String themeName = args.size() > 0 ? args.get(0) : null;
+		final String themeName = !args.isEmpty() ? args.get(0) : null;
 
 		if (!Util.isWorkspace(_blade)) {
 			_blade.error("Please execute this in a Liferay Workspace Project");
@@ -86,7 +84,7 @@ public class ConvertThemeCommand {
 
 			for (File file : _pluginsSDKThemesDir.listFiles()) {
 				if (file.isDirectory()) {
-					if (_options.isAll()) {
+					if (_args.isAll()) {
 						importTheme(file.getCanonicalPath());
 					}
 					else {
@@ -95,18 +93,19 @@ public class ConvertThemeCommand {
 				}
 			}
 
-			if (!_options.isAll()) {
-				if (themes.size() > 0) {
+			if (!_args.isAll()) {
+				if (!themes.isEmpty()) {
 					String exampleTheme = themes.get(0);
 
 					_blade.out().println(
-						"Please provide the theme project name to migrate, " + "e.g. \"blade migrateTheme " +
-							exampleTheme + "\"\n");
+						"Please provide the theme project name to migrate, e.g. \"blade migrateTheme " + exampleTheme +
+							"\"\n");
+
 					_blade.out().println("Currently available themes:");
 					_blade.out().println(WordUtils.wrap(StringUtils.join(themes, ", "), 80));
 				}
 				else {
-					_blade.out().println("Good news! All your themes have already been " + "migrated to " + _themesDir);
+					_blade.out().println("Good news! All your themes have already been migrated to " + _themesDir);
 				}
 			}
 		}
@@ -125,7 +124,7 @@ public class ConvertThemeCommand {
 	public void importTheme(String themePath) throws Exception {
 		Process process = Util.startProcess(
 			_blade,
-			"yo liferay-theme:import -p \"" + themePath + "\" -c " + compassSupport(themePath) +
+			"yo liferay-theme:import -p \"" + themePath + "\" -c " + _compassSupport(themePath) +
 				" --skip-install",
 			_themesDir, false);
 
@@ -143,7 +142,7 @@ public class ConvertThemeCommand {
 		}
 	}
 
-	private boolean compassSupport(String themePath) throws Exception {
+	private static boolean _compassSupport(String themePath) throws Exception {
 		File themeDir = new File(themePath);
 
 		File customCss = new File(themeDir, "docroot/_diffs/css/custom.css");
@@ -163,9 +162,10 @@ public class ConvertThemeCommand {
 		return matcher.find();
 	}
 
-	private blade _blade;
-	private final Pattern _compassImport = Pattern.compile("@import\\s*['\"]compass['\"];");
-	private ConvertCommandArgs _options;
+	private static final Pattern _compassImport = Pattern.compile("@import\\s*['\"]compass['\"];");
+
+	private ConvertCommandArgs _args;
+	private BladeCLI _blade;
 	private File _pluginsSDKThemesDir;
 	private File _themesDir;
 

@@ -57,7 +57,7 @@ public class JMXLocalConnector {
 		ClassLoader toolsClassloader = null;
 
 		try {
-			toolsClassloader = getToolsClassLoader(cl);
+			toolsClassloader = _getToolsClassLoader(cl);
 
 			if (toolsClassloader != null) {
 				Thread.currentThread().setContextClassLoader(toolsClassloader);
@@ -69,7 +69,7 @@ public class JMXLocalConnector {
 				List<Object> vmds = (List<Object>)listMethod.invoke(null);
 
 				for (Object vmd : vmds) {
-					String localConnectorAddress = attach(toolsClassloader, vmClass, vmd, objName);
+					String localConnectorAddress = _attach(toolsClassloader, vmClass, vmd, objName);
 
 					if (localConnectorAddress != null) {
 						return localConnectorAddress;
@@ -140,9 +140,10 @@ public class JMXLocalConnector {
 
 	protected MBeanServerConnection mBeanServerConnection;
 
-	private static String attach(ClassLoader toolsClassloader, Class<?> vmClass, Object vmd, String name) {
+	private static String _attach(ClassLoader toolsClassloader, Class<?> vmClass, Object vmd, String name) {
 		try {
 			Class< ? > vmdClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
+
 			Method idMethod = vmdClass.getMethod("id");
 
 			String id = (String)idMethod.invoke(vmd);
@@ -160,7 +161,7 @@ public class JMXLocalConnector {
 					"com.sun.management.jmxremote.localConnectorAddress");
 
 				if (localConnectorAddress == null) {
-					File agentJar = findJdkJar("management-agent.jar");
+					File agentJar = _findJdkJar("management-agent.jar");
 
 					if (agentJar != null) {
 						Method loadAgent = vmClass.getMethod("loadAgent", String.class);
@@ -170,18 +171,19 @@ public class JMXLocalConnector {
 						agentProperties = (Properties)getAgentProperties.invoke(vm);
 
 						localConnectorAddress = agentProperties.getProperty(
-							"com.sun.management.jmxremote." + "localConnectorAddress");
+							"com.sun.management.jmxremote.localConnectorAddress");
 					}
 				}
 
 				if (localConnectorAddress != null) {
 					final JMXServiceURL jmxServiceUrl = new JMXServiceURL(localConnectorAddress);
+
 					final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxServiceUrl, null);
 
 					final MBeanServerConnection mBeanServerConnection = jmxConnector.getMBeanServerConnection();
 
 					if (mBeanServerConnection != null) {
-						final ObjectName objectName = getObjectName(name, mBeanServerConnection);
+						final ObjectName objectName = _getObjectName(name, mBeanServerConnection);
 
 						if (objectName != null) {
 							return localConnectorAddress;
@@ -205,11 +207,12 @@ public class JMXLocalConnector {
 		return null;
 	}
 
-	private static File findJdkJar(String jar) throws IOException {
+	private static File _findJdkJar(String jar) throws IOException {
 		File retval = null;
 
 		final String jarPath = File.separator + "lib" + File.separator + jar;
 		final String javaHome = System.getProperty("java.home");
+
 		File jarFile = new File(javaHome + jarPath);
 
 		if (jarFile.exists()) {
@@ -226,22 +229,22 @@ public class JMXLocalConnector {
 		return retval;
 	}
 
-	private static ObjectName getObjectName(String objectNameValue, MBeanServerConnection mBeanServerConnection)
+	private static ObjectName _getObjectName(String objectNameValue, MBeanServerConnection mBeanServerConnection)
 		throws IOException, MalformedObjectNameException {
 
 		final ObjectName objectName = new ObjectName(objectNameValue);
 
 		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
 
-		if ((objectNames != null) && (objectNames.size() > 0)) {
+		if ((objectNames != null) && !objectNames.isEmpty()) {
 			return objectNames.iterator().next();
 		}
 
 		return null;
 	}
 
-	private static ClassLoader getToolsClassLoader(ClassLoader parent) throws IOException {
-		File toolsJar = findJdkJar("tools.jar");
+	private static ClassLoader _getToolsClassLoader(ClassLoader parent) throws IOException {
+		File toolsJar = _findJdkJar("tools.jar");
 
 		if ((toolsJar != null) && toolsJar.exists()) {
 			URL toolsUrl = null;

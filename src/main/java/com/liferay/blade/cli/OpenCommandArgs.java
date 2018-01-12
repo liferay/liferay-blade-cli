@@ -24,21 +24,21 @@ import java.io.File;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandNames = {"open"}, commandDescription = OpenCommand.DESCRIPTION)
+@Parameters(commandDescription = "Opens or imports a file or project in Liferay IDE.", commandNames = {"open"})
 public class OpenCommandArgs {
 
 	public File getFile() {
-		return file;
+		return _file;
 	}
 
 	public String getWorkspace() {
-		return workspace;
+		return _workspace;
 	}
 
-	@Parameter(description ="file or directory to open/import")
-	private File file;
+	@Parameter(description = "file or directory to open/import")
+	private File _file;
 
-	@Parameter(names = {"-w", "--workspace"}, description ="The workspace to open or import this file or project")
-	private String workspace;
+	@Parameter(description = "The workspace to open or import this file or project", names = {"-w", "--workspace"})
+	private String _workspace;
 
 }

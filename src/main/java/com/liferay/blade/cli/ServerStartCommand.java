@@ -25,17 +25,19 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author David Truong
  */
 public class ServerStartCommand {
 
-	public ServerStartCommand(blade blade, ServerStartCommandArgs options) {
+	public ServerStartCommand(BladeCLI blade, ServerStartCommandArgs options) {
 		_blade = blade;
-		_options = options;
+		_args = options;
 	}
 
 	public void execute() throws Exception {
@@ -44,6 +46,8 @@ public class ServerStartCommand {
 		File rootDir = gradleWrapper.getParent().toFile();
 
 		String serverType = null;
+
+		Path rootDirPath = rootDir.toPath();
 
 		if (Util.isWorkspace(rootDir)) {
 			Properties properties = Util.getGradleProperties(rootDir);
@@ -70,19 +74,19 @@ public class ServerStartCommand {
 				serverType = "tomcat";
 			}
 
-			Path tempLiferayHome = Paths.get(liferayHomePath);
 			Path liferayHomeDir = null;
+			Path tempLiferayHome = Paths.get(liferayHomePath);
 
 			if (tempLiferayHome.isAbsolute()) {
 				liferayHomeDir = tempLiferayHome.normalize();
 			}
 			else {
-				Path tempFile = rootDir.toPath().resolve(liferayHomePath);
+				Path tempFile = rootDirPath.resolve(liferayHomePath);
 
 				liferayHomeDir = tempFile.normalize();
 			}
 
-			commandServer(liferayHomeDir, serverType);
+			_commandServer(liferayHomeDir, serverType);
 		}
 		else {
 			try {
@@ -95,8 +99,10 @@ public class ServerStartCommand {
 						String appServerParentDirTemp = properties.getProperty(Util.APP_SERVER_PARENT_DIR_PROPERTY);
 
 						if ((appServerParentDirTemp != null) && !appServerParentDirTemp.equals("")) {
+							Path rootDirRealPath = rootDirPath.toRealPath();
+
 							appServerParentDirTemp = appServerParentDirTemp.replace(
-								"${project.dir}", rootDir.toPath().toRealPath().toString());
+								"${project.dir}", rootDirRealPath.toString());
 
 							appServerParentDir = appServerParentDirTemp;
 						}
@@ -112,10 +118,10 @@ public class ServerStartCommand {
 				}
 
 				if (appServerParentDir.startsWith("/") || appServerParentDir.contains(":")) {
-					commandServer(Paths.get(appServerParentDir), serverType);
+					_commandServer(Paths.get(appServerParentDir), serverType);
 				}
 				else {
-					commandServer(rootDir.toPath().resolve(appServerParentDir), serverType);
+					_commandServer(rootDirPath.resolve(appServerParentDir), serverType);
 				}
 			}
 			catch (Exception e) {
@@ -124,36 +130,40 @@ public class ServerStartCommand {
 		}
 	}
 
-	private void commandServer(Path dir, String serverType) throws Exception {
-		if (Files.notExists(dir) || !Files.list(dir).findAny().isPresent()) {
-			_blade.error(
-				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
-					"create it.");
+	private void _commandServer(Path dir, String serverType) throws Exception {
+		try (Stream<Path> files = Files.list(dir)) {
+			Optional<Path> findAny = files.findAny();
 
-			return;
-		}
+			if (Files.notExists(dir) || !findAny.isPresent()) {
+				_blade.error(
+					" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
+						"create it.");
 
-		for (Path file : Files.list(dir).collect(Collectors.toList())) {
-			Path fileName = file.getFileName();
+				return;
+			}
 
-			if (fileName.startsWith(serverType) && Files.isDirectory(file)) {
-				if (serverType.equals("tomcat")) {
-					commmandTomcat(file);
+			for (Path file : files.collect(Collectors.toList())) {
+				Path fileName = file.getFileName();
 
-					return;
-				}
-				else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
-					commmandJBossWildfly(file);
+				if (fileName.startsWith(serverType) && Files.isDirectory(file)) {
+					if (serverType.equals("tomcat")) {
+						_commmandTomcat(file);
 
-					return;
+						return;
+					}
+					else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
+						_commmandJBossWildfly(file);
+
+						return;
+					}
 				}
 			}
-		}
 
-		_blade.error(serverType + " not supported");
+			_blade.error(serverType + " not supported");
+		}
 	}
 
-	private void commmandJBossWildfly(Path dir) throws Exception {
+	private void _commmandJBossWildfly(Path dir) throws Exception {
 		Map<String, String> enviroment = new HashMap<>();
 
 		String executable = "./standalone.sh";
@@ -164,7 +174,7 @@ public class ServerStartCommand {
 
 		String debug = "";
 
-		if (_options.isDebug()) {
+		if (_args.isDebug()) {
 			debug = " --debug";
 		}
 
@@ -173,7 +183,7 @@ public class ServerStartCommand {
 		process.waitFor();
 	}
 
-	private void commmandTomcat(Path dir) throws Exception {
+	private void _commmandTomcat(Path dir) throws Exception {
 		Map<String, String> enviroment = new HashMap<>();
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
@@ -186,17 +196,19 @@ public class ServerStartCommand {
 
 		String startCommand = " run";
 
-		if (_options.isBackground()) {
+		if (_args.isBackground()) {
 			startCommand = " start";
 		}
-		else if (_options.isDebug()) {
+		else if (_args.isDebug()) {
 			startCommand = " jpda " + startCommand;
 		}
 
 		Path logs = dir.resolve("logs");
+
 		Files.createDirectory(logs);
 
 		Path catalinaOut = logs.resolve("catalina.out");
+
 		Files.createFile(catalinaOut);
 
 		final Process process = Util.startProcess(
@@ -219,14 +231,14 @@ public class ServerStartCommand {
 
 			});
 
-		if (_options.isBackground() && _options.isTail()) {
+		if (_args.isBackground() && _args.isTail()) {
 			Process tailProcess = Util.startProcess(_blade, "tail -f catalina.out", logs.toFile(), enviroment);
 
 			tailProcess.waitFor();
 		}
 	}
 
-	private blade _blade;
-	private ServerStartCommandArgs _options;
+	private ServerStartCommandArgs _args;
+	private BladeCLI _blade;
 
 }

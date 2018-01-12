@@ -28,7 +28,7 @@ import java.util.Collections;
  */
 public class UpgradePropsCommand {
 
-	public UpgradePropsCommand(blade blade, UpgradePropsOptions options) throws Exception {
+	public UpgradePropsCommand(BladeCLI blade, UpgradePropsOptions options) throws Exception {
 		File bundleDir = options.getBundleDir();
 		File propertiesFile = options.getPropertiesFile();
 

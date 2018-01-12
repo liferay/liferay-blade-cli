@@ -47,7 +47,7 @@ import org.osgi.framework.dto.BundleDTO;
 public class JMXBundleDeployer extends JMXLocalConnector {
 
 	public JMXBundleDeployer() throws MalformedURLException {
-		super(name + ":type=" + type + ",*");
+		super(_NAME + ":type=" + _TYPE + ",*");
 	}
 
 	public JMXBundleDeployer(int port) throws MalformedURLException {
@@ -66,7 +66,7 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 	 * @throws Exception
 	 */
 	public long deploy(String bsn, String bundleUrl) throws Exception {
-		final ObjectName framework = getFramework(mBeanServerConnection);
+		final ObjectName framework = _getFramework(mBeanServerConnection);
 
 		long bundleId = -1;
 
@@ -112,7 +112,7 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		final List<BundleDTO> retval = new ArrayList<>();
 
 		try {
-			final ObjectName bundleState = getBundleState();
+			final ObjectName bundleState = _getBundleState();
 
 			final Object[] params = {new String[] {"Identifier", "SymbolicName", "State", "Version"}};
 
@@ -125,7 +125,7 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 				final CompositeData cd = (CompositeData)value;
 
 				try {
-					retval.add(newFromData(cd));
+					retval.add(_newFromData(cd));
 				}
 				catch (Exception e) {
 					e.printStackTrace();
@@ -148,7 +148,7 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 	 * @throws Exception
 	 */
 	public void uninstall(long id) throws Exception {
-		final ObjectName framework = getFramework(mBeanServerConnection);
+		final ObjectName framework = _getFramework(mBeanServerConnection);
 
 		Object[] objects = {id};
 
@@ -177,21 +177,23 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		throw new IllegalStateException("Unable to uninstall " + bsn);
 	}
 
-	private static ObjectName getFramework(MBeanServerConnection mBeanServerConnection)
+	private static ObjectName _getFramework(MBeanServerConnection mBeanServerConnection)
 		throws IOException, MalformedObjectNameException {
 
-		final ObjectName objectName = new ObjectName(name + ":type=" + type + ",*");
+		final ObjectName objectName = new ObjectName(_NAME + ":type=" + _TYPE + ",*");
+
 		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
 
-		if ((objectNames != null) && (objectNames.size() > 0)) {
+		if ((objectNames != null) && !objectNames.isEmpty()) {
 			return objectNames.iterator().next();
 		}
 
 		return null;
 	}
 
-	private static BundleDTO newFromData(CompositeData cd) {
+	private static BundleDTO _newFromData(CompositeData cd) {
 		final BundleDTO dto = new BundleDTO();
+
 		dto.id = Long.parseLong(cd.get("Identifier").toString());
 		dto.symbolicName = cd.get("SymbolicName").toString();
 
@@ -221,13 +223,16 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		return dto;
 	}
 
-	private ObjectName getBundleState() throws IOException, MalformedObjectNameException {
-		ObjectName objectName = new ObjectName(name + ":type=bundleState,*");
+	private ObjectName _getBundleState() throws IOException, MalformedObjectNameException {
+		ObjectName objectName = new ObjectName(_NAME + ":type=bundleState,*");
 
-		return mBeanServerConnection.queryNames(objectName, null).iterator().next();
+		Set<ObjectName> queryNames = mBeanServerConnection.queryNames(objectName, null);
+
+		return queryNames.iterator().next();
 	}
 
-	private static final String name = "osgi.core";
-	private static final String type = "framework";
+	private static final String _NAME = "osgi.core";
+
+	private static final String _TYPE = "framework";
 
 }

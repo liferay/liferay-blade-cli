@@ -25,14 +25,14 @@ import java.util.List;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandNames = {"gw"}, commandDescription = GradleCommand.DESCRIPTION)
+@Parameters(commandDescription = "Execute gradle command using the gradle wrapper if detected", commandNames = {"gw"})
 public class GradleCommandArgs {
 
 	public List<String> getArgs() {
-		return args;
+		return _args;
 	}
 
-	@Parameter(description ="arguments")
-	private List<String> args = new ArrayList<>();
+	@Parameter(description = "arguments")
+	private List<String> _args = new ArrayList<>();
 
 }
