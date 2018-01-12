@@ -16,17 +16,13 @@
 
 package com.liferay.blade.cli.gradle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import aQute.lib.io.IO;
 
 import java.io.File;
 
 import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -45,8 +41,8 @@ public class GradleToolingTest {
 	public void testGetOutputFiles() throws Exception {
 		Set<File> files = GradleTooling.getOutputFiles(new File("build"), new File("build/testws1"));
 
-		assertNotNull(files);
-		assertEquals(1, files.size());
+		Assert.assertNotNull(files);
+		Assert.assertEquals(1, files.size());
 	}
 
 	@Test
@@ -54,8 +50,8 @@ public class GradleToolingTest {
 		Set<String> pluginClassNames = GradleTooling.getPluginClassNames(
 			new File("build"), new File("build/testws1/modules/testportlet"));
 
-		assertNotNull(pluginClassNames);
-		assertTrue(pluginClassNames.contains("com.liferay.gradle.plugins.LiferayOSGiPlugin"));
+		Assert.assertNotNull(pluginClassNames);
+		Assert.assertTrue(pluginClassNames.contains("com.liferay.gradle.plugins.LiferayOSGiPlugin"));
 	}
 
 	@Test
@@ -63,14 +59,14 @@ public class GradleToolingTest {
 		boolean isModule = GradleTooling.isLiferayModule (
 			new File("build"), new File("build/testws1/modules/testportlet"));
 
-		assertTrue(isModule);
+		Assert.assertTrue(isModule);
 	}
 
 	@Test
 	public void testIsNotLiferayModule() throws Exception {
 		boolean isModule = GradleTooling.isLiferayModule (new File("build"), new File("build/testws1/modules"));
 
-		assertFalse(isModule);
+		Assert.assertFalse(isModule);
 	}
 
 }

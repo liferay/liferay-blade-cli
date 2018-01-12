@@ -16,12 +16,7 @@
 
 package com.liferay.blade.cli;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,9 +25,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ShellCommand {
 
-	public static final String DESCRIPTION = "Connects to Liferay and executes gogo command and returns output.";
-
-	public ShellCommand(blade blade, ShellOptions options) throws Exception {
+	public ShellCommand(blade blade, ShellCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 
@@ -52,33 +45,6 @@ public class ShellCommand {
 		executeCommand(gogoCommand);
 	}
 
-	@Parameters(commandNames = {"sh"},
-		commandDescription = ShellCommand.DESCRIPTION)
-	public static class ShellOptions {
-
-		public List<String> getArgs() {
-			return args;
-		}
-
-		public String getHost() {
-			return host;
-		}
-
-		public int getPort() {
-			return port;
-		}
-
-		@Parameter
-		private List<String> args = new ArrayList<>();
-
-		@Parameter(names = {"-h", "--host"}, description ="The host to use to connect to gogo shell")
-		private String host;
-
-		@Parameter(names = {"-p", "--port"}, description ="The port to use to connect to gogo shell")
-		private int port;
-
-	}
-
 	private void addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
@@ -95,7 +61,7 @@ public class ShellCommand {
 
 	private final blade _blade;
 	private final String _host;
-	private final ShellOptions _options;
+	private final ShellCommandArgs _options;
 	private final int _port;
 
 }

@@ -16,9 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 import com.liferay.blade.cli.jmx.IDEConnector;
 
 import java.io.File;
@@ -32,7 +29,7 @@ public class OpenCommand {
 
 	public static final String DESCRIPTION = "Opens or imports a file or project in Liferay IDE.";
 
-	public OpenCommand(blade blade, OpenOptions options) throws Exception {
+	public OpenCommand(blade blade, OpenCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 	}
@@ -57,31 +54,11 @@ public class OpenCommand {
 		}
 	}
 
-	@Parameters(commandNames = {"open"},
-		commandDescription = OpenCommand.DESCRIPTION)
-	public static class OpenOptions {
-
-		public File getFile() {
-			return file;
-		}
-
-		public String getWorkspace() {
-			return workspace;
-		}
-
-		@Parameter(description ="<file or directory to open/import>")
-		private File file;
-
-		@Parameter(names = {"-w", "--workspace"}, description ="The workspace to open or import this file or project")
-		private String workspace;
-
-	}
-
 	private void addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
 	private final blade _blade;
-	private final OpenOptions _options;
+	private final OpenCommandArgs _options;
 
 }

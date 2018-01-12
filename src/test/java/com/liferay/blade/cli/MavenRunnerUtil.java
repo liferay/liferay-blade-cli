@@ -16,10 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import aQute.lib.io.IO;
 
 import java.io.BufferedReader;
@@ -28,14 +24,16 @@ import java.io.InputStreamReader;
 
 import org.codehaus.plexus.util.FileUtils;
 
+import org.junit.Assert;
+
 /**
  * @author Andy Wu
  */
 public class MavenRunnerUtil {
 
 	public static void executeMavenPackage(String projectPath, String[] phases) {
-		assertNotNull(phases);
-		assertTrue(phases.length > 0);
+		Assert.assertNotNull(phases);
+		Assert.assertTrue(phases.length > 0);
 
 		String os = System.getProperty("os.name");
 		boolean isWindows = false;
@@ -79,14 +77,14 @@ public class MavenRunnerUtil {
 		catch (Exception e) {
 		}
 
-		assertEquals(0, exitValue);
-		assertTrue(isBuildSuccess);
+		Assert.assertEquals(0, exitValue);
+		Assert.assertTrue(isBuildSuccess);
 	}
 
 	public static void verifyBuildOutput(String projectPath, String fileName) {
 		File file = IO.getFile(projectPath + "/target/" + fileName);
 
-		assertTrue(file.exists());
+		Assert.assertTrue(file.exists());
 	}
 
 }

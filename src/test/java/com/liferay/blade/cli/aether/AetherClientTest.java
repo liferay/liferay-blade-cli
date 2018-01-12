@@ -16,14 +16,11 @@
 
 package com.liferay.blade.cli.aether;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 
 import org.eclipse.aether.artifact.Artifact;
 
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -40,18 +37,18 @@ public class AetherClientTest {
 		Artifact artifact = client.findLatestAvailableArtifact(
 			"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
-		assertNotNull(artifact);
+		Assert.assertNotNull(artifact);
 
 		File file = artifact.getFile();
 
 		String name = file.getName();
 
-		assertNotNull(file);
-		assertTrue(file.exists());
-		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
-		assertTrue(name.endsWith("sources.jar"));
-		assertTrue(file.getPath().contains("test-resources/localrepo"));
-		assertTrue(name.contains("1.0.8"));
+		Assert.assertNotNull(file);
+		Assert.assertTrue(file.exists());
+		Assert.assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
+		Assert.assertTrue(name.endsWith("sources.jar"));
+		Assert.assertTrue(file.getPath().contains("test-resources/localrepo"));
+		Assert.assertTrue(name.contains("1.0.8"));
 	}
 
 	@Ignore
@@ -62,17 +59,17 @@ public class AetherClientTest {
 		Artifact artifact = client.findLatestAvailableArtifact(
 			"com.liferay:com.liferay.gradle.plugins.workspace:jar:sources");
 
-		assertNotNull(artifact);
+		Assert.assertNotNull(artifact);
 
 		File file = artifact.getFile();
 
 		String name = file.getName();
 
-		assertNotNull(file);
-		assertTrue(file.exists());
-		assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
-		assertTrue(name.endsWith("sources.jar"));
-		assertEquals(name, true, name.matches(".*-1\\.[0-9]+\\.[0-9]+-.*"));
+		Assert.assertNotNull(file);
+		Assert.assertTrue(file.exists());
+		Assert.assertTrue(name.startsWith("com.liferay.gradle.plugins.workspace"));
+		Assert.assertTrue(name.endsWith("sources.jar"));
+		Assert.assertEquals(name, true, name.matches(".*-1\\.[0-9]+\\.[0-9]+-.*"));
 	}
 
 }

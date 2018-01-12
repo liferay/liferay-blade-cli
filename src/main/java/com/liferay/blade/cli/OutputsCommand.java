@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.beust.jcommander.Parameters;
-
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
@@ -31,7 +29,7 @@ import java.util.Set;
  */
 public class OutputsCommand {
 
-	public OutputsCommand(blade blade, OutputsOptions options) throws Exception {
+	public OutputsCommand(blade blade, OutputsCommandArgs options) throws Exception {
 		_blade = blade;
 	}
 
@@ -49,7 +47,7 @@ public class OutputsCommand {
 
 			Object print = null;
 
-			if (basePathRoot != null && outputPathRoot != null) {
+			if ((basePathRoot != null) && (outputPathRoot != null)) {
 				print = basePath.relativize(outputPath);
 			}
 			else {
@@ -58,10 +56,6 @@ public class OutputsCommand {
 
 			_blade.out().println(print);
 		}
-	}
-
-	@Parameters(commandNames = {"outputs"})
-	public static class OutputsOptions {
 	}
 
 	private blade _blade;

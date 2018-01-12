@@ -16,9 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 import java.io.File;
 
 import java.util.Collections;
@@ -30,7 +27,7 @@ public class InstallCommand {
 
 	public static final String DESCRIPTION = "Installs a bundle into Liferay module framework.";
 
-	public InstallCommand(blade blade, InstallOptions options) throws Exception {
+	public InstallCommand(blade blade, InstallCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 		_host = options.getHost() != null ? options.getHost() : "localhost";
@@ -64,33 +61,6 @@ public class InstallCommand {
 		}
 	}
 
-	@Parameters(commandNames = {"install"},
-		commandDescription = InstallCommand.DESCRIPTION)
-	public static class InstallOptions {
-
-		public String getBundleFileName() {
-			return bundleFileName;
-		}
-
-		public String getHost() {
-			return host;
-		}
-
-		public int getPort() {
-			return port;
-		}
-
-		@Parameter(description ="Bundle File Name")
-		private String bundleFileName;
-
-		@Parameter(names = {"-h", "--host"}, description ="The host to use to connect to gogo shell")
-		private String host;
-
-		@Parameter(names = {"-p", "--port"}, description ="The port to use to connect to gogo shell")
-		private int port;
-
-	}
-
 	private void addError(String msg) {
 		addError("install", msg);
 	}
@@ -101,7 +71,7 @@ public class InstallCommand {
 
 	private final blade _blade;
 	private final String _host;
-	private final InstallOptions _options;
+	private final InstallCommandArgs _options;
 	private final int _port;
 
 }

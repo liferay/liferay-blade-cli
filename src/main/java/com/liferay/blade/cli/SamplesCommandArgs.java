@@ -16,31 +16,26 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.gradle.GradleExec;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
-import org.apache.commons.lang3.StringUtils;
+import java.io.File;
 
-/**
- * @author David Truong
- */
-public class GradleCommand {
+@Parameters(commandNames = {"samples"}, commandDescription = SamplesCommand.DESCRIPTION)
+public class SamplesCommandArgs {
 
-	public static final String DESCRIPTION = "Execute gradle command using the gradle wrapper if detected";
-
-	public GradleCommand(blade blade, GradleCommandArgs options) throws Exception {
-		_blade = blade;
-		_options = options;
+	public File getDir() {
+		return dir;
 	}
 
-	public void execute() throws Exception {
-		String gradleCommand = StringUtils.join(_options.getArgs(), " ");
-
-		GradleExec gradleExec = new GradleExec(_blade);
-
-		gradleExec.executeGradleCommand(gradleCommand);
+	public String getSampleName() {
+		return sampleName;
 	}
 
-	private blade _blade;
-	private GradleCommandArgs _options;
+	@Parameter(names = {"-d", "--dir"}, description ="The directory where to create the new project.")
+	private File dir;
+
+	@Parameter(description ="name")
+	private String sampleName;
 
 }

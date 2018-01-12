@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+
+<suppressions>
+	<suppress checks="CopyrightCheck" files="src/main/java/com/liferay/blade/cli/FileWatcher\.java" />
+</suppressions>

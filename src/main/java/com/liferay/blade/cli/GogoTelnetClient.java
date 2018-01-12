@@ -46,6 +46,7 @@ public class GogoTelnetClient implements AutoCloseable {
 		doHandshake();
 	}
 
+	@Override
 	public void close() {
 		try {
 			_socket.close();
@@ -121,8 +122,8 @@ public class GogoTelnetClient implements AutoCloseable {
 
 		bytes.add(second);
 
-		if (second == 250) {// SB
-			int option = _inputStream.read();
+		if (second == 250) {
+			int option = _inputStream.read(); // SB
 
 			bytes.add(option);
 

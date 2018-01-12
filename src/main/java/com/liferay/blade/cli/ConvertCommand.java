@@ -100,8 +100,9 @@ public class ConvertCommand {
 		_warsDir = new File(projectDir, warsDirPath);
 
 		if (!_pluginsSdkDir.exists()) {
-			_blade.error("Plugins SDK folder " + pluginsSdkDirPath + " doesn't exist.\n" +
-				"Please edit gradle.properties and set " + Workspace.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+			_blade.error(
+				"Plugins SDK folder " + pluginsSdkDirPath + " doesn't exist.\nPlease edit gradle.properties and " +
+					"set " + Workspace.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
 
 			return;
 		}
@@ -116,7 +117,7 @@ public class ConvertCommand {
 			return;
 		}
 
-		if (pluginName == null && (!_options.isAll() && !_options.isList())) {
+		if ((pluginName == null) && (!_options.isAll() && !_options.isList())) {
 			_blade.error("Please specify a plugin name, list the projects with [-l] or specify all using option [-a]");
 
 			return;
@@ -139,7 +140,10 @@ public class ConvertCommand {
 
 			@Override
 			public boolean accept(File pathname) {
-				if (pathname.isDirectory() && new File(pathname, "docroot").exists() && hasServiceXmlFile(pathname)) {
+				boolean isDirectory = pathname.isDirectory();
+				File docroot = new File(pathname, "docroot");
+
+				if (isDirectory && docroot.exists() && hasServiceXmlFile(pathname)) {
 					return true;
 				}
 
@@ -155,10 +159,18 @@ public class ConvertCommand {
 		File[] webFiles = _websDir.listFiles(containsDocrootFilter);
 		File[] themeFiles = _themesDir.listFiles(containsDocrootFilter);
 
-		List<File> serviceBuilderPlugins = Arrays.asList(serviceBuilderList != null ? serviceBuilderList : new File[0]);
+		if (serviceBuilderList == null) {
+			serviceBuilderList = new File[0];
+		}
+
+		List<File> serviceBuilderPlugins = Arrays.asList(serviceBuilderList);
 		List<File> portlets = Arrays.asList(portletList != null ? portletList : new File[0]);
-		List<File> portletPlugins =
-			portlets.stream().filter(portletPlugin -> !serviceBuilderPlugins.contains(portletPlugin)).collect(Collectors.toList());
+
+		List<File> portletPlugins = portlets.stream().filter(
+			portletPlugin -> !serviceBuilderPlugins.contains(portletPlugin)
+		).collect(
+			Collectors.toList()
+		);
 
 		List<File> hookPlugins = Arrays.asList(hookFiles != null ? hookFiles : new File[0]);
 		List<File> layoutPlugins = Arrays.asList(layoutFiles != null ? layoutFiles : new File[0]);
@@ -339,18 +351,19 @@ public class ConvertCommand {
 				webinfDir.toPath(),
 				new CopyDirVisitor(webinfDir.toPath(), newWebinfDir.toPath(), StandardCopyOption.REPLACE_EXISTING));
 
-			File[] others = docroot.listFiles(new FilenameFilter() {
+			File[] others = docroot.listFiles(
+				new FilenameFilter() {
 
-				@Override
-				public boolean accept(File dir, String name) {
-					if (!"_diffs".equals(name) && !"WEB-INF".equals(name)) {
-						return true;
+					@Override
+					public boolean accept(File dir, String name) {
+						if (!"_diffs".equals(name) && !"WEB-INF".equals(name)) {
+							return true;
+						}
+
+						return false;
 					}
 
-					return false;
-				}
-
-			});
+				});
 
 			if (others != null && others.length > 0) {
 				File backup = new File(newThemeDir, "docroot_backup");

@@ -16,10 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Jar;
@@ -49,6 +45,7 @@ import org.gradle.testkit.runner.BuildTask;
 import org.gradle.tooling.internal.consumer.ConnectorServices;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,7 +60,7 @@ public class CreateCommandTest {
 
 		if (testdir.exists()) {
 			IO.delete(testdir);
-			assertFalse(testdir.exists());
+			Assert.assertFalse(testdir.exists());
 		}
 	}
 
@@ -71,7 +68,7 @@ public class CreateCommandTest {
 	public void setUp() throws Exception {
 		testdir.mkdirs();
 
-		assertTrue(new File(testdir, "afile").createNewFile());
+		Assert.assertTrue(new File(testdir, "afile").createNewFile());
 	}
 
 	@Test
@@ -131,7 +128,8 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
 		try (Jar jar = new Jar(new File(projectPath + "/build/libs/foo-1.0.0.jar"))) {
-			assertEquals("foo.api;version=\"1.0.0\"", jar.getManifest().getMainAttributes().getValue("Export-Package"));
+			Assert.assertEquals(
+				"foo.api;version=\"1.0.0\"", jar.getManifest().getMainAttributes().getValue("Export-Package"));
 		}
 
 		FileUtils.deleteDirectory(IO.getFile(projectPath));
@@ -149,7 +147,8 @@ public class CreateCommandTest {
 		verifyImportPackage(new File(projectPath + "/target/foo-1.0.0.jar"));
 
 		try (Jar jar = new Jar(new File(projectPath + "/target/foo-1.0.0.jar"))) {
-			assertEquals("foo.api;version=\"1.0.0\"", jar.getManifest().getMainAttributes().getValue("Export-Package"));
+			Assert.assertEquals(
+				"foo.api;version=\"1.0.0\"", jar.getManifest().getMainAttributes().getValue("Export-Package"));
 		}
 	}
 
@@ -321,14 +320,15 @@ public class CreateCommandTest {
 				}
 
 				if (line.equals("public class FooAction implements LifecycleAction {")) {
-					String s = new StringBuilder()
-							.append("@Override\n")
-							.append("public void processLifecycleEvent(LifecycleEvent lifecycleEvent)\n")
-							.append("throws ActionException {\n")
-							.append("System.out.println(\"login.event.pre=\" + lifecycleEvent);\n")
-							.append("}\n")
-							.toString();
-					lines.add(s);
+					StringBuilder sb = new StringBuilder();
+
+					sb.append("@Override\n");
+					sb.append("public void processLifecycleEvent(LifecycleEvent lifecycleEvent)\n");
+					sb.append("throws ActionException {\n");
+					sb.append("System.out.println(\"login.event.pre=\" + lifecycleEvent);\n");
+					sb.append("}\n");
+
+					lines.add(sb.toString());
 				}
 			}
 		}
@@ -375,10 +375,10 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildServiceTask);
 		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/backend-integration-api",
-			"com.liferay.backend.integration.api-1.0.0.jar");
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/backend-integration-service",
-			"com.liferay.backend.integration.service-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/backend-integration-api", "com.liferay.backend.integration.api-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/backend-integration-service", "com.liferay.backend.integration.service-1.0.0.jar");
 
 		verifyImportPackage(
 			new File(
@@ -407,9 +407,9 @@ public class CreateCommandTest {
 
 		contains(checkFileExists(projectPath + "/guestbook-service/bnd.bnd"), ".*Liferay-Service: true.*");
 
-		contains(
-			checkFileExists(projectPath + "/guestbook-service/build.gradle"),
-				".*compileOnly project\\(\":guestbook-api\"\\).*");
+		File file = checkFileExists(projectPath + "/guestbook-service/build.gradle");
+
+		contains(file, ".*compileOnly project\\(\":guestbook-api\"\\).*");
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(projectPath, "buildService");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
@@ -427,7 +427,7 @@ public class CreateCommandTest {
 		try(JarFile serviceJarFile = new JarFile(serviceJar)) {
 			String springContext = serviceJarFile.getManifest().getMainAttributes().getValue("Liferay-Spring-Context");
 
-			assertTrue(springContext.equals("META-INF/spring"));
+			Assert.assertTrue(springContext.equals("META-INF/spring"));
 		}
 	}
 
@@ -461,10 +461,10 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
 		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/com.liferay.docs.guestbook-api",
-			"com.liferay.docs.guestbook.api-1.0.0.jar");
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/com.liferay.docs.guestbook-service",
-			"com.liferay.docs.guestbook.service-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/com.liferay.docs.guestbook-api", "com.liferay.docs.guestbook.api-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/com.liferay.docs.guestbook-service", "com.liferay.docs.guestbook.service-1.0.0.jar");
 
 		verifyImportPackage(
 			new File(
@@ -594,7 +594,7 @@ public class CreateCommandTest {
 		if (!existFile.exists()) {
 			IO.getFile("build/exist").mkdirs();
 			existFile.createNewFile();
-			assertTrue(existFile.exists());
+			Assert.assertTrue(existFile.exists());
 		}
 
 		new bladenofail().run(args);
@@ -920,7 +920,7 @@ public class CreateCommandTest {
 
 		makeWorkspace(workspace);
 
-		assertTrue(new File("build/test/workspace/modules/nested/path").mkdirs());
+		Assert.assertTrue(new File("build/test/workspace/modules/nested/path").mkdirs());
 
 		new bladenofail().run(args);
 
@@ -934,9 +934,9 @@ public class CreateCommandTest {
 
 		checkFileExists(projectPath + "/sample/sample-service/build.gradle");
 
-		contains(
-			checkFileExists(projectPath + "/sample/sample-service/build.gradle"),
-				".*compileOnly project\\(\":modules:nested:path:sample:sample-api\"\\).*");
+		File file = checkFileExists(projectPath + "/sample/sample-service/build.gradle");
+
+		contains(file, ".*compileOnly project\\(\":modules:nested:path:sample:sample-api\"\\).*");
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
@@ -977,10 +977,10 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
 		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/workspace-sample/workspace-sample-api",
-			"com.sample.api-1.0.0.jar");
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/workspace-sample/workspace-sample-service",
-			"com.sample.service-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/workspace-sample/workspace-sample-api", "com.sample.api-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/workspace-sample/workspace-sample-service", "com.sample.service-1.0.0.jar");
 
 		verifyImportPackage(
 			new File(
@@ -1010,9 +1010,9 @@ public class CreateCommandTest {
 
 		checkFileExists(projectPath + "/sample/sample-service/build.gradle");
 
-		contains(
-			checkFileExists(projectPath + "/sample/sample-service/build.gradle"),
-				".*compileOnly project\\(\":modules:sample:sample-api\"\\).*");
+		File file = checkFileExists(projectPath + "/sample/sample-service/build.gradle");
+
+		contains(file, ".*compileOnly project\\(\":modules:sample:sample-api\"\\).*");
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
@@ -1030,7 +1030,7 @@ public class CreateCommandTest {
 		try (JarFile serviceJarFile = new JarFile(serviceJar)) {
 			String springContext = serviceJarFile.getManifest().getMainAttributes().getValue("Liferay-Spring-Context");
 
-			assertTrue(springContext.equals("META-INF/spring"));
+			Assert.assertTrue(springContext.equals("META-INF/spring"));
 		}
 	}
 
@@ -1061,10 +1061,10 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
 		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/workspace.sample/workspace.sample-api",
-			"com.sample.api-1.0.0.jar");
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/workspace.sample/workspace.sample-service",
-			"com.sample.service-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/workspace.sample/workspace.sample-api", "com.sample.api-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/workspace.sample/workspace.sample-service", "com.sample.service-1.0.0.jar");
 
 		verifyImportPackage(
 			new File(
@@ -1208,7 +1208,7 @@ public class CreateCommandTest {
 		List<String> templateNames = new ArrayList<>(ProjectTemplates.getTemplates().keySet());
 
 		for (String templateName : templateNames) {
-			assertTrue(templateList.contains(templateName));
+			Assert.assertTrue(templateList.contains(templateName));
 		}
 	}
 
@@ -1226,7 +1226,7 @@ public class CreateCommandTest {
 	private File checkFileDoesNotExists(String path) {
 		File file = IO.getFile(path);
 
-		assertFalse(file.exists());
+		Assert.assertFalse(file.exists());
 
 		return file;
 	}
@@ -1234,7 +1234,7 @@ public class CreateCommandTest {
 	private File checkFileExists(String path) {
 		File file = IO.getFile(path);
 
-		assertTrue(file.exists());
+		Assert.assertTrue(file.exists());
 
 		return file;
 	}
@@ -1270,13 +1270,13 @@ public class CreateCommandTest {
 	}
 
 	private void contains(String content, String pattern) throws Exception {
-		assertTrue(Pattern.compile(pattern, Pattern.MULTILINE | Pattern.DOTALL).matcher(content).matches());
+		Assert.assertTrue(Pattern.compile(pattern, Pattern.MULTILINE | Pattern.DOTALL).matcher(content).matches());
 	}
 
 	private void lacks(File file, String pattern) throws Exception {
 		String content = new String(IO.read(file));
 
-		assertFalse(Pattern.compile(pattern, Pattern.MULTILINE | Pattern.DOTALL).matcher(content).matches());
+		Assert.assertFalse(Pattern.compile(pattern, Pattern.MULTILINE | Pattern.DOTALL).matcher(content).matches());
 	}
 
 	private void makeWorkspace(File workspace) throws Exception {
@@ -1284,7 +1284,7 @@ public class CreateCommandTest {
 
 		new bladenofail().run(args);
 
-		assertTrue(Util.isWorkspace(workspace));
+		Assert.assertTrue(Util.isWorkspace(workspace));
 	}
 
 	private void verifyBuild(String runnerPath, String projectPath, String outputFileName) {
@@ -1301,7 +1301,7 @@ public class CreateCommandTest {
 			Parameters imports = domain.getImportPackage();
 
 			for (String key : imports.keySet()) {
-				assertFalse(key.isEmpty());
+				Assert.assertFalse(key.isEmpty());
 			}
 		}
 	}

@@ -16,9 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 import java.io.File;
 import java.io.InputStream;
 
@@ -41,7 +38,7 @@ public class SamplesCommand {
 
 	public static final String DESCRIPTION = "Generate a sample project";
 
-	public SamplesCommand(blade blade, SamplesOptions options) throws Exception {
+	public SamplesCommand(blade blade, SamplesCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 	}
@@ -59,26 +56,6 @@ public class SamplesCommand {
 		else {
 			copySample(sampleName);
 		}
-	}
-
-	@Parameters(commandNames = {"samples"},
-		commandDescription = SamplesCommand.DESCRIPTION)
-	public static class SamplesOptions {
-
-		public File getDir() {
-			return dir;
-		}
-
-		public String getSampleName() {
-			return sampleName;
-		}
-
-		@Parameter(names = {"-d", "--dir"}, description ="The directory where to create the new project.")
-		private File dir;
-
-		@Parameter(description ="[name]")
-		private String sampleName;
-
 	}
 
 	private void addGradleWrapper(File dest) throws Exception {
@@ -265,6 +242,6 @@ public class SamplesCommand {
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
 	private final blade _blade;
-	private final SamplesOptions _options;
+	private final SamplesCommandArgs _options;
 
 }

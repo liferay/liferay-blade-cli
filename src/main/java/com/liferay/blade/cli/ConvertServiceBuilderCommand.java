@@ -304,7 +304,7 @@ public class ConvertServiceBuilderCommand {
 		}
 
 		private void parse() throws Exception {
-			if ((_rootElement == null) && (_serviceXml != null) && (_serviceXml.exists())) {
+			if ((_rootElement == null) && (_serviceXml != null) && _serviceXml.exists()) {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

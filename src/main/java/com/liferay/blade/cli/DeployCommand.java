@@ -18,9 +18,6 @@ package com.liferay.blade.cli;
 
 import aQute.bnd.osgi.Jar;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 import com.liferay.blade.cli.FileWatcher.Consumer;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
@@ -47,7 +44,7 @@ public class DeployCommand {
 
 	public static final String DESCRIPTION = "Builds and deploys bundles to the Liferay module framework.";
 
-	public DeployCommand(blade blade, DeployOptions options) throws Exception {
+	public DeployCommand(blade blade, DeployCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 		_host = /*options.host() != null ? options.host() : */"localhost";
@@ -72,6 +69,7 @@ public class DeployCommand {
 
 		new Thread() {
 
+			@Override
 			public void run() {
 				try {
 					gradleExec.executeGradleCommand("build -x check -t");
@@ -122,21 +120,6 @@ public class DeployCommand {
 		}
 	}
 
-	@Parameters(commandNames = {"deploy"}, commandDescription = DeployCommand.DESCRIPTION)
-	public static class DeployOptions {
-
-		public boolean isWatch() {
-			return watch;
-		}
-
-		@Parameter(
-			names = {"-w", "--watch"},
-			description = "Watches the deployed file for changes and will automatically redeploy"
-			)
-		private boolean watch;
-
-	}
-
 	private void addError(String msg) {
 		_blade.addErrors("deploy", Collections.singleton(msg));
 	}
@@ -148,7 +131,7 @@ public class DeployCommand {
 	private long getBundleId(List<BundleDTO> bundles, String bsn) throws IOException {
 		long existingId = -1;
 
-		if (bundles != null && bundles.size() > 0) {
+		if (Util.isNotEmpty(bundles)) {
 			for (BundleDTO bundle : bundles) {
 				if (bundle.symbolicName.equals(bsn)) {
 					existingId = bundle.id;
@@ -246,7 +229,7 @@ public class DeployCommand {
 		String bundleURL = outputFile.toURI().toASCIIString();
 
 		if (existingId > 0) {
-			if (isFragment && hostId > 0) {
+			if (isFragment && (hostId > 0)) {
 				String response = client.send("update " + existingId + " " + bundleURL);
 
 				_blade.out().println(response);
@@ -276,7 +259,7 @@ public class DeployCommand {
 
 			_blade.out().println(response);
 
-			if (isFragment && hostId > 0) {
+			if (isFragment && (hostId > 0)) {
 				response = client.send("refresh " + hostId);
 
 				_blade.out().println(response);
@@ -299,7 +282,7 @@ public class DeployCommand {
 
 	private final blade _blade;
 	private final String _host;
-	private final DeployOptions _options;
+	private final DeployCommandArgs _options;
 	private final int _port;
 
 }

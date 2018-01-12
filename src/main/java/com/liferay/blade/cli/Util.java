@@ -208,6 +208,14 @@ public class Util {
 		return false;
 	}
 
+	public static boolean isEmpty(List<?> list) {
+		if (list == null || list.size() == 0) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public static boolean isEmpty(Object[] array) {
 		if (array == null || array.length == 0) {
 			return true;
@@ -222,6 +230,10 @@ public class Util {
 		}
 
 		return false;
+	}
+
+	public static boolean isNotEmpty(List<?> list) {
+		return !isEmpty(list);
 	}
 
 	public static boolean isNotEmpty(Object[] array) {

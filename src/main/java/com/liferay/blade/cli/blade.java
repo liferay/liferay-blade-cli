@@ -24,16 +24,8 @@ import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import com.liferay.blade.cli.DeployCommand.DeployOptions;
-import com.liferay.blade.cli.GradleCommand.GradleOptions;
-import com.liferay.blade.cli.InitCommand.InitOptions;
-import com.liferay.blade.cli.InstallCommand.InstallOptions;
-import com.liferay.blade.cli.OpenCommand.OpenOptions;
-import com.liferay.blade.cli.OutputsCommand.OutputsOptions;
-import com.liferay.blade.cli.SamplesCommand.SamplesOptions;
 import com.liferay.blade.cli.ServerStartCommand.ServerStartOptions;
 import com.liferay.blade.cli.ServerStopCommand.ServerStopOptions;
-import com.liferay.blade.cli.ShellCommand.ShellOptions;
 import com.liferay.blade.cli.UpdateCommand.UpdateOptions;
 import com.liferay.blade.cli.UpgradePropsCommand.UpgradePropsOptions;
 
@@ -70,11 +62,11 @@ public class blade implements Runnable {
 		new CreateCommand(this, options).execute();
 	}
 
-	public void _deploy(DeployOptions options) throws Exception {
+	public void _deploy(DeployCommandArgs options) throws Exception {
 		new DeployCommand(this, options).execute();
 	}
 
-	public void _gw(GradleOptions options) throws Exception {
+	public void _gw(GradleCommandArgs options) throws Exception {
 		new GradleCommand(this, options).execute();
 	}
 
@@ -82,23 +74,23 @@ public class blade implements Runnable {
 		options._help();
 	}
 
-	public void _init(InitOptions options) throws Exception {
+	public void _init(InitCommandArgs options) throws Exception {
 		new InitCommand(this, options).execute();
 	}
 
-	public void _install(InstallOptions options) throws Exception {
+	public void _install(InstallCommandArgs options) throws Exception {
 		new InstallCommand(this, options).execute();
 	}
 
-	public void _open(OpenOptions options) throws Exception {
+	public void _open(OpenCommandArgs options) throws Exception {
 		new OpenCommand(this, options).execute();
 	}
 
-	public void _outputs(OutputsOptions options) throws Exception {
+	public void _outputs(OutputsCommandArgs options) throws Exception {
 		new OutputsCommand(this, options).execute();
 	}
 
-	public void _samples(SamplesOptions options) throws Exception {
+	public void _samples(SamplesCommandArgs options) throws Exception {
 		new SamplesCommand(this, options).execute();
 	}
 
@@ -110,7 +102,7 @@ public class blade implements Runnable {
 		new ServerStopCommand(this, options).execute();
 	}
 
-	public void _sh(ShellOptions options) throws Exception {
+	public void _sh(ShellCommandArgs options) throws Exception {
 		new ShellCommand(this, options).execute();
 	}
 
@@ -197,10 +189,10 @@ public class blade implements Runnable {
 				_convert((ConvertCommandArgs) _commandArgs);
 			} break;
 			case "deploy": {
-				_deploy((DeployOptions) _commandArgs);
+				_deploy((DeployCommandArgs) _commandArgs);
 			} break;
 			case "gw": {
-				_gw((GradleOptions) _commandArgs);
+				_gw((GradleCommandArgs) _commandArgs);
 			} break;
 			default:
 			case "help": {
@@ -209,20 +201,20 @@ public class blade implements Runnable {
 
 			} break;
 			case "init": {
-				_init((InitOptions) _commandArgs);
+				_init((InitCommandArgs) _commandArgs);
 			} break;
 			case "install": {
-				_install((InstallOptions) _commandArgs);
+				_install((InstallCommandArgs) _commandArgs);
 			}
 
 			case "open": {
-				_open((OpenOptions) _commandArgs);
+				_open((OpenCommandArgs) _commandArgs);
 			} break;
 			case "outputs": {
-				_outputs((OutputsOptions) _commandArgs);
+				_outputs((OutputsCommandArgs) _commandArgs);
 			} break;
 			case "samples": {
-				_samples((SamplesOptions) _commandArgs);
+				_samples((SamplesCommandArgs) _commandArgs);
 			} break;
 			case "server start": {
 				_serverStart((ServerStartOptions) _commandArgs);
@@ -232,7 +224,7 @@ public class blade implements Runnable {
 				_serverStop((ServerStopOptions) _commandArgs);
 			} break;
 			case "sh": {
-				_sh((ShellOptions) _commandArgs);
+				_sh((ShellCommandArgs) _commandArgs);
 			} break;
 			case "update": {
 				_update((UpdateOptions) _commandArgs);
@@ -253,10 +245,10 @@ public class blade implements Runnable {
 
 	public void run(String[] args) {
 		List<Object> argsList = Arrays.asList(
-				new CreateCommandArgs(), new ConvertCommandArgs(), new DeployOptions(), new GradleOptions(),
-				new InitOptions(), new InstallOptions(), new OpenOptions(), new OutputsOptions(), new SamplesOptions(),
-				new ServerStartOptions(), new ServerStopOptions(), new ShellOptions(), new UpdateOptions(),
-				new UpgradePropsOptions());
+				new CreateCommandArgs(), new ConvertCommandArgs(), new DeployCommandArgs(), new GradleCommandArgs(),
+				new InitCommandArgs(), new InstallCommandArgs(), new OpenCommandArgs(), new OutputsCommandArgs(),
+				new SamplesCommandArgs(), new ServerStartOptions(), new ServerStopOptions(), new ShellCommandArgs(),
+				new UpdateOptions(), new UpgradePropsOptions());
 		Builder builder = JCommander.newBuilder();
 
 			for (Object o : argsList) {

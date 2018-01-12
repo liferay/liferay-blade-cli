@@ -16,9 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.FileWatcher.Consumer;
@@ -33,6 +30,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -46,15 +44,15 @@ public class FileWatcherTest {
 	public void cleanUp() throws Exception {
 		if (testdir.exists()) {
 			IO.delete(testdir);
-			assertFalse(testdir.exists());
+			Assert.assertFalse(testdir.exists());
 		}
 	}
 
 	@Before
 	public void setUp() throws Exception {
 		testdir.mkdirs();
-		assertTrue(testdir.exists());
-		assertTrue(testfile.createNewFile());
+		Assert.assertTrue(testdir.exists());
+		Assert.assertTrue(testfile.createNewFile());
 	}
 
 	@Ignore
@@ -105,7 +103,7 @@ public class FileWatcherTest {
 		latch.await();
 
 		for (Path path : changed.keySet()) {
-			assertTrue(changed.get(path));
+			Assert.assertTrue(changed.get(path));
 		}
 	}
 
@@ -125,7 +123,7 @@ public class FileWatcherTest {
 
 		};
 
-		assertFalse(changed[0]);
+		Assert.assertFalse(changed[0]);
 
 		Thread t = new Thread() {
 
@@ -151,7 +149,7 @@ public class FileWatcherTest {
 
 		latch.await();
 
-		assertTrue(changed[0]);
+		Assert.assertTrue(changed[0]);
 	}
 
 	private final File testdir = IO.getFile("build/watch");

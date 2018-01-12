@@ -18,9 +18,6 @@ package com.liferay.blade.cli;
 
 import aQute.lib.io.IO;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
@@ -49,7 +46,7 @@ public class InitCommand {
 
 	public static final String DESCRIPTION = "Initializes a new Liferay workspace";
 
-	public InitCommand(blade blade, InitOptions options) throws Exception {
+	public InitCommand(blade blade, InitCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 	}
@@ -155,39 +152,6 @@ public class InitCommand {
 
 			IO.deleteWithException(temp);
 		}
-	}
-
-	@Parameters(commandNames = {"init"}, commandDescription = InitCommand.DESCRIPTION)
-	public static class InitOptions {
-
-		public String getName() {
-			return name;
-		}
-
-		public boolean isForce() {
-			return force;
-		}
-
-		public boolean isRefresh() {
-			return refresh;
-		}
-
-		public boolean isUpgrade() {
-			return upgrade;
-		}
-
-		@Parameter(names = {"-f", "--force"}, description = "create anyway if there are files located at target folder")
-		private boolean force;
-
-		@Parameter(description = "[name]")
-		private String name;
-
-		@Parameter(names = {"-r", "--refresh"}, description ="force to refresh workspace template")
-		private boolean refresh;
-
-		@Parameter(names = {"-u", "--upgrade"}, description ="upgrade plugins-sdk from 6.2 to 7.0")
-		private boolean upgrade;
-
 	}
 
 	private void _moveContentsToDirectory(File src, File dest) throws IOException {
@@ -310,6 +274,6 @@ public class InitCommand {
 	};
 
 	private final blade _blade;
-	private final InitOptions _options;
+	private final InitCommandArgs _options;
 
 }
