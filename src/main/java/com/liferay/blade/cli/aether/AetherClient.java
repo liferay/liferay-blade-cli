@@ -146,15 +146,14 @@ public class AetherClient {
 		locator.addService(TransporterFactory.class, FileTransporterFactory.class);
 		locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
 
-		DefaultServiceLocator.ErrorHandler handler =
-			new DefaultServiceLocator.ErrorHandler() {
+		DefaultServiceLocator.ErrorHandler handler = new DefaultServiceLocator.ErrorHandler() {
 
-				@Override
-				public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
-					exception.printStackTrace();
-				}
+			@Override
+			public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
+				exception.printStackTrace();
+			}
 
-			};
+		};
 
 		locator.setErrorHandler(handler);
 

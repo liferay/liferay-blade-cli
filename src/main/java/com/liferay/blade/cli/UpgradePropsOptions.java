@@ -19,21 +19,41 @@ package com.liferay.blade.cli;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import java.io.File;
+
 /**
  * @author Gregory Amerson
  */
 @Parameters(
-	commandNames = {"deploy"}, commandDescription = "Builds and deploys bundles to the Liferay module framework."
+	commandNames = {"upgradeProps"},
+	commandDescription = "Helps to upgrade portal properties from Liferay server 6.x to 7.x versions"
 )
-public class DeployCommandArgs {
+public class UpgradePropsOptions {
 
-	public boolean isWatch() {
-		return watch;
+	public File getBundleDir() {
+		return bundleDir;
 	}
 
+	public File getOutputFile() {
+		return outputFile;
+	}
+
+	public File getPropertiesFile() {
+		return propertiesFile;
+	}
+
+	@Parameter(names = {"-d", "--bundleDir"}, description ="Liferay server bundle directory.")
+	private File bundleDir;
+
 	@Parameter(
-		names = {"-w", "--watch"}, description = "Watches the deployed file for changes and will automatically redeploy"
+		names = {"-o", "--outputFile"},
+		description ="If specified, write out report to this file, otherwise uses stdout."
 	)
-	private boolean watch;
+	private File outputFile;
+
+	@Parameter(
+		names = {"-p", "--propertiesFile"}, description ="Specify existing Liferay 6.x portal-ext.properties file."
+	)
+	private File propertiesFile;
 
 }

@@ -117,7 +117,7 @@ public class ConvertCommand {
 			return;
 		}
 
-		if ((pluginName == null) && (!_options.isAll() && !_options.isList())) {
+		if ((pluginName == null) && !_options.isAll() && !_options.isList()) {
 			_blade.error("Please specify a plugin name, list the projects with [-l] or specify all using option [-a]");
 
 			return;
@@ -365,7 +365,7 @@ public class ConvertCommand {
 
 				});
 
-			if (others != null && others.length > 0) {
+			if ((others != null) && (others.length > 0)) {
 				File backup = new File(newThemeDir, "docroot_backup");
 
 				backup.mkdirs();
@@ -451,7 +451,7 @@ public class ConvertCommand {
 
 				NodeList depElements = documentElement.getElementsByTagName("dependency");
 
-				if (depElements != null && depElements.getLength() > 0) {
+				if ((depElements != null) && (depElements.getLength() > 0)) {
 					for (int i = 0; i < depElements.getLength(); i++) {
 						Node depElement = depElements.item(i);
 
@@ -459,7 +459,7 @@ public class ConvertCommand {
 						String org = getAttr(depElement, "org");
 						String rev = getAttr(depElement, "rev");
 
-						if (name != null && org != null && rev != null) {
+						if ((name != null) && (org != null) && (rev != null)) {
 							dependencies.add(
 								MessageFormat.format(
 									"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", org, name, rev));
@@ -492,20 +492,22 @@ public class ConvertCommand {
 	private File findPluginDir(final String pluginName) throws Exception {
 		final File[] pluginDir = new File[1];
 
-		Files.walkFileTree(_pluginsSdkDir.toPath(), new SimpleFileVisitor<Path>() {
+		Files.walkFileTree(
+			_pluginsSdkDir.toPath(),
+			new SimpleFileVisitor<Path>() {
 
-			@Override
-			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-				if (dir.getName(dir.getNameCount() - 1).toString().equals(pluginName)) {
-					pluginDir[0] = dir.toFile();
+				@Override
+				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+					if (dir.getName(dir.getNameCount() - 1).toString().equals(pluginName)) {
+						pluginDir[0] = dir.toFile();
 
-					return FileVisitResult.TERMINATE;
+						return FileVisitResult.TERMINATE;
+					}
+
+					return FileVisitResult.CONTINUE;
 				}
 
-				return FileVisitResult.CONTINUE;
-			}
-
-		});
+			});
 
 		return pluginDir[0];
 	}

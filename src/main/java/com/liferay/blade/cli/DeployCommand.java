@@ -42,13 +42,11 @@ import org.osgi.framework.dto.BundleDTO;
  */
 public class DeployCommand {
 
-	public static final String DESCRIPTION = "Builds and deploys bundles to the Liferay module framework.";
-
 	public DeployCommand(blade blade, DeployCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
-		_host = /*options.host() != null ? options.host() : */"localhost";
-		_port = /*options.port() != 0 ? options.port() : */11311;
+		_host = "localhost";
+		_port = 11311;
 	}
 
 	public void deploy(GradleExec gradle, Set<File> outputFiles) throws Exception {
@@ -177,19 +175,19 @@ public class DeployCommand {
 		if ("ACTIVE".equals(bundleState)) {
 			return Bundle.ACTIVE;
 		}
-		else if ("INSTALLED".equals(Bundle.INSTALLED)) {
+		else if ("INSTALLED".equals(bundleState)) {
 			return Bundle.INSTALLED;
 		}
-		else if ("RESOLVED".equals(Bundle.RESOLVED)) {
+		else if ("RESOLVED".equals(bundleState)) {
 			return Bundle.RESOLVED;
 		}
-		else if ("STARTING".equals(Bundle.STARTING)) {
+		else if ("STARTING".equals(bundleState)) {
 			return Bundle.STARTING;
 		}
-		else if ("STOPPING".equals(Bundle.STOPPING)) {
+		else if ("STOPPING".equals(bundleState)) {
 			return Bundle.STOPPING;
 		}
-		else if ("UNINSTALLED".equals(Bundle.UNINSTALLED)) {
+		else if ("UNINSTALLED".equals(bundleState)) {
 			return Bundle.UNINSTALLED;
 		}
 
@@ -214,7 +212,9 @@ public class DeployCommand {
 			bsn = bundle.getBsn();
 
 			if (isFragment) {
-				hostBSN = new aQute.bnd.header.Parameters(fragmentHost).keySet().iterator().next();
+				Set<String> keySet = new aQute.bnd.header.Parameters(fragmentHost).keySet();
+
+				hostBSN = keySet.iterator().next();
 			}
 		}
 

@@ -858,7 +858,11 @@ public class PropertiesLocator {
 			else if (property.endsWith("breadcrumb.display.style.default")) {
 				PropertyProblem updatedProblem = new PropertyProblem(
 					property, PropertyProblemType.MODULARIZED,
-					" ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.configuration. SiteNavigationBreadcrumbWebTemplateConfiguration. More information at Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts",
+					" ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.configuration. " +
+							"SiteNavigationBreadcrumbWebTemplateConfiguration. More information at Breaking " +
+								"Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/" +
+									"knowledge_base/7-0/breaking-changes#" +
+										"replaced-the-breadcrumb-portlets-display-styles-with-adts",
 					null);
 
 				informationToPrint.add(updatedProblem);
@@ -868,8 +872,9 @@ public class PropertiesLocator {
 			else if (property.endsWith("breadcrumb.display.style.options")) {
 				PropertyProblem updatedProblem = new PropertyProblem(
 					property, PropertyProblemType.REMOVED,
-					"Any DDM template as ddmTemplate_BREADCRUMB-HORIZONTAL-FTL can be used. More information at Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts",
-					null);
+					"Any DDM template as ddmTemplate_BREADCRUMB-HORIZONTAL-FTL can be used. More information at " +
+					"Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/" +
+					"7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts", null);
 
 				informationToPrint.add(updatedProblem);
 

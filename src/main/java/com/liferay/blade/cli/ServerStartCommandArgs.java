@@ -22,35 +22,28 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandNames = {"init"}, commandDescription = "Initializes a new Liferay workspace")
-public class InitCommandArgs {
+@Parameters(commandNames = {"server start"}, commandDescription = "Start server defined by your Liferay project")
+public class ServerStartCommandArgs {
 
-	public String getName() {
-		return name;
+	public boolean isBackground() {
+		return background;
 	}
 
-	public boolean isForce() {
-		return force;
+	public boolean isDebug() {
+		return debug;
 	}
 
-	public boolean isRefresh() {
-		return refresh;
+	public boolean isTail() {
+		return tail;
 	}
 
-	public boolean isUpgrade() {
-		return upgrade;
-	}
+	@Parameter(names = {"-b", "--background"}, description ="Start server in background")
+	private boolean background;
 
-	@Parameter(names = {"-f", "--force"}, description = "create anyway if there are files located at target folder")
-	private boolean force;
+	@Parameter(names = {"-d", "--debug"}, description ="Start server in debug mode")
+	private boolean debug;
 
-	@Parameter(description = "[name]")
-	private String name;
-
-	@Parameter(names = {"-r", "--refresh"}, description ="force to refresh workspace template")
-	private boolean refresh;
-
-	@Parameter(names = {"-u", "--upgrade"}, description ="upgrade plugins-sdk from 6.2 to 7.0")
-	private boolean upgrade;
+	@Parameter(names = {"-t", "--tail"}, description ="Tail a running server")
+	private boolean tail;
 
 }

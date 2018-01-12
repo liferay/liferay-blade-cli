@@ -44,8 +44,6 @@ import java.util.Properties;
  */
 public class InitCommand {
 
-	public static final String DESCRIPTION = "Initializes a new Liferay workspace";
-
 	public InitCommand(blade blade, InitCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
@@ -84,13 +82,14 @@ public class InitCommand {
 						}
 					}
 					else {
-						addError("Unable to run blade init in plugins sdk 6.2, please add -u (--upgrade)" +
-							" if you want to upgrade to 7.0");
+						addError(
+							"Unable to run blade init in plugins sdk 6.2, please add -u (--upgrade) if you want " +
+								"to upgrade to 7.0");
 						return;
 					}
 				}
 
-				trace("Found plugins-sdk, moving contents to new subdirectory " + "and initing workspace.");
+				trace("Found plugins-sdk, moving contents to new subdirectory and initing workspace.");
 
 				temp = Files.createTempDirectory("orignal-sdk").toFile();
 
@@ -158,7 +157,8 @@ public class InitCommand {
 		Path source = src.toPath().toAbsolutePath();
 		Path target = dest.toPath().toAbsolutePath();
 
-		Files.walkFileTree(source,
+		Files.walkFileTree(
+			source,
 			new SimpleFileVisitor<Path>() {
 
 				@Override
@@ -218,7 +218,7 @@ public class InitCommand {
 
 		List<String> names = Arrays.asList(dir.list());
 
-		if (names != null && names.contains("portlets") && names.contains("hooks") && names.contains("layouttpl") &&
+		if ((names != null) && names.contains("portlets") && names.contains("hooks") && names.contains("layouttpl") &&
 			names.contains("themes") && names.contains("build.properties") && names.contains("build.xml") &&
 			names.contains("build-common.xml") && names.contains("build-common-plugin.xml")) {
 

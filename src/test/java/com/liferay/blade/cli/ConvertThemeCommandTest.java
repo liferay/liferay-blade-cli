@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertFalse;
-
 import aQute.lib.io.IO;
 
 import java.io.ByteArrayOutputStream;
@@ -40,7 +38,7 @@ public class ConvertThemeCommandTest {
 	public void cleanUp() throws Exception {
 		if (testdir.exists()) {
 			IO.delete(testdir);
-			assertFalse(testdir.exists());
+			Assert.assertFalse(testdir.exists());
 		}
 	}
 

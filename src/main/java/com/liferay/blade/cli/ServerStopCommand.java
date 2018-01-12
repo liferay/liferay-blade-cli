@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.beust.jcommander.Parameters;
-
 import java.io.File;
 
 import java.nio.file.Files;
@@ -35,9 +33,7 @@ import java.util.stream.Collectors;
  */
 public class ServerStopCommand {
 
-	public static final String DESCRIPTION = "Stop server defined by your Liferay project";
-
-	public ServerStopCommand(blade blade, ServerStopOptions options) {
+	public ServerStopCommand(blade blade, ServerStopCommandArgs options) {
 		_blade = blade;
 	}
 
@@ -127,15 +123,11 @@ public class ServerStopCommand {
 		}
 	}
 
-	@Parameters(commandNames = {"server stop"},
-		commandDescription = ServerStopCommand.DESCRIPTION)
-	public static class ServerStopOptions {
-	}
-
 	private void commandServer(Path dir, String serverType) throws Exception {
 		if (Files.notExists(dir) || !Files.list(dir).findAny().isPresent()) {
 			_blade.error(
-				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to create it.");
+				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to" +
+					" create it.");
 
 			return;
 		}

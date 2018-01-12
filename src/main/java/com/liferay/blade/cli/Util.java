@@ -200,7 +200,7 @@ public class Util {
 		else {
 			File parent = dir.getParentFile();
 
-			if (parent != null && parent.exists()) {
+			if ((parent != null) && parent.exists()) {
 				return hasGradleWrapper(parent);
 			}
 		}
@@ -209,7 +209,7 @@ public class Util {
 	}
 
 	public static boolean isEmpty(List<?> list) {
-		if (list == null || list.size() == 0) {
+		if ((list == null) || (list.size() == 0)) {
 			return true;
 		}
 
@@ -217,7 +217,7 @@ public class Util {
 	}
 
 	public static boolean isEmpty(Object[] array) {
-		if (array == null || array.length == 0) {
+		if ((array == null) || (array.length == 0)) {
 			return true;
 		}
 
@@ -225,7 +225,7 @@ public class Util {
 	}
 
 	public static boolean isEmpty(String string) {
-		if (string == null || string.isEmpty()) {
+		if ((string == null) || string.isEmpty()) {
 			return true;
 		}
 
@@ -301,27 +301,28 @@ public class Util {
 	}
 
 	public static void readProcessStream(final InputStream is, final PrintStream ps) {
-		Thread t = new Thread(new Runnable() {
+		Thread t = new Thread(
+			new Runnable() {
 
-			@Override
-			public void run() {
-				try (InputStreamReader isr = new InputStreamReader(is);
-					BufferedReader br = new BufferedReader(isr)) {
+				@Override
+				public void run() {
+					try (InputStreamReader isr = new InputStreamReader(is);
+						BufferedReader br = new BufferedReader(isr)) {
 
-					String line = null;
+						String line = null;
 
-					while ((line = br.readLine()) != null) {
-						ps.println(line);
+						while ((line = br.readLine()) != null) {
+							ps.println(line);
+						}
+
+						is.close();
 					}
-
-					is.close();
+					catch (IOException ioe) {
+						ioe.printStackTrace();
+					}
 				}
-				catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-			}
 
-		});
+			});
 
 		t.start();
 	}

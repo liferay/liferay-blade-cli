@@ -16,9 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 import com.liferay.properties.locator.PropertiesLocator;
 import com.liferay.properties.locator.PropertiesLocatorArgs;
 
@@ -31,14 +28,11 @@ import java.util.Collections;
  */
 public class UpgradePropsCommand {
 
-	public static final String DESCRIPTION =
-		"Helps to upgrade portal properties from Liferay server 6.x to 7.x versions";
-
 	public UpgradePropsCommand(blade blade, UpgradePropsOptions options) throws Exception {
 		File bundleDir = options.getBundleDir();
 		File propertiesFile = options.getPropertiesFile();
 
-		if (bundleDir == null || propertiesFile == null) {
+		if ((bundleDir == null) || (propertiesFile == null)) {
 			blade.addErrors(
 				"upgradeProps", Collections.singleton("bundleDir and propertiesFile options both required."));
 			//options._command().help(new Justif().formatter(), blade);
@@ -53,38 +47,6 @@ public class UpgradePropsCommand {
 		args.setPropertiesFile(options.getPropertiesFile());
 
 		new PropertiesLocator(args);
-	}
-
-	@Parameters(commandNames = {"upgradeProps"},
-		commandDescription = UpgradePropsCommand.DESCRIPTION)
-	public static class UpgradePropsOptions {
-
-		public File getBundleDir() {
-			return bundleDir;
-		}
-
-		public File getOutputFile() {
-			return outputFile;
-		}
-
-		public File getPropertiesFile() {
-			return propertiesFile;
-		}
-
-		@Parameter(names = {"-d", "--bundleDir"}, description ="Liferay server bundle directory.")
-		private File bundleDir;
-
-		@Parameter(
-			names = {"-o", "--outputFile"},
-			description ="If specified, write out report to this file, otherwise uses stdout."
-		)
-		private File outputFile;
-
-		@Parameter(
-			names = {"-p", "--propertiesFile"}, description ="Specify existing Liferay 6.x portal-ext.properties file."
-		)
-		private File propertiesFile;
-
 	}
 
 }

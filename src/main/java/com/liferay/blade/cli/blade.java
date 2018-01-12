@@ -21,13 +21,6 @@ import aQute.lib.getopt.Options;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
-import com.liferay.blade.cli.ServerStartCommand.ServerStartOptions;
-import com.liferay.blade.cli.ServerStopCommand.ServerStopOptions;
-import com.liferay.blade.cli.UpdateCommand.UpdateOptions;
-import com.liferay.blade.cli.UpgradePropsCommand.UpgradePropsOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,11 +87,11 @@ public class blade implements Runnable {
 		new SamplesCommand(this, options).execute();
 	}
 
-	public void _serverStart(ServerStartOptions options) throws Exception {
+	public void _serverStart(ServerStartCommandArgs options) throws Exception {
 		new ServerStartCommand(this, options).execute();
 	}
 
-	public void _serverStop(ServerStopOptions options) throws Exception {
+	public void _serverStop(ServerStopCommandArgs options) throws Exception {
 		new ServerStopCommand(this, options).execute();
 	}
 
@@ -106,7 +99,7 @@ public class blade implements Runnable {
 		new ShellCommand(this, options).execute();
 	}
 
-	public void _update(UpdateOptions options) throws Exception {
+	public void _update(UpdateCommandArgs options) throws Exception {
 		new UpdateCommand(this, options).execute();
 	}
 
@@ -182,63 +175,86 @@ public class blade implements Runnable {
 	public void run() {
 		try {
 			switch (_command) {
-			case "create": {
+			case "create":
 				_create((CreateCommandArgs) _commandArgs);
-			} break;
-			case "convert": {
+
+				break;
+
+			case "convert":
 				_convert((ConvertCommandArgs) _commandArgs);
-			} break;
-			case "deploy": {
+
+				break;
+
+			case "deploy":
 				_deploy((DeployCommandArgs) _commandArgs);
-			} break;
-			case "gw": {
+
+				break;
+
+			case "gw":
 				_gw((GradleCommandArgs) _commandArgs);
-			} break;
-			default:
-			case "help": {
 
-				// TODO: Print help here?
+				break;
 
-			} break;
-			case "init": {
+			case "help":
+
+				break;
+
+			case "init":
 				_init((InitCommandArgs) _commandArgs);
-			} break;
-			case "install": {
+
+				break;
+
+			case "install":
 				_install((InstallCommandArgs) _commandArgs);
-			}
 
-			case "open": {
+				break;
+
+			case "open":
 				_open((OpenCommandArgs) _commandArgs);
-			} break;
-			case "outputs": {
+
+				break;
+
+			case "outputs":
 				_outputs((OutputsCommandArgs) _commandArgs);
-			} break;
-			case "samples": {
+
+				break;
+
+			case "samples":
 				_samples((SamplesCommandArgs) _commandArgs);
-			} break;
-			case "server start": {
-				_serverStart((ServerStartOptions) _commandArgs);
 
-			} break;
-			case "server stop": {
-				_serverStop((ServerStopOptions) _commandArgs);
-			} break;
-			case "sh": {
+				break;
+
+			case "server start":
+				_serverStart((ServerStartCommandArgs) _commandArgs);
+
+				break;
+
+			case "server stop":
+				_serverStop((ServerStopCommandArgs) _commandArgs);
+
+				break;
+
+			case "sh":
 				_sh((ShellCommandArgs) _commandArgs);
-			} break;
-			case "update": {
-				_update((UpdateOptions) _commandArgs);
-			} break;
-			case "upgradeProps": {
+
+				break;
+
+			case "update":
+				_update((UpdateCommandArgs) _commandArgs);
+
+				break;
+
+			case "upgradeProps":
 				_upgradeProps((UpgradePropsOptions) _commandArgs);
-			} break;
-			case "version": {
 
-				// TODO: What is this supposed to do?
+				break;
 
-			} break;
+			case "version":
+
+				break;
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -247,19 +263,18 @@ public class blade implements Runnable {
 		List<Object> argsList = Arrays.asList(
 				new CreateCommandArgs(), new ConvertCommandArgs(), new DeployCommandArgs(), new GradleCommandArgs(),
 				new InitCommandArgs(), new InstallCommandArgs(), new OpenCommandArgs(), new OutputsCommandArgs(),
-				new SamplesCommandArgs(), new ServerStartOptions(), new ServerStopOptions(), new ShellCommandArgs(),
-				new UpdateOptions(), new UpgradePropsOptions());
+				new SamplesCommandArgs(), new ServerStartCommandArgs(), new ServerStopCommandArgs(),
+				new ShellCommandArgs(), new UpdateCommandArgs(), new UpgradePropsOptions());
+
 		Builder builder = JCommander.newBuilder();
 
-			for (Object o : argsList) {
-				builder.addCommand(o);
-			}
+		for (Object o : argsList) {
+			builder.addCommand(o);
+		}
 
-		JCommander commander = builder
-		.addObject(_bladeArgs)
-		.build();
-		commander
-		.parse(args);
+		JCommander commander = builder.addObject(_bladeArgs).build();
+
+		commander.parse(args);
 
 		String command = commander.getParsedCommand();
 		Object commandArgs = commander.getCommands().get(command).getObjects().get(0);
@@ -283,34 +298,5 @@ public class blade implements Runnable {
 	private PrintStream err = System.err;
 	private PrintStream out = System.out;
 	private final Formatter tracer = new Formatter(System.out);
-
-	@Parameters(commandDescription = "Options valid for all commands. Must be given before sub command")
-	private static class BladeArgs {
-
-		public String getBase() {
-			return base;
-		}
-
-		public String getFailok() {
-			return failok;
-		}
-
-		public boolean isTrace() {
-			return trace;
-		}
-
-		@Parameter(names = {"-b", "--base"}, description ="Specify a new base directory (default working directory).")
-		private String base = ".";
-
-		@Parameter(
-			names = {"-f", "--failok"},
-			description ="Do not return error status for error that match this given regular expression."
-		)
-		private String failok;
-
-		@Parameter(names = {"-t", "--trace"}, description ="Print exception stack traces when they occur.")
-		private boolean trace;
-
-	}
 
 }

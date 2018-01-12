@@ -1,17 +1,18 @@
-/*******************************************************************************
+/**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *******************************************************************************/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.liferay.blade.cli.util;
 
@@ -60,7 +61,7 @@ public class BndProperties extends Properties {
 		if (bdValue != null) {
 			String originalValue = bdValue.getOriginalValue();
 
-			if (originalValue != null && !"".equals(originalValue)) {
+			if ((originalValue != null) && !"".equals(originalValue)) {
 				StringBuilder formatedValueBuilder = new StringBuilder(bdValue.getFormatedValue());
 				StringBuilder originalValueBuilder = new StringBuilder(bdValue.getOriginalValue());
 
@@ -79,7 +80,8 @@ public class BndProperties extends Properties {
 						formatedValueBuilder.append(",\\" + System.getProperty("line.separator"));
 						formatedValueBuilder.append("\t" + newValue);
 						inputValue.setFormatedValue(formatedValueBuilder.toString());
-					} else {
+					}
+					else {
 						originalValueBuilder.append(",").append(newValue);
 						inputValue.setFormatedValue(originalValueBuilder.toString());
 					}
@@ -112,7 +114,8 @@ public class BndProperties extends Properties {
 	public void load(File bndFile) throws IOException {
 		try (InputStream in = new FileInputStream(bndFile)) {
 			load(in);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 		}
 	}
 
@@ -133,11 +136,15 @@ public class BndProperties extends Properties {
 
 			// Leading whitespaces must be deleted first.
 
-			while (pos < line.length() && Character.isWhitespace(c = line.charAt(pos))) pos++;
+			while ((pos < line.length()) && Character.isWhitespace(c = line.charAt(pos))) {
+				pos++;
+			}
 
 			// If empty line or begins with a comment character, skip this line.
 
-			if ((line.length() - pos) == 0 || line.charAt(pos) == '#' || line.charAt(pos) == '!') continue;
+			if (((line.length() - pos) == 0) || (line.charAt(pos) == '#') || (line.charAt(pos) == '!')) {
+				continue;
+			}
 
 			// The characters up to the next Whitespace, ':', or '='
 			// describe the key. But look for escape sequences.
@@ -152,8 +159,10 @@ public class BndProperties extends Properties {
 			}
 
 			StringBuilder key = needsEscape ? new StringBuilder() : null;
-			while (pos < line.length() && !Character.isWhitespace(c = line.charAt(pos++)) && c != '=' && c != ':') {
-				if (needsEscape && c == '\\') {
+			while ((pos < line.length()) && !Character.isWhitespace(c = line.charAt(pos++)) && (c != '=') &&
+				   (c != ':')) {
+
+				if (needsEscape && (c == '\\')) {
 					if (pos == line.length()) {
 
 						// The line continues on the next line. If there
@@ -162,10 +171,17 @@ public class BndProperties extends Properties {
 
 						line = reader.readLine();
 
-						if (line == null)line = "";
+						if (line == null) {
+							line = "";
+						}
+
 						pos = 0;
-						while (pos < line.length() && Character.isWhitespace(c = line.charAt(pos))) pos++;
-					} else {
+
+						while ((pos < line.length()) && Character.isWhitespace(c = line.charAt(pos))) {
+							pos++;
+						}
+					}
+					else {
 						c = line.charAt(pos++);
 						switch (c) {
 						case 'n':
@@ -181,11 +197,11 @@ public class BndProperties extends Properties {
 
 							break;
 						case 'u':
-							if (pos + 4 <= line.length()) {
+							if ((pos + 4) <= line.length()) {
 								char uni = (char)Integer.parseInt(line.substring(pos, pos + 4), 16);
 								key.append(uni);
 								pos += 4;
-							} // else throw exception?
+							}
 
 							break;
 						default:
@@ -194,26 +210,39 @@ public class BndProperties extends Properties {
 							break;
 						}
 					}
-				} else if (needsEscape)key.append(c);
+				}
+				else if (needsEscape) {
+					key.append(c);
+				}
 			}
 
 			boolean isDelim = false;
 
-			if ((c == ':' || c == '=')) {
+			if ((c == ':') || (c == '=')) {
 				isDelim = true;
 			}
 
 			String keyString;
 
-			if (needsEscape)keyString = key.toString();
-			else if (isDelim || Character.isWhitespace(c))keyString = line.substring(start, pos - 1);
-			else keyString = line.substring(start, pos);
+			if (needsEscape) {
+				keyString = key.toString();
+			}
+			else if (isDelim || Character.isWhitespace(c)) {
+				keyString = line.substring(start, pos - 1);
+			}
+			else {
+				keyString = line.substring(start, pos);
+			}
 
-			while (pos < line.length() && Character.isWhitespace(c = line.charAt(pos))) pos++;
-
-			if (!isDelim && (c == ':' || c == '=')) {
+			while ((pos < line.length()) && Character.isWhitespace(c = line.charAt(pos))) {
 				pos++;
-				while (pos < line.length() && Character.isWhitespace(c = line.charAt(pos))) pos++;
+			}
+
+			if (!isDelim && ((c == ':') || (c == '='))) {
+				pos++;
+				while ((pos < line.length()) && Character.isWhitespace(c = line.charAt(pos))) {
+					pos++;
+				}
 			}
 
 			// Short-circuit if no escape chars found.
@@ -250,12 +279,18 @@ public class BndProperties extends Properties {
 						// the file. The JDK ignores the backslash in
 						// this case, so we follow for compatibility.
 
-						if (line == null)break;
+						if (line == null) {
+							break;
+						}
 
 						pos = 0;
-						while (pos < line.length() && Character.isWhitespace(c = line.charAt(pos))) pos++;
+						while ((pos < line.length()) && Character.isWhitespace(c = line.charAt(pos))) {
+							pos++;
+						}
+
 						element.ensureCapacity(line.length() - pos + element.length());
-					} else {
+					}
+					else {
 						c = line.charAt(pos++);
 						switch (c) {
 						case 'n':
@@ -274,11 +309,11 @@ public class BndProperties extends Properties {
 
 							break;
 						case 'u':
-							if (pos + 4 <= line.length()) {
+							if ((pos + 4) <= line.length()) {
 								char uni = (char)Integer.parseInt(line.substring(pos, pos + 4), 16);
 								element.append(uni);
 								pos += 4;
-							} // else throw exception?
+							}
 
 							break;
 						default:
@@ -287,7 +322,8 @@ public class BndProperties extends Properties {
 							break;
 						}
 					}
-				} else {
+				}
+				else {
 					element.append(c);
 				}
 			}
@@ -308,10 +344,12 @@ public class BndProperties extends Properties {
 			writer.println("#" + Calendar.getInstance().getTime());
 		}
 
-		StringBuilder s = new StringBuilder(); // Reuse the same buffer.
+		// Reuse the same buffer	.
+
+		StringBuilder s = new StringBuilder();
 
 		for (String keyString : keyList) {
-			formatForOutput((String)keyString, s, true);
+			formatForOutput(keyString, s, true);
 			s.append(": ");
 
 			Object value = get(keyString);
@@ -319,7 +357,8 @@ public class BndProperties extends Properties {
 			if (value instanceof BndPropertiesValue) {
 				final BndPropertiesValue bndValue = (BndPropertiesValue)value;
 				writer.println(s.append(bndValue.getFormatedValue()));
-			} else {
+			}
+			else {
 				formatForOutput((String)value, s, false);
 				writer.println(s);
 			}
@@ -345,7 +384,11 @@ public class BndProperties extends Properties {
 		if (key) {
 			buffer.setLength(0);
 			buffer.ensureCapacity(str.length());
-		} else buffer.ensureCapacity(buffer.length() + str.length());
+		}
+		else {
+			buffer.ensureCapacity(buffer.length() + str.length());
+		}
+
 		boolean head = true;
 		int size = str.length();
 
@@ -381,15 +424,20 @@ public class BndProperties extends Properties {
 
 				break;
 			default:
-				if (c < ' ' || c > '~') {
+				if ((c < ' ') || (c > '~')) {
 					String hex = Integer.toHexString(c);
 
 					buffer.append("\\u0000".substring(0, 6 - hex.length()));
 					buffer.append(hex);
-				} else buffer.append(c);
+				}
+				else {
+					buffer.append(c);
+				}
 			}
 
-			if (c != ' ')head = key;
+			if (c != ' ') {
+				head = key;
+			}
 		}
 	}
 

@@ -16,9 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 import java.io.File;
 
 import java.nio.file.Files;
@@ -36,9 +33,7 @@ import java.util.stream.Collectors;
  */
 public class ServerStartCommand {
 
-	public static final String DESCRIPTION = "Start server defined by your Liferay project";
-
-	public ServerStartCommand(blade blade, ServerStartOptions options) {
+	public ServerStartCommand(blade blade, ServerStartCommandArgs options) {
 		_blade = blade;
 		_options = options;
 	}
@@ -129,37 +124,11 @@ public class ServerStartCommand {
 		}
 	}
 
-	@Parameters(commandNames = {"server start"},
-		commandDescription = ServerStartCommand.DESCRIPTION)
-	public static class ServerStartOptions {
-
-		public boolean isBackground() {
-			return background;
-		}
-
-		public boolean isDebug() {
-			return debug;
-		}
-
-		public boolean isTail() {
-			return tail;
-		}
-
-		@Parameter(names = {"-b", "--background"}, description ="Start server in background")
-		private boolean background;
-
-		@Parameter(names = {"-d", "--debug"}, description ="Start server in debug mode")
-		private boolean debug;
-
-		@Parameter(names = {"-t", "--tail"}, description ="Tail a running server")
-		private boolean tail;
-
-	}
-
 	private void commandServer(Path dir, String serverType) throws Exception {
 		if (Files.notExists(dir) || !Files.list(dir).findAny().isPresent()) {
 			_blade.error(
-				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to create it.");
+				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
+					"create it.");
 
 			return;
 		}
@@ -235,17 +204,20 @@ public class ServerStartCommand {
 
 		Runtime runtime = Runtime.getRuntime();
 
-		runtime.addShutdownHook(new Thread() {
+		runtime.addShutdownHook(
+			new Thread() {
 
-			public void run() {
-				try {
-					process.waitFor();
-				} catch (InterruptedException e) {
-					_blade.error("Could not wait for process to end " + "before shutting down");
+				@Override
+				public void run() {
+					try {
+						process.waitFor();
+					}
+					catch (InterruptedException ie) {
+						_blade.error("Could not wait for process to end before shutting down");
+					}
 				}
-			}
 
-		});
+			});
 
 		if (_options.isBackground() && _options.isTail()) {
 			Process tailProcess = Util.startProcess(_blade, "tail -f catalina.out", logs.toFile(), enviroment);
@@ -255,6 +227,6 @@ public class ServerStartCommand {
 	}
 
 	private blade _blade;
-	private ServerStartOptions _options;
+	private ServerStartCommandArgs _options;
 
 }

@@ -22,35 +22,21 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandNames = {"init"}, commandDescription = "Initializes a new Liferay workspace")
-public class InitCommandArgs {
+@Parameters(commandDescription = "Options valid for all commands. Must be given before sub command")
+public class BladeArgs {
 
-	public String getName() {
-		return name;
+	public String getBase() {
+		return base;
 	}
 
-	public boolean isForce() {
-		return force;
+	public boolean isTrace() {
+		return trace;
 	}
 
-	public boolean isRefresh() {
-		return refresh;
-	}
+	@Parameter(names = {"-b", "--base"}, description ="Specify a new base directory (default working directory).")
+	private String base = ".";
 
-	public boolean isUpgrade() {
-		return upgrade;
-	}
-
-	@Parameter(names = {"-f", "--force"}, description = "create anyway if there are files located at target folder")
-	private boolean force;
-
-	@Parameter(description = "[name]")
-	private String name;
-
-	@Parameter(names = {"-r", "--refresh"}, description ="force to refresh workspace template")
-	private boolean refresh;
-
-	@Parameter(names = {"-u", "--upgrade"}, description ="upgrade plugins-sdk from 6.2 to 7.0")
-	private boolean upgrade;
+	@Parameter(names = {"-t", "--trace"}, description ="Print exception stack traces when they occur.")
+	private boolean trace;
 
 }
