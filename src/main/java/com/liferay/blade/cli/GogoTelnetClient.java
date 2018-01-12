@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-
 package com.liferay.blade.cli;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import java.net.Socket;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,62 +40,22 @@ public class GogoTelnetClient implements AutoCloseable {
 
 	public GogoTelnetClient(String host, int port) throws IOException {
 		_socket = new Socket(host, port);
+
 		_inputStream = new DataInputStream(_socket.getInputStream());
 		_outputStream = new DataOutputStream(_socket.getOutputStream());
 
-		doHandshake();
+		_handshake();
 	}
 
-	private final Socket _socket;
-	private final DataInputStream _inputStream;
-	private final DataOutputStream _outputStream;
-
-	private static void assertCond(boolean condition) {
-		if (!condition) {
-			throw new AssertionError();
+	@Override
+	public void close() {
+		try {
+			_socket.close();
+			_inputStream.close();
+			_outputStream.close();
 		}
-	}
-	private void doHandshake() throws IOException {
-		// gogo server first sends 4 commands
-		readOneCommand();
-		readOneCommand();
-		readOneCommand();
-		readOneCommand();
-
-		// first we negotiate terminal type
-		// 255(IAC),251(WILL),24(terminal type)
-		sendCommand(255, 251, 24);
-
-		// server should respond
-		// 255(IAC),250(SB),24,1,255(IAC),240(SE)
-		readOneCommand();
-
-		// send the terminal type
-		//255(IAC),250(SB),24,0,'V','T','2','2','0',255(IAC),240(SE)
-		sendCommand(255, 250, 24, 0, 'V', 'T', '2', '2', '0', 255, 240);
-
-		// read gogo shell prompt
-		readUntilNextGogoPrompt();
-	}
-
-	private String readUntilNextGogoPrompt() throws IOException {
-		StringBuilder sb = new StringBuilder();
-
-		int c = _inputStream.read();
-
-		while (c != -1) {
-			sb.append((char) c);
-
-			if(sb.toString().endsWith("g! ")) {
-				break;
-			}
-
-			c = _inputStream.read();
+		catch (IOException ioe) {
 		}
-
-		String output = sb.substring(0, sb.length() - 3);
-
-		return output.trim();
 	}
 
 	public String send(String command) throws IOException {
@@ -109,66 +70,18 @@ public class GogoTelnetClient implements AutoCloseable {
 		codes[bytes.length] = '\r';
 		codes[bytes.length + 1] = '\n';
 
-		sendCommand(codes);
+		_sendCommand(codes);
 
-		return readUntilNextGogoPrompt();
+		return _readUntilNextGogoPrompt();
 	}
 
-	private void sendCommand(int... codes) throws IOException {
-		for (int code : codes) {
-			_outputStream.write(code);
+	private static void _assertCond(boolean condition) {
+		if (!condition) {
+			throw new AssertionError();
 		}
 	}
 
-	private int[] readOneCommand() throws IOException {
-		List<Integer> bytes = new ArrayList<>();
-
-		int iac = _inputStream.read();
-
-		assertCond(iac == 255);
-
-		bytes.add(iac);
-
-		int second = _inputStream.read();
-
-		bytes.add(second);
-
-		if (second == 250) { // SB
-			int option = _inputStream.read();
-
-			bytes.add(option);
-
-			int code = _inputStream.read(); // 1 or 0
-
-			assertCond(code == 0 || code == 1);
-
-			bytes.add(code);
-
-			if (code == 0) {
-				throw new IllegalStateException();
-			}
-			else if (code == 1) {
-				iac = _inputStream.read();
-
-				assertCond(iac == 255);
-
-				bytes.add(iac);
-
-				int se = _inputStream.read(); // SE
-
-				assertCond(se == 240);
-
-				bytes.add(se);
-			}
-		}
-		else {
-			bytes.add(_inputStream.read());
-		}
-
-		return toIntArray(bytes);
-	}
-
-	static int[] toIntArray(List<Integer> list) {
+	private static int[] _toIntArray(List<Integer> list) {
 		int[] ret = new int[list.size()];
 		int i = 0;
 
@@ -179,13 +92,111 @@ public class GogoTelnetClient implements AutoCloseable {
 		return ret;
 	}
 
-	public void close() {
-		try {
-			_socket.close();
-			_inputStream.close();
-			_outputStream.close();
+	private void _handshake() throws IOException {
+
+		// gogo server first sends 4 commands
+
+		_readOneCommand();
+		_readOneCommand();
+		_readOneCommand();
+		_readOneCommand();
+
+		// first we negotiate terminal type
+		// 255(IAC),251(WILL),24(terminal type)
+
+		_sendCommand(255, 251, 24);
+
+		// server should respond
+		// 255(IAC),250(SB),24,1,255(IAC),240(SE)
+
+		_readOneCommand();
+
+		// send the terminal type
+
+		//255(IAC),250(SB),24,0,'V','T','2','2','0',255(IAC),240(SE)
+		_sendCommand(255, 250, 24, 0, 'V', 'T', '2', '2', '0', 255, 240);
+
+		// read gogo shell prompt
+
+		_readUntilNextGogoPrompt();
+	}
+
+	private int[] _readOneCommand() throws IOException {
+		List<Integer> bytes = new ArrayList<>();
+
+		int iac = _inputStream.read();
+
+		_assertCond(iac == 255);
+
+		bytes.add(iac);
+
+		int second = _inputStream.read();
+
+		bytes.add(second);
+
+		if (second == 250) {
+			int option = _inputStream.read(); // SB
+
+			bytes.add(option);
+
+			int code = _inputStream.read(); // 1 or 0
+
+			_assertCond(code == 0 || code == 1);
+
+			bytes.add(code);
+
+			if (code == 0) {
+				throw new IllegalStateException();
+			}
+			else if (code == 1) {
+				iac = _inputStream.read();
+
+				_assertCond(iac == 255);
+
+				bytes.add(iac);
+
+				int se = _inputStream.read(); // SE
+
+				_assertCond(se == 240);
+
+				bytes.add(se);
+			}
 		}
-		catch (IOException e) {
+		else {
+			bytes.add(_inputStream.read());
+		}
+
+		return _toIntArray(bytes);
+	}
+
+	private String _readUntilNextGogoPrompt() throws IOException {
+		StringBuilder sb = new StringBuilder();
+
+		int c = _inputStream.read();
+
+		while (c != -1) {
+			sb.append((char)c);
+
+			if (sb.toString().endsWith("g! ")) {
+				break;
+			}
+
+			c = _inputStream.read();
+		}
+
+		String output = sb.substring(0, sb.length() - 3);
+
+		return output.trim();
+	}
+
+	private void _sendCommand(int... codes) throws IOException {
+		for (int code : codes) {
+			_outputStream.write(code);
 		}
 	}
+
+	private final DataInputStream _inputStream;
+	private final DataOutputStream _outputStream;
+	private final Socket _socket;
+
 }

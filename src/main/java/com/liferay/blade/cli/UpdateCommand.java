@@ -16,22 +16,20 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Options;
-
 /**
  * @author Gregory Amerson
  */
 public class UpdateCommand {
 
-	public static final String DESCRIPTION = "Update blade to latest version";
-
-	public UpdateCommand(blade blade, Options options) throws Exception {
+	public UpdateCommand(BladeCLI blade, UpdateCommandArgs args) throws Exception {
 		_blade = blade;
 	}
 
 	public void execute() throws Exception {
 		if (Util.isWindows()) {
-			_blade.out().println("blade update cannot execute successfully because of Windows file locking. Please use following command:");
+			_blade.out().println(
+				"blade update cannot execute successfully because of Windows file locking. Please use following " +
+					"command:");
 			_blade.out().println("\tjpm install -f https://releases.liferay.com/tools/blade-cli/latest/blade.jar");
 		}
 		else {
@@ -49,6 +47,6 @@ public class UpdateCommand {
 		}
 	}
 
-	private blade _blade;
+	private BladeCLI _blade;
 
 }

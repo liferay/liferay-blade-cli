@@ -16,8 +16,8 @@
 
 package com.liferay.blade.cli.gradle;
 
+import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.Util;
-import com.liferay.blade.cli.blade;
 
 import java.io.File;
 
@@ -26,7 +26,7 @@ import java.io.File;
  */
 public class GradleExec {
 
-	public GradleExec(blade blade) {
+	public GradleExec(BladeCLI blade) {
 		_blade = blade;
 
 		File gradlew = Util.getGradleWrapper(blade.getBase());
@@ -36,8 +36,7 @@ public class GradleExec {
 				_executable = gradlew.getCanonicalPath();
 			}
 			catch (Exception e) {
-				blade.out().println(
-					"Could not find gradle wrapper, using gradle");
+				blade.out().println("Could not find gradle wrapper, using gradle");
 
 				_executable = "gradle";
 			}
@@ -50,13 +49,12 @@ public class GradleExec {
 	}
 
 	public int executeGradleCommand(String cmd) throws Exception {
-		Process process = Util.startProcess(
-			_blade, "\"" + _executable + "\" " + cmd);
+		Process process = Util.startProcess(_blade, "\"" + _executable + "\" " + cmd);
 
 		return process.waitFor();
 	}
 
-	private blade _blade;
+	private BladeCLI _blade;
 	private String _executable;
 
 }

@@ -16,10 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import aQute.lib.io.IO;
 
 import java.io.File;
@@ -29,24 +25,29 @@ import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 
+import org.junit.Assert;
+
 /**
  * @author Lawrence Lee
  */
 public class GradleRunnerUtil {
 
-	public static BuildTask executeGradleRunner (String projectPath, String... taskPath) {
+	public static BuildTask executeGradleRunner(String projectPath, String... taskPath) {
 		File projectDir = new File(projectPath);
 
-		BuildResult buildResult = GradleRunner.create()
-									.withProjectDir(projectDir)
-									.withArguments(taskPath)
-									.build();
+		GradleRunner gradleRunner = GradleRunner.create();
+
+		gradleRunner.withProjectDir(projectDir);
+		gradleRunner.withArguments(taskPath);
+
+		BuildResult buildResult = gradleRunner.build();
 
 		BuildTask buildtask = null;
 
 		for (BuildTask task : buildResult.getTasks()) {
 			if (task.getPath().endsWith(taskPath[taskPath.length - 1])) {
 				buildtask = task;
+
 				break;
 			}
 		}
@@ -54,16 +55,16 @@ public class GradleRunnerUtil {
 		return buildtask;
 	}
 
-	public static void verifyGradleRunnerOutput (BuildTask buildtask) {
-		assertNotNull(buildtask);
-
-		assertEquals(TaskOutcome.SUCCESS, buildtask.getOutcome());
-	}
-
-	public static void verifyBuildOutput (String projectPath, String fileName) {
+	public static void verifyBuildOutput(String projectPath, String fileName) {
 		File file = IO.getFile(projectPath + "/build/libs/" + fileName);
 
-		assertTrue(file.exists());
+		Assert.assertTrue(file.exists());
+	}
+
+	public static void verifyGradleRunnerOutput(BuildTask buildtask) {
+		Assert.assertNotNull(buildtask);
+
+		Assert.assertEquals(TaskOutcome.SUCCESS, buildtask.getOutcome());
 	}
 
 }

@@ -22,20 +22,15 @@ import java.io.UnsupportedEncodingException;
 /**
  * @author Gregory Amerson
  */
-public class bladenofail extends blade {
+public class BladeNoFail extends BladeCLI {
 
-	public bladenofail() throws UnsupportedEncodingException {
+	public BladeNoFail() throws UnsupportedEncodingException {
 		this(System.out);
 	}
 
-	public bladenofail(PrintStream out) throws UnsupportedEncodingException {
+	public BladeNoFail(PrintStream out) throws UnsupportedEncodingException {
 		_out = out;
 		_err = out;
-	}
-
-	@Override
-	public boolean check(String... pattern) {
-		return true;
 	}
 
 	@Override

@@ -17,6 +17,7 @@
 package com.liferay.blade.cli;
 
 import java.io.IOException;
+
 import java.nio.file.CopyOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -28,19 +29,16 @@ import java.nio.file.attribute.BasicFileAttributes;
  * @author Gregory Amerson
  */
 public class CopyDirVisitor extends SimpleFileVisitor<Path> {
-	private final Path fromPath;
-	private final Path toPath;
-	private final CopyOption copyOption;
 
 	public CopyDirVisitor(Path fromPath, Path toPath, CopyOption copyOption) {
-		this.fromPath = fromPath;
-		this.toPath = toPath;
-		this.copyOption = copyOption;
+		_fromPath = fromPath;
+		_toPath = toPath;
+		_copyOption = copyOption;
 	}
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-		Path targetPath = toPath.resolve(fromPath.relativize(dir));
+		Path targetPath = _toPath.resolve(_fromPath.relativize(dir));
 
 		if (!Files.exists(targetPath)) {
 			Files.createDirectory(targetPath);
@@ -51,8 +49,13 @@ public class CopyDirVisitor extends SimpleFileVisitor<Path> {
 
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-		Files.copy(file, toPath.resolve(fromPath.relativize(file)), copyOption);
+		Files.copy(file, _toPath.resolve(_fromPath.relativize(file)), _copyOption);
 
 		return FileVisitResult.CONTINUE;
 	}
+
+	private final CopyOption _copyOption;
+	private final Path _fromPath;
+	private final Path _toPath;
+
 }

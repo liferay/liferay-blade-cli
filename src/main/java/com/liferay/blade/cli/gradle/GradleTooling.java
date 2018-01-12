@@ -23,7 +23,9 @@ import com.liferay.blade.gradle.model.CustomModel;
 
 import java.io.File;
 import java.io.InputStream;
+
 import java.nio.file.Files;
+
 import java.util.Set;
 
 import org.gradle.tooling.GradleConnector;
@@ -35,75 +37,59 @@ import org.gradle.tooling.ProjectConnection;
  */
 public class GradleTooling {
 
-	public static Set<File> getOutputFiles(File cacheDir, File buildDir)
-		throws Exception {
-
-		final CustomModel model = getModel(
-			CustomModel.class, cacheDir, buildDir);
+	public static Set<File> getOutputFiles(File cacheDir, File buildDir) throws Exception {
+		final CustomModel model = _getModel(CustomModel.class, cacheDir, buildDir);
 
 		return model.getOutputFiles();
 	}
 
-	public static Set<String> getPluginClassNames(File cacheDir, File buildDir)
-		throws Exception {
-
-		final CustomModel model = getModel(
-				CustomModel.class, cacheDir, buildDir);
+	public static Set<String> getPluginClassNames(File cacheDir, File buildDir) throws Exception {
+		final CustomModel model = _getModel(CustomModel.class, cacheDir, buildDir);
 
 		return model.getPluginClassNames();
 	}
 
-	public static boolean isLiferayModule(File cacheDir, File buildDir)
-		throws Exception {
-
-		final CustomModel model = getModel(
-				CustomModel.class, cacheDir, buildDir);
+	public static boolean isLiferayModule(File cacheDir, File buildDir) throws Exception {
+		final CustomModel model = _getModel(CustomModel.class, cacheDir, buildDir);
 
 		return model.isLiferayModule();
 	}
 
-	private static <T> T getModel(
-			Class<T> modelClass, File cacheDir, File projectDir)
-		throws Exception {
-
+	private static <T> T _getModel(Class<T> modelClass, File cacheDir, File projectDir) throws Exception {
 		T retval = null;
 
 		final GradleConnector connector = GradleConnector.newConnector();
+
 		connector.forProjectDirectory(projectDir);
 
 		ProjectConnection connection = null;
 
 		try {
 			connection = connector.connect();
-			ModelBuilder<T> modelBuilder = connection.model(
-				modelClass);
+
+			ModelBuilder<T> modelBuilder = connection.model(modelClass);
 
 			final File depsDir = new File(cacheDir, "deps");
 
 			depsDir.mkdirs();
 
-			InputStream in = GradleTooling.class.getResourceAsStream(
-				"/deps.zip");
+			InputStream in = GradleTooling.class.getResourceAsStream("/deps.zip");
 
 			Util.copy(in, depsDir);
 
-			final String initScriptTemplate = IO.collect(
-				GradleTooling.class.getResourceAsStream("init.gradle"));
+			final String initScriptTemplate = IO.collect(GradleTooling.class.getResourceAsStream("init.gradle"));
 
 			String path = depsDir.getAbsolutePath();
 
 			path = path.replaceAll("\\\\", "/");
 
-			final String initScriptContents = initScriptTemplate.replaceFirst(
-				"%deps%", path);
+			final String initScriptContents = initScriptTemplate.replaceFirst("%deps%", path);
 
-			File scriptFile = Files.createTempFile(
-				"blade", "init.gradle").toFile();
+			File scriptFile = Files.createTempFile("blade", "init.gradle").toFile();
 
 			IO.write(initScriptContents.getBytes(), scriptFile);
 
-			modelBuilder.withArguments(
-				"--init-script", scriptFile.getAbsolutePath());
+			modelBuilder.withArguments("--init-script", scriptFile.getAbsolutePath());
 
 			retval = modelBuilder.get();
 		}

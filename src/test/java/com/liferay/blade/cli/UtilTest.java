@@ -16,30 +16,31 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import aQute.lib.io.IO;
 
 import java.io.File;
+
 import java.nio.file.Files;
+
 import java.util.List;
 import java.util.Properties;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
-
-import aQute.lib.io.IO;
 
 /**
  * @author David Truong
  */
 public class UtilTest {
+
 	@After
 	public void cleanUp() throws Exception {
-		testdir = IO.getFile("build/test");
+		_testdir = IO.getFile("build/test");
 
-		if (testdir.exists()) {
-			IO.delete(testdir);
-			assertFalse(testdir.exists());
+		if (_testdir.exists()) {
+			IO.delete(_testdir);
+			Assert.assertFalse(_testdir.exists());
 		}
 	}
 
@@ -49,9 +50,7 @@ public class UtilTest {
 
 		dir.mkdirs();
 
-		File appServerProperty1 = new File(
-			dir,
-			"app.server." + System.getProperty("user.name") + ".properties");
+		File appServerProperty1 = new File(dir, "app.server." + System.getProperty("user.name") + ".properties");
 
 		appServerProperty1.createNewFile();
 
@@ -61,7 +60,7 @@ public class UtilTest {
 
 		List<Properties> propertiesList = Util.getAppServerProperties(dir);
 
-		assertTrue(propertiesList.size() == 2);
+		Assert.assertTrue(propertiesList.size() == 2);
 	}
 
 	@Test
@@ -76,7 +75,7 @@ public class UtilTest {
 
 		Files.write(gradleFile.toPath(), plugin.getBytes());
 
-		assertTrue(Util.isWorkspace(workspace));
+		Assert.assertTrue(Util.isWorkspace(workspace));
 	}
 
 	@Test
@@ -91,7 +90,7 @@ public class UtilTest {
 
 		Files.write(gradleFile.toPath(), plugin.getBytes());
 
-		assertTrue(Util.isWorkspace(workspace));
+		Assert.assertTrue(Util.isWorkspace(workspace));
 	}
 
 	@Test
@@ -110,8 +109,9 @@ public class UtilTest {
 
 		Files.write(buildFile.toPath(), plugin.getBytes());
 
-		assertTrue(Util.isWorkspace(workspace));
+		Assert.assertTrue(Util.isWorkspace(workspace));
 	}
 
-	private File testdir;
+	private File _testdir;
+
 }

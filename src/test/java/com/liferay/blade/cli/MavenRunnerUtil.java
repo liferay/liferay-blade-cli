@@ -16,10 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import aQute.lib.io.IO;
 
 import java.io.BufferedReader;
@@ -28,23 +24,26 @@ import java.io.InputStreamReader;
 
 import org.codehaus.plexus.util.FileUtils;
 
+import org.junit.Assert;
+
 /**
  * @author Andy Wu
  */
-public class MavenRunnerUtil
-{
-    public static void executeMavenPackage (String projectPath , String[] phases) {
-		assertNotNull(phases);
-		assertTrue(phases.length > 0);
+public class MavenRunnerUtil {
+
+	public static void executeMavenPackage(String projectPath, String[] phases) {
+		Assert.assertNotNull(phases);
+		Assert.assertTrue(phases.length > 0);
 
 		String os = System.getProperty("os.name");
-		boolean isWindows = false;
+
+		boolean windows = false;
 
 		if (os.toLowerCase().startsWith("win")) {
-			isWindows = true;
+			windows = true;
 		}
 
-		boolean isBuildSuccess = false;
+		boolean buildSuccess = false;
 		int exitValue = 1;
 
 		StringBuilder commandBuilder = new StringBuilder();
@@ -56,23 +55,22 @@ public class MavenRunnerUtil
 		try {
 			Runtime runTime = Runtime.getRuntime();
 
-			if(isWindows) {
+			if (windows) {
 				File mvnw = new File("mvnw.cmd");
-				FileUtils.copyFile(mvnw, new File(projectPath+"/mvnw.cmd"));
+
+				FileUtils.copyFile(mvnw, new File(projectPath + "/mvnw.cmd"));
 			}
 
 			Process process = runTime.exec(
-				(isWindows ? ".\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(),
-				null, new File(projectPath));
+				(windows ? ".\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(), null, new File(projectPath));
 
-			BufferedReader input = new BufferedReader(
-				new InputStreamReader(process.getInputStream()));
+			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
 			String line = null;
 
 			while ((line = input.readLine()) != null) {
 				if (line.contains("BUILD SUCCESS")) {
-					isBuildSuccess = true;
+					buildSuccess = true;
 				}
 			}
 
@@ -81,13 +79,14 @@ public class MavenRunnerUtil
 		catch (Exception e) {
 		}
 
-		assertEquals(0, exitValue);
-		assertTrue(isBuildSuccess);
-    }
+		Assert.assertEquals(0, exitValue);
+		Assert.assertTrue(buildSuccess);
+	}
 
-    public static void verifyBuildOutput (String projectPath, String fileName) {
+	public static void verifyBuildOutput(String projectPath, String fileName) {
 		File file = IO.getFile(projectPath + "/target/" + fileName);
 
-		assertTrue(file.exists());
+		Assert.assertTrue(file.exists());
 	}
+
 }

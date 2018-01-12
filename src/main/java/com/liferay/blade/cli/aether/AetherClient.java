@@ -62,7 +62,7 @@ public class AetherClient {
 	}
 
 	public AetherClient(String[] repoUrls) {
-		this(repoUrls, lookupLocalRepoDir().getPath());
+		this(repoUrls, _lookupLocalRepoDir().getPath());
 	}
 
 	public AetherClient(String[] repoUrls, String localRepositoryPath) {
@@ -70,27 +70,24 @@ public class AetherClient {
 		_localRepositoryPath = localRepositoryPath;
 	}
 
-	public Artifact findLatestAvailableArtifact(String groupIdArtifactId)
-		throws ArtifactResolutionException {
-
-		final RepositorySystem system = newRepositorySystem();
-		final List<RemoteRepository> repos = repos();
+	public Artifact findLatestAvailableArtifact(String groupIdArtifactId) throws ArtifactResolutionException {
+		final RepositorySystem system = _newRepositorySystem();
+		final List<RemoteRepository> repos = _repos();
 		final String range = "[0,)";
-		final Artifact artifactRange = new DefaultArtifact(
-			groupIdArtifactId + ":" + range);
+
+		final Artifact artifactRange = new DefaultArtifact(groupIdArtifactId + ":" + range);
 
 		final VersionRangeRequest rangeRequest = new VersionRangeRequest();
+
 		rangeRequest.setArtifact(artifactRange);
 		rangeRequest.setRepositories(repos);
 
-		final RepositorySystemSession session = newRepositorySystemSession(
-			system, _localRepositoryPath);
+		final RepositorySystemSession session = _newRepositorySystemSession(system, _localRepositoryPath);
 
 		Version version = null;
 
 		try {
-			version = system.resolveVersionRange(
-				session, rangeRequest).getHighestVersion();
+			version = system.resolveVersionRange(session, rangeRequest).getHighestVersion();
 		}
 		catch (Exception e) {
 		}
@@ -99,71 +96,66 @@ public class AetherClient {
 			return null;
 		}
 
-		Artifact artifact = new DefaultArtifact(
-			groupIdArtifactId + ":" + version);
+		Artifact artifact = new DefaultArtifact(groupIdArtifactId + ":" + version);
 		ArtifactRequest artifactRequest = new ArtifactRequest();
+
 		artifactRequest.setArtifact(artifact);
 		artifactRequest.setRepositories(repos);
 
-		ArtifactResult artifactResult = system.resolveArtifact(
-			session, artifactRequest);
+		ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
+
 		artifact = artifactResult.getArtifact();
 
 		return artifact;
 	}
 
-	private static Settings buildSettings() {
+	private static Settings _buildSettings() {
 		SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
 
-		request.setGlobalSettingsFile(DEFAULT_GLOBAL_SETTINGS_FILE);
-		request.setUserSettingsFile(USER_MAVEN_DEFAULT_USER_SETTINGS_FILE);
+		request.setGlobalSettingsFile(_DEFAULT_GLOBAL_SETTINGS_FILE);
+		request.setUserSettingsFile(_USER_MAVEN_DEFAULT_USER_SETTINGS_FILE);
 
 		try {
-			DefaultSettingsBuilder builder =
-				new DefaultSettingsBuilderFactory().newInstance();
+			DefaultSettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
 
 			return builder.build(request).getEffectiveSettings();
 		}
 		catch (SettingsBuildingException sbe) {
 			sbe.printStackTrace();
+
 			return null;
 		}
 	}
 
-	private static File lookupLocalRepoDir() {
-		String localRepoPathSetting = buildSettings().getLocalRepository();
+	private static File _lookupLocalRepoDir() {
+		String localRepoPathSetting = _buildSettings().getLocalRepository();
 
-		return localRepoPathSetting == null
-			? new File(USER_MAVEN_CONFIGURATION_HOME, "repository")
-			: new File(localRepoPathSetting);
+		if (localRepoPathSetting == null) {
+			return new File(_USER_MAVEN_CONFIGURATION_HOME, "repository");
+		}
+
+		return new File(localRepoPathSetting);
 	}
 
-	private static RemoteRepository newRemoteRepository(String url) {
+	private static RemoteRepository _newRemoteRepository(String url) {
 		return new RemoteRepository.Builder("blade", "default", url).build();
 	}
 
-	private static RepositorySystem newRepositorySystem() {
-		DefaultServiceLocator locator =
-			MavenRepositorySystemUtils.newServiceLocator();
-		locator.addService(
-			RepositoryConnectorFactory.class,
-			BasicRepositoryConnectorFactory.class);
-		locator.addService(
-			TransporterFactory.class, FileTransporterFactory.class);
-		locator.addService(
-			TransporterFactory.class, HttpTransporterFactory.class);
+	private static RepositorySystem _newRepositorySystem() {
+		DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
 
-		DefaultServiceLocator.ErrorHandler handler =
-			new DefaultServiceLocator.ErrorHandler() {
+		locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+		locator.addService(TransporterFactory.class, FileTransporterFactory.class);
+		locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
 
-				@Override
-				public void serviceCreationFailed(
-					Class<?> type, Class<?> impl, Throwable exception) {
+		DefaultServiceLocator.ErrorHandler handler = new DefaultServiceLocator.ErrorHandler() {
 
-					exception.printStackTrace();
-				}
+			@Override
+			public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
+				exception.printStackTrace();
+			}
 
-			};
+		};
 
 		locator.setErrorHandler(handler);
 
@@ -172,55 +164,48 @@ public class AetherClient {
 		return system;
 	}
 
-	private static DefaultRepositorySystemSession newRepositorySystemSession(
+	private static DefaultRepositorySystemSession _newRepositorySystemSession(
 		RepositorySystem system, String localRepositoryPath) {
 
-		final DefaultRepositorySystemSession session =
-			MavenRepositorySystemUtils.newSession();
+		final DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-		final LocalRepository localRepo = new LocalRepository(
-			localRepositoryPath);
+		final LocalRepository localRepo = new LocalRepository(localRepositoryPath);
 
 		session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
-		session.setLocalRepositoryManager(
-			system.newLocalRepositoryManager(session, localRepo));
+		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 		session.setTransferListener(new NoopTransferListener());
 		session.setRepositoryListener(new NoopRepositoryListener());
 
 		return session;
 	}
 
-	private List<RemoteRepository> repos() {
+	private List<RemoteRepository> _repos() {
 		final List<RemoteRepository> repos = new ArrayList<>();
 
 		for (String repoUrl : _repoUrls) {
-			repos.add(newRemoteRepository(repoUrl));
+			repos.add(_newRemoteRepository(repoUrl));
 		}
 
 		return Collections.unmodifiableList(repos);
 	}
 
-	private static final File DEFAULT_GLOBAL_SETTINGS_FILE = new File(
-		System.getProperty("maven.home", System.getProperty("user.dir", "")),
-		"conf/settings.xml");
+	private static final File _DEFAULT_GLOBAL_SETTINGS_FILE = new File(
+		System.getProperty("maven.home", System.getProperty("user.dir", "")), "conf/settings.xml");
 
-	private static final String USER_HOME = System.getProperty("user.home");
+	private static final String _USER_HOME = System.getProperty("user.home");
 
-	private static final File USER_MAVEN_CONFIGURATION_HOME = new File(
-		USER_HOME, ".m2");
+	private static final File _USER_MAVEN_CONFIGURATION_HOME = new File(_USER_HOME, ".m2");
 
-	private static final File USER_MAVEN_DEFAULT_USER_SETTINGS_FILE = new File(
-		USER_MAVEN_CONFIGURATION_HOME, "settings.xml");
+	private static final File _USER_MAVEN_DEFAULT_USER_SETTINGS_FILE = new File(
+		_USER_MAVEN_CONFIGURATION_HOME, "settings.xml");
 
-	private static final String[] _defaultRepoUrls = {
-		"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
-	};
+	private static final String[] _defaultRepoUrls =
+		{"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"};
 
 	private final String _localRepositoryPath;
 	private final String[] _repoUrls;
 
-	private static class NoopRepositoryListener
-		extends AbstractRepositoryListener {
+	private static class NoopRepositoryListener extends AbstractRepositoryListener {
 	}
 
 	private static class NoopTransferListener extends AbstractTransferListener {

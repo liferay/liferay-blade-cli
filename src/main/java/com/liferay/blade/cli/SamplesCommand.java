@@ -16,14 +16,13 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-
 import java.io.File;
 import java.io.InputStream;
+
 import java.net.URL;
+
 import java.nio.file.Files;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,43 +36,36 @@ import org.apache.commons.lang3.text.WordUtils;
  */
 public class SamplesCommand {
 
-	public static final String DESCRIPTION = "Generate a sample project";
-
-	public SamplesCommand(blade blade, SamplesOptions options)
-		throws Exception {
-
+	public SamplesCommand(BladeCLI blade, SamplesCommandArgs options) throws Exception {
 		_blade = blade;
 		_options = options;
 	}
 
 	public void execute() throws Exception {
-		final List<String> args = _options._arguments();
+		final String sampleName = _options.getSampleName();
 
-		final String sampleName = args.size() > 0 ? args.get(0) : null;
-
-		if (downloadBladeRepoIfNeeded()) {
-			extractBladeRepo();
+		if (_downloadBladeRepoIfNeeded()) {
+			_extractBladeRepo();
 		}
 
 		if (sampleName == null) {
-			listSamples();
+			_listSamples();
 		}
 		else {
-			copySample(sampleName);
+			_copySample(sampleName);
 		}
 	}
 
-	@Arguments(arg = {"[name]"})
-	@Description(DESCRIPTION)
-	public interface SamplesOptions extends Options {
+	private void _addGradleWrapper(File dest) throws Exception {
+		InputStream in = SamplesCommand.class.getResourceAsStream("/wrapper.zip");
 
-		@Description("The directory where to create the new project.")
-		public File dir();
+		Util.copy(in, dest);
 
+		new File(dest, "gradlew").setExecutable(true);
 	}
 
-	private void copySample(String sampleName) throws Exception {
-		File workDir = _options.dir();
+	private void _copySample(String sampleName) throws Exception {
+		File workDir = _options.getDir();
 
 		if (workDir == null) {
 			workDir = _blade.getBase();
@@ -91,30 +83,21 @@ public class SamplesCommand {
 
 				FileUtils.copyDirectory(file, dest);
 
-				updateBuildGradle(dest);
+				_updateBuildGradle(dest);
 
 				if (!Util.hasGradleWrapper(dest)) {
-					addGradleWrapper(dest);
+					_addGradleWrapper(dest);
 				}
 			}
 		}
 	}
 
-	private void addGradleWrapper(File dest) throws Exception {
-		InputStream in = SamplesCommand.class.getResourceAsStream("/wrapper.zip");
-
-		Util.copy(in, dest);
-
-		new File(dest, "gradlew").setExecutable(true);
-	}
-
-	private String deindent(String s) {
+	private String _deindent(String s) {
 		return s.replaceAll("(?m)^\t", "");
 	}
 
-	private boolean downloadBladeRepoIfNeeded() throws Exception {
-		File bladeRepoArchive = new File(
-			_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
+	private boolean _downloadBladeRepoIfNeeded() throws Exception {
+		File bladeRepoArchive = new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
 		Date now = new Date();
 
@@ -129,14 +112,13 @@ public class SamplesCommand {
 		return false;
 	}
 
-	private void extractBladeRepo() throws Exception {
-		File bladeRepoArchive = new File(
-			_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
+	private void _extractBladeRepo() throws Exception {
+		File bladeRepoArchive = new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
 		Util.unzip(bladeRepoArchive, _blade.getCacheDir(), null);
 	}
 
-	private void listSamples() {
+	private void _listSamples() {
 		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
 		File gradleSamples = new File(bladeRepo, "gradle");
@@ -151,19 +133,16 @@ public class SamplesCommand {
 			}
 		}
 
-		_blade.out().println(
-			"Please provide the sample project name to create, " +
-				"e.g. \"blade samples blade.rest\"\n");
+		_blade.out().println("Please provide the sample project name to create, e.g. \"blade samples blade.rest\"\n");
 		_blade.out().println("Currently available samples:");
-		_blade.out().println(
-			WordUtils.wrap(StringUtils.join(samples, ", "), 80));
+		_blade.out().println(WordUtils.wrap(StringUtils.join(samples, ", "), 80));
 	}
 
-	private String parseGradleScript(
-		String script, String section, boolean contentsOnly) {
-
+	private String _parseGradleScript(String script, String section, boolean contentsOnly) {
 		int begin = script.indexOf(section + " {");
+
 		int end = begin;
+
 		int count = 0;
 
 		if (contentsOnly) {
@@ -194,15 +173,17 @@ public class SamplesCommand {
 		String newScript = script.substring(begin, end);
 
 		if (contentsOnly) {
-			return deindent(newScript);
+			return _deindent(newScript);
 		}
 
 		return newScript;
 	}
 
-	private String removeGradleSection(String script, String section) {
+	private String _removeGradleSection(String script, String section) {
 		int begin = script.indexOf(section + " {");
+
 		int end = begin;
+
 		int count = 0;
 
 		if (begin == -1) {
@@ -226,12 +207,10 @@ public class SamplesCommand {
 			}
 		}
 
-		return removeGradleSection(
-			script.substring(0, begin) + script.substring(end, script.length()),
-			section);
+		return _removeGradleSection(script.substring(0, begin) + script.substring(end, script.length()), section);
 	}
 
-	private void updateBuildGradle(File dir) throws Exception {
+	private void _updateBuildGradle(File dir) throws Exception {
 		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
 		File sampleGradleFile = new File(dir, "build.gradle");
@@ -239,17 +218,13 @@ public class SamplesCommand {
 		String script = Util.read(sampleGradleFile);
 
 		if (!Util.isWorkspace(dir)) {
-			File parentBuildGradleFile = new File(
-				bladeRepo, "gradle/build.gradle");
+			File parentBuildGradleFile = new File(bladeRepo, "gradle/build.gradle");
 
-			String parentBuildScript = parseGradleScript(
-				Util.read(parentBuildGradleFile), "buildscript", false);
+			String parentBuildScript = _parseGradleScript(Util.read(parentBuildGradleFile), "buildscript", false);
 
-			String parentSubprojectsScript = parseGradleScript(
-				Util.read(parentBuildGradleFile), "subprojects", true);
+			String parentSubprojectsScript = _parseGradleScript(Util.read(parentBuildGradleFile), "subprojects", true);
 
-			parentSubprojectsScript = removeGradleSection(
-				parentSubprojectsScript, "buildscript");
+			parentSubprojectsScript = _removeGradleSection(parentSubprojectsScript, "buildscript");
 
 			System.out.println(parentSubprojectsScript);
 
@@ -259,18 +234,15 @@ public class SamplesCommand {
 		Files.write(sampleGradleFile.toPath(), script.getBytes());
 	}
 
-	private static final String _BLADE_REPO_ARCHIVE_NAME =
-		"liferay-blade-samples-2.x.zip";
+	private static final String _BLADE_REPO_ARCHIVE_NAME = "liferay-blade-samples-2.x.zip";
 
-	private static final String _BLADE_REPO_NAME =
-		"liferay-blade-samples-2.x";
+	private static final String _BLADE_REPO_NAME = "liferay-blade-samples-2.x";
 
-	private static final String _BLADE_REPO_URL =
-		"https://github.com/liferay/liferay-blade-samples/archive/2.x.zip";
+	private static final String _BLADE_REPO_URL = "https://github.com/liferay/liferay-blade-samples/archive/2.x.zip";
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
-	private final blade _blade;
-	private final SamplesOptions _options;
+	private final BladeCLI _blade;
+	private final SamplesCommandArgs _options;
 
 }

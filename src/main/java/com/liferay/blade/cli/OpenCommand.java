@@ -16,13 +16,10 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Arguments;
-import aQute.lib.getopt.Description;
-import aQute.lib.getopt.Options;
-
 import com.liferay.blade.cli.jmx.IDEConnector;
 
 import java.io.File;
+
 import java.util.Collections;
 
 /**
@@ -30,21 +27,16 @@ import java.util.Collections;
  */
 public class OpenCommand {
 
-	public static final String DESCRIPTION =
-		"Opens or imports a file or project in Liferay IDE.";
-
-	public OpenCommand(blade blade, OpenOptions options) throws Exception {
+	public OpenCommand(BladeCLI blade, OpenCommandArgs args) throws Exception {
 		_blade = blade;
-		_options = options;
+		_args = args;
 	}
 
 	public void execute() throws Exception {
-		File fileName = new File(_options._arguments().get(0));
+		File fileName = _args.getFile();
 
 		if (!fileName.exists()) {
-			addError(
-				"open",
-				"Unable to find specified file " + fileName.getAbsolutePath());
+			_addError("open", "Unable to find specified file " + fileName.getAbsolutePath());
 			return;
 		}
 
@@ -54,26 +46,17 @@ public class OpenCommand {
 			Object retval = connector.openDir(fileName);
 
 			if (retval != null) {
-				addError("open", retval.toString());
+				_addError("open", retval.toString());
 				return;
 			}
 		}
 	}
 
-	@Arguments(arg = "file or directory to open/import")
-	@Description(DESCRIPTION)
-	public interface OpenOptions extends Options {
-
-		@Description("The workspace to open or import this file or project")
-		public String workspace();
-
-	}
-
-	private void addError(String prefix, String msg) {
+	private void _addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private final blade _blade;
-	private final OpenOptions _options;
+	private final OpenCommandArgs _args;
+	private final BladeCLI _blade;
 
 }

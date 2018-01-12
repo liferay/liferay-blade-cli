@@ -16,21 +16,20 @@
 
 package com.liferay.blade.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import aQute.lib.io.IO;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 import java.nio.file.Files;
+
 import java.util.Properties;
 
 import org.gradle.testkit.runner.BuildTask;
+
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -40,7 +39,37 @@ public class InitCommandTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		IO.delete(workspaceDir);
+		IO.delete(_workspaceDir);
+	}
+
+	@Test
+	public void testBladeInitDontLoseGitDirectory() throws Exception {
+		File testdir = IO.getFile("build/testBladeInitDontLoseGitDirectory");
+
+		if (testdir.exists()) {
+			IO.deleteWithException(testdir);
+			Assert.assertFalse(testdir.exists());
+		}
+
+		testdir.mkdirs();
+
+		Util.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+
+		Assert.assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+
+		new BladeNoFail().run(args);
+
+		File gitdir = IO.getFile(projectDir, ".git");
+
+		Assert.assertTrue(gitdir.exists());
+
+		File oldGitIgnore = IO.getFile(projectDir, "plugins-sdk/.gitignore");
+
+		Assert.assertTrue(oldGitIgnore.exists());
 	}
 
 	@Test
@@ -49,20 +78,20 @@ public class InitCommandTest {
 
 		if (testdir.exists()) {
 			IO.deleteWithException(testdir);
-			assertFalse(testdir.exists());
+			Assert.assertFalse(testdir.exists());
 		}
 
 		testdir.mkdirs();
 
 		Util.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
-		assertTrue(testdir.exists());
+		Assert.assertTrue(testdir.exists());
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
 		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File buildProperties = new File(projectDir, "plugins-sdk/build.properties");
 
@@ -72,212 +101,174 @@ public class InitCommandTest {
 
 		String version = props.getProperty("lp.version");
 
-		assertEquals("7.0.0", version);
-	}
-
-	@Test
-	public void testBladeInitDontLoseGitDirectory() throws Exception {
-		File testdir = IO.getFile("build/testBladeInitDontLoseGitDirectory");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			assertFalse(testdir.exists());
-		}
-
-		testdir.mkdirs();
-
-		Util.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
-
-		assertTrue(testdir.exists());
-
-		File projectDir = new File(testdir, "plugins-sdk-with-git");
-
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
-
-		new bladenofail().run(args);
-
-		File gitdir = IO.getFile(projectDir, ".git");
-
-		assertTrue(gitdir.exists());
-
-		File oldGitIgnore = IO.getFile(projectDir, "plugins-sdk/.gitignore");
-
-		assertTrue(oldGitIgnore.exists());
+		Assert.assertEquals("7.0.0", version);
 	}
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"-b", workspaceDir.getPath(), "init"};
+		String[] args = {"-b", _workspaceDir.getPath(), "init"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
-		assertTrue(workspaceDir.exists());
+		Assert.assertTrue(_workspaceDir.exists());
 
-		assertTrue(new File(workspaceDir, "build.gradle").exists());
+		Assert.assertTrue(new File(_workspaceDir, "build.gradle").exists());
 
-		assertTrue(new File(workspaceDir, "modules").exists());
+		Assert.assertTrue(new File(_workspaceDir, "modules").exists());
 
-		assertFalse(new File(workspaceDir, "com").exists());
+		Assert.assertFalse(new File(_workspaceDir, "com").exists());
 
-		verifyGradleBuild();
+		_verifyGradleBuild();
 	}
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"-b", workspaceDir.getPath(), "init"};
+		String[] args = {"-b", _workspaceDir.getPath(), "init"};
 
-		if (!workspaceDir.mkdirs()) {
-			fail("Unable to create workspace dir");
+		if (!_workspaceDir.mkdirs()) {
+			Assert.fail("Unable to create workspace dir");
 		}
 
-		assertTrue(new File(workspaceDir, "foo").createNewFile());
+		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
-		assertFalse(new File(workspaceDir, "build.gradle").exists());
+		Assert.assertFalse(new File(_workspaceDir, "build.gradle").exists());
 	}
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryHasFilesForce() throws Exception {
-		String[] args = {"-b", workspaceDir.getPath(), "init", "-f"};
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-f"};
 
-		if (!workspaceDir.mkdirs()) {
-			fail("Unable to create workspace dir");
+		if (!_workspaceDir.mkdirs()) {
+			Assert.fail("Unable to create workspace dir");
 		}
 
-		assertTrue(new File(workspaceDir, "foo").createNewFile());
+		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
-		assertTrue(workspaceDir.exists());
+		Assert.assertTrue(_workspaceDir.exists());
 
-		assertTrue(new File(workspaceDir, "build.gradle").exists());
+		Assert.assertTrue(new File(_workspaceDir, "build.gradle").exists());
 
-		assertTrue(new File(workspaceDir, "modules").exists());
+		Assert.assertTrue(new File(_workspaceDir, "modules").exists());
 
-		verifyGradleBuild();
+		_verifyGradleBuild();
 	}
 
 	@Test
 	public void testInitInPluginsSDKDirectory() throws Exception {
-		String[] args = {"-b", workspaceDir.getPath(), "init", "-u"};
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-u"};
 
-		makeSDK(workspaceDir);
+		_makeSDK(_workspaceDir);
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
-		assertTrue((new File(workspaceDir, "build.gradle").exists()));
+		Assert.assertTrue(new File(_workspaceDir, "build.gradle").exists());
 
-		assertTrue((new File(workspaceDir, "modules").exists()));
+		Assert.assertTrue(new File(_workspaceDir, "modules").exists());
 
-		assertTrue((new File(workspaceDir, "themes").exists()));
+		Assert.assertTrue(new File(_workspaceDir, "themes").exists());
 
-		assertFalse((new File(workspaceDir, "portlets").exists()));
+		Assert.assertFalse(new File(_workspaceDir, "portlets").exists());
 
-		assertFalse((new File(workspaceDir, "hooks").exists()));
+		Assert.assertFalse(new File(_workspaceDir, "hooks").exists());
 
-		assertFalse((new File(workspaceDir, "build.properties").exists()));
+		Assert.assertFalse(new File(_workspaceDir, "build.properties").exists());
 
-		assertFalse((new File(workspaceDir, "build.xml").exists()));
+		Assert.assertFalse(new File(_workspaceDir, "build.xml").exists());
 
-		assertTrue(
-			(new File(workspaceDir, "plugins-sdk/build.properties").exists()));
+		Assert.assertTrue(new File(_workspaceDir, "plugins-sdk/build.properties").exists());
 
-		assertTrue((new File(workspaceDir, "plugins-sdk/build.xml").exists()));
+		Assert.assertTrue(new File(_workspaceDir, "plugins-sdk/build.xml").exists());
 	}
 
 	@Test
 	public void testInitWithNameWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {
-			"-b", workspaceDir.getPath(), "init", "-f", "newproject"
-		};
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-f", "newproject"};
 
-		File newproject = new File(workspaceDir, "newproject");
+		File newproject = new File(_workspaceDir, "newproject");
 
-		assertTrue(newproject.mkdirs());
+		Assert.assertTrue(newproject.mkdirs());
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
-		assertTrue(new File(newproject, "build.gradle").exists());
+		Assert.assertTrue(new File(newproject, "build.gradle").exists());
 
-		assertTrue(new File(newproject, "modules").exists());
+		Assert.assertTrue(new File(newproject, "modules").exists());
 
 		String contents = new String(Files.readAllBytes(new File(newproject, "settings.gradle").toPath()));
 
-		assertTrue(contents, contents.contains("1.7.1"));
+		Assert.assertTrue(contents, contents.contains("1.7.1"));
 	}
 
 	@Test
 	public void testInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {
-			"-b", workspaceDir.getPath(), "init", "newproject"
-		};
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "newproject"};
 
-		assertTrue(new File(workspaceDir, "newproject").mkdirs());
+		Assert.assertTrue(new File(_workspaceDir, "newproject").mkdirs());
 
-		assertTrue(new File(workspaceDir, "newproject/foo").createNewFile());
+		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
-		assertFalse(
-			new File(workspaceDir, "newproject/build.gradle").exists());
+		Assert.assertFalse(new File(_workspaceDir, "newproject/build.gradle").exists());
 	}
 
 	@Test
 	public void testInitWithNameWorkspaceNotExists() throws Exception {
-		String[] args = {
-			"-b", workspaceDir.getPath(), "init", "newproject"
-		};
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "newproject"};
 
-		if (!workspaceDir.mkdirs()) {
-			fail("Unable to create workspace dir");
+		if (!_workspaceDir.mkdirs()) {
+			Assert.fail("Unable to create workspace dir");
 		}
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
-		assertTrue(new File(workspaceDir, "newproject/build.gradle").exists());
+		Assert.assertTrue(new File(_workspaceDir, "newproject/build.gradle").exists());
 
-		assertTrue(new File(workspaceDir, "newproject/modules").exists());
+		Assert.assertTrue(new File(_workspaceDir, "newproject/modules").exists());
 	}
 
-	private void createBundle(File workspaceDir) throws Exception {
+	private void _createBundle() throws Exception {
 		String projectPath = "build/test/workspace/modules";
 
 		String[] args = {"create", "-d", projectPath, "foo"};
 
-		new bladenofail().run(args);
+		new BladeNoFail().run(args);
 
 		File file = IO.getFile(projectPath + "/foo");
 		File bndFile = IO.getFile(projectPath + "/foo/bnd.bnd");
 
-		assertTrue(file.exists());
+		Assert.assertTrue(file.exists());
 
-		assertTrue(bndFile.exists());
+		Assert.assertTrue(bndFile.exists());
 	}
 
-	private void verifyGradleBuild() throws Exception{
-		createBundle(workspaceDir);
+	private void _makeSDK(File dir) throws IOException {
+		Assert.assertTrue(new File(dir, "portlets").mkdirs());
+		Assert.assertTrue(new File(dir, "hooks").mkdirs());
+		Assert.assertTrue(new File(dir, "layouttpl").mkdirs());
+		Assert.assertTrue(new File(dir, "themes").mkdirs());
+		Assert.assertTrue(new File(dir, "build.properties").createNewFile());
+		Assert.assertTrue(new File(dir, "build.xml").createNewFile());
+		Assert.assertTrue(new File(dir, "build-common.xml").createNewFile());
+		Assert.assertTrue(new File(dir, "build-common-plugin.xml").createNewFile());
+	}
 
-		String projectPath = workspaceDir.getPath() + "/modules";
+	private void _verifyGradleBuild() throws Exception {
+		_createBundle();
 
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "jar");
+		String projectPath = _workspaceDir.getPath() + "/modules";
+
+		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(_workspaceDir.getPath(), "jar");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
 	}
 
-	private void makeSDK(File dir) throws IOException {
-		assertTrue(new File(dir, "portlets").mkdirs());
-		assertTrue(new File(dir, "hooks").mkdirs());
-		assertTrue(new File(dir, "layouttpl").mkdirs());
-		assertTrue(new File(dir, "themes").mkdirs());
-		assertTrue(new File(dir, "build.properties").createNewFile());
-		assertTrue(new File(dir, "build.xml").createNewFile());
-		assertTrue(new File(dir, "build-common.xml").createNewFile());
-		assertTrue(new File(dir, "build-common-plugin.xml").createNewFile());
-	}
-
-	private final File workspaceDir = IO.getFile("build/test/workspace");
+	private static final File _workspaceDir = IO.getFile("build/test/workspace");
 
 }

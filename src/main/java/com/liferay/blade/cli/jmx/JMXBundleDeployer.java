@@ -47,7 +47,7 @@ import org.osgi.framework.dto.BundleDTO;
 public class JMXBundleDeployer extends JMXLocalConnector {
 
 	public JMXBundleDeployer() throws MalformedURLException {
-		super(name + ":type=" + type + ",*");
+		super(_NAME + ":type=" + _TYPE + ",*");
 	}
 
 	public JMXBundleDeployer(int port) throws MalformedURLException {
@@ -66,48 +66,39 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 	 * @throws Exception
 	 */
 	public long deploy(String bsn, String bundleUrl) throws Exception {
-		final ObjectName framework = getFramework(mBeanServerConnection);
+		final ObjectName framework = _getFramework(mBeanServerConnection);
 
 		long bundleId = -1;
 
 		for (BundleDTO osgiBundle : listBundles()) {
 			if (osgiBundle.symbolicName.equals(bsn)) {
 				bundleId = osgiBundle.id;
+
 				break;
 			}
 		}
 
 		if (bundleId > -1) {
-			mBeanServerConnection.invoke(
-				framework, "stopBundle", new Object[] {bundleId},
-				new String[] {"long"});
+			mBeanServerConnection.invoke(framework, "stopBundle", new Object[] {bundleId}, new String[] {"long"});
 
-			Object[] params = new Object[] {bundleId, bundleUrl};
+			Object[] params = {bundleId, bundleUrl};
 
 			mBeanServerConnection.invoke(
-				framework, "updateBundleFromURL", params,
-				new String[] {"long", String.class.getName()});
+				framework, "updateBundleFromURL", params, new String[] {"long", String.class.getName()});
 
-			mBeanServerConnection.invoke(
-				framework, "refreshBundle", new Object[] {bundleId},
-				new String[] {"long"});
+			mBeanServerConnection.invoke(framework, "refreshBundle", new Object[] {bundleId}, new String[] {"long"});
 		}
 		else {
-			Object[] params = new Object[] {bundleUrl, bundleUrl};
+			Object[] params = {bundleUrl, bundleUrl};
 
-			String[] signature = new String[] {
-				String.class.getName(), String.class.getName()
-			};
+			String[] signature = {String.class.getName(), String.class.getName()};
 
-			Object installed = mBeanServerConnection.invoke(
-				framework, "installBundleFromURL", params, signature);
+			Object installed = mBeanServerConnection.invoke(framework, "installBundleFromURL", params, signature);
 
 			bundleId = Long.parseLong(installed.toString());
 		}
 
-		mBeanServerConnection.invoke(
-			framework, "startBundle", new Object[] {bundleId},
-			new String[] {"long"});
+		mBeanServerConnection.invoke(framework, "startBundle", new Object[] {bundleId}, new String[] {"long"});
 
 		return bundleId;
 	}
@@ -121,15 +112,11 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		final List<BundleDTO> retval = new ArrayList<>();
 
 		try {
-			final ObjectName bundleState = getBundleState();
+			final ObjectName bundleState = _getBundleState();
 
-			final Object[] params = new Object[] {
-				new String[] {
-					"Identifier", "SymbolicName", "State", "Version"
-				}
-			};
+			final Object[] params = {new String[] {"Identifier", "SymbolicName", "State", "Version"}};
 
-			final String[] signature = new String[] {String[].class.getName()};
+			final String[] signature = {String[].class.getName()};
 
 			final TabularData data = (TabularData)mBeanServerConnection.invoke(
 				bundleState, "listBundles", params, signature);
@@ -138,7 +125,7 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 				final CompositeData cd = (CompositeData)value;
 
 				try {
-					retval.add(newFromData(cd));
+					retval.add(_newFromData(cd));
 				}
 				catch (Exception e) {
 					e.printStackTrace();
@@ -161,14 +148,13 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 	 * @throws Exception
 	 */
 	public void uninstall(long id) throws Exception {
-		final ObjectName framework = getFramework(mBeanServerConnection);
+		final ObjectName framework = _getFramework(mBeanServerConnection);
 
-		Object[] objects = new Object[] {id};
+		Object[] objects = {id};
 
-		String[] params = new String[] {"long"};
+		String[] params = {"long"};
 
-		mBeanServerConnection.invoke(
-			framework, "uninstallBundle", objects, params);
+		mBeanServerConnection.invoke(framework, "uninstallBundle", objects, params);
 	}
 
 	/**
@@ -191,24 +177,23 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		throw new IllegalStateException("Unable to uninstall " + bsn);
 	}
 
-	private static ObjectName getFramework(
-			MBeanServerConnection mBeanServerConnection)
+	private static ObjectName _getFramework(MBeanServerConnection mBeanServerConnection)
 		throws IOException, MalformedObjectNameException {
 
-		final ObjectName objectName = new ObjectName(
-			name + ":type=" + type + ",*");
-		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(
-			objectName, null);
+		final ObjectName objectName = new ObjectName(_NAME + ":type=" + _TYPE + ",*");
 
-		if ((objectNames != null) && (objectNames.size() > 0)) {
+		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
+
+		if ((objectNames != null) && !objectNames.isEmpty()) {
 			return objectNames.iterator().next();
 		}
 
 		return null;
 	}
 
-	private static BundleDTO newFromData(CompositeData cd) {
+	private static BundleDTO _newFromData(CompositeData cd) {
 		final BundleDTO dto = new BundleDTO();
+
 		dto.id = Long.parseLong(cd.get("Identifier").toString());
 		dto.symbolicName = cd.get("SymbolicName").toString();
 
@@ -238,17 +223,16 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		return dto;
 	}
 
-	private ObjectName getBundleState()
-		throws IOException, MalformedObjectNameException {
+	private ObjectName _getBundleState() throws IOException, MalformedObjectNameException {
+		ObjectName objectName = new ObjectName(_NAME + ":type=bundleState,*");
 
-		ObjectName objectName = new ObjectName(name + ":type=bundleState,*");
+		Set<ObjectName> queryNames = mBeanServerConnection.queryNames(objectName, null);
 
-		return
-			mBeanServerConnection.queryNames(
-				objectName, null).iterator().next();
+		return queryNames.iterator().next();
 	}
 
-	private static final String name = "osgi.core";
-	private static final String type = "framework";
+	private static final String _NAME = "osgi.core";
+
+	private static final String _TYPE = "framework";
 
 }
