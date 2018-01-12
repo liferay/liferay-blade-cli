@@ -858,7 +858,7 @@ public class PropertiesLocator {
 			else if (property.endsWith("breadcrumb.display.style.default")) {
 				PropertyProblem updatedProblem = new PropertyProblem(
 					property, PropertyProblemType.MODULARIZED,
-					" ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.configuration. " +
+					" ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.configuration." +
 							"SiteNavigationBreadcrumbWebTemplateConfiguration. More information at Breaking " +
 								"Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/" +
 									"knowledge_base/7-0/breaking-changes#" +
