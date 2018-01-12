@@ -1,5 +1,5 @@
 Bundle-SymbolicName: com.liferay.blade.cli
-Bundle-Version: 2.3.1.${tstamp}
+Bundle-Version: 3.0.0.${tstamp}
 
 JPM-Command: blade
 
