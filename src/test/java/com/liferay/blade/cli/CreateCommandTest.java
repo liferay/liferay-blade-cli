@@ -1244,6 +1244,42 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWarHookLocation() throws Exception {
+
+		File workspace = new File("build/test/workspace");
+
+		_makeWorkspace(workspace);
+		
+		testCreateWar(workspace, "war-hook", "war-test");
+	}
+	
+	@Test
+	public void testCreateWarMVCPortletLocation() throws Exception {
+
+		File workspace = new File("build/test/workspace");
+
+		_makeWorkspace(workspace);
+		
+		testCreateWar(workspace, "war-mvc-portlet", "war-test");
+	}
+	
+	private void testCreateWar(File workspace, String projectType, String projectName) throws Exception {
+		String[] args = {"-b", workspace.toString(), "create", "-t", projectType, projectName};
+
+		new BladeNoFail().run(args);
+
+		String projectPath = new File(workspace, "wars/war-test").toString();
+
+		_checkFileExists(projectPath);
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "war");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath, "war-test.war");
+	}
+	
+	@Test
 	public void testCreateWorkspaceThemeLocation() throws Exception {
 		String[] args = {"-b", "build/test/workspace", "create", "-t", "theme", "theme-test"};
 		File workspace = new File("build/test/workspace");
