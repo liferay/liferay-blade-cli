@@ -107,6 +107,17 @@ task downloadPortal(type: Download) {
 	onlyIfNewer true
 }
 
+task testExecutableJar(dependsOn: jar) {
+	doLast {
+		javaexec {
+			main = "-jar"
+			args = [jar.archivePath, "create", "-l"]
+		}
+	}
+}
+
+check.dependsOn testExecutableJar
+
 task unzipPortal(dependsOn: downloadPortal, type: Copy) {
 	from zipTree(downloadPortal.dest)
 	into buildDir
