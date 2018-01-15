@@ -25,6 +25,10 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandDescription = "Initializes a new Liferay workspace", commandNames = {"init"})
 public class InitCommandArgs {
 
+	public String getBuild() {
+		return _build;
+	}
+
 	public String getName() {
 		return _name;
 	}
@@ -40,6 +44,12 @@ public class InitCommandArgs {
 	public boolean isUpgrade() {
 		return _upgrade;
 	}
+
+	@Parameter(
+		description = "Specify the build type of liferay workspace. Available options are gradle, maven. (gradle is default)",
+		names = {"-b", "--build"}
+	)
+	private String _build;
 
 	@Parameter(description = "create anyway if there are files located at target folder", names = {"-f", "--force"})
 	private boolean _force;

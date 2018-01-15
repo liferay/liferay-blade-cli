@@ -21,6 +21,7 @@ import aQute.lib.io.IO;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
+import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,10 +66,17 @@ public class InitCommand {
 			return;
 		}
 
+		boolean mavenBuild = "maven".equals(_options.getBuild());
+
 		if (destDir.exists()) {
 			if (pluginsSDK) {
 				if (!_isPluginsSDK70(destDir)) {
 					if (_options.isUpgrade()) {
+						if (mavenBuild) {
+							_addError("Unsupport to upgrade plugins sdk in liferay maven workpace now.");
+							return;
+						}
+
 						_trace(
 							"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory and initing " +
 								"workspace.");
@@ -123,13 +131,19 @@ public class InitCommand {
 			projectTemplatesArgs.setForce(true);
 		}
 
+		projectTemplatesArgs.setGradle(!mavenBuild);
+		projectTemplatesArgs.setMaven(mavenBuild);
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setTemplate("workspace");
 
 		new ProjectTemplates(projectTemplatesArgs);
 
+		if (mavenBuild) {
+			FileUtil.deleteFiles(destDir.toPath(), "gradle.properties", "gradle-local.properties");
+		}
+
 		if (pluginsSDK) {
-			if (_options.isUpgrade()) {
+			if (_options.isUpgrade() && !mavenBuild) {
 				GradleExec gradleExec = new GradleExec(_blade);
 
 				gradleExec.executeGradleCommand("upgradePluginsSDK");

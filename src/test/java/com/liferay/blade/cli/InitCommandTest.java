@@ -231,10 +231,139 @@ public class InitCommandTest {
 		Assert.assertTrue(new File(_workspaceDir, "newproject/modules").exists());
 	}
 
+	@Test
+	public void testMavenInitWithNameWorkspaceDirectoryEmpty() throws Exception {
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-f", "-b", "maven", "newproject"};
+
+		File newproject = new File(_workspaceDir, "newproject");
+
+		Assert.assertTrue(newproject.mkdirs());
+
+		new BladeNoFail().run(args);
+
+		Assert.assertTrue(new File(newproject, "pom.xml").exists());
+
+		Assert.assertTrue(new File(newproject, "modules").exists());
+
+		String contents = new String(Files.readAllBytes(new File(newproject, "pom.xml").toPath()));
+
+		Assert.assertTrue(contents, contents.contains("3.2.1"));
+	}
+
+	@Test
+	public void testMavenInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
+
+		Assert.assertTrue(new File(_workspaceDir, "newproject").mkdirs());
+
+		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
+
+		new BladeNoFail().run(args);
+
+		Assert.assertFalse(new File(_workspaceDir, "newproject/pom.xml").exists());
+	}
+
+	@Test
+	public void testMavenInitWithNameWorkspaceNotExists() throws Exception {
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
+
+		if (!_workspaceDir.mkdirs()) {
+			Assert.fail("Unable to create workspace dir");
+		}
+
+		new BladeNoFail().run(args);
+
+		Assert.assertTrue(new File(_workspaceDir, "newproject/pom.xml").exists());
+
+		Assert.assertTrue(new File(_workspaceDir, "newproject/modules").exists());
+	}
+
+	@Test
+	public void testMavenInitWorkspaceDirectoryEmpty() throws Exception {
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "maven"};
+
+		new BladeNoFail().run(args);
+
+		Assert.assertTrue(_workspaceDir.exists());
+
+		Assert.assertTrue(new File(_workspaceDir, "pom.xml").exists());
+
+		Assert.assertTrue(new File(_workspaceDir, "modules").exists());
+
+		Assert.assertFalse(new File(_workspaceDir, "build.gradle").exists());
+
+		Assert.assertFalse(new File(_workspaceDir, "gradle.properties").exists());
+
+		Assert.assertFalse(new File(_workspaceDir, "gradle-local.properties").exists());
+
+		Assert.assertFalse(new File(_workspaceDir, "settings.gradle").exists());
+
+		_verifyMavenBuild();
+	}
+
+	@Test
+	public void testMavenInitWorkspaceDirectoryHasFiles() throws Exception {
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "maven"};
+
+		if (!_workspaceDir.mkdirs()) {
+			Assert.fail("Unable to create workspace dir");
+		}
+
+		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
+
+		new BladeNoFail().run(args);
+
+		Assert.assertFalse(new File(_workspaceDir, "pom.xml").exists());
+	}
+
+	@Test
+	public void testMavenInitWorkspaceDirectoryHasFilesForce() throws Exception {
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-f", "-b", "maven"};
+
+		if (!_workspaceDir.mkdirs()) {
+			Assert.fail("Unable to create workspace dir");
+		}
+
+		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
+
+		new BladeNoFail().run(args);
+
+		Assert.assertTrue(_workspaceDir.exists());
+
+		Assert.assertTrue(new File(_workspaceDir, "pom.xml").exists());
+
+		Assert.assertTrue(new File(_workspaceDir, "modules").exists());
+
+		Assert.assertFalse(new File(_workspaceDir, "build.gradle").exists());
+
+		Assert.assertFalse(new File(_workspaceDir, "gradle.properties").exists());
+
+		Assert.assertFalse(new File(_workspaceDir, "gradle-local.properties").exists());
+
+		Assert.assertFalse(new File(_workspaceDir, "settings.gradle").exists());
+
+		_verifyMavenBuild();
+	}
+
 	private void _createBundle() throws Exception {
 		String projectPath = "build/test/workspace/modules";
 
 		String[] args = {"create", "-d", projectPath, "foo"};
+
+		new BladeNoFail().run(args);
+
+		File file = IO.getFile(projectPath + "/foo");
+		File bndFile = IO.getFile(projectPath + "/foo/bnd.bnd");
+
+		Assert.assertTrue(file.exists());
+
+		Assert.assertTrue(bndFile.exists());
+	}
+
+	private void _createMavenBundle() throws Exception {
+		String projectPath = "build/test/workspace/modules";
+
+		String[] args = {"create", "-d", projectPath, "-b", "maven", "foo"};
 
 		new BladeNoFail().run(args);
 
@@ -267,6 +396,16 @@ public class InitCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
 
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
+	}
+
+	private void _verifyMavenBuild() throws Exception {
+		_createMavenBundle();
+
+		String projectPath = _workspaceDir.getPath() + "/modules/foo";
+
+		MavenRunnerUtil.executeMavenPackage(projectPath, new String[] {"clean", "package"});
+
+		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 	}
 
 	private static final File _workspaceDir = IO.getFile("build/test/workspace");
