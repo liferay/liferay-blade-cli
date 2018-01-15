@@ -48,6 +48,10 @@ import org.osgi.framework.Constants;
  */
 public class BladeCLI implements Runnable {
 
+	public static void main(String[] args) {
+		new BladeCLI().run(args);
+	}
+
 	public void addErrors(String prefix, Collection<String> data) {
 		err().println("Error: " + prefix);
 		data.forEach(err()::println);
