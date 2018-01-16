@@ -169,7 +169,7 @@ public class CreateCommand {
 	}
 
 	private File _getDefaultModulesDir() throws Exception {
-		File baseDir = _blade.getBase();
+		File baseDir = _blade.getBase().getAbsoluteFile();
 
 		if (!Util.isWorkspace(baseDir)) {
 			return baseDir;
@@ -195,7 +195,7 @@ public class CreateCommand {
 	}
 
 	private File _getDefaultWarsDir() throws Exception {
-		File baseDir = _blade.getBase();
+		File baseDir = _blade.getBase().getAbsoluteFile();
 
 		if (!Util.isWorkspace(baseDir)) {
 			return baseDir;
