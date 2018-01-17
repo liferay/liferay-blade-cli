@@ -116,7 +116,17 @@ task testExecutableJar(dependsOn: jar) {
 	}
 }
 
+task testVersionCommand(dependsOn: jar) {
+	doLast {
+		javaexec {
+			main = "-jar"
+			args = [jar.archivePath, "version"]
+		}
+	}
+}
+
 check.dependsOn testExecutableJar
+check.dependsOn testVersionCommand
 
 task unzipPortal(dependsOn: downloadPortal, type: Copy) {
 	from zipTree(downloadPortal.dest)

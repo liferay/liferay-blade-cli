@@ -16,31 +16,22 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.getopt.Description;
 import aQute.lib.getopt.Options;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
-
-import java.net.URL;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
-import org.osgi.framework.Constants;
 
 /**
  * @author Gregory Amerson
@@ -209,12 +200,14 @@ public class BladeCLI implements Runnable {
 					break;
 
 				case "version":
+					version((VersionCommandArgs)_commandArgs);
 
 					break;
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			error(e.getMessage());
+			e.printStackTrace(err());
 		}
 	}
 
@@ -223,7 +216,7 @@ public class BladeCLI implements Runnable {
 			new CreateCommandArgs(), new ConvertCommandArgs(), new DeployCommandArgs(), new GradleCommandArgs(),
 			new InitCommandArgs(), new InstallCommandArgs(), new OpenCommandArgs(), new OutputsCommandArgs(),
 			new SamplesCommandArgs(), new ServerStartCommandArgs(), new ServerStopCommandArgs(), new ShellCommandArgs(),
-			new UpdateCommandArgs(), new UpgradePropsOptions());
+			new UpdateCommandArgs(), new UpgradePropsOptions(), new VersionCommandArgs());
 
 		Builder builder = JCommander.newBuilder();
 
@@ -283,33 +276,8 @@ public class BladeCLI implements Runnable {
 		new UpgradePropsCommand(this, options);
 	}
 
-	@Description("Show version information about blade")
-	public void version(Options options) throws IOException {
-		Class<? extends BladeCLI> clazz = getClass();
-
-		ClassLoader cl = clazz.getClassLoader();
-
-		Enumeration<URL> e = cl.getResources("META-INF/MANIFEST.MF");
-
-		while (e.hasMoreElements()) {
-			URL u = e.nextElement();
-
-			Manifest m = new Manifest(u.openStream());
-
-			Attributes mainAttributes = m.getMainAttributes();
-
-			String bsn = mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
-
-			if ((bsn != null) && bsn.equals("com.liferay.blade.cli")) {
-				Attributes attrs = mainAttributes;
-
-				_out.printf("%s\n", attrs.getValue(Constants.BUNDLE_VERSION));
-
-				return;
-			}
-		}
-
-		error("Could not locate version");
+	public void version(VersionCommandArgs options) throws Exception {
+		new VersionCommand(this, options).execute();
 	}
 
 	private static final Formatter _tracer = new Formatter(System.out);
