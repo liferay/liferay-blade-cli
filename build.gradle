@@ -125,8 +125,7 @@ task testVersionCommand(dependsOn: jar) {
 	}
 }
 
-check.dependsOn testExecutableJar
-check.dependsOn testVersionCommand
+check.dependsOn testExecutableJar, testVersionCommand
 
 task unzipPortal(dependsOn: downloadPortal, type: Copy) {
 	from zipTree(downloadPortal.dest)

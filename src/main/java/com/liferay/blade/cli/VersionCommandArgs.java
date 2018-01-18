@@ -19,7 +19,7 @@ package com.liferay.blade.cli;
 import com.beust.jcommander.Parameters;
 
 /**
- * @author Gregory Amerson
+ * @author Christopher Boyd
  */
 @Parameters(commandDescription = "Show version information about blade", commandNames = {"version"})
 public class VersionCommandArgs {

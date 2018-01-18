@@ -17,11 +17,16 @@
 package com.liferay.blade.cli;
 
 import java.net.URL;
+
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+
 import org.osgi.framework.Constants;
 
+/**
+ * @author Christopher Boyd
+ */
 public class VersionCommand {
 
 	public VersionCommand(BladeCLI blade, VersionCommandArgs options) {
@@ -55,7 +60,6 @@ public class VersionCommand {
 
 		_blade.error("Could not locate version");
 	}
-
 
 	private BladeCLI _blade;
 
