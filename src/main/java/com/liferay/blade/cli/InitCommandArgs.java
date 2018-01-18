@@ -46,7 +46,7 @@ public class InitCommandArgs {
 	}
 
 	@Parameter(
-		description = "Specify the build type of liferay workspace. Available options are gradle, maven. (gradle is default)",
+		description = "Specify the build type of liferay workspace. Available options are gradle, maven. (default gradle)",
 		names = {"-b", "--build"}
 	)
 	private String _build;
