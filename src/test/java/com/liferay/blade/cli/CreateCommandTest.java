@@ -890,6 +890,24 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWarHookLocation() throws Exception {
+		File workspace = new File("build/test/workspace");
+
+		_makeWorkspace(workspace);
+
+		_testCreateWar(workspace, "war-hook", "war-hook-test");
+	}
+
+	@Test
+	public void testCreateWarMVCPortletLocation() throws Exception {
+		File workspace = new File("build/test/workspace");
+
+		_makeWorkspace(workspace);
+
+		_testCreateWar(workspace, "war-mvc-portlet", "war-portlet-test");
+	}
+
+	@Test
 	public void testCreateWorkspaceGradleFragment() throws Exception {
 		String[] args = {
 			"create", "-d", "build/test/workspace/modules/extensions", "-t", "fragment", "-h", "com.liferay.login.web",
@@ -1244,42 +1262,6 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateWarHookLocation() throws Exception {
-
-		File workspace = new File("build/test/workspace");
-
-		_makeWorkspace(workspace);
-		
-		testCreateWar(workspace, "war-hook", "war-test");
-	}
-	
-	@Test
-	public void testCreateWarMVCPortletLocation() throws Exception {
-
-		File workspace = new File("build/test/workspace");
-
-		_makeWorkspace(workspace);
-		
-		testCreateWar(workspace, "war-mvc-portlet", "war-test");
-	}
-	
-	private void testCreateWar(File workspace, String projectType, String projectName) throws Exception {
-		String[] args = {"-b", workspace.toString(), "create", "-t", projectType, projectName};
-
-		new BladeNoFail().run(args);
-
-		String projectPath = new File(workspace, "wars/war-test").toString();
-
-		_checkFileExists(projectPath);
-
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "war");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "war-test.war");
-	}
-	
-	@Test
 	public void testCreateWorkspaceThemeLocation() throws Exception {
 		String[] args = {"-b", "build/test/workspace", "create", "-t", "theme", "theme-test"};
 		File workspace = new File("build/test/workspace");
@@ -1405,6 +1387,22 @@ public class CreateCommandTest {
 		new BladeNoFail().run(args);
 
 		Assert.assertTrue(Util.isWorkspace(workspace));
+	}
+
+	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {
+		String[] args = {"-b", workspace.toString(), "create", "-t", projectType, projectName};
+
+		new BladeNoFail().run(args);
+
+		String projectPath = new File(workspace, "wars/" + projectName).getAbsolutePath();
+
+		_checkFileExists(projectPath);
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getAbsolutePath(), "war");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath, projectName + ".war");
 	}
 
 	private void _verifyBuild(String runnerPath, String projectPath, String outputFileName) {
