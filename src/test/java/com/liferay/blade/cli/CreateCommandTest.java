@@ -41,6 +41,7 @@ import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.tooling.internal.consumer.ConnectorServices;
@@ -1287,6 +1288,27 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "theme-test.war");
+	}
+
+	@Test
+	public void testCreateWorkspaceTypeValid() throws Exception {
+		String[] args = {"-b", "build/test/workspace/modules", "create", "-t", "soy-portlet", "foo"};
+
+		File workspace = new File("build/test/workspace");
+
+		_makeWorkspace(workspace);
+
+		new BladeNoFail().run(args);
+
+		File buildGradle = new File(workspace, "modules/foo/build.gradle");
+
+		_checkFileExists(buildGradle.getAbsolutePath());
+
+		String content = new String(IO.read(buildGradle));
+
+		Assert.assertEquals(1, StringUtils.countMatches(content, '{'));
+
+		Assert.assertEquals(1, StringUtils.countMatches(content, '}'));
 	}
 
 	@Test
