@@ -24,8 +24,6 @@ import aQute.lib.io.IO;
 
 import com.liferay.project.templates.ProjectTemplates;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -44,6 +42,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.tooling.internal.consumer.ConnectorServices;
 
@@ -945,28 +944,6 @@ public class CreateCommandTest {
 
 		_verifyImportPackage(new File(projectPath + "/loginHook/build/libs/loginhook-1.0.0.jar"));
 	}
-	
-	@Test
-	public void testCreateWorkspaceTypeValid() throws Exception {
-		String[] args =
-			{"-b", "build/test/workspace/modules", "create", "-t", "soy-portlet", "foo"};
-
-		File workspace = new File("build/test/workspace");
-
-		_makeWorkspace(workspace);
-
-		new BladeNoFail().run(args);
-
-		File buildGradle = new File(workspace, "modules/foo/build.gradle");
-		
-		_checkFileExists(buildGradle.getAbsolutePath());
-		
-		String content = new String(IO.read(buildGradle));
-
-		assertEquals(StringUtils.countMatches(content, '{'), 1);
-		
-		assertEquals(StringUtils.countMatches(content, '}'), 1);
-	}
 
 	@Test
 	public void testCreateWorkspaceGradlePortletProject() throws Exception {
@@ -1311,6 +1288,27 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "theme-test.war");
+	}
+
+	@Test
+	public void testCreateWorkspaceTypeValid() throws Exception {
+		String[] args = {"-b", "build/test/workspace/modules", "create", "-t", "soy-portlet", "foo"};
+
+		File workspace = new File("build/test/workspace");
+
+		_makeWorkspace(workspace);
+
+		new BladeNoFail().run(args);
+
+		File buildGradle = new File(workspace, "modules/foo/build.gradle");
+
+		_checkFileExists(buildGradle.getAbsolutePath());
+
+		String content = new String(IO.read(buildGradle));
+
+		Assert.assertEquals(1, StringUtils.countMatches(content, '{'));
+
+		Assert.assertEquals(1, StringUtils.countMatches(content, '}'));
 	}
 
 	@Test
