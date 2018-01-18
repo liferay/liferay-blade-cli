@@ -158,6 +158,21 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testInitCommandGradleOption() throws Exception {
+		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "gradle", "gradleworkspace"};
+
+		new BladeNoFail().run(args);
+
+		File gradleWorkspace = new File(_workspaceDir, "gradleworkspace");
+
+		Assert.assertTrue(gradleWorkspace.exists());
+
+		Assert.assertFalse(new File(gradleWorkspace, "pom.xml").exists());
+
+		Assert.assertTrue(new File(gradleWorkspace, "build.gradle").exists());
+	}
+
+	@Test
 	public void testInitInPluginsSDKDirectory() throws Exception {
 		String[] args = {"-b", _workspaceDir.getPath(), "init", "-u"};
 
