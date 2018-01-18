@@ -34,7 +34,7 @@ public class BladeArgs {
 	}
 
 	@Parameter(description = "Specify a new base directory (default working directory).", names = {"-b", "--base"})
-	private String _base = ".";
+	private String _base = System.getProperty("user.dir");
 
 	@Parameter(description = "Print exception stack traces when they occur.", names = {"-t", "--trace"})
 	private boolean _trace;
