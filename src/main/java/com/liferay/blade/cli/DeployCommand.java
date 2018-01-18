@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli;
 
+import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Jar;
 
 import com.liferay.blade.cli.FileWatcher.Consumer;
@@ -212,7 +213,7 @@ public class DeployCommand {
 			bsn = bundle.getBsn();
 
 			if (fragment) {
-				Set<String> keySet = new aQute.bnd.header.Parameters(fragmentHost).keySet();
+				Set<String> keySet = new Parameters(fragmentHost).keySet();
 
 				hostBSN = keySet.iterator().next();
 			}
