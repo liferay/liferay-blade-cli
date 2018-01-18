@@ -21,6 +21,7 @@ import aQute.lib.io.IO;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
+import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,13 +45,13 @@ import java.util.Properties;
  */
 public class InitCommand {
 
-	public InitCommand(BladeCLI blade, InitCommandArgs options) throws Exception {
+	public InitCommand(BladeCLI blade, InitCommandArgs args) throws Exception {
 		_blade = blade;
-		_options = options;
+		_args = args;
 	}
 
 	public void execute() throws Exception {
-		String name = _options.getName();
+		String name = _args.getName();
 
 		File destDir = name != null ? new File(_blade.getBase(), name) : _blade.getBase();
 
@@ -65,10 +66,17 @@ public class InitCommand {
 			return;
 		}
 
+		boolean mavenBuild = "maven".equals(_args.getBuild());
+
 		if (destDir.exists()) {
 			if (pluginsSDK) {
 				if (!_isPluginsSDK70(destDir)) {
-					if (_options.isUpgrade()) {
+					if (_args.isUpgrade()) {
+						if (mavenBuild) {
+							_addError("Upgrading Plugins SDK in Liferay Maven Workspace not supported.");
+							return;
+						}
+
 						_trace(
 							"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory and initing " +
 								"workspace.");
@@ -83,27 +91,27 @@ public class InitCommand {
 					}
 					else {
 						_addError(
-							"Unable to run blade init in plugins sdk 6.2, please add -u (--upgrade) if you want to " +
+							"Unable to run blade init in Plugins SDK 6.2, please add -u (--upgrade) if you want to " +
 								"upgrade to 7.0");
 						return;
 					}
 				}
 
-				_trace("Found plugins-sdk, moving contents to new subdirectory and initing workspace.");
+				_trace("Found Plugins SDK, moving contents to new subdirectory and initing workspace.");
 
 				temp = Files.createTempDirectory("orignal-sdk").toFile();
 
 				_moveContentsToDirectory(destDir, temp);
 			}
 			else if (destDir.list().length > 0) {
-				if (_options.isForce()) {
-					_trace("Files found, initing anyways.");
+				if (_args.isForce()) {
+					_trace("Files found, continuing init.");
 				}
 				else {
 					_addError(
 						destDir.getAbsolutePath() +
 							" contains files, please move them before continuing or use -f (--force) option to init " +
-								"workspace anyways.");
+								"workspace.");
 					return;
 				}
 			}
@@ -119,17 +127,23 @@ public class InitCommand {
 
 		projectTemplatesArgs.setDestinationDir(destParentDir);
 
-		if (_options.isForce() || _options.isUpgrade()) {
+		if (_args.isForce() || _args.isUpgrade()) {
 			projectTemplatesArgs.setForce(true);
 		}
 
+		projectTemplatesArgs.setGradle(!mavenBuild);
+		projectTemplatesArgs.setMaven(mavenBuild);
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setTemplate("workspace");
 
 		new ProjectTemplates(projectTemplatesArgs);
 
+		if (mavenBuild) {
+			FileUtil.deleteFiles(destDir.toPath(), "gradle.properties", "gradle-local.properties");
+		}
+
 		if (pluginsSDK) {
-			if (_options.isUpgrade()) {
+			if (_args.isUpgrade() && !mavenBuild) {
 				GradleExec gradleExec = new GradleExec(_blade);
 
 				gradleExec.executeGradleCommand("upgradePluginsSDK");
@@ -273,7 +287,7 @@ public class InitCommand {
 		"settings.gradle", "util.gradle", "versions.gradle"
 	};
 
+	private final InitCommandArgs _args;
 	private final BladeCLI _blade;
-	private final InitCommandArgs _options;
 
 }
