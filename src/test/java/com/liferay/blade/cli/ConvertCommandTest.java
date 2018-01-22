@@ -53,11 +53,11 @@ public class ConvertCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", "-a"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "-a"};
 
 		new BladeNoFail().run(args);
 
@@ -88,11 +88,11 @@ public class ConvertCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl"};
 
 		new BladeNoFail().run(args);
 
@@ -122,11 +122,11 @@ public class ConvertCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-application-adapter-hook"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-application-adapter-hook"};
 
 		new BladeNoFail().run(args);
 
@@ -136,7 +136,7 @@ public class ConvertCommandTest {
 
 		Assert.assertFalse(new File(projectDir, "plugins-sdk/hooks/sample-application-adapter-hook").exists());
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-servlet-filter-hook"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-servlet-filter-hook"};
 
 		new BladeNoFail().run(args);
 
@@ -162,13 +162,13 @@ public class ConvertCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 
 		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme"};
 
 		new BladeNoFail().run(args);
 
@@ -186,7 +186,7 @@ public class ConvertCommandTest {
 
 		Assert.assertFalse(new File(projectDir, "plugins-sdk/themes/sample-styled-minimal-theme").exists());
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
 
 		new BladeNoFail().run(args);
 
@@ -211,7 +211,7 @@ public class ConvertCommandTest {
 	public void testReadIvyXml() throws Exception {
 		File projectDir = _setupWorkspace("readIvyXml");
 
-		String[] args = {"-b", projectDir.getPath(), "convert", "sample-dao-portlet"};
+		String[] args = {"--base", projectDir.getPath(), "convert", "sample-dao-portlet"};
 
 		new BladeNoFail().run(args);
 
@@ -220,7 +220,7 @@ public class ConvertCommandTest {
 			".*compile group: 'c3p0', name: 'c3p0', version: '0.9.0.4'.*",
 			".*compile group: 'mysql', name: 'mysql-connector-java', version: '5.0.7'.*");
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", "sample-tapestry-portlet"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-tapestry-portlet"};
 
 		new BladeNoFail().run(args);
 
@@ -239,7 +239,7 @@ public class ConvertCommandTest {
 	public void testThemeDocrootBackup() throws Exception {
 		File projectDir = _setupWorkspace("testThemeDocrootBackup");
 
-		String[] args = {"-b", projectDir.getPath(), "convert", "-t", "sample-html4-theme"};
+		String[] args = {"--base", projectDir.getPath(), "convert", "-t", "sample-html4-theme"};
 
 		new BladeNoFail().run(args);
 
@@ -274,7 +274,7 @@ public class ConvertCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 

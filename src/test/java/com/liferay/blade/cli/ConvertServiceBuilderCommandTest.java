@@ -53,11 +53,11 @@ public class ConvertServiceBuilderCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", SB_PROJECT_NAME};
+		args = new String[] {"--base", projectDir.getPath(), "convert", SB_PROJECT_NAME};
 
 		new BladeNoFail().run(args);
 
@@ -71,7 +71,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertFalse(new File(sbWar, "docroot").exists());
 
-		args = new String[] {"-b", projectDir.getPath(), "convert", SB_PROJECT_NAME};
+		args = new String[] {"--base", projectDir.getPath(), "convert", SB_PROJECT_NAME};
 
 		new BladeNoFail().run(args);
 
@@ -117,7 +117,7 @@ public class ConvertServiceBuilderCommandTest {
 			Assert.assertFalse(testdir.exists());
 		}
 
-		String[] args = {"-b", testdir.getPath(), "init", "-u"};
+		String[] args = {"--base", testdir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 
@@ -127,7 +127,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(new File(testdir, "plugins-sdk/portlets/tasks-portlet").exists());
 
-		String[] convertArgs = {"-b", testdir.getPath(), "convert", "tasks-portlet", "foo"};
+		String[] convertArgs = {"--base", testdir.getPath(), "convert", "tasks-portlet", "foo"};
 
 		new BladeNoFail().run(convertArgs);
 
@@ -143,7 +143,7 @@ public class ConvertServiceBuilderCommandTest {
 			Assert.assertFalse(testdir.exists());
 		}
 
-		String[] args = {"-b", testdir.getPath(), "init", "-u"};
+		String[] args = {"--base", testdir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 
@@ -153,7 +153,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(new File(testdir, "plugins-sdk/portlets/tasks-portlet").exists());
 
-		String[] convertArgs = {"-b", testdir.getPath(), "convert", "tasks-portlet"};
+		String[] convertArgs = {"--base", testdir.getPath(), "convert", "tasks-portlet"};
 
 		new BladeNoFail().run(convertArgs);
 

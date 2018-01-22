@@ -44,7 +44,7 @@ public class ConvertThemeCommandTest {
 
 	@Test
 	public void testListThemes() throws Exception {
-		String[] args = {"-b", "build/test/workspace", "convert", "-l"};
+		String[] args = {"--base", "build/test/workspace", "convert", "-l"};
 
 		_createWorkspace();
 
@@ -62,7 +62,7 @@ public class ConvertThemeCommandTest {
 	@Ignore
 	@Test
 	public void testMigrateCompassTheme() throws Exception {
-		String[] args = {"-b", "build/test/workspace", "convert", "-a"};
+		String[] args = {"--base", "build/test/workspace", "convert", "-a"};
 
 		File workspace = _createWorkspace();
 

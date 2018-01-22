@@ -28,7 +28,7 @@ import java.io.File;
 	commandDescription = "Helps to upgrade portal properties from Liferay server 6.x to 7.x versions",
 	commandNames = {"upgradeProps"}
 )
-public class UpgradePropsOptions {
+public class UpgradePropsArgs extends BaseArgs {
 
 	public File getBundleDir() {
 		return _bundleDir;

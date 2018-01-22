@@ -23,7 +23,7 @@ import com.beust.jcommander.Parameters;
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = InstallCommand.DESCRIPTION, commandNames = {"install"})
-public class InstallCommandArgs {
+public class InstallCommandArgs extends BaseArgs {
 
 	public String getBundleFileName() {
 		return _bundleFileName;

@@ -28,7 +28,7 @@ import java.util.List;
 @Parameters(
 	commandDescription = "Connects to Liferay and executes gogo command and returns output.", commandNames = {"sh"}
 )
-public class ShellCommandArgs {
+public class ShellCommandArgs extends BaseArgs {
 
 	public List<String> getArgs() {
 		return _args;
