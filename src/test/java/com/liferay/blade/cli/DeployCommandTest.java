@@ -43,7 +43,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 	{GradleTooling.class, GradleExec.class, BladeCLI.class, BladeNoFail.class, Util.class, DeployCommand.class}
 )
 @RunWith(PowerMockRunner.class)
-public class DeployTest {
+public class DeployCommandTest {
 
 	@Rule
 	public final TemporaryFolder tempFolder = new TemporaryFolder();
