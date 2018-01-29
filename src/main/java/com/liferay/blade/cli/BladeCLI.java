@@ -234,6 +234,11 @@ public class BladeCLI implements Runnable {
 
 		JCommander jcommander = commands.get(command);
 
+		if (jcommander == null) {
+			commander.usage();
+			return;
+		}
+
 		List<Object> objects = jcommander.getObjects();
 
 		Object commandArgs = objects.get(0);
