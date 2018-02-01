@@ -44,14 +44,14 @@ import org.osgi.framework.dto.BundleDTO;
  */
 public class DeployCommand {
 
-	public DeployCommand(BladeCLI blade, DeployCommandArgs options) throws Exception {
+	public DeployCommand(BladeCLI blade, DeployCommandArgs args) throws Exception {
 		_blade = blade;
-		_options = options;
+		_options = args;
 		_host = "localhost";
 		_port = 11311;
 	}
 
-	public void deploy(GradleExec gradle, Set<File> outputFiles) throws Exception {
+	private void _deploy(GradleExec gradle, Set<File> outputFiles) throws Exception {
 		int retcode = gradle.executeGradleCommand("assemble -x check");
 
 		if (retcode > 0) {
@@ -67,7 +67,7 @@ public class DeployCommand {
 			outputFile -> {
 				try {
 					_installOrUpdate(outputFile);
-				} 
+				}
 				catch (Exception e) {
 					PrintStream err = _blade.err();
 
@@ -79,8 +79,8 @@ public class DeployCommand {
 		);
 	}
 
-	public void deployWatch(final GradleExec gradleExec, final Set<File> outputFiles) throws Exception {
-		deploy(gradleExec, outputFiles);
+	private void _deployWatch(final GradleExec gradleExec, final Set<File> outputFiles) throws Exception {
+		_deploy(gradleExec, outputFiles);
 
 		new Thread() {
 
@@ -128,10 +128,10 @@ public class DeployCommand {
 		Set<File> outputFiles = GradleTooling.getOutputFiles(_blade.getCacheDir(), _blade.getBase());
 
 		if (_options.isWatch()) {
-			deployWatch(gradleExec, outputFiles);
+			_deployWatch(gradleExec, outputFiles);
 		}
 		else {
-			deploy(gradleExec, outputFiles);
+			_deploy(gradleExec, outputFiles);
 		}
 	}
 
@@ -143,7 +143,7 @@ public class DeployCommand {
 		if (bundleId > 0) {
 			deployer.start(bundleId);
 
-		} 
+		}
 		else {
 
 			throw new Exception("Failed to deploy war: " + file.toURI().toASCIIString());
@@ -161,7 +161,7 @@ public class DeployCommand {
 	private void _installOrUpdate(File file) throws Exception {
 		file = file.getAbsoluteFile();
 
-		try (LiferayBundleDeployer client = LiferayBundleDeployer._getDefault(_host, _port)) {
+		try (LiferayBundleDeployer client = LiferayBundleDeployer.newInstance(_host, _port)) {
 			String name = file.getName();
 
 			name = name.toLowerCase();
@@ -171,7 +171,7 @@ public class DeployCommand {
 			Entry<String, Attrs> bsn = bundle.getBundleSymbolicName();
 
 			if (bsn != null) {
-				deployBundle(file, client, bundle, bsn);
+				_deployBundle(file, client, bundle, bsn);
 			}
 			else if (name.endsWith(".war")) {
 				deployWar(file, client);
@@ -179,7 +179,7 @@ public class DeployCommand {
 		}
 	}
 
-	private void deployBundle(File file, LiferayBundleDeployer client, Domain bundle, Entry<String, Attrs> bsn)
+	private void _deployBundle(File file, LiferayBundleDeployer client, Domain bundle, Entry<String, Attrs> bsn)
 		throws Exception {
 
 		Entry<String, Attrs> fragmentHost = bundle.getFragmentHost();
@@ -199,14 +199,14 @@ public class DeployCommand {
 		URI uri = file.toURI();
 
 		if (existingId > 0) {
-			reloadExistingBundle(client, fragmentHost, existingId, hostId, uri);
+			_reloadExistingBundle(client, fragmentHost, existingId, hostId, uri);
 		}
 		else {
-			installNewBundle(client, bsn, fragmentHost, hostId, uri);
+			_installNewBundle(client, bsn, fragmentHost, hostId, uri);
 		}
 	}
 
-	private void installNewBundle(LiferayBundleDeployer client, Entry<String, Attrs> bsn,
+	private void _installNewBundle(LiferayBundleDeployer client, Entry<String, Attrs> bsn,
 			Entry<String, Attrs> fragmentHost, long hostId, URI uri) throws Exception {
 
 		PrintStream out = _blade.out();
@@ -244,7 +244,7 @@ public class DeployCommand {
 		}
 	}
 
-	private final void reloadExistingBundle(LiferayBundleDeployer client, Entry<String, Attrs> fragmentHost,
+	private final void _reloadExistingBundle(LiferayBundleDeployer client, Entry<String, Attrs> fragmentHost,
 			long existingId, long hostId, URI uri) throws Exception {
 
 		if (fragmentHost != null && (hostId > 0)) {

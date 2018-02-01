@@ -43,49 +43,51 @@ import com.beust.jcommander.Parameters;
  * @author Christopher Bryan Boyd
  */
 public interface LiferayBundleDeployer extends AutoCloseable {
-	static LiferayBundleDeployer _getDefault(String host, int port) {
+
+	public static LiferayBundleDeployer newInstance(String host, int port) {
 		return new LiferayBundleDeployerImpl(host, port);
 	}
-	static LiferayBundleDeployer _getDefault(InetSocketAddress address) {
+
+	public static LiferayBundleDeployer newInstance(InetSocketAddress address) {
 		return new LiferayBundleDeployerImpl(address);
 	}
-	
+
 	Collection<BundleDTO> getBundles() throws Exception;
 
 	default long getBundleId(String name) throws Exception {
 		return getBundleId(getBundles(), name);
 	}
-	
+
 	long getBundleId(Collection<BundleDTO> bundles, String name) throws Exception;
-	
+
 	void update(long id, URI uri) throws Exception;
-	
+
 	void refresh(long id) throws Exception;
-	
+
 	void stop(long id) throws Exception;
-	
+
 	void start(long id) throws Exception;
-	
+
 	long install(URI uri) throws Exception;
-	
+
 	default void reloadFragment(long id, long hostId, URI uri) throws Exception {
-		
+
 		update(id, uri);
-		
+
 		refresh(hostId);
-		
+
 	}
-	
+
 	default void reloadBundle(long id, URI uri) throws Exception {
-		
+
 		stop(id);
-		
+
 		update(id, uri);
-		
+
 		start(id);
-		
+
 	}
-	
+
 	public static String _getWarString(Path uri) throws IllegalArgumentException {
 		if (!Constants.matcher.matches(uri)) {
 		    throw new IllegalArgumentException("Must provide a valid WAR file.");
@@ -105,11 +107,11 @@ class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 	private Optional<GogoTelnetClient> client = Optional.empty();
 	private final String host;
 	private final int port;
-	
+
 	public LiferayBundleDeployerImpl(final InetSocketAddress address) {
 		this(address.getHostString(), address.getPort());
 	}
-	
+
 	public LiferayBundleDeployerImpl(final String host, final int port) {
 		this.host = host;
 		this.port = port;
@@ -131,9 +133,9 @@ class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 	@Override
 	public long getBundleId(Collection<BundleDTO> bundles, String bsn) throws Exception {
-		
+
 		Objects.requireNonNull(bsn);
-	
+
 		return bundles.stream().filter((bundle) -> Objects.equals(bundle.symbolicName, bsn)).map((bundle) -> bundle.id).findAny().orElse(-1L);
 	}
 
@@ -160,26 +162,26 @@ class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 	@Override
 	public long install(URI uri) throws Exception {
 		final String installString;
-		
+
 		Path uriPath = Paths.get(uri);
-		
+
 		if (Constants.matcher.matches(uriPath)) {
-			
+
 			installString = "install " + LiferayBundleDeployer._getWarString(uriPath);
-			
+
 		} else {
-			
+
 			installString = "install " + uri.toASCIIString();
-			
+
 		}
-		
+
 		String response = sendGogo(installString);
-		
+
 		InstallResponse installResponse = InstallResponse.getResponse(response);
-		
+
 		return installResponse.getBundleId();
 	}
-	
+
 	private String sendGogo(String data) throws Exception{
 		final String returnValue;
 		try (GogoTelnetClient client = getClient()) {
@@ -189,17 +191,17 @@ class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		}
 		return returnValue;
 	}
-	
+
 	private static final String[] parseGogoResponse(String response) {
-		
+
 		return response.split("\\r?\\n");
 	}
-	
+
 	private static final String[] parseGogoLine(String line) {
 
 		return line.split("\\|");
 	}
-	
+
 	private static List<BundleDTO> _getBundles(GogoTelnetClient client) throws IOException {
 		return Stream.of(
 				client.send("lb -s -u")
@@ -209,35 +211,35 @@ class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		).collect(Collectors.toList());
 
 	}
-	
+
 	private static final BundleDTO getBundleFromGogoLine(String line) {
 
 		try {
-			
+
 			String[] fields = parseGogoLine(line);
-			
+
 			Long id = Long.parseLong(fields[0].trim());
-			
+
 			int state = _getState(fields[1].trim());
-			
+
 			String symbolicName = fields[3];
-			
+
 			return getBundle(id, state, symbolicName);
 
 		}
 		catch (Exception e) {
-			
+
 		}
 		return null;
 	}
-	
+
 	private static final BundleDTO getBundle(Long id, int state, String symbolicName) {
 		BundleDTO bundle = new BundleDTO();
 
 		bundle.id = id;
 		bundle.state = state;
 		bundle.symbolicName = symbolicName;
-		
+
 		return bundle;
 	}
 	private static final int _getState(String state) {
@@ -281,13 +283,13 @@ class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 class InstallResponse {
 	static InstallResponse getResponse(String data) throws IllegalArgumentException {
 		JCommander commander = JCommander.newBuilder().addCommand(new InstallResponse()).build();
-		
+
 		if (Objects.nonNull(data) && data.startsWith("Bundle") && data.indexOf(' ') > -1) {
-			
+
 			String[] args = data.split(" ");
-			
+
 			commander.parse(args);
-			
+
 			String command = commander.getParsedCommand();
 
 			Map<String, JCommander> commands = commander.getCommands();
@@ -299,24 +301,24 @@ class InstallResponse {
 			Object commandArgs = objects.get(0);
 
 			Objects.requireNonNull(commandArgs);
-			
+
 			InstallResponse response = (InstallResponse)commandArgs;
-			
+
 			return response;
 		}
 		else {
 			throw new IllegalArgumentException("data \"" + data + "\" is invalid.");
 		}
 	}
-	
+
 	@Parameter(names = "ID:")
 	private Integer bundleId = -1;
 
 	public Integer getBundleId() {
 		return bundleId;
 	}
-	
-	
+
+
 }
 
 class Constants {	

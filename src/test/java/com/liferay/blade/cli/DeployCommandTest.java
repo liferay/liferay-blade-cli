@@ -98,7 +98,7 @@ public class DeployCommandTest {
 		
 		PowerMock.mockStatic(LiferayBundleDeployer.class);
 
-		EasyMock.expect(LiferayBundleDeployer._getDefault(EasyMock.anyString(), EasyMock.anyInt()))
+		EasyMock.expect(LiferayBundleDeployer.newInstance(EasyMock.anyString(), EasyMock.anyInt()))
 		.andReturn(client).once();
 
 		PowerMock.replay(LiferayBundleDeployer.class);
@@ -155,7 +155,7 @@ public class DeployCommandTest {
 
 		PowerMock.mockStatic(LiferayBundleDeployer.class);
 
-		EasyMock.expect(LiferayBundleDeployer._getDefault(EasyMock.anyString(), EasyMock.anyInt()))
+		EasyMock.expect(LiferayBundleDeployer.newInstance(EasyMock.anyString(), EasyMock.anyInt()))
 		.andReturn(client).once();
 
 		PowerMock.replay(LiferayBundleDeployer.class);
@@ -201,7 +201,7 @@ public class DeployCommandTest {
 
 		PowerMock.mockStatic(LiferayBundleDeployer.class);
 
-		EasyMock.expect(LiferayBundleDeployer._getDefault(EasyMock.anyString(), EasyMock.anyInt()))
+		EasyMock.expect(LiferayBundleDeployer.newInstance(EasyMock.anyString(), EasyMock.anyInt()))
 		.andReturn(client).once();
 
 		PowerMock.replay(LiferayBundleDeployer.class);
