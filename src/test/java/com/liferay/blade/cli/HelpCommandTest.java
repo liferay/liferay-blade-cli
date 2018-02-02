@@ -30,19 +30,19 @@ public class HelpCommandTest {
 
 	@Test
 	public void testHelpCommand() throws UnsupportedEncodingException {
-		String content = runBlade("help");
+		String content = _runBlade("help");
 
 		Assert.assertTrue(content, content.contains("Usage:"));
 	}
-	
+
 	@Test
 	public void testHelpFlag() throws UnsupportedEncodingException {
-		String content = runBlade("--help");
+		String content = _runBlade("--help");
 
 		Assert.assertTrue(content, content.contains("Usage:"));
 	}
-	
-	private static String runBlade(String... args) throws UnsupportedEncodingException {
+
+	private static String _runBlade(String... args) throws UnsupportedEncodingException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		PrintStream ps = new PrintStream(baos);
@@ -50,9 +50,10 @@ public class HelpCommandTest {
 		new BladeNoFail(ps).run(args);
 
 		String content = baos.toString();
-		
+
 		Assert.assertFalse(content, content.contains("No such command"));
-		
+
 		return content;
 	}
+
 }

@@ -73,7 +73,7 @@ public class HelpCommand {
 		}
 	}
 
-	private BladeCLI _blade;
 	private HelpCommandArgs _args;
+	private BladeCLI _blade;
 
 }

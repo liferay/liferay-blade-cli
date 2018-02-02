@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Gregory Amerson
@@ -40,11 +39,11 @@ import java.util.Objects;
  */
 public class BladeCLI implements Runnable {
 
-	public BladeCLI() {
-	}
-	
 	public static void main(String[] args) {
 		new BladeCLI().run(args);
+	}
+
+	public BladeCLI() {
 	}
 
 	public void addErrors(String prefix, Collection<String> data) {
@@ -76,25 +75,6 @@ public class BladeCLI implements Runnable {
 		err().println(string + " [" + name + "]");
 		err().println(message);
 	}
-	
-	public static void sort(List<String> flags) {
-		Collection<String> addLast = new ArrayList<>();
-
-		for (int x = 0; x < flags.size(); x++) {
-			String s = flags.get(x);
-
-			if (s.equals("--base") || s.equals("--working-dir")) {
-				addLast.add(flags.remove(x));
-				addLast.add(flags.remove(x));
-			}
-			else if (s.equals("--trace") || s.equals("--help")) {
-				addLast.add(flags.remove(x));
-			}
-		}
-
-		flags.addAll(addLast);
-	}
-
 
 	public File getBase() {
 		if (_commandArgs == null) {
@@ -117,7 +97,9 @@ public class BladeCLI implements Runnable {
 	public File getCacheDir() {
 		String userHome = System.getProperty("user.home");
 
-		return Paths.get(userHome, ".blade", "cache").toFile();
+		Path cacheDir = Paths.get(userHome, ".blade", "cache");
+
+		return cacheDir.toFile();
 	}
 
 	public void gw(GradleCommandArgs args) throws Exception {
@@ -244,15 +226,13 @@ public class BladeCLI implements Runnable {
 	}
 
 	public void run(String[] args) {
-	
-
 		System.setOut(out());
-		
+
 		System.setErr(err());
-		
+
 		List<String> flags = new ArrayList<>(Arrays.asList(args));
 
-		sort(flags);
+		_sort(flags);
 
 		args = flags.toArray(new String[0]);
 
@@ -264,7 +244,7 @@ public class BladeCLI implements Runnable {
 			new VersionCommandArgs());
 
 		Builder builder = JCommander.newBuilder();
-		
+
 		for (Object o : argsList) {
 			builder.addCommand(o);
 		}
@@ -278,37 +258,38 @@ public class BladeCLI implements Runnable {
 			_jcommander = commander;
 
 			try {
-				
 				commander.parse(args);
-	
+
 				String command = commander.getParsedCommand();
-	
+
 				Map<String, JCommander> commands = commander.getCommands();
-	
+
 				JCommander jcommander = commands.get(command);
-	
+
 				if (jcommander == null) {
 					commander.usage();
 					return;
 				}
 
 				List<Object> objects = jcommander.getObjects();
-	
+
 				Object commandArgs = objects.get(0);
-	
+
 				_command = command;
-	
+
 				_commandArgs = (BaseArgs)commandArgs;
-	
+
 				run();
-				
-			} catch (MissingCommandException exception) {
+			}
+			catch (MissingCommandException mce) {
 				error("Error");
+
 				StringBuilder stringBuilder = new StringBuilder("0. No such command");
 
 				for (String arg : args) {
 					stringBuilder.append(" " + arg);
 				}
+
 				error(stringBuilder.toString());
 				commander.usage();
 			}
@@ -348,6 +329,24 @@ public class BladeCLI implements Runnable {
 
 	public void version(VersionCommandArgs args) throws Exception {
 		new VersionCommand(this, args).execute();
+	}
+
+	private static void _sort(List<String> flags) {
+		Collection<String> addLast = new ArrayList<>();
+
+		for (int x = 0; x < flags.size(); x++) {
+			String s = flags.get(x);
+
+			if (s.equals("--base") || s.equals("--working-dir")) {
+				addLast.add(flags.remove(x));
+				addLast.add(flags.remove(x));
+			}
+			else if (s.equals("--trace") || s.equals("--help")) {
+				addLast.add(flags.remove(x));
+			}
+		}
+
+		flags.addAll(addLast);
 	}
 
 	private static final Formatter _tracer = new Formatter(System.out);

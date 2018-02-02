@@ -36,7 +36,7 @@ public class BaseArgs {
 	public boolean isTrace() {
 		return _trace;
 	}
-	
+
 	@Parameter(description = "Specify a new base directory (default working directory).", names = {"--base"})
 	private String _base = System.getProperty("user.dir");
 
