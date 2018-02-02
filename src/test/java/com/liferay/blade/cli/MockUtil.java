@@ -46,33 +46,49 @@ public class MockUtil {
 
 		EasyMock.expect(
 			Domain.domain(EasyMock.isA(File.class))
-		)
-		.andStubAnswer(() -> {
-			Domain domain = EasyMock.createNiceMock(Domain.class);
+		).andStubAnswer(
+			() -> {
+				Domain domain = EasyMock.createNiceMock(Domain.class);
 
-			if (returnBsn || returnFragment) {
-			Entry<String, Attrs> mock = new AbstractMap.SimpleEntry<>(null, null);
+				if (returnBsn || returnFragment) {
+					Entry<String, Attrs> mock = new AbstractMap.SimpleEntry<>(null, null);
 
-			if (returnBsn) {
-				EasyMock.expect(domain.getBundleSymbolicName()).andStubReturn(mock);
+					if (returnBsn) {
+						EasyMock.expect(
+							domain.getBundleSymbolicName()
+						).andStubReturn(
+							mock
+						);
+					}
+					else {
+						EasyMock.expect(
+							domain.getBundleSymbolicName()
+						).andStubReturn(
+							null
+						);
+					}
 
-			} else {
+					if (returnFragment) {
+						EasyMock.expect(
+							domain.getFragmentHost()
+						).andStubReturn(
+							mock
+						);
+					}
+					else {
+						EasyMock.expect(
+							domain.getFragmentHost()
+						).andStubReturn(
+							null
+						);
+					}
+				}
 
-				EasyMock.expect(domain.getBundleSymbolicName()).andStubReturn(null);
+				EasyMock.replay(domain);
+
+				return domain;
 			}
-
-			if (returnFragment) {
-				EasyMock.expect(domain.getFragmentHost()).andStubReturn(mock);
-			}
-			else {
-				EasyMock.expect(domain.getFragmentHost()).andStubReturn(null);
-			}
-			}
-
-			EasyMock.replay(domain);
-
-			return domain;
-		});
+		);
 
 		PowerMock.replay(Domain.class);
 	}
@@ -80,7 +96,11 @@ public class MockUtil {
 	public static void stubGradleExec() throws Exception {
 		GradleExec gradle = EasyMock.createNiceMock(GradleExec.class);
 
-		EasyMock.expect(gradle.executeGradleCommand(EasyMock.anyString())).andStubReturn(0);
+		EasyMock.expect(
+			gradle.executeGradleCommand(EasyMock.anyString())
+		).andStubReturn(
+			0
+		);
 
 		EasyMock.replay(gradle);
 

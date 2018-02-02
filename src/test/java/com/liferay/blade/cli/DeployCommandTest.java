@@ -16,8 +16,10 @@
 
 package com.liferay.blade.cli;
 
-import static com.liferay.blade.cli.MockUtil.*;
-
+import static com.liferay.blade.cli.MockUtil.stubDomain;
+import static com.liferay.blade.cli.MockUtil.stubGradleExec;
+import static com.liferay.blade.cli.MockUtil.stubGradleTooling;
+import static com.liferay.blade.cli.MockUtil.stubUtil;
 import static org.junit.Assert.assertTrue;
 
 import aQute.bnd.osgi.Domain;
@@ -29,20 +31,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.easymock.EasyMock;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-
 import org.osgi.framework.dto.BundleDTO;
-
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -95,7 +93,7 @@ public class DeployCommandTest {
 		EasyMock.expectLastCall().andVoid().once();
 
 		EasyMock.replay(client);
-		
+
 		PowerMock.mockStatic(LiferayBundleDeployer.class);
 
 		EasyMock.expect(LiferayBundleDeployer.newInstance(EasyMock.anyString(), EasyMock.anyInt()))

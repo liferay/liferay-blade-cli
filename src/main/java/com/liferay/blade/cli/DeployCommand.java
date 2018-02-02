@@ -51,11 +51,52 @@ public class DeployCommand {
 		_port = 11311;
 	}
 
+	public void execute() throws Exception {
+		if (!Util.canConnect(_host, _port)) {
+			_addError("deploy", "Unable to connect to gogo shell on " + _host + ":" + _port);
+
+			return;
+		}
+
+		GradleExec gradleExec = new GradleExec(_blade);
+
+		Set<File> outputFiles = GradleTooling.getOutputFiles(_blade.getCacheDir(), _blade.getBase());
+
+		if (_options.isWatch()) {
+			_deployWatch(gradleExec, outputFiles);
+		}
+		else {
+			_deploy(gradleExec, outputFiles);
+		}
+	}
+
+	private static void _deployWar(File file, LiferayBundleDeployer deployer) throws Exception {
+		URI uri = file.toURI();
+
+		long bundleId = deployer.install(uri);
+
+		if (bundleId > 0) {
+			deployer.start(bundleId);
+		}
+		else {
+			throw new Exception("Failed to deploy war: " + file.getAbsolutePath());
+		}
+	}
+
+	private void _addError(String msg) {
+		_blade.addErrors("deploy", Collections.singleton(msg));
+	}
+
+	private void _addError(String prefix, String msg) {
+		_blade.addErrors(prefix, Collections.singleton(msg));
+	}
+
 	private void _deploy(GradleExec gradle, Set<File> outputFiles) throws Exception {
 		int retcode = gradle.executeGradleCommand("assemble -x check");
 
 		if (retcode > 0) {
 			_addError("Gradle assemble task failed.");
+
 			return;
 		}
 
@@ -77,106 +118,6 @@ public class DeployCommand {
 				}
 			}
 		);
-	}
-
-	private void _deployWatch(final GradleExec gradleExec, final Set<File> outputFiles) throws Exception {
-		_deploy(gradleExec, outputFiles);
-
-		new Thread() {
-
-			@Override
-			public void run() {
-				try {
-					gradleExec.executeGradleCommand("assemble -x check -t");
-				}
-				catch (Exception e) {
-				}
-			}
-
-		}.start();
-
-		Consumer<Path> consumer = new Consumer<Path>() {
-
-			@Override
-			public void consume(Path modified) {
-				try {
-					File modifiedFile = modified.toFile();
-
-					if (outputFiles.contains(modifiedFile)) {
-						_blade.out().println("installOrUpdate " + modifiedFile);
-
-						_installOrUpdate(modifiedFile);
-					}
-				}
-				catch (Exception e) {
-				}
-			}
-
-		};
-
-		new FileWatcher(_blade.getBase().toPath(), true, consumer);
-	}
-
-	public void execute() throws Exception {
-		if (!Util.canConnect(_host, _port)) {
-			_addError("deploy", "Unable to connect to gogo shell on " + _host + ":" + _port);
-			return;
-		}
-
-		GradleExec gradleExec = new GradleExec(_blade);
-
-		Set<File> outputFiles = GradleTooling.getOutputFiles(_blade.getCacheDir(), _blade.getBase());
-
-		if (_options.isWatch()) {
-			_deployWatch(gradleExec, outputFiles);
-		}
-		else {
-			_deploy(gradleExec, outputFiles);
-		}
-	}
-
-	private static void deployWar(File file, LiferayBundleDeployer deployer) throws Exception {
-		URI uri = file.toURI();
-
-		long bundleId = deployer.install(uri);
-
-		if (bundleId > 0) {
-			deployer.start(bundleId);
-
-		}
-		else {
-
-			throw new Exception("Failed to deploy war: " + file.toURI().toASCIIString());
-		}
-	}
-
-	private void _addError(String msg) {
-		_blade.addErrors("deploy", Collections.singleton(msg));
-	}
-
-	private void _addError(String prefix, String msg) {
-		_blade.addErrors(prefix, Collections.singleton(msg));
-	}
-
-	private void _installOrUpdate(File file) throws Exception {
-		file = file.getAbsoluteFile();
-
-		try (LiferayBundleDeployer client = LiferayBundleDeployer.newInstance(_host, _port)) {
-			String name = file.getName();
-
-			name = name.toLowerCase();
-
-			Domain bundle = Domain.domain(file);
-
-			Entry<String, Attrs> bsn = bundle.getBundleSymbolicName();
-
-			if (bsn != null) {
-				_deployBundle(file, client, bundle, bsn);
-			}
-			else if (name.endsWith(".war")) {
-				deployWar(file, client);
-			}
-		}
 	}
 
 	private void _deployBundle(File file, LiferayBundleDeployer client, Domain bundle, Entry<String, Attrs> bsn)
@@ -206,8 +147,52 @@ public class DeployCommand {
 		}
 	}
 
-	private void _installNewBundle(LiferayBundleDeployer client, Entry<String, Attrs> bsn,
-			Entry<String, Attrs> fragmentHost, long hostId, URI uri) throws Exception {
+	private void _deployWatch(final GradleExec gradleExec, final Set<File> outputFiles) throws Exception {
+		_deploy(gradleExec, outputFiles);
+
+		new Thread() {
+
+			@Override
+			public void run() {
+				try {
+					gradleExec.executeGradleCommand("assemble -x check -t");
+				}
+				catch (Exception e) {
+				}
+			}
+
+		}.start();
+
+		Consumer<Path> consumer = new Consumer<Path>() {
+
+			@Override
+			public void consume(Path modified) {
+				try {
+					File modifiedFile = modified.toFile();
+
+					if (outputFiles.contains(modifiedFile)) {
+						PrintStream out = _blade.out();
+
+						out.println("installOrUpdate " + modifiedFile);
+
+						_installOrUpdate(modifiedFile);
+					}
+				}
+				catch (Exception e) {
+				}
+			}
+
+		};
+
+		File base = _blade.getBase();
+
+		new FileWatcher(base.toPath(), true, consumer);
+	}
+
+	private void _installNewBundle(
+			LiferayBundleDeployer client, Entry<String, Attrs> bsn, Entry<String, Attrs> fragmentHost, long hostId,
+			URI uri)
+		throws Exception {
 
 		PrintStream out = _blade.out();
 
@@ -216,7 +201,7 @@ public class DeployCommand {
 		if ((fragmentHost != null) && (hostId > 0)) {
 			client.refresh(hostId);
 
-			_blade.out().println("Installed fragment bundle " + existingId);
+			out.println("Installed fragment bundle " + existingId);
 		}
 		else {
 			long checkedExistingId = client.getBundleId(bsn.getKey());
@@ -224,37 +209,60 @@ public class DeployCommand {
 			try {
 				if (!Objects.equals(existingId, checkedExistingId)) {
 					out.print("Error: Bundle IDs do not match.");
-
-				} else {
-
+				}
+				else {
 					if (checkedExistingId > 1) {
 						client.start(checkedExistingId);
 
-						_blade.out().println("Installed bundle " + existingId);
+						out.println("Installed bundle " + existingId);
 					}
 					else {
 						out.println("Error: Bundle failed to install: " + bsn);
 					}
 				}
-			} catch (Exception e) {
-
+			}
+			catch (Exception e) {
 				out.println("Error: Bundle failed to install: " + bsn);
 				e.printStackTrace(out);
 			}
 		}
 	}
 
-	private final void _reloadExistingBundle(LiferayBundleDeployer client, Entry<String, Attrs> fragmentHost,
-			long existingId, long hostId, URI uri) throws Exception {
+	private void _installOrUpdate(File file) throws Exception {
+		file = file.getAbsoluteFile();
 
-		if (fragmentHost != null && (hostId > 0)) {
+		try (LiferayBundleDeployer client = LiferayBundleDeployer.newInstance(_host, _port)) {
+			String name = file.getName();
+
+			name = name.toLowerCase();
+
+			Domain bundle = Domain.domain(file);
+
+			Entry<String, Attrs> bsn = bundle.getBundleSymbolicName();
+
+			if (bsn != null) {
+				_deployBundle(file, client, bundle, bsn);
+			}
+			else if (name.endsWith(".war")) {
+				_deployWar(file, client);
+			}
+		}
+	}
+
+	private final void _reloadExistingBundle(
+			LiferayBundleDeployer client, Entry<String, Attrs> fragmentHost, long existingId, long hostId, URI uri)
+		throws Exception {
+
+		if ((fragmentHost != null) && (hostId > 0)) {
 			client.reloadFragment(existingId, hostId, uri);
 		}
 		else {
 			client.reloadBundle(existingId, uri);
 		}
 
-		_blade.out().println("Updated bundle " + existingId);
+		PrintStream out = _blade.out();
+
+		out.println("Updated bundle " + existingId);
 	}
 
 	private final BladeCLI _blade;

@@ -18,11 +18,11 @@ package com.liferay.blade.cli.gradle;
 
 import static org.junit.Assert.assertTrue;
 
-import com.liferay.blade.cli.gradle.LiferayBundleDeployerImpl;
-
 import java.io.IOException;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.Objects;
 
 import org.junit.Test;
