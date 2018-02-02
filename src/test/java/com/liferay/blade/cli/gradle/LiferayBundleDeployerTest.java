@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.gradle;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
+import com.liferay.blade.cli.gradle.LiferayBundleDeployerImpl;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.util.Objects;
 
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class LiferayBundleDeployerTest {
 
 		String expectedWar = String.format(_warDeployPattern, war.toUri().toASCIIString(),
 		war.getFileName().toString().subSequence(0, war.getFileName().toString().indexOf('.')));
-		String result = LiferayBundleDeployer._getWarString(war);
+		String result = LiferayBundleDeployerImpl.getWarString(war);
 		assertTrue(Objects.equals(expectedWar, result));
 	}
 
