@@ -22,5 +22,5 @@ import com.beust.jcommander.Parameters;
  * @author Christopher Boyd
  */
 @Parameters(commandDescription = "Show version information about blade", commandNames = {"version"})
-public class VersionCommandArgs {
+public class VersionCommandArgs extends BaseArgs {
 }

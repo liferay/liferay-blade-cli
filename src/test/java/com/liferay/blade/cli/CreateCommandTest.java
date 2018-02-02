@@ -1165,7 +1165,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceModuleLocation() throws Exception {
-		String[] args = {"-b", "build/test/workspace", "create", "foo"};
+		String[] args = {"--base", "build/test/workspace", "create", "foo"};
 
 		File workspace = new File("build/test/workspace");
 
@@ -1264,7 +1264,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceThemeLocation() throws Exception {
-		String[] args = {"-b", "build/test/workspace", "create", "-t", "theme", "theme-test"};
+		String[] args = {"--base", "build/test/workspace", "create", "-t", "theme", "theme-test"};
 		File workspace = new File("build/test/workspace");
 
 		_makeWorkspace(workspace);
@@ -1292,7 +1292,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceTypeValid() throws Exception {
-		String[] args = {"-b", "build/test/workspace/modules", "create", "-t", "soy-portlet", "foo"};
+		String[] args = {"--base", "build/test/workspace/modules", "create", "-t", "soy-portlet", "foo"};
 
 		File workspace = new File("build/test/workspace");
 
@@ -1404,7 +1404,7 @@ public class CreateCommandTest {
 	}
 
 	private void _makeWorkspace(File workspace) throws Exception {
-		String[] args = {"-b", workspace.getParentFile().getPath(), "init", workspace.getName()};
+		String[] args = {"--base", workspace.getParentFile().getPath(), "init", workspace.getName()};
 
 		new BladeNoFail().run(args);
 
@@ -1412,7 +1412,7 @@ public class CreateCommandTest {
 	}
 
 	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {
-		String[] args = {"-b", workspace.toString(), "create", "-t", projectType, projectName};
+		String[] args = {"--base", workspace.toString(), "create", "-t", projectType, projectName};
 
 		new BladeNoFail().run(args);
 

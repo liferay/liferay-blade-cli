@@ -135,7 +135,7 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithGradleWrapperExisting() throws Exception {
-		String[] initArgs = {"-b", _testDir.getPath() + "/test/workspace", "init"};
+		String[] initArgs = {"--base", _testDir.getPath() + "/test/workspace", "init"};
 
 		new BladeNoFail().run(initArgs);
 

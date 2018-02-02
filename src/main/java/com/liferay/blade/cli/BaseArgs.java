@@ -23,20 +23,27 @@ import com.beust.jcommander.Parameters;
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = "Options valid for all commands. Must be given before sub command")
-public class BladeArgs {
+public class BaseArgs {
 
 	public String getBase() {
 		return _base;
+	}
+
+	public boolean isHelp() {
+		return _help;
 	}
 
 	public boolean isTrace() {
 		return _trace;
 	}
 
-	@Parameter(description = "Specify a new base directory (default working directory).", names = {"-b", "--base"})
+	@Parameter(description = "Specify a new base directory (default working directory).", names = {"--base"})
 	private String _base = System.getProperty("user.dir");
 
-	@Parameter(description = "Print exception stack traces when they occur.", names = {"-t", "--trace"})
+	@Parameter(description = "Get help on a specific command.", help = true, names = {"--help"})
+	private boolean _help;
+
+	@Parameter(description = "Print exception stack traces when they occur.", names = {"--trace"})
 	private boolean _trace;
 
 }

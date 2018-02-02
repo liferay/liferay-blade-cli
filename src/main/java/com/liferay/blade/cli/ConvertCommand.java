@@ -16,6 +16,8 @@
 
 package com.liferay.blade.cli;
 
+import static java.util.stream.Stream.concat;
+
 import aQute.lib.io.IO;
 
 import com.liferay.project.templates.ProjectTemplatesArgs;
@@ -54,10 +56,6 @@ import org.w3c.dom.NodeList;
  * @author Gregory Amerson
  */
 public class ConvertCommand {
-
-	public static <T> Stream<T> concat(Stream<? extends T> lhs, Stream<? extends T> rhs) {
-		return Stream.concat(lhs, rhs);
-	}
 
 	public ConvertCommand(BladeCLI blade, ConvertCommandArgs options) throws Exception {
 		_blade = blade;

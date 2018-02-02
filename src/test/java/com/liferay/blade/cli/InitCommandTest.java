@@ -59,7 +59,7 @@ public class InitCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 
@@ -89,7 +89,7 @@ public class InitCommandTest {
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
-		String[] args = {"-b", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		new BladeNoFail().run(args);
 
@@ -106,7 +106,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 
 		new BladeNoFail().run(args);
 
@@ -123,7 +123,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 
 		if (!_workspaceDir.mkdirs()) {
 			Assert.fail("Unable to create workspace dir");
@@ -138,7 +138,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryHasFilesForce() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-f"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f"};
 
 		if (!_workspaceDir.mkdirs()) {
 			Assert.fail("Unable to create workspace dir");
@@ -159,7 +159,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitCommandGradleOption() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "gradle", "gradleworkspace"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "gradle", "gradleworkspace"};
 
 		new BladeNoFail().run(args);
 
@@ -174,7 +174,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitInPluginsSDKDirectory() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-u"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-u"};
 
 		_makeSDK(_workspaceDir);
 
@@ -201,7 +201,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitWithNameWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-f", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "newproject"};
 
 		File newproject = new File(_workspaceDir, "newproject");
 
@@ -220,7 +220,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject"};
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject").mkdirs());
 
@@ -233,7 +233,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitWithNameWorkspaceNotExists() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject"};
 
 		if (!_workspaceDir.mkdirs()) {
 			Assert.fail("Unable to create workspace dir");
@@ -248,7 +248,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-f", "-b", "maven", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-b", "maven", "newproject"};
 
 		File newproject = new File(_workspaceDir, "newproject");
 
@@ -267,7 +267,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject").mkdirs());
 
@@ -280,7 +280,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testMavenInitWithNameWorkspaceNotExists() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
 
 		if (!_workspaceDir.mkdirs()) {
 			Assert.fail("Unable to create workspace dir");
@@ -295,7 +295,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "maven"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven"};
 
 		new BladeNoFail().run(args);
 
@@ -318,7 +318,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-b", "maven"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven"};
 
 		if (!_workspaceDir.mkdirs()) {
 			Assert.fail("Unable to create workspace dir");
@@ -333,7 +333,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFilesForce() throws Exception {
-		String[] args = {"-b", _workspaceDir.getPath(), "init", "-f", "-b", "maven"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-b", "maven"};
 
 		if (!_workspaceDir.mkdirs()) {
 			Assert.fail("Unable to create workspace dir");

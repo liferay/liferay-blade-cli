@@ -22,5 +22,5 @@ import com.beust.jcommander.Parameters;
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = "Update blade to latest version", commandNames = {"update"})
-public class UpdateCommandArgs {
+public class UpdateCommandArgs extends BaseArgs {
 }

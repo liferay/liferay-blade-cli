@@ -25,7 +25,7 @@ import java.io.File;
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = "Opens or imports a file or project in Liferay IDE.", commandNames = {"open"})
-public class OpenCommandArgs {
+public class OpenCommandArgs extends BaseArgs {
 
 	public File getFile() {
 		return _file;

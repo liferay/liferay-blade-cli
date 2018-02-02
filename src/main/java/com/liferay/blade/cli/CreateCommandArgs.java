@@ -28,7 +28,7 @@ import java.io.File;
 	commandDescription = "Creates a new Liferay module project from several available templates.",
 	commandNames = {"create"}
 )
-public class CreateCommandArgs {
+public class CreateCommandArgs extends BaseArgs {
 
 	public String getBuild() {
 		return _build;

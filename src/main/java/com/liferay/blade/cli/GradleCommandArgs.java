@@ -26,7 +26,7 @@ import java.util.List;
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = "Execute gradle command using the gradle wrapper if detected", commandNames = {"gw"})
-public class GradleCommandArgs {
+public class GradleCommandArgs extends BaseArgs {
 
 	public List<String> getArgs() {
 		return _args;

@@ -23,7 +23,7 @@ import com.beust.jcommander.Parameters;
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = "Initializes a new Liferay workspace", commandNames = {"init"})
-public class InitCommandArgs {
+public class InitCommandArgs extends BaseArgs {
 
 	public String getBuild() {
 		return _build;

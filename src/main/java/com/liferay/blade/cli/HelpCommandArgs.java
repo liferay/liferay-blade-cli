@@ -20,20 +20,16 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 /**
- * @author Gregory Amerson
+ * @author Christopher Bryan Boyd
  */
-@Parameters(
-	commandDescription = "Builds and deploys bundles to the Liferay module framework.", commandNames = {"deploy"}
-)
-public class DeployCommandArgs extends BaseArgs {
+@Parameters(commandDescription = "Get help on a specific command", commandNames = {"help"})
+public class HelpCommandArgs extends BaseArgs {
 
-	public boolean isWatch() {
-		return _watch;
+	public String getName() {
+		return _name;
 	}
 
-	@Parameter(
-		description = "Watches the deployed file for changes and will automatically redeploy", names = {"-w", "--watch"}
-	)
-	private boolean _watch;
+	@Parameter(description = "The name of the command.")
+	private String _name;
 
 }
