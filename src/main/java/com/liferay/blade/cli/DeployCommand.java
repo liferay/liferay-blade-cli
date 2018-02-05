@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.osgi.framework.dto.BundleDTO;
@@ -149,12 +150,14 @@ public class DeployCommand {
 
 	private void _deployWatch(final GradleExec gradleExec, final Set<File> outputFiles) throws Exception {
 		_deploy(gradleExec, outputFiles);
-
+		
+		Collection<Path> outputPaths = outputFiles.stream().map(File::toPath).collect(Collectors.toSet());
+		
 		new Thread() {
 
 			@Override
 			public void run() {
-				try {
+				try { 
 					gradleExec.executeGradleCommand("assemble -x check -t");
 				}
 				catch (Exception e) {
@@ -168,9 +171,9 @@ public class DeployCommand {
 			@Override
 			public void consume(Path modified) {
 				try {
-					File modifiedFile = modified.toFile();
+					File modifiedFile = modified.toFile().getAbsoluteFile();
 
-					if (outputFiles.contains(modifiedFile)) {
+					if (outputPaths.contains(modifiedFile.toPath())) {
 						PrintStream out = _blade.out();
 
 						out.println("installOrUpdate " + modifiedFile);

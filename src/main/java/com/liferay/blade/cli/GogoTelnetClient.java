@@ -45,6 +45,7 @@ public class GogoTelnetClient implements AutoCloseable {
 		_outputStream = new DataOutputStream(_socket.getOutputStream());
 
 		_handshake();
+		_closed = false;
 	}
 
 	@Override
@@ -56,7 +57,17 @@ public class GogoTelnetClient implements AutoCloseable {
 		}
 		catch (IOException ioe) {
 		}
-	}
+		
+ 		_closed = true;
+ 	}
+ 	
+ 	public boolean isClosed() {
+ 		if (!_closed && _socket.isClosed()) {
+ 			_closed = true;
+ 		}
+ 		return _closed;			
+  	}
+
 
 	public String send(String command) throws IOException {
 		byte[] bytes = command.getBytes();
@@ -194,7 +205,8 @@ public class GogoTelnetClient implements AutoCloseable {
 			_outputStream.write(code);
 		}
 	}
-
+	
+	private boolean _closed = true;
 	private final DataInputStream _inputStream;
 	private final DataOutputStream _outputStream;
 	private final Socket _socket;
