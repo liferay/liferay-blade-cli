@@ -17,19 +17,23 @@
 package com.liferay.blade.cli;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
 
 import java.nio.file.Files;
-
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * @author David Truong
@@ -74,15 +78,23 @@ public class SamplesCommand {
 		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
 		File gradleSamples = new File(bladeRepo, "gradle");
-
+		
+		SamplesVisitor visitor = new SamplesVisitor();
 		for (File file : gradleSamples.listFiles()) {
 			String fileName = file.getName();
 
-			if (file.isDirectory() && fileName.equals(sampleName)) {
+			if (file.isDirectory() && _TOP_LEVEL_FOLDERS.contains(fileName)) {
+				Files.walkFileTree(file.toPath(), visitor);
+			}
+		}
+		
+		for (Path path : visitor.getPaths()) {
+			String fileName = path.getFileName().toString();
+			if (Files.isDirectory(path) && fileName.equals(sampleName)) {
 				File dest = new File(workDir, fileName);
 
-				FileUtils.copyDirectory(file, dest);
-
+				FileUtils.copyDirectory(path.toFile(), dest);
+				
 				_updateBuildGradle(dest);
 
 				if (!Util.hasGradleWrapper(dest)) {
@@ -118,24 +130,40 @@ public class SamplesCommand {
 		Util.unzip(bladeRepoArchive, _blade.getCacheDir(), null);
 	}
 
-	private void _listSamples() {
+	private void _listSamples() throws IOException {
 		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
 
 		File gradleSamples = new File(bladeRepo, "gradle");
 
-		List<String> samples = new ArrayList<>();
-
+		Map<String, List<String>> samplesMap = new HashMap<>();
+		SamplesVisitor visitor = new SamplesVisitor();
 		for (File file : gradleSamples.listFiles()) {
 			String fileName = file.getName();
 
-			if (file.isDirectory() && fileName.startsWith("blade.")) {
-				samples.add(fileName);
+			if (file.isDirectory() && _TOP_LEVEL_FOLDERS.contains(fileName)) {
+				Files.walkFileTree(file.toPath(), visitor);
+				for (Path path : visitor.getPaths()) {
+					if (!samplesMap.containsKey(fileName)) {
+						samplesMap.put(fileName, new ArrayList<>());
+					}
+					samplesMap.get(fileName).add(path.getFileName().toString());
+				}
+				visitor.clear();
+				if (samplesMap.containsKey(fileName)) {
+					Collections.sort(samplesMap.get(fileName));
+				}
 			}
 		}
 
 		_blade.out().println("Please provide the sample project name to create, e.g. \"blade samples blade.rest\"\n");
-		_blade.out().println("Currently available samples:");
-		_blade.out().println(WordUtils.wrap(StringUtils.join(samples, ", "), 80));
+		_blade.out().println("Currently available categories and samples:");
+		
+		for (String category : samplesMap.keySet()) {
+			_blade.out().println("\t " + category + ":");
+			for (String sample : samplesMap.get(category)) {
+				_blade.out().println("\t\t " + sample);
+			}
+		}
 	}
 
 	private String _parseGradleScript(String script, String section, boolean contentsOnly) {
@@ -234,13 +262,15 @@ public class SamplesCommand {
 		Files.write(sampleGradleFile.toPath(), script.getBytes());
 	}
 
-	private static final String _BLADE_REPO_ARCHIVE_NAME = "liferay-blade-samples-2.x.zip";
+	private static final String _BLADE_REPO_ARCHIVE_NAME = "liferay-blade-samples-master.zip";
 
-	private static final String _BLADE_REPO_NAME = "liferay-blade-samples-2.x";
+	private static final String _BLADE_REPO_NAME = "liferay-blade-samples-master";
 
-	private static final String _BLADE_REPO_URL = "https://github.com/liferay/liferay-blade-samples/archive/2.x.zip";
+	private static final String _BLADE_REPO_URL = "https://github.com/liferay/liferay-blade-samples/archive/master.zip";
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
+	
+	private static final Collection<String> _TOP_LEVEL_FOLDERS = Arrays.asList("apps", "extensions", "overrides", "themes");
 
 	private final BladeCLI _blade;
 	private final SamplesCommandArgs _options;
