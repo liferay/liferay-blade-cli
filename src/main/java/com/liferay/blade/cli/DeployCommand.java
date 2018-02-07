@@ -150,15 +150,14 @@ public class DeployCommand {
 
 	private void _deployWatch(final GradleExec gradleExec, final Set<File> outputFiles) throws Exception {
 		_deploy(gradleExec, outputFiles);
-		
+
 		Collection<Path> outputPaths = outputFiles.stream().map(File::toPath).collect(Collectors.toSet());
-		
+
 		new Thread() {
 
 			@Override
 			public void run() {
-				try { 
-					gradleExec.executeGradleCommand("assemble -x check -t");
+				try {gradleExec.executeGradleCommand("assemble -x check -t");
 				}
 				catch (Exception e) {
 				}

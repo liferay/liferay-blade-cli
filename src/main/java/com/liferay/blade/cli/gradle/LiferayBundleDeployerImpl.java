@@ -4,11 +4,14 @@ import com.liferay.blade.cli.GogoTelnetClient;
 import com.liferay.blade.cli.LiferayBundleDeployer;
 
 import java.io.IOException;
+
 import java.net.URI;
+
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -27,8 +30,6 @@ import org.osgi.framework.dto.BundleDTO;
  */
 public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
-	private GogoTelnetClient _client;
-
 	public LiferayBundleDeployerImpl(final String host, final int port) throws IOException {
 		_client = new GogoTelnetClient(host, port);
 	}
@@ -45,41 +46,27 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		long bundleId;
 
 		if (Objects.nonNull(bsn)) {
+			bundleId = bundles.stream().filter(
+				Objects::nonNull
+			).filter((bundle) ->
+				Objects.equals(bundle.symbolicName, bsn)
+			).map((bundle) ->
+				bundle.id
+			).findAny(
+			).orElse(
+				-1L
+			);
 
- 			bundleId = bundles.stream().filter(
- 				Objects::nonNull
- 			).filter((bundle) ->
- 				Objects.equals(bundle.symbolicName, bsn)
- 			).map((bundle) ->
- 				bundle.id
- 			).findAny().orElse(
- 				-1L
- 			);
+		} else {
+			bundleId = -1L;
+		}
 
- 		} else {
- 			bundleId = -1L;
- 		}
- 		return bundleId;
+		return bundleId;
 	}
 
 	@Override
-	public void update(long id, URI uri) throws Exception {
-		sendGogo(String.format("update %s %s", id, uri.toASCIIString()));
-	}
-
-	@Override
-	public void refresh(long id) throws Exception {
-		sendGogo(String.format("refresh %s", id));
-	}
-
-	@Override
-	public void stop(long id) throws Exception {
-		sendGogo(String.format("stop %s", id));
-	}
-
-	@Override
-	public void start(long id) throws Exception {
-		sendGogo(String.format("start %s", id));
+	public Collection<BundleDTO> getBundles() throws Exception {
+		return _getBundles(_client);
 	}
 
 	@Override
@@ -88,17 +75,17 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 		Path uriPath = Paths.get(uri);
 
-		if (warFileGlob.matches(uriPath)) {
-			installString = "install " + getWarString(uriPath);
+		if (_warFileGlob.matches(uriPath)) {
+			installString = "install " + _getWarString(uriPath);
 		}
 		else {
 			installString = "install " + uri.toASCIIString();
 		}
 
-		String response = sendGogo(installString);
+		String response = _sendGogo(installString);
 
 		try {
-			Matcher matcher = installResponse.matcher(response);
+			Matcher matcher = _installResponse.matcher(response);
 
 			matcher.matches();
 
@@ -109,32 +96,24 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		}
 	}
 
-	private static final Pattern installResponse = Pattern.compile(".*Bundle ID: (.*$).*", Pattern.DOTALL | Pattern.MULTILINE);
-	private static final PathMatcher warFileGlob = FileSystems.getDefault().getPathMatcher("glob:**.war");
-	private static final String warStringTemplate = "webbundle:%s?Web-ContextPath=/%s";
-
-	static String getWarString(Path uri) throws IllegalArgumentException {
-		if (!warFileGlob.matches(uri)) {
-		    throw new IllegalArgumentException("Must provide a valid WAR file.");
-		}
-
-		Path fileName = uri.getFileName();
-		String fileNameString = fileName.toString();
-		int periodIndex = fileNameString.indexOf('.');
-
-		if (periodIndex > -1) {
-			fileNameString = fileNameString.substring(0, periodIndex);
-		}
-
-		return String.format(warStringTemplate, uri.toUri().toASCIIString(), fileNameString);
+	@Override
+	public void refresh(long id) throws Exception {
+		_sendGogo(String.format("refresh %s", id));
 	}
 
-	private String sendGogo(String data) throws Exception{
-		return _client.send(data);
+	@Override
+	public void start(long id) throws Exception {
+		_sendGogo(String.format("start %s", id));
 	}
 
-	private static final String[] parseGogoResponse(String response) {
-		return response.split("\\r?\\n");
+	@Override
+	public void stop(long id) throws Exception {
+		_sendGogo(String.format("stop %s", id));
+	}
+
+	@Override
+	public void update(long id, URI uri) throws Exception {
+		_sendGogo(String.format("update %s %s", id, uri.toASCIIString()));
 	}
 
 	private static List<BundleDTO> _getBundles(GogoTelnetClient client) throws IOException {
@@ -143,7 +122,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		return Stream.of(
 			response
 		).map(
-			LiferayBundleDeployerImpl::parseGogoResponse
+			LiferayBundleDeployerImpl::_parseGogoResponse
 		).flatMap(
 			Arrays::stream
 		).map(
@@ -151,28 +130,6 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		).collect(
 			Collectors.toList()
 		);
-	}
-
-	private static final BundleDTO parseGogoLine(String line) {
-		String[] fields = line.split("\\|");
-
-		Long id = Long.parseLong(fields[0].trim());
-
-		int state = _getState(fields[1].trim());
-
-		String symbolicName = fields[3];
-
-		return newBundleDTO(id, state, symbolicName);
-	}
-
-	private static final BundleDTO newBundleDTO(Long id, int state, String symbolicName) {
-		BundleDTO bundle = new BundleDTO();
-
-		bundle.id = id;
-		bundle.state = state;
-		bundle.symbolicName = symbolicName;
-
-		return bundle;
 	}
 
 	private static final int _getState(String state) {
@@ -200,8 +157,59 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		return 0;
 	}
 
-	@Override
-	public Collection<BundleDTO> getBundles() throws Exception {
-		return _getBundles(_client);
+	private static String _getWarString(Path uri) throws IllegalArgumentException {
+		if (!_warFileGlob.matches(uri)) {
+			throw new IllegalArgumentException("Must provide a valid WAR file.");
+		}
+
+		Path fileName = uri.getFileName();
+
+		String fileNameString = fileName.toString();
+
+		int periodIndex = fileNameString.indexOf('.');
+
+		if (periodIndex > -1) {
+			fileNameString = fileNameString.substring(0, periodIndex);
+		}
+
+		return String.format(_warStringTemplate, uri.toUri().toASCIIString(), fileNameString);
 	}
+
+	private static final String[] _parseGogoResponse(String response) {
+		return response.split("\\r?\\n");
+	}
+
+	private static final BundleDTO newBundleDTO(Long id, int state, String symbolicName) {
+		BundleDTO bundle = new BundleDTO();
+
+		bundle.id = id;
+		bundle.state = state;
+		bundle.symbolicName = symbolicName;
+
+		return bundle;
+	}
+
+	private static final BundleDTO parseGogoLine(String line) {
+		String[] fields = line.split("\\|");
+
+		Long id = Long.parseLong(fields[0].trim());
+
+		int state = _getState(fields[1].trim());
+
+		String symbolicName = fields[3];
+
+		return newBundleDTO(id, state, symbolicName);
+	}
+
+	private String _sendGogo(String data) throws Exception {
+		return _client.send(data);
+	}
+
+	private static final Pattern _installResponse = Pattern.compile(
+		".*Bundle ID: (.*$).*", Pattern.DOTALL | Pattern.MULTILINE);
+	private static final PathMatcher _warFileGlob = FileSystems.getDefault().getPathMatcher("glob:**.war");
+	private static final String _warStringTemplate = "webbundle:%s?Web-ContextPath=/%s";
+
+	private GogoTelnetClient _client;
+
 }

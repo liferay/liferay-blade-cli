@@ -19,7 +19,9 @@ package com.liferay.blade.cli;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import java.net.Socket;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +56,7 @@ public class GogoTelnetClient implements AutoCloseable {
 		}
 		catch (IOException ioe) {
 		}
- 	}
+	}
 
 	public String send(String command) throws IOException {
 		byte[] bytes = command.getBytes();
