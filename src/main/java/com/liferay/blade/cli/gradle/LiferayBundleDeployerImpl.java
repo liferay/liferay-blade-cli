@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -28,27 +27,17 @@ import org.osgi.framework.dto.BundleDTO;
  */
 public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
-	private Optional<GogoTelnetClient> client = Optional.empty();
-	private final String host;
-	private final int port;
+	private GogoTelnetClient _client;
 
-	public LiferayBundleDeployerImpl(final String host, final int port) {
-		this.host = host;
-		this.port = port;
+	public LiferayBundleDeployerImpl(final String host, final int port) throws IOException {
+		_client = new GogoTelnetClient(host, port);
 	}
 
 	@Override
 	public void close() throws Exception {
-		if (client.isPresent()) {
-			client.get().close();
-			client = Optional.empty();
+		if (_client != null) {
+			_client.close();
 		}
-	}
-	private GogoTelnetClient getClient() throws IOException {
-		if (!client.isPresent() || client.get().isClosed()) {
-			client = Optional.of(new GogoTelnetClient(host, port));
-		}
-		return client.get();
 	}
 
 	@Override
@@ -56,17 +45,17 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		long bundleId;
 
 		if (Objects.nonNull(bsn)) {
-			 			
+
  			bundleId = bundles.stream().filter(
  				Objects::nonNull
- 			).filter((bundle) -> 
+ 			).filter((bundle) ->
  				Objects.equals(bundle.symbolicName, bsn)
- 			).map((bundle) -> 
+ 			).map((bundle) ->
  				bundle.id
  			).findAny().orElse(
  				-1L
  			);
- 			
+
  		} else {
  			bundleId = -1L;
  		}
@@ -141,57 +130,42 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 	}
 
 	private String sendGogo(String data) throws Exception{
-		final String returnValue;
-		try (GogoTelnetClient client = getClient()) {
-			returnValue = client.send(data);
-		} catch (Exception e) {
-			throw e;
-		}
-		return returnValue;
+		return _client.send(data);
 	}
 
 	private static final String[] parseGogoResponse(String response) {
-
 		return response.split("\\r?\\n");
 	}
 
-	private static final String[] parseGogoLine(String line) {
-
-		return line.split("\\|");
-	}
-
 	private static List<BundleDTO> _getBundles(GogoTelnetClient client) throws IOException {
+		String response = client.send("lb -s -u");
+
 		return Stream.of(
-				client.send("lb -s -u")
-		).map(LiferayBundleDeployerImpl::parseGogoResponse
-		).flatMap(Arrays::stream
-		).map(LiferayBundleDeployerImpl::getBundleFromGogoLine
-		).collect(Collectors.toList());
-
+			response
+		).map(
+			LiferayBundleDeployerImpl::parseGogoResponse
+		).flatMap(
+			Arrays::stream
+		).map(
+			LiferayBundleDeployerImpl::parseGogoLine
+		).collect(
+			Collectors.toList()
+		);
 	}
 
-	private static final BundleDTO getBundleFromGogoLine(String line) {
+	private static final BundleDTO parseGogoLine(String line) {
+		String[] fields = line.split("\\|");
 
-		try {
+		Long id = Long.parseLong(fields[0].trim());
 
-			String[] fields = parseGogoLine(line);
+		int state = _getState(fields[1].trim());
 
-			Long id = Long.parseLong(fields[0].trim());
+		String symbolicName = fields[3];
 
-			int state = _getState(fields[1].trim());
-
-			String symbolicName = fields[3];
-
-			return getBundle(id, state, symbolicName);
-
-		}
-		catch (Exception e) {
-
-		}
-		return null;
+		return newBundleDTO(id, state, symbolicName);
 	}
 
-	private static final BundleDTO getBundle(Long id, int state, String symbolicName) {
+	private static final BundleDTO newBundleDTO(Long id, int state, String symbolicName) {
 		BundleDTO bundle = new BundleDTO();
 
 		bundle.id = id;
@@ -200,6 +174,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 		return bundle;
 	}
+
 	private static final int _getState(String state) {
 		String bundleState = state.toUpperCase();
 
@@ -227,12 +202,6 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 	@Override
 	public Collection<BundleDTO> getBundles() throws Exception {
-		final Collection<BundleDTO> returnValue;
-		try (GogoTelnetClient client = getClient()) {
-			returnValue = _getBundles(client);
-		} catch (Exception e) {
-			throw e;
-		}
-		return returnValue;
+		return _getBundles(_client);
 	}
 }

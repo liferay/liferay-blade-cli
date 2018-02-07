@@ -18,6 +18,7 @@ package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.gradle.LiferayBundleDeployerImpl;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 
@@ -28,7 +29,7 @@ import org.osgi.framework.dto.BundleDTO;
  */
 public interface LiferayBundleDeployer extends AutoCloseable {
 
-	public static LiferayBundleDeployer newInstance(String host, int port) {
+	public static LiferayBundleDeployer newInstance(String host, int port) throws IOException {
 		return new LiferayBundleDeployerImpl(host, port);
 	}
 
