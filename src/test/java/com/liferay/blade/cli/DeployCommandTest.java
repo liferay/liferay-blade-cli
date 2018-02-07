@@ -101,7 +101,7 @@ public class DeployCommandTest {
 
 		PowerMock.replay(LiferayBundleDeployer.class);
 
-		String[] args = {"-b", jar.getParentFile().getAbsolutePath(), "deploy"};
+		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -158,7 +158,7 @@ public class DeployCommandTest {
 
 		PowerMock.replay(LiferayBundleDeployer.class);
 
-		String[] args = {"-b", jar.getParentFile().getAbsolutePath(), "deploy"};
+		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -204,7 +204,7 @@ public class DeployCommandTest {
 
 		PowerMock.replay(LiferayBundleDeployer.class);
 
-		String[] args = {"-b", war.getParentFile().getAbsolutePath(), "deploy"};
+		String[] args = {"--base", war.getParentFile().getAbsolutePath(), "deploy"};
 
 		BladeNoFail bl = new BladeNoFail();
 
