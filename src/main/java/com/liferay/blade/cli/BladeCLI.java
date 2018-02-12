@@ -344,6 +344,14 @@ public class BladeCLI implements Runnable {
 			else if (s.equals("--trace") || s.equals("--help")) {
 				addLast.add(flags.remove(x));
 			}
+			else if (s.equals("server")) {
+				int next = x+1;
+
+				String serverCommand = s+" "+flags.get(next);
+
+				flags.set(x, serverCommand);
+				flags.remove(next);
+			}
 		}
 
 		flags.addAll(addLast);
