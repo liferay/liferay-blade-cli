@@ -345,9 +345,9 @@ public class BladeCLI implements Runnable {
 				addLast.add(flags.remove(x));
 			}
 			else if (s.equals("server")) {
-				int next = x+1;
+				int next = x + 1;
 
-				String serverCommand = s+" "+flags.get(next);
+				String serverCommand = s + " " + flags.get(next);
 
 				flags.set(x, serverCommand);
 				flags.remove(next);
