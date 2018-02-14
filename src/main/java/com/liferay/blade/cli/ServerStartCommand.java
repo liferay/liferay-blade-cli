@@ -205,11 +205,15 @@ public class ServerStartCommand {
 
 		Path logs = dir.resolve("logs");
 
-		Files.createDirectory(logs);
+		if (!logs.toFile().exists()) {
+			Files.createDirectory(logs);
+		}
 
 		Path catalinaOut = logs.resolve("catalina.out");
 
-		Files.createFile(catalinaOut);
+		if (!catalinaOut.toFile().exists()) {
+			Files.createFile(catalinaOut);
+		}
 
 		final Process process = Util.startProcess(
 			_blade, executable + startCommand, dir.resolve("bin").toFile(), enviroment);
