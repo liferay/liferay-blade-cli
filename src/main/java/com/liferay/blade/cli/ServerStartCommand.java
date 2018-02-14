@@ -142,7 +142,7 @@ public class ServerStartCommand {
 				return;
 			}
 
-			for (Path file : files.collect(Collectors.toList())) {
+			for (Path file : Files.list(dir).collect(Collectors.toList())) {
 				Path fileName = file.getFileName();
 
 				if (fileName.startsWith(serverType) && Files.isDirectory(file)) {
