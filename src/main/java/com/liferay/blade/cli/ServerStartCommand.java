@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author David Truong
@@ -129,37 +127,43 @@ public class ServerStartCommand {
 	}
 
 	private void _commandServer(Path dir, String serverType) throws Exception {
-		try (Stream<Path> files = Files.list(dir)) {
-			Optional<Path> findAny = files.findAny();
+		
+		if (Files.notExists(dir) || Util.isDirEmpty(dir)) {
+			_blade.error(
+				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
+					"create it.");
 
-			if (Files.notExists(dir) || !findAny.isPresent()) {
-				_blade.error(
-					" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
-						"create it.");
-
-				return;
-			}
-
-			for (Path path : Files.list(dir).collect(Collectors.toList())) {
-				Path fileNamePath = path.getFileName();
-				String fileName = fileNamePath.toString();
-
-				if (fileName.startsWith(serverType) && Files.isDirectory(path)) {
-					if (serverType.equals("tomcat")) {
-						_commmandTomcat(path);
-
-						return;
-					}
-					else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
-						_commmandJBossWildfly(path);
-
-						return;
-					}
-				}
-			}
-
-			_blade.error(serverType + " not supported");
+			return;
 		}
+		
+		Optional<Path> server = Files.find(dir, 10, (file, bbfa) -> {
+			Path fileName = file.getFileName();
+			String fileNameString = String.valueOf(fileName);
+			return fileNameString.startsWith(serverType) && Files.isDirectory(file);
+		}).findFirst();
+
+		boolean success = false;
+		
+		if (server.isPresent()) {
+			
+			Path file = server.get();
+			
+			if (serverType.equals("tomcat")) {
+				_commmandTomcat(file);
+
+				success = true;
+			}
+			else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
+				_commmandJBossWildfly(file);
+
+				success = true;
+			}
+		}
+		
+		if (!success) {
+			_blade.error(serverType + " not supported");	
+		}
+		
 	}
 
 	private void _commmandJBossWildfly(Path dir) throws Exception {

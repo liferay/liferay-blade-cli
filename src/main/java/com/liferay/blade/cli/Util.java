@@ -35,12 +35,13 @@ import java.io.PrintStream;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
-
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
-
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -207,6 +208,17 @@ public class Util {
 
 		return false;
 	}
+	
+	public static boolean isDirEmpty(final Path directory) throws IOException {
+		
+	    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+	    	
+	        Iterator<Path> iterator = directoryStream.iterator();
+	        
+	        return !iterator.hasNext();
+	    }
+	}
+
 
 	public static boolean isEmpty(List<?> list) {
 		if ((list == null) || list.isEmpty()) {
