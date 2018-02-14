@@ -145,7 +145,7 @@ public class ServerStartCommand {
 			for (Path file : Files.list(dir).collect(Collectors.toList())) {
 				Path fileName = file.getFileName();
 
-				if (fileName.startsWith(serverType) && Files.isDirectory(file)) {
+				if (fileName.toString().startsWith(serverType) && Files.isDirectory(file)) {
 					if (serverType.equals("tomcat")) {
 						_commmandTomcat(file);
 
