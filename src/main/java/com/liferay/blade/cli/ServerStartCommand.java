@@ -17,11 +17,9 @@
 package com.liferay.blade.cli;
 
 import java.io.File;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,17 +140,18 @@ public class ServerStartCommand {
 				return;
 			}
 
-			for (Path file : files.collect(Collectors.toList())) {
-				Path fileName = file.getFileName();
+			for (Path path : Files.list(dir).collect(Collectors.toList())) {
+				Path fileNamePath = path.getFileName();
+				String fileName = fileNamePath.toString();
 
-				if (fileName.startsWith(serverType) && Files.isDirectory(file)) {
+				if (fileName.startsWith(serverType) && Files.isDirectory(path)) {
 					if (serverType.equals("tomcat")) {
-						_commmandTomcat(file);
+						_commmandTomcat(path);
 
 						return;
 					}
 					else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
-						_commmandJBossWildfly(file);
+						_commmandJBossWildfly(path);
 
 						return;
 					}
@@ -203,13 +202,17 @@ public class ServerStartCommand {
 			startCommand = " jpda " + startCommand;
 		}
 
-		Path logs = dir.resolve("logs");
+		Path logsPath = dir.resolve("logs");
 
-		Files.createDirectory(logs);
+		if (!Files.exists(logsPath)) {
+			Files.createDirectory(logsPath);
+		}
 
-		Path catalinaOut = logs.resolve("catalina.out");
+		Path catalinaOutPath = logsPath.resolve("catalina.out");
 
-		Files.createFile(catalinaOut);
+		if (!Files.exists(catalinaOutPath)) {
+			Files.createFile(catalinaOutPath);
+		}
 
 		final Process process = Util.startProcess(
 			_blade, executable + startCommand, dir.resolve("bin").toFile(), enviroment);
@@ -232,7 +235,7 @@ public class ServerStartCommand {
 			});
 
 		if (_args.isBackground() && _args.isTail()) {
-			Process tailProcess = Util.startProcess(_blade, "tail -f catalina.out", logs.toFile(), enviroment);
+			Process tailProcess = Util.startProcess(_blade, "tail -f catalina.out", logsPath.toFile(), enviroment);
 
 			tailProcess.waitFor();
 		}
