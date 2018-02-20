@@ -63,11 +63,11 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSample() throws Exception {
-		String[] args = {"samples", "-d", _testDir.getPath() + "/test", "blade.friendlyurl"};
+		String[] args = {"samples", "-d", _testDir.getPath() + "/test", "friendly-url"};
 
 		new BladeNoFail().run(args);
 
-		File projectDir = new File(_testDir, "test/blade.friendlyurl");
+		File projectDir = new File(_testDir, "test/friendly-url");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -79,16 +79,16 @@ public class SamplesCommandTest {
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 
-		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.friendlyurl-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "com.liferay.blade.friendly.url-1.0.0.jar");
 	}
 
 	@Test
 	public void testGetSampleWithDependencies() throws Exception {
-		String[] args = {"samples", "-d", _testDir.getPath() + "/test", "blade.rest"};
+		String[] args = {"samples", "-d", _testDir.getPath() + "/test", "rest"};
 
 		new BladeNoFail().run(args);
 
-		File projectDir = new File(_testDir, "test/blade.rest");
+		File projectDir = new File(_testDir, "test/rest");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -100,16 +100,16 @@ public class SamplesCommandTest {
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 
-		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.rest-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "com.liferay.blade.rest-1.0.0.jar");
 	}
 
 	@Test
 	public void testGetSampleWithGradleWrapper() throws Exception {
-		String[] args = {"samples", "-d", _testDir.getPath() + "/test", "blade.authenticator.shiro"};
+		String[] args = {"samples", "-d", _testDir.getPath() + "/test", "authenticator-shiro"};
 
 		new BladeNoFail().run(args);
 
-		File projectDir = new File(_testDir, "test/blade.authenticator.shiro");
+		File projectDir = new File(_testDir, "test/authenticator-shiro");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -130,7 +130,7 @@ public class SamplesCommandTest {
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 
-		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.authenticator.shiro-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "com.liferay.blade.authenticator.shiro-1.0.0.jar");
 	}
 
 	@Test
@@ -139,11 +139,11 @@ public class SamplesCommandTest {
 
 		new BladeNoFail().run(initArgs);
 
-		String[] samplesArgs = {"samples", "-d", _testDir.getPath() + "/test/workspace/modules", "blade.authfailure"};
+		String[] samplesArgs = {"samples", "-d", _testDir.getPath() + "/test/workspace/modules", "auth-failure"};
 
 		new BladeNoFail().run(samplesArgs);
 
-		File projectDir = new File(_testDir, "test/workspace/modules/blade.authfailure");
+		File projectDir = new File(_testDir, "test/workspace/modules/auth-failure");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -166,7 +166,7 @@ public class SamplesCommandTest {
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 
-		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "blade.authfailure-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "com.liferay.blade.auth.failure-1.0.0.jar");
 	}
 
 	@Test
@@ -181,7 +181,7 @@ public class SamplesCommandTest {
 
 		String content = baos.toString();
 
-		Assert.assertTrue(content.contains("blade.portlet.ds"));
+		Assert.assertTrue(content.contains("ds-portlet"));
 	}
 
 	private File _testDir;
