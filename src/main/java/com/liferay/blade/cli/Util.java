@@ -19,7 +19,6 @@ package com.liferay.blade.cli;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
-
 import aQute.lib.getopt.Options;
 import aQute.lib.io.IO;
 import aQute.lib.justif.Justif;
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.file.DirectoryStream;
@@ -208,15 +206,13 @@ public class Util {
 
 		return false;
 	}
-	
+
 	public static boolean isDirEmpty(final Path directory) throws IOException {
-		
-	    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
-	    	
-	        Iterator<Path> iterator = directoryStream.iterator();
-	        
-	        return !iterator.hasNext();
-	    }
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+			Iterator<Path> iterator = directoryStream.iterator();
+
+			return !iterator.hasNext();
+		}
 	}
 
 

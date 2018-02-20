@@ -127,7 +127,6 @@ public class ServerStartCommand {
 	}
 
 	private void _commandServer(Path dir, String serverType) throws Exception {
-		
 		if (Files.notExists(dir) || Util.isDirEmpty(dir)) {
 			_blade.error(
 				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
@@ -135,19 +134,19 @@ public class ServerStartCommand {
 
 			return;
 		}
-		
-		Optional<Path> server = Files.find(dir, 10, (file, bbfa) -> {
-			Path fileName = file.getFileName();
-			String fileNameString = String.valueOf(fileName);
-			return fileNameString.startsWith(serverType) && Files.isDirectory(file);
-		}).findFirst();
+
+		Optional<Path> server = Files.find(dir, Integer.MAX_VALUE, (file, bbfa) -> {
+				Path fileName = file.getFileName();
+				String fileNameString = String.valueOf(fileName);
+
+				return fileNameString.startsWith(serverType) && Files.isDirectory(file);
+			}).findFirst();
 
 		boolean success = false;
-		
+
 		if (server.isPresent()) {
-			
 			Path file = server.get();
-			
+
 			if (serverType.equals("tomcat")) {
 				_commmandTomcat(file);
 
@@ -159,11 +158,11 @@ public class ServerStartCommand {
 				success = true;
 			}
 		}
-		
+
 		if (!success) {
-			_blade.error(serverType + " not supported");	
+			_blade.error(serverType + " not supported");
 		}
-		
+
 	}
 
 	private void _commmandJBossWildfly(Path dir) throws Exception {
