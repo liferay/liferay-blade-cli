@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -48,6 +49,30 @@ public class CreateCommand {
 		if (_args.isListTemplates()) {
 			_printTemplates();
 			return;
+		}
+		
+		if (Objects.equals(_args.getTemplate(), "fragment")) {
+
+			boolean isHostBundleBSNSpecified = _args.getHostBundleBSN() != null;
+			
+			boolean isHostBundleVersionSpecified = _args.getHostBundleVersion() != null;
+			
+			if (!isHostBundleBSNSpecified || !isHostBundleVersionSpecified) {
+				
+				StringBuilder errorMessageBuilder = new StringBuilder("\"-t fragment\" options missing:");
+				
+				if (!isHostBundleBSNSpecified) {
+					errorMessageBuilder.append(System.lineSeparator() + "Host Bundle BSN (\"-h\", \"--host-bundle-bsn\") is required.");
+				}
+				
+				if (!isHostBundleVersionSpecified) {
+					errorMessageBuilder.append(System.lineSeparator() + "Host Bundle Version (\"-H\", \"--host-bundle-version\") is required.");
+				}
+				
+				_blade.printUsage("create", errorMessageBuilder.toString());
+				
+				return;
+			}
 		}
 
 		String name = _args.getName();

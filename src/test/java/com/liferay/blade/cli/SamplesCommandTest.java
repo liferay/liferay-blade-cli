@@ -171,15 +171,8 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testListSamples() throws Exception {
-		String[] args = {"samples"};
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		PrintStream ps = new PrintStream(baos);
-
-		new BladeNoFail(ps).run(args);
-
-		String content = baos.toString();
+		String content = TestUtil.runBlade("samples");
 
 		Assert.assertTrue(content.contains("ds-portlet"));
 	}

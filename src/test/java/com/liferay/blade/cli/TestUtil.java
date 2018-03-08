@@ -16,37 +16,25 @@
 
 package com.liferay.blade.cli;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * @author Christopher Bryan Boyd
  */
-public class HelpCommandTest {
-
-	@Test
-	public void testHelpCommand() throws UnsupportedEncodingException {
-		String content = _runBlade("help");
-
-		Assert.assertTrue(content, content.contains("Usage:"));
-	}
-
-	@Test
-	public void testHelpFlag() throws UnsupportedEncodingException {
-		String content = _runBlade("--help");
-
-		Assert.assertTrue(content, content.contains("Usage:"));
-	}
-
-	private static String _runBlade(String... args) throws UnsupportedEncodingException {
+public class TestUtil {
+	
+	public static String runBlade(String... args) throws UnsupportedEncodingException {
 		
-		String content = TestUtil.runBlade(args);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		Assert.assertFalse(content, content.contains("No such command"));
-		
+		PrintStream ps = new PrintStream(baos);
+
+		new BladeNoFail(ps).run(args);
+
+		String content = baos.toString();
+
 		return content;
 	}
-
 }
