@@ -48,13 +48,7 @@ public class ConvertThemeCommandTest {
 
 		_createWorkspace();
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		PrintStream ps = new PrintStream(baos);
-
-		new BladeNoFail(ps).run(args);
-
-		String content = baos.toString();
+		String content = TestUtil.runBlade(args);
 
 		Assert.assertTrue(content, content.contains("compass-theme"));
 	}

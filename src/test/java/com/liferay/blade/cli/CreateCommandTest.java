@@ -26,11 +26,9 @@ import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.PrintStream;
 import java.io.Writer;
 
 import java.util.ArrayList;
@@ -215,7 +213,32 @@ public class CreateCommandTest {
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
 		_verifyImportPackage(new File(projectPath + "/target/loginHook-1.0.0.jar"));
 	}
+	
+	@Test
+	public void testCreateFragmentWithoutHostOptions() throws Exception {
+		String[] args =
+			{"create", "-d", "build/test", "-t", "fragment", "loginHook"};
 
+		String content = TestUtil.runBlade(args);
+		
+		Assert.assertTrue(content.contains("\"-t fragment\" options missing"));
+
+		args = new String[]
+			{"create", "-d", "build/test", "-t", "fragment", "-h", "com.liferay.login.web", "loginHook"};
+
+		content = TestUtil.runBlade(args);
+		
+		Assert.assertTrue(content.contains("\"-t fragment\" options missing"));
+
+		args = new String[]
+			{"create", "-d", "build/test", "-t", "fragment", "-H", "1.0.0", "loginHook"};
+
+		content = TestUtil.runBlade(args);
+		
+		Assert.assertTrue(content.contains("\"-t fragment\" options missing"));
+		
+	}
+	
 	@Test
 	public void testCreateGradleMVCPortletProjectWithPackage() throws Exception {
 		String[] args = {"create", "-d", "build/test", "-t", "mvc-portlet", "-p", "com.liferay.test", "foo"};
@@ -1315,15 +1338,7 @@ public class CreateCommandTest {
 	public void testListTemplates() throws Exception {
 		String[] args = {"create", "-l"};
 
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-		PrintStream ps = new PrintStream(output);
-
-		BladeCLI blade = new BladeNoFail(ps);
-
-		blade.run(args);
-
-		String templateList = new String(output.toByteArray());
+		String templateList = TestUtil.runBlade(args);
 
 		List<String> templateNames = new ArrayList<>(ProjectTemplates.getTemplates().keySet());
 

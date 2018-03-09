@@ -100,13 +100,13 @@ public class CreateCommandArgs extends BaseArgs {
 	private File _dir;
 
 	@Parameter(
-		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle symbolic name.",
+		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle symbolic name. Required for \"-t fragment\".",
 		names = {"-h", "--host-bundle-bsn"}
 	)
 	private String _hostBundleBSN;
 
 	@Parameter(
-		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle version.",
+		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle version. Required for \"-t fragment\".",
 		names = {"-H", "--host-bundle-version"}
 	)
 	private String _hostBundleVersion;

@@ -20,12 +20,12 @@ import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -48,6 +48,29 @@ public class CreateCommand {
 		if (_args.isListTemplates()) {
 			_printTemplates();
 			return;
+		}
+
+		if (Objects.equals(_args.getTemplate(), "fragment")) {
+			boolean hasHostBundleBSN = _args.getHostBundleBSN() != null;
+
+			boolean hasHostBundleVersion = _args.getHostBundleVersion() != null;
+
+			if (!hasHostBundleBSN || !hasHostBundleVersion) {
+
+				StringBuilder sb = new StringBuilder("\"-t fragment\" options missing:");
+
+				if (!hasHostBundleBSN) {
+					sb.append(System.lineSeparator() + "Host Bundle BSN (\"-h\", \"--host-bundle-bsn\") is required.");
+				}
+
+				if (!hasHostBundleVersion) {
+					sb.append(System.lineSeparator() + "Host Bundle Version (\"-H\", \"--host-bundle-version\") is required.");
+				}
+
+				_blade.printUsage("create", sb.toString());
+
+				return;
+			}
 		}
 
 		String name = _args.getName();

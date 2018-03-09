@@ -225,6 +225,15 @@ public class BladeCLI implements Runnable {
 		}
 	}
 
+	public void printUsage(String command) {
+		_jcommander.usage(command);
+	}
+
+	public void printUsage(String command, String message) {
+		error(message);
+		_jcommander.usage(command);
+	}
+
 	public void run(String[] args) {
 		System.setOut(out());
 

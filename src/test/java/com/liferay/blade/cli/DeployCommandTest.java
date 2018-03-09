@@ -103,15 +103,7 @@ public class DeployCommandTest {
 
 		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		PrintStream ps = new PrintStream(baos);
-
-		BladeNoFail bl = new BladeNoFail(ps);
-
-		bl.run(args);
-
-		String content = baos.toString();
+		String content = TestUtil.runBlade(args);
 
 		PowerMock.verifyAll();
 
@@ -160,15 +152,7 @@ public class DeployCommandTest {
 
 		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		PrintStream ps = new PrintStream(baos);
-
-		BladeNoFail bl = new BladeNoFail(ps);
-
-		bl.run(args);
-
-		String content = baos.toString();
+		String content = TestUtil.runBlade(args);
 
 		PowerMock.verifyAll();
 
