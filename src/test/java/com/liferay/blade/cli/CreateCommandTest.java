@@ -213,32 +213,29 @@ public class CreateCommandTest {
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
 		_verifyImportPackage(new File(projectPath + "/target/loginHook-1.0.0.jar"));
 	}
-	
+
 	@Test
 	public void testCreateFragmentWithoutHostOptions() throws Exception {
-		String[] args =
-			{"create", "-d", "build/test", "-t", "fragment", "loginHook"};
+		String[] args = {"create", "-d", "build/test", "-t", "fragment", "loginHook"};
 
 		String content = TestUtil.runBlade(args);
-		
-		Assert.assertTrue(content.contains("\"-t fragment\" options missing"));
+
+		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
 
 		args = new String[]
 			{"create", "-d", "build/test", "-t", "fragment", "-h", "com.liferay.login.web", "loginHook"};
 
 		content = TestUtil.runBlade(args);
-		
-		Assert.assertTrue(content.contains("\"-t fragment\" options missing"));
 
-		args = new String[]
-			{"create", "-d", "build/test", "-t", "fragment", "-H", "1.0.0", "loginHook"};
+		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
+
+		args = new String[] {"create", "-d", "build/test", "-t", "fragment", "-H", "1.0.0", "loginHook"};
 
 		content = TestUtil.runBlade(args);
-		
-		Assert.assertTrue(content.contains("\"-t fragment\" options missing"));
-		
+
+		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
 	}
-	
+
 	@Test
 	public void testCreateGradleMVCPortletProjectWithPackage() throws Exception {
 		String[] args = {"create", "-d", "build/test", "-t", "mvc-portlet", "-p", "com.liferay.test", "foo"};

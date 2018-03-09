@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -185,7 +186,9 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
 
 		if ((objectNames != null) && !objectNames.isEmpty()) {
-			return objectNames.iterator().next();
+			Iterator<ObjectName> iterator = objectNames.iterator();
+
+			return iterator.next();
 		}
 
 		return null;
@@ -194,10 +197,15 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 	private static BundleDTO _newFromData(CompositeData cd) {
 		final BundleDTO dto = new BundleDTO();
 
-		dto.id = Long.parseLong(cd.get("Identifier").toString());
-		dto.symbolicName = cd.get("SymbolicName").toString();
+		Object identifier = cd.get("Identifier");
 
-		String state = cd.get("State").toString();
+		dto.id = Long.parseLong(identifier.toString());
+
+		Object symbolicName = cd.get("SymbolicName");
+
+		dto.symbolicName = symbolicName.toString();
+
+		Object state = cd.get("State");
 
 		if ("UNINSTALLED".equals(state)) {
 			dto.state = Bundle.UNINSTALLED;
@@ -218,7 +226,9 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 			dto.state = Bundle.ACTIVE;
 		}
 
-		dto.version = cd.get("Version").toString();
+		Object version = cd.get("Version");
+
+		dto.version = version.toString();
 
 		return dto;
 	}
@@ -228,7 +238,9 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 
 		Set<ObjectName> queryNames = mBeanServerConnection.queryNames(objectName, null);
 
-		return queryNames.iterator().next();
+		Iterator<ObjectName> iterator = queryNames.iterator();
+
+		return iterator.next();
 	}
 
 	private static final String _NAME = "osgi.core";

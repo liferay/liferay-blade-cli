@@ -19,6 +19,7 @@ package com.liferay.blade.cli;
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
+import java.io.PrintStream;
 
 import java.nio.file.Path;
 
@@ -49,14 +50,16 @@ public class OutputsCommand {
 
 			Object print = null;
 
+			PrintStream out = _blade.out();
+
 			if ((basePathRoot != null) && (outputPathRoot != null)) {
 				print = basePath.relativize(outputPath);
 			}
 			else {
-				_blade.out().println(outputPath);
+				out.println(outputPath);
 			}
 
-			_blade.out().println(print);
+			out.println(print);
 		}
 	}
 

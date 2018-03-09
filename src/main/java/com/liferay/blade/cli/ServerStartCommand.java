@@ -17,14 +17,17 @@
 package com.liferay.blade.cli;
 
 import java.io.File;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 /**
  * @author David Truong
@@ -37,9 +40,13 @@ public class ServerStartCommand {
 	}
 
 	public void execute() throws Exception {
-		Path gradleWrapper = Util.getGradleWrapper(_blade.getBase()).toPath();
+		File gradleWrapperFile = Util.getGradleWrapper(_blade.getBase());
 
-		File rootDir = gradleWrapper.getParent().toFile();
+		Path gradleWrapperPath = gradleWrapperFile.toPath();
+
+		Path parent = gradleWrapperPath.getParent();
+
+		File rootDir = parent.toFile();
 
 		String serverType = null;
 
@@ -135,12 +142,19 @@ public class ServerStartCommand {
 			return;
 		}
 
-		Optional<Path> server = Files.find(dir, Integer.MAX_VALUE, (file, bbfa) -> {
+		Stream<Path> stream = Files.find(
+			dir, Integer.MAX_VALUE,
+			(file, bbfa) -> {
 				Path fileName = file.getFileName();
+
 				String fileNameString = String.valueOf(fileName);
 
 				return fileNameString.startsWith(serverType) && Files.isDirectory(file);
-			}).findFirst();
+			});
+
+		Optional<Path> server = stream.findFirst();
+
+		stream.close();
 
 		boolean success = false;
 
@@ -162,7 +176,6 @@ public class ServerStartCommand {
 		if (!success) {
 			_blade.error(serverType + " not supported");
 		}
-
 	}
 
 	private void _commmandJBossWildfly(Path dir) throws Exception {
@@ -180,7 +193,9 @@ public class ServerStartCommand {
 			debug = " --debug";
 		}
 
-		Process process = Util.startProcess(_blade, executable + debug, dir.resolve("bin").toFile(), enviroment);
+		Path binPath = dir.resolve("bin");
+
+		Process process = Util.startProcess(_blade, executable + debug, binPath.toFile(), enviroment);
 
 		process.waitFor();
 	}
@@ -217,8 +232,9 @@ public class ServerStartCommand {
 			Files.createFile(catalinaOutPath);
 		}
 
-		final Process process = Util.startProcess(
-			_blade, executable + startCommand, dir.resolve("bin").toFile(), enviroment);
+		Path binPath = dir.resolve("bin");
+
+		final Process process = Util.startProcess(_blade, executable + startCommand, binPath.toFile(), enviroment);
 
 		Runtime runtime = Runtime.getRuntime();
 

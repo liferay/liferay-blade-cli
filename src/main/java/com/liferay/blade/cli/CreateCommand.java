@@ -20,6 +20,8 @@ import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
+import java.io.PrintStream;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,20 +53,27 @@ public class CreateCommand {
 		}
 
 		if (Objects.equals(_args.getTemplate(), "fragment")) {
-			boolean hasHostBundleBSN = _args.getHostBundleBSN() != null;
+			boolean hasHostBundleBSN = false;
 
-			boolean hasHostBundleVersion = _args.getHostBundleVersion() != null;
+			if (_args.getHostBundleBSN() != null) {
+				hasHostBundleBSN = true;
+			}
+
+			boolean hasHostBundleVersion = false;
+
+			if (_args.getHostBundleVersion() != null) {
+				hasHostBundleVersion = true;
+			}
 
 			if (!hasHostBundleBSN || !hasHostBundleVersion) {
-
-				StringBuilder sb = new StringBuilder("\"-t fragment\" options missing:");
+				StringBuilder sb = new StringBuilder("\"-t fragment\" options missing:" + System.lineSeparator());
 
 				if (!hasHostBundleBSN) {
-					sb.append(System.lineSeparator() + "Host Bundle BSN (\"-h\", \"--host-bundle-bsn\") is required.");
+					sb.append("Host Bundle BSN (\"-h\", \"--host-bundle-bsn\") is required.");
 				}
 
 				if (!hasHostBundleVersion) {
-					sb.append(System.lineSeparator() + "Host Bundle Version (\"-H\", \"--host-bundle-version\") is required.");
+					sb.append("Host Bundle Version (\"-H\", \"--host-bundle-version\") is required.");
 				}
 
 				_blade.printUsage("create", sb.toString());
@@ -93,8 +102,10 @@ public class CreateCommand {
 
 		File dir;
 
-		if (_args.getDir() != null) {
-			dir = new File(_args.getDir().getAbsolutePath());
+		File argsDir = _args.getDir();
+
+		if (argsDir != null) {
+			dir = new File(argsDir.getAbsolutePath());
 		}
 		else if (template.startsWith("war") || template.equals("theme") || template.equals("layout-template") ||
 				 template.equals("spring-mvc-portlet")) {
@@ -132,12 +143,12 @@ public class CreateCommand {
 
 		execute(projectTemplatesArgs);
 
-		_blade.out().println(
-			"Successfully created project " + projectTemplatesArgs.getName() + " in " + dir.getAbsolutePath());
+		_blade.out("Successfully created project " + projectTemplatesArgs.getName() + " in " + dir.getAbsolutePath());
 	}
 
 	protected CreateCommand(BladeCLI blade) {
 		_blade = blade;
+
 		_args = null;
 	}
 
@@ -192,7 +203,9 @@ public class CreateCommand {
 	}
 
 	private File _getDefaultModulesDir() throws Exception {
-		File baseDir = _blade.getBase().getAbsoluteFile();
+		File base = _blade.getBase();
+
+		File baseDir = base.getAbsoluteFile();
 
 		if (!Util.isWorkspace(baseDir)) {
 			return baseDir;
@@ -218,7 +231,9 @@ public class CreateCommand {
 	}
 
 	private File _getDefaultWarsDir() throws Exception {
-		File baseDir = _blade.getBase().getAbsoluteFile();
+		File base = _blade.getBase();
+
+		File baseDir = base.getAbsoluteFile();
 
 		if (!Util.isWorkspace(baseDir)) {
 			return baseDir;
@@ -277,9 +292,11 @@ public class CreateCommand {
 		int padLength = longestString.length() + 2;
 
 		for (String name : templateNames) {
-			_blade.out().print(StringUtils.rightPad(name, padLength));
+			PrintStream out = _blade.out();
 
-			_blade.out().println(templates.get(name));
+			out.print(StringUtils.rightPad(name, padLength));
+
+			_blade.out(templates.get(name));
 		}
 	}
 

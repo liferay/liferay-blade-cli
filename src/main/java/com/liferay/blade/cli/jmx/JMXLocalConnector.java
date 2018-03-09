@@ -23,9 +23,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -53,14 +55,17 @@ public class JMXLocalConnector {
 	 */
 	@SuppressWarnings("unchecked")
 	public static String getLocalConnectorAddress(String objName) {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		Thread thread = Thread.currentThread();
+
+		ClassLoader cl = thread.getContextClassLoader();
+
 		ClassLoader toolsClassloader = null;
 
 		try {
 			toolsClassloader = _getToolsClassLoader(cl);
 
 			if (toolsClassloader != null) {
-				Thread.currentThread().setContextClassLoader(toolsClassloader);
+				thread.setContextClassLoader(toolsClassloader);
 
 				Class< ? > vmClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachine");
 
@@ -81,7 +86,7 @@ public class JMXLocalConnector {
 			e.printStackTrace();
 		}
 		finally {
-			Thread.currentThread().setContextClassLoader(cl);
+			thread.setContextClassLoader(cl);
 
 			// try to get custom classloader to unload native libs
 
@@ -102,7 +107,11 @@ public class JMXLocalConnector {
 
 						String name = (String)nameField.get(nativeLib);
 
-						if (new File(name).getName().contains("attach")) {
+						File nativeLibFile = new File(name);
+
+						String nativeLibFileName = nativeLibFile.getName();
+
+						if (nativeLibFileName.contains("attach")) {
 							Method f = clazz.getDeclaredMethod("finalize");
 
 							f.setAccessible(true);
@@ -237,7 +246,9 @@ public class JMXLocalConnector {
 		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
 
 		if ((objectNames != null) && !objectNames.isEmpty()) {
-			return objectNames.iterator().next();
+			Iterator<ObjectName> iterator = objectNames.iterator();
+
+			return iterator.next();
 		}
 
 		return null;
@@ -250,7 +261,9 @@ public class JMXLocalConnector {
 			URL toolsUrl = null;
 
 			try {
-				toolsUrl = toolsJar.toURI().toURL();
+				URI toolsURI = toolsJar.toURI();
+
+				toolsUrl = toolsURI.toURL();
 			}
 			catch (MalformedURLException murle) {
 				//

@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import static java.util.stream.Stream.concat;
-
 import aQute.lib.io.IO;
 
 import com.liferay.project.templates.ProjectTemplatesArgs;
@@ -107,7 +105,7 @@ public class ConvertCommand {
 	public void execute() throws Exception {
 		List<String> name = _args.getName();
 
-		final String pluginName = name.isEmpty() ? null : name.iterator().next();
+		final String pluginName = name.isEmpty() ? null : name.get(0);
 
 		if (!Util.isWorkspace(_blade)) {
 			_blade.error("Please execute this in a Liferay Workspace project");
@@ -199,15 +197,17 @@ public class ConvertCommand {
 
 			layoutPluginStream.forEach(this::_convertToLayoutWarProject);
 
+			Stream<File> themes = themePlugins.stream();
+
 			if (_args.isThemeBuilder()) {
-				themePlugins.stream().forEach(this::_convertToThemeBuilderWarProject);
+				themes.forEach(this::_convertToThemeBuilderWarProject);
 			}
 			else {
-				themePlugins.stream().forEach(this::_convertToThemeProject);
+				themes.forEach(this::_convertToThemeProject);
 			}
 		}
 		else if (_args.isList()) {
-			_blade.out().println("The following is a list of projects available to convert:\n");
+			_blade.out("The following is a list of projects available to convert:\n");
 
 			Stream<File> serviceBuilderPluginStream = serviceBuilderPlugins.stream();
 			Stream<File> portletPluginStream = portletPlugins.stream();
@@ -215,14 +215,15 @@ public class ConvertCommand {
 			Stream<File> webPluginStream = webPlugins.stream();
 			Stream<File> layoutPluginStream = layoutPlugins.stream();
 
-			Stream<File> plugins = concat(
+			Stream<File> plugins = Stream.concat(
 				serviceBuilderPluginStream,
-				concat(
+				Stream.concat(
 					portletPluginStream,
-					concat(
-						hookPluginStream, concat(webPluginStream, concat(layoutPluginStream, themePlugins.stream())))));
+					Stream.concat(
+						hookPluginStream,
+						Stream.concat(webPluginStream, Stream.concat(layoutPluginStream, themePlugins.stream())))));
 
-			plugins.forEach(plugin -> _blade.out().println("\t" + plugin.getName()));
+			plugins.forEach(plugin -> _blade.out("\t" + plugin.getName()));
 		}
 		else {
 			File pluginDir = _findPluginDir(pluginName);
@@ -289,7 +290,9 @@ public class ConvertCommand {
 		try {
 			_warsDir.mkdirs();
 
-			Files.move(layoutPluginDir.toPath(), _warsDir.toPath().resolve(layoutPluginDir.getName()));
+			Path warsPath = _warsDir.toPath();
+
+			Files.move(layoutPluginDir.toPath(), warsPath.resolve(layoutPluginDir.getName()));
 
 			File warDir = new File(_warsDir, layoutPluginDir.getName());
 
@@ -307,8 +310,10 @@ public class ConvertCommand {
 
 			File docroot = new File(warDir, "docroot");
 
+			Path webappPath = webapp.toPath();
+
 			for (File docrootFile : docroot.listFiles()) {
-				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()));
+				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
 
 			IO.delete(docroot);
@@ -414,8 +419,10 @@ public class ConvertCommand {
 
 				backup.mkdirs();
 
+				Path backupPath = backup.toPath();
+
 				for (File other : others) {
-					Files.move(other.toPath(), backup.toPath().resolve(other.getName()));
+					Files.move(other.toPath(), backupPath.resolve(other.getName()));
 				}
 			}
 
@@ -439,7 +446,9 @@ public class ConvertCommand {
 		try {
 			_warsDir.mkdirs();
 
-			Files.move(pluginDir.toPath(), _warsDir.toPath().resolve(pluginDir.getName()));
+			Path warsPath = _warsDir.toPath();
+
+			Files.move(pluginDir.toPath(), warsPath.resolve(pluginDir.getName()));
 
 			File warDir = new File(_warsDir, pluginDir.getName());
 
@@ -449,9 +458,11 @@ public class ConvertCommand {
 
 			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
 
+			Path srcPath = src.toPath();
+
 			if (docrootSrc.exists()) {
 				for (File docrootSrcFile : docrootSrc.listFiles()) {
-					Files.move(docrootSrcFile.toPath(), src.toPath().resolve(docrootSrcFile.getName()));
+					Files.move(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
 				}
 
 				docrootSrc.delete();
@@ -463,8 +474,10 @@ public class ConvertCommand {
 
 			File docroot = new File(warDir, "docroot");
 
+			Path webappPath = webapp.toPath();
+
 			for (File docrootFile : docroot.listFiles()) {
-				Files.move(docrootFile.toPath(), webapp.toPath().resolve(docrootFile.getName()));
+				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
 
 			IO.delete(docroot);
@@ -527,7 +540,9 @@ public class ConvertCommand {
 
 			File gradleFile = new File(warDir, "build.gradle");
 
-			IO.write(depsContent.toString().getBytes(), gradleFile);
+			String content = depsContent.toString();
+
+			Files.write(gradleFile.toPath(), content.getBytes());
 		}
 		catch (Exception e) {
 			_blade.error("Error upgrading project %s\n%s", pluginDir.getName(), e.getMessage());

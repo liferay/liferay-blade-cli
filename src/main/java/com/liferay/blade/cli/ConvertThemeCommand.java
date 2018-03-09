@@ -97,15 +97,15 @@ public class ConvertThemeCommand {
 				if (!themes.isEmpty()) {
 					String exampleTheme = themes.get(0);
 
-					_blade.out().println(
+					_blade.out(
 						"Please provide the theme project name to migrate, e.g. \"blade migrateTheme " + exampleTheme +
 							"\"\n");
 
-					_blade.out().println("Currently available themes:");
-					_blade.out().println(WordUtils.wrap(StringUtils.join(themes, ", "), 80));
+					_blade.out("Currently available themes:");
+					_blade.out(WordUtils.wrap(StringUtils.join(themes, ", "), 80));
 				}
 				else {
-					_blade.out().println("Good news! All your themes have already been migrated to " + _themesDir);
+					_blade.out("Good news! All your themes have already been migrated to " + _themesDir);
 				}
 			}
 		}
@@ -131,7 +131,7 @@ public class ConvertThemeCommand {
 		int errCode = process.waitFor();
 
 		if (errCode == 0) {
-			_blade.out().println("Theme " + themePath + " migrated successfully");
+			_blade.out("Theme " + themePath + " migrated successfully");
 
 			File theme = new File(themePath);
 

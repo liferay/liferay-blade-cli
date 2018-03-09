@@ -41,11 +41,10 @@ public class HelpCommandTest {
 	}
 
 	private static String _runBlade(String... args) throws UnsupportedEncodingException {
-		
 		String content = TestUtil.runBlade(args);
 
 		Assert.assertFalse(content, content.contains("No such command"));
-		
+
 		return content;
 	}
 

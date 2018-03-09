@@ -99,7 +99,9 @@ public class InitCommand {
 
 				_trace("Found Plugins SDK, moving contents to new subdirectory and initing workspace.");
 
-				temp = Files.createTempDirectory("orignal-sdk").toFile();
+				Path tempDir = Files.createTempDirectory("orignal-sdk");
+
+				temp = tempDir.toFile();
 
 				_moveContentsToDirectory(destDir, temp);
 			}
@@ -225,8 +227,13 @@ public class InitCommand {
 	}
 
 	private void _moveContentsToDirectory(File src, File dest) throws IOException {
-		Path source = src.toPath().toAbsolutePath();
-		Path target = dest.toPath().toAbsolutePath();
+		Path srcPath = src.toPath();
+
+		Path source = srcPath.toAbsolutePath();
+
+		Path destPath = dest.toPath();
+
+		Path target = destPath.toAbsolutePath();
 
 		Files.walkFileTree(
 			source,
@@ -234,7 +241,9 @@ public class InitCommand {
 
 				@Override
 				public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-					String dirName = dir.toFile().getName();
+					File file = dir.toFile();
+
+					String dirName = file.getName();
 
 					if (!dirName.equals(src.getName())) {
 						Files.delete(dir);
@@ -251,7 +260,9 @@ public class InitCommand {
 						Files.createDirectory(targetDir);
 					}
 
-					if (Util.isWindows() && !dir.toFile().canWrite()) {
+					File file = dir.toFile();
+
+					if (Util.isWindows() && !file.canWrite()) {
 						Files.setAttribute(dir, "dos:readonly", false);
 					}
 
@@ -259,18 +270,20 @@ public class InitCommand {
 				}
 
 				@Override
-				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-					Path targetFile = target.resolve(source.relativize(file));
+				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+					Path targetFile = target.resolve(source.relativize(path));
 
 					if (!Files.exists(targetFile)) {
-						Files.copy(file, targetFile);
+						Files.copy(path, targetFile);
 					}
 
-					if (Util.isWindows() && !file.toFile().canWrite()) {
-						Files.setAttribute(file, "dos:readonly", false);
+					File file = path.toFile();
+
+					if (Util.isWindows() && !file.canWrite()) {
+						Files.setAttribute(path, "dos:readonly", false);
 					}
 
-					Files.delete(file);
+					Files.delete(path);
 
 					return FileVisitResult.CONTINUE;
 				}

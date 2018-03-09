@@ -36,13 +36,13 @@ public class GradleExec {
 				_executable = gradlew.getCanonicalPath();
 			}
 			catch (Exception e) {
-				blade.out().println("Could not find gradle wrapper, using gradle");
+				blade.out("Could not find gradle wrapper, using gradle");
 
 				_executable = "gradle";
 			}
 		}
 		else {
-			blade.out().println("Could not find gradle wrapper, using gradle");
+			blade.out("Could not find gradle wrapper, using gradle");
 
 			_executable = "gradle";
 		}

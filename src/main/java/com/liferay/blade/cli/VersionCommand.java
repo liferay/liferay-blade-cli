@@ -52,7 +52,7 @@ public class VersionCommand {
 			if ((bsn != null) && bsn.equals("com.liferay.blade.cli")) {
 				Attributes attrs = mainAttributes;
 
-				_blade.out().printf("%s\n", attrs.getValue(Constants.BUNDLE_VERSION));
+				_blade.out(attrs.getValue(Constants.BUNDLE_VERSION));
 
 				return;
 			}

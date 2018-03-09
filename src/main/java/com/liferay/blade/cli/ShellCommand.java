@@ -54,7 +54,7 @@ public class ShellCommand {
 
 		String response = telnetClient.send(cmd);
 
-		_blade.out().println(response);
+		_blade.out(response);
 
 		telnetClient.close();
 	}

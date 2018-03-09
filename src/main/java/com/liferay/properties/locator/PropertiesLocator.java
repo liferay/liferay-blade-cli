@@ -643,7 +643,9 @@ public class PropertiesLocator {
 		Properties properties = new Properties();
 
 		BiPredicate<Path, BasicFileAttributes> matcher = (path, attrs) -> {
-			return attrs.isRegularFile() && path.toString().endsWith(_PORTAL_IMPL_RELATIVE_PATH);
+			String pathString = path.toString();
+
+			return attrs.isRegularFile() && pathString.endsWith(_PORTAL_IMPL_RELATIVE_PATH);
 		};
 
 		try (Stream<Path> paths = Files.find(bundlePath, Integer.MAX_VALUE, matcher)) {
@@ -826,7 +828,9 @@ public class PropertiesLocator {
 		Enumeration<Object> enuKeys = oldProperties.keys();
 
 		while (enuKeys.hasMoreElements()) {
-			String key = enuKeys.nextElement().toString();
+			Object element = enuKeys.nextElement();
+
+			String key = element.toString();
 
 			if (newProperties.getProperty(key) == null) {
 				removedProperties.add(key);

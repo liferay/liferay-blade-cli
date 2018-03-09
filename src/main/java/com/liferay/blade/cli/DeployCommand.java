@@ -47,7 +47,8 @@ public class DeployCommand {
 
 	public DeployCommand(BladeCLI blade, DeployCommandArgs args) throws Exception {
 		_blade = blade;
-		_options = args;
+		_args = args;
+
 		_host = "localhost";
 		_port = 11311;
 	}
@@ -63,7 +64,7 @@ public class DeployCommand {
 
 		Set<File> outputFiles = GradleTooling.getOutputFiles(_blade.getCacheDir(), _blade.getBase());
 
-		if (_options.isWatch()) {
+		if (_args.isWatch()) {
 			_deployWatch(gradleExec, outputFiles);
 		}
 		else {
@@ -151,13 +152,20 @@ public class DeployCommand {
 	private void _deployWatch(final GradleExec gradleExec, final Set<File> outputFiles) throws Exception {
 		_deploy(gradleExec, outputFiles);
 
-		Collection<Path> outputPaths = outputFiles.stream().map(File::toPath).collect(Collectors.toSet());
+		Stream<File> stream = outputFiles.stream();
+
+		Collection<Path> outputPaths = stream.map(
+			File::toPath
+		).collect(
+			Collectors.toSet()
+		);
 
 		new Thread() {
 
 			@Override
 			public void run() {
-				try {gradleExec.executeGradleCommand("assemble -x check -t");
+				try {
+					gradleExec.executeGradleCommand("assemble -x check -t");
 				}
 				catch (Exception e) {
 				}
@@ -170,12 +178,12 @@ public class DeployCommand {
 			@Override
 			public void consume(Path modified) {
 				try {
-					File modifiedFile = modified.toFile().getAbsoluteFile();
+					File file = modified.toFile();
+
+					File modifiedFile = file.getAbsoluteFile();
 
 					if (outputPaths.contains(modifiedFile.toPath())) {
-						PrintStream out = _blade.out();
-
-						out.println("installOrUpdate " + modifiedFile);
+						_blade.out("installOrUpdate " + modifiedFile);
 
 						_installOrUpdate(modifiedFile);
 					}
@@ -267,9 +275,9 @@ public class DeployCommand {
 		out.println("Updated bundle " + existingId);
 	}
 
+	private final DeployCommandArgs _args;
 	private final BladeCLI _blade;
 	private final String _host;
-	private final DeployCommandArgs _options;
 	private final int _port;
 
 }

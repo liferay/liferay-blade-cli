@@ -18,9 +18,7 @@ package com.liferay.blade.cli;
 
 import aQute.lib.io.IO;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
 
 import java.nio.file.Files;
 
@@ -171,7 +169,6 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testListSamples() throws Exception {
-
 		String content = TestUtil.runBlade("samples");
 
 		Assert.assertTrue(content.contains("ds-portlet"));

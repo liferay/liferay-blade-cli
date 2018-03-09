@@ -79,7 +79,7 @@ public class ConvertServiceBuilderCommand {
 	public void execute() throws Exception {
 		List<String> name = _args.getName();
 
-		final String projectName = name.isEmpty() ? null : name.iterator().next();
+		final String projectName = name.isEmpty() ? null : name.get(0);
 
 		if (!Util.isWorkspace(_blade)) {
 			_blade.error("Please execute command in a Liferay Workspace project");
@@ -209,8 +209,10 @@ public class ConvertServiceBuilderCommand {
 
 			newApiFolder.mkdirs();
 
+			Path newApiPath = newApiFolder.toPath();
+
 			for (File oldApiFile : oldApiFolder.listFiles()) {
-				Files.move(oldApiFile.toPath(), newApiFolder.toPath().resolve(oldApiFile.getName()));
+				Files.move(oldApiFile.toPath(), newApiPath.resolve(oldApiFile.getName()));
 			}
 		}
 
@@ -218,12 +220,14 @@ public class ConvertServiceBuilderCommand {
 
 		// go through all api folders and make sure to add a packageinfo file
 
-		Stream<Path> srcPaths = Files.walk(sbApiProject.toPath().resolve(Constants.DEFAULT_JAVA_SRC));
+		Path sbApiProjectPath = sbApiProject.toPath();
+
+		Stream<Path> srcPaths = Files.walk(sbApiProjectPath.resolve(Constants.DEFAULT_JAVA_SRC));
 
 		srcPaths.map(
 			path -> path.toFile()
 		).filter(
-			file -> file.isFile() && file.getName().endsWith(".java") && _isInExportedApiFolder(file)
+			file -> _isJavaFile(file) && _isInExportedApiFolder(file)
 		).map(
 			file -> {
 				Path filePath = file.toPath();
@@ -283,6 +287,16 @@ public class ConvertServiceBuilderCommand {
 		return false;
 	}
 
+	private static boolean _isJavaFile(File file) {
+		String name = file.getName();
+
+		if (file.isFile() && name.endsWith(".java")) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private ConvertCommandArgs _args;
 	private BladeCLI _blade;
 	private final File _moduleDir;
@@ -302,6 +316,7 @@ public class ConvertServiceBuilderCommand {
 
 		public ServiceBuilder(File serviceXml) throws Exception {
 			_serviceXml = serviceXml;
+
 			_parse();
 		}
 
