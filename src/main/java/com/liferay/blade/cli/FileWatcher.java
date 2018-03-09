@@ -40,6 +40,7 @@ import java.io.IOException;
 
 import java.lang.reflect.Field;
 
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -77,7 +78,10 @@ public class FileWatcher {
 	 * @param runnable
 	 */
 	public FileWatcher(Path baseDir, Path fileToWatch, boolean recursive, Consumer<Path> consumer) throws IOException {
-		_watcher = FileSystems.getDefault().newWatchService();
+		FileSystem fileSystem = FileSystems.getDefault();
+
+		_watcher = fileSystem.newWatchService();
+
 		_keys = new HashMap<>();
 		_recursive = recursive;
 

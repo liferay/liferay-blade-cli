@@ -30,6 +30,7 @@ public class InstallCommand {
 	public InstallCommand(BladeCLI blade, InstallCommandArgs options) throws Exception {
 		_blade = blade;
 		_args = options;
+
 		_host = options.getHost() != null ? options.getHost() : "localhost";
 		_port = options.getPort() != 0 ? options.getPort() : 11311;
 	}
@@ -57,7 +58,7 @@ public class InstallCommand {
 		try (GogoTelnetClient client = new GogoTelnetClient(_host, _port)) {
 			String response = client.send("install " + bundleFile.toURI());
 
-			_blade.out().println(response);
+			_blade.out(response);
 		}
 	}
 

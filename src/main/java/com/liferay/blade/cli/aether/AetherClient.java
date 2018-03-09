@@ -45,6 +45,7 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transfer.AbstractTransferListener;
@@ -58,7 +59,7 @@ import org.eclipse.aether.version.Version;
 public class AetherClient {
 
 	public AetherClient() {
-		this(_defaultRepoUrls);
+		this(_DEFAULT_REPO_URLS);
 	}
 
 	public AetherClient(String[] repoUrls) {
@@ -87,7 +88,9 @@ public class AetherClient {
 		Version version = null;
 
 		try {
-			version = system.resolveVersionRange(session, rangeRequest).getHighestVersion();
+			VersionRangeResult versionRangeResult = system.resolveVersionRange(session, rangeRequest);
+
+			version = versionRangeResult.getHighestVersion();
 		}
 		catch (Exception e) {
 		}
@@ -192,15 +195,15 @@ public class AetherClient {
 	private static final File _DEFAULT_GLOBAL_SETTINGS_FILE = new File(
 		System.getProperty("maven.home", System.getProperty("user.dir", "")), "conf/settings.xml");
 
+	private static final String[] _DEFAULT_REPO_URLS =
+		{"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"};
+
 	private static final String _USER_HOME = System.getProperty("user.home");
 
 	private static final File _USER_MAVEN_CONFIGURATION_HOME = new File(_USER_HOME, ".m2");
 
 	private static final File _USER_MAVEN_DEFAULT_USER_SETTINGS_FILE = new File(
 		_USER_MAVEN_CONFIGURATION_HOME, "settings.xml");
-
-	private static final String[] _defaultRepoUrls =
-		{"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"};
 
 	private final String _localRepositoryPath;
 	private final String[] _repoUrls;

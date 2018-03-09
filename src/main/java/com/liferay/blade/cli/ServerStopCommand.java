@@ -39,9 +39,13 @@ public class ServerStopCommand {
 	}
 
 	public void execute() throws Exception {
-		Path gradleWrapper = Util.getGradleWrapper(_blade.getBase()).toPath();
+		File gradleWrapperFile = Util.getGradleWrapper(_blade.getBase());
 
-		File rootDir = gradleWrapper.getParent().toFile();
+		Path gradleWrapperPath = gradleWrapperFile.toPath();
+
+		Path parent = gradleWrapperPath.getParent();
+
+		File rootDir = parent.toFile();
 
 		String serverType = null;
 
@@ -174,8 +178,9 @@ public class ServerStopCommand {
 			executable = "catalina.bat";
 		}
 
-		Process process = Util.startProcess(
-			_blade, executable + " stop 60 -force", dir.resolve("bin").toFile(), enviroment);
+		Path binPath = dir.resolve("bin");
+
+		Process process = Util.startProcess(_blade, executable + " stop 60 -force", binPath.toFile(), enviroment);
 
 		process.waitFor();
 	}

@@ -27,6 +27,7 @@ public class PropertyProblem implements Comparable<PropertyProblem> {
 
 	public PropertyProblem(String propertyName) {
 		_propertyName = propertyName;
+
 		_type = PropertyProblemType.MISSING;
 	}
 
@@ -58,7 +59,9 @@ public class PropertyProblem implements Comparable<PropertyProblem> {
 
 	@Override
 	public String toString() {
-		return _propertyName + " has been " + _type.toString().toLowerCase() + ".  " + _message;
+		String type = _type.toString();
+
+		return _propertyName + " has been " + type.toLowerCase() + ".  " + _message;
 	}
 
 	private String _message;

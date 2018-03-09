@@ -17,11 +17,13 @@
 package com.liferay.blade.cli;
 
 import java.io.IOException;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,6 +32,10 @@ import java.util.HashSet;
  * @author Christopher Bryan Boyd
  */
 public class SamplesVisitor extends SimpleFileVisitor<Path> {
+
+	public Collection<Path> getPaths() {
+		return Collections.unmodifiableCollection(_paths);
+	}
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -44,9 +50,6 @@ public class SamplesVisitor extends SimpleFileVisitor<Path> {
 		return FileVisitResult.CONTINUE;
 	}
 
-	public Collection<Path> getPaths() {
-		return Collections.unmodifiableCollection(_paths);
-	}
-
 	private final Collection<Path> _paths = new HashSet<>();
+
 }

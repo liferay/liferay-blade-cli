@@ -67,13 +67,17 @@ public class BladeCLI implements Runnable {
 		return _err;
 	}
 
+	public void err(String msg) {
+		_err.println(msg);
+	}
+
 	public void error(String error) {
-		err().println(error);
+		err(error);
 	}
 
 	public void error(String string, String name, String message) {
-		err().println(string + " [" + name + "]");
-		err().println(message);
+		err(string + " [" + name + "]");
+		err(message);
 	}
 
 	public File getBase() {
@@ -126,8 +130,21 @@ public class BladeCLI implements Runnable {
 		return _out;
 	}
 
+	public void out(String msg) {
+		out().println(msg);
+	}
+
 	public void outputs(OutputsCommandArgs args) throws Exception {
 		new OutputsCommand(this, args).execute();
+	}
+
+	public void printUsage(String command) {
+		_jcommander.usage(command);
+	}
+
+	public void printUsage(String command, String message) {
+		out(message);
+		_jcommander.usage(command);
 	}
 
 	@Override
@@ -223,15 +240,6 @@ public class BladeCLI implements Runnable {
 			error(e.getMessage());
 			e.printStackTrace(err());
 		}
-	}
-
-	public void printUsage(String command) {
-		_jcommander.usage(command);
-	}
-
-	public void printUsage(String command, String message) {
-		error(message);
-		_jcommander.usage(command);
 	}
 
 	public void run(String[] args) {

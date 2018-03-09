@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-
-<suppressions>
-	<suppress checks="BNDDefinitionKeysCheck" files="bnd.bnd" />
-	<suppress checks="CopyrightCheck" files="src/main/java/com/liferay/blade/cli/FileWatcher\.java" />
-</suppressions>

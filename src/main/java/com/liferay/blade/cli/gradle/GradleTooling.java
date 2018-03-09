@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import java.util.Set;
 
@@ -85,11 +86,13 @@ public class GradleTooling {
 
 			final String initScriptContents = initScriptTemplate.replaceFirst("%deps%", path);
 
-			File scriptFile = Files.createTempFile("blade", "init.gradle").toFile();
+			Path tempPath = Files.createTempFile("blade", "init.gradle");
 
-			IO.write(initScriptContents.getBytes(), scriptFile);
+			File tempFile = tempPath.toFile();
 
-			modelBuilder.withArguments("--init-script", scriptFile.getAbsolutePath());
+			IO.write(initScriptContents.getBytes(), tempFile);
+
+			modelBuilder.withArguments("--init-script", tempFile.getAbsolutePath());
 
 			retval = modelBuilder.get();
 		}

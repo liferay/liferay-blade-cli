@@ -351,7 +351,10 @@ public class BndProperties extends Properties {
 
 		if (header != null) {
 			writer.println("#" + header);
-			writer.println("#" + Calendar.getInstance().getTime());
+
+			Calendar calender = Calendar.getInstance();
+
+			writer.println("#" + calender.getTime());
 		}
 
 		// Reuse the same buffer	.
@@ -433,7 +436,8 @@ public class BndProperties extends Properties {
 					// case '=':
 					// case ':':
 
-					buffer.append('\\').append(c);
+					buffer.append('\\');
+					buffer.append(c);
 
 					break;
 				default:

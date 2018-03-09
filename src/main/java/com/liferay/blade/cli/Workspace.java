@@ -48,7 +48,7 @@ public class Workspace {
 
 	public static final String DEFAULT_WARS_DIR_PROPERTY = "liferay.workspace.wars.dir";
 
-	public static final Pattern PATTERN_WORKSPACE_PLUGIN = Pattern.compile(
+	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
 
 }

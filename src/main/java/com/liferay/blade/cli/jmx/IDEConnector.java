@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import java.net.MalformedURLException;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.management.MBeanServerConnection;
@@ -39,9 +40,12 @@ public class IDEConnector extends JMXLocalConnector {
 	public Object openDir(File dir) throws Exception {
 		final ObjectName workspaceHelper = _getWorkspaceHelper(mBeanServerConnection);
 
+		File absoluteDir = dir.getAbsoluteFile();
+
+		String absolutePath = absoluteDir.getAbsolutePath();
+
 		return mBeanServerConnection.invoke(
-			workspaceHelper, "openDir", new Object[] {dir.getAbsoluteFile().getAbsolutePath()},
-			new String[] {String.class.getName()});
+			workspaceHelper, "openDir", new Object[] {absolutePath}, new String[] {String.class.getName()});
 	}
 
 	private static ObjectName _getWorkspaceHelper(MBeanServerConnection mBeanServerConnection)
@@ -52,7 +56,9 @@ public class IDEConnector extends JMXLocalConnector {
 		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
 
 		if ((objectNames != null) && !objectNames.isEmpty()) {
-			return objectNames.iterator().next();
+			Iterator<ObjectName> iterator = objectNames.iterator();
+
+			return iterator.next();
 		}
 
 		return null;
