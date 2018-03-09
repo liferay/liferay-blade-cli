@@ -20,7 +20,6 @@ import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,27 +49,26 @@ public class CreateCommand {
 			_printTemplates();
 			return;
 		}
-		
-		if (Objects.equals(_args.getTemplate(), "fragment")) {
 
-			boolean isHostBundleBSNSpecified = _args.getHostBundleBSN() != null;
-			
-			boolean isHostBundleVersionSpecified = _args.getHostBundleVersion() != null;
-			
-			if (!isHostBundleBSNSpecified || !isHostBundleVersionSpecified) {
-				
-				StringBuilder errorMessageBuilder = new StringBuilder("\"-t fragment\" options missing:");
-				
-				if (!isHostBundleBSNSpecified) {
-					errorMessageBuilder.append(System.lineSeparator() + "Host Bundle BSN (\"-h\", \"--host-bundle-bsn\") is required.");
+		if (Objects.equals(_args.getTemplate(), "fragment")) {
+			boolean hasHostBundleBSN = _args.getHostBundleBSN() != null;
+
+			boolean hasHostBundleVersion = _args.getHostBundleVersion() != null;
+
+			if (!hasHostBundleBSN || !hasHostBundleVersion) {
+
+				StringBuilder sb = new StringBuilder("\"-t fragment\" options missing:");
+
+				if (!hasHostBundleBSN) {
+					sb.append(System.lineSeparator() + "Host Bundle BSN (\"-h\", \"--host-bundle-bsn\") is required.");
 				}
-				
-				if (!isHostBundleVersionSpecified) {
-					errorMessageBuilder.append(System.lineSeparator() + "Host Bundle Version (\"-H\", \"--host-bundle-version\") is required.");
+
+				if (!hasHostBundleVersion) {
+					sb.append(System.lineSeparator() + "Host Bundle Version (\"-H\", \"--host-bundle-version\") is required.");
 				}
-				
-				_blade.printUsage("create", errorMessageBuilder.toString());
-				
+
+				_blade.printUsage("create", sb.toString());
+
 				return;
 			}
 		}

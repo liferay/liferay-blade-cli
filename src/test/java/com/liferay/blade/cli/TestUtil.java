@@ -24,9 +24,8 @@ import java.io.UnsupportedEncodingException;
  * @author Christopher Bryan Boyd
  */
 public class TestUtil {
-	
+
 	public static String runBlade(String... args) throws UnsupportedEncodingException {
-		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		PrintStream ps = new PrintStream(baos);
