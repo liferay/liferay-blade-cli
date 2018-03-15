@@ -23,6 +23,7 @@ import aQute.bnd.osgi.Jar;
 import aQute.lib.io.IO;
 
 import com.liferay.project.templates.ProjectTemplates;
+import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,7 +41,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-
+import org.easymock.EasyMock;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.tooling.internal.consumer.ConnectorServices;
 
@@ -48,10 +49,16 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Gregory Amerson
  */
+@PrepareForTest(CreateCommand.class)
+@RunWith(PowerMockRunner.class)
 public class CreateCommandTest {
 
 	@After
@@ -1340,6 +1347,32 @@ public class CreateCommandTest {
 		Assert.assertEquals(1, StringUtils.countMatches(content, '{'));
 
 		Assert.assertEquals(1, StringUtils.countMatches(content, '}'));
+	}
+
+	@Test
+	public void testLiferayVersion() throws Exception {
+		String[] args = {"--base", "build/test/workspace", "create", "-v", "7.1", "foobar"};
+
+		ProjectTemplates projectTemplates = EasyMock.createNiceMock(ProjectTemplates.class);
+		
+		PowerMock.expectNew(ProjectTemplates.class, new Class<?>[] {ProjectTemplatesArgs.class}, EasyMock.anyObject()).andAnswer(
+			() -> {
+				
+			ProjectTemplatesArgs projectTemplatesArgs = (ProjectTemplatesArgs) EasyMock.getCurrentArguments()[0];
+			
+			Assert.assertEquals(projectTemplatesArgs.getLiferayVersion(), "7.1");
+			
+			return projectTemplates;
+			
+		}).once();
+		
+		PowerMock.replay(projectTemplates, ProjectTemplates.class);
+
+		String output = TestUtil.runBlade(args);
+		
+		System.out.println(output);
+		
+		PowerMock.verify(projectTemplates, ProjectTemplates.class);
 	}
 
 	@Test

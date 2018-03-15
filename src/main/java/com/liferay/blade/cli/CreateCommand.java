@@ -134,6 +134,7 @@ public class CreateCommand {
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 		projectTemplatesArgs.setHostBundleSymbolicName(_args.getHostBundleBSN());
 		projectTemplatesArgs.setHostBundleVersion(_args.getHostBundleVersion());
+		projectTemplatesArgs.setLiferayVersion(_args.getLiferayVersion());
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(_args.getPackageName());
 		projectTemplatesArgs.setService(_args.getService());
