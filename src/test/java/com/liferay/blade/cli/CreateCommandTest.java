@@ -23,7 +23,6 @@ import aQute.bnd.osgi.Jar;
 import aQute.lib.io.IO;
 
 import com.liferay.project.templates.ProjectTemplates;
-import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -41,7 +40,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.easymock.EasyMock;
+
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.tooling.internal.consumer.ConnectorServices;
 
@@ -49,16 +48,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Gregory Amerson
  */
-@PrepareForTest(CreateCommand.class)
-@RunWith(PowerMockRunner.class)
 public class CreateCommandTest {
 
 	@After
@@ -1351,28 +1344,26 @@ public class CreateCommandTest {
 
 	@Test
 	public void testLiferayVersion() throws Exception {
-		String[] args = {"--base", "build/test/workspace", "create", "-v", "7.1", "foobar"};
+		String[] sevenZeroArgs = {"--base", "build/test", "create", "-t", "npm-angular-portlet", "seven-zero"};
 
-		ProjectTemplates projectTemplates = EasyMock.createNiceMock(ProjectTemplates.class);
-		
-		PowerMock.expectNew(ProjectTemplates.class, new Class<?>[] {ProjectTemplatesArgs.class}, EasyMock.anyObject()).andAnswer(
-			() -> {
-				
-			ProjectTemplatesArgs projectTemplatesArgs = (ProjectTemplatesArgs) EasyMock.getCurrentArguments()[0];
-			
-			Assert.assertEquals(projectTemplatesArgs.getLiferayVersion(), "7.1");
-			
-			return projectTemplates;
-			
-		}).once();
-		
-		PowerMock.replay(projectTemplates, ProjectTemplates.class);
+		new BladeNoFail().run(sevenZeroArgs);
 
-		String output = TestUtil.runBlade(args);
-		
-		System.out.println(output);
-		
-		PowerMock.verify(projectTemplates, ProjectTemplates.class);
+		File npmbundlerrc = new File("build/test/seven-zero/build.gradle");
+
+		String content = new String(IO.read(npmbundlerrc));
+
+		Assert.assertFalse(content.contains("js.loader.modules.extender.api"));
+
+		String[] sevenOneArgs =
+			{"--base", "build/test", "create", "-t", "npm-angular-portlet", "-v", "7.1", "seven-one"};
+
+		new BladeNoFail().run(sevenOneArgs);
+
+		npmbundlerrc = new File("build/test/seven-one/build.gradle");
+
+		content = new String(IO.read(npmbundlerrc));
+
+		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
 	}
 
 	@Test
