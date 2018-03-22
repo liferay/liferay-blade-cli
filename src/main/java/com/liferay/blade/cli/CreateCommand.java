@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli;
 
+import com.beust.jcommander.ParameterException;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
@@ -50,6 +51,12 @@ public class CreateCommand {
 		if (_args.isListTemplates()) {
 			_printTemplates();
 			return;
+		}
+		
+		String template = _args.getTemplate();
+
+		if (template == null) {
+			throw new ParameterException("The following option is required: [-t | --template]");
 		}
 
 		if (Objects.equals(_args.getTemplate(), "fragment")) {
@@ -89,12 +96,7 @@ public class CreateCommand {
 			return;
 		}
 
-		String template = _args.getTemplate();
-
-		if (template == null) {
-			template = "mvc-portlet";
-		}
-		else if (!_isExistingTemplate(template)) {
+		if (!_isExistingTemplate(template)) {
 			_addError("Create", "The template " + template + " is not in the list");
 
 			return;

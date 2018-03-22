@@ -29,21 +29,9 @@ public class BladeNoFail extends BladeCLI {
 	}
 
 	public BladeNoFail(PrintStream out) throws UnsupportedEncodingException {
+		super();
 		_out = out;
 		_err = out;
 	}
-
-	@Override
-	public PrintStream err() {
-		return _err;
-	}
-
-	@Override
-	public PrintStream out() {
-		return _out;
-	}
-
-	private PrintStream _err;
-	private PrintStream _out;
 
 }
