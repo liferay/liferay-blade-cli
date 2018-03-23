@@ -358,13 +358,13 @@ public class BladeCLI implements Runnable {
 	public void serverStop(ServerStopCommandArgs args) throws Exception {
 		new ServerStopCommand(this, args).execute();
 	}
-
-	public void setOut(PrintStream printStream) {
-		_out = printStream;
-	}
 	
 	public void setErr(PrintStream printStream) {
 		_err = printStream;
+	}
+
+	public void setOut(PrintStream printStream) {
+		_out = printStream;
 	}
 
 	public void sh(ShellCommandArgs args) throws Exception {
