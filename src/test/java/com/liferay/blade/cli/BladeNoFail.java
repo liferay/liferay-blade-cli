@@ -30,8 +30,8 @@ public class BladeNoFail extends BladeCLI {
 
 	public BladeNoFail(PrintStream out) throws UnsupportedEncodingException {
 		super();
-		_out = out;
-		_err = out;
+		setOut(out);
+		setErr(out);
 	}
 
 }
