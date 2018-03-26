@@ -117,7 +117,7 @@ public class CreateCommandArgs extends BaseArgs {
 	@Parameter(description = "The project name")
 	private String _name;
 
-	@Parameter(names = {"-p", "--package-name"})
+	@Parameter(description = "The Java package to use when generating Java source.", names = {"-p", "--package-name"})
 	private String _packageName;
 
 	@Parameter(

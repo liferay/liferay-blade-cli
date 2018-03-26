@@ -140,29 +140,32 @@ public class BladeCLI implements Runnable {
 		new OutputsCommand(this, args).execute();
 	}
 
+	public void printUsage() {
+		StringBuilder usageString = new StringBuilder();
+
+		_jcommander.usage(usageString);
+
+		try (Scanner scanner = new Scanner(usageString.toString())) {
+			StringBuilder simplifiedUsageString = new StringBuilder();
+
+			while (scanner.hasNextLine()) {
+				String oneLine = scanner.nextLine();
+
+				if (!oneLine.startsWith("          ") && !oneLine.contains("Options:")) {
+					simplifiedUsageString.append(oneLine + System.lineSeparator());
+				}
+			}
+
+			String output = simplifiedUsageString.toString();
+
+			out(output);
+		}
+	}
+
 	public void printUsage(String command) {
 		_jcommander.usage(command);
 	}
 
-	public void printUsage() {
-		StringBuilder stringBuilder = new StringBuilder();
-		StringBuilder updatedStringBuilder = new StringBuilder();
-		_jcommander.usage(stringBuilder);
-		try (Scanner scanner = new Scanner(stringBuilder.toString())) {
-			while (scanner.hasNextLine()) {
-				String oneLine = scanner.nextLine();
-				if (!oneLine.startsWith("          ") && !oneLine.contains("Options:")) {
-					updatedStringBuilder.append(oneLine + System.lineSeparator());
-				}
-			}
-		}
-		String output = updatedStringBuilder.toString();
-		
-		output = output.replace("\n\n\n", "\n\n");
-		
-		out(output);
-	}
-	
 	public void printUsage(String command, String message) {
 		out(message);
 		_jcommander.usage(command);
@@ -172,9 +175,10 @@ public class BladeCLI implements Runnable {
 	public void run() {
 		try {
 			if (_commandArgs.isHelp()) {
-				if (Objects.isNull(_command) || _command.length() == 0) {
-					printUsage();	
-				} else {
+				if (Objects.isNull(_command) || (_command.length() == 0)) {
+					printUsage();
+				}
+				else {
 					printUsage(_command);
 				}
 			}
@@ -297,7 +301,6 @@ public class BladeCLI implements Runnable {
 			printUsage();
 		}
 		else {
-
 			try {
 				_jcommander.parse(args);
 

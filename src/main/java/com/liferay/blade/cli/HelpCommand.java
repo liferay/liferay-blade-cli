@@ -32,7 +32,7 @@ public class HelpCommand {
 		String commandName = _args.getName();
 
 		if (Objects.nonNull(commandName) && (commandName.length() > 0)) {
-			_blade.printUsage(commandName);			
+			_blade.printUsage(commandName);
 		}
 		else {
 			_blade.printUsage();
