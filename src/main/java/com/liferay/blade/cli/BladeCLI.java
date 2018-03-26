@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
 
 /**
  * @author Gregory Amerson
@@ -138,6 +140,28 @@ public class BladeCLI implements Runnable {
 		new OutputsCommand(this, args).execute();
 	}
 
+	public void printUsage() {
+		StringBuilder usageString = new StringBuilder();
+
+		_jcommander.usage(usageString);
+
+		try (Scanner scanner = new Scanner(usageString.toString())) {
+			StringBuilder simplifiedUsageString = new StringBuilder();
+
+			while (scanner.hasNextLine()) {
+				String oneLine = scanner.nextLine();
+
+				if (!oneLine.startsWith("          ") && !oneLine.contains("Options:")) {
+					simplifiedUsageString.append(oneLine + System.lineSeparator());
+				}
+			}
+
+			String output = simplifiedUsageString.toString();
+
+			out(output);
+		}
+	}
+
 	public void printUsage(String command) {
 		_jcommander.usage(command);
 	}
@@ -151,7 +175,12 @@ public class BladeCLI implements Runnable {
 	public void run() {
 		try {
 			if (_commandArgs.isHelp()) {
-				_jcommander.usage();
+				if (Objects.isNull(_command) || (_command.length() == 0)) {
+					printUsage();
+				}
+				else {
+					printUsage(_command);
+				}
 			}
 			else {
 				switch (_command) {
@@ -266,25 +295,23 @@ public class BladeCLI implements Runnable {
 			builder.addCommand(o);
 		}
 
-		JCommander commander = builder.build();
+		_jcommander = builder.build();
 
 		if ((args.length == 1) && args[0].equals("--help")) {
-			commander.usage();
+			printUsage();
 		}
 		else {
-			_jcommander = commander;
-
 			try {
-				commander.parse(args);
+				_jcommander.parse(args);
 
-				String command = commander.getParsedCommand();
+				String command = _jcommander.getParsedCommand();
 
-				Map<String, JCommander> commands = commander.getCommands();
+				Map<String, JCommander> commands = _jcommander.getCommands();
 
 				JCommander jcommander = commands.get(command);
 
 				if (jcommander == null) {
-					commander.usage();
+					printUsage();
 					return;
 				}
 
@@ -308,7 +335,7 @@ public class BladeCLI implements Runnable {
 				}
 
 				error(stringBuilder.toString());
-				commander.usage();
+				printUsage();
 			}
 		}
 	}
