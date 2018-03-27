@@ -16,7 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.beust.jcommander.ParameterException;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
@@ -52,11 +51,13 @@ public class CreateCommand {
 			_printTemplates();
 			return;
 		}
-		
+
 		String template = _args.getTemplate();
 
 		if (template == null) {
-			throw new ParameterException("The following option is required: [-t | --template]");
+			_blade.err("The following option is required: [-t | --template]\n");
+			_printTemplates();
+			return;
 		}
 
 		if (Objects.equals(_args.getTemplate(), "fragment")) {
@@ -277,6 +278,8 @@ public class CreateCommand {
 	}
 
 	private void _printTemplates() throws Exception {
+		_blade.out("Available project templates:\n");
+
 		Map<String, String> templates = ProjectTemplates.getTemplates();
 
 		List<String> templateNames = new ArrayList<>(templates.keySet());
