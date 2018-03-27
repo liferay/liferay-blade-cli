@@ -55,8 +55,11 @@ public class CreateCommand {
 		String template = _args.getTemplate();
 
 		if (template == null) {
-			_blade.err("The following option is required: [-t | --template]\n");
+			_blade.err("The following option is required: [-t | --template]\n\n");
+			_blade.err("Availble project templates:\n\n");
+
 			_printTemplates();
+
 			return;
 		}
 
@@ -279,8 +282,6 @@ public class CreateCommand {
 	}
 
 	private void _printTemplates() throws Exception {
-		_blade.out("Available project templates:\n");
-
 		Map<String, String> templates = ProjectTemplates.getTemplates();
 
 		List<String> templateNames = new ArrayList<>(templates.keySet());
