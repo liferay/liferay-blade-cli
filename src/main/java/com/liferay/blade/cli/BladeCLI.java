@@ -47,6 +47,12 @@ public class BladeCLI implements Runnable {
 	}
 
 	public BladeCLI() {
+		this(System.out, System.err);
+	}
+
+	public BladeCLI(PrintStream out, PrintStream err) {
+		_out = out;
+		_err = err;
 	}
 
 	public void addErrors(String prefix, Collection<String> data) {
@@ -266,8 +272,8 @@ public class BladeCLI implements Runnable {
 				}
 			}
 		}
-		catch (ParameterException e) {
-			throw e;
+		catch (ParameterException pe) {
+			throw pe;
 		}
 		catch (Exception e) {
 			error(e.getMessage());
@@ -342,7 +348,7 @@ public class BladeCLI implements Runnable {
 				printUsage();
 			}
 			catch (ParameterException pe) {
-				error(pe.getClass().getName() + ": " + pe.getMessage());
+				error(_jcommander.getParsedCommand() + ": " + pe.getMessage());
 			}
 		}
 	}
@@ -357,14 +363,6 @@ public class BladeCLI implements Runnable {
 
 	public void serverStop(ServerStopCommandArgs args) throws Exception {
 		new ServerStopCommand(this, args).execute();
-	}
-	
-	public void setErr(PrintStream printStream) {
-		_err = printStream;
-	}
-
-	public void setOut(PrintStream printStream) {
-		_out = printStream;
 	}
 
 	public void sh(ShellCommandArgs args) throws Exception {
@@ -415,13 +413,13 @@ public class BladeCLI implements Runnable {
 
 		flags.addAll(addLast);
 	}
-	
+
 	private static final Formatter _tracer = new Formatter(System.out);
 
 	private String _command;
 	private BaseArgs _commandArgs;
-	private PrintStream _err = System.err;
+	private final PrintStream _err;
 	private JCommander _jcommander;
-	private PrintStream _out = System.out;
+	private final PrintStream _out;
 
 }
