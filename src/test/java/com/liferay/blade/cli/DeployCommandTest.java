@@ -189,7 +189,7 @@ public class DeployCommandTest {
 
 		PowerMock.verifyAll();
 
-		Assert.assertTrue(content.contains(String.format("Installed bundle %s", atomicLong.get())));
+		Assert.assertTrue(content.contains(String.format("Deployed bundle %s", atomicLong.get())));
 	}
 
 	@Test

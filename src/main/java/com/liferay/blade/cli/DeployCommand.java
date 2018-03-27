@@ -211,7 +211,7 @@ public class DeployCommand {
 		if ((fragmentHost != null) && (hostId > 0)) {
 			client.refresh(hostId);
 
-			out.println("Installed fragment bundle " + existingId);
+			out.println("Deployed fragment bundle " + existingId);
 		}
 		else {
 			long checkedExistingId = client.getBundleId(bsn.getKey());
@@ -224,15 +224,15 @@ public class DeployCommand {
 					if (checkedExistingId > 1) {
 						client.start(checkedExistingId);
 
-						out.println("Installed bundle " + existingId);
+						out.println("Deployed bundle " + existingId);
 					}
 					else {
-						out.println("Error: Bundle failed to install: " + bsn);
+						out.println("Error: Bundle failed to deploy: " + bsn);
 					}
 				}
 			}
 			catch (Exception e) {
-				out.println("Error: Bundle failed to install: " + bsn);
+				out.println("Error: Bundle failed to deploy: " + bsn);
 				e.printStackTrace(out);
 			}
 		}
