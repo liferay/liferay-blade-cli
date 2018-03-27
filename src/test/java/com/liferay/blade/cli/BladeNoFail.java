@@ -25,25 +25,11 @@ import java.io.UnsupportedEncodingException;
 public class BladeNoFail extends BladeCLI {
 
 	public BladeNoFail() throws UnsupportedEncodingException {
-		this(System.out);
+		super(System.out, System.out);
 	}
 
-	public BladeNoFail(PrintStream out) throws UnsupportedEncodingException {
-		_out = out;
-		_err = out;
+	public BladeNoFail(PrintStream ps) {
+		super(ps, ps);
 	}
-
-	@Override
-	public PrintStream err() {
-		return _err;
-	}
-
-	@Override
-	public PrintStream out() {
-		return _out;
-	}
-
-	private PrintStream _err;
-	private PrintStream _out;
 
 }

@@ -52,6 +52,14 @@ public class CreateCommand {
 			return;
 		}
 
+		String template = _args.getTemplate();
+
+		if (template == null) {
+			_blade.err("The following option is required: [-t | --template]\n");
+			_printTemplates();
+			return;
+		}
+
 		if (Objects.equals(_args.getTemplate(), "fragment")) {
 			boolean hasHostBundleBSN = false;
 
@@ -89,12 +97,7 @@ public class CreateCommand {
 			return;
 		}
 
-		String template = _args.getTemplate();
-
-		if (template == null) {
-			template = "mvc-portlet";
-		}
-		else if (!_isExistingTemplate(template)) {
+		if (!_isExistingTemplate(template)) {
 			_addError("Create", "The template " + template + " is not in the list");
 
 			return;
@@ -275,6 +278,8 @@ public class CreateCommand {
 	}
 
 	private void _printTemplates() throws Exception {
+		_blade.out("Available project templates:\n");
+
 		Map<String, String> templates = ProjectTemplates.getTemplates();
 
 		List<String> templateNames = new ArrayList<>(templates.keySet());

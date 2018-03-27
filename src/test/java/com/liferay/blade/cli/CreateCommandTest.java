@@ -566,7 +566,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleSymbolicName() throws Exception {
-		String[] args = {"create", "-d", "build/test", "-p", "foo.bar", "barfoo"};
+		String[] args = {"create", "-t", "mvc-portlet", "-d", "build/test", "-p", "foo.bar", "barfoo"};
 
 		new BladeNoFail().run(args);
 
@@ -583,6 +583,17 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo.bar-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath + "/build/libs/foo.bar-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateMissingArgument() throws Exception {
+		String[] args = {"create", "foobar"};
+
+		String content = TestUtil.runBlade(args);
+
+		boolean containsError = content.contains("The following option is required");
+
+		Assert.assertTrue(containsError);
 	}
 
 	@Test
@@ -726,7 +737,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateProjectAllDefaults() throws Exception {
-		String[] args = {"create", "-d", "build/test", "hello-world-portlet"};
+		String[] args = {"create", "-d", "build/test", "-t", "mvc-portlet", "hello-world-portlet"};
 
 		new BladeNoFail().run(args);
 
@@ -760,7 +771,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateProjectWithRefresh() throws Exception {
-		String[] args = {"create", "-d", "build/test", "hello-world-refresh"};
+		String[] args = {"create", "-d", "build/test", "-t", "mvc-portlet", "hello-world-refresh"};
 
 		new BladeNoFail().run(args);
 
@@ -1185,7 +1196,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceModuleLocation() throws Exception {
-		String[] args = {"--base", "build/test/workspace", "create", "foo"};
+		String[] args = {"--base", "build/test/workspace", "create", "-t", "mvc-portlet", "foo"};
 
 		File workspace = new File("build/test/workspace");
 
@@ -1218,7 +1229,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceProjectAllDefaults() throws Exception {
-		String[] args = {"create", "-d", "build/test/workspace/modules/apps", "foo"};
+		String[] args = {"create", "-d", "build/test/workspace/modules/apps", "-t", "mvc-portlet", "foo"};
 
 		File workspace = new File("build/test/workspace");
 
@@ -1251,7 +1262,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceProjectWithRefresh() throws Exception {
-		String[] args = {"create", "-d", "build/test/workspace/modules/apps", "foo-refresh"};
+		String[] args = {"create", "-d", "build/test/workspace/modules/apps", "-t", "mvc-portlet", "foo-refresh"};
 
 		File workspace = new File("build/test/workspace");
 

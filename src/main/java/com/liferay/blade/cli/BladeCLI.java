@@ -19,6 +19,7 @@ package com.liferay.blade.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
+import com.beust.jcommander.ParameterException;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -46,6 +47,12 @@ public class BladeCLI implements Runnable {
 	}
 
 	public BladeCLI() {
+		this(System.out, System.err);
+	}
+
+	public BladeCLI(PrintStream out, PrintStream err) {
+		_out = out;
+		_err = err;
 	}
 
 	public void addErrors(String prefix, Collection<String> data) {
@@ -265,6 +272,9 @@ public class BladeCLI implements Runnable {
 				}
 			}
 		}
+		catch (ParameterException pe) {
+			throw pe;
+		}
 		catch (Exception e) {
 			error(e.getMessage());
 			e.printStackTrace(err());
@@ -337,6 +347,9 @@ public class BladeCLI implements Runnable {
 				error(stringBuilder.toString());
 				printUsage();
 			}
+			catch (ParameterException pe) {
+				error(_jcommander.getParsedCommand() + ": " + pe.getMessage());
+			}
 		}
 	}
 
@@ -405,8 +418,8 @@ public class BladeCLI implements Runnable {
 
 	private String _command;
 	private BaseArgs _commandArgs;
-	private PrintStream _err = System.err;
+	private final PrintStream _err;
 	private JCommander _jcommander;
-	private PrintStream _out = System.out;
+	private final PrintStream _out;
 
 }
