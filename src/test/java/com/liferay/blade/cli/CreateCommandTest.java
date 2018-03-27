@@ -235,18 +235,6 @@ public class CreateCommandTest {
 
 		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
 	}
-	
-	@Test
-	public void testCreateMissingArgument() throws Exception {
-
-		String[] args = {"create", "foobar"};
-
-		String content = TestUtil.runBlade(args);
-		
-		boolean containsError = content.contains("The following option is required");
-		
-		Assert.assertTrue(containsError);
-	}
 
 	@Test
 	public void testCreateGradleMVCPortletProjectWithPackage() throws Exception {
@@ -595,6 +583,17 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo.bar-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath + "/build/libs/foo.bar-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateMissingArgument() throws Exception {
+		String[] args = {"create", "foobar"};
+
+		String content = TestUtil.runBlade(args);
+
+		boolean containsError = content.contains("The following option is required");
+
+		Assert.assertTrue(containsError);
 	}
 
 	@Test
