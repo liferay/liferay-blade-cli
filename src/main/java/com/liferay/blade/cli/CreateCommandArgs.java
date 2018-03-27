@@ -54,6 +54,10 @@ public class CreateCommandArgs extends BaseArgs {
 		return _hostBundleVersion;
 	}
 
+	public String getLiferayVersion() {
+		return _liferayVersion;
+	}
+
 	public String getName() {
 		return _name;
 	}
@@ -110,6 +114,11 @@ public class CreateCommandArgs extends BaseArgs {
 		names = {"-H", "--host-bundle-version"}
 	)
 	private String _hostBundleVersion;
+
+	@Parameter(
+		description = "The version of Liferay to target when creating the project.", names = {"-v", "--liferay-version"}
+	)
+	private String _liferayVersion = "7.0";
 
 	@Parameter(description = "Prints a list of available project templates", names = {"-l", "--list-templates"})
 	private boolean _listTemplates;

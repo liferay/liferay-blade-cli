@@ -1343,6 +1343,30 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testLiferayVersion() throws Exception {
+		String[] sevenZeroArgs = {"--base", "build/test", "create", "-t", "npm-angular-portlet", "seven-zero"};
+
+		new BladeNoFail().run(sevenZeroArgs);
+
+		File npmbundlerrc = new File("build/test/seven-zero/build.gradle");
+
+		String content = new String(IO.read(npmbundlerrc));
+
+		Assert.assertFalse(content.contains("js.loader.modules.extender.api"));
+
+		String[] sevenOneArgs =
+			{"--base", "build/test", "create", "-t", "npm-angular-portlet", "-v", "7.1", "seven-one"};
+
+		new BladeNoFail().run(sevenOneArgs);
+
+		npmbundlerrc = new File("build/test/seven-one/build.gradle");
+
+		content = new String(IO.read(npmbundlerrc));
+
+		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
+	}
+
+	@Test
 	public void testListTemplates() throws Exception {
 		String[] args = {"create", "-l"};
 
