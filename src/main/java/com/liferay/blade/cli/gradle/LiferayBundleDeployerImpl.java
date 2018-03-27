@@ -139,9 +139,11 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 		String[] lines = _parseGogoResponse(response);
 
-		Stream<String> stream = Stream.of(lines).skip(3);
+		Stream<String> stream = Stream.of(lines);
 
-		return stream.map(
+		return stream.skip(
+			3
+		).map(
 			LiferayBundleDeployerImpl::_parseGogoLine
 		).collect(
 			Collectors.toList()
