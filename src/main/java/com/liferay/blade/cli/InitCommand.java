@@ -105,16 +105,20 @@ public class InitCommand {
 
 				_moveContentsToDirectory(destDir, temp);
 			}
-			else if (destDir.list().length > 0) {
-				if (_args.isForce()) {
-					_trace("Files found, continuing init.");
-				}
-				else {
-					_addError(
-						destDir.getAbsolutePath() +
-							" contains files, please move them before continuing or use -f (--force) option to init " +
-								"workspace.");
-					return;
+			else {
+				String[] files = destDir.list();
+
+				if ((files != null) && (files.length > 0)) {
+					if (_args.isForce()) {
+						_trace("Files found, continuing init.");
+					}
+					else {
+						_addError(
+							destDir.getAbsolutePath() +
+								" contains files, please move them before continuing or use -f (--force) option to " +
+									"init workspace.");
+						return;
+					}
 				}
 			}
 		}
