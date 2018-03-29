@@ -134,6 +134,7 @@ public class InitCommand {
 		}
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
+		projectTemplatesArgs.setLiferayVersion(_args.getLiferayVersion());
 		projectTemplatesArgs.setMaven(mavenBuild);
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setTemplate("workspace");
