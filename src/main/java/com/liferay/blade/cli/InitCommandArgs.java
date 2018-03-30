@@ -29,6 +29,10 @@ public class InitCommandArgs extends BaseArgs {
 		return _build;
 	}
 
+	public String getLiferayVersion() {
+		return _liferayVersion;
+	}
+
 	public String getName() {
 		return _name;
 	}
@@ -53,6 +57,12 @@ public class InitCommandArgs extends BaseArgs {
 
 	@Parameter(description = "create anyway if there are files located at target folder", names = {"-f", "--force"})
 	private boolean _force;
+
+	@Parameter(
+		description = "The version of Liferay to target when init the workspace. Available options are 7.0, 7.1. (default 7.0)",
+		names = {"-v", "--liferay-version"}
+	)
+	private String _liferayVersion = "7.0";
 
 	@Parameter(description = "[name]")
 	private String _name;

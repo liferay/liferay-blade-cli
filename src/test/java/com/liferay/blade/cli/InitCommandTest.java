@@ -200,6 +200,39 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testInitWithLiferayVersion70() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", "7.0"};
+
+		new BladeNoFail().run(args);
+
+		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
+
+		Assert.assertTrue(contents, contents.contains("7.0.4-ga5"));
+	}
+
+	@Test
+	public void testInitWithLiferayVersion71() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", "7.1"};
+
+		new BladeNoFail().run(args);
+
+		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
+
+		Assert.assertTrue(contents, contents.contains("7.1.0-m1"));
+	}
+
+	@Test
+	public void testInitWithLiferayVersionDefault() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init"};
+
+		new BladeNoFail().run(args);
+
+		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
+
+		Assert.assertTrue(contents, contents.contains("7.0.4-ga5"));
+	}
+
+	@Test
 	public void testInitWithNameWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "newproject"};
 
