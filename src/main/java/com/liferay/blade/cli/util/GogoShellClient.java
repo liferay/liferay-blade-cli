@@ -1,20 +1,18 @@
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.util;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -26,19 +24,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * java client for telnet handshake
+ * Java client for Telnet handshake.
  *
- * reference: http://www.laynetworks.com/telnet.htm
+ * <p>
+ * Reference: http://www.laynetworks.com/telnet.htm
+ * </p>
  *
  * @author Gregory Amerson
  */
-public class GogoTelnetClient implements AutoCloseable {
+public class GogoShellClient implements AutoCloseable {
 
-	public GogoTelnetClient() throws IOException {
+	public GogoShellClient() throws IOException {
 		this("localhost", 11311);
 	}
 
-	public GogoTelnetClient(String host, int port) throws IOException {
+	public GogoShellClient(String host, int port) throws IOException {
 		_socket = new Socket(host, port);
 
 		_inputStream = new DataInputStream(_socket.getInputStream());
@@ -51,6 +51,7 @@ public class GogoTelnetClient implements AutoCloseable {
 	public void close() {
 		try {
 			_socket.close();
+
 			_inputStream.close();
 			_outputStream.close();
 		}
@@ -75,48 +76,50 @@ public class GogoTelnetClient implements AutoCloseable {
 		return _readUntilNextGogoPrompt();
 	}
 
-	private static void _assertCond(boolean condition) {
+	private static void _assertCondition(boolean condition) {
 		if (!condition) {
 			throw new AssertionError();
 		}
 	}
 
 	private static int[] _toIntArray(List<Integer> list) {
-		int[] ret = new int[list.size()];
+		int[] array = new int[list.size()];
+
 		int i = 0;
 
-		for (Integer e : list) {
-			ret[i++] = e.intValue();
+		for (Integer integer : list) {
+			array[i++] = integer.intValue();
 		}
 
-		return ret;
+		return array;
 	}
 
 	private void _handshake() throws IOException {
 
-		// gogo server first sends 4 commands
+		// Gogo server first sends 4 commands
 
 		_readOneCommand();
 		_readOneCommand();
 		_readOneCommand();
 		_readOneCommand();
 
-		// first we negotiate terminal type
+		// First we negotiate the terminal type:
 		// 255(IAC),251(WILL),24(terminal type)
 
 		_sendCommand(255, 251, 24);
 
-		// server should respond
+		// Server should respond:
 		// 255(IAC),250(SB),24,1,255(IAC),240(SE)
 
 		_readOneCommand();
 
-		// send the terminal type
+		// Send the terminal type:
 
 		//255(IAC),250(SB),24,0,'V','T','2','2','0',255(IAC),240(SE)
+
 		_sendCommand(255, 250, 24, 0, 'V', 'T', '2', '2', '0', 255, 240);
 
-		// read gogo shell prompt
+		// Read Gogo shell prompt
 
 		_readUntilNextGogoPrompt();
 	}
@@ -126,7 +129,7 @@ public class GogoTelnetClient implements AutoCloseable {
 
 		int iac = _inputStream.read();
 
-		_assertCond(iac == 255);
+		_assertCondition(iac == 255);
 
 		bytes.add(iac);
 
@@ -134,14 +137,18 @@ public class GogoTelnetClient implements AutoCloseable {
 
 		bytes.add(second);
 
+		// SB
+
 		if (second == 250) {
-			int option = _inputStream.read(); // SB
+			int option = _inputStream.read();
 
 			bytes.add(option);
 
-			int code = _inputStream.read(); // 1 or 0
+			// 1 or 0
 
-			_assertCond(code == 0 || code == 1);
+			int code = _inputStream.read();
+
+			_assertCondition(code == 0 || code == 1);
 
 			bytes.add(code);
 
@@ -151,13 +158,15 @@ public class GogoTelnetClient implements AutoCloseable {
 			else if (code == 1) {
 				iac = _inputStream.read();
 
-				_assertCond(iac == 255);
+				_assertCondition(iac == 255);
 
 				bytes.add(iac);
 
-				int se = _inputStream.read(); // SE
+				// SE
 
-				_assertCond(se == 240);
+				int se = _inputStream.read();
+
+				_assertCondition(se == 240);
 
 				bytes.add(se);
 			}
@@ -177,10 +186,14 @@ public class GogoTelnetClient implements AutoCloseable {
 		while (c != -1) {
 			sb.append((char)c);
 
-			String string = sb.toString();
+			int length = sb.length();
 
-			if (string.endsWith("g! ")) {
-				break;
+			if (length > 2) {
+				String string = sb.substring(length - 3, length);
+
+				if (string.equals("g! ")) {
+					break;
+				}
 			}
 
 			c = _inputStream.read();

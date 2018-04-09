@@ -16,19 +16,16 @@
 
 package com.liferay.blade.cli.gradle;
 
-import com.liferay.blade.cli.GogoTelnetClient;
 import com.liferay.blade.cli.LiferayBundleDeployer;
+import com.liferay.blade.cli.util.GogoShellClient;
 
 import java.io.IOException;
-
 import java.net.URI;
-
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +44,7 @@ import org.osgi.framework.dto.BundleDTO;
 public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 	public LiferayBundleDeployerImpl(final String host, final int port) throws IOException {
-		_client = new GogoTelnetClient(host, port);
+		_client = new GogoShellClient(host, port);
 	}
 
 	@Override
@@ -134,7 +131,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		_sendGogo(String.format("update %s %s", id, uri.toASCIIString()));
 	}
 
-	private static List<BundleDTO> _getBundles(GogoTelnetClient client) throws IOException {
+	private static List<BundleDTO> _getBundles(GogoShellClient client) throws IOException {
 		String response = client.send("lb -s -u");
 
 		String[] lines = _parseGogoResponse(response);
@@ -234,6 +231,6 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 	private static final Pattern _installResponse = Pattern.compile(
 		".*Bundle ID: (.*$).*", Pattern.DOTALL | Pattern.MULTILINE);
 
-	private GogoTelnetClient _client;
+	private GogoShellClient _client;
 
 }

@@ -16,6 +16,8 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.util.GogoShellClient;
+
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,13 +52,11 @@ public class ShellCommand {
 	}
 
 	private void _executeCommand(String cmd) throws Exception {
-		final GogoTelnetClient telnetClient = new GogoTelnetClient(_host, _port);
+		try (final GogoShellClient client = new GogoShellClient(_host, _port)) {
+			String response = client.send(cmd);
 
-		String response = telnetClient.send(cmd);
-
-		_blade.out(response);
-
-		telnetClient.close();
+			_blade.out(response);
+		}
 	}
 
 	private final BladeCLI _blade;

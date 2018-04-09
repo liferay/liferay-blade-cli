@@ -16,8 +16,9 @@
 
 package com.liferay.blade.cli;
 
-import java.io.File;
+import com.liferay.blade.cli.util.GogoShellClient;
 
+import java.io.File;
 import java.util.Collections;
 
 /**
@@ -55,7 +56,7 @@ public class InstallCommand {
 			return;
 		}
 
-		try (GogoTelnetClient client = new GogoTelnetClient(_host, _port)) {
+		try (GogoShellClient client = new GogoShellClient(_host, _port)) {
 			String response = client.send("install " + bundleFile.toURI());
 
 			_blade.out(response);
