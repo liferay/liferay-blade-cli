@@ -35,14 +35,15 @@ public class AnsiLinePrinter {
 	public static void println(PrintStream printStream, String line) {
 		AtomicBoolean printed = new AtomicBoolean(false);
 
-		Consumer<? super Ansi> printer = ansi -> {
+		Consumer<? super Ansi> println = ansi -> {
 			printed.set(true);
 			printStream.println(ansi);
 		};
 
-		_print(_BRIGHT_RED_LINE_PATTERNS, line, _toAnsiColor(Ansi::fgBrightRed), printer);
-		_print(_YELLOW_LINE_PATTERNS, line, _toAnsiColor(Ansi::fgYellow), printer);
-		_print(_GREEN_LINE_PATTERNS, line, _toAnsiColor(Ansi::fgGreen), printer);
+		_print(_BRIGHT_RED_LINE_PATTERNS, line, _toAnsiColor(Ansi::fgBrightRed), println);
+		_print(_BRIGHT_GREEN_LINE_PATTERNS, line, _toAnsiColor(Ansi::fgBrightGreen), println);
+		_print(_YELLOW_LINE_PATTERNS, line, _toAnsiColor(Ansi::fgYellow), println);
+		_print(_GREEN_LINE_PATTERNS, line, _toAnsiColor(Ansi::fgGreen), println);
 
 		if (!printed.get()) {
 			printStream.println(line);
@@ -51,7 +52,7 @@ public class AnsiLinePrinter {
 
 	private static void _print(
 		Pattern[] patterns, String line, Function<? super String, ? extends Ansi> toAnsi,
-		Consumer<? super Ansi> printer) {
+		Consumer<? super Ansi> println) {
 
 		Stream.of(
 			patterns
@@ -65,13 +66,15 @@ public class AnsiLinePrinter {
 		).map(
 			toAnsi
 		).ifPresent(
-			printer
+			println
 		);
 	}
 
 	private static Function<? super String, ? extends Ansi> _toAnsiColor(Function<Ansi, Ansi> colorizer) {
 		return line -> colorizer.apply(Ansi.ansi()).a(line).reset();
 	}
+
+	private static final Pattern[] _BRIGHT_GREEN_LINE_PATTERNS = {Pattern.compile(".*STOPPED.*")};
 
 	private static final Pattern[] _BRIGHT_RED_LINE_PATTERNS =
 		{Pattern.compile("^Error.*"), Pattern.compile(".*ERROR.*"), Pattern.compile(".*FATAL.*")};
