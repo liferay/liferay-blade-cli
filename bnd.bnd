@@ -181,6 +181,7 @@ aether-deps:\
 
 -includeresource:\
 	@com.liferay.project.templates-*.jar,\
+	@jansi-*.jar,\
 	deps.zip,\
 	wrapper.zip,\
 	mvnw.cmd

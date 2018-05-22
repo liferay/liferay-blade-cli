@@ -195,7 +195,7 @@ public class ServerStartCommand {
 
 		Path binPath = dir.resolve("bin");
 
-		Process process = Util.startProcess(_blade, executable + debug, binPath.toFile(), enviroment);
+		Process process = Util.startProcess(_blade, executable + debug, binPath.toFile(), enviroment, false);
 
 		process.waitFor();
 	}
@@ -234,7 +234,7 @@ public class ServerStartCommand {
 
 		Path binPath = dir.resolve("bin");
 
-		final Process process = Util.startProcess(_blade, executable + startCommand, binPath.toFile(), enviroment);
+		final Process process = Util.startProcess(_blade, executable + startCommand, binPath.toFile(), enviroment, false);
 
 		Runtime runtime = Runtime.getRuntime();
 

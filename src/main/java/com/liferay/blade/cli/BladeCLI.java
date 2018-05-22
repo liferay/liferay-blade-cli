@@ -20,6 +20,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -51,6 +52,8 @@ public class BladeCLI implements Runnable {
 	}
 
 	public BladeCLI(PrintStream out, PrintStream err) {
+		AnsiConsole.systemInstall();
+
 		_out = out;
 		_err = err;
 	}
