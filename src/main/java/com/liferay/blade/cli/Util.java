@@ -22,6 +22,8 @@ import aQute.bnd.osgi.Resource;
 
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.util.AnsiLinePrinter;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -301,22 +303,22 @@ public class Util {
 		return new String(Files.readAllBytes(file.toPath()));
 	}
 
-	public static void readProcessStream(final InputStream is, final PrintStream ps) {
+	public static void readProcessStream(final InputStream inputStream, final PrintStream printStream) {
 		Thread t = new Thread(
 			new Runnable() {
 
 				@Override
 				public void run() {
-					try (InputStreamReader isr = new InputStreamReader(is);
+					try (InputStreamReader isr = new InputStreamReader(inputStream);
 						BufferedReader br = new BufferedReader(isr)) {
 
 						String line = null;
 
 						while ((line = br.readLine()) != null) {
-							ps.println(line);
+							AnsiLinePrinter.println(printStream, line);
 						}
 
-						is.close();
+						inputStream.close();
 					}
 					catch (IOException ioe) {
 						ioe.printStackTrace();

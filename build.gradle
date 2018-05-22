@@ -44,6 +44,7 @@ dependencies {
 	compile group: "org.eclipse.aether", name: "aether-transport-http", version: "1.0.2.v20150114"
 	compile group: "org.eclipse.aether", name: "aether-transport-wagon", version: "1.0.2.v20150114"
 	compile group: "org.eclipse.aether", name: "aether-util", version: "1.0.2.v20150114"
+	compile group: "org.fusesource.jansi", name: "jansi", version: "1.17.1"
 	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "3.0"
 	compile group: "org.gradle", name: "gradle-core", version: "3.0"
 	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"

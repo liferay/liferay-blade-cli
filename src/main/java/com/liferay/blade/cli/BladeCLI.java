@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
+import org.fusesource.jansi.AnsiConsole;
+
 /**
  * @author Gregory Amerson
  * @author David Truong
@@ -51,6 +53,8 @@ public class BladeCLI implements Runnable {
 	}
 
 	public BladeCLI(PrintStream out, PrintStream err) {
+		AnsiConsole.systemInstall();
+
 		_out = out;
 		_err = err;
 	}
@@ -322,6 +326,7 @@ public class BladeCLI implements Runnable {
 
 				if (jcommander == null) {
 					printUsage();
+
 					return;
 				}
 
