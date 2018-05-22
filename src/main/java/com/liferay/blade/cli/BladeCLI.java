@@ -20,7 +20,6 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
-import org.fusesource.jansi.AnsiConsole;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -36,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+
+import org.fusesource.jansi.AnsiConsole;
 
 /**
  * @author Gregory Amerson
@@ -325,6 +326,7 @@ public class BladeCLI implements Runnable {
 
 				if (jcommander == null) {
 					printUsage();
+
 					return;
 				}
 

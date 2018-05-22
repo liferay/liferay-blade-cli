@@ -21,7 +21,8 @@ import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
 
 import aQute.lib.io.IO;
-import org.fusesource.jansi.Ansi;
+
+import com.liferay.blade.cli.util.AnsiLinePrinter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -302,36 +303,22 @@ public class Util {
 		return new String(Files.readAllBytes(file.toPath()));
 	}
 
-	public static void readProcessStream(final InputStream is, final PrintStream ps) {
+	public static void readProcessStream(final InputStream inputStream, final PrintStream printStream) {
 		Thread t = new Thread(
 			new Runnable() {
 
 				@Override
 				public void run() {
-					try (InputStreamReader isr = new InputStreamReader(is);
+					try (InputStreamReader isr = new InputStreamReader(inputStream);
 						BufferedReader br = new BufferedReader(isr)) {
 
 						String line = null;
 
 						while ((line = br.readLine()) != null) {
-							if (line.contains("STOPPED")) {
-								ps.println(Ansi.ansi().fgBrightRed().a(line).reset());
-							}
-							else if (line.contains("STARTED")) {
-								ps.println(Ansi.ansi().fgGreen().a(line).reset());
-							}
-							else if (line.contains("WARN")) {
-								ps.println(Ansi.ansi().fgYellow().a(line).reset());
-							}
-							else if (line.contains("ERROR") || line.contains("FATAL")) {
-								ps.println(Ansi.ansi().fgRed().a(line).reset());
-							}
-							else {
-								ps.println(line);
-							}
+							AnsiLinePrinter.println(printStream, line);
 						}
 
-						is.close();
+						inputStream.close();
 					}
 					catch (IOException ioe) {
 						ioe.printStackTrace();
