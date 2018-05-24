@@ -18,6 +18,7 @@ package com.liferay.blade.cli;
 
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
+import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -156,7 +157,8 @@ public class CreateCommand {
 		projectTemplatesArgs.setPackageName(_args.getPackageName());
 		projectTemplatesArgs.setService(_args.getService());
 		projectTemplatesArgs.setTemplate(template);
-
+        projectTemplatesArgs.getArchetypesDirs().add(FileUtil.getJarFile(ProjectTemplates.class));
+        projectTemplatesArgs.getArchetypesDirs().add(Util.getTemplatesDirectory().toFile());
 		boolean mavenBuild = "maven".equals(_args.getBuild());
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
@@ -284,22 +286,14 @@ public class CreateCommand {
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
-		String[] templates = _getTemplateNames();
-
-		for (String template : templates) {
-			if (templateName.equals(template)) {
-				return true;
-			}
-		}
-
-		return false;
+		return Util.getTemplateNames().contains(templateName);
 	}
 
 	private void _printTemplates() throws Exception {
-		Map<String, String> templates = ProjectTemplates.getTemplates();
+		Map<String, String> templates = Util.getTemplates();
 
-		List<String> templateNames = new ArrayList<>(templates.keySet());
-
+		List<String> templateNames = new ArrayList<>(Util.getTemplateNames());
+		
 		Collections.sort(templateNames);
 
 		Comparator<String> compareLength = Comparator.comparingInt(String::length);

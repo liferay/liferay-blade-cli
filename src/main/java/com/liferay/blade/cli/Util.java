@@ -23,6 +23,7 @@ import aQute.bnd.osgi.Resource;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.util.AnsiLinePrinter;
+import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,9 +41,11 @@ import java.net.Socket;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -189,6 +192,71 @@ public class Util {
 		catch (Exception e) {
 			return null;
 		}
+	}
+
+	public static Collection<String> getTemplateNames() throws Exception {
+		Map<String, String> templates = getTemplates();
+
+		return templates.keySet();
+	}
+
+	public static List<String> getTemplateJarNames() {
+		Path templateDirectory = getTemplatesDirectory();
+
+		List<String> fileNames = new ArrayList<>();
+
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(templateDirectory)) {
+			for (Path path : directoryStream) {
+				String fileName = path.getFileName().toString();
+				if (fileName.contains("project.templates") && fileName.endsWith(".jar")) {
+					fileNames.add(fileName);
+
+				}
+			}
+		} catch (IOException ex) {
+		}
+		return fileNames;
+	}
+
+	public static Path getTemplatesDirectory() {
+		try
+		{
+			Path homePath = Paths.get(System.getProperty("user.home"));
+
+			Path bladePath = homePath.resolve(".blade");
+
+			if (Files.notExists(bladePath)) {
+
+				Files.createDirectory(bladePath);
+			}
+			else if (!Files.isDirectory(bladePath)) {
+				throw new Exception(".blade is not a directory!");
+			}
+			Path templatesPath = bladePath.resolve("templates");
+
+			if (Files.notExists(templatesPath)) {
+
+				Files.createDirectory(templatesPath);
+			}
+			else if (!Files.isDirectory(templatesPath)) {
+				throw new Exception(".blade/templates is not a directory!");
+			}
+			return templatesPath;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Map<String, String> getTemplates() throws Exception {
+		File templatesDirectoryFile = getTemplatesDirectory().toFile();
+
+		Collection<File> templatesDirectoryCollection = new HashSet<>();
+
+		templatesDirectoryCollection.add(templatesDirectoryFile);
+
+		return ProjectTemplates.getTemplates(templatesDirectoryCollection);
 	}
 
 	public static File getWorkspaceDir(BladeCLI blade) {
