@@ -16,30 +16,36 @@
 
 package com.liferay.blade.cli;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+
+import org.gradle.internal.impldep.org.testng.Assert;
+
+import org.junit.Test;
 
 /**
  * @author Christopher Bryan Boyd
  */
-public class HelpCommand extends BaseCommand<HelpCommandArgs> {
+public class SortTest {
 
-	public HelpCommand() {
-	}
+	@Test
+	public void testSort() {
+		List<String> args = new ArrayList<>(
+			Arrays.asList("--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2"));
 
-	public void execute() throws Exception {
-		String commandName = _args.getName();
+		BladeCLI.sort(args);
 
-		if (Objects.nonNull(commandName) && (commandName.length() > 0)) {
-			_blade.printUsage(commandName);
+		boolean correctSort = false;
+
+		for (String arg : args) {
+			if (Objects.equals(arg, "extension install")) {
+				correctSort = true;
+			}
 		}
-		else {
-			_blade.printUsage();
-		}
-	}
 
-	@Override
-	public Class<HelpCommandArgs> getArgsClass() {
-		return HelpCommandArgs.class;
+		Assert.assertTrue(correctSort);
 	}
 
 }

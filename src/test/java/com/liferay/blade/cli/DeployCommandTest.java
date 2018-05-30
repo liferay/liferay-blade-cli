@@ -50,7 +50,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest(
 	{
 		Domain.class, GradleTooling.class, LiferayBundleDeployer.class, GradleExec.class, BladeCLI.class,
-		BladeNoFail.class, Util.class, DeployCommand.class
+		BladeNoFail.class, Util.class, DeployCommand.class, TestUtil.class
 	}
 )
 @RunWith(PowerMockRunner.class)

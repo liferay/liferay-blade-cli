@@ -25,26 +25,29 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @author Gregory Amerson
  */
-public class ShellCommand {
+public class ShellCommand extends BaseCommand<ShellCommandArgs> {
 
-	public ShellCommand(BladeCLI blade, ShellCommandArgs options) throws Exception {
-		_blade = blade;
-		_options = options;
-
-		_host = options.getHost() != null ? options.getHost() : "localhost";
-		_port = options.getPort() != 0 ? options.getPort() : 11311;
+	public ShellCommand() {
 	}
 
 	public void execute() throws Exception {
+		_host = _args.getHost() != null ? _args.getHost() : "localhost";
+		_port = _args.getPort() != 0 ? _args.getPort() : 11311;
+
 		if (!Util.canConnect(_host, _port)) {
 			_addError("sh", "Unable to connect to gogo shell on " + _host + ":" + _port);
 
 			return;
 		}
 
-		String gogoCommand = StringUtils.join(_options.getArgs(), " ");
+		String gogoCommand = StringUtils.join(_args.getArgs(), " ");
 
 		_executeCommand(gogoCommand);
+	}
+
+	@Override
+	public Class<ShellCommandArgs> getArgsClass() {
+		return ShellCommandArgs.class;
 	}
 
 	private void _addError(String prefix, String msg) {
@@ -59,9 +62,7 @@ public class ShellCommand {
 		}
 	}
 
-	private final BladeCLI _blade;
-	private final String _host;
-	private final ShellCommandArgs _options;
-	private final int _port;
+	private String _host;
+	private int _port;
 
 }

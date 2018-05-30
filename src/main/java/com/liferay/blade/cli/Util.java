@@ -22,8 +22,11 @@ import aQute.bnd.osgi.Resource;
 
 import aQute.lib.io.IO;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+
 import com.liferay.blade.cli.util.AnsiLinePrinter;
-import com.liferay.project.templates.ProjectTemplates;
+import com.liferay.blade.cli.util.LinkDownloader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,8 +38,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import java.lang.reflect.Field;
+
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -44,15 +51,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -119,6 +131,12 @@ public class Util {
 		}
 	}
 
+	public static void downloadLink(String link, Path target) {
+		LinkDownloader downloader = new LinkDownloader(link, target);
+
+		downloader.run();
+	}
+
 	public static File findParentFile(File dir, String[] fileNames, boolean checkParents) {
 		if (dir == null) {
 			return null;
@@ -154,6 +172,36 @@ public class Util {
 
 		return properties;
 	}
+	
+	public static Map<BaseArgs, BaseCommand<?>> getBuiltinCommands() {
+		if (_BUILTIN_COMMANDS == null) {
+			_BUILTIN_COMMANDS = new HashMap<>();
+			loadBuiltinCommands();
+		}
+
+		return _BUILTIN_COMMANDS;
+	}
+	
+	public static <T extends BaseArgs> String[] getCommandNames(Class<T> argsClass) {
+		try
+		{
+			Parameters annotation = argsClass.getAnnotation(Parameters.class);
+
+			if (Objects.nonNull(annotation)) {
+				return annotation.commandNames();
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
+		return argsClass.stream().map(clazz -> clazz.getAnnotation(Parameters.class)).filter(Objects::nonNull).map(x -> Arrays.asList(x.commandNames())).flatMap(List::stream).collect(Collectors.toList());
+	}
 
 	public static Path getCustomTemplatesPath() {
 		try {
@@ -184,6 +232,89 @@ public class Util {
 
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public static Map<BaseArgs, BaseCommand<?>> getExtensions() {
+		if (_EXTENSIONS == null) {
+			_EXTENSIONS = new HashMap<>();
+			loadExtensions();
+		}
+
+		return _EXTENSIONS;
+	}
+
+	public static Path getExtensionsDirectory() {
+		try
+		{
+			Path homePath = Paths.get(System.getProperty("user.home"));
+
+			Path bladePath = homePath.resolve(".blade");
+
+			if (Files.notExists(bladePath)) {
+				Files.createDirectory(bladePath);
+			}
+
+			else
+
+			if (!Files.isDirectory(bladePath)) {
+				throw new Exception(".blade is not a directory!");
+			}
+
+			Path extensionsPath = bladePath.resolve("extensions");
+
+			if (Files.notExists(extensionsPath)) {
+				Files.createDirectory(extensionsPath);
+			}
+
+			else
+
+			if (!Files.isDirectory(extensionsPath)) {
+				throw new Exception(".blade/extensions is not a directory!");
+			}
+
+			return extensionsPath;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Collection<String> getFlagsWithArguments(Class<? extends BaseArgs> clazz) {
+		Collection<String> flags = new ArrayList<>();
+
+		for (Field field : clazz.getDeclaredFields()) {
+			Parameter annotation = field.getAnnotation(Parameter.class);
+
+			if (annotation != null && (annotation.names() != null && annotation.names().length > 0)) {
+				if (!field.getType().equals(boolean.class)) {
+					for (String fName : annotation.names()) {
+						flags.add(fName);
+					}
+				}
+			}
+		}
+
+		return flags;
+	}
+
+	public static Collection<String> getFlagsWithoutArguments(Class<? extends BaseArgs> clazz) {
+		Collection<String> flags = new ArrayList<>();
+
+		for (Field field : clazz.getDeclaredFields()) {
+			Parameter annotation = field.getAnnotation(Parameter.class);
+
+			if (annotation != null && (annotation.names() != null && annotation.names().length > 0)) {
+				if (field.getType().equals(boolean.class)) {
+					for (String fName : annotation.names()) {
+						flags.add(fName);
+					}
+				}
+			}
+		}
+
+		return flags;
 	}
 
 	public static Properties getGradleProperties(File dir) {
@@ -313,6 +444,17 @@ public class Util {
 		return !isEmpty(array);
 	}
 
+	public static boolean isValidURL(String urlString) {
+		try {
+			new URL(urlString).toURI();
+
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+
 	public static boolean isWindows() {
 		String osName = System.getProperty("os.name");
 
@@ -359,6 +501,58 @@ public class Util {
 		}
 	}
 
+	public static void loadBuiltinCommands() {
+		if (!_BUILTIN_COMMANDS_LOADED) {
+			try {
+				loadBuiltinCommandsFromClasspath();
+				_BUILTIN_COMMANDS_LOADED = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void loadBuiltinCommandsFromClasspath() throws Exception {
+		getBuiltinCommands().clear();
+
+		ServiceLoader<BaseCommand> loader = (ServiceLoader<BaseCommand>)ServiceLoader.load(BaseCommand.class);
+
+		for (BaseCommand<?> baseCommand : loader) {
+			Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+			BaseArgs args = argsClass.newInstance();
+
+			getBuiltinCommands().put(args, baseCommand.getClass().newInstance());
+		}
+	}
+
+	public static void loadExtensions() {
+		if (!_EXTENSIONS_LOADED) {
+		try {
+			loadExtensionsFromClasspath();
+			_EXTENSIONS_LOADED = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		}
+	}
+
+	public static void loadExtensionsFromClasspath() throws Exception {
+		getExtensions().clear();
+		URL[] urls = getJarUrls(getExtensionsDirectory());
+
+		URLClassLoader extensionsClassLoader = buildURLClassLoader(urls);
+
+		ServiceLoader<BaseCommand> loader = (ServiceLoader<BaseCommand>)ServiceLoader.load(
+			BaseCommand.class, extensionsClassLoader);
+
+		for (BaseCommand<?> baseCommand : loader) {
+			Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+			BaseArgs args = argsClass.newInstance();
+
+			getExtensions().put(args, baseCommand);
+		}
+	}
+
 	public static String read(File file) throws IOException {
 		return new String(Files.readAllBytes(file.toPath()));
 	}
@@ -388,6 +582,16 @@ public class Util {
 			});
 
 		t.start();
+	}
+
+	public static void resetBuiltinCommands() {
+		_BUILTIN_COMMANDS = null;
+		_BUILTIN_COMMANDS_LOADED = false;
+	}
+
+	public static void resetExtensions() {
+		_EXTENSIONS = null;
+		_EXTENSIONS_LOADED = false;
 	}
 
 	public static void setShell(ProcessBuilder processBuilder, String cmd) {
@@ -529,6 +733,24 @@ public class Util {
 		}
 	}
 
+	private static URLClassLoader buildURLClassLoader(URL[] urls) {
+		return URLClassLoader.newInstance(urls, null);
+	}
+
+	private static URL[] getJarUrls(Path extensionsPath) throws Exception {
+		Collection<URL> urls = new HashSet<>();
+
+		for (Path extension :
+				Files.list(extensionsPath).filter(p -> p.toString().endsWith(".jar")).collect(Collectors.toSet())) {
+
+			URL url = extension.toUri().toURL();
+
+			urls.add(url);
+		}
+
+		return urls.toArray(new URL[0]);
+	}
+
 	private static final String[] _APP_SERVER_PROPERTIES_FILE_NAMES = {
 		"app.server." + System.getProperty("user.name") + ".properties",
 		"app.server." + System.getenv("COMPUTERNAME") + ".properties",
@@ -540,6 +762,14 @@ public class Util {
 	};
 
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
+
+	private static Map<BaseArgs, BaseCommand<?>> _BUILTIN_COMMANDS = null;
+
+	private static boolean _BUILTIN_COMMANDS_LOADED = false;
+
+	private static Map<BaseArgs, BaseCommand<?>> _EXTENSIONS = null;
+
+	private static boolean _EXTENSIONS_LOADED = false;
 
 	private static final String _GRADLE_PROPERTIES_FILE_NAME = "gradle.properties";
 

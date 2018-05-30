@@ -1,0 +1,12 @@
+<extensions>
+	<extension>
+		<name>ext1</name>
+		<description>ext1 description</description>
+		<location>ext1 location</location>
+	</extension>
+	<extension>
+		<name>ext2</name>
+		<description>ext2 description</description>
+		<location>ext2 location</location>
+	</extension>
+</extensions>

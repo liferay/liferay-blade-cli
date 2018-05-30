@@ -25,11 +25,9 @@ import java.util.Collections;
 /**
  * @author Gregory Amerson
  */
-public class OpenCommand {
+public class OpenCommand extends BaseCommand<OpenCommandArgs> {
 
-	public OpenCommand(BladeCLI blade, OpenCommandArgs args) throws Exception {
-		_blade = blade;
-		_args = args;
+	public OpenCommand() {
 	}
 
 	public void execute() throws Exception {
@@ -54,11 +52,13 @@ public class OpenCommand {
 		}
 	}
 
+	@Override
+	public Class<OpenCommandArgs> getArgsClass() {
+		return OpenCommandArgs.class;
+	}
+
 	private void _addError(String prefix, String msg) {
 		_blade.addErrors(prefix, Collections.singleton(msg));
 	}
-
-	private final OpenCommandArgs _args;
-	private final BladeCLI _blade;
 
 }

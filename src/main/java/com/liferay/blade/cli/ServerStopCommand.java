@@ -32,10 +32,9 @@ import java.util.stream.Stream;
 /**
  * @author David Truong
  */
-public class ServerStopCommand {
+public class ServerStopCommand extends BaseCommand<ServerStopCommandArgs> {
 
-	public ServerStopCommand(BladeCLI blade, ServerStopCommandArgs options) {
-		_blade = blade;
+	public ServerStopCommand() {
 	}
 
 	public void execute() throws Exception {
@@ -130,6 +129,11 @@ public class ServerStopCommand {
 				_blade.error("Please execute this command from a Liferay project");
 			}
 		}
+	}
+
+	@Override
+	public Class<ServerStopCommandArgs> getArgsClass() {
+		return ServerStopCommandArgs.class;
 	}
 
 	private void _commandServer(Path dir, String serverType) throws Exception {

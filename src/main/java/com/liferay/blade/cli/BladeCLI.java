@@ -31,10 +31,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Formatter;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fusesource.jansi.AnsiConsole;
 
@@ -46,6 +51,94 @@ public class BladeCLI implements Runnable {
 
 	public static void main(String[] args) {
 		new BladeCLI().run(args);
+	}
+
+	public static void sort(List<String> flags) {
+		Collection<String> addLast = new ArrayList<>();
+
+		Collection<BaseArgs> argList = new HashSet<>();
+		Stream.of(Util.getBuiltinCommands().keySet(), Util.getExtensions().keySet()).forEach(argList::addAll);
+
+		Collection<Class<? extends BaseArgs>> classes =
+			argList.stream().map(BaseArgs::getClass).collect(Collectors.toSet());
+		Collection<String> spaceCommandCollection = Util.getCommandNames(
+			classes).stream().filter(x -> x.contains(" ")).collect(Collectors.toSet());
+		Collection<String[]> spaceCommandSplitCollection = new ArrayList<>();
+		spaceCommandCollection.stream().map(x -> x.split(" ")).forEach(spaceCommandSplitCollection::add);
+
+		Collection<String> flagsWithoutArgs = Util.getFlagsWithoutArguments(BaseArgs.class);
+		Collection<String> flagsWithArgs = Util.getFlagsWithArguments(BaseArgs.class);
+
+		for (int x = 0; x < flags.size(); x++) {
+			String s = flags.get(x);
+
+			if (flagsWithArgs.contains(s)) {
+				addLast.add(flags.remove(x));
+				addLast.add(flags.remove(x));
+			} else if (flagsWithoutArgs.contains(s)) {
+				addLast.add(flags.remove(x));
+			}
+			else {
+				if (spaceCommandSplitCollection.size() > 0) {
+					String[] foundStrArray = null;
+
+					for (String[] strArray : spaceCommandSplitCollection) {
+						if (flags.size() == (x + strArray.length)) {
+						} else
+
+						if (flags.size() > x + (strArray.length - 1)) {
+							if (foundStrArray == null) {
+								boolean mismatch = false;
+
+								if (strArray.length == 0) {
+									mismatch = true;
+								}
+
+								for (int y = 0; y < strArray.length; y++) {
+									if (Objects.equals(strArray[y], flags.get(x + y))) {
+										continue;
+									}
+
+									mismatch = true;
+								}
+
+								if (!mismatch) {
+									foundStrArray = strArray;
+
+									break;
+								}
+							}
+						}
+					}
+
+					if (foundStrArray != null) {
+						Collection<String> commandParts = new ArrayList<>();
+
+						for (int y = 0; y < foundStrArray.length; y++) {
+							if (Objects.equals(foundStrArray[y], flags.get(x + y))) {
+								commandParts.add(foundStrArray[y]);
+							}
+						}
+
+						StringBuilder newCommand = new StringBuilder();
+
+						for (String commandPart : commandParts) {
+							if (Objects.equals(commandPart, flags.get(x))) {
+								int len = newCommand.length();
+
+								if (len > 0)newCommand.append(" ");
+
+								newCommand.append(flags.remove(x));
+							}
+						}
+
+						flags.add(x, newCommand.toString());
+					}
+				}
+			}
+		}
+
+		flags.addAll(addLast);
 	}
 
 	public BladeCLI() {
@@ -63,18 +156,6 @@ public class BladeCLI implements Runnable {
 		err().println("Error: " + prefix);
 
 		data.forEach(err()::println);
-	}
-
-	public void convert(ConvertCommandArgs args) throws Exception {
-		new ConvertCommand(this, args).execute();
-	}
-
-	public void create(CreateCommandArgs args) throws Exception {
-		new CreateCommand(this, args).execute();
-	}
-
-	public void deploy(DeployCommandArgs args) throws Exception {
-		new DeployCommand(this, args).execute();
 	}
 
 	public PrintStream err() {
@@ -120,28 +201,8 @@ public class BladeCLI implements Runnable {
 		return cacheDir.toFile();
 	}
 
-	public void gw(GradleCommandArgs args) throws Exception {
-		new GradleCommand(this, args).execute();
-	}
-
-	public void help(HelpCommandArgs args) throws Exception {
-		new HelpCommand(this, args).execute();
-	}
-
-	public void init(InitCommandArgs args) throws Exception {
-		new InitCommand(this, args).execute();
-	}
-
-	public void install(InstallCommandArgs args) throws Exception {
-		new InstallCommand(this, args).execute();
-	}
-
 	public void installTemplate(InstallTemplateCommandArgs args) throws Exception {
 		new InstallTemplateCommand(this, args).execute();
-	}
-
-	public void open(OpenCommandArgs args) throws Exception {
-		new OpenCommand(this, args).execute();
 	}
 
 	public PrintStream out() {
@@ -150,10 +211,6 @@ public class BladeCLI implements Runnable {
 
 	public void out(String msg) {
 		out().println(msg);
-	}
-
-	public void outputs(OutputsCommandArgs args) throws Exception {
-		new OutputsCommand(this, args).execute();
 	}
 
 	public void printUsage() {
@@ -203,71 +260,10 @@ public class BladeCLI implements Runnable {
 				}
 			}
 			else {
-				switch (_command) {
-					case "create":
-						create((CreateCommandArgs)_commandArgs);
-
-						break;
-
-					case "convert":
-						convert((ConvertCommandArgs)_commandArgs);
-
-						break;
-
-					case "deploy":
-						deploy((DeployCommandArgs)_commandArgs);
-
-						break;
-
-					case "gw":
-						gw((GradleCommandArgs)_commandArgs);
-
-						break;
-
-					case "help":
-						help((HelpCommandArgs)_commandArgs);
-
-						break;
-					case "init":
-						init((InitCommandArgs)_commandArgs);
-
-						break;
-
-					case "install":
-						install((InstallCommandArgs)_commandArgs);
-
-						break;
-
-					case "open":
-						open((OpenCommandArgs)_commandArgs);
-
-						break;
-
-					case "outputs":
-						outputs((OutputsCommandArgs)_commandArgs);
-
-						break;
-
-					case "samples":
-						samples((SamplesCommandArgs)_commandArgs);
-
-						break;
-
-					case "server start":
-						serverStart((ServerStartCommandArgs)_commandArgs);
-
-						break;
-
-					case "server stop":
-						serverStop((ServerStopCommandArgs)_commandArgs);
-
-						break;
-
-					case "sh":
-						sh((ShellCommandArgs)_commandArgs);
-
-						break;
-
+				if (_commandArgs != null) {
+					runCustomCommand();
+				} else {
+					_jCommander.usage();
 					case "template install":
 						installTemplate((InstallTemplateCommandArgs)_commandArgs);
 
@@ -278,20 +274,6 @@ public class BladeCLI implements Runnable {
 
 						break;
 
-					case "update":
-						update((UpdateCommandArgs)_commandArgs);
-
-						break;
-
-					case "upgradeProps":
-						upgradeProps((UpgradePropsArgs)_commandArgs);
-
-						break;
-
-					case "version":
-						version((VersionCommandArgs)_commandArgs);
-
-						break;
 				}
 			}
 		}
@@ -311,21 +293,40 @@ public class BladeCLI implements Runnable {
 
 		List<String> flags = new ArrayList<>(Arrays.asList(args));
 
-		_sort(flags);
+		sort(flags);
 
 		args = flags.toArray(new String[0]);
 
-		List<Object> argsList = Arrays.asList(
-			new CreateCommandArgs(), new ConvertCommandArgs(), new DeployCommandArgs(), new GradleCommandArgs(),
-			new HelpCommandArgs(), new InitCommandArgs(), new InstallCommandArgs(), new InstallTemplateCommandArgs(),
-			new OpenCommandArgs(), new OutputsCommandArgs(), new UninstallTemplateCommandArgs(),
-			new SamplesCommandArgs(), new ServerStartCommandArgs(), new ServerStopCommandArgs(), new ShellCommandArgs(),
-			new UpdateCommandArgs(), new UpgradePropsArgs(), new VersionCommandArgs());
+		Collection<BaseArgs> builtinList = Util.getBuiltinCommands().keySet();
+
+		Collection<BaseArgs> extensionsList = Util.getExtensions().keySet();
+
+		Map<String, BaseArgs> argsMap = new HashMap<>();
+
+		for (BaseArgs arg : extensionsList) {
+			String[] commandNames = Util.getCommandNames(arg.getClass());
+
+			if (commandNames != null && commandNames.length > 0) {
+				for (String commandName : commandNames) {
+					argsMap.put(commandName, arg);
+				}
+			}
+		}
+
+		for (BaseArgs arg : builtinList) {
+			String[] commandNames = Util.getCommandNames(arg.getClass());
+
+			if (commandNames != null && commandNames.length > 0) {
+				for (String commandName : commandNames) {
+					argsMap.putIfAbsent(commandName, arg);
+				}
+			}
+		}
 
 		Builder builder = JCommander.newBuilder();
 
-		for (Object o : argsList) {
-			builder.addCommand(o);
+		for (Entry<String, BaseArgs> e : argsMap.entrySet()) {
+			builder.addCommand(e.getKey(), e.getValue());
 		}
 
 		_jCommander = builder.build();
@@ -376,22 +377,9 @@ public class BladeCLI implements Runnable {
 				error(_jCommander.getParsedCommand() + ": " + pe.getMessage());
 			}
 		}
-	}
 
-	public void samples(SamplesCommandArgs args) throws Exception {
-		new SamplesCommand(this, args).execute();
-	}
-
-	public void serverStart(ServerStartCommandArgs args) throws Exception {
-		new ServerStartCommand(this, args).execute();
-	}
-
-	public void serverStop(ServerStopCommandArgs args) throws Exception {
-		new ServerStopCommand(this, args).execute();
-	}
-
-	public void sh(ShellCommandArgs args) throws Exception {
-		new ShellCommand(this, args).execute();
+		Util.resetBuiltinCommands();
+		Util.resetExtensions();
 	}
 
 	public void trace(String s, Object... args) {
@@ -401,40 +389,24 @@ public class BladeCLI implements Runnable {
 		}
 	}
 
-	public void update(UpdateCommandArgs args) throws Exception {
-		new UpdateCommand(this, args).execute();
-	}
+	private void runCustomCommand() throws Exception {
+		Map<BaseArgs, BaseCommand<?>> extensions = Util.getExtensions();
+		Map<BaseArgs, BaseCommand<?>> builtin = Util.getBuiltinCommands();
 
-	public void upgradeProps(UpgradePropsArgs args) throws Exception {
-		new UpgradePropsCommand(this, args);
-	}
+		BaseCommand<?> command = null;
 
-	public void version(VersionCommandArgs args) throws Exception {
-		new VersionCommand(this, args).execute();
-	}
+		if (extensions.containsKey(_commandArgs)) {
+			command = extensions.get(_commandArgs);
+		} else if (builtin.containsKey(_commandArgs)) {
+			command = builtin.get(_commandArgs);
+		}
 
-	private static void _sort(List<String> flags) {
-		Collection<String> addLast = new ArrayList<>();
-
-		for (int x = 0; x < flags.size(); x++) {
-			String s = flags.get(x);
-
-			if (s.equals("--base") || s.equals("--working-dir")) {
-				addLast.add(flags.remove(x));
-				addLast.add(flags.remove(x));
-			}
-			else if (s.equals("--trace") || s.equals("--help")) {
-				addLast.add(flags.remove(x));
-			}
-			else if (s.equals("server")) {
-				int next = x + 1;
-
-				String serverCommand = s + " " + flags.get(next);
-
-				flags.set(x, serverCommand);
-
-				flags.remove(next);
-			}
+		if (Objects.nonNull(command)) {
+			command.setArgs(_commandArgs);
+			command.setBlade(this);
+			command.execute();
+		} else {
+			printUsage();
 			else if (s.equals("template")) {
 				int next = x + 1;
 
@@ -449,10 +421,7 @@ public class BladeCLI implements Runnable {
 						flags.remove(next);
 					}
 				}
-			}
 		}
-
-		flags.addAll(addLast);
 	}
 
 	private static final Formatter _tracer = new Formatter(System.out);

@@ -43,11 +43,9 @@ import java.util.Properties;
  * @author Gregory Amerson
  * @author Terry Jia
  */
-public class InitCommand {
+public class InitCommand extends BaseCommand<InitCommandArgs> {
 
-	public InitCommand(BladeCLI blade, InitCommandArgs args) throws Exception {
-		_blade = blade;
-		_args = args;
+	public InitCommand() {
 	}
 
 	public void execute() throws Exception {
@@ -176,6 +174,11 @@ public class InitCommand {
 
 			IO.deleteWithException(temp);
 		}
+	}
+
+	@Override
+	public Class<InitCommandArgs> getArgsClass() {
+		return InitCommandArgs.class;
 	}
 
 	private void _addError(String msg) {
@@ -308,8 +311,5 @@ public class InitCommand {
 		"app-servers.gradle", "build.gradle", "build-plugins.gradle", "build-themes.gradle", "sdk.gradle",
 		"settings.gradle", "util.gradle", "versions.gradle"
 	};
-
-	private final InitCommandArgs _args;
-	private final BladeCLI _blade;
 
 }

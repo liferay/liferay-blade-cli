@@ -53,13 +53,13 @@ import org.w3c.dom.NodeList;
 /**
  * @author Gregory Amerson
  */
-public class ConvertCommand {
+public class ConvertCommand extends BaseCommand<ConvertCommandArgs> {
 
-	public ConvertCommand(BladeCLI blade, ConvertCommandArgs options) throws Exception {
-		_blade = blade;
-		_args = options;
+	public ConvertCommand() {
+	}
 
-		File projectDir = Util.getWorkspaceDir(_blade);
+	public void execute() throws Exception {
+	File projectDir = Util.getWorkspaceDir(_blade);
 
 		Properties gradleProperties = Util.getGradleProperties(projectDir);
 
@@ -100,9 +100,7 @@ public class ConvertCommand {
 
 			return;
 		}
-	}
 
-	public void execute() throws Exception {
 		List<String> name = _args.getName();
 
 		final String pluginName = name.isEmpty() ? null : name.get(0);
@@ -260,6 +258,11 @@ public class ConvertCommand {
 				}
 			}
 		}
+	}
+
+	@Override
+	public Class<ConvertCommandArgs> getArgsClass() {
+		return ConvertCommandArgs.class;
 	}
 
 	private static String _getAttr(Node item, String attrName) {
@@ -576,14 +579,12 @@ public class ConvertCommand {
 		return pluginDir[0];
 	}
 
-	private final ConvertCommandArgs _args;
-	private final BladeCLI _blade;
-	private final File _hooksDir;
-	private final File _layouttplDir;
-	private final File _pluginsSdkDir;
-	private final File _portletsDir;
-	private final File _themesDir;
-	private final File _warsDir;
-	private final File _websDir;
+	private File _hooksDir;
+	private File _layouttplDir;
+	private File _pluginsSdkDir;
+	private File _portletsDir;
+	private File _themesDir;
+	private File _warsDir;
+	private File _websDir;
 
 }

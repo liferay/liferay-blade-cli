@@ -16,30 +16,20 @@
 
 package com.liferay.blade.cli;
 
-import java.util.Objects;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * @author Christopher Bryan Boyd
  */
-public class HelpCommand extends BaseCommand<HelpCommandArgs> {
+@Parameters(commandDescription = UninstallExtensionCommand.DESCRIPTION, commandNames = "extension uninstall")
+public class UninstallExtensionCommandArgs extends BaseArgs {
 
-	public HelpCommand() {
+	public String getName() {
+		return _name;
 	}
 
-	public void execute() throws Exception {
-		String commandName = _args.getName();
-
-		if (Objects.nonNull(commandName) && (commandName.length() > 0)) {
-			_blade.printUsage(commandName);
-		}
-		else {
-			_blade.printUsage();
-		}
-	}
-
-	@Override
-	public Class<HelpCommandArgs> getArgsClass() {
-		return HelpCommandArgs.class;
-	}
+	@Parameter(description = "The name of the extension to uninstall")
+	private String _name;
 
 }

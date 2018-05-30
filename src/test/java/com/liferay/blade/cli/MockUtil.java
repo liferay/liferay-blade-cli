@@ -27,7 +27,9 @@ import java.io.IOException;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -126,12 +128,21 @@ public class MockUtil {
 	}
 
 	public static void stubUtil() {
-		PowerMock.mockStaticNice(Util.class);
+		PowerMock.mockStaticPartialNice(Util.class, "canConnect", "getBuiltinCommands", "getExtensions");
 
 		IExpectationSetters<Boolean> canConnect = EasyMock.expect(
 			Util.canConnect(EasyMock.anyString(), EasyMock.anyInt()));
 
 		canConnect.andStubReturn(true);
+
+		Map<BaseArgs, BaseCommand<?>> map = new HashMap<>();
+		map.put(new DeployCommandArgs(), new DeployCommand());
+
+		EasyMock.expect(Util.getBuiltinCommands()).andStubReturn(map);
+
+		Map<BaseArgs, BaseCommand<?>> eMap = new HashMap<>();
+
+		EasyMock.expect(Util.getExtensions()).andStubReturn(eMap);
 
 		PowerMock.replay(Util.class);
 	}

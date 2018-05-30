@@ -28,10 +28,9 @@ import java.util.Set;
 /**
  * @author Gregory Amerson
  */
-public class OutputsCommand {
+public class OutputsCommand extends BaseCommand<OutputsCommandArgs> {
 
-	public OutputsCommand(BladeCLI blade, OutputsCommandArgs args) throws Exception {
-		_blade = blade;
+	public OutputsCommand() {
 	}
 
 	public void execute() throws Exception {
@@ -63,6 +62,9 @@ public class OutputsCommand {
 		}
 	}
 
-	private BladeCLI _blade;
+	@Override
+	public Class<OutputsCommandArgs> getArgsClass() {
+		return OutputsCommandArgs.class;
+	}
 
 }

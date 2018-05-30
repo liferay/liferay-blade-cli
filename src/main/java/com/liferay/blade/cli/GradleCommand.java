@@ -23,22 +23,22 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @author David Truong
  */
-public class GradleCommand {
+public class GradleCommand extends BaseCommand<GradleCommandArgs> {
 
-	public GradleCommand(BladeCLI blade, GradleCommandArgs options) throws Exception {
-		_blade = blade;
-		_options = options;
+	public GradleCommand() {
 	}
 
 	public void execute() throws Exception {
-		String gradleCommand = StringUtils.join(_options.getArgs(), " ");
+		String gradleCommand = StringUtils.join(_args.getArgs(), " ");
 
 		GradleExec gradleExec = new GradleExec(_blade);
 
 		gradleExec.executeGradleCommand(gradleCommand);
 	}
 
-	private BladeCLI _blade;
-	private GradleCommandArgs _options;
+	@Override
+	public Class<GradleCommandArgs> getArgsClass() {
+		return GradleCommandArgs.class;
+	}
 
 }

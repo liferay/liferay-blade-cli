@@ -43,17 +43,15 @@ import org.osgi.framework.dto.BundleDTO;
 /**
  * @author Gregory Amerson
  */
-public class DeployCommand {
+public class DeployCommand extends BaseCommand<DeployCommandArgs> {
 
-	public DeployCommand(BladeCLI blade, DeployCommandArgs args) throws Exception {
-		_blade = blade;
-		_args = args;
-
-		_host = "localhost";
-		_port = 11311;
+	public DeployCommand() {
 	}
 
 	public void execute() throws Exception {
+		_host = "localhost";
+		_port = 11311;
+
 		if (!Util.canConnect(_host, _port)) {
 			_addError("deploy", "Unable to connect to gogo shell on " + _host + ":" + _port);
 
@@ -70,6 +68,10 @@ public class DeployCommand {
 		else {
 			_deploy(gradleExec, outputFiles);
 		}
+	}
+
+	public Class<DeployCommandArgs> getArgsClass() {
+		return DeployCommandArgs.class;
 	}
 
 	private static void _deployWar(File file, LiferayBundleDeployer deployer) throws Exception {
@@ -276,9 +278,7 @@ public class DeployCommand {
 		out.println("Updated bundle " + existingId);
 	}
 
-	private final DeployCommandArgs _args;
-	private final BladeCLI _blade;
-	private final String _host;
-	private final int _port;
+	private String _host;
+	private int _port;
 
 }

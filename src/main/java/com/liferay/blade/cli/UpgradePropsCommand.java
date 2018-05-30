@@ -26,14 +26,18 @@ import java.util.Collections;
 /**
  * @author Gregory Amerson
  */
-public class UpgradePropsCommand {
+public class UpgradePropsCommand extends BaseCommand<UpgradePropsArgs> {
 
-	public UpgradePropsCommand(BladeCLI blade, UpgradePropsArgs options) throws Exception {
-		File bundleDir = options.getBundleDir();
-		File propertiesFile = options.getPropertiesFile();
+	public UpgradePropsCommand() {
+	}
+
+	@Override
+	public void execute() throws Exception {
+		File bundleDir = _args.getBundleDir();
+		File propertiesFile = _args.getPropertiesFile();
 
 		if ((bundleDir == null) || (propertiesFile == null)) {
-			blade.addErrors(
+			_blade.addErrors(
 				"upgradeProps", Collections.singleton("bundleDir and propertiesFile options both required."));
 			//options._command().help(new Justif().formatter(), blade);
 
@@ -42,11 +46,16 @@ public class UpgradePropsCommand {
 
 		PropertiesLocatorArgs args = new PropertiesLocatorArgs();
 
-		args.setBundleDir(options.getBundleDir());
-		args.setOutputFile(options.getOutputFile());
-		args.setPropertiesFile(options.getPropertiesFile());
+		args.setBundleDir(_args.getBundleDir());
+		args.setOutputFile(_args.getOutputFile());
+		args.setPropertiesFile(_args.getPropertiesFile());
 
 		new PropertiesLocator(args);
+	}
+
+	@Override
+	public Class<UpgradePropsArgs> getArgsClass() {
+		return UpgradePropsArgs.class;
 	}
 
 }

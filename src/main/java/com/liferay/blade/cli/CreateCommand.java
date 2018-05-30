@@ -41,11 +41,9 @@ import org.apache.commons.lang3.StringUtils;
  * @author David Truong
  * @author Christopher Boyd
  */
-public class CreateCommand {
+public class CreateCommand extends BaseCommand<CreateCommandArgs> {
 
-	public CreateCommand(BladeCLI blade, CreateCommandArgs args) {
-		_blade = blade;
-		_args = args;
+	public CreateCommand() {
 	}
 
 	public void execute() throws Exception {
@@ -175,6 +173,11 @@ public class CreateCommand {
 		execute(projectTemplatesArgs);
 
 		_blade.out("Successfully created project " + projectTemplatesArgs.getName() + " in " + dir.getAbsolutePath());
+	}
+
+	@Override
+	public Class<CreateCommandArgs> getArgsClass() {
+		return CreateCommandArgs.class;
 	}
 
 	protected CreateCommand(BladeCLI blade) {
@@ -316,8 +319,5 @@ public class CreateCommand {
 			_blade.out(templates.get(name));
 		}
 	}
-
-	private final CreateCommandArgs _args;
-	private final BladeCLI _blade;
 
 }
