@@ -19,10 +19,12 @@ package com.liferay.blade.cli;
 import aQute.lib.io.IO;
 
 import java.io.File;
+
 import java.nio.file.Path;
 
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
+
 import org.gradle.tooling.internal.consumer.ConnectorServices;
 
 import org.junit.After;
@@ -30,6 +32,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -54,49 +57,47 @@ public class InstallTemplateCommandTest {
 	@Before
 	public void setUp() throws Exception {
 		_testdir.mkdirs();
-		
+
 		File aFile = new File(_testdir, "afile");
-		if (aFile.exists())
-			aFile.delete();
+
+		if (aFile.exists())aFile.delete();
 		Assert.assertTrue(aFile.createNewFile() && aFile.delete());
 	}
 
 	@Test
 	public void testInstallTemplate() throws Exception {
-		
 		String jarName = "foo.bar.project.templates.custom.jar";
-		
+
 		File fakeJar = new File(_testdir, jarName);
-		
+
 		String[] args = {"template", "install", fakeJar.getAbsolutePath()};
-		
+
 		File templatesDir = new File(_testdir, "templates");
-		
+
 		templatesDir.mkdirs();
 
 		File fakeJarDest = new File(templatesDir, fakeJar.getName());
-		
+
 		Assert.assertTrue(!fakeJarDest.exists());
-		
+
 		Assert.assertTrue(fakeJar.createNewFile());
-		
+
 		PowerMock.mockStaticPartialNice(Util.class, "getTemplatesDirectory");
 
-		IExpectationSetters<Path> templatesDirMethod = EasyMock.expect(
-			Util.getTemplatesDirectory());
-		
+		IExpectationSetters<Path> templatesDirMethod = EasyMock.expect(Util.getCustomTemplatesPath());
+
 		Path templatesDirPath = templatesDir.toPath();
-		
+
 		templatesDirMethod.andReturn(templatesDirPath).atLeastOnce();
-		
+
 		PowerMock.replay(Util.class);
-		
+
 		String output = TestUtil.runBlade(args);
 
 		PowerMock.verifyAll();
-		
+
 		Assert.assertTrue(output.contains(" successful") && output.contains(jarName));
-		
+
 		Assert.assertTrue(fakeJarDest.exists());
 	}
 

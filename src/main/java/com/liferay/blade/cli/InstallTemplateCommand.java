@@ -16,27 +16,25 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.gradle.GradleExec;
+import com.liferay.blade.cli.gradle.GradleTooling;
+import com.liferay.blade.cli.util.StringUtil;
+
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Iterator;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-
-import com.liferay.blade.cli.gradle.GradleExec;
-import com.liferay.blade.cli.gradle.GradleTooling;
 
 /**
  * @author Christopher Bryan Boyd
  */
 public class InstallTemplateCommand {
-	
-	public static final String DESCRIPTION = "Installs a custom project template into Blade.";
 
 	public InstallTemplateCommand(BladeCLI blade, InstallTemplateCommandArgs args) throws Exception {
 		_blade = blade;
@@ -44,76 +42,86 @@ public class InstallTemplateCommand {
 	}
 
 	public void execute() throws Exception {
-
 		String arg = _args.getPath();
-		
-		Path pathArg;
-		if (Objects.isNull(arg) || arg.trim().length() == 0) {
-			pathArg = Paths.get(".");
-		} else
-		{
-			pathArg = Paths.get(arg);
-		}
-		// Possibly handle git and github links here
-		if (Files.exists(pathArg)) {
-			if (Files.isDirectory(pathArg)) {
-				_gradleDeploy(_blade, pathArg);
-			} else {
-				// Install Jar Directly if it is valid
-				// Or Error if it's not
-				installTemplatePath(pathArg);
-			}
+
+		Path path = StringUtil.isNullOrEmpty(arg) ? Paths.get(".") : Paths.get(arg);
+
+		if (Files.exists(path)) {
+			Path templatePath = Optional.of(
+				path
+			).filter(
+				Files::exists
+			).filter(
+				Files::isDirectory
+			).filter(
+				Util::isGradleBuildPath
+			).map(
+				this::_gradleAssemble
+			).orElse(
+				path
+			);
+
+			_installTemplatePath(templatePath);
 		}
 		else {
-			throw new Exception("Path to template does not exist: " + pathArg);
+			throw new Exception("Template path must exist");
 		}
 	}
-	
-	private void _gradleDeploy(BladeCLI blade, Path pathToProject) throws Exception {
-		GradleExec gradle = new GradleExec(blade);
 
-		Set<File> outputFiles = GradleTooling.getOutputFiles(blade.getCacheDir(), blade.getBase());
+	private Path _gradleAssemble(Path projectPath) {
+		GradleExec gradle = new GradleExec(_blade);
 
-		gradle.executeGradleCommand("assemble -x check");
-		
-		Iterator<File> i = outputFiles.iterator();
-		if (i.hasNext()) {
-			Path outputFile = i.next().toPath();
-			
-			if (Files.exists(outputFile)) {
+		try {
+			Set<File> outputFiles = GradleTooling.getOutputFiles(_blade.getCacheDir(), projectPath.toFile());
 
-				installTemplatePath(outputFile);
+			gradle.executeGradleCommand("assemble -x check");
+
+			Iterator<File> i = outputFiles.iterator();
+
+			if (i.hasNext()) {
+				Path outputPath = i.next().toPath();
+
+				if (Files.exists(outputPath)) {
+					return outputPath;
+				}
 			}
 		}
-	}
-
-	private void installTemplatePath(Path outputFile) throws IOException, Exception {
-		if (_isTemplateMatch(outputFile)) {
-			_installTemplate(outputFile);
-		} else {
-			throw new Exception();
+		catch (Exception e) {
+			e.printStackTrace();
 		}
-	}
-	
-	private boolean _isTemplateMatch(Path path) {
-		return _pathMatcher.matches(path);
+
+		return null;
 	}
 
 	private void _installTemplate(Path templatePath) throws IOException {
-		Path templatesHome = Util.getTemplatesDirectory();
-		
+		Path templatesHome = Util.getCustomTemplatesPath();
+
 		Path templateName = templatePath.getFileName();
-		
+
 		Path newTemplatePath = templatesHome.resolve(templateName);
-		
+
 		Files.copy(templatePath, newTemplatePath);
-		
+
 		_blade.out("The template " + newTemplatePath.getFileName() + " has been installed successfully.");
 	}
-	
-	private static final FileSystem _fileSystem = FileSystems.getDefault();
-	private static final PathMatcher _pathMatcher = _fileSystem.getPathMatcher("glob:**/*.project.templates.*");
+
+	private void _installTemplatePath(Path outputFile) throws Exception, IOException {
+		if (_isTemplateMatch(outputFile)) {
+			_installTemplate(outputFile);
+		}
+		else {
+			throw new Exception();
+		}
+	}
+
+	private boolean _isTemplateMatch(Path path) {
+		return _customTemplatePathMatcher.matches(path);
+	}
+
+	private static final PathMatcher _customTemplatePathMatcher = FileSystems.getDefault().getPathMatcher(
+		"glob:**/*.project.templates.*");
 
 	private final InstallTemplateCommandArgs _args;
 	private final BladeCLI _blade;
+
 }

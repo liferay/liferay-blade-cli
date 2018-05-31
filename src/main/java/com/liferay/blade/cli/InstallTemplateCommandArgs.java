@@ -22,13 +22,14 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Christopher Bryan Boyd
  */
-@Parameters(commandDescription = InstallTemplateCommand.DESCRIPTION, commandNames = {"template install"})
+@Parameters(commandDescription = "Installs a custom project template into blade.", commandNames = "template install")
 public class InstallTemplateCommandArgs extends BaseArgs {
-
-	@Parameter(description = "The path to the template to install")
-	private String _path;
 
 	public String getPath() {
 		return _path;
 	}
+
+	@Parameter(description = "The path to the template to install")
+	private String _path;
+
 }

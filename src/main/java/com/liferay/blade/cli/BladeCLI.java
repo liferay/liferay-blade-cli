@@ -445,6 +445,7 @@ public class BladeCLI implements Runnable {
 						String fullCommand = s + " " + nextCommand;
 
 						flags.set(x, fullCommand);
+
 						flags.remove(next);
 					}
 				}

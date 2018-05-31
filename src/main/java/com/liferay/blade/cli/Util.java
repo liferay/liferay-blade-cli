@@ -42,6 +42,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -154,6 +155,37 @@ public class Util {
 		return properties;
 	}
 
+	public static Path getCustomTemplatesPath() {
+		try {
+			Path homePath = Paths.get(System.getProperty("user.home"));
+
+			Path bladePath = homePath.resolve(".blade");
+
+			if (Files.notExists(bladePath)) {
+				Files.createDirectory(bladePath);
+			}
+			else if (!Files.isDirectory(bladePath)) {
+				throw new Exception(".blade is not a directory!");
+			}
+
+			Path templatesPath = bladePath.resolve("templates");
+
+			if (Files.notExists(templatesPath)) {
+				Files.createDirectory(templatesPath);
+			}
+			else if (!Files.isDirectory(templatesPath)) {
+				throw new Exception(".blade/templates is not a directory!");
+			}
+
+			return templatesPath;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static Properties getGradleProperties(File dir) {
 		File file = getGradlePropertiesFile(dir);
 
@@ -200,63 +232,14 @@ public class Util {
 		return templates.keySet();
 	}
 
-	public static List<String> getTemplateJarNames() {
-		Path templateDirectory = getTemplatesDirectory();
-
-		List<String> fileNames = new ArrayList<>();
-
-		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(templateDirectory)) {
-			for (Path path : directoryStream) {
-				String fileName = path.getFileName().toString();
-				if (fileName.contains("project.templates") && fileName.endsWith(".jar")) {
-					fileNames.add(fileName);
-
-				}
-			}
-		} catch (IOException ex) {
-		}
-		return fileNames;
-	}
-
-	public static Path getTemplatesDirectory() {
-		try
-		{
-			Path homePath = Paths.get(System.getProperty("user.home"));
-
-			Path bladePath = homePath.resolve(".blade");
-
-			if (Files.notExists(bladePath)) {
-
-				Files.createDirectory(bladePath);
-			}
-			else if (!Files.isDirectory(bladePath)) {
-				throw new Exception(".blade is not a directory!");
-			}
-			Path templatesPath = bladePath.resolve("templates");
-
-			if (Files.notExists(templatesPath)) {
-
-				Files.createDirectory(templatesPath);
-			}
-			else if (!Files.isDirectory(templatesPath)) {
-				throw new Exception(".blade/templates is not a directory!");
-			}
-			return templatesPath;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-	}
-
 	public static Map<String, String> getTemplates() throws Exception {
-		File templatesDirectoryFile = getTemplatesDirectory().toFile();
+		File customTemplatesDir = getCustomTemplatesPath().toFile();
 
-		Collection<File> templatesDirectoryCollection = new HashSet<>();
+		Collection<File> templatesFiles = new HashSet<>();
 
-		templatesDirectoryCollection.add(templatesDirectoryFile);
+		templatesFiles.add(customTemplatesDir);
 
-		return ProjectTemplates.getTemplates(templatesDirectoryCollection);
+		return ProjectTemplates.getTemplates(templatesFiles);
 	}
 
 	public static File getWorkspaceDir(BladeCLI blade) {
@@ -308,6 +291,14 @@ public class Util {
 
 	public static boolean isEmpty(String string) {
 		if ((string == null) || string.isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean isGradleBuildPath(Path path) {
+		if ((path != null) && Files.exists(path.resolve("build.gradle"))) {
 			return true;
 		}
 
