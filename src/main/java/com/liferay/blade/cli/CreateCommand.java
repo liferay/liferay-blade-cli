@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -49,6 +48,7 @@ public class CreateCommand {
 	public void execute() throws Exception {
 		if (_args.isListTemplates()) {
 			_printTemplates();
+
 			return;
 		}
 
@@ -61,16 +61,20 @@ public class CreateCommand {
 			_printTemplates();
 
 			return;
-		} else if (Objects.equals(template, "service")) {
-			if (Objects.isNull(_args.getService())) {
-				StringBuilder sb = new StringBuilder("\"-t service\" option missing:" + System.lineSeparator());
-				
-				sb.append("Service Name  (\"-s\", \"--service\") is required.");
+		} else if (template.equals("service")) {
+			if (_args.getService() == null) {
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("\"-t service <FQCN>\" parameter missing.");
 				sb.append(System.lineSeparator());
+				sb.append("Usage: blade create -t service -s <FQCN> <project name>");
+				sb.append(System.lineSeparator());
+
 				_blade.err(sb.toString());
+
 				return;
 			}
-		} else if (Objects.equals(_args.getTemplate(), "fragment")) {
+		} else if (_args.getTemplate().equals("fragment")) {
 			boolean hasHostBundleBSN = false;
 
 			if (_args.getHostBundleBSN() != null) {
@@ -104,6 +108,7 @@ public class CreateCommand {
 
 		if (Util.isEmpty(name)) {
 			_addError("Create", "SYNOPSIS\n\t create [options] <[name]>");
+
 			return;
 		}
 
