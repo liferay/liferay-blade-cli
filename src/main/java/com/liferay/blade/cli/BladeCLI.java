@@ -135,13 +135,9 @@ public class BladeCLI implements Runnable {
 	public void install(InstallCommandArgs args) throws Exception {
 		new InstallCommand(this, args).execute();
 	}
-	
+
 	public void installTemplate(InstallTemplateCommandArgs args) throws Exception {
 		new InstallTemplateCommand(this, args).execute();
-	}
-
-	public void listTemplates(ListTemplateCommandArgs args) throws Exception {
-		new ListTemplateCommand(this, args).execute();
 	}
 
 	public void open(OpenCommandArgs args) throws Exception {
@@ -272,11 +268,6 @@ public class BladeCLI implements Runnable {
 
 						break;
 
-					case "template list":
-						listTemplates((ListTemplateCommandArgs)_commandArgs);
-
-						break;
-
 					case "template install":
 						installTemplate((InstallTemplateCommandArgs)_commandArgs);
 
@@ -327,10 +318,9 @@ public class BladeCLI implements Runnable {
 		List<Object> argsList = Arrays.asList(
 			new CreateCommandArgs(), new ConvertCommandArgs(), new DeployCommandArgs(), new GradleCommandArgs(),
 			new HelpCommandArgs(), new InitCommandArgs(), new InstallCommandArgs(), new InstallTemplateCommandArgs(),
-			new ListTemplateCommandArgs(), new OpenCommandArgs(), new OutputsCommandArgs(), new UninstallTemplateCommandArgs(),
-			new SamplesCommandArgs(), new ServerStartCommandArgs(),
-			new ServerStopCommandArgs(), new ShellCommandArgs(), new UpdateCommandArgs(), new UpgradePropsArgs(),
-			new VersionCommandArgs());
+			new OpenCommandArgs(), new OutputsCommandArgs(), new UninstallTemplateCommandArgs(),
+			new SamplesCommandArgs(), new ServerStartCommandArgs(), new ServerStopCommandArgs(), new ShellCommandArgs(),
+			new UpdateCommandArgs(), new UpgradePropsArgs(), new VersionCommandArgs());
 
 		Builder builder = JCommander.newBuilder();
 
@@ -447,10 +437,13 @@ public class BladeCLI implements Runnable {
 			}
 			else if (s.equals("template")) {
 				int next = x + 1;
+
 				if (flags.size() > next) {
 					String nextCommand = flags.get(next);
-					if (Objects.equals(nextCommand, "install") || Objects.equals(nextCommand, "uninstall") || Objects.equals(nextCommand, "list")) {
+
+					if ("install".equals(nextCommand) || "uninstall".equals(nextCommand)) {
 						String fullCommand = s + " " + nextCommand;
+
 						flags.set(x, fullCommand);
 						flags.remove(next);
 					}
