@@ -19,10 +19,12 @@ package com.liferay.blade.cli;
 import aQute.lib.io.IO;
 
 import java.io.File;
+
 import java.nio.file.Path;
 
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
+
 import org.gradle.tooling.internal.consumer.ConnectorServices;
 
 import org.junit.After;
@@ -30,6 +32,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -37,7 +40,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author Christopher Bryan Boyd
  */
-@PrepareForTest({Util.class, UninstallTemplateCommand.class})
+@PrepareForTest({UninstallTemplateCommand.class, Util.class})
 @RunWith(PowerMockRunner.class)
 public class UninstallTemplateCommandTest {
 
@@ -47,6 +50,7 @@ public class UninstallTemplateCommandTest {
 
 		if (_testdir.exists()) {
 			IO.delete(_testdir);
+
 			Assert.assertFalse(_testdir.exists());
 		}
 	}
@@ -54,45 +58,46 @@ public class UninstallTemplateCommandTest {
 	@Before
 	public void setUp() throws Exception {
 		_testdir.mkdirs();
-		
+
 		File aFile = new File(_testdir, "afile");
-		if (aFile.exists())
+
+		if (aFile.exists()) {
 			aFile.delete();
+		}
+
 		Assert.assertTrue(aFile.createNewFile() && aFile.delete());
 	}
 
 	@Test
 	public void testUninstallTemplate() throws Exception {
-		
-		String jarName =  "foo.bar.project.templates.custom.jar";
-		
+		String jarName = "foo.bar.project.templates.custom.jar";
+
 		String[] args = {"template", "uninstall", jarName};
-		
+
 		File templatesDir = new File(_testdir, "templates");
-		
+
 		templatesDir.mkdirs();
 
 		File testJar = new File(templatesDir, jarName);
-		
+
 		Assert.assertTrue(testJar.createNewFile());
-		
+
 		PowerMock.mockStaticPartialNice(Util.class, "getTemplatesDirectory");
 
-		IExpectationSetters<Path> templatesDirMethod = EasyMock.expect(
-			Util.getTemplatesDirectory());
-		
+		IExpectationSetters<Path> templatesDirMethod = EasyMock.expect(Util.getCustomTemplatesPath());
+
 		Path templatesDirPath = templatesDir.toPath();
-		
+
 		templatesDirMethod.andReturn(templatesDirPath).atLeastOnce();
-		
+
 		PowerMock.replay(Util.class);
-		
+
 		String output = TestUtil.runBlade(args);
 
 		PowerMock.verifyAll();
-		
+
 		Assert.assertTrue(output.contains(" successful") && output.contains(jarName));
-		
+
 		Assert.assertTrue(!testJar.exists());
 	}
 

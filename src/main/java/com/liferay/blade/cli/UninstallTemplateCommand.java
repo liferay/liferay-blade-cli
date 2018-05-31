@@ -16,45 +16,60 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.util.StringUtil;
+
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+
+import java.util.Optional;
 
 /**
  * @author Christopher Bryan Boyd
  */
 public class UninstallTemplateCommand {
-	
-	public static final String DESCRIPTION = "Uninstalls a custo project template from Blade.";
 
 	public UninstallTemplateCommand(BladeCLI blade, UninstallTemplateCommandArgs args) throws Exception {
 		_blade = blade;
 		_args = args;
-		
 	}
 
 	public void execute() throws Exception {
+		Optional<String> templateName = Optional.of(
+			_args.getName()
+		).filter(
+			name -> !StringUtil.isNullOrEmpty(name)
+		).filter(
+			name -> name.endsWith(".jar")
+		);
 
-		String name = _args.getName();
-		
-		if (Objects.nonNull(name) && name.length() > 0 && name.contains("project.templates") && name.endsWith(".jar")) {
-			_removeTemplate(name);
-			_blade.out("The template " + name + " has been uninstalled successfully.");
+		if (templateName.isPresent()) {
+			try {
+				String template = templateName.get();
+
+				_removeTemplate(template);
+
+				_blade.out("The template " + template + " has been uninstalled successfully.");
+			}
+			catch (IOException ioe) {
+				_blade.err(ioe.getMessage());
+			}
 		}
 		else {
-			throw new Exception("Invalid template specified: " + name);
+			_blade.err("Invalid template name specified.");
 		}
 	}
-	
+
 	private static void _removeTemplate(String name) throws IOException {
-		Path templatesHome = Util.getTemplatesDirectory();
-		
+		Path templatesHome = Util.getCustomTemplatesPath();
+
 		Path templatePath = templatesHome.resolve(name);
-		
+
 		Files.delete(templatePath);
 	}
 
 	private final UninstallTemplateCommandArgs _args;
 	private final BladeCLI _blade;
+
 }

@@ -22,11 +22,13 @@ import com.liferay.blade.cli.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
@@ -79,7 +81,9 @@ public class InstallTemplateCommand {
 			Iterator<File> i = outputFiles.iterator();
 
 			if (i.hasNext()) {
-				Path outputPath = i.next().toPath();
+				File next = i.next();
+
+				Path outputPath = next.toPath();
 
 				if (Files.exists(outputPath)) {
 					return outputPath;

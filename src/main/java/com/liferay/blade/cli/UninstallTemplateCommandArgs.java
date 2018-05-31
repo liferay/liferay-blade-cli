@@ -22,13 +22,14 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Christopher Bryan Boyd
  */
-@Parameters(commandDescription = UninstallTemplateCommand.DESCRIPTION, commandNames = {"template uninstall"})
+@Parameters(commandDescription = "Uninstalls a custom project template from blade", commandNames = "template uninstall")
 public class UninstallTemplateCommandArgs extends BaseArgs {
-
-	@Parameter(description = "The name of the project template to uninstall")
-	private String _name;
 
 	public String getName() {
 		return _name;
 	}
+
+	@Parameter(description = "The name of the custom project template to uninstall")
+	private String _name;
+
 }

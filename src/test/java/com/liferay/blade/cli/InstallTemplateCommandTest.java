@@ -40,7 +40,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author Christopher Bryan Boyd
  */
-@PrepareForTest({Util.class, InstallTemplateCommand.class})
+@PrepareForTest({InstallTemplateCommand.class, Util.class})
 @RunWith(PowerMockRunner.class)
 public class InstallTemplateCommandTest {
 
@@ -60,7 +60,10 @@ public class InstallTemplateCommandTest {
 
 		File aFile = new File(_testdir, "afile");
 
-		if (aFile.exists())aFile.delete();
+		if (aFile.exists()) {
+			aFile.delete();
+		}
+
 		Assert.assertTrue(aFile.createNewFile() && aFile.delete());
 	}
 
