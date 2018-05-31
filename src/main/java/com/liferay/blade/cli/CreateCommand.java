@@ -18,6 +18,7 @@ package com.liferay.blade.cli;
 
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
+import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -163,6 +164,7 @@ public class CreateCommand {
 
 		Path customTemplatesPath = Util.getCustomTemplatesPath();
 
+		archetypesDirs.add(FileUtil.getJarFile(ProjectTemplates.class));
 		archetypesDirs.add(customTemplatesPath.toFile());
 
 		boolean mavenBuild = "maven".equals(_args.getBuild());
