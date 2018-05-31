@@ -17,7 +17,7 @@
 package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.LiferayBundleDeployer;
-import com.liferay.blade.cli.util.GogoShellClient;
+import com.liferay.gogo.shell.client.GogoShellClient;
 
 import java.io.IOException;
 

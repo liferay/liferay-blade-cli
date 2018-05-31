@@ -16,7 +16,7 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.util.GogoShellClient;
+import com.liferay.gogo.shell.client.GogoShellClient;
 
 import java.io.File;
 
