@@ -82,7 +82,7 @@ public class UninstallTemplateCommandTest {
 
 		Assert.assertTrue(testJar.createNewFile());
 
-		PowerMock.mockStaticPartialNice(Util.class, "getTemplatesDirectory");
+		PowerMock.mockStaticPartialNice(Util.class, "getCustomTemplatesPath");
 
 		IExpectationSetters<Path> templatesDirMethod = EasyMock.expect(Util.getCustomTemplatesPath());
 
