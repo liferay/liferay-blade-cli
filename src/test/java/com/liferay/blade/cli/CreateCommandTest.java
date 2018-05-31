@@ -804,6 +804,21 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateServiceTemplateServiceParameterRequired() throws Exception {
+		String[] args = {"create", "-t", "service", "foo"};
+
+		String output = TestUtil.runBlade(args);
+
+		Assert.assertTrue(output, output.contains("Usage:"));
+
+		args = new String[] {"create", "-t", "service", "-s com.test.Foo", "foo"};
+
+		output = TestUtil.runBlade(args);
+
+		Assert.assertFalse(output, output.contains("Usage:"));
+	}
+
+	@Test
 	public void testCreateSimulationPanelEntry() throws Exception {
 		String[] args =
 			{"create", "-d", "build/test", "-t", "simulation-panel-entry", "-p", "test.simulator", "simulator"};
