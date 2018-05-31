@@ -16,42 +16,13 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
-
-import java.io.File;
-
-import org.gradle.tooling.internal.consumer.ConnectorServices;
-
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @author Christopher Bryan Boyd
  */
 public class ListExtensionsCommandTest {
-
-	@After
-	public void cleanUp() throws Exception {
-		ConnectorServices.reset();
-
-		if (_TEST_DIR.exists()) {
-			IO.delete(_TEST_DIR);
-			Assert.assertFalse(_TEST_DIR.exists());
-		}
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		_TEST_DIR.mkdirs();
-
-		File newFile = new File(_TEST_DIR, "afile");
-
-		if (newFile.exists())newFile.delete();
-
-		Assert.assertTrue(newFile.createNewFile());
-	}
 
 	@Test
 	public void testListExtensions() throws Exception {
@@ -64,7 +35,4 @@ public class ListExtensionsCommandTest {
 		Assert.assertTrue(content.contains("ext2 description"));
 		Assert.assertTrue(content.contains("ext2 location"));
 	}
-
-	private static File _TEST_DIR = IO.getFile("build/test");
-
 }

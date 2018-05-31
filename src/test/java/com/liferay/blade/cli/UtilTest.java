@@ -25,31 +25,21 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Properties;
 
-import org.junit.After;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author David Truong
  */
 public class UtilTest {
 
-	@After
-	public void cleanUp() throws Exception {
-		_testdir = IO.getFile("build/test");
-
-		if (_testdir.exists()) {
-			IO.delete(_testdir);
-			Assert.assertFalse(_testdir.exists());
-		}
-	}
 
 	@Test
 	public void testAppServerProperties() throws Exception {
-		File dir = new File("build/test");
-
-		dir.mkdirs();
-
+		File dir = tempFolder.getRoot();
+		
 		File appServerProperty1 = new File(dir, "app.server." + System.getProperty("user.name") + ".properties");
 
 		appServerProperty1.createNewFile();
@@ -65,7 +55,7 @@ public class UtilTest {
 
 	@Test
 	public void testIsWorkspace1() throws Exception {
-		File workspace = new File("build/test/workspace");
+		File workspace = new File(tempFolder.getRoot(), "workspace");
 
 		workspace.mkdirs();
 
@@ -80,7 +70,7 @@ public class UtilTest {
 
 	@Test
 	public void testIsWorkspace2() throws Exception {
-		File workspace = new File("build/test/workspace");
+		File workspace = new File(tempFolder.getRoot(), "workspace");
 
 		workspace.mkdirs();
 
@@ -95,7 +85,7 @@ public class UtilTest {
 
 	@Test
 	public void testIsWorkspace3() throws Exception {
-		File workspace = new File("build/test/workspace");
+		File workspace = new File(tempFolder.getRoot(), "workspace");
 
 		workspace.mkdirs();
 
@@ -112,6 +102,8 @@ public class UtilTest {
 		Assert.assertTrue(Util.isWorkspace(workspace));
 	}
 
-	private File _testdir;
+
+	@Rule
+	public final TemporaryFolder tempFolder = new TemporaryFolder();
 
 }

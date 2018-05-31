@@ -16,45 +16,24 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
-
 import java.io.File;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.gradle.tooling.internal.consumer.ConnectorServices;
-
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Christopher Bryan Boyd
  */
 public class LinkDownloaderTest {
 
-	@After
-	public void cleanUp() throws Exception {
-		ConnectorServices.reset();
-
-		if (_TEST_DIR.exists()) {
-			IO.delete(_TEST_DIR);
-			Assert.assertFalse(_TEST_DIR.exists());
-		}
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		_TEST_DIR.mkdirs();
-
-		Assert.assertTrue(new File(_TEST_DIR, "afile").createNewFile());
-	}
-
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFiles() throws Exception {
-		Path targetFile = new File(_TEST_DIR, "bnd.bnd").toPath();
+		Path targetFile = new File(tempFolder.getRoot(), "bnd.bnd").toPath();
 
 		String link = "https://raw.githubusercontent.com/liferay/liferay-blade-cli/master/bnd.bnd";
 
@@ -63,6 +42,7 @@ public class LinkDownloaderTest {
 		Assert.assertTrue(Files.exists(targetFile));
 	}
 
-	private static File _TEST_DIR = IO.getFile("build/test");
+	@Rule
+	public final TemporaryFolder tempFolder = new TemporaryFolder();
 
 }

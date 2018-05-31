@@ -30,7 +30,9 @@ import org.gradle.tooling.internal.consumer.ConnectorServices;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
 import org.powermock.api.easymock.PowerMock;
@@ -44,35 +46,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class InstallExtensionCommandTest {
 
-	@After
-	public void cleanUp() throws Exception {
-		ConnectorServices.reset();
-
-		if (_testdir.exists()) {
-			IO.delete(_testdir);
-			Assert.assertFalse(_testdir.exists());
-		}
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		_testdir.mkdirs();
-
-		File aFile = new File(_testdir, "afile");
-
-		if (aFile.exists())aFile.delete();
-		Assert.assertTrue(aFile.createNewFile() && aFile.delete());
-	}
-
 	@Test
 	public void testInstallTemplate() throws Exception {
 		String jarName = "custom.extension.jar";
 
-		File fakeJar = new File(_testdir, jarName);
+		File fakeJar = new File(tempFolder.getRoot(), jarName);
 
 		String[] args = {"extension install", fakeJar.getAbsolutePath()};
 
-		File extensionsDir = new File(_testdir, "extensions");
+		File extensionsDir = new File(tempFolder.getRoot(), "extensions");
 
 		extensionsDir.mkdirs();
 
@@ -101,6 +83,7 @@ public class InstallExtensionCommandTest {
 		Assert.assertTrue(fakeJarDest.exists());
 	}
 
-	private static File _testdir = IO.getFile("build/test");
+	@Rule
+	public final TemporaryFolder tempFolder = new TemporaryFolder();
 
 }

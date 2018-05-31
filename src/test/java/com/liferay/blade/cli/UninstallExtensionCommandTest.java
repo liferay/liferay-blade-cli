@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
-
 import java.io.File;
 
 import java.nio.file.Path;
@@ -25,10 +23,10 @@ import java.nio.file.Path;
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
 import org.powermock.api.easymock.PowerMock;
@@ -42,31 +40,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class UninstallExtensionCommandTest {
 
-	@After
-	public void cleanUp() throws Exception {
-		if (_TEST_DIR.exists()) {
-			IO.delete(_TEST_DIR);
-			Assert.assertFalse(_TEST_DIR.exists());
-		}
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		_TEST_DIR.mkdirs();
-
-		File aFile = new File(_TEST_DIR, "afile");
-
-		if (aFile.exists())aFile.delete();
-		Assert.assertTrue(aFile.createNewFile() && aFile.delete());
-	}
-
 	@Test
 	public void testUninstallTemplate() throws Exception {
 		String jarName = "custom.blade.extension.jar";
 
 		String[] args = {"extension", "uninstall", jarName};
 
-		File extensionsDir = new File(_TEST_DIR, "extensions");
+		File extensionsDir = new File(tempFolder.getRoot(), "extensions");
 
 		extensionsDir.mkdirs();
 
@@ -93,6 +73,7 @@ public class UninstallExtensionCommandTest {
 		Assert.assertTrue(!testJar.exists());
 	}
 
-	private static File _TEST_DIR = IO.getFile("build/test");
+	@Rule
+	public final TemporaryFolder tempFolder = new TemporaryFolder();
 
 }
