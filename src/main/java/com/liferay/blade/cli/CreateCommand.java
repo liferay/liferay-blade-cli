@@ -64,8 +64,10 @@ public class CreateCommand {
 		} else if (Objects.equals(template, "service")) {
 			if (Objects.isNull(_args.getService())) {
 				StringBuilder sb = new StringBuilder("\"-t service\" option missing:" + System.lineSeparator());
+				
 				sb.append("Service Name  (\"-s\", \"--service\") is required.");
 				sb.append(System.lineSeparator());
+				_blade.err(sb.toString());
 				return;
 			}
 		} else if (Objects.equals(_args.getTemplate(), "fragment")) {
