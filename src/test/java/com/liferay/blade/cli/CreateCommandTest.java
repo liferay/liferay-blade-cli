@@ -804,6 +804,18 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateServiceValidateInput() throws Exception {
+
+		String[] args = {"create", "-t", "service", "foo"};
+		
+		String output = TestUtil.runBlade(args);
+		
+		boolean contains = output.contains("is required");
+		
+		Assert.assertTrue(contains);
+	}
+	
+	@Test
 	public void testCreateSimulationPanelEntry() throws Exception {
 		String[] args =
 			{"create", "-d", "build/test", "-t", "simulation-panel-entry", "-p", "test.simulator", "simulator"};
