@@ -41,6 +41,7 @@ Private-Package:\
 	\
 	com.liferay.blade.cli.*,\
 	com.liferay.blade.gradle.model,\
+	com.liferay.gogo.shell.client,\
 	com.liferay.properties.locator,\
 	\
 	org.apache.commons.io,\
