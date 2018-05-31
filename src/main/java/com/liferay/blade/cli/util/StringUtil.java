@@ -19,11 +19,30 @@ package com.liferay.blade.cli.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Gregory Amerson
  */
 public class StringUtil {
+
+	public static boolean isNullOrEmpty(String arg) {
+		boolean hasContent = Optional.of(
+			arg
+		).filter(
+			s -> s != null
+		).map(
+			String::trim
+		).filter(
+			s -> s.length() != 0
+		).isPresent();
+
+		if (hasContent) {
+			return false;
+		}
+
+		return true;
+	}
 
 	public static String replace(String s, char oldSub, char newSub) {
 		if (s == null) {

@@ -18,17 +18,20 @@ package com.liferay.blade.cli;
 
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
+import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.PrintStream;
 
+import java.nio.file.Path;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -157,6 +160,13 @@ public class CreateCommand {
 		projectTemplatesArgs.setService(_args.getService());
 		projectTemplatesArgs.setTemplate(template);
 
+		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
+
+		Path customTemplatesPath = Util.getCustomTemplatesPath();
+
+		archetypesDirs.add(FileUtil.getJarFile(ProjectTemplates.class));
+		archetypesDirs.add(customTemplatesPath.toFile());
+
 		boolean mavenBuild = "maven".equals(_args.getBuild());
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
@@ -209,14 +219,6 @@ public class CreateCommand {
 		String parentPath = parentDir.getCanonicalPath();
 
 		return currentPath.startsWith(parentPath);
-	}
-
-	private static String[] _getTemplateNames() throws Exception {
-		Map<String, String> templates = ProjectTemplates.getTemplates();
-
-		Set<String> keySet = templates.keySet();
-
-		return keySet.toArray(new String[0]);
 	}
 
 	private void _addError(String prefix, String msg) {
@@ -284,21 +286,15 @@ public class CreateCommand {
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
-		String[] templates = _getTemplateNames();
+		Collection<String> templateNames = Util.getTemplateNames();
 
-		for (String template : templates) {
-			if (templateName.equals(template)) {
-				return true;
-			}
-		}
-
-		return false;
+		return templateNames.contains(templateName);
 	}
 
 	private void _printTemplates() throws Exception {
-		Map<String, String> templates = ProjectTemplates.getTemplates();
+		Map<String, String> templates = Util.getTemplates();
 
-		List<String> templateNames = new ArrayList<>(templates.keySet());
+		List<String> templateNames = new ArrayList<>(Util.getTemplateNames());
 
 		Collections.sort(templateNames);
 

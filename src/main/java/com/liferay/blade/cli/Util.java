@@ -23,6 +23,7 @@ import aQute.bnd.osgi.Resource;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.util.AnsiLinePrinter;
+import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,9 +41,12 @@ import java.net.Socket;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -151,6 +155,37 @@ public class Util {
 		return properties;
 	}
 
+	public static Path getCustomTemplatesPath() {
+		try {
+			Path homePath = Paths.get(System.getProperty("user.home"));
+
+			Path bladePath = homePath.resolve(".blade");
+
+			if (Files.notExists(bladePath)) {
+				Files.createDirectory(bladePath);
+			}
+			else if (!Files.isDirectory(bladePath)) {
+				throw new Exception(".blade is not a directory!");
+			}
+
+			Path templatesPath = bladePath.resolve("templates");
+
+			if (Files.notExists(templatesPath)) {
+				Files.createDirectory(templatesPath);
+			}
+			else if (!Files.isDirectory(templatesPath)) {
+				throw new Exception(".blade/templates is not a directory!");
+			}
+
+			return templatesPath;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static Properties getGradleProperties(File dir) {
 		File file = getGradlePropertiesFile(dir);
 
@@ -189,6 +224,22 @@ public class Util {
 		catch (Exception e) {
 			return null;
 		}
+	}
+
+	public static Collection<String> getTemplateNames() throws Exception {
+		Map<String, String> templates = getTemplates();
+
+		return templates.keySet();
+	}
+
+	public static Map<String, String> getTemplates() throws Exception {
+		File customTemplatesDir = getCustomTemplatesPath().toFile();
+
+		Collection<File> templatesFiles = new HashSet<>();
+
+		templatesFiles.add(customTemplatesDir);
+
+		return ProjectTemplates.getTemplates(templatesFiles);
 	}
 
 	public static File getWorkspaceDir(BladeCLI blade) {
@@ -240,6 +291,14 @@ public class Util {
 
 	public static boolean isEmpty(String string) {
 		if ((string == null) || string.isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean isGradleBuildPath(Path path) {
+		if ((path != null) && Files.exists(path.resolve("build.gradle"))) {
 			return true;
 		}
 

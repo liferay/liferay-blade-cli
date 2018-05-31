@@ -136,6 +136,10 @@ public class BladeCLI implements Runnable {
 		new InstallCommand(this, args).execute();
 	}
 
+	public void installTemplate(InstallTemplateCommandArgs args) throws Exception {
+		new InstallTemplateCommand(this, args).execute();
+	}
+
 	public void open(OpenCommandArgs args) throws Exception {
 		new OpenCommand(this, args).execute();
 	}
@@ -181,6 +185,10 @@ public class BladeCLI implements Runnable {
 	public void printUsage(String command, String message) {
 		out(message);
 		_jCommander.usage(command);
+	}
+
+	public void removeTemplate(UninstallTemplateCommandArgs args) throws Exception {
+		new UninstallTemplateCommand(this, args).execute();
 	}
 
 	@Override
@@ -260,6 +268,16 @@ public class BladeCLI implements Runnable {
 
 						break;
 
+					case "template install":
+						installTemplate((InstallTemplateCommandArgs)_commandArgs);
+
+						break;
+
+					case "template uninstall":
+						removeTemplate((UninstallTemplateCommandArgs)_commandArgs);
+
+						break;
+
 					case "update":
 						update((UpdateCommandArgs)_commandArgs);
 
@@ -299,10 +317,10 @@ public class BladeCLI implements Runnable {
 
 		List<Object> argsList = Arrays.asList(
 			new CreateCommandArgs(), new ConvertCommandArgs(), new DeployCommandArgs(), new GradleCommandArgs(),
-			new HelpCommandArgs(), new InitCommandArgs(), new InstallCommandArgs(), new OpenCommandArgs(),
-			new OutputsCommandArgs(), new SamplesCommandArgs(), new ServerStartCommandArgs(),
-			new ServerStopCommandArgs(), new ShellCommandArgs(), new UpdateCommandArgs(), new UpgradePropsArgs(),
-			new VersionCommandArgs());
+			new HelpCommandArgs(), new InitCommandArgs(), new InstallCommandArgs(), new InstallTemplateCommandArgs(),
+			new OpenCommandArgs(), new OutputsCommandArgs(), new UninstallTemplateCommandArgs(),
+			new SamplesCommandArgs(), new ServerStartCommandArgs(), new ServerStopCommandArgs(), new ShellCommandArgs(),
+			new UpdateCommandArgs(), new UpgradePropsArgs(), new VersionCommandArgs());
 
 		Builder builder = JCommander.newBuilder();
 
@@ -416,6 +434,21 @@ public class BladeCLI implements Runnable {
 				flags.set(x, serverCommand);
 
 				flags.remove(next);
+			}
+			else if (s.equals("template")) {
+				int next = x + 1;
+
+				if (flags.size() > next) {
+					String nextCommand = flags.get(next);
+
+					if ("install".equals(nextCommand) || "uninstall".equals(nextCommand)) {
+						String fullCommand = s + " " + nextCommand;
+
+						flags.set(x, fullCommand);
+
+						flags.remove(next);
+					}
+				}
 			}
 		}
 
