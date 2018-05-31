@@ -61,7 +61,8 @@ public class CreateCommand {
 			_printTemplates();
 
 			return;
-		} else if (template.equals("service")) {
+		}
+		else if (template.equals("service")) {
 			if (_args.getService() == null) {
 				StringBuilder sb = new StringBuilder();
 
@@ -74,7 +75,8 @@ public class CreateCommand {
 
 				return;
 			}
-		} else if (_args.getTemplate().equals("fragment")) {
+		}
+		else if (template.equals("fragment")) {
 			boolean hasHostBundleBSN = false;
 
 			if (_args.getHostBundleBSN() != null) {

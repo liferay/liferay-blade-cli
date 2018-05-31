@@ -19,6 +19,7 @@ package com.liferay.blade.cli;
 import com.liferay.blade.cli.util.GogoShellClient;
 
 import java.io.File;
+
 import java.util.Collections;
 
 /**
@@ -39,6 +40,7 @@ public class InstallCommand {
 	public void execute() throws Exception {
 		if (!Util.canConnect(_host, _port)) {
 			_addError("Unable to connect to gogo shell on " + _host + ":" + _port);
+
 			return;
 		}
 
@@ -46,6 +48,7 @@ public class InstallCommand {
 
 		if (bundleFileName == null) {
 			_addError("Must specify bundle file to install.");
+
 			return;
 		}
 
@@ -53,6 +56,7 @@ public class InstallCommand {
 
 		if (!bundleFile.exists()) {
 			_addError(bundleFile + "doesn't exist.");
+
 			return;
 		}
 

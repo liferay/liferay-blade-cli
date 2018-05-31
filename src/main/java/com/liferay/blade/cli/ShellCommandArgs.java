@@ -26,7 +26,7 @@ import java.util.List;
  * @author Gregory Amerson
  */
 @Parameters(
-	commandDescription = "Connects to Liferay and executes gogo command and returns output.", commandNames = {"sh"}
+	commandDescription = "Connects to Liferay and executes gogo command and returns output.", commandNames = "sh"
 )
 public class ShellCommandArgs extends BaseArgs {
 

@@ -22,9 +22,7 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Gregory Amerson
  */
-@Parameters(
-	commandDescription = "Builds and deploys bundles to the Liferay module framework.", commandNames = {"deploy"}
-)
+@Parameters(commandDescription = "Builds and deploys bundles to the Liferay module framework.", commandNames = "deploy")
 public class DeployCommandArgs extends BaseArgs {
 
 	public boolean isWatch() {

@@ -22,7 +22,7 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Christopher Bryan Boyd
  */
-@Parameters(commandDescription = "Get help on a specific command", commandNames = {"help"})
+@Parameters(commandDescription = "Get help on a specific command", commandNames = "help")
 public class HelpCommandArgs extends BaseArgs {
 
 	public String getName() {

@@ -1,10 +1,7 @@
 Bundle-SymbolicName: com.liferay.blade.cli
 Bundle-Version: 3.0.0.${tstamp}
-
 JPM-Command: blade
-
 Main-Class: com.liferay.blade.cli.BladeCLI
-
 Private-Package:\
 	aQute.bnd.deployer.http,\
 	aQute.bnd.deployer.repository,\
@@ -72,7 +69,6 @@ Private-Package:\
 	org.slf4j.helpers;-split-package:=merge-first,\
 	org.slf4j.impl,\
 	org.slf4j.spi;-split-package:=merge-first
-
 aether-deps:\
 	org.apache.commons.logging,\
 	org.apache.commons.logging.impl,\
@@ -178,12 +174,10 @@ aether-deps:\
 	org.eclipse.aether.util.repository,\
 	org.eclipse.aether.util.version,\
 	org.eclipse.aether.version
-
 -includeresource:\
 	@com.liferay.project.templates-*.jar,\
 	@jansi-*.jar,\
 	deps.zip,\
 	wrapper.zip,\
 	mvnw.cmd
-
 -sources: false

@@ -670,7 +670,9 @@ public class CreateCommandTest {
 
 		if (!existFile.exists()) {
 			IO.getFile("build/exist").mkdirs();
+
 			existFile.createNewFile();
+
 			Assert.assertTrue(existFile.exists());
 		}
 

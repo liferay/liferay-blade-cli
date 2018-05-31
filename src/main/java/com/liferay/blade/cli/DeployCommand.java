@@ -233,6 +233,7 @@ public class DeployCommand {
 			}
 			catch (Exception e) {
 				out.println("Error: Bundle failed to deploy: " + bsn);
+
 				e.printStackTrace(out);
 			}
 		}

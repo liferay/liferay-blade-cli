@@ -42,17 +42,17 @@ public class GradleRunnerUtil {
 
 		BuildResult buildResult = gradleRunner.build();
 
-		BuildTask buildtask = null;
+		BuildTask buildTask = null;
 
 		for (BuildTask task : buildResult.getTasks()) {
 			if (task.getPath().endsWith(taskPath[taskPath.length - 1])) {
-				buildtask = task;
+				buildTask = task;
 
 				break;
 			}
 		}
 
-		return buildtask;
+		return buildTask;
 	}
 
 	public static void verifyBuildOutput(String projectPath, String fileName) {
@@ -61,10 +61,10 @@ public class GradleRunnerUtil {
 		Assert.assertTrue(file.exists());
 	}
 
-	public static void verifyGradleRunnerOutput(BuildTask buildtask) {
-		Assert.assertNotNull(buildtask);
+	public static void verifyGradleRunnerOutput(BuildTask buildTask) {
+		Assert.assertNotNull(buildTask);
 
-		Assert.assertEquals(TaskOutcome.SUCCESS, buildtask.getOutcome());
+		Assert.assertEquals(TaskOutcome.SUCCESS, buildTask.getOutcome());
 	}
 
 }

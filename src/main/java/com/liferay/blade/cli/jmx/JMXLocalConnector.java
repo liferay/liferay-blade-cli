@@ -185,9 +185,9 @@ public class JMXLocalConnector {
 				}
 
 				if (localConnectorAddress != null) {
-					final JMXServiceURL jmxServiceUrl = new JMXServiceURL(localConnectorAddress);
+					final JMXServiceURL jmxServiceURL = new JMXServiceURL(localConnectorAddress);
 
-					final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxServiceUrl, null);
+					final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxServiceURL, null);
 
 					final MBeanServerConnection mBeanServerConnection = jmxConnector.getMBeanServerConnection();
 
