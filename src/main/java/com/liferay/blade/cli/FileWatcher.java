@@ -31,11 +31,6 @@
 
 package com.liferay.blade.cli;
 
-import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
-
 import java.io.IOException;
 
 import java.lang.reflect.Field;
@@ -44,9 +39,12 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
+import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchEvent.Modifier;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
@@ -130,7 +128,7 @@ public class FileWatcher {
 
 				// TBD - provide example of how OVERFLOW event is handled
 
-				if (kind == OVERFLOW) {
+				if (kind == StandardWatchEventKinds.OVERFLOW) {
 					continue;
 				}
 
@@ -143,7 +141,8 @@ public class FileWatcher {
 				Path child = dir.resolve(name);
 
 				if ((child.equals(fileToWatch) || (fileToWatch == null)) &&
-					((kind == ENTRY_CREATE) || (kind == ENTRY_MODIFY))) {
+					((kind == StandardWatchEventKinds.ENTRY_CREATE) ||
+					 (kind == StandardWatchEventKinds.ENTRY_MODIFY))) {
 
 					reportModified.add(child);
 				}
@@ -151,9 +150,9 @@ public class FileWatcher {
 				// if directory is created, and watching recursively, then
 				// register it and its sub-directories
 
-				if (_recursive && (kind == ENTRY_CREATE)) {
+				if (_recursive && (kind == StandardWatchEventKinds.ENTRY_CREATE)) {
 					try {
-						if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
+						if (Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) {
 							_registerAll(child);
 						}
 					}
@@ -217,10 +216,10 @@ public class FileWatcher {
 		WatchKey key;
 
 		if (modifier != null) {
-			key = dir.register(_watcher, new WatchEvent.Kind[] {ENTRY_CREATE, ENTRY_MODIFY}, modifier);
+			key = dir.register(_watcher, _WATCH_KINDS, modifier);
 		}
 		else {
-			key = dir.register(_watcher, ENTRY_CREATE, ENTRY_MODIFY);
+			key = dir.register(_watcher, _WATCH_KINDS);
 		}
 
 		_keys.put(key, dir);
@@ -247,6 +246,9 @@ public class FileWatcher {
 
 			});
 	}
+
+	@SuppressWarnings("rawtypes")
+	private static final Kind[] _WATCH_KINDS = {StandardWatchEventKinds.ENTRY_CREATE};
 
 	private final Map<WatchKey, Path> _keys;
 	private final boolean _recursive;

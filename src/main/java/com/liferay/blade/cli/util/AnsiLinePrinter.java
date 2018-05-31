@@ -71,7 +71,13 @@ public class AnsiLinePrinter {
 	}
 
 	private static Function<? super String, ? extends Ansi> _toAnsiColor(Function<Ansi, Ansi> colorizer) {
-		return line -> colorizer.apply(Ansi.ansi()).a(line).reset();
+		return line -> {
+			return colorizer.apply(
+				Ansi.ansi()
+			).a(
+				line
+			).reset();
+		};
 	}
 
 	private static final Pattern[] _BRIGHT_GREEN_LINE_PATTERNS = {Pattern.compile(".*STOPPED.*")};

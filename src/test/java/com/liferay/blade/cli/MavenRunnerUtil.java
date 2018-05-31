@@ -53,7 +53,7 @@ public class MavenRunnerUtil {
 		}
 
 		try {
-			Runtime runTime = Runtime.getRuntime();
+			Runtime runtime = Runtime.getRuntime();
 
 			if (windows) {
 				File mvnw = new File("mvnw.cmd");
@@ -61,7 +61,7 @@ public class MavenRunnerUtil {
 				FileUtils.copyFile(mvnw, new File(projectPath + "/mvnw.cmd"));
 			}
 
-			Process process = runTime.exec(
+			Process process = runtime.exec(
 				(windows ? ".\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(), null, new File(projectPath));
 
 			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));

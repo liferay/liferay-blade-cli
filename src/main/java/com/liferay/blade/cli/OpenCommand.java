@@ -37,6 +37,7 @@ public class OpenCommand {
 
 		if (!fileName.exists()) {
 			_addError("open", "Unable to find specified file " + fileName.getAbsolutePath());
+
 			return;
 		}
 
@@ -47,6 +48,7 @@ public class OpenCommand {
 
 			if (retval != null) {
 				_addError("open", retval.toString());
+
 				return;
 			}
 		}

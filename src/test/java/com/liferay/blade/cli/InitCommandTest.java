@@ -439,9 +439,9 @@ public class InitCommandTest {
 
 		String projectPath = _workspaceDir.getPath() + "/modules";
 
-		BuildTask buildtask = GradleRunnerUtil.executeGradleRunner(_workspaceDir.getPath(), "jar");
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(_workspaceDir.getPath(), "jar");
 
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildtask);
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
 	}

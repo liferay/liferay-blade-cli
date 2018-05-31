@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Parameters(
 	commandDescription = "Converts a plugins-sdk plugin project to a gradle WAR project in Liferay workspace",
-	commandNames = {"convert"}
+	commandNames = "convert"
 )
 public class ConvertCommandArgs extends BaseArgs {
 

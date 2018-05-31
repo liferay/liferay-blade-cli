@@ -24,7 +24,7 @@ import java.io.File;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandDescription = "Generate a sample project", commandNames = {"samples"})
+@Parameters(commandDescription = "Generate a sample project", commandNames = "samples")
 public class SamplesCommandArgs extends BaseArgs {
 
 	public File getDir() {

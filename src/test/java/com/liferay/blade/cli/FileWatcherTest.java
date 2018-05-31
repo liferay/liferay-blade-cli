@@ -44,6 +44,7 @@ public class FileWatcherTest {
 	public void cleanUp() throws Exception {
 		if (_testdir.exists()) {
 			IO.delete(_testdir);
+
 			Assert.assertFalse(_testdir.exists());
 		}
 	}
@@ -51,6 +52,7 @@ public class FileWatcherTest {
 	@Before
 	public void setUp() throws Exception {
 		_testdir.mkdirs();
+
 		Assert.assertTrue(_testdir.exists());
 		Assert.assertTrue(_testfile.createNewFile());
 	}

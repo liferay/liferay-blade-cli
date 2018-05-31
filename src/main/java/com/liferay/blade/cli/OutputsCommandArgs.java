@@ -21,6 +21,6 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandNames = {"outputs"})
+@Parameters(commandNames = "outputs")
 public class OutputsCommandArgs extends BaseArgs {
 }

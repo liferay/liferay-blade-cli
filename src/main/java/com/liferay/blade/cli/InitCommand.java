@@ -63,6 +63,7 @@ public class InitCommand {
 
 		if (destDir.exists() && !destDir.isDirectory()) {
 			_addError(destDir.getAbsolutePath() + " is not a directory.");
+
 			return;
 		}
 
@@ -74,6 +75,7 @@ public class InitCommand {
 					if (_args.isUpgrade()) {
 						if (mavenBuild) {
 							_addError("Upgrading Plugins SDK in Liferay Maven Workspace not supported.");
+
 							return;
 						}
 
@@ -93,6 +95,7 @@ public class InitCommand {
 						_addError(
 							"Unable to run blade init in Plugins SDK 6.2, please add -u (--upgrade) if you want to " +
 								"upgrade to 7.0");
+
 						return;
 					}
 				}
@@ -117,6 +120,7 @@ public class InitCommand {
 							destDir.getAbsolutePath() +
 								" contains files, please move them before continuing or use -f (--force) option to " +
 									"init workspace.");
+
 						return;
 					}
 				}

@@ -21,6 +21,6 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandDescription = "Stop server defined by your Liferay project", commandNames = {"server stop"})
+@Parameters(commandDescription = "Stop server defined by your Liferay project", commandNames = "server stop")
 public class ServerStopCommandArgs extends BaseArgs {
 }

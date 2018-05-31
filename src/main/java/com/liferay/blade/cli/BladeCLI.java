@@ -61,6 +61,7 @@ public class BladeCLI implements Runnable {
 
 	public void addErrors(String prefix, Collection<String> data) {
 		err().println("Error: " + prefix);
+
 		data.forEach(err()::println);
 	}
 
@@ -154,7 +155,7 @@ public class BladeCLI implements Runnable {
 	public void printUsage() {
 		StringBuilder usageString = new StringBuilder();
 
-		_jcommander.usage(usageString);
+		_jCommander.usage(usageString);
 
 		try (Scanner scanner = new Scanner(usageString.toString())) {
 			StringBuilder simplifiedUsageString = new StringBuilder();
@@ -174,12 +175,12 @@ public class BladeCLI implements Runnable {
 	}
 
 	public void printUsage(String command) {
-		_jcommander.usage(command);
+		_jCommander.usage(command);
 	}
 
 	public void printUsage(String command, String message) {
 		out(message);
-		_jcommander.usage(command);
+		_jCommander.usage(command);
 	}
 
 	@Override
@@ -309,28 +310,28 @@ public class BladeCLI implements Runnable {
 			builder.addCommand(o);
 		}
 
-		_jcommander = builder.build();
+		_jCommander = builder.build();
 
 		if ((args.length == 1) && args[0].equals("--help")) {
 			printUsage();
 		}
 		else {
 			try {
-				_jcommander.parse(args);
+				_jCommander.parse(args);
 
-				String command = _jcommander.getParsedCommand();
+				String command = _jCommander.getParsedCommand();
 
-				Map<String, JCommander> commands = _jcommander.getCommands();
+				Map<String, JCommander> commands = _jCommander.getCommands();
 
-				JCommander jcommander = commands.get(command);
+				JCommander jCommander = commands.get(command);
 
-				if (jcommander == null) {
+				if (jCommander == null) {
 					printUsage();
 
 					return;
 				}
 
-				List<Object> objects = jcommander.getObjects();
+				List<Object> objects = jCommander.getObjects();
 
 				Object commandArgs = objects.get(0);
 
@@ -350,10 +351,11 @@ public class BladeCLI implements Runnable {
 				}
 
 				error(stringBuilder.toString());
+
 				printUsage();
 			}
 			catch (ParameterException pe) {
-				error(_jcommander.getParsedCommand() + ": " + pe.getMessage());
+				error(_jCommander.getParsedCommand() + ": " + pe.getMessage());
 			}
 		}
 	}
@@ -412,6 +414,7 @@ public class BladeCLI implements Runnable {
 				String serverCommand = s + " " + flags.get(next);
 
 				flags.set(x, serverCommand);
+
 				flags.remove(next);
 			}
 		}
@@ -424,7 +427,7 @@ public class BladeCLI implements Runnable {
 	private String _command;
 	private BaseArgs _commandArgs;
 	private final PrintStream _err;
-	private JCommander _jcommander;
+	private JCommander _jCommander;
 	private final PrintStream _out;
 
 }

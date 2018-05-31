@@ -26,7 +26,7 @@ import java.io.File;
  */
 @Parameters(
 	commandDescription = "Helps to upgrade portal properties from Liferay server 6.x to 7.x versions",
-	commandNames = {"upgradeProps"}
+	commandNames = "upgradeProps"
 )
 public class UpgradePropsArgs extends BaseArgs {
 

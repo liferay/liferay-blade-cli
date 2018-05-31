@@ -79,6 +79,7 @@ public class BndProperties extends Properties {
 					if (bdValue.isMultiLine()) {
 						formatedValueBuilder.append(",\\" + System.getProperty("line.separator"));
 						formatedValueBuilder.append("\t" + newValue);
+
 						inputValue.setFormatedValue(formatedValueBuilder.toString());
 					}
 					else {

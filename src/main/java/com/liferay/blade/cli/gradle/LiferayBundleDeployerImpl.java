@@ -20,12 +20,15 @@ import com.liferay.blade.cli.LiferayBundleDeployer;
 import com.liferay.blade.cli.util.GogoShellClient;
 
 import java.io.IOException;
+
 import java.net.URI;
+
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -174,7 +177,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 	private static String _getWarString(Path path) throws IllegalArgumentException {
 		if (!_WAR_FILE_GLOB.matches(path)) {
-			throw new IllegalArgumentException("Must provide a valid WAR file.");
+			throw new IllegalArgumentException("Must provide a valid WAR file");
 		}
 
 		Path fileName = path.getFileName();

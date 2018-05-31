@@ -71,6 +71,7 @@ public class Util {
 		try (Socket socket = new Socket()) {
 			socket.bind(local);
 			socket.connect(address, 3000);
+
 			in = socket.getInputStream();
 
 			return true;
