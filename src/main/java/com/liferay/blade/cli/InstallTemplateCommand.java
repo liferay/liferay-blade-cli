@@ -36,11 +36,9 @@ import java.util.Set;
 /**
  * @author Christopher Bryan Boyd
  */
-public class InstallTemplateCommand {
+public class InstallTemplateCommand extends BaseCommand<InstallTemplateCommandArgs> {
 
-	public InstallTemplateCommand(BladeCLI blade, InstallTemplateCommandArgs args) throws Exception {
-		_blade = blade;
-		_args = args;
+	public InstallTemplateCommand()  {
 	}
 
 	public void execute() throws Exception {
@@ -68,6 +66,11 @@ public class InstallTemplateCommand {
 		else {
 			throw new Exception("Template path must exist");
 		}
+	}
+
+	@Override
+	public Class<InstallTemplateCommandArgs> getArgsClass() {
+		return InstallTemplateCommandArgs.class;
 	}
 
 	private Path _gradleAssemble(Path projectPath) {
@@ -124,8 +127,5 @@ public class InstallTemplateCommand {
 
 	private static final PathMatcher _customTemplatePathMatcher = FileSystems.getDefault().getPathMatcher(
 		"glob:**/*.project.templates.*");
-
-	private final InstallTemplateCommandArgs _args;
-	private final BladeCLI _blade;
 
 }

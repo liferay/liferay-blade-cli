@@ -27,6 +27,7 @@ import com.beust.jcommander.Parameters;
 
 import com.liferay.blade.cli.util.AnsiLinePrinter;
 import com.liferay.blade.cli.util.LinkDownloader;
+import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -28,11 +28,9 @@ import java.util.Optional;
 /**
  * @author Christopher Bryan Boyd
  */
-public class UninstallTemplateCommand {
+public class UninstallTemplateCommand extends BaseCommand<UninstallTemplateCommandArgs> {
 
-	public UninstallTemplateCommand(BladeCLI blade, UninstallTemplateCommandArgs args) throws Exception {
-		_blade = blade;
-		_args = args;
+	public UninstallTemplateCommand() {
 	}
 
 	public void execute() throws Exception {
@@ -69,7 +67,9 @@ public class UninstallTemplateCommand {
 		Files.delete(templatePath);
 	}
 
-	private final UninstallTemplateCommandArgs _args;
-	private final BladeCLI _blade;
+	@Override
+	public Class<UninstallTemplateCommandArgs> getArgsClass() {
+		return UninstallTemplateCommandArgs.class;
+	}
 
 }

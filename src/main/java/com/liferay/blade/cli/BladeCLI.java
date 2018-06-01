@@ -201,10 +201,6 @@ public class BladeCLI implements Runnable {
 		return cacheDir.toFile();
 	}
 
-	public void installTemplate(InstallTemplateCommandArgs args) throws Exception {
-		new InstallTemplateCommand(this, args).execute();
-	}
-
 	public PrintStream out() {
 		return _out;
 	}
@@ -244,10 +240,6 @@ public class BladeCLI implements Runnable {
 		_jCommander.usage(command);
 	}
 
-	public void removeTemplate(UninstallTemplateCommandArgs args) throws Exception {
-		new UninstallTemplateCommand(this, args).execute();
-	}
-
 	@Override
 	public void run() {
 		try {
@@ -264,16 +256,6 @@ public class BladeCLI implements Runnable {
 					runCustomCommand();
 				} else {
 					_jCommander.usage();
-					case "template install":
-						installTemplate((InstallTemplateCommandArgs)_commandArgs);
-
-						break;
-
-					case "template uninstall":
-						removeTemplate((UninstallTemplateCommandArgs)_commandArgs);
-
-						break;
-
 				}
 			}
 		}
@@ -407,20 +389,6 @@ public class BladeCLI implements Runnable {
 			command.execute();
 		} else {
 			printUsage();
-			else if (s.equals("template")) {
-				int next = x + 1;
-
-				if (flags.size() > next) {
-					String nextCommand = flags.get(next);
-
-					if ("install".equals(nextCommand) || "uninstall".equals(nextCommand)) {
-						String fullCommand = s + " " + nextCommand;
-
-						flags.set(x, fullCommand);
-
-						flags.remove(next);
-					}
-				}
 		}
 	}
 
