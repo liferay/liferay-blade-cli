@@ -20,26 +20,20 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
+import com.liferay.blade.cli.extensions.Extensions;
 
 import java.io.File;
 import java.io.PrintStream;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.fusesource.jansi.AnsiConsole;
 
@@ -51,94 +45,6 @@ public class BladeCLI implements Runnable {
 
 	public static void main(String[] args) {
 		new BladeCLI().run(args);
-	}
-
-	public static void sort(List<String> flags) {
-		Collection<String> addLast = new ArrayList<>();
-
-		Collection<BaseArgs> argList = new HashSet<>();
-		Stream.of(Util.getBuiltinCommands().keySet(), Util.getExtensions().keySet()).forEach(argList::addAll);
-
-		Collection<Class<? extends BaseArgs>> classes =
-			argList.stream().map(BaseArgs::getClass).collect(Collectors.toSet());
-		Collection<String> spaceCommandCollection = Util.getCommandNames(
-			classes).stream().filter(x -> x.contains(" ")).collect(Collectors.toSet());
-		Collection<String[]> spaceCommandSplitCollection = new ArrayList<>();
-		spaceCommandCollection.stream().map(x -> x.split(" ")).forEach(spaceCommandSplitCollection::add);
-
-		Collection<String> flagsWithoutArgs = Util.getFlagsWithoutArguments(BaseArgs.class);
-		Collection<String> flagsWithArgs = Util.getFlagsWithArguments(BaseArgs.class);
-
-		for (int x = 0; x < flags.size(); x++) {
-			String s = flags.get(x);
-
-			if (flagsWithArgs.contains(s)) {
-				addLast.add(flags.remove(x));
-				addLast.add(flags.remove(x));
-			} else if (flagsWithoutArgs.contains(s)) {
-				addLast.add(flags.remove(x));
-			}
-			else {
-				if (spaceCommandSplitCollection.size() > 0) {
-					String[] foundStrArray = null;
-
-					for (String[] strArray : spaceCommandSplitCollection) {
-						if (flags.size() == (x + strArray.length)) {
-						} else
-
-						if (flags.size() > x + (strArray.length - 1)) {
-							if (foundStrArray == null) {
-								boolean mismatch = false;
-
-								if (strArray.length == 0) {
-									mismatch = true;
-								}
-
-								for (int y = 0; y < strArray.length; y++) {
-									if (Objects.equals(strArray[y], flags.get(x + y))) {
-										continue;
-									}
-
-									mismatch = true;
-								}
-
-								if (!mismatch) {
-									foundStrArray = strArray;
-
-									break;
-								}
-							}
-						}
-					}
-
-					if (foundStrArray != null) {
-						Collection<String> commandParts = new ArrayList<>();
-
-						for (int y = 0; y < foundStrArray.length; y++) {
-							if (Objects.equals(foundStrArray[y], flags.get(x + y))) {
-								commandParts.add(foundStrArray[y]);
-							}
-						}
-
-						StringBuilder newCommand = new StringBuilder();
-
-						for (String commandPart : commandParts) {
-							if (Objects.equals(commandPart, flags.get(x))) {
-								int len = newCommand.length();
-
-								if (len > 0)newCommand.append(" ");
-
-								newCommand.append(flags.remove(x));
-							}
-						}
-
-						flags.add(x, newCommand.toString());
-					}
-				}
-			}
-		}
-
-		flags.addAll(addLast);
 	}
 
 	public BladeCLI() {
@@ -273,15 +179,11 @@ public class BladeCLI implements Runnable {
 
 		System.setErr(err());
 
-		List<String> flags = new ArrayList<>(Arrays.asList(args));
+		args = Extensions.sort(args);
 
-		sort(flags);
+		Collection<BaseArgs> builtinList = Extensions.getBuiltinCommands().keySet();
 
-		args = flags.toArray(new String[0]);
-
-		Collection<BaseArgs> builtinList = Util.getBuiltinCommands().keySet();
-
-		Collection<BaseArgs> extensionsList = Util.getExtensions().keySet();
+		Collection<BaseArgs> extensionsList = Extensions.getExtensions().keySet();
 
 		Map<String, BaseArgs> argsMap = new HashMap<>();
 
@@ -360,8 +262,8 @@ public class BladeCLI implements Runnable {
 			}
 		}
 
-		Util.resetBuiltinCommands();
-		Util.resetExtensions();
+		Extensions.resetBuiltinCommands();
+		Extensions.resetExtensions();
 	}
 
 	public void trace(String s, Object... args) {
@@ -372,8 +274,8 @@ public class BladeCLI implements Runnable {
 	}
 
 	private void runCustomCommand() throws Exception {
-		Map<BaseArgs, BaseCommand<?>> extensions = Util.getExtensions();
-		Map<BaseArgs, BaseCommand<?>> builtin = Util.getBuiltinCommands();
+		Map<BaseArgs, BaseCommand<?>> extensions = Extensions.getExtensions();
+		Map<BaseArgs, BaseCommand<?>> builtin = Extensions.getBuiltinCommands();
 
 		BaseCommand<?> command = null;
 

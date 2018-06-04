@@ -16,30 +16,28 @@
 
 package com.liferay.blade.cli;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.liferay.blade.cli.extensions.Extensions;
+
 import java.util.Objects;
 
 import org.gradle.internal.impldep.org.testng.Assert;
-
 import org.junit.Test;
 
 /**
  * @author Christopher Bryan Boyd
+ * @author Gregory Amerson
  */
-public class SortTest {
+public class ExtenionsTest {
 
 	@Test
-	public void testSort() {
-		List<String> args = new ArrayList<>(
-			Arrays.asList("--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2"));
+	public void testArgsSort() {
+		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2" };
 
-		BladeCLI.sort(args);
+		String[] sortedArgs = Extensions.sort(args);
 
 		boolean correctSort = false;
 
-		for (String arg : args) {
+		for (String arg : sortedArgs) {
 			if (Objects.equals(arg, "extension install")) {
 				correctSort = true;
 			}
