@@ -41,12 +41,12 @@ public abstract class BaseCommand<T extends BaseArgs> {
 		return _blade;
 	}
 
-	public void setArgs(BaseArgs _commandArgs) {
-		this._args = getArgsClass().cast(_commandArgs);
+	public void setArgs(BaseArgs commandArgs) {
+		_args = getArgsClass().cast(commandArgs);
 	}
 
-	public void setBlade(BladeCLI _blade) {
-		this._blade = _blade;
+	public void setBlade(BladeCLI blade) {
+		_blade = blade;
 	}
 
 	protected T _args;

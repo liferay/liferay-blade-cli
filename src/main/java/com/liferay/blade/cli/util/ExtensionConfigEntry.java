@@ -53,19 +53,21 @@ public class ExtensionConfigEntry {
 	}
 
 	public ExtensionConfigEntry(String name, String description, String location) {
-	this.name = name; this.description = description; this.location = location;
+		_name = name;
+		_description = description;
+		_location = location;
 	}
 
 	public String getDescription() {
-		return description;
+		return _description;
 	}
 
 	public String getLocation() {
-		return location;
+		return _location;
 	}
 
 	public String getName() {
-		return name;
+		return _name;
 	}
 
 	private static ExtensionConfigEntry get(Element element) {
@@ -96,8 +98,8 @@ public class ExtensionConfigEntry {
 		return entry;
 	}
 
-	private String description;
-	private String location;
-	private String name;
+	private final String _description;
+	private final String _location;
+	private final String _name;
 
 }
