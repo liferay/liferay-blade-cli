@@ -14,34 +14,32 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.command;
 
 import java.util.Objects;
 
-import org.gradle.internal.impldep.org.testng.Assert;
-import org.junit.Test;
-
 /**
  * @author Christopher Bryan Boyd
- * @author Gregory Amerson
  */
-public class ExtenionsTest {
+public class Help extends BaseCommand<HelpArgs> {
 
-	@Test
-	public void testArgsSort() {
-		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2" };
+	public Help() {
+	}
 
-		String[] sortedArgs = Extensions.sort(args);
+	public void execute() throws Exception {
+		String commandName = _args.getName();
 
-		boolean correctSort = false;
-
-		for (String arg : sortedArgs) {
-			if (Objects.equals(arg, "extension install")) {
-				correctSort = true;
-			}
+		if (Objects.nonNull(commandName) && (commandName.length() > 0)) {
+			_blade.printUsage(commandName);
 		}
+		else {
+			_blade.printUsage();
+		}
+	}
 
-		Assert.assertTrue(correctSort);
+	@Override
+	public Class<HelpArgs> getArgsClass() {
+		return HelpArgs.class;
 	}
 
 }

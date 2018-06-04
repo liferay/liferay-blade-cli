@@ -14,34 +14,22 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.command;
 
-import java.util.Objects;
-
-import org.gradle.internal.impldep.org.testng.Assert;
-import org.junit.Test;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * @author Christopher Bryan Boyd
- * @author Gregory Amerson
  */
-public class ExtenionsTest {
+@Parameters(commandDescription = "Installs a custom project template into blade.", commandNames = "template install")
+public class InstallTemplateArgs extends BaseArgs {
 
-	@Test
-	public void testArgsSort() {
-		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2" };
-
-		String[] sortedArgs = Extensions.sort(args);
-
-		boolean correctSort = false;
-
-		for (String arg : sortedArgs) {
-			if (Objects.equals(arg, "extension install")) {
-				correctSort = true;
-			}
-		}
-
-		Assert.assertTrue(correctSort);
+	public String getPath() {
+		return _path;
 	}
+
+	@Parameter(description = "The path to the template to install")
+	private String _path;
 
 }

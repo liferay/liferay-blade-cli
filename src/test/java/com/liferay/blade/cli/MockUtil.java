@@ -19,12 +19,15 @@ package com.liferay.blade.cli;
 import aQute.bnd.header.Attrs;
 import aQute.bnd.osgi.Domain;
 
+import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.command.Deploy;
+import com.liferay.blade.cli.command.DeployArgs;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,7 +38,6 @@ import java.util.Set;
 
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
-
 import org.powermock.api.easymock.PowerMock;
 
 /**
@@ -136,15 +138,15 @@ public class MockUtil {
 		canConnect.andStubReturn(true);
 
 		Map<BaseArgs, BaseCommand<?>> map = new HashMap<>();
-		map.put(new DeployCommandArgs(), new DeployCommand());
+		map.put(new DeployArgs(), new Deploy());
 
-		EasyMock.expect(Util.getBuiltinCommands()).andStubReturn(map);
+		EasyMock.expect(Extensions.getBuiltinCommands()).andStubReturn(map);
 
 		Map<BaseArgs, BaseCommand<?>> eMap = new HashMap<>();
 
-		EasyMock.expect(Util.getExtensions()).andStubReturn(eMap);
+		EasyMock.expect(Extensions.getExtensions()).andStubReturn(eMap);
 
-		PowerMock.replay(Util.class);
+		PowerMock.replay(Extensions.class);
 	}
 
 }

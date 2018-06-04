@@ -16,25 +16,18 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
+import com.liferay.blade.cli.command.InstallExtension;
 
 import java.io.File;
-
 import java.nio.file.Path;
 
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
-
-import org.gradle.tooling.internal.consumer.ConnectorServices;
-
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -42,7 +35,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author Christopher Bryan Boyd
  */
-@PrepareForTest({Util.class, InstallExtensionCommand.class})
+@PrepareForTest({Util.class, InstallExtension.class})
 @RunWith(PowerMockRunner.class)
 public class InstallExtensionCommandTest {
 
@@ -66,7 +59,7 @@ public class InstallExtensionCommandTest {
 
 		PowerMock.mockStaticPartialNice(Util.class, "getExtensionsDirectory");
 
-		IExpectationSetters<Path> extensionsDirMethod = EasyMock.expect(Util.getExtensionsDirectory());
+		IExpectationSetters<Path> extensionsDirMethod = EasyMock.expect(Extensions.getDirectory());
 
 		Path extensionsDirPath = extensionsDir.toPath();
 

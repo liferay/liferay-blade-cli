@@ -18,7 +18,8 @@ package com.liferay.blade.cli;
 
 import aQute.lib.io.IO;
 
-import com.liferay.blade.cli.FileWatcher.Consumer;
+import com.liferay.blade.cli.util.FileWatcher;
+import com.liferay.blade.cli.util.FileWatcher.Consumer;
 
 import java.io.File;
 import java.io.IOException;

@@ -18,6 +18,8 @@ package com.liferay.blade.cli;
 
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.command.InstallTemplate;
+
 import java.io.File;
 
 import java.nio.file.Path;
@@ -40,7 +42,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author Christopher Bryan Boyd
  */
-@PrepareForTest({InstallTemplateCommand.class, Util.class})
+@PrepareForTest({InstallTemplate.class, Util.class})
 @RunWith(PowerMockRunner.class)
 public class InstallTemplateCommandTest {
 

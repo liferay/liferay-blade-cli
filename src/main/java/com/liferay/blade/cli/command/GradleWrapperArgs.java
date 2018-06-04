@@ -14,34 +14,25 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.command;
 
-import java.util.Objects;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
-import org.gradle.internal.impldep.org.testng.Assert;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class ExtenionsTest {
+@Parameters(commandDescription = "Execute gradle command using the gradle wrapper if detected", commandNames = "gw")
+public class GradleWrapperArgs extends BaseArgs {
 
-	@Test
-	public void testArgsSort() {
-		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2" };
-
-		String[] sortedArgs = Extensions.sort(args);
-
-		boolean correctSort = false;
-
-		for (String arg : sortedArgs) {
-			if (Objects.equals(arg, "extension install")) {
-				correctSort = true;
-			}
-		}
-
-		Assert.assertTrue(correctSort);
+	public List<String> getArgs() {
+		return _args;
 	}
+
+	@Parameter(description = "arguments")
+	private List<String> _args = new ArrayList<>();
 
 }

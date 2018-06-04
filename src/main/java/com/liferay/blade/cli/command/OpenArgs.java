@@ -14,34 +14,31 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.command;
 
-import java.util.Objects;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
-import org.gradle.internal.impldep.org.testng.Assert;
-import org.junit.Test;
+import java.io.File;
 
 /**
- * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class ExtenionsTest {
+@Parameters(commandDescription = "Opens or imports a file or project in Liferay IDE.", commandNames = "open")
+public class OpenArgs extends BaseArgs {
 
-	@Test
-	public void testArgsSort() {
-		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2" };
-
-		String[] sortedArgs = Extensions.sort(args);
-
-		boolean correctSort = false;
-
-		for (String arg : sortedArgs) {
-			if (Objects.equals(arg, "extension install")) {
-				correctSort = true;
-			}
-		}
-
-		Assert.assertTrue(correctSort);
+	public File getFile() {
+		return _file;
 	}
+
+	public String getWorkspace() {
+		return _workspace;
+	}
+
+	@Parameter(description = "file or directory to open/import")
+	private File _file;
+
+	@Parameter(description = "The workspace to open or import this file or project", names = {"-w", "--workspace"})
+	private String _workspace;
 
 }

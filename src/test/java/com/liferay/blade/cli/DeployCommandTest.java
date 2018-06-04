@@ -18,6 +18,7 @@ package com.liferay.blade.cli;
 
 import aQute.bnd.osgi.Domain;
 
+import com.liferay.blade.cli.command.Deploy;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 
@@ -50,7 +51,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest(
 	{
 		Domain.class, GradleTooling.class, LiferayBundleDeployer.class, GradleExec.class, BladeCLI.class,
-		BladeNoFail.class, Util.class, DeployCommand.class, TestUtil.class
+		BladeNoFail.class, Util.class, Deploy.class, TestUtil.class
 	}
 )
 @RunWith(PowerMockRunner.class)

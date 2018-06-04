@@ -14,34 +14,24 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.command;
 
-import java.util.Objects;
-
-import org.gradle.internal.impldep.org.testng.Assert;
-import org.junit.Test;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
- * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class ExtenionsTest {
+@Parameters(commandDescription = "Builds and deploys bundles to the Liferay module framework.", commandNames = "deploy")
+public class DeployArgs extends BaseArgs {
 
-	@Test
-	public void testArgsSort() {
-		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2" };
-
-		String[] sortedArgs = Extensions.sort(args);
-
-		boolean correctSort = false;
-
-		for (String arg : sortedArgs) {
-			if (Objects.equals(arg, "extension install")) {
-				correctSort = true;
-			}
-		}
-
-		Assert.assertTrue(correctSort);
+	public boolean isWatch() {
+		return _watch;
 	}
+
+	@Parameter(
+		description = "Watches the deployed file for changes and will automatically redeploy", names = {"-w", "--watch"}
+	)
+	private boolean _watch;
 
 }

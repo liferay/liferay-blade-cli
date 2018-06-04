@@ -18,9 +18,10 @@ package com.liferay.blade.cli;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
+import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.command.BaseCommand;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
-import com.liferay.blade.cli.extensions.Extensions;
 
 import java.io.File;
 import java.io.PrintStream;

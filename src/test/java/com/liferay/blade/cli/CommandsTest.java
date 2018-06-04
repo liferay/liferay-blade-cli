@@ -16,32 +16,30 @@
 
 package com.liferay.blade.cli;
 
-import java.util.Objects;
+import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.command.BaseCommand;
 
-import org.gradle.internal.impldep.org.testng.Assert;
+import java.util.Map;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class ExtenionsTest {
+public class CommandsTest {
 
 	@Test
-	public void testArgsSort() {
-		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2" };
+	public void testLoadCommandsBuiltIn() throws Exception {
+		Map<String, BaseCommand<? extends BaseArgs>> commands = Commands.get();
 
-		String[] sortedArgs = Extensions.sort(args);
+		Assert.assertNotNull(commands);
 
-		boolean correctSort = false;
-
-		for (String arg : sortedArgs) {
-			if (Objects.equals(arg, "extension install")) {
-				correctSort = true;
-			}
-		}
-
-		Assert.assertTrue(correctSort);
+		Assert.assertEquals(19, commands.size());
 	}
 
+	@Test
+	public void testLoadCommandsWithExtension() throws Exception {
+
+	}
 }

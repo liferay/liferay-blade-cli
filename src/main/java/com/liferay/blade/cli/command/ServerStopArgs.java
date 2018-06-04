@@ -14,34 +14,13 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.blade.cli.command;
 
-import java.util.Objects;
-
-import org.gradle.internal.impldep.org.testng.Assert;
-import org.junit.Test;
+import com.beust.jcommander.Parameters;
 
 /**
- * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class ExtenionsTest {
-
-	@Test
-	public void testArgsSort() {
-		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2" };
-
-		String[] sortedArgs = Extensions.sort(args);
-
-		boolean correctSort = false;
-
-		for (String arg : sortedArgs) {
-			if (Objects.equals(arg, "extension install")) {
-				correctSort = true;
-			}
-		}
-
-		Assert.assertTrue(correctSort);
-	}
-
+@Parameters(commandDescription = "Stop server defined by your Liferay project", commandNames = "server stop")
+public class ServerStopArgs extends BaseArgs {
 }

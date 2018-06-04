@@ -23,6 +23,7 @@ import aQute.lib.io.IO;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.AnsiLinePrinter;
 import com.liferay.blade.cli.util.LinkDownloader;
 import com.liferay.project.templates.ProjectTemplates;
