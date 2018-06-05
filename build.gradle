@@ -1,150 +1,16 @@
-import de.undercouch.gradle.tasks.download.Download
+subprojects {
+	pluginManager.withPlugin("java") {
+		repositories {
+			flatDir {
+				dirs "${rootProject.projectDir}/libs"
+			}
 
-buildscript {
-	dependencies {
-		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
-		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
-	}
-
-	repositories {
-		maven {
-			url "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
+			maven {
+				url "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
+			}
 		}
+
+		sourceCompatibility = "1.8"
+		targetCompatibility = "1.8"
 	}
 }
-
-apply plugin: 'biz.aQute.bnd.builder'
-apply plugin: 'com.liferay.source.formatter'
-apply plugin: 'java'
-
-checkSourceFormatting {
-	maxLineLength = 120
-}
-
-formatSource {
-	maxLineLength = 120
-}
-
-dependencies {
-	compile group: "biz.aQute.bnd", name: "aQute.libg", version: "3.5.0"
-	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
-	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
-	compile group: "com.liferay", name: "com.liferay.project.templates", version: "4.0.0"
-	compile group: "commons-io", name: "commons-io", version: "2.5"
-	compile group: "de.vandermeer", name: "asciitable", version: "0.3.2"
-	compile group: "org.apache.commons", name: "commons-lang3", version: "3.4"
-	compile group: "org.apache.maven", name: "maven-aether-provider", version: "3.3.9"
-	compile group: "org.apache.maven", name: "maven-settings", version: "3.3.9"
-	compile group: "org.apache.maven", name: "maven-settings-builder", version: "3.3.9"
-	compile group: "org.eclipse.aether", name: "aether-api", version: "1.0.2.v20150114"
-	compile group: "org.eclipse.aether", name: "aether-connector-basic", version: "1.0.2.v20150114"
-	compile group: "org.eclipse.aether", name: "aether-impl", version: "1.0.2.v20150114"
-	compile group: "org.eclipse.aether", name: "aether-spi", version: "1.0.2.v20150114"
-	compile group: "org.eclipse.aether", name: "aether-transport-classpath", version: "1.0.2.v20150114"
-	compile group: "org.eclipse.aether", name: "aether-transport-file", version: "1.0.2.v20150114"
-	compile group: "org.eclipse.aether", name: "aether-transport-http", version: "1.0.2.v20150114"
-	compile group: "org.eclipse.aether", name: "aether-transport-wagon", version: "1.0.2.v20150114"
-	compile group: "org.eclipse.aether", name: "aether-util", version: "1.0.2.v20150114"
-	compile group: "org.fusesource.jansi", name: "jansi", version: "1.17.1"
-	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "3.0"
-	compile group: "org.gradle", name: "gradle-core", version: "3.0"
-	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"
-	compile name: "com.liferay.blade.gradle.model"
-	compile name: "com.liferay.blade.gradle.plugin"
-	compile name: "gradle-native-3.0"
-	compile name: "org.objectweb.asm-6.0.0"
-	compile name: "org.objectweb.asm.analysis-6.0.0"
-	compile name: "org.objectweb.asm.commons-6.0.0"
-	compile name: "org.objectweb.asm.tree-6.0.0"
-	compile name: "org.objectweb.asm.util-6.0.0"
-
-	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
-
-	testCompile gradleTestKit()
-	testCompile group: "junit", name: "junit", version: "4.12"
-	testCompile group: "org.easymock", name: "easymock", version: "3.5.1"
-	testCompile group: "org.osgi", name: "osgi.core", version: "6.0.0"
-	testCompile group: "org.powermock", name: "powermock-api-easymock", version: "1.7.3"
-	testCompile group: "org.powermock", name: "powermock-module-junit4", version: "1.7.3"
-}
-
-jar.baseName = 'blade'
-
-repositories {
-	flatDir {
-		dirs 'libs'
-	}
-
-	maven {
-		url "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
-	}
-
-	maven {
-		url "https://repo.gradle.org/gradle/libs-releases"
-	}
-}
-
-task createDepsZip(type:Zip) {
-	from "${projectDir}/libs/"
-	baseName = "deps"
-	destinationDir = new File("${projectDir}")
-	include "com.liferay.blade.gradle.*.jar"
-}
-
-task createWrapperZip(type:Zip) {
-	from "${projectDir}/"
-	baseName = "wrapper"
-	destinationDir = new File("${projectDir}")
-	include "gradle/**"
-	include "gradlew*"
-}
-
-clean.doFirst {
-	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
-}
-
-jar {
-	from createDepsZip, createWrapperZip
-}
-
-task downloadPortal(type: Download) {
-	src 'https://cdn.lfrs.sl/releases.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip'
-	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip')
-	onlyIfNewer true
-}
-
-task testExecutableJar(dependsOn: jar) {
-	doLast {
-		javaexec {
-			main = "-jar"
-			args = [jar.archivePath, "create", "-l"]
-		}
-	}
-}
-
-task testVersionCommand(dependsOn: jar) {
-	doLast {
-		javaexec {
-			main = "-jar"
-			args = [jar.archivePath, "version"]
-		}
-	}
-}
-
-check.dependsOn testExecutableJar, testVersionCommand
-
-task unzipPortal(dependsOn: downloadPortal, type: Copy) {
-	from zipTree(downloadPortal.dest)
-	into buildDir
-}
-
-test {
-	dependsOn createDepsZip, createWrapperZip, unzipPortal
-
-	systemProperty 'buildDir', "${buildDir}"
-	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
-}
-
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
