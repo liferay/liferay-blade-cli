@@ -16,14 +16,10 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
-
 import java.nio.file.Files;
-
 import java.util.List;
 import java.util.Properties;
 
@@ -41,7 +37,7 @@ public class UtilTest {
 	@Test
 	public void testAppServerProperties() throws Exception {
 		File dir = tempFolder.getRoot();
-		
+
 		File appServerProperty1 = new File(dir, "app.server." + System.getProperty("user.name") + ".properties");
 
 		appServerProperty1.createNewFile();

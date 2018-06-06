@@ -16,20 +16,30 @@
 
 package com.liferay.blade.cli.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import com.liferay.blade.cli.gradle.GradleExec;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Christopher Bryan Boyd
+ * @author David Truong
  */
-@Parameters(commandDescription = "Installs an extension into blade.", commandNames = "extension install")
-public class InstallExtensionArgs extends BaseArgs {
+public class GradleWrapperCommand extends BaseCommand<GradleWrapperArgs> {
 
-	public String getPath() {
-		return _path;
+	public GradleWrapperCommand() {
 	}
 
-	@Parameter(description = "The path to the extension to install")
-	private String _path;
+	@Override
+	public void execute() throws Exception {
+		String gradleCommand = StringUtils.join(getArgs().getArgs(), " ");
+
+		GradleExec gradleExec = new GradleExec(getBladeCLI());
+
+		gradleExec.executeGradleCommand(gradleCommand);
+	}
+
+	@Override
+	public Class<GradleWrapperArgs> getArgsClass() {
+		return GradleWrapperArgs.class;
+	}
 
 }

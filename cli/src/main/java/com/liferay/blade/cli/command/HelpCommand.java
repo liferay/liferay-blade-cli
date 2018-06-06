@@ -16,20 +16,36 @@
 
 package com.liferay.blade.cli.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import com.liferay.blade.cli.BladeCLI;
+
+import java.util.Objects;
 
 /**
  * @author Christopher Bryan Boyd
  */
-@Parameters(commandDescription = "Installs an extension into blade.", commandNames = "extension install")
-public class InstallExtensionArgs extends BaseArgs {
+public class HelpCommand extends BaseCommand<HelpArgs> {
 
-	public String getPath() {
-		return _path;
+	public HelpCommand() {
+		super();
 	}
 
-	@Parameter(description = "The path to the extension to install")
-	private String _path;
+	@Override
+	public void execute() throws Exception {
+		String commandName = getArgs().getName();
+
+		BladeCLI bladeCLI = getBladeCLI();
+
+		if (Objects.nonNull(commandName) && (commandName.length() > 0)) {
+			bladeCLI.printUsage(commandName);
+		}
+		else {
+			bladeCLI.printUsage();
+		}
+	}
+
+	@Override
+	public Class<HelpArgs> getArgsClass() {
+		return HelpArgs.class;
+	}
 
 }

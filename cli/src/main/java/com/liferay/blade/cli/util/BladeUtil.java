@@ -21,11 +21,9 @@ import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
 import aQute.lib.io.IO;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.Workspace;
-import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.Extensions;
+import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
@@ -37,16 +35,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -54,10 +48,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -124,12 +116,6 @@ public class BladeUtil {
 		}
 	}
 
-	public static void downloadLink(String link, Path target) {
-		LinkDownloader downloader = new LinkDownloader(link, target);
-
-		downloader.run();
-	}
-
 	public static File findParentFile(File dir, String[] fileNames, boolean checkParents) {
 		if (dir == null) {
 			return null;
@@ -164,94 +150,6 @@ public class BladeUtil {
 		}
 
 		return properties;
-	}
-
-	public static <T extends BaseArgs> String[] getCommandNames(Class<T> argsClass) {
-		try
-		{
-			Parameters annotation = argsClass.getAnnotation(Parameters.class);
-
-			if (Objects.nonNull(annotation)) {
-				return annotation.commandNames();
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
-		return argsClass.stream().map(clazz -> clazz.getAnnotation(Parameters.class)).filter(Objects::nonNull).map(x -> Arrays.asList(x.commandNames())).flatMap(List::stream).collect(Collectors.toList());
-	}
-
-	public static Path getCustomTemplatesPath() {
-		try {
-			Path homePath = Paths.get(System.getProperty("user.home"));
-
-			Path bladePath = homePath.resolve(".blade");
-
-			if (Files.notExists(bladePath)) {
-				Files.createDirectory(bladePath);
-			}
-			else if (!Files.isDirectory(bladePath)) {
-				throw new Exception(".blade is not a directory!");
-			}
-
-			Path templatesPath = bladePath.resolve("templates");
-
-			if (Files.notExists(templatesPath)) {
-				Files.createDirectory(templatesPath);
-			}
-			else if (!Files.isDirectory(templatesPath)) {
-				throw new Exception(".blade/templates is not a directory!");
-			}
-
-			return templatesPath;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static Collection<String> getFlagsWithArguments(Class<? extends BaseArgs> clazz) {
-		Collection<String> flags = new ArrayList<>();
-
-		for (Field field : clazz.getDeclaredFields()) {
-			Parameter annotation = field.getAnnotation(Parameter.class);
-
-			if (annotation != null && (annotation.names() != null && annotation.names().length > 0)) {
-				if (!field.getType().equals(boolean.class)) {
-					for (String fName : annotation.names()) {
-						flags.add(fName);
-					}
-				}
-			}
-		}
-
-		return flags;
-	}
-
-	public static Collection<String> getFlagsWithoutArguments(Class<? extends BaseArgs> clazz) {
-		Collection<String> flags = new ArrayList<>();
-
-		for (Field field : clazz.getDeclaredFields()) {
-			Parameter annotation = field.getAnnotation(Parameter.class);
-
-			if (annotation != null && (annotation.names() != null && annotation.names().length > 0)) {
-				if (field.getType().equals(boolean.class)) {
-					for (String fName : annotation.names()) {
-						flags.add(fName);
-					}
-				}
-			}
-		}
-
-		return flags;
 	}
 
 	public static Properties getGradleProperties(File dir) {
@@ -301,7 +199,7 @@ public class BladeUtil {
 	}
 
 	public static Map<String, String> getTemplates() throws Exception {
-		File customTemplatesDir = getCustomTemplatesPath().toFile();
+		File customTemplatesDir = Extensions.getCustomTemplatesPath().toFile();
 
 		Collection<File> templatesFiles = new HashSet<>();
 
@@ -381,17 +279,6 @@ public class BladeUtil {
 		return !isEmpty(array);
 	}
 
-	public static boolean isValidURL(String urlString) {
-		try {
-			new URL(urlString).toURI();
-
-			return true;
-		}
-		catch (Exception e) {
-			return false;
-		}
-	}
-
 	public static boolean isWindows() {
 		String osName = System.getProperty("os.name");
 
@@ -416,7 +303,7 @@ public class BladeUtil {
 		try {
 			String script = read(gradleFile);
 
-			Matcher matcher = Workspace.patternWorkspacePlugin.matcher(script);
+			Matcher matcher = WorkspaceConstants.patternWorkspacePlugin.matcher(script);
 
 			if (matcher.find()) {
 				return true;
@@ -428,7 +315,7 @@ public class BladeUtil {
 
 				script = read(gradleFile);
 
-				matcher = Workspace.patternWorkspacePlugin.matcher(script);
+				matcher = WorkspaceConstants.patternWorkspacePlugin.matcher(script);
 
 				return matcher.find();
 			}

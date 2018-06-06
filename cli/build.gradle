@@ -32,7 +32,6 @@ dependencies {
 	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
 	compile group: "com.liferay", name: "com.liferay.project.templates", version: "4.0.0"
 	compile group: "commons-io", name: "commons-io", version: "2.5"
-	compile group: "de.vandermeer", name: "asciitable", version: "0.3.2"
 	compile group: "org.apache.commons", name: "commons-lang3", version: "3.4"
 	compile group: "org.apache.maven", name: "maven-aether-provider", version: "3.3.9"
 	compile group: "org.apache.maven", name: "maven-settings", version: "3.3.9"
@@ -136,4 +135,10 @@ test {
 
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
+	systemProperty 'user.home', "${buildDir}/testUserHome"
+
+	project(':extensions:sample-command').afterEvaluate { project ->
+		dependsOn project.jar
+		systemProperty 'sampleCommandJarFile', project.jar.archivePath
+	}
 }

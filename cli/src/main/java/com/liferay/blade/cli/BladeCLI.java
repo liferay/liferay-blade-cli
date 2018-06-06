@@ -167,7 +167,7 @@ public class BladeCLI implements Runnable {
 			}
 			else {
 				if (_commandArgs != null) {
-					runCustomCommand();
+					runCommand();
 				} else {
 					_jCommander.usage();
 				}
@@ -189,9 +189,9 @@ public class BladeCLI implements Runnable {
 
 		System.setErr(err());
 
-		_commands = new Commands().get();
+		_commands = new Extensions().getCommands();
 
-		args = Extensions.sort(_commands, args);
+		args = Extensions.sortArgs(_commands, args);
 
 		Builder builder = JCommander.newBuilder();
 
@@ -256,14 +256,14 @@ public class BladeCLI implements Runnable {
 		}
 	}
 
-	private void runCustomCommand() throws Exception {
+	private void runCommand() throws Exception {
 		BaseCommand<?> command = null;
 
 		if (_commands.containsKey(_command)) {
 			command = _commands.get(_command);
 		}
 
-		if (Objects.nonNull(command)) {
+		if (command != null) {
 			command.setArgs(_commandArgs);
 			command.setBlade(this);
 			command.execute();

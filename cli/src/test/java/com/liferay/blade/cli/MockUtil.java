@@ -21,8 +21,7 @@ import aQute.bnd.osgi.Domain;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.command.Deploy;
-import com.liferay.blade.cli.command.DeployArgs;
+import com.liferay.blade.cli.command.DeployCommand;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.util.BladeUtil;
@@ -130,22 +129,20 @@ public class MockUtil {
 		PowerMock.replay(GradleTooling.class);
 	}
 
-	public static void stubUtil() {
-		PowerMock.mockStaticPartialNice(BladeUtil.class, "canConnect", "getBuiltinCommands", "getExtensions");
+	public static void stubDeployCommand() throws Exception {
+		PowerMock.mockStaticPartialNice(BladeUtil.class, "canConnect");
+		PowerMock.mockStaticPartialNice(Extensions.class, "getCommands");
 
 		IExpectationSetters<Boolean> canConnect = EasyMock.expect(
 			BladeUtil.canConnect(EasyMock.anyString(), EasyMock.anyInt()));
 
 		canConnect.andStubReturn(true);
 
-		Map<BaseArgs, BaseCommand<?>> map = new HashMap<>();
-		map.put(new DeployArgs(), new Deploy());
+		Map<String, BaseCommand<? extends BaseArgs>> map = new HashMap<>();
 
-		//EasyMock.expect(Extensions.getBuiltinCommands()).andStubReturn(map);
+		map.put("deploy", new DeployCommand());
 
-		Map<BaseArgs, BaseCommand<?>> eMap = new HashMap<>();
-
-		//EasyMock.expect(Extensions.getExtensions()).andStubReturn(eMap);
+		EasyMock.expect(new Extensions().getCommands()).andStubReturn(map);
 
 		PowerMock.replay(Extensions.class);
 	}

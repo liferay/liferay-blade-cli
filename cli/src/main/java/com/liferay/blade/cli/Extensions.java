@@ -16,20 +16,28 @@
 
 package com.liferay.blade.cli;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.util.BladeUtil;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +53,7 @@ public class Extensions {
 			Path dotBlade = home.resolve(".blade");
 
 			if (Files.notExists(dotBlade)) {
-				Files.createDirectory(dotBlade);
+				Files.createDirectories(dotBlade);
 			}
 
 			else
@@ -57,7 +65,7 @@ public class Extensions {
 			Path extensions = dotBlade.resolve("extensions");
 
 			if (Files.notExists(extensions)) {
-				Files.createDirectory(extensions);
+				Files.createDirectories(extensions);
 			}
 
 			else
@@ -77,7 +85,7 @@ public class Extensions {
 
 	private static final String _USER_HOME = System.getProperty("user.home");
 
-	public static String[] sort(Map<String, BaseCommand<? extends BaseArgs>> commands, String[] args) throws Exception {
+	public static String[] sortArgs(Map<String, BaseCommand<? extends BaseArgs>> commands, String[] args) throws Exception {
 		List<String> argsList = new ArrayList<>(Arrays.asList(args));
 
 		Collection<String> addLast = new ArrayList<>();
@@ -85,17 +93,16 @@ public class Extensions {
 		Collection<BaseArgs> argList = new HashSet<>();
 
 		commands.values().stream().map(command -> command.getArgs()).forEach(argList::add);
-		//Stream.of(getBuiltinCommands().keySet(), getExtensions().keySet()).forEach(argList::addAll);
 
 		Collection<Class<? extends BaseArgs>> classes =
 			argList.stream().map(BaseArgs::getClass).collect(Collectors.toSet());
-		Collection<String> spaceCommandCollection = BladeUtil.getCommandNames(
+		Collection<String> spaceCommandCollection = Extensions.getCommandNames(
 			classes).stream().filter(x -> x.contains(" ")).collect(Collectors.toSet());
 		Collection<String[]> spaceCommandSplitCollection = new ArrayList<>();
 		spaceCommandCollection.stream().map(x -> x.split(" ")).forEach(spaceCommandSplitCollection::add);
 
-		Collection<String> flagsWithoutArgs = BladeUtil.getFlagsWithoutArguments(BaseArgs.class);
-		Collection<String> flagsWithArgs = BladeUtil.getFlagsWithArguments(BaseArgs.class);
+		Collection<String> flagsWithoutArgs = Extensions.getFlagsWithoutArguments(BaseArgs.class);
+		Collection<String> flagsWithArgs = Extensions.getFlagsWithArguments(BaseArgs.class);
 
 		for (int x = 0; x < argsList.size(); x++) {
 			String s = argsList.get(x);
@@ -169,6 +176,143 @@ public class Extensions {
 		argsList.addAll(addLast);
 
 		return argsList.toArray(new String[0]);
+	}
+
+	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
+		return argsClass.stream().map(clazz -> clazz.getAnnotation(Parameters.class)).filter(Objects::nonNull).map(x -> Arrays.asList(x.commandNames())).flatMap(List::stream).collect(Collectors.toList());
+	}
+
+	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
+
+	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
+		if (_commands == null) {
+			_commands = new HashMap<>();
+
+			URL[] jarUrls = _getJarUrls(Extensions.getDirectory());
+
+			URLClassLoader serviceLoaderClassloader = new URLClassLoader(jarUrls, this.getClass().getClassLoader());
+
+			@SuppressWarnings("rawtypes")
+			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassloader);
+
+			for (BaseCommand<?> baseCommand : serviceLoader) {
+				Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+
+				BaseArgs baseArgs = argsClass.newInstance();
+
+				baseCommand.setArgs(baseArgs);
+
+				Parameters parameters = argsClass.getAnnotation(Parameters.class);
+
+				if (parameters == null) {
+					throw new IllegalArgumentException(
+						"Loaded base command class that doesn't have a Parameters annotation " + argsClass.getName());
+				}
+
+				String[] commandNames = parameters.commandNames();
+
+				_commands.put(commandNames[0], baseCommand);
+			}
+		}
+
+		return _commands;
+	}
+
+	private static URL[] _getJarUrls(Path jarsPath) throws IOException {
+		return Files.list(
+			jarsPath
+		).filter(
+			path -> {
+				String pathString = path.toString();
+
+				return pathString.endsWith(".jar");
+			}
+		).map(
+			Path::toUri
+		).map(
+			uri -> {
+				try {
+					return uri.toURL();
+				}
+				catch (MalformedURLException e) {
+				}
+
+				return null;
+			}
+		).filter(
+			url -> url != null
+		).collect(
+			Collectors.toSet()
+		).toArray(
+			new URL[0]
+		);
+	}
+
+	public static Path getCustomTemplatesPath() {
+		try {
+			Path homePath = Paths.get(System.getProperty("user.home"));
+
+			Path bladePath = homePath.resolve(".blade");
+
+			if (Files.notExists(bladePath)) {
+				Files.createDirectory(bladePath);
+			}
+			else if (!Files.isDirectory(bladePath)) {
+				throw new Exception(".blade is not a directory!");
+			}
+
+			Path templatesPath = bladePath.resolve("templates");
+
+			if (Files.notExists(templatesPath)) {
+				Files.createDirectory(templatesPath);
+			}
+			else if (!Files.isDirectory(templatesPath)) {
+				throw new Exception(".blade/templates is not a directory!");
+			}
+
+			return templatesPath;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Collection<String> getFlagsWithArguments(Class<? extends BaseArgs> clazz) {
+		Collection<String> flags = new ArrayList<>();
+
+		for (Field field : clazz.getDeclaredFields()) {
+			Parameter annotation = field.getAnnotation(Parameter.class);
+
+			if (annotation != null && (annotation.names() != null && annotation.names().length > 0)) {
+				if (!field.getType().equals(boolean.class)) {
+					for (String fName : annotation.names()) {
+						flags.add(fName);
+					}
+				}
+			}
+		}
+
+		return flags;
+	}
+
+	public static Collection<String> getFlagsWithoutArguments(Class<? extends BaseArgs> clazz) {
+		Collection<String> flags = new ArrayList<>();
+
+		for (Field field : clazz.getDeclaredFields()) {
+			Parameter annotation = field.getAnnotation(Parameter.class);
+
+			if (annotation != null && (annotation.names() != null && annotation.names().length > 0)) {
+				if (field.getType().equals(boolean.class)) {
+					for (String fName : annotation.names()) {
+						flags.add(fName);
+					}
+				}
+			}
+		}
+
+		return flags;
 	}
 
 }

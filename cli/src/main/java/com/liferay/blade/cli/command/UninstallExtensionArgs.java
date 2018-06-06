@@ -22,7 +22,7 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Christopher Bryan Boyd
  */
-@Parameters(commandDescription = UninstallExtension.DESCRIPTION, commandNames = "extension uninstall")
+@Parameters(commandDescription = "Uninstalls an extension from blade.", commandNames = "extension uninstall")
 public class UninstallExtensionArgs extends BaseArgs {
 
 	public String getName() {
