@@ -13,7 +13,14 @@ buildscript {
 
 apply plugin: "biz.aQute.bnd.builder"
 apply plugin: "com.liferay.source.formatter"
+apply plugin: "eclipse"
 apply plugin: "java"
+
+eclipse {
+    classpath {
+        sourceSets -= [sourceSets.main]
+    }
+}
 
 checkSourceFormatting {
 	maxLineLength = 120
