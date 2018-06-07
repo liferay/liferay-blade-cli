@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.jmx.IDEConnector;
 
 import java.io.File;
+
 import java.util.Collections;
 
 /**
@@ -27,7 +28,6 @@ import java.util.Collections;
 public class OpenCommand extends BaseCommand<OpenArgs> {
 
 	public OpenCommand() {
-		super();
 	}
 
 	@Override

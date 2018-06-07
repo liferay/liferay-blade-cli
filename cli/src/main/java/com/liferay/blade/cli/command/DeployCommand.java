@@ -29,8 +29,11 @@ import com.liferay.blade.cli.util.FileWatcher.Consumer;
 
 import java.io.File;
 import java.io.PrintStream;
+
 import java.net.URI;
+
 import java.nio.file.Path;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map.Entry;
@@ -60,15 +63,15 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			return;
 		}
 
-		BladeCLI _blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		GradleExec gradleExec = new GradleExec(_blade);
+		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		Set<File> outputFiles = GradleTooling.getOutputFiles(_blade.getCacheDir(), _blade.getBase());
+		Set<File> outputFiles = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), bladeCLI.getBase());
 
-		DeployArgs _args = getArgs();
+		DeployArgs deployArgs = getArgs();
 
-		if (_args.isWatch()) {
+		if (deployArgs.isWatch()) {
 			_deployWatch(gradleExec, outputFiles, host, port);
 		}
 		else {
@@ -158,7 +161,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		}
 	}
 
-	private void _deployWatch(final GradleExec gradleExec, final Set<File> outputFiles, String host, int port) throws Exception {
+	private void _deployWatch(final GradleExec gradleExec, final Set<File> outputFiles, String host, int port)
+		throws Exception {
+
 		_deploy(gradleExec, outputFiles, host, port);
 
 		Stream<File> stream = outputFiles.stream();

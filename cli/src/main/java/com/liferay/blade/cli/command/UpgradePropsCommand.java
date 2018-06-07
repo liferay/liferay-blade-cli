@@ -21,6 +21,7 @@ import com.liferay.properties.locator.PropertiesLocator;
 import com.liferay.properties.locator.PropertiesLocatorArgs;
 
 import java.io.File;
+
 import java.util.Collections;
 
 /**
@@ -29,7 +30,6 @@ import java.util.Collections;
 public class UpgradePropsCommand extends BaseCommand<UpgradePropsArgs> {
 
 	public UpgradePropsCommand() {
-		super();
 	}
 
 	@Override

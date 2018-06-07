@@ -20,13 +20,16 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
+
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 
 import java.io.File;
 import java.io.PrintStream;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
@@ -51,6 +54,7 @@ public class BladeCLI implements Runnable {
 		}
 		catch (Exception e) {
 			bladeCLI.error("Unexpected error occured.");
+
 			e.printStackTrace(bladeCLI._err);
 		}
 	}
@@ -167,8 +171,9 @@ public class BladeCLI implements Runnable {
 			}
 			else {
 				if (_commandArgs != null) {
-					runCommand();
-				} else {
+					_runCommand();
+				}
+				else {
 					_jCommander.usage();
 				}
 			}
@@ -178,11 +183,10 @@ public class BladeCLI implements Runnable {
 		}
 		catch (Exception e) {
 			error(e.getMessage());
+
 			e.printStackTrace(err());
 		}
 	}
-
-	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 
 	public void run(String[] args) throws Exception {
 		System.setOut(out());
@@ -195,8 +199,10 @@ public class BladeCLI implements Runnable {
 
 		Builder builder = JCommander.newBuilder();
 
-		for (Entry<String, BaseCommand<? extends BaseArgs>>e : _commands.entrySet()) {
-			builder.addCommand(e.getKey(), e.getValue().getArgs());
+		for (Entry<String, BaseCommand<? extends BaseArgs>> e : _commands.entrySet()) {
+			BaseCommand<? extends BaseArgs> value = e.getValue();
+
+			builder.addCommand(e.getKey(), value.getArgs());
 		}
 
 		_jCommander = builder.build();
@@ -256,7 +262,7 @@ public class BladeCLI implements Runnable {
 		}
 	}
 
-	private void runCommand() throws Exception {
+	private void _runCommand() throws Exception {
 		BaseCommand<?> command = null;
 
 		if (_commands.containsKey(_command)) {
@@ -277,6 +283,7 @@ public class BladeCLI implements Runnable {
 
 	private String _command;
 	private BaseArgs _commandArgs;
+	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final PrintStream _err;
 	private JCommander _jCommander;
 	private final PrintStream _out;

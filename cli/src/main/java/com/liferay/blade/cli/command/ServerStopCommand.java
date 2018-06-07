@@ -21,9 +21,11 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +39,6 @@ import java.util.stream.Stream;
 public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 	public ServerStopCommand() {
-		super();
 	}
 
 	@Override
@@ -101,7 +102,8 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 				for (Properties properties : propertiesList) {
 					if (appServerParentDir.equals("")) {
-						String appServerParentDirTemp = properties.getProperty(BladeUtil.APP_SERVER_PARENT_DIR_PROPERTY);
+						String appServerParentDirTemp = properties.getProperty(
+							BladeUtil.APP_SERVER_PARENT_DIR_PROPERTY);
 
 						if ((appServerParentDirTemp != null) && !appServerParentDirTemp.equals("")) {
 							Path rootDirRealPath = rootDirPath.toRealPath();

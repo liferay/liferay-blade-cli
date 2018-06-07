@@ -22,9 +22,12 @@ import com.liferay.blade.cli.util.BladeUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.net.URL;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,14 +47,13 @@ import org.apache.commons.io.FileUtils;
 public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 	public SamplesCommand() {
-		super();
 	}
 
 	@Override
 	public void execute() throws Exception {
-		SamplesArgs _args = getArgs();
+		SamplesArgs samplesArgs = getArgs();
 
-		final String sampleName = _args.getSampleName();
+		final String sampleName = samplesArgs.getSampleName();
 
 		if (_downloadBladeRepoIfNeeded()) {
 			_extractBladeRepo();
@@ -79,16 +81,16 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	}
 
 	private void _copySample(String sampleName) throws Exception {
-		BladeCLI _blade = getBladeCLI();
-		SamplesArgs _args = getArgs();
+		BladeCLI bladeCLI = getBladeCLI();
+		SamplesArgs samplesArgs = getArgs();
 
-		File workDir = _args.getDir();
+		File workDir = samplesArgs.getDir();
 
 		if (workDir == null) {
-			workDir = _blade.getBase();
+			workDir = bladeCLI.getBase();
 		}
 
-		File bladeRepo = new File(_blade.getCacheDir(), _BLADE_REPO_NAME);
+		File bladeRepo = new File(bladeCLI.getCacheDir(), _BLADE_REPO_NAME);
 
 		File gradleSamples = new File(bladeRepo, "gradle");
 
@@ -126,9 +128,9 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	}
 
 	private boolean _downloadBladeRepoIfNeeded() throws Exception {
-		BladeCLI _blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		File bladeRepoArchive = new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
+		File bladeRepoArchive = new File(bladeCLI.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
 		Date now = new Date();
 
@@ -144,11 +146,11 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	}
 
 	private void _extractBladeRepo() throws Exception {
-		BladeCLI _blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		File bladeRepoArchive = new File(_blade.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
+		File bladeRepoArchive = new File(bladeCLI.getCacheDir(), _BLADE_REPO_ARCHIVE_NAME);
 
-		BladeUtil.unzip(bladeRepoArchive, _blade.getCacheDir(), null);
+		BladeUtil.unzip(bladeRepoArchive, bladeCLI.getCacheDir(), null);
 	}
 
 	private void _listSamples() throws IOException {
@@ -291,7 +293,8 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 			String parentBuildScript = _parseGradleScript(BladeUtil.read(parentBuildGradleFile), "buildscript", false);
 
-			String parentSubprojectsScript = _parseGradleScript(BladeUtil.read(parentBuildGradleFile), "subprojects", true);
+			String parentSubprojectsScript = _parseGradleScript(
+				BladeUtil.read(parentBuildGradleFile), "subprojects", true);
 
 			parentSubprojectsScript = _removeGradleSection(parentSubprojectsScript, "buildscript");
 

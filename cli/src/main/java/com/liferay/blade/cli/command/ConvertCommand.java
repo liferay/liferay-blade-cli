@@ -28,13 +28,16 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.text.MessageFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,7 +60,6 @@ import org.w3c.dom.NodeList;
 public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 	public ConvertCommand() {
-		super();
 	}
 
 	@Override
@@ -118,7 +120,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 
 		if ((pluginName == null) && !convertArgs.isAll() && !convertArgs.isList()) {
-			bladeCLI.error("Please specify a plugin name, list the projects with [-l] or specify all using option [-a]");
+			bladeCLI.error(
+				"Please specify a plugin name, list the projects with [-l] or specify all using option [-a]");
 
 			return;
 		}
@@ -295,15 +298,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		return _hasServiceXmlFile(pluginDir);
 	}
 
-	private void _convertToLayoutWarProject(File _warsDir, File layoutPluginDir) {
+	private void _convertToLayoutWarProject(File warsDir, File layoutPluginDir) {
 		try {
-			_warsDir.mkdirs();
+			warsDir.mkdirs();
 
-			Path warsPath = _warsDir.toPath();
+			Path warsPath = warsDir.toPath();
 
 			Files.move(layoutPluginDir.toPath(), warsPath.resolve(layoutPluginDir.getName()));
 
-			File warDir = new File(_warsDir, layoutPluginDir.getName());
+			File warDir = new File(warsDir, layoutPluginDir.getName());
 
 			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
 
@@ -336,11 +339,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 	}
 
-	private void _convertToServiceBuilderWarProject(File _warsDir, File pluginDir) {
+	private void _convertToServiceBuilderWarProject(File warsDir, File pluginDir) {
 		ConvertArgs convertArgs = getArgs();
 
 		try {
-			_convertToWarProject(_warsDir, pluginDir);
+			_convertToWarProject(warsDir, pluginDir);
 
 			List<String> arguments;
 
@@ -369,15 +372,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 	}
 
-	private void _convertToThemeBuilderWarProject(File _warsDir, File themePlugin) {
+	private void _convertToThemeBuilderWarProject(File warsDir, File themePlugin) {
 		try {
-			_warsDir.mkdirs();
+			warsDir.mkdirs();
 
 			CreateCommand createCommand = new CreateCommand(getBladeCLI());
 
 			ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
-			projectTemplatesArgs.setDestinationDir(_warsDir);
+			projectTemplatesArgs.setDestinationDir(warsDir);
 			projectTemplatesArgs.setName(themePlugin.getName());
 			projectTemplatesArgs.setTemplate("theme");
 
@@ -395,7 +398,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			// only copy _diffs and WEB-INF
 
-			File newThemeDir = new File(_warsDir, themePlugin.getName());
+			File newThemeDir = new File(warsDir, themePlugin.getName());
 
 			File webapp = new File(newThemeDir, "src/main/webapp");
 
@@ -453,15 +456,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 	}
 
-	private void _convertToWarProject(File _warsDir, File pluginDir) {
+	private void _convertToWarProject(File warsDir, File pluginDir) {
 		try {
-			_warsDir.mkdirs();
+			warsDir.mkdirs();
 
-			Path warsPath = _warsDir.toPath();
+			Path warsPath = warsDir.toPath();
 
 			Files.move(pluginDir.toPath(), warsPath.resolve(pluginDir.getName()));
 
-			File warDir = new File(_warsDir, pluginDir.getName());
+			File warDir = new File(warsDir, pluginDir.getName());
 
 			File src = new File(warDir, "src/main/java");
 
@@ -560,11 +563,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 	}
 
-	private File _findPluginDir(File _pluginsSdkDir, final String pluginName) throws Exception {
+	private File _findPluginDir(File pluginsSdkDir, final String pluginName) throws Exception {
 		final File[] pluginDir = new File[1];
 
 		Files.walkFileTree(
-			_pluginsSdkDir.toPath(),
+			pluginsSdkDir.toPath(),
 			new SimpleFileVisitor<Path>() {
 
 				@Override

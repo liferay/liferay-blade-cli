@@ -21,7 +21,9 @@ import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
 import java.io.PrintStream;
+
 import java.nio.file.Path;
+
 import java.util.Set;
 
 /**
@@ -30,20 +32,19 @@ import java.util.Set;
 public class OutputsCommand extends BaseCommand<OutputsArgs> {
 
 	public OutputsCommand() {
-		super();
 	}
 
 	@Override
 	public void execute() throws Exception {
-		BladeCLI _blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		final File base = _blade.getBase();
+		final File base = bladeCLI.getBase();
 
 		final Path basePath = base.toPath();
 
 		final Path basePathRoot = basePath.getRoot();
 
-		final Set<File> outputs = GradleTooling.getOutputFiles(_blade.getCacheDir(), base);
+		final Set<File> outputs = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), base);
 
 		for (File output : outputs) {
 			Path outputPath = output.toPath();
@@ -52,7 +53,7 @@ public class OutputsCommand extends BaseCommand<OutputsArgs> {
 
 			Object print = null;
 
-			PrintStream out = _blade.out();
+			PrintStream out = bladeCLI.out();
 
 			if ((basePathRoot != null) && (outputPathRoot != null)) {
 				print = basePath.relativize(outputPath);

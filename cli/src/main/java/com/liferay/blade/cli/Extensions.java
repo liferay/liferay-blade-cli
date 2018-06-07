@@ -18,17 +18,22 @@ package com.liferay.blade.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 
 import java.io.IOException;
+
 import java.lang.reflect.Field;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,12 +44,29 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
 public class Extensions {
+
+	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
+		Stream<Class<? extends BaseArgs>> stream = argsClass.stream();
+
+		return stream.map(
+			clazz -> clazz.getAnnotation(Parameters.class)
+		).filter(
+			Objects::nonNull
+		).map(
+			x -> Arrays.asList(x.commandNames())
+		).flatMap(
+			List::stream
+		).collect(
+			Collectors.toList()
+		);
+	}
 
 	public static Path getDirectory() {
 		try {
@@ -55,10 +77,7 @@ public class Extensions {
 			if (Files.notExists(dotBlade)) {
 				Files.createDirectories(dotBlade);
 			}
-
-			else
-
-			if (!Files.isDirectory(dotBlade)) {
+			else if (!Files.isDirectory(dotBlade)) {
 				throw new Exception(".blade is not a directory!");
 			}
 
@@ -67,10 +86,7 @@ public class Extensions {
 			if (Files.notExists(extensions)) {
 				Files.createDirectories(extensions);
 			}
-
-			else
-
-			if (!Files.isDirectory(extensions)) {
+			else if (!Files.isDirectory(extensions)) {
 				throw new Exception(".blade/extensions is not a directory!");
 			}
 
@@ -83,26 +99,55 @@ public class Extensions {
 		}
 	}
 
-	private static final String _USER_HOME = System.getProperty("user.home");
+	public static String[] sortArgs(Map<String, BaseCommand<? extends BaseArgs>> commands, String[] args)
+		throws Exception {
 
-	public static String[] sortArgs(Map<String, BaseCommand<? extends BaseArgs>> commands, String[] args) throws Exception {
 		List<String> argsList = new ArrayList<>(Arrays.asList(args));
 
 		Collection<String> addLast = new ArrayList<>();
 
 		Collection<BaseArgs> argList = new HashSet<>();
 
-		commands.values().stream().map(command -> command.getArgs()).forEach(argList::add);
+		Collection<BaseCommand<? extends BaseArgs>> values = commands.values();
 
-		Collection<Class<? extends BaseArgs>> classes =
-			argList.stream().map(BaseArgs::getClass).collect(Collectors.toSet());
-		Collection<String> spaceCommandCollection = Extensions.getCommandNames(
-			classes).stream().filter(x -> x.contains(" ")).collect(Collectors.toSet());
+		Stream<BaseCommand<? extends BaseArgs>> valuesStream = values.stream();
+
+		valuesStream.map(
+			command -> command.getArgs()
+		).forEach(
+			argList::add
+		);
+
+		Stream<BaseArgs> argStream = argList.stream();
+
+		Collection<Class<? extends BaseArgs>> classes = argStream.map(
+			BaseArgs::getClass
+		).collect(
+			Collectors.toSet()
+		);
+
+		Collection<String> commandNames = getCommandNames(classes);
+
+		Stream<String> commandNamesStream = commandNames.stream();
+
+		Collection<String> spaceCommandCollection = commandNamesStream.filter(
+			x -> x.contains(" ")
+		).collect(
+			Collectors.toSet()
+		);
+
 		Collection<String[]> spaceCommandSplitCollection = new ArrayList<>();
-		spaceCommandCollection.stream().map(x -> x.split(" ")).forEach(spaceCommandSplitCollection::add);
 
-		Collection<String> flagsWithoutArgs = _getFlagsWithoutArguments(BaseArgs.class);
-		Collection<String> flagsWithArgs = _getFlagsWithArguments(BaseArgs.class);
+		Stream<String> spaceCommandStream = spaceCommandCollection.stream();
+
+		spaceCommandStream.map(
+			x -> x.split(" ")
+		).forEach(
+			spaceCommandSplitCollection::add
+		);
+
+		Collection<String> flagsWithoutArgs = _getFlags(BaseArgs.class, false);
+		Collection<String> flagsWithArgs = _getFlags(BaseArgs.class, true);
 
 		for (int x = 0; x < argsList.size(); x++) {
 			String s = argsList.get(x);
@@ -115,13 +160,13 @@ public class Extensions {
 				addLast.add(argsList.remove(x));
 			}
 			else {
-				if (spaceCommandSplitCollection.size() > 0) {
+				if (!spaceCommandSplitCollection.isEmpty()) {
 					String[] foundStrArray = null;
 
 					for (String[] strArray : spaceCommandSplitCollection) {
 						if (argsList.size() == (x + strArray.length)) {
 						}
-						else if (argsList.size() > x + (strArray.length - 1)) {
+						else if (argsList.size() > (x + (strArray.length - 1))) {
 							if (foundStrArray == null) {
 								boolean mismatch = false;
 
@@ -161,7 +206,9 @@ public class Extensions {
 							if (Objects.equals(commandPart, argsList.get(x))) {
 								int len = newCommand.length();
 
-								if (len > 0)newCommand.append(" ");
+								if (len > 0) {
+									newCommand.append(" ");
+								}
 
 								newCommand.append(argsList.remove(x));
 							}
@@ -178,19 +225,13 @@ public class Extensions {
 		return argsList.toArray(new String[0]);
 	}
 
-	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
-		return argsClass.stream().map(clazz -> clazz.getAnnotation(Parameters.class)).filter(Objects::nonNull).map(x -> Arrays.asList(x.commandNames())).flatMap(List::stream).collect(Collectors.toList());
-	}
-
-	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
-
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
 		if (_commands == null) {
 			_commands = new HashMap<>();
 
-			URL[] jarUrls = _getJarUrls(Extensions.getDirectory());
+			URL[] jarUrls = _getJarUrls(getDirectory());
 
-			URLClassLoader serviceLoaderClassloader = new URLClassLoader(jarUrls, this.getClass().getClassLoader());
+			URLClassLoader serviceLoaderClassloader = new URLClassLoader(jarUrls, getClass().getClassLoader());
 
 			@SuppressWarnings("rawtypes")
 			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassloader);
@@ -218,70 +259,64 @@ public class Extensions {
 		return _commands;
 	}
 
+	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
+		Collection<String> flags = new ArrayList<>();
+
+		for (Field field : clazz.getDeclaredFields()) {
+			Parameter annotation = field.getAnnotation(Parameter.class);
+
+			if (annotation != null) {
+				String[] names = annotation.names();
+
+				if ((names != null) && (names.length > 0)) {
+					Class<?> type = field.getType();
+
+					if ((withArguments && !type.equals(boolean.class)) ||
+						(!withArguments && type.equals(boolean.class))) {
+
+						for (String name : names) {
+							flags.add(name);
+						}
+					}
+				}
+			}
+		}
+
+		return flags;
+	}
+
 	private static URL[] _getJarUrls(Path jarsPath) throws IOException {
-		return Files.list(
-			jarsPath
-		).filter(
-			path -> {
-				String pathString = path.toString();
+		try (Stream<Path> files = Files.list(jarsPath)) {
+			return files.filter(
+				path -> {
+					String pathString = path.toString();
 
-				return pathString.endsWith(".jar");
-			}
-		).map(
-			Path::toUri
-		).map(
-			uri -> {
-				try {
-					return uri.toURL();
+					return pathString.endsWith(".jar");
 				}
-				catch (MalformedURLException e) {
-				}
-
-				return null;
-			}
-		).filter(
-			url -> url != null
-		).collect(
-			Collectors.toSet()
-		).toArray(
-			new URL[0]
-		);
-	}
-
-	private static Collection<String> _getFlagsWithArguments(Class<? extends BaseArgs> clazz) {
-		Collection<String> flags = new ArrayList<>();
-
-		for (Field field : clazz.getDeclaredFields()) {
-			Parameter annotation = field.getAnnotation(Parameter.class);
-
-			if (annotation != null && (annotation.names() != null && annotation.names().length > 0)) {
-				if (!field.getType().equals(boolean.class)) {
-					for (String fName : annotation.names()) {
-						flags.add(fName);
+			).map(
+				Path::toUri
+			).map(
+				uri -> {
+					try {
+						return uri.toURL();
 					}
-				}
-			}
-		}
-
-		return flags;
-	}
-
-	private static Collection<String> _getFlagsWithoutArguments(Class<? extends BaseArgs> clazz) {
-		Collection<String> flags = new ArrayList<>();
-
-		for (Field field : clazz.getDeclaredFields()) {
-			Parameter annotation = field.getAnnotation(Parameter.class);
-
-			if (annotation != null && (annotation.names() != null && annotation.names().length > 0)) {
-				if (field.getType().equals(boolean.class)) {
-					for (String fName : annotation.names()) {
-						flags.add(fName);
+					catch (MalformedURLException murle) {
 					}
-				}
-			}
-		}
 
-		return flags;
+					return null;
+				}
+			).filter(
+				url -> url != null
+			).collect(
+				Collectors.toSet()
+			).toArray(
+				new URL[0]
+			);
+		}
 	}
+
+	private static final String _USER_HOME = System.getProperty("user.home");
+
+	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 
 }

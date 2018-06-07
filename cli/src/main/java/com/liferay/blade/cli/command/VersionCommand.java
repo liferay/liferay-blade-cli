@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 
 import java.net.URL;
+
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -31,7 +32,6 @@ import org.osgi.framework.Constants;
 public class VersionCommand extends BaseCommand<VersionArgs> {
 
 	public VersionCommand() {
-		super();
 	}
 
 	@Override

@@ -25,7 +25,6 @@ import com.liferay.blade.cli.util.BladeUtil;
 public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	public UpdateCommand() {
-		super();
 	}
 
 	@Override

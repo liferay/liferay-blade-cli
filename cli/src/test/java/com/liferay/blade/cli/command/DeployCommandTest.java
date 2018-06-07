@@ -23,7 +23,6 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.LiferayBundleDeployer;
 import com.liferay.blade.cli.MockUtil;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.command.DeployCommand;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.util.BladeUtil;

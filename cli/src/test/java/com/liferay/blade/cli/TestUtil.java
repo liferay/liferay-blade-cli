@@ -19,6 +19,7 @@ package com.liferay.blade.cli;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +31,30 @@ import java.nio.file.attribute.BasicFileAttributes;
  */
 public class TestUtil {
 
+	public static void deleteDir(Path dirPath) throws IOException {
+		Files.walkFileTree(
+			dirPath,
+			new SimpleFileVisitor<Path>() {
+
+				@Override
+				public FileVisitResult postVisitDirectory(Path dirPath, IOException ioe) throws IOException {
+					Files.delete(dirPath);
+
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes)
+					throws IOException {
+
+					Files.delete(path);
+
+					return FileVisitResult.CONTINUE;
+				}
+
+			});
+	}
+
 	public static String runBlade(String... args) throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -40,34 +65,6 @@ public class TestUtil {
 		String content = baos.toString();
 
 		return content;
-	}
-
-	public static void deleteDir(Path dirPath) throws IOException {
-		Files.walkFileTree(
-			dirPath,
-			new SimpleFileVisitor<Path>() {
-
-				@Override
-				public FileVisitResult postVisitDirectory(
-						Path dirPath, IOException ioe)
-					throws IOException {
-
-					Files.delete(dirPath);
-
-					return FileVisitResult.CONTINUE;
-				}
-
-				@Override
-				public FileVisitResult visitFile(
-						Path path, BasicFileAttributes basicFileAttributes)
-					throws IOException {
-
-					Files.delete(path);
-
-					return FileVisitResult.CONTINUE;
-				}
-
-			});
 	}
 
 }

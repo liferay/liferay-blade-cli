@@ -19,6 +19,7 @@ package com.liferay.blade.cli.util;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
+
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
@@ -35,11 +36,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+
 import java.net.InetSocketAddress;
 import java.net.Socket;
+
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;

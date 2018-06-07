@@ -20,15 +20,18 @@ import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
+
 import java.nio.file.Path;
 
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;

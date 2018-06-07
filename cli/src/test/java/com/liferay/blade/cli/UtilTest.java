@@ -19,7 +19,9 @@ package com.liferay.blade.cli;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
+
 import java.nio.file.Files;
+
 import java.util.List;
 import java.util.Properties;
 
@@ -32,7 +34,6 @@ import org.junit.rules.TemporaryFolder;
  * @author David Truong
  */
 public class UtilTest {
-
 
 	@Test
 	public void testAppServerProperties() throws Exception {
@@ -99,7 +100,6 @@ public class UtilTest {
 
 		Assert.assertTrue(BladeUtil.isWorkspace(workspace));
 	}
-
 
 	@Rule
 	public final TemporaryFolder tempFolder = new TemporaryFolder();

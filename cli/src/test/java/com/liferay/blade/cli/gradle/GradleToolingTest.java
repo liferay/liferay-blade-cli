@@ -19,6 +19,7 @@ package com.liferay.blade.cli.gradle;
 import aQute.lib.io.IO;
 
 import java.io.File;
+
 import java.util.Set;
 
 import org.junit.Assert;

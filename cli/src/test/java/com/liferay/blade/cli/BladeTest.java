@@ -34,16 +34,14 @@ public class BladeTest extends BladeCLI {
 		_base = base;
 	}
 
+	public BladeTest(PrintStream ps) {
+		this(ps, null);
+	}
+
 	public BladeTest(PrintStream ps, File base) {
 		super(ps, ps);
 
 		_base = base;
-	}
-
-	private File _base;
-
-	public BladeTest(PrintStream ps) {
-		this(ps, null);
 	}
 
 	@Override
@@ -56,5 +54,6 @@ public class BladeTest extends BladeCLI {
 		}
 	}
 
+	private File _base;
 
 }

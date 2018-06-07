@@ -19,8 +19,10 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.Extensions;
 
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.util.Objects;
 
 /**
@@ -29,7 +31,6 @@ import java.util.Objects;
 public class UninstallExtensionCommand extends BaseCommand<UninstallExtensionArgs> {
 
 	public UninstallExtensionCommand() {
-		super();
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class UninstallExtensionCommand extends BaseCommand<UninstallExtensionArg
 
 		String name = uninstallExtensionArgs.getName();
 
-		if (Objects.nonNull(name) && name.length() > 0 && name.endsWith(".jar")) {
+		if (Objects.nonNull(name) && (name.length() > 0) && name.endsWith(".jar")) {
 			_removeExtension(name);
 		}
 		else {

@@ -28,6 +28,7 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,12 +39,31 @@ import java.util.Set;
 
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
+
 import org.powermock.api.easymock.PowerMock;
 
 /**
  * @author Christopher Bryan Boyd
  */
 public class MockUtil {
+
+	public static void stubDeployCommand() throws Exception {
+		PowerMock.mockStaticPartialNice(BladeUtil.class, "canConnect");
+		PowerMock.mockStaticPartialNice(Extensions.class, "getCommands");
+
+		IExpectationSetters<Boolean> canConnect = EasyMock.expect(
+			BladeUtil.canConnect(EasyMock.anyString(), EasyMock.anyInt()));
+
+		canConnect.andStubReturn(true);
+
+		Map<String, BaseCommand<? extends BaseArgs>> map = new HashMap<>();
+
+		map.put("deploy", new DeployCommand());
+
+		EasyMock.expect(new Extensions().getCommands()).andStubReturn(map);
+
+		PowerMock.replay(Extensions.class);
+	}
 
 	public static void stubDomain(boolean returnBsn, boolean returnFragment) throws IOException {
 		PowerMock.mockStatic(Domain.class);
@@ -127,24 +147,6 @@ public class MockUtil {
 		outputFiles.andStubReturn(new HashSet<>(Arrays.asList(returnFile)));
 
 		PowerMock.replay(GradleTooling.class);
-	}
-
-	public static void stubDeployCommand() throws Exception {
-		PowerMock.mockStaticPartialNice(BladeUtil.class, "canConnect");
-		PowerMock.mockStaticPartialNice(Extensions.class, "getCommands");
-
-		IExpectationSetters<Boolean> canConnect = EasyMock.expect(
-			BladeUtil.canConnect(EasyMock.anyString(), EasyMock.anyInt()));
-
-		canConnect.andStubReturn(true);
-
-		Map<String, BaseCommand<? extends BaseArgs>> map = new HashMap<>();
-
-		map.put("deploy", new DeployCommand());
-
-		EasyMock.expect(new Extensions().getCommands()).andStubReturn(map);
-
-		PowerMock.replay(Extensions.class);
 	}
 
 }

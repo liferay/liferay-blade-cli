@@ -26,7 +26,6 @@ import java.util.Objects;
 public class HelpCommand extends BaseCommand<HelpArgs> {
 
 	public HelpCommand() {
-		super();
 	}
 
 	@Override

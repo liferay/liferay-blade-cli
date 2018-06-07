@@ -22,9 +22,11 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -45,28 +47,8 @@ public class ExtensionsTest {
 	}
 
 	@Test
-	public void testProjectTemplatesBuiltIn() throws Exception {
-		Map<String, String> templates = BladeUtil.getTemplates();
-
-		Assert.assertNotNull(templates);
-
-		Assert.assertEquals(_NUM_BUILTIN_TEMPLATES, templates.size());
-	}
-
-	@Test
-	public void testProjectTemplatesWithCustom() throws Exception {
-		_setupTestExtensions();
-
-		Map<String, String> templates = BladeUtil.getTemplates();
-
-		Assert.assertNotNull(templates);
-
-		Assert.assertEquals(_NUM_BUILTIN_TEMPLATES + 1, templates.size());
-	}
-
-	@Test
 	public void testArgsSort() throws Exception {
-		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2" };
+		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2"};
 
 		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions().getCommands();
 
@@ -83,17 +65,13 @@ public class ExtensionsTest {
 		Assert.assertTrue(correctSort);
 	}
 
-	private static final int _NUM_BUILTIN_COMMANDS = 17;
-
-	private static final int _NUM_BUILTIN_TEMPLATES = 36;
-
 	@Test
 	public void testLoadCommandsBuiltIn() throws Exception {
 		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions().getCommands();
 
 		Assert.assertNotNull(commands);
 
-		Assert.assertEquals(_NUM_BUILTIN_COMMANDS, commands.size());
+		Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS, commands.size());
 	}
 
 	@Test
@@ -104,10 +82,28 @@ public class ExtensionsTest {
 
 		Assert.assertNotNull(commands);
 
-		Assert.assertEquals(_NUM_BUILTIN_COMMANDS + 1, commands.size());
+		Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 1, commands.size());
 	}
 
-	private static final File _USER_HOME = new File(System.getProperty("user.home"));
+	@Test
+	public void testProjectTemplatesBuiltIn() throws Exception {
+		Map<String, String> templates = BladeUtil.getTemplates();
+
+		Assert.assertNotNull(templates);
+
+		Assert.assertEquals(templates.toString(), _NUM_BUILTIN_TEMPLATES, templates.size());
+	}
+
+	@Test
+	public void testProjectTemplatesWithCustom() throws Exception {
+		_setupTestExtensions();
+
+		Map<String, String> templates = BladeUtil.getTemplates();
+
+		Assert.assertNotNull(templates);
+
+		Assert.assertEquals(templates.toString(), _NUM_BUILTIN_TEMPLATES + 1, templates.size());
+	}
 
 	private static void _setupTestExtensions() throws Exception {
 		File extensionsDir = new File(_USER_HOME, ".blade/extensions");
@@ -128,7 +124,7 @@ public class ExtensionsTest {
 			try {
 				Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
 			}
-			catch (IOException e) {
+			catch (IOException ioe) {
 			}
 
 			Assert.assertTrue(Files.exists(sampleJarPath));
@@ -137,5 +133,11 @@ public class ExtensionsTest {
 		copySampleJarFile.accept("sampleCommandJarFile");
 		copySampleJarFile.accept("sampleTemplateJarFile");
 	}
+
+	private static final int _NUM_BUILTIN_COMMANDS = 17;
+
+	private static final int _NUM_BUILTIN_TEMPLATES = 36;
+
+	private static final File _USER_HOME = new File(System.getProperty("user.home"));
 
 }

@@ -33,14 +33,11 @@ import org.junit.rules.TemporaryFolder;
  */
 public class GradleExecTest {
 
-	@Rule
-	public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
 	@Test
 	public void testGradleWrapper() throws Exception {
 		File file = temporaryFolder.getRoot();
 
-		String[] args = new String[] {"create", "-t", "api", "foo"};
+		String[] args = {"create", "-t", "api", "foo"};
 
 		new BladeTest(file).run(args);
 
@@ -56,5 +53,8 @@ public class GradleExecTest {
 
 		Assert.assertEquals(0, errorCode);
 	}
+
+	@Rule
+	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 }

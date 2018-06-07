@@ -33,10 +33,10 @@ public class ShellCommand extends BaseCommand<ShellArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		ShellArgs _args = getArgs();
+		ShellArgs shellArgs = getArgs();
 
-		String host = _args.getHost() != null ? _args.getHost() : "localhost";
-		int port = _args.getPort() != 0 ? _args.getPort() : 11311;
+		String host = shellArgs.getHost() != null ? shellArgs.getHost() : "localhost";
+		int port = shellArgs.getPort() != 0 ? shellArgs.getPort() : 11311;
 
 		if (!BladeUtil.canConnect(host, port)) {
 			_addError("sh", "Unable to connect to gogo shell on " + host + ":" + port);
@@ -44,7 +44,7 @@ public class ShellCommand extends BaseCommand<ShellArgs> {
 			return;
 		}
 
-		String gogoCommand = StringUtils.join(_args.getArgs(), " ");
+		String gogoCommand = StringUtils.join(shellArgs.getArgs(), " ");
 
 		_executeCommand(gogoCommand, host, port);
 	}

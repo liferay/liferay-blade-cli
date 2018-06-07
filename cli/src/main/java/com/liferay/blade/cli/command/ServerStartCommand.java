@@ -21,9 +21,11 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +39,6 @@ import java.util.stream.Stream;
 public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 	public ServerStartCommand() {
-		super();
 	}
 
 	@Override
@@ -103,7 +104,8 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 				for (Properties properties : propertiesList) {
 					if (appServerParentDir.equals("")) {
-						String appServerParentDirTemp = properties.getProperty(BladeUtil.APP_SERVER_PARENT_DIR_PROPERTY);
+						String appServerParentDirTemp = properties.getProperty(
+							BladeUtil.APP_SERVER_PARENT_DIR_PROPERTY);
 
 						if ((appServerParentDirTemp != null) && !appServerParentDirTemp.equals("")) {
 							Path rootDirRealPath = rootDirPath.toRealPath();
@@ -272,7 +274,8 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 			});
 
 		if (serverStartArgs.isBackground() && serverStartArgs.isTail()) {
-			Process tailProcess = BladeUtil.startProcess(bladeCLI, "tail -f catalina.out", logsPath.toFile(), enviroment);
+			Process tailProcess = BladeUtil.startProcess(
+				bladeCLI, "tail -f catalina.out", logsPath.toFile(), enviroment);
 
 			tailProcess.waitFor();
 		}

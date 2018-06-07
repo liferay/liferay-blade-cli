@@ -26,7 +26,9 @@ import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.PrintStream;
+
 import java.nio.file.Path;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,7 +48,6 @@ import org.apache.commons.lang3.StringUtils;
 public class CreateCommand extends BaseCommand<CreateArgs> {
 
 	public CreateCommand() {
-		super();
 	}
 
 	public CreateCommand(BladeCLI bladeCLI) {
@@ -234,9 +235,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	}
 
 	private File _getDefaultModulesDir() throws Exception {
-		BladeCLI _blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		File base = _blade.getBase();
+		File base = bladeCLI.getBase();
 
 		File baseDir = base.getAbsoluteFile();
 
@@ -252,7 +253,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			modulesDirValue = WorkspaceConstants.DEFAULT_MODULES_DIR;
 		}
 
-		File projectDir = BladeUtil.getWorkspaceDir(_blade);
+		File projectDir = BladeUtil.getWorkspaceDir(bladeCLI);
 
 		File modulesDir = new File(projectDir, modulesDirValue);
 
@@ -264,9 +265,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	}
 
 	private File _getDefaultWarsDir() throws Exception {
-		BladeCLI _blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		File base = _blade.getBase();
+		File base = bladeCLI.getBase();
 
 		File baseDir = base.getAbsoluteFile();
 
@@ -286,7 +287,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			warsDirValue = warsDirValue.split(",")[0];
 		}
 
-		File projectDir = BladeUtil.getWorkspaceDir(_blade);
+		File projectDir = BladeUtil.getWorkspaceDir(bladeCLI);
 
 		File warsDir = new File(projectDir, warsDirValue);
 

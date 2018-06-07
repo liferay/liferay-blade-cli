@@ -27,8 +27,8 @@ public abstract class BaseCommand<T extends BaseArgs> {
 	}
 
 	public BaseCommand(BladeCLI blade, T args) {
-		_args = args;
 		_blade = blade;
+		_args = args;
 	}
 
 	public abstract void execute() throws Exception;
