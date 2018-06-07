@@ -171,7 +171,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
 
-		Path customTemplatesPath = Extensions.getCustomTemplatesPath();
+		Path customTemplatesPath = Extensions.getDirectory();
 
 		archetypesDirs.add(FileUtil.getJarFile(ProjectTemplates.class));
 		archetypesDirs.add(customTemplatesPath.toFile());

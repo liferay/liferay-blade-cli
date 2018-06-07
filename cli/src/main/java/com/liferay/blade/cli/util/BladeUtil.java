@@ -199,11 +199,11 @@ public class BladeUtil {
 	}
 
 	public static Map<String, String> getTemplates() throws Exception {
-		File customTemplatesDir = Extensions.getCustomTemplatesPath().toFile();
+		Path extensions = Extensions.getDirectory();
 
 		Collection<File> templatesFiles = new HashSet<>();
 
-		templatesFiles.add(customTemplatesDir);
+		templatesFiles.add(extensions.toFile());
 
 		return ProjectTemplates.getTemplates(templatesFiles);
 	}

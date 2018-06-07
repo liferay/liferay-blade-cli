@@ -101,8 +101,8 @@ public class Extensions {
 		Collection<String[]> spaceCommandSplitCollection = new ArrayList<>();
 		spaceCommandCollection.stream().map(x -> x.split(" ")).forEach(spaceCommandSplitCollection::add);
 
-		Collection<String> flagsWithoutArgs = Extensions.getFlagsWithoutArguments(BaseArgs.class);
-		Collection<String> flagsWithArgs = Extensions.getFlagsWithArguments(BaseArgs.class);
+		Collection<String> flagsWithoutArgs = _getFlagsWithoutArguments(BaseArgs.class);
+		Collection<String> flagsWithArgs = _getFlagsWithArguments(BaseArgs.class);
 
 		for (int x = 0; x < argsList.size(); x++) {
 			String s = argsList.get(x);
@@ -110,7 +110,8 @@ public class Extensions {
 			if (flagsWithArgs.contains(s)) {
 				addLast.add(argsList.remove(x));
 				addLast.add(argsList.remove(x));
-			} else if (flagsWithoutArgs.contains(s)) {
+			}
+			else if (flagsWithoutArgs.contains(s)) {
 				addLast.add(argsList.remove(x));
 			}
 			else {
@@ -119,9 +120,8 @@ public class Extensions {
 
 					for (String[] strArray : spaceCommandSplitCollection) {
 						if (argsList.size() == (x + strArray.length)) {
-						} else
-
-						if (argsList.size() > x + (strArray.length - 1)) {
+						}
+						else if (argsList.size() > x + (strArray.length - 1)) {
 							if (foundStrArray == null) {
 								boolean mismatch = false;
 
@@ -248,38 +248,7 @@ public class Extensions {
 		);
 	}
 
-	public static Path getCustomTemplatesPath() {
-		try {
-			Path homePath = Paths.get(System.getProperty("user.home"));
-
-			Path bladePath = homePath.resolve(".blade");
-
-			if (Files.notExists(bladePath)) {
-				Files.createDirectory(bladePath);
-			}
-			else if (!Files.isDirectory(bladePath)) {
-				throw new Exception(".blade is not a directory!");
-			}
-
-			Path templatesPath = bladePath.resolve("templates");
-
-			if (Files.notExists(templatesPath)) {
-				Files.createDirectory(templatesPath);
-			}
-			else if (!Files.isDirectory(templatesPath)) {
-				throw new Exception(".blade/templates is not a directory!");
-			}
-
-			return templatesPath;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static Collection<String> getFlagsWithArguments(Class<? extends BaseArgs> clazz) {
+	private static Collection<String> _getFlagsWithArguments(Class<? extends BaseArgs> clazz) {
 		Collection<String> flags = new ArrayList<>();
 
 		for (Field field : clazz.getDeclaredFields()) {
@@ -297,7 +266,7 @@ public class Extensions {
 		return flags;
 	}
 
-	public static Collection<String> getFlagsWithoutArguments(Class<? extends BaseArgs> clazz) {
+	private static Collection<String> _getFlagsWithoutArguments(Class<? extends BaseArgs> clazz) {
 		Collection<String> flags = new ArrayList<>();
 
 		for (Field field : clazz.getDeclaredFields()) {
