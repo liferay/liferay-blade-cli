@@ -1,0 +1,3 @@
+Bundle-Name: custom-command
+Bundle-SymbolicName: com.liferay.extensions.sample.command
+Bundle-Version: 1.0.0

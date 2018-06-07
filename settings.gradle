@@ -1,0 +1,3 @@
+include "cli"
+include "extensions:sample-command"
+include "extensions:sample-template"

@@ -1,0 +1,17 @@
+com.liferay.blade.cli.command.ConvertCommand
+com.liferay.blade.cli.command.CreateCommand
+com.liferay.blade.cli.command.DeployCommand
+com.liferay.blade.cli.command.GradleWrapperCommand
+com.liferay.blade.cli.command.HelpCommand
+com.liferay.blade.cli.command.InitCommand
+com.liferay.blade.cli.command.InstallExtensionCommand
+com.liferay.blade.cli.command.OpenCommand
+com.liferay.blade.cli.command.OutputsCommand
+com.liferay.blade.cli.command.UninstallExtensionCommand
+com.liferay.blade.cli.command.SamplesCommand
+com.liferay.blade.cli.command.ServerStartCommand
+com.liferay.blade.cli.command.ServerStopCommand
+com.liferay.blade.cli.command.ShellCommand
+com.liferay.blade.cli.command.UpdateCommand
+com.liferay.blade.cli.command.UpgradePropsCommand
+com.liferay.blade.cli.command.VersionCommand

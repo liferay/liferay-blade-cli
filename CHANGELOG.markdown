@@ -14,6 +14,7 @@
 - [BLADE-207]: Upgrade all Blade Samples to set up logging
 - [BLADE-226]: Print warning and usage info when `blade create -t fragment` is invoked without -H and -h flags
 - [BLADE-230]: `blade create` `-t` argument should be mandatory
+- [BLADE-214]: Removed install command `blade install ...` and shell command should be used instead `blade sh install ...`
 
 ### Fixed
 - [BLADE-193]: Deploy Command does not properly handle bundle states
