@@ -254,6 +254,8 @@ public class Extensions {
 
 				_commands.put(commandNames[0], baseCommand);
 			}
+
+			serviceLoaderClassloader.close();
 		}
 
 		return _commands;
