@@ -2,7 +2,6 @@
 
 <suppressions>
 	<source-check>
-		<suppress checks="ChainingCheck" files="src/main/java/com/liferay/blade/cli/command/ConvertCommand\.java" />
 		<suppress checks="CopyrightCheck" files="src/main/java/com/liferay/blade/cli/util/FileWatcher\.java" />
 	</source-check>
 </suppressions>

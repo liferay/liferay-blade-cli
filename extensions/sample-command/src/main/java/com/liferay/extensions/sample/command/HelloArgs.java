@@ -22,16 +22,16 @@ import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 
 /**
- * @author Gregory Amerson
+ * @author Liferay
  */
-@Parameters(commandDescription = "Executes a custom command", commandNames = "custom")
+@Parameters(commandDescription = "Executes a hello command", commandNames = "hello")
 public class HelloArgs extends BaseArgs {
 
 	public String getName() {
 		return _name;
 	}
 
-	@Parameter(description = "The name to say hello to", names = "--name")
-	private String _name = System.getProperty("user.dir");
+	@Parameter(description = "The name to say hello to", names = "--name", required = true)
+	private String _name;
 
 }
