@@ -13,4 +13,8 @@ subprojects {
 		sourceCompatibility = "1.8"
 		targetCompatibility = "1.8"
 	}
+
+	pluginManager.withPlugin("com.liferay.source.formatter") {
+		classes.dependsOn checkSourceFormatting
+	}
 }
