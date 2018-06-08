@@ -36,10 +36,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.powermock.reflect.Whitebox;
 
 /**
@@ -47,7 +46,6 @@ import org.powermock.reflect.Whitebox;
  * @author Gregory Amerson
  */
 @PrepareForTest(Extensions.class)
-@RunWith(PowerMockRunner.class)
 public class ExtensionsTest {
 
 	@Before
@@ -115,6 +113,9 @@ public class ExtensionsTest {
 
 		Assert.assertEquals(templates.toString(), _NUM_BUILTIN_TEMPLATES + 1, templates.size());
 	}
+
+	@Rule
+	public final PowerMockRule rule = new PowerMockRule();
 
 	@Rule
 	public final TemporaryFolder tempFolder = new TemporaryFolder();

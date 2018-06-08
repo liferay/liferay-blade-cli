@@ -42,13 +42,12 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 
 import org.osgi.framework.dto.BundleDTO;
 
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 
 /**
  * @author Christopher Bryan Boyd
@@ -59,7 +58,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 		BladeTest.class, BladeUtil.class, DeployCommand.class, TestUtil.class
 	}
 )
-@RunWith(PowerMockRunner.class)
 public class DeployCommandTest {
 
 	@Test
@@ -244,6 +242,9 @@ public class DeployCommandTest {
 
 		PowerMock.verifyAll();
 	}
+
+	@Rule
+	public final PowerMockRule rule = new PowerMockRule();
 
 	@Rule
 	public final TemporaryFolder tempFolder = new TemporaryFolder();
