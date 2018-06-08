@@ -20,13 +20,13 @@ checkSourceFormatting {
 	maxLineLength = 120
 }
 
-formatSource {
-	maxLineLength = 120
-}
-
 dependencies {
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
 	compileOnly project(":cli")
+}
+
+formatSource {
+	maxLineLength = 120
 }
 
 repositories {

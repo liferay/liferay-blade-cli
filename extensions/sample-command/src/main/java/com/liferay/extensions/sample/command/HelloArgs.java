@@ -18,6 +18,7 @@ package com.liferay.extensions.sample.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+
 import com.liferay.blade.cli.command.BaseArgs;
 
 /**

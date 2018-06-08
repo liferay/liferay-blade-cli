@@ -15,4 +15,5 @@ public class Hello extends BaseCommand<HelloArgs> {
 	public Class<HelloArgs> getArgsClass() {
 		return HelloArgs.class;
 	}
+
 }
