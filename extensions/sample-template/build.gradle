@@ -16,14 +16,14 @@ apply plugin: "com.liferay.source.formatter"
 apply plugin: "eclipse"
 apply plugin: "java"
 
+checkSourceFormatting {
+	maxLineLength = 120
+}
+
 eclipse {
     classpath {
         sourceSets -= [sourceSets.main]
     }
-}
-
-checkSourceFormatting {
-	maxLineLength = 120
 }
 
 formatSource {
