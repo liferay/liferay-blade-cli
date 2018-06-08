@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,9 +42,12 @@ import org.junit.Test;
  */
 public class ExtensionsTest {
 
+	@After
 	@Before
 	public void cleanTestUserHome() throws Exception {
-		TestUtil.deleteDir(_USER_HOME.toPath());
+		if (_TEST_USER_HOME.exists()) {
+			TestUtil.deleteDir(_TEST_USER_HOME.toPath());
+		}
 	}
 
 	@Test
@@ -106,7 +110,7 @@ public class ExtensionsTest {
 	}
 
 	private static void _setupTestExtensions() throws Exception {
-		File extensionsDir = new File(_USER_HOME, ".blade/extensions");
+		File extensionsDir = new File(_TEST_USER_HOME, ".blade/extensions");
 
 		extensionsDir.mkdirs();
 
@@ -138,6 +142,6 @@ public class ExtensionsTest {
 
 	private static final int _NUM_BUILTIN_TEMPLATES = 36;
 
-	private static final File _USER_HOME = new File(System.getProperty("user.home"));
+	private static final File _TEST_USER_HOME = new File(System.getProperty("testUserHome"));
 
 }
