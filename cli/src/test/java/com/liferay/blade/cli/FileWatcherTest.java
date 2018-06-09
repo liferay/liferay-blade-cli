@@ -57,9 +57,11 @@ public class FileWatcherTest {
 		_testdir = tempFolder.newFolder("build", "watch");
 
 		_testfile = new File(_testdir, "file.txt");
+
 		_testfile.createNewFile();
 
 		_testsecondfile = new File(_testdir, "second.txt");
+
 		_testsecondfile.createNewFile();
 	}
 

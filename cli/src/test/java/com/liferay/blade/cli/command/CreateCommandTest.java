@@ -166,8 +166,10 @@ public class CreateCommandTest {
 	public void testCreateFragment() throws Exception {
 		File tempRoot = tempFolder.getRoot();
 
-		String[] gradleArgs =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook"};
+		String[] gradleArgs = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "-h", "com.liferay.login.web", "-H", "1.0.0",
+			"loginHook"
+		};
 
 		String[] mavenArgs = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "fragment", "-h", "com.liferay.login.web",
@@ -446,15 +448,17 @@ public class CreateCommandTest {
 		_verifyImportPackage(
 			new File(
 				projectPath,
-					"backend-integration-service/build/libs/com.liferay.backend.integration.service-1.0.0.jar"));
+				"backend-integration-service/build/libs/com.liferay.backend.integration.service-1.0.0.jar"));
 	}
 
 	@Test
 	public void testCreateGradleServiceBuilderDefault() throws Exception {
 		File tempRoot = tempFolder.getRoot();
 
-		String[] args =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "service-builder", "-p", "com.liferay.docs.guestbook", "guestbook"};
+		String[] args = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "service-builder", "-p", "com.liferay.docs.guestbook",
+			"guestbook"
+		};
 
 		new BladeTest().run(args);
 
@@ -549,7 +553,7 @@ public class CreateCommandTest {
 		_verifyImportPackage(
 			new File(
 				projectPath,
-					"com.liferay.docs.guestbook-service/build/libs/com.liferay.docs.guestbook.service-1.0.0.jar"));
+				"com.liferay.docs.guestbook-service/build/libs/com.liferay.docs.guestbook.service-1.0.0.jar"));
 	}
 
 	@Test
@@ -717,8 +721,10 @@ public class CreateCommandTest {
 	public void testCreatePortletConfigurationIcon() throws Exception {
 		File tempRoot = tempFolder.getRoot();
 
-		String[] args =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "portlet-configuration-icon", "-p", "blade.test", "icontest"};
+		String[] args = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "portlet-configuration-icon", "-p", "blade.test",
+			"icontest"
+		};
 
 		new BladeTest().run(args);
 
@@ -745,8 +751,10 @@ public class CreateCommandTest {
 	public void testCreatePortletToolbarContributor() throws Exception {
 		File tempRoot = tempFolder.getRoot();
 
-		String[] args =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "portlet-toolbar-contributor", "-p", "blade.test", "toolbartest"};
+		String[] args = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "portlet-toolbar-contributor", "-p", "blade.test",
+			"toolbartest"
+		};
 
 		new BladeTest().run(args);
 
@@ -864,8 +872,10 @@ public class CreateCommandTest {
 	public void testCreateSimulationPanelEntry() throws Exception {
 		File tempRoot = tempFolder.getRoot();
 
-		String[] args =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "simulation-panel-entry", "-p", "test.simulator", "simulator"};
+		String[] args = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "simulation-panel-entry", "-p", "test.simulator",
+			"simulator"
+		};
 
 		new BladeTest().run(args);
 
@@ -891,8 +901,10 @@ public class CreateCommandTest {
 	public void testCreateSpringMvcPortlet() throws Exception {
 		File tempRoot = tempFolder.getRoot();
 
-		String[] args =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "spring-mvc-portlet", "-p", "test.spring.portlet", "spring-test"};
+		String[] args = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "spring-mvc-portlet", "-p", "test.spring.portlet",
+			"spring-test"
+		};
 
 		new BladeTest().run(args);
 
@@ -973,8 +985,10 @@ public class CreateCommandTest {
 	public void testCreateThemeContributor() throws Exception {
 		File tempRoot = tempFolder.getRoot();
 
-		String[] args =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "theme-contributor", "-C", "foobar", "theme-contributor-test"};
+		String[] args = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "theme-contributor", "-C", "foobar",
+			"theme-contributor-test"
+		};
 
 		new BladeTest().run(args);
 
