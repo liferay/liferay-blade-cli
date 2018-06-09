@@ -50,7 +50,7 @@ public class ExtensionsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_TEST_USER_HOME = tempFolder.newFolder();
+		_TEST_USER_HOME = tempFolder.newFolder(".blade", "extensions");
 
 		Whitebox.setInternalState(Extensions.class, _TEST_USER_HOME.getAbsolutePath());
 	}

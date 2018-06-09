@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
@@ -27,29 +25,22 @@ import java.io.PrintStream;
 
 import java.nio.file.Files;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author David Truong
  */
 public class ConvertThemeCommandTest {
 
-	@After
-	public void cleanUp() throws Exception {
-		if (_testDir.exists()) {
-			IO.delete(_testDir);
-			Assert.assertFalse(_testDir.exists());
-		}
-	}
-
 	@Test
 	public void testListThemes() throws Exception {
-		String[] args = {"--base", "build/test/workspace", "convert", "-l"};
+		File workspace = _createWorkspace();
 
-		_createWorkspace();
+		String[] args = {"--base", workspace.getAbsolutePath(), "convert", "-l"};
 
 		String content = TestUtil.runBlade(args);
 
@@ -59,9 +50,9 @@ public class ConvertThemeCommandTest {
 	@Ignore
 	@Test
 	public void testMigrateCompassTheme() throws Exception {
-		String[] args = {"--base", "build/test/workspace", "convert", "-a"};
-
 		File workspace = _createWorkspace();
+
+		String[] args = {"--base", workspace.getAbsolutePath(), "convert", "-a"};
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -93,6 +84,9 @@ public class ConvertThemeCommandTest {
 
 		Assert.assertTrue(json.contains("\"supportCompass\": false"));
 	}
+
+	@Rule
+	public final TemporaryFolder tempFolder = new TemporaryFolder();
 
 	private void _createTheme(File workspace, String themeName, boolean compass) throws Exception {
 		File theme = new File(workspace, "plugins-sdk/themes/" + themeName);
@@ -129,7 +123,7 @@ public class ConvertThemeCommandTest {
 	}
 
 	private File _createWorkspace() throws Exception {
-		File workspace = new File("build/test/workspace");
+		File workspace = new File(tempFolder.getRoot(), "build/test/workspace");
 
 		File themesDir = new File(workspace, "themes");
 
@@ -147,7 +141,5 @@ public class ConvertThemeCommandTest {
 
 		return workspace;
 	}
-
-	private static File _testDir = IO.getFile("build/test");
 
 }
