@@ -50,9 +50,7 @@ public class ExtensionsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_testUserHome = tempFolder.newFolder(".blade", "extensions");
-
-		Whitebox.setInternalState(Extensions.class, _testUserHome.getAbsolutePath());
+		Whitebox.setInternalState(Extensions.class, tempFolder.getRoot().getAbsolutePath());
 	}
 
 	@Test
@@ -120,8 +118,8 @@ public class ExtensionsTest {
 	@Rule
 	public final TemporaryFolder tempFolder = new TemporaryFolder();
 
-	private static void _setupTestExtensions() throws Exception {
-		File extensionsDir = new File(_testUserHome, ".blade/extensions");
+	private void _setupTestExtensions() throws Exception {
+		File extensionsDir = new File(tempFolder.getRoot(), ".blade/extensions");
 
 		extensionsDir.mkdirs();
 
@@ -152,7 +150,5 @@ public class ExtensionsTest {
 	private static final int _NUM_BUILTIN_COMMANDS = 17;
 
 	private static final int _NUM_BUILTIN_TEMPLATES = 36;
-
-	private static File _testUserHome = null;
 
 }
