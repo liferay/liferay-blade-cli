@@ -19,7 +19,6 @@ package com.liferay.blade.cli.command;
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Jar;
-
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeTest;
@@ -35,9 +34,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -45,10 +44,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.tooling.internal.consumer.ConnectorServices;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -84,11 +81,7 @@ public class CreateCommandTest {
 			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
 			".*^public class BarActivator implements BundleActivator.*$");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "bar.activator-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "bar.activator-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "build/libs/bar.activator-1.0.0.jar"));
 
@@ -103,7 +96,9 @@ public class CreateCommandTest {
 			".*^public class BarActivator implements BundleActivator.*$");
 
 		MavenRunnerUtil.executeMavenPackage(projectPath, new String[] {"clean", "package"});
+
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
+
 		_verifyImportPackage(new File(projectPath, "target/bar-activator-1.0.0.jar"));
 	}
 
@@ -125,11 +120,7 @@ public class CreateCommandTest {
 
 		_contains(_checkFileExists(projectPath + "/src/main/resources/foo/api/packageinfo"), "version 1.0.0");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "foo-1.0.0.jar");
 
 		try (Jar jar = new Jar(new File(projectPath, "build/libs/foo-1.0.0.jar"))) {
 			Manifest manifest = jar.getManifest();
@@ -191,11 +182,7 @@ public class CreateCommandTest {
 
 		_contains(_checkFileExists(projectPath + "/build.gradle"), ".*^apply plugin: \"com.liferay.plugin\".*");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "loginhook-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "loginhook-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "build/libs/loginhook-1.0.0.jar"));
 
@@ -268,11 +255,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "com.liferay.test-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "com.liferay.test-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "/build/libs/com.liferay.test-1.0.0.jar"));
 	}
@@ -301,11 +284,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "portlet.portlet-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "portlet.portlet-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "/build/libs/portlet.portlet-1.0.0.jar"));
 	}
@@ -327,15 +306,11 @@ public class CreateCommandTest {
 		_contains(
 			_checkFileExists(projectPath + "/src/main/java/gradle/test/portlet/FooPortlet.java"),
 			new String[] {
-				"^package gradle.test.portlet;.*", ".*javax.portlet.display-name=gradle.test.*",
-				".*^public class FooPortlet .*", ".*printWriter.print\\(\\\"gradle.test Portlet.*"
+				"^package gradle.test.portlet;.*", ".*javax.portlet.display-name=Foo.*",
+				".*^public class FooPortlet .*", ".*Hello from Foo!.*"
 			});
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "gradle.test-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "gradle.test-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "/build/libs/gradle.test-1.0.0.jar"));
 	}
@@ -396,11 +371,7 @@ public class CreateCommandTest {
 			}
 		}
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "servicepreaction-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "servicepreaction-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "build/libs/servicepreaction-1.0.0.jar"));
 	}
@@ -581,11 +552,7 @@ public class CreateCommandTest {
 				".*public Serviceoverride\\(\\) \\{.*"
 			});
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "serviceoverride-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "serviceoverride-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "build/libs/serviceoverride-1.0.0.jar"));
 	}
@@ -604,11 +571,7 @@ public class CreateCommandTest {
 
 		_contains(_checkFileExists(projectPath + "/bnd.bnd"), ".*Bundle-SymbolicName: foo.bar.*");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo.bar-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "foo.bar-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "build/libs/foo.bar-1.0.0.jar"));
 	}
@@ -659,11 +622,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "build/libs/foo-1.0.0.jar"));
 
@@ -682,7 +641,9 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 
 		MavenRunnerUtil.executeMavenPackage(projectPath, new String[] {"clean", "package"});
+
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
 		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 	}
 
@@ -753,7 +714,7 @@ public class CreateCommandTest {
 
 		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 
-		_verifyBuild(projectPath, projectPath, "blade.test-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "blade.test-1.0.0.jar");
 	}
 
 	@Test
@@ -785,7 +746,7 @@ public class CreateCommandTest {
 
 		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 
-		_verifyBuild(projectPath, projectPath, "blade.test-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "blade.test-1.0.0.jar");
 	}
 
 	@Test
@@ -815,11 +776,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "hello.world.portlet-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "hello.world.portlet-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath + "/build/libs/hello.world.portlet-1.0.0.jar"));
 	}
@@ -851,11 +808,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, "hello.world.refresh-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "hello.world.refresh-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath + "/build/libs/hello.world.refresh-1.0.0.jar"));
 	}
@@ -917,7 +870,7 @@ public class CreateCommandTest {
 
 		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 
-		_verifyBuild(projectPath, projectPath, "test.simulator-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "test.simulator-1.0.0.jar");
 	}
 
 	@Test
@@ -940,7 +893,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/build.gradle");
 
-		_verifyBuild(projectPath, projectPath, "spring-test.war");
+		TestUtil.verifyBuild(projectPath, "spring-test.war");
 	}
 
 	@Test
@@ -969,7 +922,7 @@ public class CreateCommandTest {
 
 		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
 
-		_verifyBuild(projectPath, projectPath, "blade.test-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "blade.test-1.0.0.jar");
 	}
 
 	@Test
@@ -1001,7 +954,7 @@ public class CreateCommandTest {
 		bufferWriter.write("\nbuildTheme { jvmArgs \"-Djava.awt.headless=true\" }");
 		bufferWriter.close();
 
-		_verifyBuild(projectPath, projectPath, "theme-test.war");
+		TestUtil.verifyBuild(projectPath, "theme-test.war");
 	}
 
 	@Test
@@ -1023,7 +976,7 @@ public class CreateCommandTest {
 
 		_contains(bnd, ".*Liferay-Theme-Contributor-Type: foobar.*");
 
-		_verifyBuild(projectPath, projectPath, "theme.contributor.test-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "theme.contributor.test-1.0.0.jar");
 	}
 
 	@Test
@@ -1112,18 +1065,14 @@ public class CreateCommandTest {
 		_contains(
 			_checkFileExists(projectPath + "/gradle.test/src/main/java/gradle/test/portlet/FooPortlet.java"),
 			new String[] {
-				"^package gradle.test.portlet;.*", ".*javax.portlet.display-name=gradle.test.*",
-				".*^public class FooPortlet .*", ".*printWriter.print\\(\\\"gradle.test Portlet.*"
+				"^package gradle.test.portlet;.*", ".*javax.portlet.display-name=Foo.*",
+				".*^public class FooPortlet .*", ".*Hello from Foo!.*"
 			});
 
 		_lacks(
 			_checkFileExists(projectPath + "/gradle.test/build.gradle"), ".*^apply plugin: \"com.liferay.plugin\".*");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/gradle.test", "gradle.test-1.0.0.jar");
+		TestUtil.verifyBuild(workspace.getPath(), "jar", "gradle.test-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "gradle.test/build/libs/gradle.test-1.0.0.jar"));
 	}
@@ -1516,7 +1465,9 @@ public class CreateCommandTest {
 
 		String templateList = TestUtil.runBlade(args);
 
-		List<String> templateNames = new ArrayList<>(ProjectTemplates.getTemplates().keySet());
+		Map<String, String> templates = ProjectTemplates.getTemplates();
+
+		List<String> templateNames = new ArrayList<>(templates.keySet());
 
 		for (String templateName : templateNames) {
 			Assert.assertTrue(templateList.contains(templateName));
@@ -1621,14 +1572,6 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 
 		GradleRunnerUtil.verifyBuildOutput(projectPath, projectName + ".war");
-	}
-
-	private void _verifyBuild(String runnerPath, String projectPath, String outputFileName) {
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(runnerPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, outputFileName);
 	}
 
 	private void _verifyImportPackage(File serviceJar) throws Exception {

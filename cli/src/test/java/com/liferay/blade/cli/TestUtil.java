@@ -19,14 +19,17 @@ package com.liferay.blade.cli;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.Scanner;
+
+import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
 
@@ -87,6 +90,34 @@ public class TestUtil {
 		String content = outputStream.toString();
 
 		return content;
+	}
+
+	public static void verifyBuild(String projectPath, String outputFileName) throws Exception {
+		verifyBuild(projectPath, "build", outputFileName);
+	}
+
+	public static void verifyBuild(String projectPath, String taskPath, String outputFileName) throws Exception {
+		Path path = Paths.get(projectPath);
+
+		Path buildGradlePath = path.resolve("build.gradle");
+
+		String content = "\nbuildscript { repositories { mavenLocal() } }";
+
+		if (Files.exists(buildGradlePath)) {
+			Files.write(buildGradlePath, content.getBytes(), StandardOpenOption.APPEND);
+		}
+
+		Path settingsGradlePath = path.resolve("settings.gradle");
+
+		if (Files.exists(settingsGradlePath)) {
+			Files.write(settingsGradlePath, content.getBytes(), StandardOpenOption.APPEND);
+		}
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, taskPath);
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath, outputFileName);
 	}
 
 }
