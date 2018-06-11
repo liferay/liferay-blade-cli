@@ -37,7 +37,7 @@ public class UtilTest {
 
 	@Test
 	public void testAppServerProperties() throws Exception {
-		File dir = tempFolder.getRoot();
+		File dir = temporaryFolder.getRoot();
 
 		File appServerProperty1 = new File(dir, "app.server." + System.getProperty("user.name") + ".properties");
 
@@ -54,7 +54,7 @@ public class UtilTest {
 
 	@Test
 	public void testIsWorkspace1() throws Exception {
-		File workspace = new File(tempFolder.getRoot(), "workspace");
+		File workspace = new File(temporaryFolder.getRoot(), "workspace");
 
 		workspace.mkdirs();
 
@@ -69,7 +69,7 @@ public class UtilTest {
 
 	@Test
 	public void testIsWorkspace2() throws Exception {
-		File workspace = new File(tempFolder.getRoot(), "workspace");
+		File workspace = new File(temporaryFolder.getRoot(), "workspace");
 
 		workspace.mkdirs();
 
@@ -84,7 +84,7 @@ public class UtilTest {
 
 	@Test
 	public void testIsWorkspace3() throws Exception {
-		File workspace = new File(tempFolder.getRoot(), "workspace");
+		File workspace = new File(temporaryFolder.getRoot(), "workspace");
 
 		workspace.mkdirs();
 
@@ -102,6 +102,6 @@ public class UtilTest {
 	}
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 }

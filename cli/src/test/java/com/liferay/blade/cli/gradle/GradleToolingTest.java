@@ -35,11 +35,11 @@ import org.junit.rules.TemporaryFolder;
 public class GradleToolingTest {
 
 	@ClassRule
-	public static final TemporaryFolder tempFolder = new TemporaryFolder();
+	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		File wsDir = tempFolder.newFolder("build", "testws1");
+		File wsDir = temporaryFolder.newFolder("build", "testws1");
 
 		IO.copy(new File("deps.zip"), _DEPS_ZIP);
 		IO.copy(new File("test-resources/projects/testws1"), wsDir);
@@ -53,7 +53,7 @@ public class GradleToolingTest {
 	@Test
 	public void testGetOutputFiles() throws Exception {
 		Set<File> files = GradleTooling.getOutputFiles(
-			new File(tempFolder.getRoot(), "build"), new File(tempFolder.getRoot(), "build/testws1"));
+			new File(temporaryFolder.getRoot(), "build"), new File(temporaryFolder.getRoot(), "build/testws1"));
 
 		Assert.assertNotNull(files);
 		Assert.assertEquals(files.toString(), 1, files.size());
@@ -62,8 +62,8 @@ public class GradleToolingTest {
 	@Test
 	public void testGetPluginClassNames() throws Exception {
 		Set<String> pluginClassNames = GradleTooling.getPluginClassNames(
-			new File(tempFolder.getRoot(), "build"),
-			new File(tempFolder.getRoot(), "build/testws1/modules/testportlet"));
+			new File(temporaryFolder.getRoot(), "build"),
+			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet"));
 
 		Assert.assertNotNull(pluginClassNames);
 		Assert.assertTrue(pluginClassNames.contains("com.liferay.gradle.plugins.LiferayOSGiPlugin"));
@@ -72,8 +72,8 @@ public class GradleToolingTest {
 	@Test
 	public void testIsLiferayModule() throws Exception {
 		boolean liferayModule = GradleTooling.isLiferayModule(
-			new File(tempFolder.getRoot(), "build"),
-			new File(tempFolder.getRoot(), "build/testws1/modules/testportlet"));
+			new File(temporaryFolder.getRoot(), "build"),
+			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet"));
 
 		Assert.assertTrue(liferayModule);
 	}
@@ -81,7 +81,7 @@ public class GradleToolingTest {
 	@Test
 	public void testIsNotLiferayModule() throws Exception {
 		boolean liferayModule = GradleTooling.isLiferayModule(
-			new File(tempFolder.getRoot(), "build"), new File(tempFolder.getRoot(), "build/testws1/modules"));
+			new File(temporaryFolder.getRoot(), "build"), new File(temporaryFolder.getRoot(), "build/testws1/modules"));
 
 		Assert.assertFalse(liferayModule);
 	}

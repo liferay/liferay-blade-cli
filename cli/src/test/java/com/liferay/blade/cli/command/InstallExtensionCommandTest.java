@@ -45,11 +45,11 @@ public class InstallExtensionCommandTest {
 	public void testInstallCustomExtension() throws Exception {
 		String jarName = "custom.extension.jar";
 
-		File fakeJar = new File(tempFolder.getRoot(), jarName);
+		File fakeJar = new File(temporaryFolder.getRoot(), jarName);
 
 		String[] args = {"extension install", fakeJar.getAbsolutePath()};
 
-		File extensionsDir = new File(tempFolder.getRoot(), "extensions");
+		File extensionsDir = new File(temporaryFolder.getRoot(), "extensions");
 
 		extensionsDir.mkdirs();
 
@@ -82,6 +82,6 @@ public class InstallExtensionCommandTest {
 	public final PowerMockRule rule = new PowerMockRule();
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 }

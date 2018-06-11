@@ -54,7 +54,7 @@ public class FileWatcherTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_testdir = tempFolder.newFolder("build", "watch");
+		_testdir = temporaryFolder.newFolder("build", "watch");
 
 		_testfile = new File(_testdir, "file.txt");
 
@@ -163,7 +163,7 @@ public class FileWatcherTest {
 	}
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private File _testdir = null;
 	private File _testfile = null;

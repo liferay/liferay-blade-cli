@@ -44,11 +44,11 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSample() throws Exception {
-		String[] args = {"samples", "-d", tempFolder.getRoot().getPath() + "/test", "friendly-url"};
+		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "friendly-url"};
 
 		new BladeTest().run(args);
 
-		File projectDir = new File(tempFolder.getRoot(), "test/friendly-url");
+		File projectDir = new File(temporaryFolder.getRoot(), "test/friendly-url");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -65,11 +65,11 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithDependencies() throws Exception {
-		String[] args = {"samples", "-d", tempFolder.getRoot().getPath() + "/test", "rest"};
+		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "rest"};
 
 		new BladeTest().run(args);
 
-		File projectDir = new File(tempFolder.getRoot(), "test/rest");
+		File projectDir = new File(temporaryFolder.getRoot(), "test/rest");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -86,11 +86,11 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithGradleWrapper() throws Exception {
-		String[] args = {"samples", "-d", tempFolder.getRoot().getPath() + "/test", "authenticator-shiro"};
+		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "authenticator-shiro"};
 
 		new BladeTest().run(args);
 
-		File projectDir = new File(tempFolder.getRoot(), "test/authenticator-shiro");
+		File projectDir = new File(temporaryFolder.getRoot(), "test/authenticator-shiro");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -116,16 +116,16 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithGradleWrapperExisting() throws Exception {
-		String[] initArgs = {"--base", tempFolder.getRoot().getPath() + "/test/workspace", "init"};
+		String[] initArgs = {"--base", temporaryFolder.getRoot().getPath() + "/test/workspace", "init"};
 
 		new BladeTest().run(initArgs);
 
 		String[] samplesArgs =
-			{"samples", "-d", tempFolder.getRoot().getPath() + "/test/workspace/modules", "auth-failure"};
+			{"samples", "-d", temporaryFolder.getRoot().getPath() + "/test/workspace/modules", "auth-failure"};
 
 		new BladeTest().run(samplesArgs);
 
-		File projectDir = new File(tempFolder.getRoot(), "test/workspace/modules/auth-failure");
+		File projectDir = new File(temporaryFolder.getRoot(), "test/workspace/modules/auth-failure");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -142,7 +142,7 @@ public class SamplesCommandTest {
 		Assert.assertFalse(gradleWrapperProperties.exists());
 		Assert.assertFalse(gradleWrapperShell.exists());
 
-		File workspaceDir = new File(tempFolder.getRoot(), "test/workspace");
+		File workspaceDir = new File(temporaryFolder.getRoot(), "test/workspace");
 
 		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "jar");
 
@@ -159,6 +159,6 @@ public class SamplesCommandTest {
 	}
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 }

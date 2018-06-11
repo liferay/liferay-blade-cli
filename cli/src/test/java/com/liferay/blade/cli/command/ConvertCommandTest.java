@@ -37,7 +37,7 @@ public class ConvertCommandTest {
 
 	@Test
 	public void testAll() throws Exception {
-		File testdir = new File(tempFolder.getRoot(), "build/testUpgradePluginsSDKTo70");
+		File testdir = new File(temporaryFolder.getRoot(), "build/testUpgradePluginsSDKTo70");
 
 		testdir.mkdirs();
 
@@ -98,7 +98,7 @@ public class ConvertCommandTest {
 
 	@Test
 	public void testMovePluginsToWars() throws Exception {
-		File testdir = new File(tempFolder.getRoot(), "build/testMovePluginsToWars");
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMovePluginsToWars");
 
 		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
@@ -133,7 +133,7 @@ public class ConvertCommandTest {
 
 	@Test
 	public void testMoveThemesToWars() throws Exception {
-		File testdir = new File(tempFolder.getRoot(), "build/testMoveThemesToWar");
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMoveThemesToWar");
 
 		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
@@ -226,7 +226,7 @@ public class ConvertCommandTest {
 	}
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _contains(File file, String... patterns) throws Exception {
 		String content = new String(IO.read(file));
@@ -243,7 +243,7 @@ public class ConvertCommandTest {
 	}
 
 	private File _setupWorkspace(String name) throws Exception {
-		File testdir = new File(tempFolder.getRoot(), "build/" + name);
+		File testdir = new File(temporaryFolder.getRoot(), "build/" + name);
 
 		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 

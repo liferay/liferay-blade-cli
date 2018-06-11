@@ -39,7 +39,7 @@ public class ConvertServiceBuilderCommandTest {
 
 	@Test
 	public void testConvertServiceBuilder() throws Exception {
-		File testdir = new File(tempFolder.getRoot(), "build/testMigrateServiceBuilder");
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMigrateServiceBuilder");
 
 		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
@@ -104,7 +104,7 @@ public class ConvertServiceBuilderCommandTest {
 
 	@Test
 	public void testConvertServiceBuilderTasksPortletCustomName() throws Exception {
-		File testdir = new File(tempFolder.getRoot(), "build/test-tasks-portlet-conversion");
+		File testdir = new File(temporaryFolder.getRoot(), "build/test-tasks-portlet-conversion");
 
 		String[] args = {"--base", testdir.getPath(), "init", "-u"};
 
@@ -125,7 +125,7 @@ public class ConvertServiceBuilderCommandTest {
 
 	@Test
 	public void testConvertServiceBuilderTasksPortletDefaultName() throws Exception {
-		File testdir = new File(tempFolder.getRoot(), "build/test-tasks-portlet-conversion");
+		File testdir = new File(temporaryFolder.getRoot(), "build/test-tasks-portlet-conversion");
 
 		String[] args = {"--base", testdir.getPath(), "init", "-u"};
 
@@ -173,6 +173,6 @@ public class ConvertServiceBuilderCommandTest {
 	}
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 }

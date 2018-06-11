@@ -67,7 +67,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateActivator() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] gradleArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "activator", "bar-activator"};
 
@@ -109,7 +109,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateApi() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] gradleArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "api", "foo"};
 
@@ -164,7 +164,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateFragment() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] gradleArgs = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "-h", "com.liferay.login.web", "-H", "1.0.0",
@@ -219,7 +219,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateFragmentWithoutHostOptions() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "loginHook"};
 
@@ -243,7 +243,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleMVCPortletProjectWithPackage() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args =
 			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "-p", "com.liferay.test", "foo"};
@@ -279,7 +279,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleMVCPortletProjectWithPortletSuffix() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "portlet-portlet"};
 
@@ -312,7 +312,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradlePortletProject() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "portlet", "-c", "Foo", "gradle.test"};
 
@@ -342,7 +342,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleService() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "service", "-s",
@@ -407,7 +407,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleServiceBuilderDashes() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "service-builder", "-p",
@@ -453,7 +453,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleServiceBuilderDefault() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "service-builder", "-p", "com.liferay.docs.guestbook",
@@ -511,7 +511,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleServiceBuilderDots() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "service-builder", "-p", "com.liferay.docs.guestbook",
@@ -558,7 +558,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleServiceWrapper() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "service-wrapper", "-s",
@@ -592,7 +592,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleSymbolicName() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-t", "mvc-portlet", "-d", tempRoot.getAbsolutePath(), "-p", "foo.bar", "barfoo"};
 
@@ -615,7 +615,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateMissingArgument() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "foobar", "-d", tempRoot.getAbsolutePath()};
 
@@ -628,7 +628,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateMVCPortlet() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] gradleArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "foo"};
 
@@ -679,7 +679,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateNpmAngular() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "npm-angular-portlet", "npmangular"};
 
@@ -698,7 +698,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateOnExistFolder() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "activator", "exist"};
 
@@ -719,7 +719,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreatePortletConfigurationIcon() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "portlet-configuration-icon", "-p", "blade.test",
@@ -749,7 +749,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreatePortletToolbarContributor() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "portlet-toolbar-contributor", "-p", "blade.test",
@@ -781,7 +781,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateProjectAllDefaults() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "hello-world-portlet"};
 
@@ -817,7 +817,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateProjectWithRefresh() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "hello-world-refresh"};
 
@@ -853,7 +853,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateServiceTemplateServiceParameterRequired() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "service", "foo"};
 
@@ -870,7 +870,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateSimulationPanelEntry() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "simulation-panel-entry", "-p", "test.simulator",
@@ -899,7 +899,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateSpringMvcPortlet() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "spring-mvc-portlet", "-p", "test.spring.portlet",
@@ -922,7 +922,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateTemplateContextContributor() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args =
 			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "template-context-contributor", "blade-test"};
@@ -951,7 +951,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateTheme() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "theme", "theme-test"};
 
@@ -983,7 +983,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateThemeContributor() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-t", "theme-contributor", "-C", "foobar",
@@ -1005,7 +1005,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWarHookLocation() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1016,7 +1016,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWarMVCPortletLocation() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1027,7 +1027,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceGradleFragment() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1068,7 +1068,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceGradlePortletProject() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1107,7 +1107,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceGradleServiceBuilderProjectApiPath() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1155,7 +1155,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceGradleServiceBuilderProjectDashes() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1196,7 +1196,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceGradleServiceBuilderProjectDefault() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1252,7 +1252,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceGradleServiceBuilderProjectDots() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1293,7 +1293,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceModuleLocation() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1330,7 +1330,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceProjectAllDefaults() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1367,7 +1367,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceProjectWithRefresh() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1406,7 +1406,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceThemeLocation() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1437,7 +1437,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceTypeValid() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		File workspace = new File(tempRoot, "workspace");
 
@@ -1462,7 +1462,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testLiferayVersion() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] sevenZeroArgs =
 			{"--base", tempRoot.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-zero"};
@@ -1502,7 +1502,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testWrongTemplateTyping() throws Exception {
-		File tempRoot = tempFolder.getRoot();
+		File tempRoot = temporaryFolder.getRoot();
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "activatorXXX", "wrong-activator"};
 
@@ -1514,7 +1514,7 @@ public class CreateCommandTest {
 	}
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private File _checkFileDoesNotExists(String path) {
 		File file = IO.getFile(path);

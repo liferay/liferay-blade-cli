@@ -50,7 +50,7 @@ public class ExtensionsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", tempFolder.getRoot());
+		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", temporaryFolder.getRoot());
 	}
 
 	@Test
@@ -116,10 +116,10 @@ public class ExtensionsTest {
 	public final PowerMockRule rule = new PowerMockRule();
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _setupTestExtensions() throws Exception {
-		File extensionsDir = new File(tempFolder.getRoot(), ".blade/extensions");
+		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
 
 		extensionsDir.mkdirs();
 

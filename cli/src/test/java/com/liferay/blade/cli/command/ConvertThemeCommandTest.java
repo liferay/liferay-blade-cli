@@ -86,7 +86,7 @@ public class ConvertThemeCommandTest {
 	}
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _createTheme(File workspace, String themeName, boolean compass) throws Exception {
 		File theme = new File(workspace, "plugins-sdk/themes/" + themeName);
@@ -123,7 +123,7 @@ public class ConvertThemeCommandTest {
 	}
 
 	private File _createWorkspace() throws Exception {
-		File workspace = new File(tempFolder.getRoot(), "build/test/workspace");
+		File workspace = new File(temporaryFolder.getRoot(), "build/test/workspace");
 
 		File themesDir = new File(workspace, "themes");
 

@@ -46,12 +46,12 @@ public class InitCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_workspaceDir = tempFolder.newFolder("build", "test", "workspace");
+		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 	}
 
 	@Test
 	public void testBladeInitDontLoseGitDirectory() throws Exception {
-		File testdir = new File(tempFolder.getRoot(), "build/testBladeInitDontLoseGitDirectory");
+		File testdir = new File(temporaryFolder.getRoot(), "build/testBladeInitDontLoseGitDirectory");
 
 		testdir.mkdirs();
 
@@ -76,7 +76,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testBladeInitUpgradePluginsSDKTo70() throws Exception {
-		File testdir = new File(tempFolder.getRoot(), "build/testUpgradePluginsSDKTo70");
+		File testdir = new File(temporaryFolder.getRoot(), "build/testUpgradePluginsSDKTo70");
 
 		testdir.mkdirs();
 
@@ -361,7 +361,7 @@ public class InitCommandTest {
 	}
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _createBundle() throws Exception {
 		String projectPath = new File(_workspaceDir, "modules").getAbsolutePath();

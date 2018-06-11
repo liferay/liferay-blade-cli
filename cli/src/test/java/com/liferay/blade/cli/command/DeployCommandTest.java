@@ -247,10 +247,10 @@ public class DeployCommandTest {
 	public final PowerMockRule rule = new PowerMockRule();
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private File _createFile(String fileName) throws IOException {
-		final File testDir = tempFolder.newFolder();
+		final File testDir = temporaryFolder.newFolder();
 
 		final File war = new File(testDir, fileName);
 
