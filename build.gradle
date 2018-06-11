@@ -1,5 +1,9 @@
 subprojects {
-	pluginManager.withPlugin("java") {
+	plugins.withId("com.liferay.source.formatter") {
+		build.dependsOn checkSourceFormatting
+	}
+
+	plugins.withId("java") {
 		repositories {
 			flatDir {
 				dirs "${rootProject.projectDir}/libs"

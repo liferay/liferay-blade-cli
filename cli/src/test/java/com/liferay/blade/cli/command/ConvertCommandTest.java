@@ -25,28 +25,19 @@ import java.io.File;
 
 import java.util.regex.Pattern;
 
-import org.junit.After;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Gregory Amerson
  */
 public class ConvertCommandTest {
 
-	@After
-	public void cleanUp() throws Exception {
-		IO.delete(_workspaceDir.getParentFile());
-	}
-
 	@Test
 	public void testAll() throws Exception {
-		File testdir = IO.getFile("build/testUpgradePluginsSDKTo70");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
+		File testdir = new File(temporaryFolder.getRoot(), "build/testUpgradePluginsSDKTo70");
 
 		testdir.mkdirs();
 
@@ -80,11 +71,6 @@ public class ConvertCommandTest {
 	public void testMoveLayouttplToWars() throws Exception {
 		File testdir = IO.getFile("build/testMoveLayouttplToWars");
 
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
-
 		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
 		Assert.assertTrue(testdir.exists());
@@ -112,12 +98,7 @@ public class ConvertCommandTest {
 
 	@Test
 	public void testMovePluginsToWars() throws Exception {
-		File testdir = IO.getFile("build/testMovePluginsToWars");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMovePluginsToWars");
 
 		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
@@ -152,12 +133,7 @@ public class ConvertCommandTest {
 
 	@Test
 	public void testMoveThemesToWars() throws Exception {
-		File testdir = IO.getFile("build/testMoveThemesToWar");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMoveThemesToWar");
 
 		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
@@ -249,6 +225,9 @@ public class ConvertCommandTest {
 		Assert.assertTrue(new File(projectDir, "wars/sample-html4-theme/docroot_backup/other/afile").exists());
 	}
 
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
 	private void _contains(File file, String... patterns) throws Exception {
 		String content = new String(IO.read(file));
 
@@ -264,12 +243,7 @@ public class ConvertCommandTest {
 	}
 
 	private File _setupWorkspace(String name) throws Exception {
-		File testdir = IO.getFile("build/" + name);
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
+		File testdir = new File(temporaryFolder.getRoot(), "build/" + name);
 
 		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
@@ -285,7 +259,5 @@ public class ConvertCommandTest {
 
 		return projectDir;
 	}
-
-	private static final File _workspaceDir = IO.getFile("build/test/workspace");
 
 }

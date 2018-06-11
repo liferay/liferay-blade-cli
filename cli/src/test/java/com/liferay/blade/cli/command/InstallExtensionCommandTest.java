@@ -30,28 +30,26 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 
 /**
  * @author Christopher Bryan Boyd
  */
 @PrepareForTest({Extensions.class, InstallExtensionCommand.class})
-@RunWith(PowerMockRunner.class)
 public class InstallExtensionCommandTest {
 
 	@Test
 	public void testInstallCustomExtension() throws Exception {
 		String jarName = "custom.extension.jar";
 
-		File fakeJar = new File(tempFolder.getRoot(), jarName);
+		File fakeJar = new File(temporaryFolder.getRoot(), jarName);
 
 		String[] args = {"extension install", fakeJar.getAbsolutePath()};
 
-		File extensionsDir = new File(tempFolder.getRoot(), "extensions");
+		File extensionsDir = new File(temporaryFolder.getRoot(), "extensions");
 
 		extensionsDir.mkdirs();
 
@@ -81,6 +79,9 @@ public class InstallExtensionCommandTest {
 	}
 
 	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	public final PowerMockRule rule = new PowerMockRule();
+
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 }

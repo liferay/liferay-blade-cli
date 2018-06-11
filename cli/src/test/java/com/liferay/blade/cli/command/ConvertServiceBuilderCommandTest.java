@@ -25,9 +25,10 @@ import java.io.File;
 
 import java.nio.file.Files;
 
-import org.junit.After;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Terry Jia
@@ -36,19 +37,9 @@ public class ConvertServiceBuilderCommandTest {
 
 	public static final String SB_PROJECT_NAME = "sample-service-builder-portlet";
 
-	@After
-	public void cleanUp() throws Exception {
-		IO.delete(_workspaceDir.getParentFile());
-	}
-
 	@Test
 	public void testConvertServiceBuilder() throws Exception {
-		File testdir = IO.getFile("build/testMigrateServiceBuilder");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMigrateServiceBuilder");
 
 		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
@@ -113,12 +104,7 @@ public class ConvertServiceBuilderCommandTest {
 
 	@Test
 	public void testConvertServiceBuilderTasksPortletCustomName() throws Exception {
-		File testdir = IO.getFile("build/test-tasks-portlet-conversion");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
+		File testdir = new File(temporaryFolder.getRoot(), "build/test-tasks-portlet-conversion");
 
 		String[] args = {"--base", testdir.getPath(), "init", "-u"};
 
@@ -139,12 +125,7 @@ public class ConvertServiceBuilderCommandTest {
 
 	@Test
 	public void testConvertServiceBuilderTasksPortletDefaultName() throws Exception {
-		File testdir = IO.getFile("build/test-tasks-portlet-conversion");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
+		File testdir = new File(temporaryFolder.getRoot(), "build/test-tasks-portlet-conversion");
 
 		String[] args = {"--base", testdir.getPath(), "init", "-u"};
 
@@ -191,6 +172,7 @@ public class ConvertServiceBuilderCommandTest {
 		Assert.assertTrue(content.contains("compileOnly project(\":modules:tasks:tasks-api\")"));
 	}
 
-	private static final File _workspaceDir = IO.getFile("build/test/workspace");
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 }

@@ -2,7 +2,6 @@
 
 <suppressions>
 	<source-check>
-		<suppress checks="BNDDefinitionKeysCheck" files="bnd.bnd" />
-		<suppress checks="CopyrightCheck" files="src/main/java/com/liferay/blade/cli/FileWatcher\.java" />
+		<suppress checks="CopyrightCheck" files="src/main/java/com/liferay/blade/cli/util/FileWatcher\.java" />
 	</source-check>
 </suppressions>

@@ -216,19 +216,14 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		else if (convertArgs.isList()) {
 			bladeCLI.out("The following is a list of projects available to convert:\n");
 
-			Stream<File> serviceBuilderPluginStream = serviceBuilderPlugins.stream();
-			Stream<File> portletPluginStream = portletPlugins.stream();
-			Stream<File> hookPluginStream = hookPlugins.stream();
-			Stream<File> webPluginStream = webPlugins.stream();
-			Stream<File> layoutPluginStream = layoutPlugins.stream();
+			List<File> plugins = new ArrayList<>();
 
-			Stream<File> plugins = Stream.concat(
-				serviceBuilderPluginStream,
-				Stream.concat(
-					portletPluginStream,
-					Stream.concat(
-						hookPluginStream,
-						Stream.concat(webPluginStream, Stream.concat(layoutPluginStream, themePlugins.stream())))));
+			plugins.addAll(serviceBuilderPlugins);
+			plugins.addAll(portletPlugins);
+			plugins.addAll(hookPlugins);
+			plugins.addAll(webPlugins);
+			plugins.addAll(layoutPlugins);
+			plugins.addAll(themePlugins);
 
 			plugins.forEach(plugin -> bladeCLI.out("\t" + plugin.getName()));
 		}

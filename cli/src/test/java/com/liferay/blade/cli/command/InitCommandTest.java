@@ -33,28 +33,25 @@ import java.util.Properties;
 
 import org.gradle.testkit.runner.BuildTask;
 
-import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Gregory Amerson
  */
 public class InitCommandTest {
 
-	@After
-	public void cleanUp() throws Exception {
-		IO.delete(_workspaceDir);
+	@Before
+	public void setUp() throws Exception {
+		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 	}
 
 	@Test
 	public void testBladeInitDontLoseGitDirectory() throws Exception {
-		File testdir = IO.getFile("build/testBladeInitDontLoseGitDirectory");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
+		File testdir = new File(temporaryFolder.getRoot(), "build/testBladeInitDontLoseGitDirectory");
 
 		testdir.mkdirs();
 
@@ -79,12 +76,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testBladeInitUpgradePluginsSDKTo70() throws Exception {
-		File testdir = IO.getFile("build/testUpgradePluginsSDKTo70");
-
-		if (testdir.exists()) {
-			IO.deleteWithException(testdir);
-			Assert.assertFalse(testdir.exists());
-		}
+		File testdir = new File(temporaryFolder.getRoot(), "build/testUpgradePluginsSDKTo70");
 
 		testdir.mkdirs();
 
@@ -130,10 +122,6 @@ public class InitCommandTest {
 	public void testDefaultInitWorkspaceDirectoryHasFiles() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 
-		if (!_workspaceDir.mkdirs()) {
-			Assert.fail("Unable to create workspace dir");
-		}
-
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
 		new BladeTest().run(args);
@@ -144,12 +132,6 @@ public class InitCommandTest {
 	@Test
 	public void testDefaultInitWorkspaceDirectoryHasFilesForce() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f"};
-
-		if (!_workspaceDir.mkdirs()) {
-			Assert.fail("Unable to create workspace dir");
-		}
-
-		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
 		new BladeTest().run(args);
 
@@ -273,10 +255,6 @@ public class InitCommandTest {
 	public void testInitWithNameWorkspaceNotExists() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject"};
 
-		if (!_workspaceDir.mkdirs()) {
-			Assert.fail("Unable to create workspace dir");
-		}
-
 		new BladeTest().run(args);
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/build.gradle").exists());
@@ -320,10 +298,6 @@ public class InitCommandTest {
 	public void testMavenInitWithNameWorkspaceNotExists() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
 
-		if (!_workspaceDir.mkdirs()) {
-			Assert.fail("Unable to create workspace dir");
-		}
-
 		new BladeTest().run(args);
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/pom.xml").exists());
@@ -336,8 +310,6 @@ public class InitCommandTest {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven"};
 
 		new BladeTest().run(args);
-
-		Assert.assertTrue(_workspaceDir.exists());
 
 		Assert.assertTrue(new File(_workspaceDir, "pom.xml").exists());
 
@@ -358,10 +330,6 @@ public class InitCommandTest {
 	public void testMavenInitWorkspaceDirectoryHasFiles() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven"};
 
-		if (!_workspaceDir.mkdirs()) {
-			Assert.fail("Unable to create workspace dir");
-		}
-
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
 		new BladeTest().run(args);
@@ -372,12 +340,6 @@ public class InitCommandTest {
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFilesForce() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-b", "maven"};
-
-		if (!_workspaceDir.mkdirs()) {
-			Assert.fail("Unable to create workspace dir");
-		}
-
-		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
 		new BladeTest().run(args);
 
@@ -398,8 +360,11 @@ public class InitCommandTest {
 		_verifyMavenBuild();
 	}
 
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
 	private void _createBundle() throws Exception {
-		String projectPath = "build/test/workspace/modules";
+		String projectPath = new File(_workspaceDir, "modules").getAbsolutePath();
 
 		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "foo"};
 
@@ -414,7 +379,7 @@ public class InitCommandTest {
 	}
 
 	private void _createMavenBundle() throws Exception {
-		String projectPath = "build/test/workspace/modules";
+		String projectPath = new File(_workspaceDir, "modules").getAbsolutePath();
 
 		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "-b", "maven", "foo"};
 
@@ -461,6 +426,6 @@ public class InitCommandTest {
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 	}
 
-	private static final File _workspaceDir = IO.getFile("build/test/workspace");
+	private File _workspaceDir = null;
 
 }

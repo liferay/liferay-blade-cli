@@ -58,6 +58,7 @@ public class MockUtil {
 		Map<String, BaseCommand<? extends BaseArgs>> map = new HashMap<>();
 
 		map.put("deploy", new DeployCommand());
+
 		Extensions extensions = EasyMock.createNiceMock(Extensions.class);
 
 		EasyMock.expect(extensions.getCommands()).andStubReturn(map);

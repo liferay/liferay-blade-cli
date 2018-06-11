@@ -33,17 +33,24 @@ import java.util.function.Consumer;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.rule.PowerMockRule;
+import org.powermock.reflect.Whitebox;
 
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
+@PrepareForTest(Extensions.class)
 public class ExtensionsTest {
 
 	@Before
-	public void cleanTestUserHome() throws Exception {
-		TestUtil.deleteDir(_USER_HOME.toPath());
+	public void setUp() throws Exception {
+		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", temporaryFolder.getRoot());
 	}
 
 	@Test
@@ -105,8 +112,14 @@ public class ExtensionsTest {
 		Assert.assertEquals(templates.toString(), _NUM_BUILTIN_TEMPLATES + 1, templates.size());
 	}
 
-	private static void _setupTestExtensions() throws Exception {
-		File extensionsDir = new File(_USER_HOME, ".blade/extensions");
+	@Rule
+	public final PowerMockRule rule = new PowerMockRule();
+
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private void _setupTestExtensions() throws Exception {
+		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
 
 		extensionsDir.mkdirs();
 
@@ -137,7 +150,5 @@ public class ExtensionsTest {
 	private static final int _NUM_BUILTIN_COMMANDS = 17;
 
 	private static final int _NUM_BUILTIN_TEMPLATES = 36;
-
-	private static final File _USER_HOME = new File(System.getProperty("user.home"));
 
 }

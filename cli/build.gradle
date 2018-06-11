@@ -65,7 +65,9 @@ dependencies {
 	testCompile group: "org.easymock", name: "easymock", version: "3.5.1"
 	testCompile group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	testCompile group: "org.powermock", name: "powermock-api-easymock", version: "1.7.3"
+	testCompile group: "org.powermock", name: "powermock-classloading-xstream", version: "1.7.3"
 	testCompile group: "org.powermock", name: "powermock-module-junit4", version: "1.7.3"
+	testCompile group: "org.powermock", name: "powermock-module-junit4-rule", version: "1.7.3"
 }
 
 jar.baseName = 'blade'
@@ -135,7 +137,6 @@ test {
 
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
-	systemProperty 'user.home', "${buildDir}/testUserHome"
 
 	project(':extensions:sample-command').afterEvaluate { project ->
 		dependsOn project.jar

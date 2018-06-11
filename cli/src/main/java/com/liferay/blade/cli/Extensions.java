@@ -22,6 +22,7 @@ import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.lang.reflect.Field;
@@ -32,7 +33,6 @@ import java.net.URLClassLoader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,18 +70,18 @@ public class Extensions {
 
 	public static Path getDirectory() {
 		try {
-			Path home = Paths.get(_USER_HOME);
+			Path userHomePath = _USER_HOME_DIR.toPath();
 
-			Path dotBlade = home.resolve(".blade");
+			Path dotBladePath = userHomePath.resolve(".blade");
 
-			if (Files.notExists(dotBlade)) {
-				Files.createDirectories(dotBlade);
+			if (Files.notExists(dotBladePath)) {
+				Files.createDirectories(dotBladePath);
 			}
-			else if (!Files.isDirectory(dotBlade)) {
+			else if (!Files.isDirectory(dotBladePath)) {
 				throw new Exception(".blade is not a directory!");
 			}
 
-			Path extensions = dotBlade.resolve("extensions");
+			Path extensions = dotBladePath.resolve("extensions");
 
 			if (Files.notExists(extensions)) {
 				Files.createDirectories(extensions);
@@ -254,6 +254,8 @@ public class Extensions {
 
 				_commands.put(commandNames[0], baseCommand);
 			}
+
+			serviceLoaderClassloader.close();
 		}
 
 		return _commands;
@@ -315,7 +317,7 @@ public class Extensions {
 		}
 	}
 
-	private static final String _USER_HOME = System.getProperty("user.home");
+	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 

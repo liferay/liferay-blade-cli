@@ -34,7 +34,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Greg Amerson
@@ -52,10 +54,15 @@ public class FileWatcherTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_testdir.mkdirs();
+		_testdir = temporaryFolder.newFolder("build", "watch");
 
-		Assert.assertTrue(_testdir.exists());
-		Assert.assertTrue(_testfile.createNewFile());
+		_testfile = new File(_testdir, "file.txt");
+
+		_testfile.createNewFile();
+
+		_testsecondfile = new File(_testdir, "second.txt");
+
+		_testsecondfile.createNewFile();
 	}
 
 	@Ignore
@@ -155,8 +162,11 @@ public class FileWatcherTest {
 		Assert.assertTrue(changed[0]);
 	}
 
-	private static final File _testdir = IO.getFile("build/watch");
-	private static final File _testfile = new File(_testdir, "file.txt");
-	private static final File _testsecondfile = new File(_testdir, "second.txt");
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private File _testdir = null;
+	private File _testfile = null;
+	private File _testsecondfile = null;
 
 }
