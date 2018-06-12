@@ -126,25 +126,37 @@ public class ExtensionsTest {
 		Assert.assertTrue("Unable to create test extensions dir.", extensionsDir.exists());
 
 		Path extensionsPath = extensionsDir.toPath();
+		
+		_setupTestExtension(extensionsPath, System.getProperty("sampleCommandJarFile"));
+		_setupTestTemplate(extensionsPath, System.getProperty("sampleTemplateJarFile"));
+	}
+	
+	private static void _setupTestExtension(Path extensionsPath, String jarPath) throws IOException {
+		File sampleJarFile = new File(jarPath);
 
-		Consumer<String> copySampleJarFile = prop -> {
-			File sampleJarFile = new File(System.getProperty(prop));
+		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
 
-			Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
+		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
 
-			Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
+		Assert.assertTrue(BladeUtil.isExtension(sampleJarFile.toPath()));
+		
+		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
+			
+		Assert.assertTrue(Files.exists(sampleJarPath));
+	}
+	
+	private static void _setupTestTemplate(Path extensionsPath, String jarPath) throws IOException {
+		File sampleJarFile = new File(jarPath);
 
-			try {
-				Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
-			}
-			catch (IOException ioe) {
-			}
+		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
 
-			Assert.assertTrue(Files.exists(sampleJarPath));
-		};
+		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
 
-		copySampleJarFile.accept("sampleCommandJarFile");
-		copySampleJarFile.accept("sampleTemplateJarFile");
+		Assert.assertTrue(BladeUtil.isArchetype(sampleJarFile.toPath()));
+		
+		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
+			
+		Assert.assertTrue(Files.exists(sampleJarPath));
 	}
 
 	private static final int _NUM_BUILTIN_COMMANDS = 17;

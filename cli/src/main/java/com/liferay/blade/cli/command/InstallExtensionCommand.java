@@ -22,12 +22,14 @@ import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.StringUtil;
+import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 
 import java.util.Iterator;
@@ -47,27 +49,55 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	public void execute() throws Exception {
 		String pathArg = getArgs().getPath();
 
-		Path path = StringUtil.isNullOrEmpty(pathArg) ? Paths.get(".") : Paths.get(pathArg);
-
-		if (Files.exists(path)) {
-			Path extensionJarPath = Optional.of(
-				path
-			).filter(
-				Files::exists
-			).filter(
-				Files::isDirectory
-			).filter(
-				BladeUtil::isGradleBuildPath
-			).map(
-				this::_gradleAssemble
-			).orElse(
-				path
-			);
-
-			_installExtension(extensionJarPath);
+		if (StringUtil.isNullOrEmpty(pathArg)) {
+			pathArg = ".";
 		}
-		else {
-			throw new Exception("Path to extension does not exist: " + pathArg);
+		if (pathArg.toLowerCase().startsWith("http") && BladeUtil.isValidURL(pathArg)) {
+			if (pathArg.toLowerCase().contains("github")) {
+				Path path = Files.createTempDirectory(null);
+				try 
+				{
+					Path zip = path.resolve("master.zip");
+					
+					BladeUtil.downloadGithubProject(pathArg, zip);
+					BladeUtil.unzip(zip.toFile(), path.toFile(), null);
+					
+					if (BladeUtil.isGradleBuildPath(path)) {
+						_gradleAssemble(path);
+						
+						_installExtension(path);
+					}	
+				} catch (Exception e) {
+					throw e;
+				} finally {
+					FileUtil.deleteDir(path);					
+				}
+			} else {
+				throw new Exception("Only Github HTTP links are supported.");
+			}
+		} else {
+			Path path = Paths.get(pathArg);
+	
+			if (Files.exists(path)) {
+				Path extensionJarPath = Optional.of(
+					path
+				).filter(
+					Files::exists
+				).filter(
+					Files::isDirectory
+				).filter(
+					BladeUtil::isGradleBuildPath
+				).map(
+					this::_gradleAssemble
+				).orElse(
+					path
+				);
+	
+				_installExtension(extensionJarPath);
+			}
+			else {
+				throw new Exception("Path to extension does not exist: " + pathArg);
+			}
 		}
 	}
 
@@ -105,16 +135,34 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		return null;
 	}
 
+	
 	private void _installExtension(Path extensionPath) throws IOException {
-		Path extensionsHome = Extensions.getDirectory();
-
-		Path extensionName = extensionPath.getFileName();
-
-		Path newExtensionPath = extensionsHome.resolve(extensionName);
-
-		Files.copy(extensionPath, newExtensionPath);
-
-		getBladeCLI().out("The extension " + extensionName + " has been installed successfully.");
+		
+		if (_isTemplateMatch(extensionPath) || BladeUtil.isExtension(extensionPath)) {
+			
+			Path extensionsHome = Extensions.getDirectory();
+			
+			Path extensionName = extensionPath.getFileName();
+			
+			Path newExtensionPath = extensionsHome.resolve(extensionName);
+			
+			Files.copy(extensionPath, newExtensionPath);
+			
+			getBladeCLI().out("The extension " + extensionName + " has been installed successfully.");
+			
+		} else {
+			throw new IOException("Unable to install, file " + extensionPath.getFileName() + 
+			" is not a valid maven archetype or Blade extension.");
+		}
 	}
 
+	private boolean _isTemplateMatch(Path path) {
+		if (_customTemplatePathMatcher.matches(path) && Files.exists(path) && BladeUtil.isArchetype(path)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private static final PathMatcher _customTemplatePathMatcher = FileSystems.getDefault().getPathMatcher(
+			"glob:**/*.project.templates.*");
 }
