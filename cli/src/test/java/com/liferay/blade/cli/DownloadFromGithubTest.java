@@ -16,6 +16,8 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.util.BladeUtil;
+
 import java.io.IOException;
 
 import java.nio.file.Files;
@@ -25,8 +27,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import com.liferay.blade.cli.util.BladeUtil;
 
 /**
  * @author Christopher Bryan Boyd
@@ -40,7 +40,7 @@ public class DownloadFromGithubTest {
 		Path zip = testDir.resolve("master.zip");
 
 		BladeUtil.downloadGithubProject("https://github.com/liferay/liferay-blade-cli", zip);
-		
+
 		Assert.assertTrue(Files.exists(zip));
 	}
 

@@ -36,14 +36,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
+
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -52,11 +55,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Predicate;
 import java.util.Properties;
+import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -122,18 +126,20 @@ public class BladeUtil {
 			}
 		}
 	}
-	
+
 	public static void downloadGithubProject(String link, Path target) {
 		link = link + "/archive/master.zip";
 
 		downloadLink(link, target);
 	}
-	
+
 	public static void downloadLink(String link, Path target) {
 		if (isURLAvailable(link)) {
 			LinkDownloader downloader = new LinkDownloader(link, target);
+
 			downloader.run();
-		} else {
+		}
+		else {
 			throw new RuntimeException("url '" + link + "' is not accessible.");
 		}
 	}
@@ -252,7 +258,7 @@ public class BladeUtil {
 
 		return false;
 	}
-	
+
 	public static boolean isArchetype(Path path) {
 		return searchJar(path, name -> name.endsWith("archetype-metadata.xml"));
 	}
@@ -288,9 +294,10 @@ public class BladeUtil {
 
 		return false;
 	}
-	
+
 	public static boolean isExtension(Path path) {
-		String search = Paths.get("META-INF", "services", "com.liferay.blade.cli.command").toString();
+		String search = String.valueOf(Paths.get("META-INF", "services", "com.liferay.blade.cli.command"));
+
 		return searchJar(path, name -> name.startsWith(search));
 	}
 
@@ -309,34 +316,41 @@ public class BladeUtil {
 	public static boolean isNotEmpty(Object[] array) {
 		return !isEmpty(array);
 	}
-	
+
 	public static boolean isURLAvailable(String urlString) {
 		try {
 			URL u = new URL(urlString);
-	
+
 			u.toURI();
+
 			HttpURLConnection.setFollowRedirects(false);
+
 			HttpURLConnection huc = (HttpURLConnection)u.openConnection();
-	
+
 			huc.setRequestMethod("GET");
+
 			huc.connect();
+
 			int code = huc.getResponseCode();
-	
-			if ((code == HttpURLConnection.HTTP_OK)) {
+
+			if (code == HttpURLConnection.HTTP_OK) {
 				return true;
 			}
-	
+
 			return false;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false;
 		}
 	}
-	
+
 	public static boolean isValidURL(String urlString) {
 		try {
 			new URL(urlString).toURI();
+
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false;
 		}
 	}
@@ -419,24 +433,27 @@ public class BladeUtil {
 	}
 
 	public static boolean searchJar(Path path, Predicate<String> predicate) {
-		if(Files.exists(path) && !Files.isDirectory(path)) {
+		if (Files.exists(path) && !Files.isDirectory(path)) {
 			try (JarFile jarFile = new JarFile(path.toFile())) {
-				
-				return jarFile.stream().filter(
+				Stream<JarEntry> stream = jarFile.stream();
+
+				return stream.filter(
 					j -> !j.isDirectory()
 				).map(
 					JarEntry::getName
 				).anyMatch(
 					predicate
 				);
-				
-			} catch (Exception e) {
+
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+
 		return false;
 	}
-	
+
 	public static void setShell(ProcessBuilder processBuilder, String cmd) {
 		Map<String, String> env = processBuilder.environment();
 

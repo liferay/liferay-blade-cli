@@ -33,50 +33,56 @@ import java.util.function.Supplier;
 public class LinkDownloader implements Runnable {
 
 	public LinkDownloader(String link, Path target) {
-		this.link = link;
-		this.target = target;
+		_link = link;
+		_target = target;
 	}
 
 	@Override
 	public void run() {
-		Redirecter redirecter = new Redirecter(link);
+		Redirecter redirecter = new Redirecter(_link);
 
 		redirecter.run();
-		save(redirecter.http);
+
+		_save(redirecter.http);
 	}
 
-	private String getFileName(URL url) {
+	private String _getFileName(URL url) {
 		Path path = Paths.get(url.getFile());
 
-		return path.getFileName().toString();
+		return String.valueOf(path.getFileName());
 	}
 
-	private void save(HttpURLConnection http) {
-		Path savePath = target;
+	private void _save(HttpURLConnection http) {
+		Path savePath = _target;
 
 		try {
-			if (Files.isDirectory(target)) {
-				savePath = target.resolve(getFileName(http.getURL()));
+			if (Files.isDirectory(_target)) {
+				savePath = _target.resolve(_getFileName(http.getURL()));
 			}
 
 			Files.copy(http.getInputStream(), savePath);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private String link;
-	private Path target;
+	private String _link;
+	private Path _target;
 
 	private static class Redirecter implements Runnable, Supplier<Boolean> {
 
 		public Redirecter(String link) {
 			try {
 				this.link = link;
-				this.url = new URL(link);
-				this.http = (HttpURLConnection)url.openConnection();
-				this.header = http.getHeaderFields();
-			} catch (Exception e) {
+
+				url = new URL(link);
+
+				http = (HttpURLConnection)url.openConnection();
+
+				header = http.getHeaderFields();
+			}
+			catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -96,20 +102,26 @@ public class LinkDownloader implements Runnable {
 		public void run() {
 			try {
 				while (get()) {
-					link = header.get("Location").get(0);
+					List<String> headers = header.get("Location");
+
+					link = headers.get(0);
+
 					url = new URL(link);
+
 					http = (HttpURLConnection)url.openConnection();
+
 					header = http.getHeaderFields();
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
 
-		Map<String, List<String>> header;
-		HttpURLConnection http;
-		String link;
-		URL url;
+		public Map<String, List<String>> header;
+		public HttpURLConnection http;
+		public String link;
+		public URL url;
 
 		private static final String _HTTP_FOUND = "302";
 
