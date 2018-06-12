@@ -9,7 +9,7 @@ buildscript {
 
 	repositories {
 		maven {
-			url "https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"
+			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 		}
 	}
 }
@@ -102,7 +102,7 @@ jar {
 }
 
 task downloadPortal(type: Download) {
-	src 'https://cdn.lfrs.sl/releases.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip'
+	src 'https://releases-cdn.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip'
 	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip')
 	onlyIfNewer true
 }

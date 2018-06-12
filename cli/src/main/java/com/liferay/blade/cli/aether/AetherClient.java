@@ -196,7 +196,7 @@ public class AetherClient {
 		System.getProperty("maven.home", System.getProperty("user.dir", "")), "conf/settings.xml");
 
 	private static final String[] _DEFAULT_REPO_URLS =
-		{"https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public"};
+		{"https://repository-cdn.liferay.com/nexus/content/groups/public"};
 
 	private static final String _USER_HOME = System.getProperty("user.home");
 
