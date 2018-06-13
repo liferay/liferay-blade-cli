@@ -146,9 +146,8 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 			return true;
 		}
 
-		String search = String.valueOf(Paths.get("META-INF", "services", "com.liferay.blade.cli.command"));
-
-		return BladeUtil.searchZip(path, name -> name.startsWith(search));
+		return BladeUtil.searchZip(
+			path, name -> name.startsWith("META-INF/services/com.liferay.blade.cli.command.BaseCommand"));
 	}
 
 	private static boolean _isGradleBuild(Path path) {
