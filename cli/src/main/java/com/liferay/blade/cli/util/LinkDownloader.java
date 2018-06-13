@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * @author Christopher Bryan Boyd
@@ -43,7 +42,7 @@ public class LinkDownloader implements Runnable {
 
 		redirecter.run();
 
-		_save(redirecter.http);
+		_save(redirecter._httpURLConnection);
 	}
 
 	private String _getFileName(URL url) {
@@ -70,26 +69,25 @@ public class LinkDownloader implements Runnable {
 	private String _link;
 	private Path _target;
 
-	private static class Redirecter implements Runnable, Supplier<Boolean> {
+	private static class Redirecter {
 
 		public Redirecter(String link) {
 			try {
-				this.link = link;
+				_link = link;
 
-				url = new URL(link);
+				_url = new URL(link);
 
-				http = (HttpURLConnection)url.openConnection();
+				_httpURLConnection = (HttpURLConnection)_url.openConnection();
 
-				header = http.getHeaderFields();
+				_headers = _httpURLConnection.getHeaderFields();
 			}
 			catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
 
-		@Override
 		public Boolean get() {
-			for (String headerEntry : header.get(null)) {
+			for (String headerEntry : _headers.get(null)) {
 				if (headerEntry.contains(" " + _HTTP_FOUND + " ") || headerEntry.contains(" " + _HTTP_MOVED + " ")) {
 					return true;
 				}
@@ -98,19 +96,18 @@ public class LinkDownloader implements Runnable {
 			return false;
 		}
 
-		@Override
 		public void run() {
 			try {
 				while (get()) {
-					List<String> headers = header.get("Location");
+					List<String> headers = _headers.get("Location");
 
-					link = headers.get(0);
+					_link = headers.get(0);
 
-					url = new URL(link);
+					_url = new URL(_link);
 
-					http = (HttpURLConnection)url.openConnection();
+					_httpURLConnection = (HttpURLConnection)_url.openConnection();
 
-					header = http.getHeaderFields();
+					_headers = _httpURLConnection.getHeaderFields();
 				}
 			}
 			catch (Exception e) {
@@ -118,14 +115,14 @@ public class LinkDownloader implements Runnable {
 			}
 		}
 
-		public Map<String, List<String>> header;
-		public HttpURLConnection http;
-		public String link;
-		public URL url;
-
 		private static final String _HTTP_FOUND = "302";
 
 		private static final String _HTTP_MOVED = "301";
+
+		private Map<String, List<String>> _headers;
+		private HttpURLConnection _httpURLConnection;
+		private String _link;
+		private URL _url;
 
 	}
 

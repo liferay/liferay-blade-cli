@@ -27,6 +27,8 @@ import com.liferay.project.templates.internal.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
 
+import java.net.URL;
+
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +50,10 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		String pathArg = getArgs().getPath();
+		BladeCLI bladeCLI = getBladeCLI();
+		InstallExtensionArgs args = getArgs();
+
+		String pathArg = args.getPath();
 
 		if (StringUtil.isNullOrEmpty(pathArg)) {
 			pathArg = ".";
@@ -56,20 +61,30 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		String pathArgLower = pathArg.toLowerCase();
 
-		if (pathArgLower.startsWith("http") && BladeUtil.isValidURL(pathArg)) {
+		if (pathArgLower.startsWith("http") && _isValidURL(pathArg)) {
 			if (pathArgLower.contains("github")) {
 				Path path = Files.createTempDirectory(null);
 
 				try {
 					Path zip = path.resolve("master.zip");
 
+					bladeCLI.out("Downloading github repository " + pathArg);
+
 					BladeUtil.downloadGithubProject(pathArg, zip);
+
+					bladeCLI.out("Unzipping github repository to " + path);
+
 					BladeUtil.unzip(zip.toFile(), path.toFile(), null);
 
-					if (BladeUtil.isGradleBuildPath(path)) {
-						_gradleAssemble(path);
+					if (_isGradleBuild(path)) {
+						bladeCLI.out("Building extension...");
 
-						_installExtension(path);
+						Path extensionPath = _gradleAssemble(path);
+
+						_installExtension(extensionPath);
+					}
+					else {
+						bladeCLI.err("Path not a gradle build " + path);
 					}
 				}
 				catch (Exception e) {
@@ -80,7 +95,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 				}
 			}
 			else {
-				throw new Exception("Only Github HTTP links are supported");
+				throw new Exception("Only github http(s) links are supported");
 			}
 		}
 		else {
@@ -94,7 +109,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 				).filter(
 					Files::isDirectory
 				).filter(
-					BladeUtil::isGradleBuildPath
+					InstallExtensionCommand::_isGradleBuild
 				).map(
 					this::_gradleAssemble
 				).orElse(
@@ -112,6 +127,25 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	@Override
 	public Class<InstallExtensionArgs> getArgsClass() {
 		return InstallExtensionArgs.class;
+	}
+
+	private static boolean _isGradleBuild(Path path) {
+		if ((path != null) && Files.exists(path.resolve("build.gradle"))) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isValidURL(String urlString) {
+		try {
+			new URL(urlString).toURI();
+
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 
 	private Path _gradleAssemble(Path projectPath) {

@@ -127,14 +127,14 @@ public class BladeUtil {
 		}
 	}
 
-	public static void downloadGithubProject(String link, Path target) {
-		link = link + "/archive/master.zip";
+	public static void downloadGithubProject(String url, Path target) throws IOException {
+		String zipUrl = url + "/archive/master.zip";
 
-		downloadLink(link, target);
+		downloadLink(zipUrl, target);
 	}
 
-	public static void downloadLink(String link, Path target) {
-		if (isURLAvailable(link)) {
+	public static void downloadLink(String link, Path target) throws IOException {
+		if (_isURLAvailable(link)) {
 			LinkDownloader downloader = new LinkDownloader(link, target);
 
 			downloader.run();
@@ -301,56 +301,12 @@ public class BladeUtil {
 		return searchJar(path, name -> name.startsWith(search));
 	}
 
-	public static boolean isGradleBuildPath(Path path) {
-		if ((path != null) && Files.exists(path.resolve("build.gradle"))) {
-			return true;
-		}
-
-		return false;
-	}
-
 	public static boolean isNotEmpty(List<?> list) {
 		return !isEmpty(list);
 	}
 
 	public static boolean isNotEmpty(Object[] array) {
 		return !isEmpty(array);
-	}
-
-	public static boolean isURLAvailable(String urlString) {
-		try {
-			URL u = new URL(urlString);
-
-			u.toURI();
-
-			HttpURLConnection.setFollowRedirects(false);
-
-			HttpURLConnection huc = (HttpURLConnection)u.openConnection();
-
-			huc.setRequestMethod("HEAD");
-
-			int code = huc.getResponseCode();
-
-			if ((code == HttpURLConnection.HTTP_OK) || (code == HttpURLConnection.HTTP_MOVED_TEMP)) {
-				return true;
-			}
-
-			return false;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static boolean isValidURL(String urlString) {
-		try {
-			new URL(urlString).toURI();
-
-			return true;
-		}
-		catch (Exception e) {
-			return false;
-		}
 	}
 
 	public static boolean isWindows() {
@@ -589,6 +545,24 @@ public class BladeUtil {
 				}
 			}
 		}
+	}
+
+	private static boolean _isURLAvailable(String urlString) throws IOException {
+		URL url = new URL(urlString);
+
+		HttpURLConnection.setFollowRedirects(false);
+
+		HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+
+		httpURLConnection.setRequestMethod("HEAD");
+
+		int responseCode = httpURLConnection.getResponseCode();
+
+		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_MOVED_TEMP)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private static final String[] _APP_SERVER_PROPERTIES_FILE_NAMES = {
