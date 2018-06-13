@@ -26,6 +26,11 @@ publishing {
 			artifactId = "com.liferay.blade.cli"
 			version = "3.1.0"
 
+			pom.withXml {
+				Node pom = asNode()
+				pom.remove(pom.get('dependencies'))
+			}
+
 			from components.java
 		}
 	}
