@@ -331,7 +331,7 @@ public class BladeUtil {
 
 			int code = huc.getResponseCode();
 
-			if (code == HttpURLConnection.HTTP_OK || code == HttpURLConnection.HTTP_MOVED_TEMP) {
+			if ((code == HttpURLConnection.HTTP_OK) || (code == HttpURLConnection.HTTP_MOVED_TEMP)) {
 				return true;
 			}
 
