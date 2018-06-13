@@ -22,12 +22,17 @@ import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.StringUtil;
+import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 
+import java.net.URL;
+
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 
 import java.util.Iterator;
@@ -45,35 +50,131 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		String pathArg = getArgs().getPath();
+		BladeCLI bladeCLI = getBladeCLI();
+		InstallExtensionArgs args = getArgs();
 
-		Path path = StringUtil.isNullOrEmpty(pathArg) ? Paths.get(".") : Paths.get(pathArg);
+		String pathArg = args.getPath();
 
-		if (Files.exists(path)) {
-			Path extensionJarPath = Optional.of(
-				path
-			).filter(
-				Files::exists
-			).filter(
-				Files::isDirectory
-			).filter(
-				BladeUtil::isGradleBuildPath
-			).map(
-				this::_gradleAssemble
-			).orElse(
-				path
-			);
+		if (StringUtil.isNullOrEmpty(pathArg)) {
+			pathArg = ".";
+		}
 
-			_installExtension(extensionJarPath);
+		String pathArgLower = pathArg.toLowerCase();
+
+		if (pathArgLower.startsWith("http") && _isValidURL(pathArg)) {
+			if (pathArgLower.contains("github")) {
+				Path path = Files.createTempDirectory(null);
+
+				try {
+					Path zip = path.resolve("master.zip");
+
+					bladeCLI.out("Downloading github repository " + pathArg);
+
+					BladeUtil.downloadGithubProject(pathArg, zip);
+
+					bladeCLI.out("Unzipping github repository to " + path);
+
+					BladeUtil.unzip(zip.toFile(), path.toFile(), null);
+
+					if (_isGradleBuild(path)) {
+						bladeCLI.out("Building extension...");
+
+						Path extensionPath = _gradleAssemble(path);
+
+						_installExtension(extensionPath);
+					}
+					else {
+						bladeCLI.err("Path not a gradle build " + path);
+					}
+				}
+				catch (Exception e) {
+					throw e;
+				}
+				finally {
+					FileUtil.deleteDir(path);
+				}
+			}
+			else {
+				throw new Exception("Only github http(s) links are supported");
+			}
 		}
 		else {
-			throw new Exception("Path to extension does not exist: " + pathArg);
+			Path path = Paths.get(pathArg);
+
+			if (Files.exists(path)) {
+				Path extensionJarPath = Optional.of(
+					path
+				).filter(
+					Files::exists
+				).filter(
+					Files::isDirectory
+				).filter(
+					InstallExtensionCommand::_isGradleBuild
+				).map(
+					this::_gradleAssemble
+				).orElse(
+					path
+				);
+
+				_installExtension(extensionJarPath);
+			}
+			else {
+				throw new Exception("Path to extension does not exist: " + pathArg);
+			}
 		}
 	}
 
 	@Override
 	public Class<InstallExtensionArgs> getArgsClass() {
 		return InstallExtensionArgs.class;
+	}
+
+	private static boolean _isArchetype(Path path) {
+		return BladeUtil.searchZip(path, name -> name.endsWith("archetype-metadata.xml"));
+	}
+
+	private static boolean _isCustomTemplate(Path path) {
+		if (_isTemplateMatch(path) && _isArchetype(path)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isExtension(Path path) {
+		if (_isCustomTemplate(path)) {
+			return true;
+		}
+
+		return BladeUtil.searchZip(
+			path, name -> name.startsWith("META-INF/services/com.liferay.blade.cli.command.BaseCommand"));
+	}
+
+	private static boolean _isGradleBuild(Path path) {
+		if ((path != null) && Files.exists(path.resolve("build.gradle"))) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isTemplateMatch(Path path) {
+		if (_customTemplatePathMatcher.matches(path) && Files.exists(path) && _isArchetype(path)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isValidURL(String urlString) {
+		try {
+			new URL(urlString).toURI();
+
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 
 	private Path _gradleAssemble(Path projectPath) {
@@ -106,15 +207,25 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private void _installExtension(Path extensionPath) throws IOException {
-		Path extensionsHome = Extensions.getDirectory();
+		if (_isExtension(extensionPath)) {
+			Path extensionsHome = Extensions.getDirectory();
 
-		Path extensionName = extensionPath.getFileName();
+			Path extensionName = extensionPath.getFileName();
 
-		Path newExtensionPath = extensionsHome.resolve(extensionName);
+			Path newExtensionPath = extensionsHome.resolve(extensionName);
 
-		Files.copy(extensionPath, newExtensionPath);
+			Files.copy(extensionPath, newExtensionPath);
 
-		getBladeCLI().out("The extension " + extensionName + " has been installed successfully.");
+			getBladeCLI().out("The extension " + extensionName + " has been installed successfully.");
+		}
+		else {
+			throw new IOException(
+				"Unable to install. " + extensionPath.getFileName() +
+					" is not a valid blade extension, e.g. custom template or command");
+		}
 	}
+
+	private static final PathMatcher _customTemplatePathMatcher = FileSystems.getDefault().getPathMatcher(
+		"glob:**/*.project.templates.*");
 
 }

@@ -21,67 +21,48 @@ import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
 
-import java.nio.file.Path;
-
-import org.easymock.EasyMock;
-import org.easymock.IExpectationSetters;
-
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
+import org.powermock.reflect.Whitebox;
 
 /**
  * @author Christopher Bryan Boyd
+ * @author Gregory Amerson
  */
-@PrepareForTest({Extensions.class, InstallExtensionCommand.class})
 public class InstallExtensionCommandTest {
+
+	@Before
+	public void setUp() throws Exception {
+		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", temporaryFolder.getRoot());
+	}
 
 	@Test
 	public void testInstallCustomExtension() throws Exception {
-		String jarName = "custom.extension.jar";
-
-		File fakeJar = new File(temporaryFolder.getRoot(), jarName);
-
-		String[] args = {"extension install", fakeJar.getAbsolutePath()};
-
-		File extensionsDir = new File(temporaryFolder.getRoot(), "extensions");
-
-		extensionsDir.mkdirs();
-
-		File fakeJarDest = new File(extensionsDir, fakeJar.getName());
-
-		Assert.assertTrue(!fakeJarDest.exists());
-
-		Assert.assertTrue(fakeJar.createNewFile());
-
-		PowerMock.mockStaticPartialNice(Extensions.class, "getDirectory");
-
-		IExpectationSetters<Path> extensionsDirMethod = EasyMock.expect(Extensions.getDirectory());
-
-		Path extensionsDirPath = extensionsDir.toPath();
-
-		extensionsDirMethod.andReturn(extensionsDirPath).atLeastOnce();
-
-		PowerMock.replay(Extensions.class);
+		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
 
 		String output = TestUtil.runBlade(args);
 
 		PowerMock.verifyAll();
 
-		Assert.assertTrue(output.contains(" successful") && output.contains(jarName));
+		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
-		Assert.assertTrue(fakeJarDest.exists());
+		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
+
+		File root = temporaryFolder.getRoot();
+
+		File extensionJar = new File(root, ".blade/extensions/" + _sampleCommandJarFile.getName());
+
+		Assert.assertTrue(extensionJar.getAbsolutePath() + " does not exist", extensionJar.exists());
 	}
 
 	@Rule
-	public final PowerMockRule rule = new PowerMockRule();
-
-	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
 
 }

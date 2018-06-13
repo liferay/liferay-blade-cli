@@ -37,8 +37,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URL;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -53,7 +55,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -117,6 +121,23 @@ public class BladeUtil {
 					IO.copy(r.openInputStream(), dest);
 				}
 			}
+		}
+	}
+
+	public static void downloadGithubProject(String url, Path target) throws IOException {
+		String zipUrl = url + "/archive/master.zip";
+
+		downloadLink(zipUrl, target);
+	}
+
+	public static void downloadLink(String link, Path target) throws IOException {
+		if (_isURLAvailable(link)) {
+			LinkDownloader downloader = new LinkDownloader(link, target);
+
+			downloader.run();
+		}
+		else {
+			throw new RuntimeException("url '" + link + "' is not accessible.");
 		}
 	}
 
@@ -267,14 +288,6 @@ public class BladeUtil {
 		return false;
 	}
 
-	public static boolean isGradleBuildPath(Path path) {
-		if ((path != null) && Files.exists(path.resolve("build.gradle"))) {
-			return true;
-		}
-
-		return false;
-	}
-
 	public static boolean isNotEmpty(List<?> list) {
 		return !isEmpty(list);
 	}
@@ -358,6 +371,28 @@ public class BladeUtil {
 			});
 
 		t.start();
+	}
+
+	public static boolean searchZip(Path path, Predicate<String> test) {
+		if (Files.exists(path) && !Files.isDirectory(path)) {
+			try (ZipFile zipFile = new ZipFile(path.toFile())) {
+				Stream<? extends ZipEntry> stream = zipFile.stream();
+
+				return stream.filter(
+					entry -> !entry.isDirectory()
+				).map(
+					ZipEntry::getName
+				).anyMatch(
+					test
+				);
+
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return false;
 	}
 
 	public static void setShell(ProcessBuilder processBuilder, String cmd) {
@@ -497,6 +532,24 @@ public class BladeUtil {
 				}
 			}
 		}
+	}
+
+	private static boolean _isURLAvailable(String urlString) throws IOException {
+		URL url = new URL(urlString);
+
+		HttpURLConnection.setFollowRedirects(false);
+
+		HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+
+		httpURLConnection.setRequestMethod("HEAD");
+
+		int responseCode = httpURLConnection.getResponseCode();
+
+		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_MOVED_TEMP)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private static final String[] _APP_SERVER_PROPERTIES_FILE_NAMES = {

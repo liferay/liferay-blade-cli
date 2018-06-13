@@ -29,7 +29,6 @@ import java.nio.file.StandardCopyOption;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -118,6 +117,30 @@ public class ExtensionsTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static void _setupTestExtension(Path extensionsPath, String jarPath) throws IOException {
+		File sampleJarFile = new File(jarPath);
+
+		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
+
+		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
+
+		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
+
+		Assert.assertTrue(Files.exists(sampleJarPath));
+	}
+
+	private static void _setupTestTemplate(Path extensionsPath, String jarPath) throws IOException {
+		File sampleJarFile = new File(jarPath);
+
+		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
+
+		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
+
+		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
+
+		Assert.assertTrue(Files.exists(sampleJarPath));
+	}
+
 	private void _setupTestExtensions() throws Exception {
 		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
 
@@ -127,24 +150,8 @@ public class ExtensionsTest {
 
 		Path extensionsPath = extensionsDir.toPath();
 
-		Consumer<String> copySampleJarFile = prop -> {
-			File sampleJarFile = new File(System.getProperty(prop));
-
-			Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
-
-			Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
-
-			try {
-				Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
-			}
-			catch (IOException ioe) {
-			}
-
-			Assert.assertTrue(Files.exists(sampleJarPath));
-		};
-
-		copySampleJarFile.accept("sampleCommandJarFile");
-		copySampleJarFile.accept("sampleTemplateJarFile");
+		_setupTestExtension(extensionsPath, System.getProperty("sampleCommandJarFile"));
+		_setupTestTemplate(extensionsPath, System.getProperty("sampleTemplateJarFile"));
 	}
 
 	private static final int _NUM_BUILTIN_COMMANDS = 17;
