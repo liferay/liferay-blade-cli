@@ -18,16 +18,13 @@ package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.command.InstallExtensionCommand;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,7 +33,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.powermock.reflect.Whitebox;
@@ -136,8 +132,6 @@ public class ExtensionsTest {
 		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
 
 		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
-
-		Assert.assertTrue(InstallExtensionCommand._isArchetype(sampleJarFile.toPath()));
 
 		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
 

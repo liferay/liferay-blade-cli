@@ -19,7 +19,6 @@ package com.liferay.blade.cli.util;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
-
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
@@ -36,16 +35,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
-
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -56,8 +52,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.function.Predicate;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -375,17 +369,17 @@ public class BladeUtil {
 		t.start();
 	}
 
-	public static boolean searchJar(Path path, Predicate<String> predicate) {
+	public static boolean searchZip(Path path, Predicate<String> test) {
 		if (Files.exists(path) && !Files.isDirectory(path)) {
-			try (JarFile jarFile = new JarFile(path.toFile())) {
-				Stream<JarEntry> stream = jarFile.stream();
+			try (ZipFile zipFile = new ZipFile(path.toFile())) {
+				Stream<? extends ZipEntry> stream = zipFile.stream();
 
 				return stream.filter(
-					j -> !j.isDirectory()
+					entry -> !entry.isDirectory()
 				).map(
-					JarEntry::getName
+					ZipEntry::getName
 				).anyMatch(
-					predicate
+					test
 				);
 
 			}

@@ -130,7 +130,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private static boolean _isArchetype(Path path) {
-		return BladeUtil.searchJar(path, name -> name.endsWith("archetype-metadata.xml"));
+		return BladeUtil.searchZip(path, name -> name.endsWith("archetype-metadata.xml"));
 	}
 
 	private static boolean _isCustomTemplate(Path path) {
@@ -148,7 +148,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		String search = String.valueOf(Paths.get("META-INF", "services", "com.liferay.blade.cli.command"));
 
-		return BladeUtil.searchJar(path, name -> name.startsWith(search));
+		return BladeUtil.searchZip(path, name -> name.startsWith(search));
 	}
 
 	private static boolean _isGradleBuild(Path path) {
