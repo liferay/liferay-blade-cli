@@ -14,9 +14,9 @@ buildscript {
 	}
 }
 
-apply plugin: 'biz.aQute.bnd.builder'
-apply plugin: 'com.liferay.source.formatter'
-apply plugin: 'java'
+apply plugin: "biz.aQute.bnd.builder"
+apply plugin: "com.liferay.source.formatter"
+apply plugin: "java"
 apply plugin: "maven-publish"
 
 publishing {
