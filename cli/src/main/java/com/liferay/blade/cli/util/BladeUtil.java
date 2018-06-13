@@ -327,20 +327,18 @@ public class BladeUtil {
 
 			HttpURLConnection huc = (HttpURLConnection)u.openConnection();
 
-			huc.setRequestMethod("GET");
-
-			huc.connect();
+			huc.setRequestMethod("HEAD");
 
 			int code = huc.getResponseCode();
 
-			if (code == HttpURLConnection.HTTP_OK) {
+			if (code == HttpURLConnection.HTTP_OK || code == HttpURLConnection.HTTP_MOVED_TEMP) {
 				return true;
 			}
 
 			return false;
 		}
 		catch (Exception e) {
-			return false;
+			throw new RuntimeException(e);
 		}
 	}
 
