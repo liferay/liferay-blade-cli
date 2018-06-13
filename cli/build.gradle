@@ -17,6 +17,19 @@ buildscript {
 apply plugin: 'biz.aQute.bnd.builder'
 apply plugin: 'com.liferay.source.formatter'
 apply plugin: 'java'
+apply plugin: "maven-publish"
+
+publishing {
+	publications {
+		bladeJar(MavenPublication) {
+			groupId = "com.liferay.blade"
+			artifactId = "com.liferay.blade.cli"
+			version = "3.1.0"
+
+			from components.java
+		}
+	}
+}
 
 checkSourceFormatting {
 	maxLineLength = 120
