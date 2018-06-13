@@ -129,8 +129,38 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		return InstallExtensionArgs.class;
 	}
 
+	private static boolean _isArchetype(Path path) {
+		return BladeUtil.searchJar(path, name -> name.endsWith("archetype-metadata.xml"));
+	}
+
+	private static boolean _isCustomTemplate(Path path) {
+		if (_isTemplateMatch(path) && _isArchetype(path)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isExtension(Path path) {
+		if (_isCustomTemplate(path)) {
+			return true;
+		}
+
+		String search = String.valueOf(Paths.get("META-INF", "services", "com.liferay.blade.cli.command"));
+
+		return BladeUtil.searchJar(path, name -> name.startsWith(search));
+	}
+
 	private static boolean _isGradleBuild(Path path) {
 		if ((path != null) && Files.exists(path.resolve("build.gradle"))) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isTemplateMatch(Path path) {
+		if (_customTemplatePathMatcher.matches(path) && Files.exists(path) && _isArchetype(path)) {
 			return true;
 		}
 
@@ -178,7 +208,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private void _installExtension(Path extensionPath) throws IOException {
-		if (_isTemplateMatch(extensionPath) || BladeUtil.isExtension(extensionPath)) {
+		if (_isExtension(extensionPath)) {
 			Path extensionsHome = Extensions.getDirectory();
 
 			Path extensionName = extensionPath.getFileName();
@@ -191,17 +221,9 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		}
 		else {
 			throw new IOException(
-				"Unable to install, file " + extensionPath.getFileName() +
-					" is not a valid maven archetype or Blade extension");
+				"Unable to install. " + extensionPath.getFileName() +
+					" is not a valid blade extension, e.g. custom template or command");
 		}
-	}
-
-	private boolean _isTemplateMatch(Path path) {
-		if (_customTemplatePathMatcher.matches(path) && Files.exists(path) && BladeUtil.isArchetype(path)) {
-			return true;
-		}
-
-		return false;
 	}
 
 	private static final PathMatcher _customTemplatePathMatcher = FileSystems.getDefault().getPathMatcher(

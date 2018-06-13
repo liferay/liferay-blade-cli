@@ -18,6 +18,7 @@ package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.command.InstallExtensionCommand;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
@@ -124,8 +125,6 @@ public class ExtensionsTest {
 
 		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
 
-		Assert.assertTrue(BladeUtil.isExtension(sampleJarFile.toPath()));
-
 		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
 
 		Assert.assertTrue(Files.exists(sampleJarPath));
@@ -138,7 +137,7 @@ public class ExtensionsTest {
 
 		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
 
-		Assert.assertTrue(BladeUtil.isArchetype(sampleJarFile.toPath()));
+		Assert.assertTrue(InstallExtensionCommand._isArchetype(sampleJarFile.toPath()));
 
 		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
 

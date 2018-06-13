@@ -45,7 +45,6 @@ import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -259,10 +258,6 @@ public class BladeUtil {
 		return false;
 	}
 
-	public static boolean isArchetype(Path path) {
-		return searchJar(path, name -> name.endsWith("archetype-metadata.xml"));
-	}
-
 	public static boolean isDirEmpty(final Path directory) throws IOException {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
 			Iterator<Path> iterator = directoryStream.iterator();
@@ -293,12 +288,6 @@ public class BladeUtil {
 		}
 
 		return false;
-	}
-
-	public static boolean isExtension(Path path) {
-		String search = String.valueOf(Paths.get("META-INF", "services", "com.liferay.blade.cli.command"));
-
-		return searchJar(path, name -> name.startsWith(search));
 	}
 
 	public static boolean isNotEmpty(List<?> list) {
