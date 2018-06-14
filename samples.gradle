@@ -39,8 +39,6 @@ task createSamples {
 	def projectTemplateNameList = ProjectTemplates.getTemplates().keySet()
 	def templateArgs
 
-	println "Project Templates Name List: " + projectTemplateNameList
-
 	projectTemplateNameList.each { projectTemplateName ->
 		if (projectTemplateName.equals("fragment")) {
 			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--host-bundle-symbolic-name", "com.liferay.login.web", "--host-bundle-version", "1.0.0", "--liferayVersion", liferayVersionArg]
@@ -64,12 +62,9 @@ task createSamples {
 			samplesDir.mkdir()
 		}
 
-		println "templateArgs= " + templateArgs.toString()
-
 		javaexec {
 			args templateArgs
 			classpath = configurations.projectTemplates
-//			jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
 			main = "com.liferay.project.templates.ProjectTemplates"
 			workingDir = samplesDir
 		}
