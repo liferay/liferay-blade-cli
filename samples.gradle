@@ -1,0 +1,77 @@
+buildscript {
+	dependencies{
+		classpath group: "com.liferay", name: "com.liferay.project.templates", version: "4.0.0"
+	}
+	repositories {
+		maven {
+			url "https://repository.liferay.com/nexus/content/groups/public"
+		}
+	}
+}
+
+configurations {
+	projectTemplates
+}
+
+dependencies {
+	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.0.0"
+}
+
+repositories {
+	maven {
+		url "https://repository.liferay.com/nexus/content/groups/public"
+	}
+}
+
+import com.liferay.project.templates.ProjectTemplates
+
+tasks.withType(JavaExec) {
+}
+
+task createSamples {
+	String liferayVersion
+	if (project.hasProperty('liferayVersion')) {
+		liferayVersion = liferayVersion
+	}
+	else {
+		liferayVersion = '7.0'
+	}
+	def projectTemplateNameList = ProjectTemplates.getTemplates().keySet()
+	def templateArgs
+
+	println "Project Templates Name List: " + projectTemplateNameList
+
+	projectTemplateNameList.each { projectTemplateName ->
+		if (projectTemplateName.equals("fragment")) {
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--host-bundle-symbolic-name", "com.liferay.login.web", "--host-bundle-version", "1.0.0", "--liferayVersion", liferayVersion].join(', ')
+		}
+		else if (projectTemplateName.equals("service")) {
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--class-name", "FooAction", "--service", "com.liferay.portal.kernel.events.LifecycleAction", "--liferayVersion", liferayVersion].join(', ')
+		}
+		else if (projectTemplateName.equals("service-builder")) {
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--package-name", "com.liferay.docs.guestbook", "--liferayVersion", liferayVersion].join(', ')
+		}
+		else if (projectTemplateName.equals("service-wrapper")) {
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--service", "com.liferay.portal.kernel.service.UserLocalServiceWrapper", "--liferayVersion", liferayVersion].join(', ')
+		}
+		else {
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--liferayVersion", liferayVersion].join(', ')
+		}
+
+		File samplesDir = new File("samples-" + liferayVersion)
+
+		if (!samplesDir.exists()) {
+			samplesDir.mkdir()
+		}
+
+		println "templateArgs= " + templateArgs.toString()
+
+		javaexec {
+			args templateArgs
+			classpath = configurations.projectTemplates
+//			jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
+			main = "com.liferay.project.templates.ProjectTemplates"
+			workingDir = samplesDir
+		}
+	}
+}
