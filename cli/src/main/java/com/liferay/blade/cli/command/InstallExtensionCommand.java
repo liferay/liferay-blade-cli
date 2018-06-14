@@ -21,8 +21,8 @@ import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.StringUtil;
-import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,11 +62,13 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		String pathArgLower = pathArg.toLowerCase();
 
 		if (pathArgLower.startsWith("http") && _isValidURL(pathArg)) {
-			if (pathArgLower.contains("github")) {
+			if (pathArgLower.contains("//github.com/")) {
 				Path path = Files.createTempDirectory(null);
 
 				try {
 					Path zip = path.resolve("master.zip");
+
+					File dir = path.toFile();
 
 					bladeCLI.out("Downloading github repository " + pathArg);
 
@@ -74,17 +76,23 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 					bladeCLI.out("Unzipping github repository to " + path);
 
-					BladeUtil.unzip(zip.toFile(), path.toFile(), null);
+					BladeUtil.unzip(zip.toFile(), dir, null);
 
-					if (_isGradleBuild(path)) {
-						bladeCLI.out("Building extension...");
+					File[] directories = dir.listFiles(File::isDirectory);
 
-						Path extensionPath = _gradleAssemble(path);
+					if ((directories != null) && (directories.length > 0)) {
+						Path directory = directories[0].toPath();
 
-						_installExtension(extensionPath);
-					}
-					else {
-						bladeCLI.err("Path not a gradle build " + path);
+						if (_isGradleBuild(directory)) {
+							bladeCLI.out("Building extension...");
+
+							Path extensionPath = _gradleAssemble(directory);
+
+							_installExtension(extensionPath);
+						}
+						else {
+							bladeCLI.err("Path not a gradle build " + directory);
+						}
 					}
 				}
 				catch (Exception e) {
@@ -159,7 +167,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private static boolean _isTemplateMatch(Path path) {
-		if (_customTemplatePathMatcher.matches(path) && Files.exists(path) && _isArchetype(path)) {
+		if (Files.exists(path) && (_customTemplatePathMatcher.matches(path) || _isArchetype(path))) {
 			return true;
 		}
 
@@ -185,7 +193,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		try {
 			Set<File> outputFiles = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), projectPath.toFile());
 
-			gradle.executeGradleCommand("assemble -x check");
+			gradle.executeGradleCommand("assemble -x check", projectPath.toFile());
 
 			Iterator<File> i = outputFiles.iterator();
 

@@ -19,28 +19,7 @@ apply plugin: "com.liferay.source.formatter"
 apply plugin: "java"
 apply plugin: "maven-publish"
 
-publishing {
-	publications {
-		bladeJar(MavenPublication) {
-			groupId = "com.liferay.blade"
-			artifactId = "com.liferay.blade.cli"
-			version = "3.1.0"
-
-			pom.withXml {
-				Node pom = asNode()
-				pom.remove(pom.get('dependencies'))
-			}
-
-			from components.java
-		}
-	}
-}
-
 checkSourceFormatting {
-	maxLineLength = 120
-}
-
-formatSource {
 	maxLineLength = 120
 }
 
@@ -88,11 +67,45 @@ dependencies {
 	testCompile group: "org.powermock", name: "powermock-module-junit4-rule", version: "1.7.3"
 }
 
+formatSource {
+	maxLineLength = 120
+}
+
 jar.baseName = 'blade'
+
+publishing {
+	publications {
+		bladeJar(MavenPublication) {
+			groupId = "com.liferay.blade"
+			artifactId = "com.liferay.blade.cli"
+			version = "3.1.0"
+
+			pom.withXml {
+				Node pom = asNode()
+				pom.remove(pom.get('dependencies'))
+			}
+
+			from components.java
+		}
+	}
+}
 
 repositories {
 	maven {
 		url "https://repo.gradle.org/gradle/libs-releases"
+	}
+}
+
+sourceSets {
+	zips {
+		resources {
+			srcDir "${projectDir}"
+			include "deps.zip"
+			include "wrapper.zip"
+		}
+	}
+	test {
+		runtimeClasspath += sourceSets.zips.output
 	}
 }
 
