@@ -20,7 +20,6 @@ import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,7 +29,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.reflect.Whitebox;
 
@@ -69,8 +67,6 @@ public class InstallExtensionCommandTest {
 		String[] args = {"extension install", _SAMPLE_COMMAND_STRING};
 
 		String output = TestUtil.runBlade(args);
-
-		PowerMock.verifyAll();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
