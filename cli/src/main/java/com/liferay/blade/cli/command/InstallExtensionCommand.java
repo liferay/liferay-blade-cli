@@ -62,7 +62,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		String pathArgLower = pathArg.toLowerCase();
 
 		if (pathArgLower.startsWith("http") && _isValidURL(pathArg)) {
-			if (pathArgLower.contains("github")) {
+			if (pathArgLower.contains("//github.com/")) {
 				Path path = Files.createTempDirectory(null);
 
 				try {
