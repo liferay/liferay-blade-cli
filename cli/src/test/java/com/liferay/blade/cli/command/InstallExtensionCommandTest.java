@@ -18,8 +18,10 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.TestUtil;
-
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,7 +37,7 @@ import org.powermock.reflect.Whitebox;
  * @author Gregory Amerson
  */
 public class InstallExtensionCommandTest {
-
+	
 	@Before
 	public void setUp() throws Exception {
 		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", temporaryFolder.getRoot());
@@ -60,8 +62,30 @@ public class InstallExtensionCommandTest {
 		Assert.assertTrue(extensionJar.getAbsolutePath() + " does not exist", extensionJar.exists());
 	}
 
+	@Test
+	public void testInstallCustomGithubExtension() throws Exception {
+		
+		String[] args = {"extension install", _sampleCommandGithubString};
+
+		String output = TestUtil.runBlade(args);
+
+		PowerMock.verifyAll();
+
+		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
+
+		Path rootPath = temporaryFolder.getRoot().toPath();
+		
+		Path extensionJarPath = rootPath.resolve(Paths.get(".blade", "extensions", "blade-sample-command-master.jar"));
+		
+		boolean pathExists = Files.exists(extensionJarPath);
+		
+		Assert.assertTrue(extensionJarPath.toAbsolutePath() + " does not exist", pathExists);
+	}
+	
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+	
+	private static final String _sampleCommandGithubString = "https://github.com/gamerson/blade-sample-command";
 
 	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
 

@@ -143,6 +143,18 @@ task testVersionCommand(dependsOn: jar) {
 	}
 }
 
+sourceSets {
+	zips {
+		resources {
+			srcDir "${projectDir}"
+			include "*.zip"
+		}
+	}
+	test {
+		runtimeClasspath += sourceSets.zips.runtimeClasspath
+	}
+}
+
 check.dependsOn testExecutableJar, testVersionCommand
 
 task unzipPortal(dependsOn: downloadPortal, type: Copy) {
