@@ -49,7 +49,7 @@ public class HelloMavenTest {
 	}
 
 	@Test
-	public void testMavenInitWithNameWorkspaceDirectoryEmpty() throws Exception {
+	public void testCustomProfileExtension() throws Exception {
 		_setupTestExtensions();
 
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-b", "maven", "newproject"};
@@ -59,18 +59,6 @@ public class HelloMavenTest {
 		Assert.assertTrue(newproject.mkdirs());
 
 		new BladeTest().run(args);
-
-		Assert.assertTrue(new File(newproject, "pom.xml").exists());
-
-		Assert.assertTrue(new File(newproject, "modules").exists());
-
-		String contents = new String(Files.readAllBytes(new File(newproject, "pom.xml").toPath()));
-
-		Assert.assertTrue(contents, contents.contains("3.2.1"));
-
-		File metadataFile = new File(_workspaceDir, "blade.properties");
-
-		Assert.assertTrue(metadataFile.exists());
 
 		WorkspaceMetadata metadata = BladeUtil.getWorkspaceMetadata(_workspaceDir);
 
