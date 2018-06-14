@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.util;
 
 import java.io.IOException;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,18 +35,14 @@ public class FileUtil {
 			new SimpleFileVisitor<Path>() {
 
 				@Override
-				public FileVisitResult postVisitDirectory(
-						Path dirPath, IOException ioe)
-					throws IOException {
-
+				public FileVisitResult postVisitDirectory(Path dirPath, IOException ioe) throws IOException {
 					Files.delete(dirPath);
 
 					return FileVisitResult.CONTINUE;
 				}
 
 				@Override
-				public FileVisitResult visitFile(
-						Path path, BasicFileAttributes basicFileAttributes)
+				public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes)
 					throws IOException {
 
 					Files.delete(path);
@@ -55,4 +52,5 @@ public class FileUtil {
 
 			});
 	}
+
 }
