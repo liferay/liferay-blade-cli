@@ -259,8 +259,8 @@ public class BladeUtil {
 			}
 
 			return workspaceMetaDataFile;
-
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -329,15 +329,15 @@ public class BladeUtil {
 	}
 
 	public static boolean isWorkspace(BladeCLI blade) {
-		
 		File dirToCheck;
-		
-		if (blade == null || blade.getBase() == null) {
+
+		if ((blade == null) || (blade.getBase() == null)) {
 			dirToCheck = new File(".").getAbsoluteFile();
-		} else {
+		}
+		else {
 			dirToCheck = blade.getBase();
 		}
-		
+
 		return isWorkspace(dirToCheck);
 	}
 

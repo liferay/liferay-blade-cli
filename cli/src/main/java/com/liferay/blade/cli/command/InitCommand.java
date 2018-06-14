@@ -58,6 +58,8 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		String name = initArgs.getName();
 
+		String build = initArgs.getBuild();
+
 		File destDir = name != null ? new File(bladeCLI.getBase(), name) : bladeCLI.getBase();
 
 		File temp = null;
@@ -72,7 +74,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			return;
 		}
 
-		boolean mavenBuild = "maven".equals(initArgs.getBuild());
+		boolean mavenBuild = "maven".equals(build);
 
 		if (destDir.exists()) {
 			if (pluginsSDK) {
@@ -182,10 +184,10 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			IO.deleteWithException(temp);
 		}
 
-		if (initArgs.getBuild() != null && !initArgs.getBuild().equals("gradle")) {
+		if ((build != null) && !build.equals("gradle")) {
 			WorkspaceMetadata metadata = BladeUtil.getWorkspaceMetadata(destParentDir);
 
-			metadata.setProfileName(initArgs.getBuild());
+			metadata.setProfileName(build);
 
 			metadata.save();
 		}

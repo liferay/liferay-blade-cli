@@ -30,8 +30,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Objects;
 
-import org.easymock.Mock;
-import org.easymock.MockType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -112,7 +110,7 @@ public class ExtensionsTest {
 
 		Assert.assertEquals(templates.toString(), _NUM_BUILTIN_TEMPLATES + 1, templates.size());
 	}
-	
+
 	@Rule
 	public final PowerMockRule rule = new PowerMockRule();
 

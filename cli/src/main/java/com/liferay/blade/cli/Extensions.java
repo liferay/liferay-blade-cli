@@ -106,8 +106,13 @@ public class Extensions {
 	}
 
 	public static Collection<String> getProfileNames(Class<? extends BaseCommand> commandClass) {
-		return Stream.of(commandClass.getAnnotationsByType(BladeProfile.class)
-		).filter(
+		BladeProfile[] profiles = commandClass.getAnnotationsByType(BladeProfile.class);
+
+		Collection<BladeProfile> profilesCollection = Arrays.asList(profiles);
+
+		Stream<BladeProfile> stream = profilesCollection.stream();
+
+		return stream.filter(
 			Objects::nonNull
 		).map(
 			BladeProfile::value
@@ -242,84 +247,29 @@ public class Extensions {
 		return argsList.toArray(new String[0]);
 	}
 
+	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
+		return _getCommands((String)null);
+	}
+
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands(File dir) throws Exception {
-		boolean isProfileWorkspace = BladeUtil.isWorkspace(dir);
+		boolean profileWorkspace = BladeUtil.isWorkspace(dir);
 
 		String workspaceProfileName = null;
 
-		if (isProfileWorkspace) {
+		if (profileWorkspace) {
 			WorkspaceMetadata metadata = BladeUtil.getWorkspaceMetadata(dir);
 
 			String profileName = metadata.getProfileName();
 
-			if (profileName == null || profileName.length() == 0) {
-				isProfileWorkspace = false;
-
-			} else {
+			if ((profileName == null) || (profileName.length() == 0)) {
+				profileWorkspace = false;
+			}
+			else {
 				workspaceProfileName = profileName;
 			}
 		}
 
-		return getCommands(workspaceProfileName);
-	}
-	
-	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
-		return getCommands((String)null);
-		
-	}
-
-	private Map<String, BaseCommand<? extends BaseArgs>> getCommands(String workspaceProfileName) throws Exception {
-		if (_commands == null) {
-			_commands = new HashMap<>();
-
-			URL[] jarUrls = _getJarUrls(getDirectory());
-
-			URLClassLoader serviceLoaderClassloader = new URLClassLoader(jarUrls, getClass().getClassLoader());
-
-			@SuppressWarnings("rawtypes")
-			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassloader);
-
-			Collection<BaseCommand<?>> allCommands = new ArrayList<>();
-
-			for (BaseCommand<?> baseCommand : serviceLoader) {
-				allCommands.add(baseCommand);
-			}
-
-			Map<String, BaseCommand<?>> map = new HashMap<>();
-			
-			Collection<BaseCommand> commandsToRemove = new ArrayList<>();
-
-			if (workspaceProfileName != null && workspaceProfileName.length() > 0) {
-				for (BaseCommand<?> baseCommand : allCommands) {
-					
-					Collection<String> profileNames = getProfileNames(baseCommand.getClass());
-					
-					Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
-
-					if (profileNames.contains(workspaceProfileName)) {
-						addCommand(map, baseCommand, argsClass);
-
-						commandsToRemove.add(baseCommand);
-					}
-				}
-			}
-			
-			allCommands.removeAll(commandsToRemove);
-
-			for (BaseCommand<?> baseCommand : allCommands) {
-				Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
-
-				addCommand(map, baseCommand, argsClass);
-			}
-
-			for (Entry<String, BaseCommand<?>> entry : map.entrySet()) {
-				_commands.put(entry.getKey(), entry.getValue());
-			}
-
-			serviceLoaderClassloader.close();
-		}
-
-		return _commands;
+		return _getCommands(workspaceProfileName);
 	}
 
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
@@ -378,8 +328,9 @@ public class Extensions {
 		}
 	}
 
-	private void addCommand(Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand,
-			Class<? extends BaseArgs> argsClass) throws IllegalAccessException, InstantiationException {
+	private void _addCommand(
+			Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand, Class<? extends BaseArgs> argsClass)
+		throws IllegalAccessException, InstantiationException {
 
 		BaseArgs baseArgs = argsClass.newInstance();
 
@@ -395,6 +346,59 @@ public class Extensions {
 		String[] commandNames = parameters.commandNames();
 
 		map.putIfAbsent(commandNames[0], baseCommand);
+	}
+
+	private Map<String, BaseCommand<? extends BaseArgs>> _getCommands(String workspaceProfileName) throws Exception {
+		if (_commands == null) {
+			_commands = new HashMap<>();
+
+			URL[] jarUrls = _getJarUrls(getDirectory());
+
+			URLClassLoader serviceLoaderClassloader = new URLClassLoader(jarUrls, getClass().getClassLoader());
+
+			@SuppressWarnings("rawtypes")
+			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassloader);
+
+			Collection<BaseCommand<?>> allCommands = new ArrayList<>();
+
+			for (BaseCommand<?> baseCommand : serviceLoader) {
+				allCommands.add(baseCommand);
+			}
+
+			Map<String, BaseCommand<?>> map = new HashMap<>();
+
+			Collection<BaseCommand<?>> commandsToRemove = new ArrayList<>();
+
+			if ((workspaceProfileName != null) && (workspaceProfileName.length() > 0)) {
+				for (BaseCommand<?> baseCommand : allCommands) {
+					Collection<String> profileNames = getProfileNames(baseCommand.getClass());
+
+					Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+
+					if (profileNames.contains(workspaceProfileName)) {
+						_addCommand(map, baseCommand, argsClass);
+
+						commandsToRemove.add(baseCommand);
+					}
+				}
+			}
+
+			allCommands.removeAll(commandsToRemove);
+
+			for (BaseCommand<?> baseCommand : allCommands) {
+				Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+
+				_addCommand(map, baseCommand, argsClass);
+			}
+
+			for (Entry<String, BaseCommand<?>> entry : map.entrySet()) {
+				_commands.put(entry.getKey(), entry.getValue());
+			}
+
+			serviceLoaderClassloader.close();
+		}
+
+		return _commands;
 	}
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
