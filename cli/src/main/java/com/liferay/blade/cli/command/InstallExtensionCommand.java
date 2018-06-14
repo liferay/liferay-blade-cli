@@ -21,20 +21,17 @@ import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.StringUtil;
-import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.net.URL;
-
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
