@@ -21,6 +21,9 @@ import com.beust.jcommander.Parameters;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.command.BladeProfile;
+import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.WorkspaceMetadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +44,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
@@ -60,7 +64,9 @@ public class Extensions {
 		).filter(
 			Objects::nonNull
 		).map(
-			x -> Arrays.asList(x.commandNames())
+			Parameters::commandNames
+		).map(
+			Arrays::asList
 		).flatMap(
 			List::stream
 		).collect(
@@ -97,6 +103,17 @@ public class Extensions {
 
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static Collection<String> getProfileNames(Class<? extends BaseCommand> commandClass) {
+		return Stream.of(commandClass.getAnnotationsByType(BladeProfile.class)
+		).filter(
+			Objects::nonNull
+		).map(
+			BladeProfile::value
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	public static String[] sortArgs(Map<String, BaseCommand<? extends BaseArgs>> commands, String[] args)
@@ -225,7 +242,33 @@ public class Extensions {
 		return argsList.toArray(new String[0]);
 	}
 
+	public Map<String, BaseCommand<? extends BaseArgs>> getCommands(File dir) throws Exception {
+		boolean isProfileWorkspace = BladeUtil.isWorkspace(dir);
+
+		String workspaceProfileName = null;
+
+		if (isProfileWorkspace) {
+			WorkspaceMetadata metadata = BladeUtil.getWorkspaceMetadata(dir);
+
+			String profileName = metadata.getProfileName();
+
+			if (profileName == null || profileName.length() == 0) {
+				isProfileWorkspace = false;
+
+			} else {
+				workspaceProfileName = profileName;
+			}
+		}
+
+		return getCommands(workspaceProfileName);
+	}
+	
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
+		return getCommands((String)null);
+		
+	}
+
+	private Map<String, BaseCommand<? extends BaseArgs>> getCommands(String workspaceProfileName) throws Exception {
 		if (_commands == null) {
 			_commands = new HashMap<>();
 
@@ -236,23 +279,41 @@ public class Extensions {
 			@SuppressWarnings("rawtypes")
 			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassloader);
 
+			Collection<BaseCommand<?>> allCommands = new ArrayList<>();
+
 			for (BaseCommand<?> baseCommand : serviceLoader) {
+				allCommands.add(baseCommand);
+			}
+
+			Map<String, BaseCommand<?>> map = new HashMap<>();
+			
+			Collection<BaseCommand> commandsToRemove = new ArrayList<>();
+
+			if (workspaceProfileName != null && workspaceProfileName.length() > 0) {
+				for (BaseCommand<?> baseCommand : allCommands) {
+					
+					Collection<String> profileNames = getProfileNames(baseCommand.getClass());
+					
+					Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+
+					if (profileNames.contains(workspaceProfileName)) {
+						addCommand(map, baseCommand, argsClass);
+
+						commandsToRemove.add(baseCommand);
+					}
+				}
+			}
+			
+			allCommands.removeAll(commandsToRemove);
+
+			for (BaseCommand<?> baseCommand : allCommands) {
 				Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
 
-				BaseArgs baseArgs = argsClass.newInstance();
+				addCommand(map, baseCommand, argsClass);
+			}
 
-				baseCommand.setArgs(baseArgs);
-
-				Parameters parameters = argsClass.getAnnotation(Parameters.class);
-
-				if (parameters == null) {
-					throw new IllegalArgumentException(
-						"Loaded base command class that doesn't have a Parameters annotation " + argsClass.getName());
-				}
-
-				String[] commandNames = parameters.commandNames();
-
-				_commands.put(commandNames[0], baseCommand);
+			for (Entry<String, BaseCommand<?>> entry : map.entrySet()) {
+				_commands.put(entry.getKey(), entry.getValue());
 			}
 
 			serviceLoaderClassloader.close();
@@ -315,6 +376,25 @@ public class Extensions {
 				new URL[0]
 			);
 		}
+	}
+
+	private void addCommand(Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand,
+			Class<? extends BaseArgs> argsClass) throws IllegalAccessException, InstantiationException {
+
+		BaseArgs baseArgs = argsClass.newInstance();
+
+		baseCommand.setArgs(baseArgs);
+
+		Parameters parameters = argsClass.getAnnotation(Parameters.class);
+
+		if (parameters == null) {
+			throw new IllegalArgumentException(
+				"Loaded base command class that doesn't have a Parameters annotation " + argsClass.getName());
+		}
+
+		String[] commandNames = parameters.commandNames();
+
+		map.putIfAbsent(commandNames[0], baseCommand);
 	}
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));

@@ -22,6 +22,7 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.MavenRunnerUtil;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.WorkspaceMetadata;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -279,6 +280,14 @@ public class InitCommandTest {
 		String contents = new String(Files.readAllBytes(new File(newproject, "pom.xml").toPath()));
 
 		Assert.assertTrue(contents, contents.contains("3.2.1"));
+
+		File metadataFile = new File(_workspaceDir, "blade.properties");
+
+		Assert.assertTrue(metadataFile.exists());
+
+		WorkspaceMetadata metadata = BladeUtil.getWorkspaceMetadata(_workspaceDir);
+
+		Assert.assertEquals("maven", metadata.getProfileName());
 	}
 
 	@Test

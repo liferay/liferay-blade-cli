@@ -242,6 +242,29 @@ public class BladeUtil {
 		return findParentFile(dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
 	}
 
+	public static WorkspaceMetadata getWorkspaceMetadata(File dir) {
+		File workspaceMetaDataFile = getWorkspaceMetadataFile(dir);
+
+		WorkspaceMetadata metaData = new WorkspaceMetadata(workspaceMetaDataFile);
+
+		return metaData;
+	}
+
+	public static File getWorkspaceMetadataFile(File dir) {
+		try {
+			File workspaceMetaDataFile = new File(dir, "blade.properties");
+
+			if (!workspaceMetaDataFile.exists()) {
+				workspaceMetaDataFile.createNewFile();
+			}
+
+			return workspaceMetaDataFile;
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static boolean hasGradleWrapper(File dir) {
 		if (new File(dir, "gradlew").exists() && new File(dir, "gradlew.bat").exists()) {
 			return true;
@@ -306,10 +329,23 @@ public class BladeUtil {
 	}
 
 	public static boolean isWorkspace(BladeCLI blade) {
-		return isWorkspace(blade.getBase());
+		
+		File dirToCheck;
+		
+		if (blade == null || blade.getBase() == null) {
+			dirToCheck = new File(".").getAbsoluteFile();
+		} else {
+			dirToCheck = blade.getBase();
+		}
+		
+		return isWorkspace(dirToCheck);
 	}
 
 	public static boolean isWorkspace(File dir) {
+		if (new File(dir, "blade.properties").exists()) {
+			return true;
+		}
+
 		File workspaceDir = getWorkspaceDir(dir);
 
 		File gradleFile = new File(workspaceDir, _SETTINGS_GRADLE_FILE_NAME);
