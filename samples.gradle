@@ -29,12 +29,12 @@ tasks.withType(JavaExec) {
 }
 
 task createSamples {
-	String liferayVersion
+	String liferayVersionArg
 	if (project.hasProperty('liferayVersion')) {
-		liferayVersion = liferayVersion
+		liferayVersionArg = liferayVersion
 	}
 	else {
-		liferayVersion = '7.0'
+		liferayVersionArg = '7.0'
 	}
 	def projectTemplateNameList = ProjectTemplates.getTemplates().keySet()
 	def templateArgs
@@ -43,22 +43,22 @@ task createSamples {
 
 	projectTemplateNameList.each { projectTemplateName ->
 		if (projectTemplateName.equals("fragment")) {
-			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--host-bundle-symbolic-name", "com.liferay.login.web", "--host-bundle-version", "1.0.0", "--liferayVersion", liferayVersion].join(', ')
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--host-bundle-symbolic-name", "com.liferay.login.web", "--host-bundle-version", "1.0.0", "--liferayVersion", liferayVersionArg]
 		}
 		else if (projectTemplateName.equals("service")) {
-			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--class-name", "FooAction", "--service", "com.liferay.portal.kernel.events.LifecycleAction", "--liferayVersion", liferayVersion].join(', ')
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--class-name", "FooAction", "--service", "com.liferay.portal.kernel.events.LifecycleAction", "--liferayVersion", liferayVersionArg]
 		}
 		else if (projectTemplateName.equals("service-builder")) {
-			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--package-name", "com.liferay.docs.guestbook", "--liferayVersion", liferayVersion].join(', ')
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--package-name", "com.liferay.docs.guestbook", "--liferayVersion", liferayVersionArg]
 		}
 		else if (projectTemplateName.equals("service-wrapper")) {
-			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--service", "com.liferay.portal.kernel.service.UserLocalServiceWrapper", "--liferayVersion", liferayVersion].join(', ')
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--service", "com.liferay.portal.kernel.service.UserLocalServiceWrapper", "--liferayVersion", liferayVersionArg]
 		}
 		else {
-			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--liferayVersion", liferayVersion].join(', ')
+			templateArgs = ["--template", projectTemplateName, "--name", "sample-" + projectTemplateName, "--liferayVersion", liferayVersionArg]
 		}
 
-		File samplesDir = new File("samples-" + liferayVersion)
+		File samplesDir = new File("samples-" + liferayVersionArg)
 
 		if (!samplesDir.exists()) {
 			samplesDir.mkdir()
