@@ -30,8 +30,6 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
@@ -39,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 import org.fusesource.jansi.AnsiConsole;
 
@@ -267,21 +266,22 @@ public class BladeCLI implements Runnable {
 	}
 
 	private static String _extractBasePath(String[] args) {
-		List<String> argsList = new ArrayList<>(Arrays.asList(args));
+		String defaultBasePath = ".";
 
-		String realBasePath = ".";
-
-		for (int x = 0; x < argsList.size(); x++) {
-			String s = argsList.get(x);
-
-			if (s.equals("--base") && (argsList.size() > (x + 1))) {
-				realBasePath = argsList.get(x + 1);
-
-				break;
-			}
+		if (args.length > 2) {
+			return IntStream.range(
+				0, args.length - 1
+			).filter(
+				i -> args[i].equals("--base") && args.length > (i + 1)
+			).mapToObj(
+				i -> args[i + 1]
+			).findFirst(
+			).orElse(
+				defaultBasePath
+			);
 		}
 
-		return realBasePath;
+		return defaultBasePath;
 	}
 
 	private void _runCommand() throws Exception {
