@@ -1,0 +1,71 @@
+import com.liferay.project.templates.ProjectTemplates
+
+buildscript {
+	dependencies{
+		classpath group: "com.liferay", name: "com.liferay.project.templates", version: "4.0.0"
+	}
+	repositories {
+		maven {
+			url "https://repository.liferay.com/nexus/content/groups/public"
+		}
+	}
+}
+
+configurations {
+	projectTemplates
+}
+
+dependencies {
+	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.0.0"
+}
+
+repositories {
+	maven {
+		url "https://repository.liferay.com/nexus/content/groups/public"
+	}
+}
+
+task createSamples {
+	String liferayVersionArg
+
+	if (project.hasProperty('liferayVersion')) {
+		liferayVersionArg = liferayVersion
+	}
+	else {
+		liferayVersionArg = '7.0'
+	}
+
+	def templateNames = ProjectTemplates.getTemplates().keySet()
+
+	templateNames.each {
+		def mainArgs = ["--template", it, "--name", "sample-${it}"]
+
+		if (it.equals("fragment")) {
+			mainArgs += ["--host-bundle-symbolic-name", "com.liferay.login.web", "--host-bundle-version", "1.0.0"]
+		}
+		else if (it.equals("service")) {
+			mainArgs += ["--class-name", "FooAction", "--service", "com.liferay.portal.kernel.events.LifecycleAction"]
+		}
+		else if (it.equals("service-builder")) {
+			mainArgs += ["--package-name", "com.liferay.docs.guestbook"]
+		}
+		else if (it.equals("service-wrapper")) {
+			mainArgs += ["--service", "com.liferay.portal.kernel.service.UserLocalServiceWrapper"]
+		}
+
+		mainArgs += ["--liferayVersion", liferayVersionArg]
+
+		File samplesDir = new File("samples-${liferayVersionArg}")
+
+		if (!samplesDir.exists()) {
+			samplesDir.mkdir()
+		}
+
+		javaexec {
+			args mainArgs
+			classpath = configurations.projectTemplates
+			main = "com.liferay.project.templates.ProjectTemplates"
+			workingDir = samplesDir
+		}
+	}
+}
