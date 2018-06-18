@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import java.net.URL;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -137,7 +135,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		long diff = now.getTime() - bladeRepoArchive.lastModified();
 
 		if (!bladeRepoArchive.exists() || (diff > _FILE_EXPIRATION_TIME)) {
-			FileUtils.copyURLToFile(new URL(_BLADE_REPO_URL), bladeRepoArchive);
+			BladeUtil.downloadLink(_BLADE_REPO_URL, bladeRepoArchive.toPath());
 
 			return true;
 		}
