@@ -19,7 +19,6 @@ package com.liferay.blade.cli.util;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
-
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
@@ -36,16 +35,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
-
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -239,30 +235,24 @@ public class BladeUtil {
 	}
 
 	public static File getWorkspaceDir(File dir) {
-		return findParentFile(dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
+		File gradleParent = findParentFile(
+			dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
+
+		if (gradleParent != null && gradleParent.exists()) {
+			return gradleParent;
+		}
+
+		File mavenParent = findParentFile(dir, new String[] {"pom.xml"}, true);
+
+		if (_isWorkspacePomFile(mavenParent)) {
+			return mavenParent;
+		}
+
+		return null;
 	}
 
-	public static WorkspaceMetadata getWorkspaceMetadata(File dir) {
-		File workspaceMetaDataFile = getWorkspaceMetadataFile(dir);
-
-		WorkspaceMetadata metaData = new WorkspaceMetadata(workspaceMetaDataFile);
-
-		return metaData;
-	}
-
-	public static File getWorkspaceMetadataFile(File dir) {
-		try {
-			File workspaceMetaDataFile = new File(dir, "blade.properties");
-
-			if (!workspaceMetaDataFile.exists()) {
-				workspaceMetaDataFile.createNewFile();
-			}
-
-			return workspaceMetaDataFile;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	private static boolean _isWorkspacePomFile(File pomFile) {
+		return true;
 	}
 
 	public static boolean hasGradleWrapper(File dir) {
@@ -342,15 +332,17 @@ public class BladeUtil {
 	}
 
 	public static boolean isWorkspace(File dir) {
-		if (new File(dir, "blade.properties").exists()) {
-			return true;
-		}
-
 		File workspaceDir = getWorkspaceDir(dir);
 
 		File gradleFile = new File(workspaceDir, _SETTINGS_GRADLE_FILE_NAME);
 
 		if (!gradleFile.exists()) {
+			File pomFile = new File(workspaceDir, "pom.xml");
+
+			if (_isWorkspacePomFile(pomFile)) {
+				return true;
+			}
+
 			return false;
 		}
 

@@ -19,9 +19,9 @@ package com.liferay.blade.cli.command;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.WorkspaceMetadata;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 import com.liferay.project.templates.internal.util.FileUtil;
@@ -30,13 +30,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -185,11 +183,13 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		if ((build != null) && !build.equals("gradle")) {
-			WorkspaceMetadata metadata = BladeUtil.getWorkspaceMetadata(destParentDir);
+			getBladeCLI().setBase(destDir);
 
-			metadata.setProfileName(build);
+			BladeSettings settings = getBladeCLI().getSettings();
 
-			metadata.save();
+			settings.setProfileName(build);
+
+			settings.save();
 		}
 	}
 

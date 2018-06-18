@@ -18,22 +18,19 @@ package com.liferay.blade.cli.command;
 
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.MavenRunnerUtil;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.WorkspaceMetadata;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import java.nio.file.Files;
-
 import java.util.Properties;
 
 import org.gradle.testkit.runner.BuildTask;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -271,7 +268,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(newproject.mkdirs());
 
-		new BladeTest().run(args);
+		BladeTest bladeTest = new BladeTest();
+
+		bladeTest.run(args);
 
 		Assert.assertTrue(new File(newproject, "pom.xml").exists());
 
@@ -281,13 +280,13 @@ public class InitCommandTest {
 
 		Assert.assertTrue(contents, contents.contains("3.2.1"));
 
-		File metadataFile = new File(_workspaceDir, "blade.properties");
+		File metadataFile = new File(_workspaceDir, "newproject/.blade/settings.properties");
 
 		Assert.assertTrue(metadataFile.exists());
 
-		WorkspaceMetadata metadata = BladeUtil.getWorkspaceMetadata(_workspaceDir);
+		BladeSettings bladeSettings = bladeTest.getSettings();
 
-		Assert.assertEquals("maven", metadata.getProfileName());
+		Assert.assertEquals("maven", bladeSettings.getProfileName());
 	}
 
 	@Test

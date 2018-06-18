@@ -18,25 +18,18 @@ package com.liferay.blade.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.WorkspaceMetadata;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.lang.reflect.Field;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,6 +48,12 @@ import java.util.stream.Stream;
  * @author Gregory Amerson
  */
 public class Extensions {
+
+	private final BladeSettings _bladeSettings;
+
+	public Extensions(BladeSettings bladeSettings) {
+		_bladeSettings = bladeSettings;
+	}
 
 	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
 		Stream<Class<? extends BaseArgs>> stream = argsClass.stream();
@@ -105,14 +104,10 @@ public class Extensions {
 		}
 	}
 
-	public static Collection<String> getProfileNames(Class<? extends BaseCommand> commandClass) {
-		BladeProfile[] profiles = commandClass.getAnnotationsByType(BladeProfile.class);
-
-		Collection<BladeProfile> profilesCollection = Arrays.asList(profiles);
-
-		Stream<BladeProfile> stream = profilesCollection.stream();
-
-		return stream.filter(
+	public static Collection<String> getBladeProfiles(Class<?> commandClass) {
+		return Stream.of(
+			commandClass.getAnnotationsByType(BladeProfile.class)
+		).filter(
 			Objects::nonNull
 		).map(
 			BladeProfile::value
@@ -248,28 +243,9 @@ public class Extensions {
 	}
 
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
-		return _getCommands((String)null);
-	}
+		String profileName = _bladeSettings.getProfileName();
 
-	public Map<String, BaseCommand<? extends BaseArgs>> getCommands(File dir) throws Exception {
-		boolean profileWorkspace = BladeUtil.isWorkspace(dir);
-
-		String workspaceProfileName = null;
-
-		if (profileWorkspace) {
-			WorkspaceMetadata metadata = BladeUtil.getWorkspaceMetadata(dir);
-
-			String profileName = metadata.getProfileName();
-
-			if ((profileName == null) || (profileName.length() == 0)) {
-				profileWorkspace = false;
-			}
-			else {
-				workspaceProfileName = profileName;
-			}
-		}
-
-		return _getCommands(workspaceProfileName);
+		return _getCommands(profileName);
 	}
 
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
@@ -348,7 +324,7 @@ public class Extensions {
 		map.putIfAbsent(commandNames[0], baseCommand);
 	}
 
-	private Map<String, BaseCommand<? extends BaseArgs>> _getCommands(String workspaceProfileName) throws Exception {
+	private Map<String, BaseCommand<? extends BaseArgs>> _getCommands(String profileName) throws Exception {
 		if (_commands == null) {
 			_commands = new HashMap<>();
 
@@ -369,13 +345,13 @@ public class Extensions {
 
 			Collection<BaseCommand<?>> commandsToRemove = new ArrayList<>();
 
-			if ((workspaceProfileName != null) && (workspaceProfileName.length() > 0)) {
+			if ((profileName != null) && (profileName.length() > 0)) {
 				for (BaseCommand<?> baseCommand : allCommands) {
-					Collection<String> profileNames = getProfileNames(baseCommand.getClass());
+					Collection<String> profileNames = getBladeProfiles(baseCommand.getClass());
 
 					Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
 
-					if (profileNames.contains(workspaceProfileName)) {
+					if (profileNames.contains(profileName)) {
 						_addCommand(map, baseCommand, argsClass);
 
 						commandsToRemove.add(baseCommand);

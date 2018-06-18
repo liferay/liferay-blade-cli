@@ -22,11 +22,9 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,7 +33,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.powermock.reflect.Whitebox;
@@ -56,7 +53,9 @@ public class ExtensionsTest {
 	public void testArgsSort() throws Exception {
 		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2"};
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions().getCommands();
+		BladeTest bladeTest = new BladeTest();
+
+		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions(bladeTest.getSettings()).getCommands();
 
 		String[] sortedArgs = Extensions.sortArgs(commands, args);
 
@@ -73,7 +72,9 @@ public class ExtensionsTest {
 
 	@Test
 	public void testLoadCommandsBuiltIn() throws Exception {
-		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions().getCommands();
+		BladeTest bladeTest = new BladeTest();
+
+		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions(bladeTest.getSettings()).getCommands();
 
 		Assert.assertNotNull(commands);
 
@@ -84,7 +85,9 @@ public class ExtensionsTest {
 	public void testLoadCommandsWithCustomExtension() throws Exception {
 		_setupTestExtensions();
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions().getCommands();
+		BladeTest bladeTest = new BladeTest();
+
+		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions(bladeTest.getSettings()).getCommands();
 
 		Assert.assertNotNull(commands);
 

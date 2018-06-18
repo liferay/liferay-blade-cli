@@ -28,7 +28,6 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,7 +38,6 @@ import java.util.Set;
 
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
-
 import org.powermock.api.easymock.PowerMock;
 
 /**
@@ -61,7 +59,7 @@ public class MockUtil {
 
 		Extensions extensions = EasyMock.createNiceMock(Extensions.class);
 
-		EasyMock.expect(extensions.getCommands(EasyMock.isA(File.class))).andStubReturn(map);
+		EasyMock.expect(extensions.getCommands()).andStubReturn(map);
 
 		PowerMock.replay(Extensions.class, BladeUtil.class);
 	}

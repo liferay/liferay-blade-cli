@@ -14,52 +14,56 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli.util;
+package com.liferay.blade.cli;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
+import java.io.IOException;
 import java.util.Properties;
 
 /**
  * @author Christopher Bryan Boyd
+ * @author Gregory Amerson
  */
-public class WorkspaceMetadata {
+public class BladeSettings {
 
-	public WorkspaceMetadata(File workspaceMetadataFile) {
-		_workspaceMetadataFile = workspaceMetadataFile;
+	public BladeSettings(File settingsFile) throws IOException {
+		_settingsFile = settingsFile;
 
-		load();
+		if (_settingsFile.exists()) {
+			load();
+		}
 	}
 
 	public String getProfileName() {
-		return _properties.getProperty("blade.profile.name");
+		return _properties.getProperty("profile.name");
 	}
 
-	public void load() {
-		try {
-			_properties.load(new FileInputStream(_workspaceMetadataFile));
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+	public void load() throws IOException {
+		try (FileInputStream fileInputStream = new FileInputStream(_settingsFile)) {
+
+			_properties.load(fileInputStream);
 		}
 	}
 
-	public void save() {
-		try {
-			_properties.store(new FileOutputStream(_workspaceMetadataFile), null);
+	public void save() throws IOException {
+		if (!_settingsFile.exists()) {
+			File parentDir = _settingsFile.getParentFile();
+
+			parentDir.mkdirs();
 		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+
+		try (FileOutputStream out = new FileOutputStream(_settingsFile)) {
+			_properties.store(out, null);
 		}
 	}
 
 	public void setProfileName(String profileName) {
-		_properties.setProperty("blade.profile.name", profileName);
+		_properties.setProperty("profile.name", profileName);
 	}
 
-	private Properties _properties = new Properties();
-	private final File _workspaceMetadataFile;
+	private final Properties _properties = new Properties();
+	private final File _settingsFile;
 
 }

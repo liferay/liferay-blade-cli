@@ -20,16 +20,15 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
-
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
@@ -50,6 +49,8 @@ public class BladeCLI implements Runnable {
 	public static void main(String[] args) {
 		BladeCLI bladeCLI = new BladeCLI();
 
+
+
 		try {
 			bladeCLI.run(args);
 		}
@@ -59,6 +60,8 @@ public class BladeCLI implements Runnable {
 			e.printStackTrace(bladeCLI._err);
 		}
 	}
+
+	private Path _basePath = Paths.get(".");
 
 	public BladeCLI() {
 		this(System.out, System.err);
@@ -95,11 +98,11 @@ public class BladeCLI implements Runnable {
 	}
 
 	public File getBase() {
-		if (_commandArgs == null) {
-			return new File(".");
-		}
+		return _basePath.toFile();
+	}
 
-		return new File(_commandArgs.getBase());
+	public void setBase(File baseDir) {
+		_basePath = baseDir.toPath();
 	}
 
 	public BaseArgs getBladeArgs() {
@@ -190,13 +193,15 @@ public class BladeCLI implements Runnable {
 	}
 
 	public void run(String[] args) throws Exception {
+		String basePath = _extractBasePath(args);
+
+		setBase(new File(basePath));
+
 		System.setOut(out());
 
 		System.setErr(err());
 
-		String basePath = _extractBasePath(args);
-
-		_commands = new Extensions().getCommands(new File(basePath));
+		_commands = new Extensions(getSettings()).getCommands();
 
 		args = Extensions.sortArgs(_commands, args);
 
@@ -309,5 +314,22 @@ public class BladeCLI implements Runnable {
 	private final PrintStream _err;
 	private JCommander _jCommander;
 	private final PrintStream _out;
+
+	public BladeSettings getSettings() throws IOException {
+		final File settingsFile;
+
+		if (BladeUtil.isWorkspace(this)) {
+			File workspaceDir = BladeUtil.getWorkspaceDir(this);
+
+			settingsFile = new File(workspaceDir, ".blade/settings.properties");
+		}
+		else {
+			File homeDir = new File(System.getProperty("user.home"));
+
+			settingsFile = new File(homeDir, ".blade/settings.properties");
+		}
+
+		return new BladeSettings(settingsFile);
+	}
 
 }

@@ -16,12 +16,8 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.WorkspaceMetadata;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -31,7 +27,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
 import org.powermock.reflect.Whitebox;
 
 /**
@@ -58,11 +53,13 @@ public class HelloMavenTest {
 
 		Assert.assertTrue(newproject.mkdirs());
 
-		new BladeTest().run(args);
+		BladeTest bladeTest = new BladeTest();
 
-		WorkspaceMetadata metadata = BladeUtil.getWorkspaceMetadata(_workspaceDir);
+		bladeTest.run(args);
 
-		Assert.assertEquals("maven", metadata.getProfileName());
+		BladeSettings bladeSettings = bladeTest.getSettings();
+
+		Assert.assertEquals("maven", bladeSettings.getProfileName());
 
 		args = new String[] {"--base", _workspaceDir.getPath(), "hello", "--name", "foobar"};
 
