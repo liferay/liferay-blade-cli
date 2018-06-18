@@ -23,6 +23,10 @@ checkSourceFormatting {
 	maxLineLength = 120
 }
 
+clean.doFirst {
+	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
+}
+
 dependencies {
 	compile group: "biz.aQute.bnd", name: "aQute.libg", version: "3.5.0"
 	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
@@ -46,6 +50,7 @@ dependencies {
 	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "3.0"
 	compile group: "org.gradle", name: "gradle-core", version: "3.0"
 	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"
+
 	compile name: "com.liferay.blade.gradle.model"
 	compile name: "com.liferay.blade.gradle.plugin"
 	compile name: "gradle-native-3.0"
@@ -124,12 +129,25 @@ task createWrapperZip(type:Zip) {
 	include "gradlew*"
 }
 
-clean.doFirst {
-	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
-}
-
 jar {
 	from createDepsZip, createWrapperZip
+}
+
+publishing {
+	publications {
+		bladeJar(MavenPublication) {
+			groupId = "com.liferay.blade"
+			artifactId = "com.liferay.blade.cli"
+			version = "3.1.0"
+
+			pom.withXml {
+				Node pom = asNode()
+				pom.remove(pom.get('dependencies'))
+			}
+
+			from components.java
+		}
+	}
 }
 
 task downloadPortal(type: Download) {
@@ -141,8 +159,8 @@ task downloadPortal(type: Download) {
 task testExecutableJar(dependsOn: jar) {
 	doLast {
 		javaexec {
-			main = "-jar"
 			args = [jar.archivePath, "create", "-l"]
+			main = "-jar"
 		}
 	}
 }
@@ -150,8 +168,8 @@ task testExecutableJar(dependsOn: jar) {
 task testVersionCommand(dependsOn: jar) {
 	doLast {
 		javaexec {
-			main = "-jar"
 			args = [jar.archivePath, "version"]
+			main = "-jar"
 		}
 	}
 }
