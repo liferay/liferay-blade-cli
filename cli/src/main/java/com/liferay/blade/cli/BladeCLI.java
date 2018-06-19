@@ -23,8 +23,10 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import java.nio.file.Path;
@@ -37,6 +39,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 import org.fusesource.jansi.AnsiConsole;
 
@@ -94,11 +97,7 @@ public class BladeCLI implements Runnable {
 	}
 
 	public File getBase() {
-		if (_commandArgs == null) {
-			return new File(".");
-		}
-
-		return new File(_commandArgs.getBase());
+		return _basePath.toFile();
 	}
 
 	public BaseArgs getBladeArgs() {
@@ -117,6 +116,23 @@ public class BladeCLI implements Runnable {
 		Path cacheDir = Paths.get(userHome, ".blade", "cache");
 
 		return cacheDir.toFile();
+	}
+
+	public BladeSettings getSettings() throws IOException {
+		final File settingsFile;
+
+		if (BladeUtil.isWorkspace(this)) {
+			File workspaceDir = BladeUtil.getWorkspaceDir(this);
+
+			settingsFile = new File(workspaceDir, ".blade/settings.properties");
+		}
+		else {
+			File homeDir = new File(System.getProperty("user.home"));
+
+			settingsFile = new File(homeDir, ".blade/settings.properties");
+		}
+
+		return new BladeSettings(settingsFile);
 	}
 
 	public PrintStream out() {
@@ -189,11 +205,15 @@ public class BladeCLI implements Runnable {
 	}
 
 	public void run(String[] args) throws Exception {
+		String basePath = _extractBasePath(args);
+
+		setBase(new File(basePath));
+
 		System.setOut(out());
 
 		System.setErr(err());
 
-		_commands = new Extensions().getCommands();
+		_commands = new Extensions(getSettings()).getCommands();
 
 		args = Extensions.sortArgs(_commands, args);
 
@@ -255,11 +275,34 @@ public class BladeCLI implements Runnable {
 		}
 	}
 
+	public void setBase(File baseDir) {
+		_basePath = baseDir.toPath();
+	}
+
 	public void trace(String s, Object... args) {
 		if (_commandArgs.isTrace() && (_tracer != null)) {
 			_tracer.format("# " + s + "%n", args);
 			_tracer.flush();
 		}
+	}
+
+	private static String _extractBasePath(String[] args) {
+		String defaultBasePath = ".";
+
+		if (args.length > 2) {
+			return IntStream.range(
+				0, args.length - 1
+			).filter(
+				i -> args[i].equals("--base") && args.length > (i + 1)
+			).mapToObj(
+				i -> args[i + 1]
+			).findFirst(
+			).orElse(
+				defaultBasePath
+			);
+		}
+
+		return defaultBasePath;
 	}
 
 	private void _runCommand() throws Exception {
@@ -281,6 +324,7 @@ public class BladeCLI implements Runnable {
 
 	private static final Formatter _tracer = new Formatter(System.out);
 
+	private Path _basePath = Paths.get(".");
 	private String _command;
 	private BaseArgs _commandArgs;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;

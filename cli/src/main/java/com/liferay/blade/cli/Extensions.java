@@ -21,6 +21,7 @@ import com.beust.jcommander.Parameters;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.command.BladeProfile;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
@@ -52,6 +54,18 @@ import java.util.stream.Stream;
  */
 public class Extensions {
 
+	public static Collection<String> getBladeProfiles(Class<?> commandClass) {
+		return Stream.of(
+			commandClass.getAnnotationsByType(BladeProfile.class)
+		).filter(
+			Objects::nonNull
+		).map(
+			BladeProfile::value
+		).collect(
+			Collectors.toList()
+		);
+	}
+
 	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
 		Stream<Class<? extends BaseArgs>> stream = argsClass.stream();
 
@@ -60,7 +74,9 @@ public class Extensions {
 		).filter(
 			Objects::nonNull
 		).map(
-			x -> Arrays.asList(x.commandNames())
+			Parameters::commandNames
+		).map(
+			Arrays::asList
 		).flatMap(
 			List::stream
 		).collect(
@@ -225,40 +241,14 @@ public class Extensions {
 		return argsList.toArray(new String[0]);
 	}
 
+	public Extensions(BladeSettings bladeSettings) {
+		_bladeSettings = bladeSettings;
+	}
+
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
-		if (_commands == null) {
-			_commands = new HashMap<>();
+		String profileName = _bladeSettings.getProfileName();
 
-			URL[] jarUrls = _getJarUrls(getDirectory());
-
-			URLClassLoader serviceLoaderClassloader = new URLClassLoader(jarUrls, getClass().getClassLoader());
-
-			@SuppressWarnings("rawtypes")
-			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassloader);
-
-			for (BaseCommand<?> baseCommand : serviceLoader) {
-				Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
-
-				BaseArgs baseArgs = argsClass.newInstance();
-
-				baseCommand.setArgs(baseArgs);
-
-				Parameters parameters = argsClass.getAnnotation(Parameters.class);
-
-				if (parameters == null) {
-					throw new IllegalArgumentException(
-						"Loaded base command class that doesn't have a Parameters annotation " + argsClass.getName());
-				}
-
-				String[] commandNames = parameters.commandNames();
-
-				_commands.put(commandNames[0], baseCommand);
-			}
-
-			serviceLoaderClassloader.close();
-		}
-
-		return _commands;
+		return _getCommands(profileName);
 	}
 
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
@@ -317,8 +307,82 @@ public class Extensions {
 		}
 	}
 
+	private void _addCommand(
+			Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand, Class<? extends BaseArgs> argsClass)
+		throws IllegalAccessException, InstantiationException {
+
+		BaseArgs baseArgs = argsClass.newInstance();
+
+		baseCommand.setArgs(baseArgs);
+
+		Parameters parameters = argsClass.getAnnotation(Parameters.class);
+
+		if (parameters == null) {
+			throw new IllegalArgumentException(
+				"Loaded base command class that doesn't have a Parameters annotation " + argsClass.getName());
+		}
+
+		String[] commandNames = parameters.commandNames();
+
+		map.putIfAbsent(commandNames[0], baseCommand);
+	}
+
+	private Map<String, BaseCommand<? extends BaseArgs>> _getCommands(String profileName) throws Exception {
+		if (_commands == null) {
+			_commands = new HashMap<>();
+
+			URL[] jarUrls = _getJarUrls(getDirectory());
+
+			URLClassLoader serviceLoaderClassloader = new URLClassLoader(jarUrls, getClass().getClassLoader());
+
+			@SuppressWarnings("rawtypes")
+			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassloader);
+
+			Collection<BaseCommand<?>> allCommands = new ArrayList<>();
+
+			for (BaseCommand<?> baseCommand : serviceLoader) {
+				allCommands.add(baseCommand);
+			}
+
+			Map<String, BaseCommand<?>> map = new HashMap<>();
+
+			Collection<BaseCommand<?>> commandsToRemove = new ArrayList<>();
+
+			if ((profileName != null) && (profileName.length() > 0)) {
+				for (BaseCommand<?> baseCommand : allCommands) {
+					Collection<String> profileNames = getBladeProfiles(baseCommand.getClass());
+
+					Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+
+					if (profileNames.contains(profileName)) {
+						_addCommand(map, baseCommand, argsClass);
+
+						commandsToRemove.add(baseCommand);
+					}
+				}
+			}
+
+			allCommands.removeAll(commandsToRemove);
+
+			for (BaseCommand<?> baseCommand : allCommands) {
+				Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+
+				_addCommand(map, baseCommand, argsClass);
+			}
+
+			for (Entry<String, BaseCommand<?>> entry : map.entrySet()) {
+				_commands.put(entry.getKey(), entry.getValue());
+			}
+
+			serviceLoaderClassloader.close();
+		}
+
+		return _commands;
+	}
+
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
+	private final BladeSettings _bladeSettings;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 
 }

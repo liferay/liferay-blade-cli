@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.project.templates.ProjectTemplates;
@@ -57,6 +58,8 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		String name = initArgs.getName();
 
+		String build = initArgs.getBuild();
+
 		File destDir = name != null ? new File(bladeCLI.getBase(), name) : bladeCLI.getBase();
 
 		File temp = null;
@@ -71,7 +74,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			return;
 		}
 
-		boolean mavenBuild = "maven".equals(initArgs.getBuild());
+		boolean mavenBuild = "maven".equals(build);
 
 		if (destDir.exists()) {
 			if (pluginsSDK) {
@@ -179,6 +182,16 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			_moveContentsToDirectory(temp, pluginsSdkDir);
 
 			IO.deleteWithException(temp);
+		}
+
+		if ((build != null) && !build.equals("gradle")) {
+			getBladeCLI().setBase(destDir);
+
+			BladeSettings settings = getBladeCLI().getSettings();
+
+			settings.setProfileName(build);
+
+			settings.save();
 		}
 	}
 

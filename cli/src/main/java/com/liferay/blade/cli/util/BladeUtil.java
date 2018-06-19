@@ -239,7 +239,20 @@ public class BladeUtil {
 	}
 
 	public static File getWorkspaceDir(File dir) {
-		return findParentFile(dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
+		File gradleParent = findParentFile(
+			dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
+
+		if ((gradleParent != null) && gradleParent.exists()) {
+			return gradleParent;
+		}
+
+		File mavenParent = findParentFile(dir, new String[] {"pom.xml"}, true);
+
+		if (_isWorkspacePomFile(new File(mavenParent, "pom.xml"))) {
+			return mavenParent;
+		}
+
+		return null;
 	}
 
 	public static boolean hasGradleWrapper(File dir) {
@@ -306,7 +319,16 @@ public class BladeUtil {
 	}
 
 	public static boolean isWorkspace(BladeCLI blade) {
-		return isWorkspace(blade.getBase());
+		File dirToCheck;
+
+		if ((blade == null) || (blade.getBase() == null)) {
+			dirToCheck = new File(".").getAbsoluteFile();
+		}
+		else {
+			dirToCheck = blade.getBase();
+		}
+
+		return isWorkspace(dirToCheck);
 	}
 
 	public static boolean isWorkspace(File dir) {
@@ -315,6 +337,12 @@ public class BladeUtil {
 		File gradleFile = new File(workspaceDir, _SETTINGS_GRADLE_FILE_NAME);
 
 		if (!gradleFile.exists()) {
+			File pomFile = new File(workspaceDir, "pom.xml");
+
+			if (_isWorkspacePomFile(pomFile)) {
+				return true;
+			}
+
 			return false;
 		}
 
@@ -578,6 +606,28 @@ public class BladeUtil {
 
 		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_MOVED_TEMP)) {
 			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isWorkspacePomFile(File pomFile) {
+		boolean pom = false;
+
+		if ((pomFile != null) && "pom.xml".equals(pomFile.getName()) && pomFile.exists()) {
+			pom = true;
+		}
+
+		if (pom) {
+			try {
+				String content = read(pomFile);
+
+				if (content.contains("portal.tools.bundle.support")) {
+					return true;
+				}
+			}
+			catch (Exception e) {
+			}
 		}
 
 		return false;

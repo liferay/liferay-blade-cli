@@ -619,7 +619,16 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "foobar", "-d", tempRoot.getAbsolutePath()};
 
-		String content = TestUtil.runBlade(args);
+		String content = null;
+
+		try {
+			content = TestUtil.runBlade(args);
+		}
+		catch (Throwable t) {
+			content = t.getMessage();
+		}
+
+		Assert.assertNotNull(content);
 
 		boolean containsError = content.contains("The following option is required");
 
@@ -857,13 +866,27 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "service", "foo"};
 
-		String output = TestUtil.runBlade(args);
+		String output = null;
+
+		try {
+			output = TestUtil.runBlade(args);
+		}
+		catch (Throwable t) {
+			output = t.getMessage();
+		}
+
+		Assert.assertNotNull(output);
 
 		Assert.assertTrue(output, output.contains("Usage:"));
 
 		args = new String[] {"create", "-t", "service", "-s com.test.Foo", "foo"};
 
-		output = TestUtil.runBlade(args);
+		try {
+			output = TestUtil.runBlade(args);
+		}
+		catch (Throwable t) {
+			output = t.getMessage();
+		}
 
 		Assert.assertFalse(output, output.contains("Usage:"));
 	}

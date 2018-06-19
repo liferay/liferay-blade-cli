@@ -19,8 +19,30 @@ apply plugin: "com.liferay.source.formatter"
 apply plugin: "java"
 apply plugin: "maven-publish"
 
+task createDepsZip(type:Zip)
+task createWrapperZip(type:Zip)
+
 checkSourceFormatting {
 	maxLineLength = 120
+}
+
+clean.doFirst {
+	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
+}
+
+createDepsZip {
+	from "${rootProject.projectDir}/libs/"
+	baseName = "deps"
+	destinationDir = new File("${projectDir}")
+	include "com.liferay.blade.gradle.*.jar"
+}
+
+createWrapperZip {
+	from "${rootProject.projectDir}"
+	baseName = "wrapper"
+	destinationDir = new File("${projectDir}")
+	include "gradle/**"
+	include "gradlew*"
 }
 
 dependencies {
@@ -71,23 +93,9 @@ formatSource {
 	maxLineLength = 120
 }
 
-jar.baseName = 'blade'
-
-publishing {
-	publications {
-		bladeJar(MavenPublication) {
-			groupId = "com.liferay.blade"
-			artifactId = "com.liferay.blade.cli"
-			version = "3.1.0"
-
-			pom.withXml {
-				Node pom = asNode()
-				pom.remove(pom.get('dependencies'))
-			}
-
-			from components.java
-		}
-	}
+jar {
+	baseName = 'blade'
+	from createDepsZip, createWrapperZip
 }
 
 repositories {
@@ -109,27 +117,21 @@ sourceSets {
 	}
 }
 
-task createDepsZip(type:Zip) {
-	from "${rootProject.projectDir}/libs/"
-	baseName = "deps"
-	destinationDir = new File("${projectDir}")
-	include "com.liferay.blade.gradle.*.jar"
-}
+publishing {
+	publications {
+		bladeJar(MavenPublication) {
+			groupId = "com.liferay.blade"
+			artifactId = "com.liferay.blade.cli"
+			version = "3.1.0"
 
-task createWrapperZip(type:Zip) {
-	from "${rootProject.projectDir}"
-	baseName = "wrapper"
-	destinationDir = new File("${projectDir}")
-	include "gradle/**"
-	include "gradlew*"
-}
+			pom.withXml {
+				Node pom = asNode()
+				pom.remove(pom.get('dependencies'))
+			}
 
-clean.doFirst {
-	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
-}
-
-jar {
-	from createDepsZip, createWrapperZip
+			from components.java
+		}
+	}
 }
 
 task downloadPortal(type: Download) {
@@ -141,8 +143,8 @@ task downloadPortal(type: Download) {
 task testExecutableJar(dependsOn: jar) {
 	doLast {
 		javaexec {
-			main = "-jar"
 			args = [jar.archivePath, "create", "-l"]
+			main = "-jar"
 		}
 	}
 }
@@ -150,8 +152,8 @@ task testExecutableJar(dependsOn: jar) {
 task testVersionCommand(dependsOn: jar) {
 	doLast {
 		javaexec {
-			main = "-jar"
 			args = [jar.archivePath, "version"]
+			main = "-jar"
 		}
 	}
 }

@@ -18,6 +18,7 @@ package com.liferay.blade.cli.command;
 
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.MavenRunnerUtil;
@@ -270,7 +271,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(newproject.mkdirs());
 
-		new BladeTest().run(args);
+		BladeTest bladeTest = new BladeTest();
+
+		bladeTest.run(args);
 
 		Assert.assertTrue(new File(newproject, "pom.xml").exists());
 
@@ -279,6 +282,14 @@ public class InitCommandTest {
 		String contents = new String(Files.readAllBytes(new File(newproject, "pom.xml").toPath()));
 
 		Assert.assertTrue(contents, contents.contains("3.2.1"));
+
+		File metadataFile = new File(_workspaceDir, "newproject/.blade/settings.properties");
+
+		Assert.assertTrue(metadataFile.exists());
+
+		BladeSettings bladeSettings = bladeTest.getSettings();
+
+		Assert.assertEquals("maven", bladeSettings.getProfileName());
 	}
 
 	@Test

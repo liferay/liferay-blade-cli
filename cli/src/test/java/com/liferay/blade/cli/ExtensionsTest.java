@@ -56,7 +56,9 @@ public class ExtensionsTest {
 	public void testArgsSort() throws Exception {
 		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2"};
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions().getCommands();
+		BladeTest bladeTest = new BladeTest();
+
+		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions(bladeTest.getSettings()).getCommands();
 
 		String[] sortedArgs = Extensions.sortArgs(commands, args);
 
@@ -73,7 +75,9 @@ public class ExtensionsTest {
 
 	@Test
 	public void testLoadCommandsBuiltIn() throws Exception {
-		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions().getCommands();
+		BladeTest bladeTest = new BladeTest();
+
+		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions(bladeTest.getSettings()).getCommands();
 
 		Assert.assertNotNull(commands);
 
@@ -84,7 +88,9 @@ public class ExtensionsTest {
 	public void testLoadCommandsWithCustomExtension() throws Exception {
 		_setupTestExtensions();
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions().getCommands();
+		BladeTest bladeTest = new BladeTest();
+
+		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions(bladeTest.getSettings()).getCommands();
 
 		Assert.assertNotNull(commands);
 

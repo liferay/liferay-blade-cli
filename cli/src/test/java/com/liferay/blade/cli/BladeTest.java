@@ -35,11 +35,21 @@ public class BladeTest extends BladeCLI {
 	}
 
 	public BladeTest(PrintStream ps) {
-		this(ps, null);
+		this(ps, ps, null);
 	}
 
 	public BladeTest(PrintStream ps, File base) {
 		super(ps, ps);
+
+		_base = base;
+	}
+
+	public BladeTest(PrintStream outputStream, PrintStream errorStream) {
+		this(outputStream, errorStream, null);
+	}
+
+	public BladeTest(PrintStream out, PrintStream err, File base) {
+		super(out, err);
 
 		_base = base;
 	}
