@@ -61,7 +61,7 @@ public class HelloMavenTest {
 
 		Assert.assertEquals("maven", bladeSettings.getProfileName());
 
-		args = new String[] {"--base", _workspaceDir.getPath(), "hello", "--name", "foobar"};
+		args = new String[] {"--base", _workspaceDir.getPath() + "/newproject", "hello", "--name", "foobar"};
 
 		String content = TestUtil.runBlade(args);
 
