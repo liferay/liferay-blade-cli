@@ -19,97 +19,59 @@ package com.liferay.blade.cli;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.zip.ZipEntry;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
-import org.easymock.EasyMock;
-import org.easymock.IExpectationSetters;
-
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-
-import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * @author Christopher Bryan Boyd
+ * @author Gregory Amerson
  */
-@PrepareForTest({ZipFile.class, BladeUtil.class})
-@RunWith(PowerMockRunner.class)
 public class ZipSlipTest {
 
 	@Test
-	public void testNonZipSlip() throws Exception {
-		_testZip("foo.txt");
+	public void testNoZipSlipZip() throws Exception {
+		_testZip("no-zip-slip.zip");
+
+		File tempDir = temporaryFolder.getRoot();
+
+		File expectedAFile = new File(tempDir, "afile");
+
+		Assert.assertTrue("Expected file " + expectedAFile + " not found.", expectedAFile.exists());
+
+		File expectedBFile = new File(tempDir, "b/bfile");
+
+		Assert.assertTrue("Expected file " + expectedBFile + " not found.", expectedBFile.exists());
+
+		File expectedEFile = new File(tempDir, "c/d/efile");
+
+		Assert.assertTrue("Expected file " + expectedEFile + " not found.", expectedEFile.exists());
 	}
 
 	@Test(expected = ZipException.class)
-	public void testZipSlip() throws Exception {
-		_testZip("../../foo.txt");
+	public void testZipSlipZip() throws Exception {
+		_testZip("zip-slip.zip");
 	}
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _testZip(String fileName) throws Exception {
-		ZipFile zip = PowerMock.createMock(ZipFile.class);
+		File tempDir = temporaryFolder.getRoot();
 
-		zip.close();
+		Path tempPath = tempDir.toPath();
 
-		EasyMock.expectLastCall().andVoid();
+		Path zipPath = tempPath.resolve(fileName);
 
-		InputStream in = EasyMock.createNiceMock(InputStream.class);
+		Files.copy(getClass().getResourceAsStream(fileName), zipPath);
 
-		in.read(EasyMock.isA(byte[].class));
-
-		EasyMock.expectLastCall().andReturn(-1);
-
-		EasyMock.replay(in);
-
-		EasyMock.expect(zip.getInputStream(EasyMock.isA(ZipEntry.class))).andStubReturn(in);
-
-		ZipEntry e = EasyMock.createNiceMock(ZipEntry.class);
-
-		EasyMock.expect(e.getName()).andStubReturn(fileName);
-
-		EasyMock.replay(e);
-
-		Vector<ZipEntry> vector = new Vector<>();
-
-		vector.add(e);
-
-		Enumeration<? extends ZipEntry> entries = vector.elements();
-
-		zip.entries();
-
-		EasyMock.expectLastCall().andStubReturn(entries);
-
-		IExpectationSetters<ZipFile> expectation = PowerMock.expectNew(
-			ZipFile.class, new Class<?>[] {File.class}, EasyMock.isA(File.class));
-
-		expectation.andStubReturn(zip);
-
-		FileOutputStream out = PowerMock.createNiceMock(FileOutputStream.class);
-
-		PowerMock.expectNew(
-			FileOutputStream.class, new Class<?>[] {File.class}, EasyMock.isA(File.class)).andStubReturn(out);
-
-		PowerMock.replayAll();
-
-		File testFile = new File(temporaryFolder.getRoot(), "test.zip");
-
-		File testDir = temporaryFolder.newFolder("a", "b", "c", "d", "e");
-
-		BladeUtil.unzip(testFile, testDir);
+		BladeUtil.unzip(zipPath.toFile(), tempDir);
 	}
 
 }
