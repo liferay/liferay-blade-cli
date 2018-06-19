@@ -154,7 +154,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private static boolean _isExtension(Path path) {
-		if (_isCustomTemplate(path)) {
+		if ((path != null) && _isCustomTemplate(path)) {
 			return true;
 		}
 
