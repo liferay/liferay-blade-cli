@@ -72,7 +72,9 @@ public class InstallExtensionCommandTest {
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
-		Path rootPath = temporaryFolder.getRoot().toPath();
+		File root = temporaryFolder.getRoot();
+
+		Path rootPath = root.toPath();
 
 		Path extensionJarPath = rootPath.resolve(Paths.get(".blade", "extensions", "blade-sample-command-master.jar"));
 

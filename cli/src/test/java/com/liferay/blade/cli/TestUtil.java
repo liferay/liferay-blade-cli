@@ -26,6 +26,10 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import java.util.Scanner;
+
+import org.junit.Assert;
+
 /**
  * @author Christopher Bryan Boyd
  */
@@ -56,13 +60,31 @@ public class TestUtil {
 	}
 
 	public static String runBlade(String... args) throws Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-		PrintStream ps = new PrintStream(baos);
+		PrintStream outputPrintStream = new PrintStream(outputStream);
 
-		new BladeTest(ps).run(args);
+		ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
 
-		String content = baos.toString();
+		PrintStream errorPrintStream = new PrintStream(errorStream);
+
+		new BladeTest(outputPrintStream, errorPrintStream).run(args);
+
+		String error = errorStream.toString();
+
+		try (Scanner scanner = new Scanner(error)) {
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+
+				if (line.startsWith("SLF4J:")) {
+					continue;
+				}
+
+				Assert.fail("Encountered error at line: " + line + "\n" + error);
+			}
+		}
+
+		String content = outputStream.toString();
 
 		return content;
 	}
