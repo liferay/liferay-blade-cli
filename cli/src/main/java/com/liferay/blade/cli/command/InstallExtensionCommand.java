@@ -110,7 +110,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 			Path path = Paths.get(pathArg);
 
 			if (Files.exists(path)) {
-				Path extensionJarPath = Optional.of(
+				Path gradleBuildPath = Optional.of(
 					path
 				).filter(
 					Files::exists
@@ -118,16 +118,20 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 					Files::isDirectory
 				).filter(
 					InstallExtensionCommand::_isGradleBuild
-				).map(
-					this::_gradleAssemble
 				).orElse(
-					path
+					null
 				);
 
-				_installExtension(extensionJarPath);
+				if (gradleBuildPath != null) {
+					path = _gradleAssemble(path);
+				}
+			}
+
+			if (path == null) {
+				throw new Exception("Path to extension does not exist: " + pathArg);
 			}
 			else {
-				throw new Exception("Path to extension does not exist: " + pathArg);
+				_installExtension(path);
 			}
 		}
 	}
@@ -185,30 +189,25 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		}
 	}
 
-	private Path _gradleAssemble(Path projectPath) {
+	private Path _gradleAssemble(Path projectPath) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		GradleExec gradle = new GradleExec(bladeCLI);
 
-		try {
-			Set<File> outputFiles = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), projectPath.toFile());
+		Set<File> outputFiles = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), projectPath.toFile());
 
-			gradle.executeGradleCommand("assemble -x check", projectPath.toFile());
+		gradle.executeGradleCommand("assemble -x check", projectPath.toFile());
 
-			Iterator<File> i = outputFiles.iterator();
+		Iterator<File> i = outputFiles.iterator();
 
-			if (i.hasNext()) {
-				File next = i.next();
+		if (i.hasNext()) {
+			File next = i.next();
 
-				Path outputPath = next.toPath();
+			Path outputPath = next.toPath();
 
-				if (Files.exists(outputPath)) {
-					return outputPath;
-				}
+			if (Files.exists(outputPath)) {
+				return outputPath;
 			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		return null;
