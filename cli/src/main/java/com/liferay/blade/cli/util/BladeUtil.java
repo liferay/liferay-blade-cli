@@ -244,7 +244,7 @@ public class BladeUtil {
 
 		File mavenParent = findParentFile(dir, new String[] {"pom.xml"}, true);
 
-		if (_isWorkspacePomFile(mavenParent)) {
+		if (_isWorkspacePomFile(new File(mavenParent, "pom.xml"))) {
 			return mavenParent;
 		}
 
@@ -252,7 +252,21 @@ public class BladeUtil {
 	}
 
 	private static boolean _isWorkspacePomFile(File pomFile) {
-		return true;
+		boolean pom = pomFile != null && "pom.xml".equals(pomFile.getName()) && pomFile.exists();
+
+		if (pom) {
+			try {
+				String content = BladeUtil.read(pomFile);
+
+				if (content.contains("portal.tools.bundle.support")) {
+					return true;
+				}
+			}
+			catch (Exception e) {
+			}
+		}
+
+		return false;
 	}
 
 	public static boolean hasGradleWrapper(File dir) {
