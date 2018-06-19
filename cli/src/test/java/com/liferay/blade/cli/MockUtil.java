@@ -28,6 +28,7 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import java.util.Set;
 
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
+
 import org.powermock.api.easymock.PowerMock;
 
 /**

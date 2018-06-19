@@ -19,6 +19,7 @@ package com.liferay.blade.cli.util;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
+
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
@@ -35,13 +36,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
+
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -238,7 +242,7 @@ public class BladeUtil {
 		File gradleParent = findParentFile(
 			dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
 
-		if (gradleParent != null && gradleParent.exists()) {
+		if ((gradleParent != null) && gradleParent.exists()) {
 			return gradleParent;
 		}
 
@@ -249,24 +253,6 @@ public class BladeUtil {
 		}
 
 		return null;
-	}
-
-	private static boolean _isWorkspacePomFile(File pomFile) {
-		boolean pom = pomFile != null && "pom.xml".equals(pomFile.getName()) && pomFile.exists();
-
-		if (pom) {
-			try {
-				String content = BladeUtil.read(pomFile);
-
-				if (content.contains("portal.tools.bundle.support")) {
-					return true;
-				}
-			}
-			catch (Exception e) {
-			}
-		}
-
-		return false;
 	}
 
 	public static boolean hasGradleWrapper(File dir) {
@@ -620,6 +606,28 @@ public class BladeUtil {
 
 		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_MOVED_TEMP)) {
 			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isWorkspacePomFile(File pomFile) {
+		boolean pom = false;
+
+		if ((pomFile != null) && "pom.xml".equals(pomFile.getName()) && pomFile.exists()) {
+			pom = true;
+		}
+
+		if (pom) {
+			try {
+				String content = read(pomFile);
+
+				if (content.contains("portal.tools.bundle.support")) {
+					return true;
+				}
+			}
+			catch (Exception e) {
+			}
 		}
 
 		return false;

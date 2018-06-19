@@ -68,7 +68,6 @@ dependencies {
 	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "3.0"
 	compile group: "org.gradle", name: "gradle-core", version: "3.0"
 	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"
-
 	compile name: "com.liferay.blade.gradle.model"
 	compile name: "com.liferay.blade.gradle.plugin"
 	compile name: "gradle-native-3.0"

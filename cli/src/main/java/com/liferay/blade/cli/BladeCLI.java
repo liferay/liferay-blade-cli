@@ -20,6 +20,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
+
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.util.BladeUtil;
@@ -27,8 +28,10 @@ import com.liferay.blade.cli.util.BladeUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
@@ -49,8 +52,6 @@ public class BladeCLI implements Runnable {
 	public static void main(String[] args) {
 		BladeCLI bladeCLI = new BladeCLI();
 
-
-
 		try {
 			bladeCLI.run(args);
 		}
@@ -60,8 +61,6 @@ public class BladeCLI implements Runnable {
 			e.printStackTrace(bladeCLI._err);
 		}
 	}
-
-	private Path _basePath = Paths.get(".");
 
 	public BladeCLI() {
 		this(System.out, System.err);
@@ -101,10 +100,6 @@ public class BladeCLI implements Runnable {
 		return _basePath.toFile();
 	}
 
-	public void setBase(File baseDir) {
-		_basePath = baseDir.toPath();
-	}
-
 	public BaseArgs getBladeArgs() {
 		return _commandArgs;
 	}
@@ -121,6 +116,23 @@ public class BladeCLI implements Runnable {
 		Path cacheDir = Paths.get(userHome, ".blade", "cache");
 
 		return cacheDir.toFile();
+	}
+
+	public BladeSettings getSettings() throws IOException {
+		final File settingsFile;
+
+		if (BladeUtil.isWorkspace(this)) {
+			File workspaceDir = BladeUtil.getWorkspaceDir(this);
+
+			settingsFile = new File(workspaceDir, ".blade/settings.properties");
+		}
+		else {
+			File homeDir = new File(System.getProperty("user.home"));
+
+			settingsFile = new File(homeDir, ".blade/settings.properties");
+		}
+
+		return new BladeSettings(settingsFile);
 	}
 
 	public PrintStream out() {
@@ -263,6 +275,10 @@ public class BladeCLI implements Runnable {
 		}
 	}
 
+	public void setBase(File baseDir) {
+		_basePath = baseDir.toPath();
+	}
+
 	public void trace(String s, Object... args) {
 		if (_commandArgs.isTrace() && (_tracer != null)) {
 			_tracer.format("# " + s + "%n", args);
@@ -308,28 +324,12 @@ public class BladeCLI implements Runnable {
 
 	private static final Formatter _tracer = new Formatter(System.out);
 
+	private Path _basePath = Paths.get(".");
 	private String _command;
 	private BaseArgs _commandArgs;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final PrintStream _err;
 	private JCommander _jCommander;
 	private final PrintStream _out;
-
-	public BladeSettings getSettings() throws IOException {
-		final File settingsFile;
-
-		if (BladeUtil.isWorkspace(this)) {
-			File workspaceDir = BladeUtil.getWorkspaceDir(this);
-
-			settingsFile = new File(workspaceDir, ".blade/settings.properties");
-		}
-		else {
-			File homeDir = new File(System.getProperty("user.home"));
-
-			settingsFile = new File(homeDir, ".blade/settings.properties");
-		}
-
-		return new BladeSettings(settingsFile);
-	}
 
 }

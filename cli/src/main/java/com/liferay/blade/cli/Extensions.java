@@ -18,18 +18,23 @@ package com.liferay.blade.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.lang.reflect.Field;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,10 +54,16 @@ import java.util.stream.Stream;
  */
 public class Extensions {
 
-	private final BladeSettings _bladeSettings;
-
-	public Extensions(BladeSettings bladeSettings) {
-		_bladeSettings = bladeSettings;
+	public static Collection<String> getBladeProfiles(Class<?> commandClass) {
+		return Stream.of(
+			commandClass.getAnnotationsByType(BladeProfile.class)
+		).filter(
+			Objects::nonNull
+		).map(
+			BladeProfile::value
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
@@ -102,18 +113,6 @@ public class Extensions {
 
 			throw new RuntimeException(e);
 		}
-	}
-
-	public static Collection<String> getBladeProfiles(Class<?> commandClass) {
-		return Stream.of(
-			commandClass.getAnnotationsByType(BladeProfile.class)
-		).filter(
-			Objects::nonNull
-		).map(
-			BladeProfile::value
-		).collect(
-			Collectors.toList()
-		);
 	}
 
 	public static String[] sortArgs(Map<String, BaseCommand<? extends BaseArgs>> commands, String[] args)
@@ -240,6 +239,10 @@ public class Extensions {
 		argsList.addAll(addLast);
 
 		return argsList.toArray(new String[0]);
+	}
+
+	public Extensions(BladeSettings bladeSettings) {
+		_bladeSettings = bladeSettings;
 	}
 
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
@@ -379,6 +382,7 @@ public class Extensions {
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
+	private final BladeSettings _bladeSettings;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 
 }

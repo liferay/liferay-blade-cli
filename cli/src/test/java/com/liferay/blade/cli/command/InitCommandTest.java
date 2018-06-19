@@ -27,10 +27,13 @@ import com.liferay.blade.cli.util.BladeUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 import java.nio.file.Files;
+
 import java.util.Properties;
 
 import org.gradle.testkit.runner.BuildTask;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
