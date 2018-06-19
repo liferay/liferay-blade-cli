@@ -59,6 +59,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 /**
@@ -509,6 +510,11 @@ public class BladeUtil {
 
 				final File f = new File(destDir, entryName);
 
+				if (!_isSafelyRelative(f, destDir)) {
+					throw new ZipException(
+						"Entry " + f.getName() + " is outside of the target destination: " + destDir);
+				}
+
 				if (f.exists()) {
 					IO.delete(f);
 
@@ -541,6 +547,22 @@ public class BladeUtil {
 				}
 			}
 		}
+	}
+
+	private static boolean _isSafelyRelative(File file, File destDir) {
+		Path destPath = destDir.toPath();
+
+		destPath = destPath.toAbsolutePath();
+
+		destPath = destPath.normalize();
+
+		Path path = file.toPath();
+
+		path = path.toAbsolutePath();
+
+		path = path.normalize();
+
+		return path.startsWith(destPath);
 	}
 
 	private static boolean _isURLAvailable(String urlString) throws IOException {
