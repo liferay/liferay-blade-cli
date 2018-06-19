@@ -342,6 +342,15 @@ public class BladeUtil {
 		}
 	}
 
+	public static boolean isZipValid(final File file) {
+		try (ZipFile zipFile = new ZipFile(file)) {
+			return true;
+		}
+		catch (IOException ioe) {
+			return false;
+		}
+	}
+
 	public static String read(File file) throws IOException {
 		return new String(Files.readAllBytes(file.toPath()));
 	}

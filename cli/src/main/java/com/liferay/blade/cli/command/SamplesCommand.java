@@ -132,9 +132,23 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Date now = new Date();
 
-		long diff = now.getTime() - bladeRepoArchive.lastModified();
+		boolean bladeRepoArchiveExists = bladeRepoArchive.exists();
 
-		if (!bladeRepoArchive.exists() || (diff > _FILE_EXPIRATION_TIME)) {
+		if (bladeRepoArchiveExists) {
+			long diff = now.getTime() - bladeRepoArchive.lastModified();
+
+			boolean old = false;
+
+			if (diff > _FILE_EXPIRATION_TIME) {
+				old = true;
+			}
+
+			if (old || !BladeUtil.isZipValid(bladeRepoArchive)) {
+				bladeRepoArchive.delete();
+			}
+		}
+
+		if (!bladeRepoArchive.exists()) {
 			BladeUtil.downloadLink(_BLADE_REPO_URL, bladeRepoArchive.toPath());
 
 			return true;
