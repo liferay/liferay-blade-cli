@@ -22,7 +22,7 @@ checkSourceFormatting {
 
 dependencies {
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
-	compileOnly project(":cli")
+	compileOnly group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "3.1.0"
 }
 
 formatSource {
@@ -30,6 +30,9 @@ formatSource {
 }
 
 repositories {
+	maven {
+		url "https://jenkins-lide.wedeploy.io/job/liferay-blade-cli/2/artifact/mavenRepo/"
+	}
 	maven {
 		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 	}
