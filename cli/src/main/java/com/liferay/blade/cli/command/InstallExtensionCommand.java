@@ -88,7 +88,12 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 							Path extensionPath = _gradleAssemble(directory);
 
-							_installExtension(extensionPath);
+							if (extensionPath == null) {
+								bladeCLI.err("Unable to get output of gradle build " + directory);
+							}
+							else {
+								_installExtension(extensionPath);
+							}
 						}
 						else {
 							bladeCLI.err("Path not a gradle build " + directory);
@@ -154,7 +159,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private static boolean _isExtension(Path path) {
-		if ((path != null) && _isCustomTemplate(path)) {
+		if (_isCustomTemplate(path)) {
 			return true;
 		}
 
@@ -205,9 +210,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 			Path outputPath = next.toPath();
 
-			if (Files.exists(outputPath)) {
-				return outputPath;
-			}
+			return outputPath;
 		}
 
 		return null;
