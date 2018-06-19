@@ -510,7 +510,10 @@ public class BladeUtil {
 
 				final File f = new File(destDir, entryName);
 
-				_checkZipSlip(f, destDir);
+				if (!_isSafelyRelative(f, destDir)) {
+					throw new ZipException(
+						"Entry " + f.getName() + " is outside of the target destination: " + destDir);
+				}
 
 				if (f.exists()) {
 					IO.delete(f);
@@ -546,23 +549,20 @@ public class BladeUtil {
 		}
 	}
 
-	private static void _checkZipSlip(File file, File destDir) throws IOException {
-		Path dirPath = destDir.toPath();
+	private static boolean _isSafelyRelative(File file, File destDir) {
+		Path destPath = destDir.toPath();
 
-		dirPath = dirPath.toAbsolutePath();
+		destPath = destPath.toAbsolutePath();
 
-		dirPath = dirPath.normalize();
+		destPath = destPath.normalize();
 
-		Path filePath = file.toPath();
+		Path path = file.toPath();
 
-		filePath = filePath.toAbsolutePath();
+		path = path.toAbsolutePath();
 
-		filePath = filePath.normalize();
+		path = path.normalize();
 
-		if (!filePath.startsWith(dirPath)) {
-			throw new ZipException(
-				"Zip Slip: Entry " + filePath.getFileName() + " is outside of the target destination: " + filePath);
-		}
+		return path.startsWith(destPath);
 	}
 
 	private static boolean _isURLAvailable(String urlString) throws IOException {
