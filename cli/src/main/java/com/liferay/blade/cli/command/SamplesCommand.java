@@ -132,9 +132,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Date now = new Date();
 
-		boolean bladeRepoArchiveExists = bladeRepoArchive.exists();
-
-		if (bladeRepoArchiveExists) {
+		if (bladeRepoArchive.exists()) {
 			long diff = now.getTime() - bladeRepoArchive.lastModified();
 
 			boolean old = false;

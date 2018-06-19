@@ -342,7 +342,7 @@ public class BladeUtil {
 		}
 	}
 
-	public static boolean isZipValid(final File file) {
+	public static boolean isZipValid(File file) {
 		try (ZipFile zipFile = new ZipFile(file)) {
 			return true;
 		}
