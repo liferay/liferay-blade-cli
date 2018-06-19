@@ -59,6 +59,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 /**
@@ -509,6 +510,8 @@ public class BladeUtil {
 
 				final File f = new File(destDir, entryName);
 
+				_checkZipSlip(f, destDir);
+
 				if (f.exists()) {
 					IO.delete(f);
 
@@ -540,6 +543,25 @@ public class BladeUtil {
 					out.flush();
 				}
 			}
+		}
+	}
+
+	private static void _checkZipSlip(File file, File destDir) throws IOException {
+		Path dirPath = destDir.toPath();
+
+		dirPath = dirPath.toAbsolutePath();
+
+		dirPath = dirPath.normalize();
+
+		Path filePath = file.toPath();
+
+		filePath = filePath.toAbsolutePath();
+
+		filePath = filePath.normalize();
+
+		if (!filePath.startsWith(dirPath)) {
+			throw new ZipException(
+				"Zip Slip: Entry " + filePath.getFileName() + " is outside of the target destination: " + filePath);
 		}
 	}
 
