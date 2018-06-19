@@ -22,7 +22,7 @@ checkSourceFormatting {
 
 dependencies {
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
-	compileOnly group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "3.1.0"
+	compileOnly project(":cli")
 }
 
 formatSource {
