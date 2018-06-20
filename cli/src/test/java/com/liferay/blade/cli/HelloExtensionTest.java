@@ -33,8 +33,9 @@ import org.powermock.reflect.Whitebox;
 
 /**
  * @author Christopher Bryan Boyd
+ * @author Gregory Amerson
  */
-public class HelloMavenTest {
+public class HelloExtensionTest {
 
 	@Before
 	public void setUp() throws Exception {
@@ -43,12 +44,12 @@ public class HelloMavenTest {
 		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
 		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", temporaryFolder.getRoot());
+
+		_setupTestExtensions();
 	}
 
 	@Test
 	public void testCustomProfileExtension() throws Exception {
-		_setupTestExtensions();
-
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-b", "maven", "newproject"};
 
 		File newproject = new File(_workspaceDir, "newproject");
@@ -68,6 +69,15 @@ public class HelloMavenTest {
 		String content = TestUtil.runBlade(args);
 
 		Assert.assertTrue(content.contains("maven"));
+	}
+
+	@Test
+	public void testHelp() throws Exception {
+		String[] args = {"hello", "--name", "foo"};
+
+		String output = TestUtil.runBlade(args);
+
+		Assert.assertEquals("Hello foo!", output.trim());
 	}
 
 	@Rule

@@ -315,7 +315,19 @@ public class BladeCLI implements Runnable {
 		if (command != null) {
 			command.setArgs(_commandArgs);
 			command.setBlade(this);
-			command.execute();
+
+			Thread thread = Thread.currentThread();
+
+			ClassLoader currentClassLoader = thread.getContextClassLoader();
+
+			try {
+				thread.setContextClassLoader(command.getClassLoader());
+
+				command.execute();
+			}
+			finally {
+				thread.setContextClassLoader(currentClassLoader);
+			}
 		}
 		else {
 			printUsage();
