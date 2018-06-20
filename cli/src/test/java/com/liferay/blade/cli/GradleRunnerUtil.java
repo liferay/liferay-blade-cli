@@ -64,7 +64,8 @@ public class GradleRunnerUtil {
 	public static void verifyBuildOutput(String projectPath, String fileName) throws IOException {
 		final Path[] projectFilePath = new Path[1];
 
-		Files.walkFileTree(Paths.get(projectPath),
+		Files.walkFileTree(
+			Paths.get(projectPath),
 			new SimpleFileVisitor<Path>() {
 
 				@Override
