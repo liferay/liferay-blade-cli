@@ -120,9 +120,8 @@ public class MockUtil {
 	}
 
 	public static void stubGradleExec() throws Exception {
-		
 		ProcessResult result = new ProcessResult(0, "");
-		
+
 		GradleExec gradle = EasyMock.createNiceMock(GradleExec.class);
 
 		EasyMock.expect(

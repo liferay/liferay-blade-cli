@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
@@ -87,16 +88,13 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 							bladeCLI.out("Building extension...");
 
 							Set<Path> extensionPaths = _gradleAssemble(directory);
-							
-							if(extensionPaths.size() > 0) {
-								
+
+							if (!extensionPaths.isEmpty()) {
 								for (Path extensionPath : extensionPaths) {
-									
 									_installExtension(extensionPath);
 								}
 							}
 							else {
-
 								bladeCLI.err("Unable to get output of gradle build " + directory);
 							}
 						}
@@ -134,8 +132,11 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 				if (gradleBuildPath != null) {
 					Set<Path> paths = _gradleAssemble(path);
-					if (paths.size() > 0) {
-						path = paths.iterator().next();
+
+					if (!paths.isEmpty()) {
+						Iterator<Path> pathsIterator = paths.iterator();
+
+						path = pathsIterator.next();
 					}
 				}
 			}
@@ -212,7 +213,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		gradle.executeGradleCommand("assemble -x check", projectPath.toFile());
 
 		Set<Path> extensionFiles = new HashSet<>();
-		
+
 		Iterator<File> i = outputFiles.iterator();
 
 		if (i.hasNext()) {

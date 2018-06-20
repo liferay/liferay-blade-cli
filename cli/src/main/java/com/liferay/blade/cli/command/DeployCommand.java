@@ -110,7 +110,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		ProcessResult result = gradle.executeGradleCommand("assemble -x check");
 
 		int retcode = result.getResultCode();
-		
+
 		if (retcode > 0) {
 			_addError("Gradle assemble task failed.");
 

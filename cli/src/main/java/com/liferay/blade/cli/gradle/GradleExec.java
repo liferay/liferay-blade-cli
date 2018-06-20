@@ -21,7 +21,9 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.InputStream;
+
 import java.nio.charset.Charset;
+
 import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
@@ -30,6 +32,53 @@ import org.apache.commons.io.IOUtils;
  * @author David Truong
  */
 public class GradleExec {
+
+	public static boolean isGradleInstalled() {
+		try {
+			ProcessBuilder builder = new ProcessBuilder();
+
+			if (BladeUtil.isWindows()) {
+				builder.command("cmd.exe", "/c", "gradle -version");
+			}
+			else {
+				builder.command("sh", "-c", "gradle -version");
+			}
+
+			builder.directory(new File(System.getProperty("user.home")));
+
+			Process process = builder.start();
+
+			InputStream inputStream = process.getInputStream();
+
+			InputStream errorStream = process.getErrorStream();
+
+			StringBuilder output = new StringBuilder();
+
+			String stdOutString = IOUtils.toString(inputStream, Charset.defaultCharset());
+			String stdErrString = IOUtils.toString(errorStream, Charset.defaultCharset());
+
+			output.append(stdOutString);
+			output.append(stdErrString);
+
+			int code = process.waitFor();
+
+			if (code != 0) {
+				return false;
+			}
+			else {
+				String result = output.toString();
+
+				if ((result != null) && result.contains("version")) {
+					return true;
+				}
+
+				return false;
+			}
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
 
 	public GradleExec(BladeCLI blade) {
 		_blade = blade;
@@ -40,29 +89,28 @@ public class GradleExec {
 	}
 
 	public ProcessResult executeGradleCommand(String cmd, File dir) throws Exception {
-		
-		String executable = getGradleExecutable(dir);
-		
+		String executable = _getGradleExecutable(dir);
+
 		Process process = BladeUtil.startProcess(_blade, "\"" + executable + "\" " + cmd, dir, true);
 
 		int returnCode = process.waitFor();
-		
+
 		String output = IOUtils.toString(process.getInputStream(), Charset.defaultCharset());
-		
+
 		return new ProcessResult(returnCode, output);
 	}
-	
-	private String getGradleExecutable(File dir) throws NoSuchElementException {
+
+	private String _getGradleExecutable(File dir) throws NoSuchElementException {
 		File gradlew = null;
 		String executable = null;
-				
+
 		gradlew = BladeUtil.getGradleWrapper(dir);
-		
+
 		if (gradlew == null) {
 			gradlew = BladeUtil.getGradleWrapper(_blade.getBase());
 		}
 
-		if (gradlew != null && gradlew.exists()) {
+		if ((gradlew != null) && gradlew.exists()) {
 			try {
 				executable = gradlew.getCanonicalPath();
 			}
@@ -73,67 +121,26 @@ public class GradleExec {
 		else {
 			executable = "gradle";
 		}
-		
+
 		if ("gradle".equals(executable)) {
 			if (isGradleInstalled()) {
 				_blade.out("Could not find gradle wrapper, using gradle");
-			} else {				
-				throw new NoSuchElementException("Gradle Wrapper not found, and Gradle is not installed.");
 			}
-		} else {
+			else {
+				throw new NoSuchElementException("Gradle Wrapper not found, and Gradle is not installed");
+			}
+		}
+		else {
 			if (gradlew != null) {
 				if (!gradlew.canExecute()) {
 					gradlew.setExecutable(true);
 				}
 			}
 		}
-		
+
 		return executable;
 	}
-	
-	public static boolean isGradleInstalled() {
-		try {
-			ProcessBuilder builder = new ProcessBuilder();
-			
-			if (BladeUtil.isWindows()) {
-			    builder.command("cmd.exe", "/c", "gradle -version");
-			} else {
-			    builder.command("sh", "-c", "gradle -version");
-			}
-			
-			builder.directory(new File(System.getProperty("user.home")));
-			
-			Process process = builder.start();
-			
-			InputStream inputStream = process.getInputStream();
-			
-			InputStream errorStream = process.getErrorStream();
-			
-			StringBuilder output = new StringBuilder();
-			
-			String stdOutString = IOUtils.toString(inputStream, Charset.defaultCharset());
-			String stdErrString = IOUtils.toString(errorStream, Charset.defaultCharset());
-			
-			output.append(stdOutString);
-			output.append(stdErrString);
-			
-			int code = process.waitFor();
-			
-			if (code != 0) {
-				return false;
-			} 
-			else {
-				
-				String result = output.toString();
-	
-				return result != null && result.contains("version");
-			}
-		} 
-		catch (Exception e) {
-			return false;
-		}
-		
-	}
-	
+
 	private BladeCLI _blade;
+
 }
