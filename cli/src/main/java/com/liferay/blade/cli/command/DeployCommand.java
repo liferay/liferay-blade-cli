@@ -23,6 +23,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.LiferayBundleDeployer;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
+import com.liferay.blade.cli.gradle.ProcessResult;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileWatcher;
 import com.liferay.blade.cli.util.FileWatcher.Consumer;
@@ -106,8 +107,10 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 	}
 
 	private void _deploy(GradleExec gradle, Set<File> outputFiles, String host, int port) throws Exception {
-		int retcode = gradle.executeGradleCommand("assemble -x check");
+		ProcessResult result = gradle.executeGradleCommand("assemble -x check");
 
+		int retcode = result.getResultCode();
+		
 		if (retcode > 0) {
 			_addError("Gradle assemble task failed.");
 

@@ -49,8 +49,10 @@ public class GradleExecTest {
 
 		GradleExec gradleExec = new GradleExec(blade);
 
-		int errorCode = gradleExec.executeGradleCommand("tasks");
-
+		ProcessResult result = gradleExec.executeGradleCommand("tasks");
+		
+		int errorCode = result.getResultCode();
+		
 		Assert.assertEquals(0, errorCode);
 	}
 
