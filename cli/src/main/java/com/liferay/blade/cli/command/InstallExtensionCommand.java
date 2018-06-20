@@ -35,6 +35,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
@@ -86,13 +87,15 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 						if (_isGradleBuild(directory)) {
 							bladeCLI.out("Building extension...");
 
-							Path extensionPath = _gradleAssemble(directory);
+							Set<Path> extensionPaths = _gradleAssemble(directory);
 
-							if (extensionPath == null) {
-								bladeCLI.err("Unable to get output of gradle build " + directory);
+							if (!extensionPaths.isEmpty()) {
+								for (Path extensionPath : extensionPaths) {
+									_installExtension(extensionPath);
+								}
 							}
 							else {
-								_installExtension(extensionPath);
+								bladeCLI.err("Unable to get output of gradle build " + directory);
 							}
 						}
 						else {
@@ -128,7 +131,13 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 				);
 
 				if (gradleBuildPath != null) {
-					path = _gradleAssemble(path);
+					Set<Path> paths = _gradleAssemble(path);
+
+					if (!paths.isEmpty()) {
+						Iterator<Path> pathsIterator = paths.iterator();
+
+						path = pathsIterator.next();
+					}
 				}
 			}
 
@@ -194,14 +203,16 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		}
 	}
 
-	private Path _gradleAssemble(Path projectPath) throws Exception {
+	private Set<Path> _gradleAssemble(Path projectPath) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		GradleExec gradle = new GradleExec(bladeCLI);
+		GradleExec gradleExec = new GradleExec(bladeCLI);
 
 		Set<File> outputFiles = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), projectPath.toFile());
 
-		gradle.executeGradleCommand("assemble -x check", projectPath.toFile());
+		gradleExec.executeCommand("assemble -x check", projectPath.toFile());
+
+		Set<Path> extensionPaths = new HashSet<>();
 
 		Iterator<File> i = outputFiles.iterator();
 
@@ -210,10 +221,12 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 			Path outputPath = next.toPath();
 
-			return outputPath;
+			if (Files.exists(outputPath)) {
+				extensionPaths.add(outputPath);
+			}
 		}
 
-		return null;
+		return extensionPaths;
 	}
 
 	private void _installExtension(Path extensionPath) throws IOException {

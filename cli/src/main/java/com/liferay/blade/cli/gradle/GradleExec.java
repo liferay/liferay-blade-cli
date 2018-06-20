@@ -20,6 +20,13 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
+import java.io.InputStream;
+
+import java.nio.charset.Charset;
+
+import java.util.NoSuchElementException;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * @author David Truong
@@ -28,37 +35,103 @@ public class GradleExec {
 
 	public GradleExec(BladeCLI blade) {
 		_blade = blade;
+	}
 
-		File gradlew = BladeUtil.getGradleWrapper(blade.getBase());
+	public ProcessResult executeCommand(String cmd, File dir) throws Exception {
+		String executable = _getGradleExecutable(dir);
 
-		if (gradlew != null) {
+		Process process = BladeUtil.startProcess(_blade, "\"" + executable + "\" " + cmd, dir, true);
+
+		int returnCode = process.waitFor();
+
+		String output = IOUtils.toString(process.getInputStream(), Charset.defaultCharset());
+
+		return new ProcessResult(returnCode, output);
+	}
+
+	public ProcessResult executeGradleCommand(String cmd) throws Exception {
+		return executeCommand(cmd, _blade.getBase());
+	}
+
+	private static boolean _isGradleInstalled() {
+		try {
+			ProcessBuilder builder = new ProcessBuilder();
+
+			if (BladeUtil.isWindows()) {
+				builder.command("cmd.exe", "/c", "gradle -version");
+			}
+			else {
+				builder.command("sh", "-c", "gradle -version");
+			}
+
+			builder.directory(new File(System.getProperty("user.home")));
+
+			Process process = builder.start();
+
+			InputStream inputStream = process.getInputStream();
+
+			InputStream errorStream = process.getErrorStream();
+
+			StringBuilder output = new StringBuilder();
+
+			String stdOutString = IOUtils.toString(inputStream, Charset.defaultCharset());
+			String stdErrString = IOUtils.toString(errorStream, Charset.defaultCharset());
+
+			output.append(stdOutString);
+			output.append(stdErrString);
+
+			int code = process.waitFor();
+
+			if (code != 0) {
+				return false;
+			}
+			else {
+				String result = output.toString();
+
+				if ((result != null) && result.contains("version")) {
+					return true;
+				}
+
+				return false;
+			}
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+
+	private String _getGradleExecutable(File dir) throws NoSuchElementException {
+		File gradlew = BladeUtil.getGradleWrapper(dir);
+		String executable = "gradle";
+
+		if (gradlew == null) {
+			gradlew = BladeUtil.getGradleWrapper(_blade.getBase());
+		}
+
+		if ((gradlew != null) && gradlew.exists()) {
 			try {
-				_executable = gradlew.getCanonicalPath();
-			}
-			catch (Exception e) {
-				blade.out("Could not find gradle wrapper, using gradle");
+				if (!gradlew.canExecute()) {
+					gradlew.setExecutable(true);
+				}
 
-				_executable = "gradle";
+				executable = gradlew.getCanonicalPath();
+			}
+			catch (Throwable th) {
 			}
 		}
-		else {
-			blade.out("Could not find gradle wrapper, using gradle");
 
-			_executable = "gradle";
+		if ("gradle".equals(executable)) {
+			if (_isGradleInstalled()) {
+				_blade.out("Could not find gradle wrapper, using gradle");
+			}
+			else {
+				throw new NoSuchElementException("Gradle wrapper not found and Gradle is not installed");
+			}
 		}
-	}
 
-	public int executeGradleCommand(String cmd) throws Exception {
-		return executeGradleCommand(cmd, _blade.getBase());
-	}
-
-	public int executeGradleCommand(String cmd, File dir) throws Exception {
-		Process process = BladeUtil.startProcess(_blade, "\"" + _executable + "\" " + cmd, dir, true);
-
-		return process.waitFor();
+		return executable;
 	}
 
 	private BladeCLI _blade;
-	private String _executable;
 
 }

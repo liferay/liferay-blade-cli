@@ -24,6 +24,7 @@ import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.DeployCommand;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
+import com.liferay.blade.cli.gradle.ProcessResult;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
@@ -119,12 +120,14 @@ public class MockUtil {
 	}
 
 	public static void stubGradleExec() throws Exception {
+		ProcessResult result = new ProcessResult(0, "");
+
 		GradleExec gradle = EasyMock.createNiceMock(GradleExec.class);
 
 		EasyMock.expect(
 			gradle.executeGradleCommand(EasyMock.anyString())
 		).andStubReturn(
-			0
+			result
 		);
 
 		EasyMock.replay(gradle);
