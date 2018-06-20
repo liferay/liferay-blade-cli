@@ -43,6 +43,10 @@ public abstract class BaseCommand<T extends BaseArgs> {
 		return _blade;
 	}
 
+	public ClassLoader getClassLoader() {
+		return _classLoader;
+	}
+
 	public void setArgs(BaseArgs commandArgs) {
 		_args = getArgsClass().cast(commandArgs);
 	}
@@ -51,7 +55,12 @@ public abstract class BaseCommand<T extends BaseArgs> {
 		_blade = blade;
 	}
 
+	public void setClassLoader(ClassLoader classLoader) {
+		_classLoader = classLoader;
+	}
+
 	private T _args;
 	private BladeCLI _blade;
+	private ClassLoader _classLoader;
 
 }

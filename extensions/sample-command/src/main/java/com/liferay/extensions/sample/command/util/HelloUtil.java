@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.sample.command;
+package com.liferay.extensions.sample.command.util;
 
-import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.extensions.sample.command.util.HelloUtil;
+import com.liferay.extensions.sample.command.HelloArgs;
 
 /**
  * @author Liferay
  */
-public class Hello extends BaseCommand<HelloArgs> {
+public class HelloUtil {
 
-	@Override
-	public void execute() throws Exception {
-		HelloArgs helloArgs = getArgs();
-
-		getBladeCLI().out(HelloUtil.getHello(helloArgs));
-	}
-
-	@Override
-	public Class<HelloArgs> getArgsClass() {
-		return HelloArgs.class;
+	public static String getHello(HelloArgs helloArgs) {
+		return "Hello " + helloArgs.getName() + "!";
 	}
 
 }

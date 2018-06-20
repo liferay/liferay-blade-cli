@@ -333,14 +333,16 @@ public class Extensions {
 
 			URL[] jarUrls = _getJarUrls(getDirectory());
 
-			URLClassLoader serviceLoaderClassloader = new URLClassLoader(jarUrls, getClass().getClassLoader());
+			ClassLoader serviceLoaderClassLoader = new URLClassLoader(jarUrls, getClass().getClassLoader());
 
 			@SuppressWarnings("rawtypes")
-			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassloader);
+			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassLoader);
 
 			Collection<BaseCommand<?>> allCommands = new ArrayList<>();
 
 			for (BaseCommand<?> baseCommand : serviceLoader) {
+				baseCommand.setClassLoader(serviceLoaderClassLoader);
+
 				allCommands.add(baseCommand);
 			}
 
@@ -373,8 +375,6 @@ public class Extensions {
 			for (Entry<String, BaseCommand<?>> entry : map.entrySet()) {
 				_commands.put(entry.getKey(), entry.getValue());
 			}
-
-			serviceLoaderClassloader.close();
 		}
 
 		return _commands;
