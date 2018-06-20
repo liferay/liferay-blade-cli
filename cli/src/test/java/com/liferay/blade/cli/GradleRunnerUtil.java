@@ -18,6 +18,7 @@ package com.liferay.blade.cli;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +30,7 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
+
 import org.junit.Assert;
 
 /**
@@ -64,6 +66,7 @@ public class GradleRunnerUtil {
 
 		Files.walkFileTree(Paths.get(projectPath),
 			new SimpleFileVisitor<Path>() {
+
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					Path pathFileName = file.getFileName();
@@ -76,6 +79,7 @@ public class GradleRunnerUtil {
 
 					return FileVisitResult.CONTINUE;
 				}
+
 			});
 
 		Assert.assertNotNull("Unable to find project file " + fileName + " in " + projectPath, projectFilePath[0]);

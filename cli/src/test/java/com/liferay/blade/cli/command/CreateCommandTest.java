@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Jar;
+
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeTest;
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,8 +46,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.tooling.internal.consumer.ConnectorServices;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -95,7 +99,7 @@ public class CreateCommandTest {
 			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
 			".*^public class BarActivator implements BundleActivator.*$");
 
-		MavenRunnerUtil.executeMavenPackage(projectPath, new String[] {"clean", "package"});
+		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
 
@@ -140,8 +144,10 @@ public class CreateCommandTest {
 
 		_contains(_checkFileExists(projectPath + "/src/main/resources/foo/api/packageinfo"), "version 1.0.0");
 
-		MavenRunnerUtil.executeMavenPackage(projectPath, new String[] {"clean", "package"});
+		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
 		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 
 		try (Jar jar = new Jar(new File(projectPath, "target/foo-1.0.0.jar"))) {
@@ -199,8 +205,10 @@ public class CreateCommandTest {
 				".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$"
 			});
 
-		MavenRunnerUtil.executeMavenPackage(projectPath, new String[] {"clean", "package"});
+		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
+
 		_verifyImportPackage(new File(projectPath, "target/loginHook-1.0.0.jar"));
 	}
 
@@ -640,7 +648,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 
-		MavenRunnerUtil.executeMavenPackage(projectPath, new String[] {"clean", "package"});
+		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 

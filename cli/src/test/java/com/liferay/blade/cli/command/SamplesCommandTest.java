@@ -25,6 +25,7 @@ import com.liferay.blade.cli.TestUtil;
 import java.io.File;
 
 import org.gradle.testkit.runner.BuildTask;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
