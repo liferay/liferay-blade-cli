@@ -107,11 +107,11 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 	}
 
 	private void _deploy(GradleExec gradle, Set<File> outputFiles, String host, int port) throws Exception {
-		ProcessResult result = gradle.executeGradleCommand("assemble -x check");
+		ProcessResult processResult = gradle.executeGradleCommand("assemble -x check");
 
-		int retcode = result.getResultCode();
+		int resultCode = processResult.getResultCode();
 
-		if (retcode > 0) {
+		if (resultCode > 0) {
 			_addError("Gradle assemble task failed.");
 
 			return;

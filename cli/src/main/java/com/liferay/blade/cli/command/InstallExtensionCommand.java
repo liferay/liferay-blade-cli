@@ -206,13 +206,13 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	private Set<Path> _gradleAssemble(Path projectPath) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		GradleExec gradle = new GradleExec(bladeCLI);
+		GradleExec gradleExec = new GradleExec(bladeCLI);
 
 		Set<File> outputFiles = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), projectPath.toFile());
 
-		gradle.executeGradleCommand("assemble -x check", projectPath.toFile());
+		gradleExec.executeCommand("assemble -x check", projectPath.toFile());
 
-		Set<Path> extensionFiles = new HashSet<>();
+		Set<Path> extensionPaths = new HashSet<>();
 
 		Iterator<File> i = outputFiles.iterator();
 
@@ -222,11 +222,11 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 			Path outputPath = next.toPath();
 
 			if (Files.exists(outputPath)) {
-				extensionFiles.add(outputPath);
+				extensionPaths.add(outputPath);
 			}
 		}
 
-		return extensionFiles;
+		return extensionPaths;
 	}
 
 	private void _installExtension(Path extensionPath) throws IOException {
