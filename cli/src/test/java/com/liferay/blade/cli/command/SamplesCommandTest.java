@@ -34,6 +34,7 @@ import org.junit.rules.TemporaryFolder;
 
 /**
  * @author David Truong
+ * @author Gregory Amerson
  */
 public class SamplesCommandTest {
 
@@ -56,11 +57,9 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(buildFile.exists());
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "build");
+		String projectPath = projectDir.getPath();
 
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "com.liferay.blade.friendly.url-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "com.liferay.blade.friendly.url-1.0.0.jar");
 	}
 
 	@Test
@@ -77,11 +76,9 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(buildFile.exists());
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "build");
+		String projectPath = projectDir.getPath();
 
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "com.liferay.blade.rest-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "com.liferay.blade.rest-1.0.0.jar");
 	}
 
 	@Test
@@ -107,11 +104,9 @@ public class SamplesCommandTest {
 		Assert.assertTrue(gradleWrapperProperties.exists());
 		Assert.assertTrue(gradleWrapperShell.exists());
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectDir.getPath(), "build");
+		String projectPath = projectDir.getPath();
 
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "com.liferay.blade.authenticator.shiro-1.0.0.jar");
+		TestUtil.verifyBuild(projectPath, "com.liferay.blade.authenticator.shiro-1.0.0.jar");
 	}
 
 	@Test

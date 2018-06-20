@@ -1,6 +1,6 @@
 subprojects {
 	plugins.withId("com.liferay.source.formatter") {
-		build.dependsOn checkSourceFormatting
+		test.dependsOn checkSourceFormatting
 	}
 
 	plugins.withId("java") {

@@ -162,6 +162,6 @@ public class ExtensionsTest {
 
 	private static final int _NUM_BUILTIN_COMMANDS = 17;
 
-	private static final int _NUM_BUILTIN_TEMPLATES = 36;
+	private static final int _NUM_BUILTIN_TEMPLATES = 37;
 
 }

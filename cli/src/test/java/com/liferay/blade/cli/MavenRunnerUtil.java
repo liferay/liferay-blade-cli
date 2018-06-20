@@ -31,9 +31,9 @@ import org.junit.Assert;
  */
 public class MavenRunnerUtil {
 
-	public static void executeMavenPackage(String projectPath, String[] phases) {
-		Assert.assertNotNull(phases);
-		Assert.assertTrue(phases.length > 0);
+	public static void executeGoals(String projectPath, String[] goals) {
+		Assert.assertNotNull(goals);
+		Assert.assertTrue(goals.length > 0);
 
 		String os = System.getProperty("os.name");
 
@@ -48,9 +48,11 @@ public class MavenRunnerUtil {
 
 		StringBuilder commandBuilder = new StringBuilder();
 
-		for (String phase : phases) {
-			commandBuilder.append(phase + " ");
+		for (String goal : goals) {
+			commandBuilder.append(goal + " ");
 		}
+
+		StringBuilder output = new StringBuilder();
 
 		try {
 			Runtime runtime = Runtime.getRuntime();
@@ -64,14 +66,23 @@ public class MavenRunnerUtil {
 			Process process = runtime.exec(
 				(windows ? ".\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(), null, new File(projectPath));
 
-			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
 			String line = null;
 
-			while ((line = input.readLine()) != null) {
+			while ((line = processOutput.readLine()) != null) {
+				output.append(line);
+				output.append(System.lineSeparator());
+
 				if (line.contains("BUILD SUCCESS")) {
 					buildSuccess = true;
 				}
+			}
+
+			while ((line = processError.readLine()) != null) {
+				output.append(line);
+				output.append(System.lineSeparator());
 			}
 
 			exitValue = process.waitFor();
@@ -79,7 +90,7 @@ public class MavenRunnerUtil {
 		catch (Exception e) {
 		}
 
-		Assert.assertEquals(0, exitValue);
+		Assert.assertEquals("Maven process returned:\n" + output.toString(), 0, exitValue);
 		Assert.assertTrue(buildSuccess);
 	}
 

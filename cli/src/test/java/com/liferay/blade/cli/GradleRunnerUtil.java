@@ -16,9 +16,15 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
-
 import java.io.File;
+import java.io.IOException;
+
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
@@ -55,10 +61,29 @@ public class GradleRunnerUtil {
 		return buildTask;
 	}
 
-	public static void verifyBuildOutput(String projectPath, String fileName) {
-		File file = IO.getFile(projectPath + "/build/libs/" + fileName);
+	public static void verifyBuildOutput(String projectPath, String fileName) throws IOException {
+		final Path[] projectFilePath = new Path[1];
 
-		Assert.assertTrue(file.exists());
+		Files.walkFileTree(
+			Paths.get(projectPath),
+			new SimpleFileVisitor<Path>() {
+
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+					Path pathFileName = file.getFileName();
+
+					if (fileName.equals(pathFileName.toString())) {
+						projectFilePath[0] = file;
+
+						return FileVisitResult.TERMINATE;
+					}
+
+					return FileVisitResult.CONTINUE;
+				}
+
+			});
+
+		Assert.assertNotNull("Unable to find project file " + fileName + " in " + projectPath, projectFilePath[0]);
 	}
 
 	public static void verifyGradleRunnerOutput(BuildTask buildTask) {

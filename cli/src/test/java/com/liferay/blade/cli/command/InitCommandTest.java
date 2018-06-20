@@ -236,7 +236,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(new File(newproject, "settings.gradle").toPath()));
 
-		Assert.assertTrue(contents, contents.contains("1.9.0"));
+		Assert.assertTrue(contents, contents.contains("1.10"));
 	}
 
 	@Test
@@ -432,7 +432,7 @@ public class InitCommandTest {
 
 		String projectPath = _workspaceDir.getPath() + "/modules/foo";
 
-		MavenRunnerUtil.executeMavenPackage(projectPath, new String[] {"clean", "package"});
+		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 	}
