@@ -31,7 +31,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import org.powermock.api.easymock.PowerMock;
 import org.powermock.reflect.Whitebox;
 
 /**
@@ -51,8 +50,6 @@ public class InstallExtensionCommandTest {
 
 		String output = TestUtil.runBlade(args);
 
-		PowerMock.verifyAll();
-
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
 		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
@@ -62,6 +59,22 @@ public class InstallExtensionCommandTest {
 		File extensionJar = new File(root, ".blade/extensions/" + _sampleCommandJarFile.getName());
 
 		Assert.assertTrue(extensionJar.getAbsolutePath() + " does not exist", extensionJar.exists());
+	}
+
+	@Test
+	public void testInstallCustomExtensionTwice() throws Exception {
+		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
+
+		String output = TestUtil.runBlade(args);
+
+		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
+
+		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
+
+		output = TestUtil.runBlade(args);
+
+		Assert.assertTrue(
+			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
 	}
 
 	@Test
