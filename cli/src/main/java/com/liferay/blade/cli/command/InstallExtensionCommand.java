@@ -237,9 +237,14 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 			Path newExtensionPath = extensionsHome.resolve(extensionName);
 
-			Files.copy(extensionPath, newExtensionPath);
+			if (Files.exists(newExtensionPath)) {
+				getBladeCLI().out("The extension " + extensionName + " already exists in blade extensions.");
+			}
+			else {
+				Files.copy(extensionPath, newExtensionPath);
 
-			getBladeCLI().out("The extension " + extensionName + " has been installed successfully.");
+				getBladeCLI().out("The extension " + extensionName + " has been installed successfully.");
+			}
 		}
 		else {
 			throw new IOException(

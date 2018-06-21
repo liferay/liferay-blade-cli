@@ -1,8 +1,4 @@
 subprojects {
-	plugins.withId("com.liferay.source.formatter") {
-		test.dependsOn checkSourceFormatting
-	}
-
 	plugins.withId("java") {
 		repositories {
 			flatDir {
