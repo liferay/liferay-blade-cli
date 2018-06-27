@@ -49,7 +49,7 @@ public class ExtensionsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", temporaryFolder.getRoot());
+		Whitebox.setInternalState(BladeCLI.class, "USER_HOME_DIR", temporaryFolder.getRoot());
 	}
 
 	@Test
@@ -58,7 +58,11 @@ public class ExtensionsTest {
 
 		BladeTest bladeTest = new BladeTest();
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions(bladeTest.getSettings()).getCommands();
+		Map<String, BaseCommand<? extends BaseArgs>> commands;
+
+		try (Extensions extensions = new Extensions(bladeTest.getSettings())) {
+			commands = extensions.getCommands();
+		}
 
 		String[] sortedArgs = Extensions.sortArgs(commands, args);
 

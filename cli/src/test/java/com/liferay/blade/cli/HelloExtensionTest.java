@@ -43,7 +43,7 @@ public class HelloExtensionTest {
 
 		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
-		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", temporaryFolder.getRoot());
+		Whitebox.setInternalState(BladeCLI.class, "USER_HOME_DIR", temporaryFolder.getRoot());
 
 		_setupTestExtensions();
 	}

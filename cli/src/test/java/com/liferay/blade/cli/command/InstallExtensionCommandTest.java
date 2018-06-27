@@ -16,8 +16,11 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.Extensions;
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
@@ -26,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +45,15 @@ public class InstallExtensionCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", temporaryFolder.getRoot());
+		Whitebox.setInternalState(BladeCLI.class, "USER_HOME_DIR", temporaryFolder.getRoot());
+
+		BladeTest bladeTest = new BladeTest();
+
+		File cacheDir = bladeTest.getCacheDir();
+
+		if (cacheDir.exists()) {
+			FileUtil.deleteDir(cacheDir.toPath());
+		}
 	}
 
 	@Test
@@ -79,7 +91,9 @@ public class InstallExtensionCommandTest {
 
 	@Test
 	public void testInstallCustomGithubExtension() throws Exception {
-		String[] args = {"extension install", _SAMPLE_COMMAND_STRING};
+		Assume.assumeTrue(BladeUtil.isWindows());
+
+		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
 
 		String output = TestUtil.runBlade(args);
 
@@ -96,10 +110,27 @@ public class InstallExtensionCommandTest {
 		Assert.assertTrue(extensionJarPath.toAbsolutePath() + " does not exist", pathExists);
 	}
 
+	@Test
+	public void testInstallUninstallCustomExtension() throws Exception {
+		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
+
+		String output = TestUtil.runBlade(args);
+
+		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
+
+		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
+
+		args = new String[] {"extension uninstall", _sampleCommandJarFile.getName()};
+
+		output = TestUtil.runBlade(args);
+
+		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
+
+		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
+	}
+
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-	private static final String _SAMPLE_COMMAND_STRING = "https://github.com/gamerson/blade-sample-command";
 
 	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
 

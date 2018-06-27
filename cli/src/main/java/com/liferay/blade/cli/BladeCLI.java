@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -48,6 +49,8 @@ import org.fusesource.jansi.AnsiConsole;
  * @author David Truong
  */
 public class BladeCLI implements Runnable {
+
+	public static final File USER_HOME_DIR = new File(System.getProperty("user.home"));
 
 	public static void main(String[] args) {
 		BladeCLI bladeCLI = new BladeCLI();
@@ -105,15 +108,19 @@ public class BladeCLI implements Runnable {
 	}
 
 	public Path getBundleDir() {
-		String userHome = System.getProperty("user.home");
+		Path userHomePath = USER_HOME_DIR.toPath();
 
-		return Paths.get(userHome, ".liferay", "bundles");
+		return userHomePath.resolve(".liferay/bundles");
 	}
 
-	public File getCacheDir() {
-		String userHome = System.getProperty("user.home");
+	public File getCacheDir() throws IOException {
+		Path userHomePath = USER_HOME_DIR.toPath();
 
-		Path cacheDir = Paths.get(userHome, ".blade", "cache");
+		Path cacheDir = userHomePath.resolve(".blade/cache");
+
+		if (!Files.exists(cacheDir)) {
+			Files.createDirectories(cacheDir);
+		}
 
 		return cacheDir.toFile();
 	}
@@ -127,7 +134,7 @@ public class BladeCLI implements Runnable {
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
 		else {
-			File homeDir = new File(System.getProperty("user.home"));
+			File homeDir = USER_HOME_DIR;
 
 			settingsFile = new File(homeDir, ".blade/settings.properties");
 		}
@@ -213,7 +220,9 @@ public class BladeCLI implements Runnable {
 
 		System.setErr(err());
 
-		_commands = new Extensions(getSettings()).getCommands();
+		Extensions extensions = new Extensions(getSettings());
+
+		_commands = extensions.getCommands();
 
 		args = Extensions.sortArgs(_commands, args);
 
@@ -242,6 +251,8 @@ public class BladeCLI implements Runnable {
 
 				if (jCommander == null) {
 					printUsage();
+
+					extensions.close();
 
 					return;
 				}
@@ -273,6 +284,8 @@ public class BladeCLI implements Runnable {
 				error(_jCommander.getParsedCommand() + ": " + pe.getMessage());
 			}
 		}
+
+		extensions.close();
 	}
 
 	public void setBase(File baseDir) {

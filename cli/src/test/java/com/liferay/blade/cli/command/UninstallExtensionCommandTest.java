@@ -42,7 +42,7 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 public class UninstallExtensionCommandTest {
 
 	@Test
-	public void testUninstallCustomExtension() throws Exception {
+	public void testUninstallCustomExtensionMock() throws Exception {
 		String jarName = "custom.blade.extension.jar";
 
 		String[] args = {"extension", "uninstall", jarName};
