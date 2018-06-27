@@ -215,9 +215,9 @@ public class BladeCLI implements Runnable {
 
 		System.setErr(err());
 
-		try (Extensions extensions = new Extensions(getSettings())) {
-			_commands = extensions.getCommands();
-		}
+		Extensions extensions = new Extensions(getSettings());
+
+		_commands = extensions.getCommands();
 
 		args = Extensions.sortArgs(_commands, args);
 
@@ -246,6 +246,8 @@ public class BladeCLI implements Runnable {
 
 				if (jCommander == null) {
 					printUsage();
+
+					extensions.close();
 
 					return;
 				}
@@ -277,6 +279,8 @@ public class BladeCLI implements Runnable {
 				error(_jCommander.getParsedCommand() + ": " + pe.getMessage());
 			}
 		}
+
+		extensions.close();
 	}
 
 	public void setBase(File baseDir) {
