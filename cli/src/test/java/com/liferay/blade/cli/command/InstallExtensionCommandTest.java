@@ -49,7 +49,9 @@ public class InstallExtensionCommandTest {
 
 		File cacheDir = bladeTest.getCacheDir();
 
-		FileUtil.deleteDir(cacheDir.toPath());
+		if (cacheDir.exists()) {
+			FileUtil.deleteDir(cacheDir.toPath());
+		}
 	}
 
 	@Test
