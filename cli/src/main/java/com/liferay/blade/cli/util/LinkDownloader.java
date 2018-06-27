@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import java.util.List;
 import java.util.Map;
@@ -51,15 +52,15 @@ public class LinkDownloader implements Runnable {
 		return String.valueOf(path.getFileName());
 	}
 
-	private void _save(HttpURLConnection http) {
+	private void _save(HttpURLConnection httpURLConnection) {
 		Path savePath = _target;
 
 		try {
 			if (Files.isDirectory(_target)) {
-				savePath = _target.resolve(_getFileName(http.getURL()));
+				savePath = _target.resolve(_getFileName(httpURLConnection.getURL()));
 			}
 
-			Files.copy(http.getInputStream(), savePath);
+			Files.copy(httpURLConnection.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
