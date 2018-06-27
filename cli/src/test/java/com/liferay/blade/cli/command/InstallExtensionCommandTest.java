@@ -20,7 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.project.templates.internal.util.FileUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
