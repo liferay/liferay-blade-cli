@@ -259,14 +259,6 @@ public class Extensions implements AutoCloseable {
 		return _getCommands(profileName);
 	}
 
-	public boolean isClosed() {
-		if (_serviceLoaderClassLoader == null) {
-			return true;
-		}
-
-		return false;
-	}
-
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
 		Collection<String> flags = new ArrayList<>();
 
