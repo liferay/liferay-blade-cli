@@ -127,7 +127,7 @@ public class BladeCLI implements Runnable {
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
 		else {
-			File homeDir = new File(System.getProperty("user.home"));
+			File homeDir = Extensions.USER_HOME_DIR;
 
 			settingsFile = new File(homeDir, ".blade/settings.properties");
 		}

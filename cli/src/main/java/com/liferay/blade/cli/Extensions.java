@@ -22,6 +22,7 @@ import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +53,9 @@ import java.util.stream.Stream;
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class Extensions {
+public class Extensions implements AutoCloseable {
+
+	public static final File USER_HOME_DIR = new File(System.getProperty("user.home"));
 
 	public static Collection<String> getBladeProfiles(Class<?> commandClass) {
 		return Stream.of(
@@ -86,7 +89,7 @@ public class Extensions {
 
 	public static Path getDirectory() {
 		try {
-			Path userHomePath = _USER_HOME_DIR.toPath();
+			Path userHomePath = USER_HOME_DIR.toPath();
 
 			Path dotBladePath = userHomePath.resolve(".blade");
 
@@ -245,10 +248,26 @@ public class Extensions {
 		_bladeSettings = bladeSettings;
 	}
 
+	@Override
+	public void close() throws Exception {
+		if (_serviceLoaderClassLoader != null) {
+			_getServiceClassLoader().close();
+			System.gc();
+		}
+	}
+
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
 		String profileName = _bladeSettings.getProfileName();
 
 		return _getCommands(profileName);
+	}
+
+	public boolean isClosed() {
+		if (_serviceLoaderClassLoader == null) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
@@ -331,9 +350,7 @@ public class Extensions {
 		if (_commands == null) {
 			_commands = new HashMap<>();
 
-			URL[] jarUrls = _getJarUrls(getDirectory());
-
-			ClassLoader serviceLoaderClassLoader = new URLClassLoader(jarUrls, getClass().getClassLoader());
+			ClassLoader serviceLoaderClassLoader = _getServiceClassLoader();
 
 			@SuppressWarnings("rawtypes")
 			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassLoader);
@@ -380,9 +397,29 @@ public class Extensions {
 		return _commands;
 	}
 
-	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
+	private URLClassLoader _getServiceClassLoader() {
+		if (_serviceLoaderClassLoader == null) {
+			URL[] jarUrls;
+
+			try {
+				Path tempBladeExtensionsDirectory = Files.createTempDirectory("bladeCache");
+
+				FileUtil.copyDirRecursive(getDirectory(), tempBladeExtensionsDirectory);
+
+				jarUrls = _getJarUrls(tempBladeExtensionsDirectory);
+
+				_serviceLoaderClassLoader = new URLClassLoader(jarUrls, getClass().getClassLoader());
+			}
+			catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
+
+		return _serviceLoaderClassLoader;
+	}
 
 	private final BladeSettings _bladeSettings;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
+	private URLClassLoader _serviceLoaderClassLoader = null;
 
 }

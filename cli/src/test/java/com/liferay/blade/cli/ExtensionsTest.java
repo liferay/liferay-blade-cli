@@ -49,7 +49,7 @@ public class ExtensionsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Whitebox.setInternalState(Extensions.class, "_USER_HOME_DIR", temporaryFolder.getRoot());
+		Whitebox.setInternalState(Extensions.class, "USER_HOME_DIR", temporaryFolder.getRoot());
 	}
 
 	@Test
