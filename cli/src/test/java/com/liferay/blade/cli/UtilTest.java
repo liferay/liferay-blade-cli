@@ -52,7 +52,7 @@ public class UtilTest {
 
 		Assert.assertTrue(propertiesList.size() == 2);
 	}
-	
+
 	@Test
 	public void testCopyEntireDirectory() throws Exception {
 		File testDir1 = temporaryFolder.newFolder("dir1");

@@ -96,6 +96,25 @@ public class InstallExtensionCommandTest {
 		Assert.assertTrue(extensionJarPath.toAbsolutePath() + " does not exist", pathExists);
 	}
 
+	@Test
+	public void testInstallUninstallCustomExtension() throws Exception {
+		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
+
+		String output = TestUtil.runBlade(args);
+
+		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
+
+		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
+
+		args = new String[] {"extension uninstall", _sampleCommandJarFile.getName()};
+
+		output = TestUtil.runBlade(args);
+
+		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
+
+		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
+	}
+
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
