@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -89,7 +91,9 @@ public class InstallExtensionCommandTest {
 
 	@Test
 	public void testInstallCustomGithubExtension() throws Exception {
-		String[] args = {"extension install", _SAMPLE_COMMAND_STRING};
+		Assume.assumeTrue(BladeUtil.isWindows());
+
+		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
 
 		String output = TestUtil.runBlade(args);
 
@@ -127,8 +131,6 @@ public class InstallExtensionCommandTest {
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-	private static final String _SAMPLE_COMMAND_STRING = "https://github.com/gamerson/blade-sample-command";
 
 	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
 
