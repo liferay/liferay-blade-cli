@@ -24,7 +24,6 @@ import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.util.FileUtil;
 
-import java.io.File;
 import java.io.IOException;
 
 import java.lang.reflect.Field;
@@ -54,8 +53,6 @@ import java.util.stream.Stream;
  * @author Gregory Amerson
  */
 public class Extensions implements AutoCloseable {
-
-	public static final File USER_HOME_DIR = new File(System.getProperty("user.home"));
 
 	public static Collection<String> getBladeProfiles(Class<?> commandClass) {
 		return Stream.of(
@@ -89,7 +86,7 @@ public class Extensions implements AutoCloseable {
 
 	public static Path getDirectory() {
 		try {
-			Path userHomePath = USER_HOME_DIR.toPath();
+			Path userHomePath = BladeCLI.USER_HOME_DIR.toPath();
 
 			Path dotBladePath = userHomePath.resolve(".blade");
 
