@@ -30,7 +30,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  */
 public class FileUtil {
 
-	public static void copyDirRecursive(Path source, Path target) throws IOException {
+	public static void copyDir(Path source, Path target) throws IOException {
 		if (!Files.exists(target)) {
 			Files.createDirectories(target);
 		}

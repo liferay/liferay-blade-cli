@@ -67,7 +67,7 @@ public class UtilTest {
 
 		File testDir2 = new File(temporaryFolder.getRoot(), "dir2");
 
-		FileUtil.copyDirRecursive(testDir1.toPath(), testDir2.toPath());
+		FileUtil.copyDir(testDir1.toPath(), testDir2.toPath());
 		Assert.assertTrue(testDir2.exists());
 
 		Assert.assertEquals(testDir1.list().length, testDir2.list().length);
