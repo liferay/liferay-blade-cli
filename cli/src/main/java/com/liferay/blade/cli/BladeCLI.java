@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -107,15 +108,19 @@ public class BladeCLI implements Runnable {
 	}
 
 	public Path getBundleDir() {
-		String userHome = System.getProperty("user.home");
+		Path userHomePath = USER_HOME_DIR.toPath();
 
-		return Paths.get(userHome, ".liferay", "bundles");
+		return userHomePath.resolve(".liferay/bundles");
 	}
 
-	public File getCacheDir() {
-		String userHome = System.getProperty("user.home");
+	public File getCacheDir() throws IOException {
+		Path userHomePath = USER_HOME_DIR.toPath();
 
-		Path cacheDir = Paths.get(userHome, ".blade", "cache");
+		Path cacheDir = userHomePath.resolve(".blade/cache");
+
+		if (!Files.exists(cacheDir)) {
+			Files.createDirectories(cacheDir);
+		}
 
 		return cacheDir.toFile();
 	}

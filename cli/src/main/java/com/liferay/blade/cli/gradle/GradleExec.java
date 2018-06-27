@@ -64,7 +64,7 @@ public class GradleExec {
 				builder.command("sh", "-c", "gradle -version");
 			}
 
-			builder.directory(new File(System.getProperty("user.home")));
+			builder.directory(BladeCLI.USER_HOME_DIR);
 
 			Process process = builder.start();
 
