@@ -249,7 +249,6 @@ public class Extensions implements AutoCloseable {
 	public void close() throws Exception {
 		if (_serviceLoaderClassLoader != null) {
 			_getServiceClassLoader().close();
-			System.gc();
 		}
 	}
 
