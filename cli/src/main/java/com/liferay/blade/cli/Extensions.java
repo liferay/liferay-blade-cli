@@ -386,22 +386,15 @@ public class Extensions implements AutoCloseable {
 		return _commands;
 	}
 
-	private URLClassLoader _getServiceClassLoader() {
+	private URLClassLoader _getServiceClassLoader() throws IOException {
 		if (_serviceLoaderClassLoader == null) {
-			URL[] jarUrls;
+			Path tempExtensionsDirectory = Files.createTempDirectory("extensions");
 
-			try {
-				Path tempBladeExtensionsDirectory = Files.createTempDirectory("bladeCache");
+			FileUtil.copyDir(getDirectory(), tempExtensionsDirectory);
 
-				FileUtil.copyDirRecursive(getDirectory(), tempBladeExtensionsDirectory);
+			URL[] jarUrls = _getJarUrls(tempExtensionsDirectory);
 
-				jarUrls = _getJarUrls(tempBladeExtensionsDirectory);
-
-				_serviceLoaderClassLoader = new URLClassLoader(jarUrls, getClass().getClassLoader());
-			}
-			catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
+			_serviceLoaderClassLoader = new URLClassLoader(jarUrls, getClass().getClassLoader());
 		}
 
 		return _serviceLoaderClassLoader;
