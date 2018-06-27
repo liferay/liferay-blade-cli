@@ -18,7 +18,6 @@ package com.liferay.blade.cli.command;
 
 import aQute.lib.io.IO;
 
-import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 
@@ -47,7 +46,7 @@ public class SamplesCommandTest {
 	public void testGetSample() throws Exception {
 		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "friendly-url"};
 
-		new BladeTest().run(args);
+		TestUtil.runBlade(args);
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/friendly-url");
 
@@ -66,7 +65,7 @@ public class SamplesCommandTest {
 	public void testGetSampleWithDependencies() throws Exception {
 		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "rest"};
 
-		new BladeTest().run(args);
+		TestUtil.runBlade(args);
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/rest");
 
@@ -85,7 +84,7 @@ public class SamplesCommandTest {
 	public void testGetSampleWithGradleWrapper() throws Exception {
 		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "authenticator-shiro"};
 
-		new BladeTest().run(args);
+		TestUtil.runBlade(args);
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/authenticator-shiro");
 
@@ -113,12 +112,16 @@ public class SamplesCommandTest {
 	public void testGetSampleWithGradleWrapperExisting() throws Exception {
 		String[] initArgs = {"--base", temporaryFolder.getRoot().getPath() + "/test/workspace", "init"};
 
-		new BladeTest().run(initArgs);
+		String output = TestUtil.runBlade(initArgs);
+
+		Assert.assertTrue(output, output == null || output.isEmpty());
 
 		String[] samplesArgs =
 			{"samples", "-d", temporaryFolder.getRoot().getPath() + "/test/workspace/modules", "auth-failure"};
 
-		new BladeTest().run(samplesArgs);
+		output = TestUtil.runBlade(samplesArgs);
+
+		Assert.assertTrue(output, output == null || output.isEmpty());
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/workspace/modules/auth-failure");
 
