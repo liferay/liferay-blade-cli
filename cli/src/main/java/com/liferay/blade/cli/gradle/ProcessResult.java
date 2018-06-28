@@ -21,9 +21,14 @@ package com.liferay.blade.cli.gradle;
  */
 public class ProcessResult {
 
-	public ProcessResult(int returnCode, String output) {
+	public ProcessResult(int returnCode, String output, String error) {
 		_returnCode = returnCode;
 		_output = output;
+		_error = error;
+	}
+
+	public String getError() {
+		return _error;
 	}
 
 	public String getOutput() {
@@ -34,6 +39,7 @@ public class ProcessResult {
 		return _returnCode;
 	}
 
+	private final String _error;
 	private final String _output;
 	private final int _returnCode;
 

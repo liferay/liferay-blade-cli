@@ -46,7 +46,9 @@ public class GradleExec {
 
 		String output = IOUtils.toString(process.getInputStream(), Charset.defaultCharset());
 
-		return new ProcessResult(returnCode, output);
+		String error = IOUtils.toString(process.getErrorStream(), Charset.defaultCharset());
+
+		return new ProcessResult(returnCode, output, error);
 	}
 
 	public ProcessResult executeGradleCommand(String cmd) throws Exception {
