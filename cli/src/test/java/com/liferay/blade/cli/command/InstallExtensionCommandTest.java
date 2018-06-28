@@ -18,14 +18,17 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.PathChangeWatcher;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -73,18 +76,81 @@ public class InstallExtensionCommandTest {
 
 	@Test
 	public void testInstallCustomExtensionTwice() throws Exception {
+		String jarName = _sampleCommandJarFile.getName();
+
+		File extensionsFolder = temporaryFolder.newFolder(".blade", "extensions");
+
+		File extensionJar = new File(extensionsFolder, jarName);
+		
+		
 		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
 
-		String output = TestUtil.runBlade(args);
+		String output;
+		
+		try (PathChangeWatcher watcher = new PathChangeWatcher(extensionJar.toPath())) {
+			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
+
+			output = TestUtil.runBlade(args);
+
+			Assert.assertTrue("Existing extension \"" + jarName + "\" should have been modified", watcher.get());
+		}
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
-		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
+		Assert.assertTrue(output.contains(jarName));
 
 		output = TestUtil.runBlade(args);
 
+		String data = "y";
+
+		try (PathChangeWatcher watcher = new PathChangeWatcher(extensionJar.toPath())) {
+			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
+
+			output = _testBladeWithInteractive(args, data);
+
+			Assert.assertTrue("Existing extension \"" + jarName + "\" should have been modified", watcher.get());
+		}
+
 		Assert.assertTrue(
 			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
+		Assert.assertTrue("Expected output to contain \"Overwriting\"\n" + output, output.contains("Overwriting"));
+		Assert.assertTrue(
+			"Expected output to contain \"installed successfully\"\n" + output,
+			output.contains(" installed successfully"));
+
+		data = "n";
+
+		try (PathChangeWatcher watcher = new PathChangeWatcher(extensionJar.toPath())) {
+			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
+
+			output = _testBladeWithInteractive(args, data);
+
+			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
+		}
+
+		Assert.assertTrue(
+			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
+		Assert.assertFalse("Expected output to not contain \"Overwriting\"\n" + output, output.contains("Overwriting"));
+		Assert.assertFalse(
+			"Expected output to not contain \"installed successfully\"\n" + output,
+			output.contains(" installed successfully"));
+
+		data = "foobar";
+
+		try (PathChangeWatcher watcher = new PathChangeWatcher(extensionJar.toPath())) {
+			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
+
+			output = _testBladeWithInteractive(args, data);
+
+			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
+		}
+
+		Assert.assertTrue(
+			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
+		Assert.assertFalse("Expected output to not contain \"Overwriting\"\n" + output, output.contains("Overwriting"));
+		Assert.assertFalse(
+			"Expected output to not contain \"installed successfully\"\n" + output,
+			output.contains(" installed successfully"));
 	}
 
 	@Test
@@ -124,6 +190,39 @@ public class InstallExtensionCommandTest {
 
 		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
 	}
+	
+	private String _testBladeWithInteractive(String[] args, String data)
+			throws Exception {
+
+			String output;
+			InputStream testInput = new ByteArrayInputStream(data.getBytes("UTF-8"));
+			InputStream old = System.in;
+
+			try {
+				System.setIn(testInput);
+
+				CompletableFuture<String> futureString = CompletableFuture.supplyAsync(
+					() -> {
+						try {
+							return TestUtil.runBlade(args);
+						}
+						catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+					});
+
+				output = futureString.get();
+			}
+			catch (Exception e) {
+				throw e;
+			}
+			finally {
+				System.setIn(old);
+			}
+
+			return output;
+		}
+
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();

@@ -56,6 +56,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.function.Predicate;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -163,7 +166,10 @@ public class BladeUtil {
 
 		return properties;
 	}
-
+	public static String getBundleVersion(Path pathToJar) throws IOException {
+			return getManifestProperty(pathToJar, "Bundle-Version");
+	}
+	
 	public static Properties getGradleProperties(File dir) {
 		File file = getGradlePropertiesFile(dir);
 
@@ -190,6 +196,18 @@ public class BladeUtil {
 
 		return null;
 	}
+	
+	public static String getManifestProperty(Path pathToJar, String propertyName) throws IOException {
+		File file = pathToJar.toFile();
+
+		try (JarFile jar = new JarFile(file)) {
+			Manifest manifest = jar.getManifest();
+
+			Attributes attributes = manifest.getMainAttributes();
+			return attributes.getValue("Bundle-Version");
+		}
+	}
+		
 
 	public static Properties getProperties(File file) {
 		try (InputStream inputStream = new FileInputStream(file)) {
