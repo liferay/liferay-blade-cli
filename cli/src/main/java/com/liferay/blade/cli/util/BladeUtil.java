@@ -149,7 +149,8 @@ public class BladeUtil {
 		else if (".".equals(dir.toString()) || !dir.isAbsolute()) {
 			try {
 				dir = dir.getCanonicalFile();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				dir = dir.getAbsoluteFile();
 			}
 		}
