@@ -37,6 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
@@ -264,26 +265,31 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 				getBladeCLI().out("Installed version: " + installedVersion);
 				getBladeCLI().out("New version: " + newVersion);
 
-				doInstall = PromptUtil.askBoolean("Overwrite existing extension?", System.in, getBladeCLI().out(),
-						false);
+				doInstall = PromptUtil.askBoolean(
+					"Overwrite existing extension?", System.in, getBladeCLI().out(), false);
 
 				if (doInstall) {
-					getBladeCLI().out("Overwriting " + extensionName + ":" + installedVersion + " with " + extensionName
-							+ ":" + newVersion);
+					getBladeCLI().out(
+						"Overwriting " + extensionName + ":" + installedVersion + " with " + extensionName + ":" +
+							newVersion);
 				}
 			}
+
 			if (doInstall) {
 				try {
 					Files.copy(extensionPath, newExtensionPath, StandardCopyOption.REPLACE_EXISTING);
 					getBladeCLI().out(
 						"The extension " + extensionName + ":" + newVersion + " has been installed successfully.");
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
-		} else {
-			throw new IOException("Unable to install. " + extensionPath.getFileName()
-					+ " is not a valid blade extension, e.g. custom template or command");
+		}
+		else {
+			throw new IOException(
+				"Unable to install. " + extensionPath.getFileName() +
+					" is not a valid blade extension, e.g. custom template or command");
 		}
 	}
 

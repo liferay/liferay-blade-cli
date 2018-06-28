@@ -166,10 +166,11 @@ public class BladeUtil {
 
 		return properties;
 	}
+
 	public static String getBundleVersion(Path pathToJar) throws IOException {
-			return getManifestProperty(pathToJar, "Bundle-Version");
+		return getManifestProperty(pathToJar, "Bundle-Version");
 	}
-	
+
 	public static Properties getGradleProperties(File dir) {
 		File file = getGradlePropertiesFile(dir);
 
@@ -196,7 +197,7 @@ public class BladeUtil {
 
 		return null;
 	}
-	
+
 	public static String getManifestProperty(Path pathToJar, String propertyName) throws IOException {
 		File file = pathToJar.toFile();
 
@@ -204,10 +205,10 @@ public class BladeUtil {
 			Manifest manifest = jar.getManifest();
 
 			Attributes attributes = manifest.getMainAttributes();
+
 			return attributes.getValue("Bundle-Version");
 		}
 	}
-		
 
 	public static Properties getProperties(File file) {
 		try (InputStream inputStream = new FileInputStream(file)) {

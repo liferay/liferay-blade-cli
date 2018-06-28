@@ -25,9 +25,11 @@ import com.liferay.blade.cli.util.FileUtil;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.Assert;
@@ -81,12 +83,11 @@ public class InstallExtensionCommandTest {
 		File extensionsFolder = temporaryFolder.newFolder(".blade", "extensions");
 
 		File extensionJar = new File(extensionsFolder, jarName);
-		
-		
+
 		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
 
 		String output;
-		
+
 		try (PathChangeWatcher watcher = new PathChangeWatcher(extensionJar.toPath())) {
 			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
 
@@ -190,42 +191,39 @@ public class InstallExtensionCommandTest {
 
 		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
 	}
-	
-	private String _testBladeWithInteractive(String[] args, String data)
-			throws Exception {
-
-			String output;
-			InputStream testInput = new ByteArrayInputStream(data.getBytes("UTF-8"));
-			InputStream old = System.in;
-
-			try {
-				System.setIn(testInput);
-
-				CompletableFuture<String> futureString = CompletableFuture.supplyAsync(
-					() -> {
-						try {
-							return TestUtil.runBlade(args);
-						}
-						catch (Exception e) {
-							throw new RuntimeException(e);
-						}
-					});
-
-				output = futureString.get();
-			}
-			catch (Exception e) {
-				throw e;
-			}
-			finally {
-				System.setIn(old);
-			}
-
-			return output;
-		}
-
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private String _testBladeWithInteractive(String[] args, String data) throws Exception {
+		String output;
+		InputStream testInput = new ByteArrayInputStream(data.getBytes("UTF-8"));
+		InputStream old = System.in;
+
+		try {
+			System.setIn(testInput);
+
+			CompletableFuture<String> futureString = CompletableFuture.supplyAsync(
+				() -> {
+					try {
+						return TestUtil.runBlade(args);
+					}
+					catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				});
+
+			output = futureString.get();
+		}
+		catch (Exception e) {
+			throw e;
+		}
+		finally {
+			System.setIn(old);
+		}
+
+		return output;
+	}
 
 	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
 
