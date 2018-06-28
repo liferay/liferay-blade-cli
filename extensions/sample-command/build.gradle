@@ -31,7 +31,7 @@ formatSource {
 
 repositories {
 	maven {
-		url "https://jenkins-lide.wedeploy.io/job/liferay-blade-cli/2/artifact/mavenRepo/"
+		url "https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/lastSuccessfulBuild/artifact/mavenRepo/"
 	}
 	maven {
 		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
