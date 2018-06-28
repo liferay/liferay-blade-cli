@@ -20,6 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
+import com.liferay.blade.cli.gradle.ProcessResult;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.StringUtil;
@@ -210,7 +211,13 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		Set<File> outputFiles = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), projectPath.toFile());
 
-		gradleExec.executeCommand("assemble -x check", projectPath.toFile());
+		ProcessResult processResult = gradleExec.executeCommand("assemble -x check", projectPath.toFile());
+
+		if (processResult.getResultCode() > 0) {
+			throw new RuntimeException(
+				"Gradle command returned error code " + processResult.getResultCode() + "\n " +
+					processResult.getError());
+		}
 
 		Set<Path> extensionPaths = new HashSet<>();
 
