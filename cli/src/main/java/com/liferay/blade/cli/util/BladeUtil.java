@@ -146,6 +146,14 @@ public class BladeUtil {
 		if (dir == null) {
 			return null;
 		}
+		else if (".".equals(dir.toString()) || !dir.isAbsolute()) {
+			try {
+				dir = dir.getCanonicalFile();
+			}
+			catch (Exception e) {
+				dir = dir.getAbsoluteFile();
+			}
+		}
 
 		for (String fileName : fileNames) {
 			File file = new File(dir, fileName);
