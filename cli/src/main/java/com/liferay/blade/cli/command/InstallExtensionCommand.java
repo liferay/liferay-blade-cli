@@ -214,9 +214,15 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		ProcessResult processResult = gradleExec.executeCommand("assemble -x check", projectPath.toFile());
 
 		if (processResult.getResultCode() > 0) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append(processResult.getError());
+			sb.append('\n');
+			sb.append(processResult.getOutput());
+			sb.append('\n');
+
 			throw new RuntimeException(
-				"Gradle command returned error code " + processResult.getResultCode() + "\n " +
-					processResult.getError());
+				"Gradle command returned error code " + processResult.getResultCode() + "\n " + sb.toString());
 		}
 
 		Set<Path> extensionPaths = new HashSet<>();
