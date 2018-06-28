@@ -19,11 +19,14 @@ package com.liferay.blade.cli;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
+import aQute.lib.io.IO;
+
 import java.io.File;
 
 import java.nio.file.Files;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.junit.Assert;
@@ -120,6 +123,38 @@ public class UtilTest {
 		Files.write(buildFile.toPath(), plugin.getBytes());
 
 		Assert.assertTrue(BladeUtil.isWorkspace(workspace));
+	}
+	
+	@Test
+	public void testFindParentFile() throws Exception {
+
+		File tempTestFile = null;
+		
+		try {
+			File parentDirectory = new File(".").getAbsoluteFile().getParentFile();
+			
+			File parentParentDirectory = parentDirectory.getParentFile();
+			
+			tempTestFile = new File(parentParentDirectory, "test.file");
+			
+			if (tempTestFile.exists()) {
+				Assert.assertTrue(tempTestFile.delete());
+			}
+			
+			Assert.assertTrue(tempTestFile.createNewFile());
+			
+			File fileRelative = new File(".");
+			
+			File foundFile = BladeUtil.findParentFile(fileRelative, new String[] {"test.file"}, true);
+
+			Assert.assertTrue(Objects.nonNull(foundFile));
+		}
+		finally {
+			if (tempTestFile != null) {
+				IO.delete(tempTestFile);
+				
+			}
+		}
 	}
 
 	@Rule
