@@ -132,7 +132,7 @@ public class PromptUtilTest {
 
 		InputStream in = new ByteArrayInputStream(answerString.getBytes("UTF-8"));
 
-		boolean answer = Prompter.askBoolean(question, in, out, defaultAnswer);
+		boolean answer = Prompter.confirm(question, in, out, defaultAnswer);
 
 		String outString = outStream.toString();
 

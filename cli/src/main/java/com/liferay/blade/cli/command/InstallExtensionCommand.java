@@ -264,7 +264,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 						"The extension %s already exists with version %s.\n", extensionName,
 						BladeUtil.getBundleVersion(extensionInstallPath)));
 
-				boolean overwrite = Prompter.askBoolean(
+				boolean overwrite = Prompter.confirm(
 					String.format(
 						"Overwrite existing extension with version %s?", newExtensionVersion, System.in, bladeCLI.out(),
 						false));

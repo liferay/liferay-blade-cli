@@ -28,13 +28,11 @@ import java.util.Scanner;
  */
 public class Prompter {
 
-	public static boolean askBoolean(String question) {
-		return askBoolean(question, System.in, System.out, Optional.empty());
+	public static boolean confirm(String question) {
+		return confirm(question, System.in, System.out, Optional.empty());
 	}
 
-	public static boolean askBoolean(
-		String question, InputStream in, PrintStream out, Optional<Boolean> defaultAnswer) {
-
+	public static boolean confirm(String question, InputStream in, PrintStream out, Optional<Boolean> defaultAnswer) {
 		String questionWithPrompt = _buildQuestionWithPrompt(question, defaultAnswer);
 
 		Optional<Boolean> answer = _getBooleanAnswer(questionWithPrompt, in, out, defaultAnswer);
