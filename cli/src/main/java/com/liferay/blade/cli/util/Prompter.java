@@ -87,7 +87,7 @@ public class Prompter {
 						break;
 					default:
 						if (defaultAnswer.isPresent()) {
-							answer = Optional.of(defaultAnswer.get());
+							answer = defaultAnswer;
 						}
 						else {
 							out.println("Unrecognized input: " + decision);
@@ -100,7 +100,7 @@ public class Prompter {
 			}
 			catch (NoSuchElementException nsee) {
 				if (defaultAnswer.isPresent()) {
-					answer = Optional.of(defaultAnswer.get());
+					answer = defaultAnswer;
 				}
 				else {
 					out.println(nsee.getMessage());
