@@ -73,32 +73,10 @@ public class BladeUtil {
 	public static final String APP_SERVER_TYPE_PROPERTY = "app.server.type";
 
 	public static boolean canConnect(String host, int port) {
-		InetSocketAddress address = new InetSocketAddress(host, Integer.valueOf(port));
-		InetSocketAddress local = new InetSocketAddress(0);
+		InetSocketAddress localAddress = new InetSocketAddress(0);
+		InetSocketAddress remoteAddress = new InetSocketAddress(host, Integer.valueOf(port));
 
-		InputStream in = null;
-
-		try (Socket socket = new Socket()) {
-			socket.bind(local);
-			socket.connect(address, 3000);
-
-			in = socket.getInputStream();
-
-			return true;
-		}
-		catch (Exception e) {
-		}
-		finally {
-			if (in != null) {
-				try {
-					in.close();
-				}
-				catch (Exception e) {
-				}
-			}
-		}
-
-		return false;
+		return _canConnect(localAddress, remoteAddress);
 	}
 
 	public static void copy(InputStream in, File outputDir) throws Exception {
@@ -583,6 +561,26 @@ public class BladeUtil {
 				}
 			}
 		}
+	}
+
+	private static boolean _canConnect(InetSocketAddress localAddress, InetSocketAddress remoteAddress) {
+		boolean connected = false;
+
+		try (Socket socket = new Socket()) {
+			socket.bind(localAddress);
+			socket.connect(remoteAddress, 3000);
+			socket.getInputStream();
+
+			connected = true;
+		}
+		catch (IOException ioe) {
+		}
+
+		if (connected) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private static boolean _isSafelyRelative(File file, File destDir) {
