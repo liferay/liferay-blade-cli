@@ -564,20 +564,23 @@ public class BladeUtil {
 	}
 
 	private static boolean _canConnect(InetSocketAddress localAddress, InetSocketAddress remoteAddress) {
-		boolean canConnectBoolean = false;
+		boolean connected = false;
 
 		try (Socket socket = new Socket()) {
 			socket.bind(localAddress);
 			socket.connect(remoteAddress, 3000);
-
 			socket.getInputStream();
 
-			canConnectBoolean = true;
+			connected = true;
 		}
 		catch (IOException ioe) {
 		}
 
-		return canConnectBoolean;
+		if (connected) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private static boolean _isSafelyRelative(File file, File destDir) {
