@@ -79,23 +79,6 @@ public class BladeUtil {
 		return _canConnect(localAddress, remoteAddress);
 	}
 
-	private static boolean _canConnect(InetSocketAddress localAddress, InetSocketAddress remoteAddress) {
-		boolean canConnectBoolean = false;
-		
-		try (Socket socket = new Socket()) {
-			socket.bind(localAddress);
-			socket.connect(remoteAddress, 3000);
-
-			socket.getInputStream();
-
-			canConnectBoolean = true;
-		} 
-		catch (IOException e) {
-			
-		}
-		return canConnectBoolean;
-	}
-
 	public static void copy(InputStream in, File outputDir) throws Exception {
 		try (Jar jar = new Jar("dot", in)) {
 			Map<String, Resource> resources = jar.getResources();
@@ -578,6 +561,23 @@ public class BladeUtil {
 				}
 			}
 		}
+	}
+
+	private static boolean _canConnect(InetSocketAddress localAddress, InetSocketAddress remoteAddress) {
+		boolean canConnectBoolean = false;
+
+		try (Socket socket = new Socket()) {
+			socket.bind(localAddress);
+			socket.connect(remoteAddress, 3000);
+
+			socket.getInputStream();
+
+			canConnectBoolean = true;
+		}
+		catch (IOException ioe) {
+		}
+
+		return canConnectBoolean;
 	}
 
 	private static boolean _isSafelyRelative(File file, File destDir) {
