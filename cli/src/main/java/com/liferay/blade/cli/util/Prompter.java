@@ -98,13 +98,11 @@ public class Prompter {
 						break;
 				}
 			}
-			catch (NoSuchElementException nsee) {
+			catch (Exception exception) {
 				if (defaultAnswer.isPresent()) {
 					answer = defaultAnswer;
 				}
 				else {
-					out.println(nsee.getMessage());
-
 					continue;
 				}
 			}
