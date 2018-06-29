@@ -245,51 +245,42 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private void _installExtension(Path extensionPath) throws IOException {
+		Path extensionName = extensionPath.getFileName();
+
 		if (_isExtension(extensionPath)) {
 			Path extensionsHome = Extensions.getDirectory();
 
-			Path extensionName = extensionPath.getFileName();
+			Path extensionInstallPath = extensionsHome.resolve(extensionName);
 
-			Path newExtensionPath = extensionsHome.resolve(extensionName);
+			boolean exists = Files.exists(extensionInstallPath);
 
-			boolean extensionExists = Files.exists(newExtensionPath);
+			String newExtensionVersion = BladeUtil.getBundleVersion(extensionPath);
 
-			boolean doInstall = true;
+			BladeCLI bladeCLI = getBladeCLI();
 
-			String newVersion = BladeUtil.getBundleVersion(extensionPath);
+			if (exists) {
+				bladeCLI.out(
+					String.format(
+						"The extension %s already exists with version %s.\n", extensionName,
+						BladeUtil.getBundleVersion(extensionInstallPath)));
 
-			if (extensionExists) {
-				String installedVersion = BladeUtil.getBundleVersion(newExtensionPath);
+				boolean overwrite = PromptUtil.askBoolean(
+					String.format(
+						"Overwrite existing extension with version %s?", newExtensionVersion, System.in,
+						getBladeCLI().out(), false));
 
-				getBladeCLI().out("The extension " + extensionName + " already exists in blade extensions.");
-				getBladeCLI().out("Installed version: " + installedVersion);
-				getBladeCLI().out("New version: " + newVersion);
-
-				doInstall = PromptUtil.askBoolean(
-					"Overwrite existing extension?", System.in, getBladeCLI().out(), false);
-
-				if (doInstall) {
-					getBladeCLI().out(
-						"Overwriting " + extensionName + ":" + installedVersion + " with " + extensionName + ":" +
-							newVersion);
+				if (!overwrite) {
+					return;
 				}
 			}
 
-			if (doInstall) {
-				try {
-					Files.copy(extensionPath, newExtensionPath, StandardCopyOption.REPLACE_EXISTING);
-					getBladeCLI().out(
-						"The extension " + extensionName + ":" + newVersion + " has been installed successfully.");
-				}
-				catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
+			Files.copy(extensionPath, extensionInstallPath, StandardCopyOption.REPLACE_EXISTING);
+
+			bladeCLI.out("The extension " + extensionName + "has been installed successfully.");
 		}
 		else {
 			throw new IOException(
-				"Unable to install. " + extensionPath.getFileName() +
-					" is not a valid blade extension, e.g. custom template or command");
+				String.format("Unable to install. %s is not a valid blade extension.", extensionName));
 		}
 	}
 
