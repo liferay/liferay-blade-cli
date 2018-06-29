@@ -32,18 +32,6 @@ public class Prompter {
 		return askBoolean(question, System.in, System.out, Optional.empty());
 	}
 
-	public static boolean askBoolean(String question, boolean defaultAnswer) {
-		return askBoolean(question, System.in, System.out, Optional.of(defaultAnswer));
-	}
-
-	public static boolean askBoolean(String question, InputStream in, PrintStream out) {
-		return askBoolean(question, in, out, Optional.empty());
-	}
-
-	public static boolean askBoolean(String question, InputStream in, PrintStream out, boolean defaultAnswer) {
-		return askBoolean(question, in, out, Optional.of(defaultAnswer));
-	}
-
 	public static boolean askBoolean(
 		String question, InputStream in, PrintStream out, Optional<Boolean> defaultAnswer) {
 

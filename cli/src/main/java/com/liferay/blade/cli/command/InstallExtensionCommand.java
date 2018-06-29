@@ -266,8 +266,8 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 				boolean overwrite = Prompter.askBoolean(
 					String.format(
-						"Overwrite existing extension with version %s?", newExtensionVersion, System.in,
-						getBladeCLI().out(), false));
+						"Overwrite existing extension with version %s?", newExtensionVersion, System.in, bladeCLI.out(),
+						false));
 
 				if (!overwrite) {
 					return;
