@@ -23,7 +23,7 @@ import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.gradle.ProcessResult;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.PromptUtil;
+import com.liferay.blade.cli.util.Prompter;
 import com.liferay.blade.cli.util.StringUtil;
 
 import java.io.File;
@@ -264,7 +264,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 						"The extension %s already exists with version %s.\n", extensionName,
 						BladeUtil.getBundleVersion(extensionInstallPath)));
 
-				boolean overwrite = PromptUtil.askBoolean(
+				boolean overwrite = Prompter.askBoolean(
 					String.format(
 						"Overwrite existing extension with version %s?", newExtensionVersion, System.in,
 						getBladeCLI().out(), false));

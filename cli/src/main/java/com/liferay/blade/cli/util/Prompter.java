@@ -26,7 +26,7 @@ import java.util.Scanner;
 /**
  * @author Christopher Bryan Boyd
  */
-public class PromptUtil {
+public class Prompter {
 
 	public static boolean askBoolean(String question) {
 		return askBoolean(question, System.in, System.out, Optional.empty());

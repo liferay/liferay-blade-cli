@@ -16,7 +16,7 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.util.PromptUtil;
+import com.liferay.blade.cli.util.Prompter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -132,7 +132,7 @@ public class PromptUtilTest {
 
 		InputStream in = new ByteArrayInputStream(answerString.getBytes("UTF-8"));
 
-		boolean answer = PromptUtil.askBoolean(question, in, out, defaultAnswer);
+		boolean answer = Prompter.askBoolean(question, in, out, defaultAnswer);
 
 		String outString = outStream.toString();
 
