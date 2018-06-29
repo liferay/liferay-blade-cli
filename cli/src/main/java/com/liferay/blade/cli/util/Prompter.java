@@ -58,7 +58,7 @@ public class Prompter {
 			}
 		}
 
-		return question + " [" + yesDefault + "/" + noDefault + "]";
+		return question + " (" + yesDefault + "/" + noDefault + ")";
 	}
 
 	private static Optional<Boolean> _getBooleanAnswer(
@@ -74,9 +74,7 @@ public class Prompter {
 
 				decision = decision.toLowerCase();
 
-				decision = decision.trim();
-
-				switch (decision) {
+				switch (decision.trim()) {
 					case "y":
 					case "yes":
 						answer = Optional.of(true);
@@ -93,6 +91,7 @@ public class Prompter {
 						}
 						else {
 							out.println("Unrecognized input: " + decision);
+
 							continue;
 						}
 
@@ -105,6 +104,7 @@ public class Prompter {
 				}
 				else {
 					out.println(nsee.getMessage());
+
 					continue;
 				}
 			}
