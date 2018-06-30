@@ -20,7 +20,6 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
-
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.util.BladeUtil;
@@ -29,10 +28,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
@@ -96,6 +93,11 @@ public class BladeCLI implements Runnable {
 	public void error(String string, String name, String message) {
 		err(string + " [" + name + "]");
 		err(message);
+	}
+
+	public void error(Throwable error) {
+		err(error.getMessage());
+		error.printStackTrace(err());
 	}
 
 	public BaseArgs getBladeArgs() {

@@ -30,8 +30,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import java.util.Scanner;
-
 import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
@@ -70,9 +68,10 @@ public class TestUtil {
 
 		PrintStream outputPrintStream = new PrintStream(outputStream);
 
-		ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
+		boolean errors = blade.runBlade(args);
 
-		PrintStream errorPrintStream = new PrintStream(errorStream);
+		StringBuilder sb = new StringBuilder();
+		String output = blade.getOutput();
 
 		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir);
 
@@ -80,21 +79,25 @@ public class TestUtil {
 
 		String error = errorStream.toString();
 
-		try (Scanner scanner = new Scanner(error)) {
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
+		String error = blade.getError();
 
-				if (line.startsWith("SLF4J:")) {
-					continue;
-				}
-
-				Assert.fail("Encountered error at line: " + line + "\n" + error);
+		if (error != null) {
+			if (errors && checkAssert) {
+				Assert.fail("Errors were encountered while running blade: " + System.lineSeparator() + error);
 			}
+
+			if (sb.length() > 0) {
+				sb.append(System.lineSeparator());
+			}
+
+			sb.append(error);
 		}
 
-		String content = outputStream.toString();
+		return sb.toString();
+	}
 
-		return content;
+	public static String runBlade(String... args) throws Exception {
+		return runBlade(true, args);
 	}
 
 	public static String runBlade(File userHomeDir, String... args) throws Exception {

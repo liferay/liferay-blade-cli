@@ -19,6 +19,8 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
 
+import java.io.File;
+
 /**
  * @author Gregory Amerson
  */
@@ -38,8 +40,12 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			bladeCLI.out("\tjpm install -f https://releases.liferay.com/tools/blade-cli/latest/blade.jar");
 		}
 		else {
+			BaseArgs baseArgs = bladeCLI.getBladeArgs();
+
+			File base = new File(baseArgs.getBase());
+
 			Process process = BladeUtil.startProcess(
-				bladeCLI, "jpm install -f https://releases.liferay.com/tools/blade-cli/latest/blade.jar");
+				base, "jpm install -f https://releases.liferay.com/tools/blade-cli/latest/blade.jar");
 
 			int errCode = process.waitFor();
 

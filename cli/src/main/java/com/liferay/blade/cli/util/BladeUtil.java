@@ -19,7 +19,6 @@ package com.liferay.blade.cli.util;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
-
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
@@ -37,16 +36,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
-
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -514,58 +510,42 @@ public class BladeUtil {
 		processBuilder.command(commands);
 	}
 
-	public static Process startProcess(BladeCLI blade, String command) throws Exception {
-		BaseArgs args = blade.getBladeArgs();
-
-		File baseDir = new File(args.getBase());
-
-		return startProcess(blade, command, baseDir, null, true);
+	public static Process startProcess(File workingDir, String command) throws Exception {
+		return startProcess(command, workingDir, null);
 	}
 
-	public static Process startProcess(BladeCLI blade, String command, File dir, boolean inheritIO) throws Exception {
-		return startProcess(blade, command, dir, null, inheritIO);
-	}
-
-	public static Process startProcess(BladeCLI blade, String command, File dir, Map<String, String> environment)
-		throws Exception {
-
-		return startProcess(blade, command, dir, environment, true);
-	}
-
-	public static Process startProcess(
-			BladeCLI blade, String command, File dir, Map<String, String> environment, boolean inheritIO)
-		throws Exception {
-
-		ProcessBuilder processBuilder = new ProcessBuilder();
-
-		Map<String, String> env = processBuilder.environment();
-
-		if (environment != null) {
-			env.putAll(environment);
-		}
-
-		if ((dir != null) && dir.exists()) {
-			processBuilder.directory(dir);
-		}
-
-		setShell(processBuilder, command);
-
-		if (inheritIO) {
-			processBuilder.inheritIO();
-		}
+	public static Process startProcess(String command, File dir, Map<String, String> environment) throws Exception {
+		ProcessBuilder processBuilder = _buildProcessBuilder(command, dir, environment, true);
 
 		Process process = processBuilder.start();
-
-		if (!inheritIO) {
-			readProcessStream(process.getInputStream(), blade.out());
-			readProcessStream(process.getErrorStream(), blade.err());
-		}
 
 		OutputStream outputStream = process.getOutputStream();
 
 		outputStream.close();
 
 		return process;
+	}
+
+	public static Process startProcess(
+			String command, File dir, Map<String, String> environment, PrintStream out, PrintStream err)
+		throws Exception {
+
+		ProcessBuilder processBuilder = _buildProcessBuilder(command, dir, environment, false);
+
+		Process process = processBuilder.start();
+
+		readProcessStream(process.getInputStream(), out);
+		readProcessStream(process.getErrorStream(), err);
+
+		OutputStream outputStream = process.getOutputStream();
+
+		outputStream.close();
+
+		return process;
+	}
+
+	public static Process startProcess(String command, File dir, PrintStream out, PrintStream err) throws Exception {
+		return startProcess(command, dir, null, out, err);
 	}
 
 	public static void unzip(File srcFile, File destDir) throws IOException {
@@ -639,6 +619,30 @@ public class BladeUtil {
 				}
 			}
 		}
+	}
+
+	private static ProcessBuilder _buildProcessBuilder(
+		String command, File dir, Map<String, String> environment, boolean inheritIO) {
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+
+		Map<String, String> env = processBuilder.environment();
+
+		if (environment != null) {
+			env.putAll(environment);
+		}
+
+		if ((dir != null) && dir.exists()) {
+			processBuilder.directory(dir);
+		}
+
+		setShell(processBuilder, command);
+
+		if (inheritIO) {
+			processBuilder.inheritIO();
+		}
+
+		return processBuilder;
 	}
 
 	private static boolean _canConnect(InetSocketAddress localAddress, InetSocketAddress remoteAddress) {
