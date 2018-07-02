@@ -18,6 +18,7 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,8 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import org.apache.commons.io.FileUtils;
 
 /**
  * @author David Truong
@@ -110,7 +109,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 			if (Files.isDirectory(path) && fileName.equals(sampleName)) {
 				File dest = new File(workDir, fileName);
 
-				FileUtils.copyDirectory(path.toFile(), dest);
+				FileUtil.copyDir(path, dest.toPath());
 
 				_updateBuildGradle(dest);
 

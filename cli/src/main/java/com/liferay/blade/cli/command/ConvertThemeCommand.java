@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
@@ -30,7 +31,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -139,7 +139,7 @@ public class ConvertThemeCommand {
 
 			File theme = new File(themePath);
 
-			FileUtils.deleteDirectory(theme);
+			FileUtil.deleteDir(theme.toPath());
 		}
 		else {
 			_blade.error("blade exited with code: " + errCode);
