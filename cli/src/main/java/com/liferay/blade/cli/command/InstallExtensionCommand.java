@@ -28,13 +28,16 @@ import com.liferay.blade.cli.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.net.URL;
+
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
@@ -263,8 +266,8 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 				boolean overwrite = Prompter.confirm(
 					String.format(
-						"Overwrite existing extension with version %s?", newExtensionVersion, System.in, bladeCLI.out(),
-						false));
+						"Overwrite existing extension with version %s?",
+						newExtensionVersion), System.in, bladeCLI.out(), Optional.of(false));
 
 				if (!overwrite) {
 					return;

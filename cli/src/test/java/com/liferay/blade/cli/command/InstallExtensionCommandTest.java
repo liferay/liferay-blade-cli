@@ -18,19 +18,34 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.PathChangeWatcher;
+import com.liferay.blade.cli.StringTestUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
+import net.diibadaaba.zipdiff.DifferenceCalculator;
+import net.diibadaaba.zipdiff.Differences;
+
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -77,81 +92,106 @@ public class InstallExtensionCommandTest {
 	}
 
 	@Test
-	public void testInstallCustomExtensionTwice() throws Exception {
+	public void testInstallCustomExtensionTwiceDontOverwrite() throws Exception {
 		String jarName = _sampleCommandJarFile.getName();
 
 		File extensionsFolder = temporaryFolder.newFolder(".blade", "extensions");
 
 		File extensionJar = new File(extensionsFolder, jarName);
 
-		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
+		String[] args = {"extension", "install", _sampleCommandJarFile.getAbsolutePath()};
 
-		String output;
+		Path extensionPath = extensionJar.toPath();
 
-		try (PathChangeWatcher watcher = new PathChangeWatcher(extensionJar.toPath())) {
-			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
+		String output = TestUtil.runBlade(args);
 
-			output = TestUtil.runBlade(args);
-
-			Assert.assertTrue("Existing extension \"" + jarName + "\" should have been modified", watcher.get());
-		}
+		_testJarsDiff(_sampleCommandJarFile, extensionJar);
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
-
 		Assert.assertTrue(output.contains(jarName));
 
-		output = TestUtil.runBlade(args);
+		File tempDir = temporaryFolder.newFolder("overwrite");
 
-		String data = "y";
+		Path tempPath = tempDir.toPath();
 
-		try (PathChangeWatcher watcher = new PathChangeWatcher(extensionJar.toPath())) {
-			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
+		Path sampleCommandPath = tempPath.resolve(_sampleCommandJarFile.getName());
 
-			output = _testBladeWithInteractive(args, data);
+		Files.copy(
+			_sampleCommandJarFile.toPath(), sampleCommandPath, StandardCopyOption.COPY_ATTRIBUTES,
+			StandardCopyOption.REPLACE_EXISTING);
 
-			Assert.assertTrue("Existing extension \"" + jarName + "\" should have been modified", watcher.get());
-		}
+		File sampleCommandFile = sampleCommandPath.toFile();
+
+		sampleCommandFile.setLastModified(0);
+
+		args = new String[] {"extension", "install", sampleCommandFile.getAbsolutePath()};
+
+		output = _testBladeWithInteractive(args, "n");
 
 		Assert.assertTrue(
 			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
-		Assert.assertTrue("Expected output to contain \"Overwriting\"\n" + output, output.contains("Overwriting"));
+		Assert.assertFalse(
+			"Expected output to not contain \"installed successfully\"\n" + output,
+			output.contains(" installed successfully"));
+
+		Assert.assertTrue(sampleCommandFile.lastModified() == 0);
+		Assert.assertFalse(extensionPath.toFile().lastModified() == 0);
+
+		output = _testBladeWithInteractive(args, "defaultShouldBeNo");
+
+		Assert.assertFalse(extensionPath.toFile().lastModified() == 0);
+		Assert.assertTrue(
+			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
+		Assert.assertFalse("Expected output to not contain \"Overwriting\"\n" + output, output.contains("Overwriting"));
+		Assert.assertFalse(
+			"Expected output to not contain \"installed successfully\"\n" + output,
+			output.contains(" installed successfully"));
+	}
+
+	@Test
+	public void testInstallCustomExtensionTwiceOverwrite() throws Exception {
+		String jarName = _sampleCommandJarFile.getName();
+
+		File extensionsFolder = temporaryFolder.newFolder(".blade", "extensions");
+
+		File extensionJar = new File(extensionsFolder, jarName);
+
+		String[] args = {"extension", "install", _sampleCommandJarFile.getAbsolutePath()};
+
+		Path extensionPath = extensionJar.toPath();
+
+		String output = TestUtil.runBlade(args);
+
+		_testJarsDiff(_sampleCommandJarFile, extensionJar);
+
+		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
+		Assert.assertTrue(output.contains(jarName));
+
+		File tempDir = temporaryFolder.newFolder("overwrite");
+
+		Path tempPath = tempDir.toPath();
+
+		Path sampleCommandPath = tempPath.resolve(_sampleCommandJarFile.getName());
+
+		Files.copy(
+			_sampleCommandJarFile.toPath(), sampleCommandPath, StandardCopyOption.COPY_ATTRIBUTES,
+			StandardCopyOption.REPLACE_EXISTING);
+
+		File sampleCommandFile = sampleCommandPath.toFile();
+
+		sampleCommandFile.setLastModified(0);
+
+		args = new String[] {"extension", "install", sampleCommandFile.getAbsolutePath()};
+
+		output = _testBladeWithInteractive(args, "y");
+
+		_testJarsDiff(sampleCommandFile, extensionJar);
+
+		Assert.assertTrue("Expected output to contain \"Overwrite\"\n" + output, output.contains("Overwrite"));
 		Assert.assertTrue(
 			"Expected output to contain \"installed successfully\"\n" + output,
 			output.contains(" installed successfully"));
-
-		data = "n";
-
-		try (PathChangeWatcher watcher = new PathChangeWatcher(extensionJar.toPath())) {
-			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
-
-			output = _testBladeWithInteractive(args, data);
-
-			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
-		}
-
-		Assert.assertTrue(
-			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
-		Assert.assertFalse("Expected output to not contain \"Overwriting\"\n" + output, output.contains("Overwriting"));
-		Assert.assertFalse(
-			"Expected output to not contain \"installed successfully\"\n" + output,
-			output.contains(" installed successfully"));
-
-		data = "foobar";
-
-		try (PathChangeWatcher watcher = new PathChangeWatcher(extensionJar.toPath())) {
-			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
-
-			output = _testBladeWithInteractive(args, data);
-
-			Assert.assertFalse("Existing extension \"" + jarName + "\" should not have been modified", watcher.get());
-		}
-
-		Assert.assertTrue(
-			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
-		Assert.assertFalse("Expected output to not contain \"Overwriting\"\n" + output, output.contains("Overwriting"));
-		Assert.assertFalse(
-			"Expected output to not contain \"installed successfully\"\n" + output,
-			output.contains(" installed successfully"));
+		Assert.assertEquals(sampleCommandFile.lastModified(), extensionPath.toFile().lastModified());
 	}
 
 	@Test
@@ -194,6 +234,107 @@ public class InstallExtensionCommandTest {
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private static void _testJarsDiff(File warFile1, File warFile2) throws IOException {
+		DifferenceCalculator differenceCalculator = new DifferenceCalculator(warFile1, warFile2);
+
+		differenceCalculator.setFilenameRegexToIgnore(Collections.singleton(".*META-INF.*"));
+		differenceCalculator.setIgnoreTimestamps(true);
+
+		Differences differences = differenceCalculator.getDifferences();
+
+		if (!differences.hasDifferences()) {
+			return;
+		}
+
+		StringBuilder message = new StringBuilder();
+
+		message.append("WAR ");
+		message.append(warFile1);
+		message.append(" and ");
+		message.append(warFile2);
+		message.append(" do not match:");
+		message.append(System.lineSeparator());
+
+		boolean realChange;
+
+		Map<String, ZipArchiveEntry> added = differences.getAdded();
+		Map<String, ZipArchiveEntry[]> changed = differences.getChanged();
+		Map<String, ZipArchiveEntry> removed = differences.getRemoved();
+
+		if (added.isEmpty() && !changed.isEmpty() && removed.isEmpty()) {
+			realChange = false;
+
+			ZipFile zipFile1 = null;
+			ZipFile zipFile2 = null;
+
+			try {
+				zipFile1 = new ZipFile(warFile1);
+				zipFile2 = new ZipFile(warFile2);
+
+				for (Map.Entry<String, ZipArchiveEntry[]> entry : changed.entrySet()) {
+					ZipArchiveEntry[] zipArchiveEntries = entry.getValue();
+
+					ZipArchiveEntry zipArchiveEntry1 = zipArchiveEntries[0];
+					ZipArchiveEntry zipArchiveEntry2 = zipArchiveEntries[0];
+
+					if (zipArchiveEntry1.isDirectory() && zipArchiveEntry2.isDirectory() &&
+						(zipArchiveEntry1.getSize() ==
+							zipArchiveEntry2.getSize()) &&
+						(zipArchiveEntry1.getCompressedSize() <= 2) && (zipArchiveEntry2.getCompressedSize() <= 2)) {
+
+						// Skip zipdiff bug
+
+						continue;
+					}
+
+					try (InputStream inputStream1 = zipFile1.getInputStream(
+							zipFile1.getEntry(zipArchiveEntry1.getName()));
+						InputStream inputStream2 = zipFile2.getInputStream(
+							zipFile2.getEntry(zipArchiveEntry2.getName()))) {
+
+						List<String> lines1 = StringTestUtil.readLines(inputStream1);
+						List<String> lines2 = StringTestUtil.readLines(inputStream2);
+
+						message.append(System.lineSeparator());
+
+						message.append("--- ");
+						message.append(zipArchiveEntry1.getName());
+						message.append(System.lineSeparator());
+
+						message.append("+++ ");
+						message.append(zipArchiveEntry2.getName());
+						message.append(System.lineSeparator());
+
+						Patch<String> diff = DiffUtils.diff(lines1, lines2);
+
+						for (Delta<String> delta : diff.getDeltas()) {
+							message.append('\t');
+							message.append(delta.getOriginal());
+							message.append(System.lineSeparator());
+
+							message.append('\t');
+							message.append(delta.getRevised());
+							message.append(System.lineSeparator());
+						}
+					}
+
+					realChange = true;
+
+					break;
+				}
+			}
+			finally {
+				ZipFile.closeQuietly(zipFile1);
+				ZipFile.closeQuietly(zipFile2);
+			}
+		}
+		else {
+			realChange = true;
+		}
+
+		Assert.assertFalse(message.toString(), realChange);
+	}
 
 	private String _testBladeWithInteractive(String[] args, String data) throws Exception {
 		String output;
