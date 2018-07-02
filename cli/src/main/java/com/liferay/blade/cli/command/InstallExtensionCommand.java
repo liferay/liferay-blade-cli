@@ -23,6 +23,7 @@ import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.gradle.ProcessResult;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.Prompter;
 import com.liferay.blade.cli.util.StringUtil;
 
 import java.io.File;
@@ -35,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -243,26 +245,43 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private void _installExtension(Path extensionPath) throws IOException {
+		Path extensionName = extensionPath.getFileName();
+
 		if (_isExtension(extensionPath)) {
 			Path extensionsHome = Extensions.getDirectory();
 
-			Path extensionName = extensionPath.getFileName();
+			Path extensionInstallPath = extensionsHome.resolve(extensionName);
 
-			Path newExtensionPath = extensionsHome.resolve(extensionName);
+			boolean exists = Files.exists(extensionInstallPath);
 
-			if (Files.exists(newExtensionPath)) {
-				getBladeCLI().out("The extension " + extensionName + " already exists in blade extensions.");
+			String newExtensionVersion = BladeUtil.getBundleVersion(extensionPath);
+
+			BladeCLI bladeCLI = getBladeCLI();
+
+			if (exists) {
+				bladeCLI.out(
+					String.format(
+						"The extension %s already exists with version %s.\n", extensionName,
+						BladeUtil.getBundleVersion(extensionInstallPath)));
+
+				String message = String.format("Overwrite existing extension with version %s?", newExtensionVersion);
+
+				boolean overwrite = Prompter.confirm(message, System.in, bladeCLI.out(), Optional.of(false));
+
+				if (!overwrite) {
+					return;
+				}
 			}
-			else {
-				Files.copy(extensionPath, newExtensionPath);
 
-				getBladeCLI().out("The extension " + extensionName + " has been installed successfully.");
-			}
+			Files.copy(
+				extensionPath, extensionInstallPath, StandardCopyOption.REPLACE_EXISTING,
+				StandardCopyOption.COPY_ATTRIBUTES);
+
+			bladeCLI.out(String.format("The extension %s has been installed successfully.", extensionName));
 		}
 		else {
 			throw new IOException(
-				"Unable to install. " + extensionPath.getFileName() +
-					" is not a valid blade extension, e.g. custom template or command");
+				String.format("Unable to install. %s is not a valid blade extension.", extensionName));
 		}
 	}
 
