@@ -28,16 +28,13 @@ import com.liferay.blade.cli.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.net.URL;
-
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
@@ -274,9 +271,11 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 				}
 			}
 
-			Files.copy(extensionPath, extensionInstallPath, StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(
+				extensionPath, extensionInstallPath, StandardCopyOption.REPLACE_EXISTING,
+				StandardCopyOption.COPY_ATTRIBUTES);
 
-			bladeCLI.out("The extension " + extensionName + "has been installed successfully.");
+			bladeCLI.out(String.format("The extension %s has been installed successfully.", extensionName));
 		}
 		else {
 			throw new IOException(
