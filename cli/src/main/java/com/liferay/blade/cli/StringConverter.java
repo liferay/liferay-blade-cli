@@ -17,52 +17,36 @@
 package com.liferay.blade.cli;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.nio.charset.Charset;
 
-import java.util.function.Supplier;
-
 /**
  * @author Christopher Bryan Boyd
  */
-public class StringConverter implements AutoCloseable, Supplier<String> {
+public class StringConverter {
 
-	public static String get(InputStream inputStream) throws Exception {
-		return get(inputStream, Charset.defaultCharset());
-	}
-
-	public static String get(InputStream inputStream, Charset charset) throws Exception {
-		try (StringConverter streamWrapper = new StringConverter(inputStream, charset)) {
-			return streamWrapper.get();
+	public static String fromInputStream(InputStream inputStream, Charset charset) throws IOException {
+		try (ByteArrayOutputStream outputStream = _getOutputStream(inputStream)) {
+			return new String(outputStream.toByteArray(), charset);
+		}
+		finally {
+			inputStream.close();
 		}
 	}
 
-	@Override
-	public void close() throws Exception {
-		if (!_closed) {
-			_closed = true;
-			_close(_inputStream);
-			_close(_outputStream);
-		}
+	public static String frommInputStream(InputStream inputStream) throws IOException {
+		return fromInputStream(inputStream, Charset.defaultCharset());
 	}
 
-	@Override
-	public String get() {
-		return _readStringFromOutputStream();
-	}
+	private static ByteArrayOutputStream _getOutputStream(InputStream inputStream) {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-	private static void _close(Closeable closeable) {
-		if (closeable != null) {
-			try {
-				closeable.close();
-			}
-			catch (IOException ioe) {
-			}
-		}
+		_readInputStreamToOutputStream(inputStream, outputStream);
+
+		return outputStream;
 	}
 
 	private static void _readInputStreamToOutputStream(InputStream inputStream, OutputStream outputStream) {
@@ -74,7 +58,9 @@ public class StringConverter implements AutoCloseable, Supplier<String> {
 
 		try {
 			byte[] buffer = new byte[bufferSize];
+
 			int length;
+
 			while ((length = inputStream.read(buffer)) != -1) {
 				outputStream.write(buffer, 0, length);
 			}
@@ -84,47 +70,6 @@ public class StringConverter implements AutoCloseable, Supplier<String> {
 		}
 	}
 
-	private StringConverter(InputStream inputStream, Charset charset) {
-		_inputStream = inputStream;
-		_charset = charset;
-	}
-
-	private void _closeSafe() {
-		try {
-			close();
-		}
-		catch (Exception ignoredException) {
-		}
-	}
-
-	private ByteArrayOutputStream _getOutputStream() {
-		if (_outputStream == null) {
-			_outputStream = new ByteArrayOutputStream();
-
-			_readInputStreamToOutputStream(_inputStream, _outputStream);
-		}
-
-		return _outputStream;
-	}
-
-	private String _readStringFromOutputStream() {
-		try {
-			ByteArrayOutputStream outputStream = _getOutputStream();
-
-			return new String(outputStream.toByteArray(), _charset);
-		}
-		catch (Exception e) {
-			_closeSafe();
-
-			throw new RuntimeException(e);
-		}
-	}
-
 	private static final int _DEFAULT_BUFFER_SIZE = 1024;
-
-	private Charset _charset;
-	private boolean _closed = false;
-	private InputStream _inputStream;
-	private ByteArrayOutputStream _outputStream;
 
 }
