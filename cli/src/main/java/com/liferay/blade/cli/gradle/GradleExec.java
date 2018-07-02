@@ -17,16 +17,12 @@
 package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.StringConverter;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
-import java.io.InputStream;
-
-import java.nio.charset.Charset;
 
 import java.util.NoSuchElementException;
-
-import org.apache.commons.io.IOUtils;
 
 /**
  * @author David Truong
@@ -44,9 +40,9 @@ public class GradleExec {
 
 		int returnCode = process.waitFor();
 
-		String output = IOUtils.toString(process.getInputStream(), Charset.defaultCharset());
+		String output = StringConverter.frommInputStream(process.getInputStream());
 
-		String error = IOUtils.toString(process.getErrorStream(), Charset.defaultCharset());
+		String error = StringConverter.frommInputStream(process.getErrorStream());
 
 		return new ProcessResult(returnCode, output, error);
 	}
@@ -70,16 +66,13 @@ public class GradleExec {
 
 			Process process = builder.start();
 
-			InputStream inputStream = process.getInputStream();
-
-			InputStream errorStream = process.getErrorStream();
-
 			StringBuilder output = new StringBuilder();
 
-			String stdOutString = IOUtils.toString(inputStream, Charset.defaultCharset());
-			String stdErrString = IOUtils.toString(errorStream, Charset.defaultCharset());
+			String stdOutString = StringConverter.frommInputStream(process.getInputStream());
+			String stdErrString = StringConverter.frommInputStream(process.getErrorStream());
 
 			output.append(stdOutString);
+			output.append(System.lineSeparator());
 			output.append(stdErrString);
 
 			int code = process.waitFor();

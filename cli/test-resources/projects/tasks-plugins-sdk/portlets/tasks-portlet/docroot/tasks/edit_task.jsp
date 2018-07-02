@@ -20,7 +20,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-long tasksEntryId = ParamUtil.getLong(request, "tasksEntryId");
+	long tasksEntryId = ParamUtil.getLong(request, "tasksEntryId");
 
 TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId);
 
@@ -29,31 +29,31 @@ long assigneeUserId = BeanParamUtil.getLong(tasksEntry, request, "assigneeUserId
 
 boolean addDueDate = false;
 String dueDateClassName = "hide";
-String dueDateToggleText = LanguageUtil.get(request, "add-due-date");
+String dueDateToggleText = LanguageUtil.fromInputStream(request, "add-due-date");
 
 if ((tasksEntry != null) && (tasksEntry.getDueDate() != null)) {
 	addDueDate = true;
 	dueDateClassName = StringPool.BLANK;
-	dueDateToggleText = LanguageUtil.get(request, "remove-due-date");
+	dueDateToggleText = LanguageUtil.fromInputStream(request, "remove-due-date");
 }
 %>
 
 <c:choose>
-	<c:when test="<%= (tasksEntry == null) && (tasksEntryId > 0) %>">
+	<c:when test="<%=(tasksEntry == null) && (tasksEntryId > 0)%>">
 		<span class="alert alert-error"><liferay-ui:message key="task-could-not-be-found" /></span>
 	</c:when>
 	<c:otherwise>
 		<portlet:actionURL name="updateTasksEntry" var="updateTasksEntryURL" />
 
-		<aui:form action="<%= updateTasksEntryURL %>" method="post" name="fm1">
+		<aui:form action="<%=updateTasksEntryURL%>" method="post" name="fm1">
 			<aui:input name="mvcPath" type="hidden" value="/tasks/edit_task.jsp" />
-			<aui:input name="tasksEntryId" type="hidden" value="<%= tasksEntryId %>" />
-			<aui:input name="userId" type="hidden" value="<%= user.getUserId() %>" />
-			<aui:input name="resolverUserId" type="hidden" value="<%= user.getUserId() %>" />
+			<aui:input name="tasksEntryId" type="hidden" value="<%=tasksEntryId%>" />
+			<aui:input name="userId" type="hidden" value="<%=user.getUserId()%>" />
+			<aui:input name="resolverUserId" type="hidden" value="<%=user.getUserId()%>" />
 
 			<liferay-ui:asset-tags-error />
 
-			<aui:model-context bean="<%= tasksEntry %>" model="<%= TasksEntry.class %>" />
+			<aui:model-context bean="<%=tasksEntry%>" model="<%=TasksEntry.class%>" />
 
 			<aui:fieldset>
 				<aui:input cssClass="input-task-description" label="description" name="title">
@@ -62,18 +62,18 @@ if ((tasksEntry != null) && (tasksEntry.getDueDate() != null)) {
 
 				<aui:select label="assignee" name="assigneeUserId">
 					<c:choose>
-						<c:when test="<%= group.isUser() %>">
-							<aui:option label="<%= HtmlUtil.escape(user.getFullName()) %>" selected="<%= (assigneeUserId == 0) %>" value="<%= user.getUserId() %>" />
+						<c:when test="<%=group.isUser()%>">
+							<aui:option label="<%=HtmlUtil.escape(user.getFullName())%>" selected="<%=(assigneeUserId == 0)%>" value="<%=user.getUserId()%>" />
 
 							<optgroup label="<liferay-ui:message key="contacts" />">
 						</c:when>
 						<c:otherwise>
-							<aui:option label="unassigned" selected="<%= (assigneeUserId == 0) %>" value="0" />
+							<aui:option label="unassigned" selected="<%=(assigneeUserId == 0)%>" value="0" />
 
-							<aui:option label="<%= HtmlUtil.escape(user.getFullName()) %>" selected="<%= (assigneeUserId == user.getUserId()) %>" value="<%= user.getUserId() %>" />
+							<aui:option label="<%=HtmlUtil.escape(user.getFullName())%>" selected="<%=(assigneeUserId == user.getUserId())%>" value="<%=user.getUserId()%>" />
 
-							<c:if test="<%= (tasksEntry != null) && (assigneeUserId > 0) && (assigneeUserId != user.getUserId()) %>">
-								<aui:option label="<%= PortalUtil.getUserName(assigneeUserId, tasksEntry.getAssigneeFullName()) %>" selected="<%= true %>" />
+							<c:if test="<%=(tasksEntry != null) && (assigneeUserId > 0) && (assigneeUserId != user.getUserId())%>">
+								<aui:option label="<%=PortalUtil.getUserName(assigneeUserId, tasksEntry.getAssigneeFullName())%>" selected="<%=true%>" />
 							</c:if>
 
 							<optgroup label="<liferay-ui:message key="members" />">
@@ -81,66 +81,66 @@ if ((tasksEntry != null) && (tasksEntry.getDueDate() != null)) {
 					</c:choose>
 
 					<%
-					List<User> users = null;
+						List<User> users = null;
 
-					if (group.isUser()) {
-						users = UserLocalServiceUtil.getSocialUsers(group.getClassPK(), SocialRelationConstants.TYPE_BI_CONNECTION, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new UserFirstNameComparator(true));
-					}
-					else {
-						LinkedHashMap userParams = new LinkedHashMap();
+								if (group.isUser()) {
+									users = UserLocalServiceUtil.getSocialUsers(group.getClassPK(), SocialRelationConstants.TYPE_BI_CONNECTION, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new UserFirstNameComparator(true));
+								}
+								else {
+									LinkedHashMap userParams = new LinkedHashMap();
 
-						userParams.put("inherit", Boolean.TRUE);
-						userParams.put("usersGroups", new Long(themeDisplay.getScopeGroupId()));
+									userParams.put("inherit", Boolean.TRUE);
+									userParams.put("usersGroups", new Long(themeDisplay.getScopeGroupId()));
 
-						users = UserLocalServiceUtil.search(company.getCompanyId(), StringPool.BLANK, WorkflowConstants.STATUS_APPROVED, userParams, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new UserFirstNameComparator(true));
-					}
+									users = UserLocalServiceUtil.search(company.getCompanyId(), StringPool.BLANK, WorkflowConstants.STATUS_APPROVED, userParams, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new UserFirstNameComparator(true));
+								}
 
-					for (User curUser : users) {
-						long curUserId = curUser.getUserId();
+								for (User curUser : users) {
+									long curUserId = curUser.getUserId();
 
-						if (curUserId == user.getUserId()) {
-							continue;
-						}
+									if (curUserId == user.getUserId()) {
+										continue;
+									}
 					%>
 
-						<aui:option label="<%= HtmlUtil.escape(curUser.getFullName()) %>" selected="<%= (assigneeUserId == curUserId) %>" value="<%= curUserId %>" />
+						<aui:option label="<%=HtmlUtil.escape(curUser.getFullName())%>" selected="<%=(assigneeUserId == curUserId)%>" value="<%=curUserId%>" />
 
 					<%
-					}
+						}
 					%>
 
 					</optgroup>
 				</aui:select>
 
 				<aui:select name="priority">
-					<aui:option label="high" selected="<%= (priority == 1) %>" value="1" />
-					<aui:option label="normal" selected="<%= (priority == 2) %>" value="2" />
-					<aui:option label="low" selected="<%= (priority == 3) %>" value="3" />
+					<aui:option label="high" selected="<%=(priority == 1)%>" value="1" />
+					<aui:option label="normal" selected="<%=(priority == 2)%>" value="2" />
+					<aui:option label="low" selected="<%=(priority == 3)%>" value="3" />
 				</aui:select>
 
 				<%
-				String taglibAddDueDateOnClick = renderResponse.getNamespace() + "displayInputDate();";
+					String taglibAddDueDateOnClick = renderResponse.getNamespace() + "displayInputDate();";
 				%>
 
-				<label class="field-label due-date-label"><%= LanguageUtil.get(request, "due-date") %></label>
+				<label class="field-label due-date-label"><%=LanguageUtil.fromInputStream(request, "due-date")%></label>
 
-				<a class="field-content due-date-toggle" href="#" id="toggleDueDate" onClick="<%= taglibAddDueDateOnClick %>"><%= dueDateToggleText %></a>
+				<a class="field-content due-date-toggle" href="#" id="toggleDueDate" onClick="<%=taglibAddDueDateOnClick%>"><%=dueDateToggleText%></a>
 
-				<aui:input id="addDueDate" name="addDueDate" type="hidden" value="<%= addDueDate %>" />
+				<aui:input id="addDueDate" name="addDueDate" type="hidden" value="<%=addDueDate%>" />
 
-				<aui:input cssClass="<%= dueDateClassName %>" label="" name="dueDate" />
+				<aui:input cssClass="<%=dueDateClassName%>" label="" name="dueDate" />
 
-				<c:if test="<%= tasksEntry != null %>">
+				<c:if test="<%=tasksEntry != null%>">
 					<aui:select name="status">
 
 						<%
-						for (int curStatus : TasksEntryConstants.STATUSES) {
+							for (int curStatus : TasksEntryConstants.STATUSES) {
 						%>
 
-							<aui:option label="<%= TasksEntryConstants.getStatusLabel(curStatus) %>" selected="<%= tasksEntry.getStatus() == curStatus %>" value="<%= curStatus %>" />
+							<aui:option label="<%=TasksEntryConstants.getStatusLabel(curStatus)%>" selected="<%=tasksEntry.getStatus() == curStatus%>" value="<%=curStatus%>" />
 
 						<%
-						}
+							}
 						%>
 
 					</aui:select>
@@ -151,13 +151,13 @@ if ((tasksEntry != null) && (tasksEntry.getDueDate() != null)) {
 				<aui:button-row cssClass="task-action">
 					<aui:button type="submit" />
 
-					<c:if test="<%= tasksEntryId > 0 %>">
-						<portlet:renderURL var="viewURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+					<c:if test="<%=tasksEntryId > 0%>">
+						<portlet:renderURL var="viewURL" windowState="<%=LiferayWindowState.POP_UP.toString()%>">
 							<portlet:param name="mvcPath" value="/tasks/view_task.jsp" />
-							<portlet:param name="tasksEntryId" value="<%= String.valueOf(tasksEntry.getTasksEntryId()) %>" />
+							<portlet:param name="tasksEntryId" value="<%=String.valueOf(tasksEntry.getTasksEntryId())%>" />
 						</portlet:renderURL>
 
-						<aui:button onClick="<%= viewURL %>" value="cancel" />
+						<aui:button onClick="<%=viewURL%>" value="cancel" />
 					</c:if>
 				</aui:button-row>
 			</aui:fieldset>
@@ -186,11 +186,11 @@ if ((tasksEntry != null) && (tasksEntry.getDueDate() != null)) {
 
 				if (checkboxValue == 'true') {
 					checkbox.set('value', false);
-					dueDateToggle.html('<%= LanguageUtil.get(request, "add-due-date") %>');
+					dueDateToggle.html('<%=LanguageUtil.fromInputStream(request, "add-due-date")%>');
 				}
 				else {
 					checkbox.set('value', true);
-					dueDateToggle.html('<%= LanguageUtil.get(request, "remove-due-date") %>');
+					dueDateToggle.html('<%=LanguageUtil.fromInputStream(request, "remove-due-date")%>');
 				}
 			}
 
