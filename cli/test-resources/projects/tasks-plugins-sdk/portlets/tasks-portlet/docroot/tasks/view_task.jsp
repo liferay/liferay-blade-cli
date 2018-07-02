@@ -45,19 +45,19 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 					<c:when test="<%= tasksEntry.getAssigneeUserId() > 0 %>">
 
 						<%
-						String assigneeDisplayURL = StringPool.BLANK;
-						String taglibAssigneeDisplayURL = LanguageUtil.get(request, "unknown-user");
+							String assigneeDisplayURL = StringPool.BLANK;
+										String taglibAssigneeDisplayURL = LanguageUtil.fromInputStream(request, "unknown-user");
 
-						User assigneeUser = UserLocalServiceUtil.fetchUser(tasksEntry.getAssigneeUserId());
+										User assigneeUser = UserLocalServiceUtil.fetchUser(tasksEntry.getAssigneeUserId());
 
-						if (assigneeUser != null) {
-							assigneeDisplayURL = assigneeUser.getDisplayURL(themeDisplay);
+										if (assigneeUser != null) {
+											assigneeDisplayURL = assigneeUser.getDisplayURL(themeDisplay);
 
-							taglibAssigneeDisplayURL = "<a href=\"" + assigneeDisplayURL + "\">" + HtmlUtil.escape(tasksEntry.getAssigneeFullName()) + "</a>";
-						}
+											taglibAssigneeDisplayURL = "<a href=\"" + assigneeDisplayURL + "\">" + HtmlUtil.escape(tasksEntry.getAssigneeFullName()) + "</a>";
+										}
 						%>
 
-						<liferay-ui:message arguments="<%= taglibAssigneeDisplayURL %>" key="assigned-to-x" translateArguments="<%= false %>" />
+						<liferay-ui:message arguments="<%=taglibAssigneeDisplayURL%>" key="assigned-to-x" translateArguments="<%=false%>" />
 					</c:when>
 					<c:otherwise>
 						<liferay-ui:message key="unassigned" />
@@ -68,23 +68,23 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 			<div class="task-data reporter">
 
 				<%
-				String reporterDisplayURL = StringPool.BLANK;
-				String taglibReporterDisplayURL = LanguageUtil.get(request, "unknown-user");
+					String reporterDisplayURL = StringPool.BLANK;
+						String taglibReporterDisplayURL = LanguageUtil.fromInputStream(request, "unknown-user");
 
-				User reporterUser = UserLocalServiceUtil.fetchUser(tasksEntry.getUserId());
+						User reporterUser = UserLocalServiceUtil.fetchUser(tasksEntry.getUserId());
 
-				if (reporterUser != null) {
-					reporterDisplayURL = reporterUser.getDisplayURL(themeDisplay);
+						if (reporterUser != null) {
+							reporterDisplayURL = reporterUser.getDisplayURL(themeDisplay);
 
-					taglibReporterDisplayURL = "<a href=\"" + reporterDisplayURL + "\">" + HtmlUtil.escape(tasksEntry.getReporterFullName()) + "</a>";
-				}
+							taglibReporterDisplayURL = "<a href=\"" + reporterDisplayURL + "\">" + HtmlUtil.escape(tasksEntry.getReporterFullName()) + "</a>";
+						}
 				%>
 
-				<liferay-ui:message arguments="<%= taglibReporterDisplayURL %>" key="created-by-x" translateArguments="<%= false %>" />
+				<liferay-ui:message arguments="<%=taglibReporterDisplayURL%>" key="created-by-x" translateArguments="<%=false%>" />
 			</div>
 
 			<div class="task-data last modified-date">
-				<liferay-ui:message arguments="<%= dateFormatDateTime.format(tasksEntry.getModifiedDate()) %>" key="modified-on-x" translateArguments="<%= false %>" />
+				<liferay-ui:message arguments="<%=dateFormatDateTime.format(tasksEntry.getModifiedDate())%>" key="modified-on-x" translateArguments="<%=false%>" />
 			</div>
 		</div>
 
@@ -95,7 +95,7 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 			</td>
 			<td>
 				<div class="task-data status">
-					<liferay-ui:message key="<%= tasksEntry.getStatusLabel() %>" />
+					<liferay-ui:message key="<%=tasksEntry.getStatusLabel()%>" />
 				</div>
 			</td>
 		</tr>
@@ -104,20 +104,20 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 				<liferay-ui:message key="priority" />
 			</td>
 			<td>
-				<div class="task-data <%= tasksEntry.getPriorityLabel() %>">
-					<liferay-ui:message key="<%= tasksEntry.getPriorityLabel() %>" />
+				<div class="task-data <%=tasksEntry.getPriorityLabel()%>">
+					<liferay-ui:message key="<%=tasksEntry.getPriorityLabel()%>" />
 				</div>
 			</td>
 		</tr>
 
-		<c:if test="<%= tasksEntry.getDueDate() != null %>">
+		<c:if test="<%=tasksEntry.getDueDate() != null%>">
 			<tr>
 				<td class="lfr-label">
 					<liferay-ui:message key="due-date" />
 				</td>
 				<td>
 					<div class="task-data due-date">
-						<%= dateFormatDateTime.format(tasksEntry.getDueDate()) %>
+						<%=dateFormatDateTime.format(tasksEntry.getDueDate())%>
 					</div>
 				</td>
 			</tr>
@@ -134,35 +134,35 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 			</td>
 			<td>
 				<liferay-ui:asset-tags-summary
-					className="<%= TasksEntry.class.getName() %>"
-					classPK="<%= tasksEntry.getTasksEntryId() %>"
+					className="<%=TasksEntry.class.getName()%>"
+					classPK="<%=tasksEntry.getTasksEntryId()%>"
 				/>
 			</td>
 		</tr>
 		</table>
 
 		<div class="task-action">
-			<c:if test="<%= TasksEntryPermission.contains(permissionChecker, tasksEntry, ActionKeys.UPDATE) %>">
+			<c:if test="<%=TasksEntryPermission.contains(permissionChecker, tasksEntry, ActionKeys.UPDATE)%>">
 
 				<%
-				boolean resolved = (tasksEntry.getStatus() == TasksEntryConstants.STATUS_RESOLVED);
+					boolean resolved = (tasksEntry.getStatus() == TasksEntryConstants.STATUS_RESOLVED);
 				%>
 
 				<portlet:actionURL name="updateTasksEntryStatus" var="updateTasksEntryStatusURL">
-					<portlet:param name="tasksEntryId" value="<%= String.valueOf(tasksEntry.getTasksEntryId()) %>" />
-					<portlet:param name="resolverUserId" value="<%= String.valueOf(user.getUserId()) %>" />
-					<portlet:param name="status" value="<%= String.valueOf(resolved ? TasksEntryConstants.STATUS_REOPENED : TasksEntryConstants.STATUS_RESOLVED) %>" />
+					<portlet:param name="tasksEntryId" value="<%=String.valueOf(tasksEntry.getTasksEntryId())%>" />
+					<portlet:param name="resolverUserId" value="<%=String.valueOf(user.getUserId())%>" />
+					<portlet:param name="status" value="<%=String.valueOf(resolved ? TasksEntryConstants.STATUS_REOPENED : TasksEntryConstants.STATUS_RESOLVED)%>" />
 				</portlet:actionURL>
 
-				<aui:button cssClass="task-action-button" onClick="<%= updateTasksEntryStatusURL %>" value='<%= resolved ? "reopen" : "resolve" %>' />
+				<aui:button cssClass="task-action-button" onClick="<%=updateTasksEntryStatusURL%>" value='<%=resolved ? "reopen" : "resolve"%>' />
 
 				<span class="task-action-spacer">
-					<portlet:renderURL var="editTasksEntryURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+					<portlet:renderURL var="editTasksEntryURL" windowState="<%=LiferayWindowState.POP_UP.toString()%>">
 						<portlet:param name="mvcPath" value="/tasks/edit_task.jsp" />
-						<portlet:param name="tasksEntryId" value="<%= String.valueOf(tasksEntry.getTasksEntryId()) %>" />
+						<portlet:param name="tasksEntryId" value="<%=String.valueOf(tasksEntry.getTasksEntryId())%>" />
 					</portlet:renderURL>
 
-					<aui:button onClick="<%= editTasksEntryURL %>" value="edit" />
+					<aui:button onClick="<%=editTasksEntryURL%>" value="edit" />
 
 					<aui:button name="deleteTasksEntry" value="delete" />
 				</span>
@@ -174,7 +174,7 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 						deleteTasksEntry.on(
 							'click',
 							function(event) {
-								if (confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-this-entry") %>')) {
+								if (confirm('<%=UnicodeLanguageUtil.fromInputStream(request, "are-you-sure-you-want-to-delete-this-entry")%>')) {
 									A.io.request(
 										'<portlet:actionURL name="deleteTasksEntry" />',
 										{
