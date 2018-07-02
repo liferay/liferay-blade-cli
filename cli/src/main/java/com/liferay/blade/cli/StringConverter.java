@@ -29,14 +29,14 @@ import java.util.function.Supplier;
 /**
  * @author Christopher Bryan Boyd
  */
-public class StringInputStreamWrapper implements AutoCloseable, Supplier<String> {
+public class StringConverter implements AutoCloseable, Supplier<String> {
 
 	public static String get(InputStream inputStream) throws Exception {
 		return get(inputStream, Charset.defaultCharset());
 	}
 
 	public static String get(InputStream inputStream, Charset charset) throws Exception {
-		try (StringInputStreamWrapper streamWrapper = new StringInputStreamWrapper(inputStream, charset)) {
+		try (StringConverter streamWrapper = new StringConverter(inputStream, charset)) {
 			return streamWrapper.get();
 		}
 	}
@@ -84,7 +84,7 @@ public class StringInputStreamWrapper implements AutoCloseable, Supplier<String>
 		}
 	}
 
-	private StringInputStreamWrapper(InputStream inputStream, Charset charset) {
+	private StringConverter(InputStream inputStream, Charset charset) {
 		_inputStream = inputStream;
 		_charset = charset;
 	}

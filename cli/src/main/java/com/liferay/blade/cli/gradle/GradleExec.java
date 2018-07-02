@@ -17,7 +17,7 @@
 package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.StringInputStreamWrapper;
+import com.liferay.blade.cli.StringConverter;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
@@ -40,9 +40,9 @@ public class GradleExec {
 
 		int returnCode = process.waitFor();
 
-		String output = StringInputStreamWrapper.get(process.getInputStream());
+		String output = StringConverter.get(process.getInputStream());
 
-		String error = StringInputStreamWrapper.get(process.getErrorStream());
+		String error = StringConverter.get(process.getErrorStream());
 
 		return new ProcessResult(returnCode, output, error);
 	}
@@ -68,8 +68,8 @@ public class GradleExec {
 
 			StringBuilder output = new StringBuilder();
 
-			String stdOutString = StringInputStreamWrapper.get(process.getInputStream());
-			String stdErrString = StringInputStreamWrapper.get(process.getErrorStream());
+			String stdOutString = StringConverter.get(process.getInputStream());
+			String stdErrString = StringConverter.get(process.getErrorStream());
 
 			output.append(stdOutString);
 			output.append(System.lineSeparator());
