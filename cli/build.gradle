@@ -39,14 +39,14 @@ clean.doFirst {
 
 createDepsZip {
 	from "${rootProject.projectDir}/libs/"
-	baseName = "deps"
+	archiveName = "deps.zip"
 	destinationDir = new File("${projectDir}")
 	include "com.liferay.blade.gradle.*.jar"
 }
 
 createWrapperZip {
 	from "${rootProject.projectDir}"
-	baseName = "wrapper"
+	archiveName = "wrapper.zip"
 	destinationDir = new File("${projectDir}")
 	include "gradle/**"
 	include "gradlew*"
@@ -102,7 +102,7 @@ formatSource {
 }
 
 jar {
-	baseName = 'blade'
+	archiveName = 'blade.jar'
 	from createDepsZip, createWrapperZip
 }
 
@@ -130,7 +130,6 @@ publishing {
 		bladeJar(MavenPublication) {
 			groupId = "com.liferay.blade"
 			artifactId = "com.liferay.blade.cli"
-			version = "3.1.0"
 
 			pom.withXml {
 				Node pom = asNode()
@@ -189,3 +188,5 @@ test {
 		systemProperty 'sampleTemplateJarFile', project.jar.archivePath
 	}
 }
+
+version = "3.1.0"
