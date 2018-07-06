@@ -3,6 +3,7 @@ import de.undercouch.gradle.tasks.download.Download
 buildscript {
 	dependencies {
 		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.change.log.builder", version: "1.1.0"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
 		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
 	}
@@ -15,6 +16,7 @@ buildscript {
 }
 
 apply plugin: "biz.aQute.bnd.builder"
+apply plugin: "com.liferay.change.log.builder"
 apply plugin: "com.liferay.source.formatter"
 apply plugin: "java"
 apply plugin: "maven-publish"
