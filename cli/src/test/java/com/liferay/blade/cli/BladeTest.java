@@ -17,6 +17,7 @@
 package com.liferay.blade.cli;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.PrintStream;
 
 /**
@@ -25,7 +26,7 @@ import java.io.PrintStream;
 public class BladeTest extends BladeCLI {
 
 	public BladeTest() throws Exception {
-		super(System.out, System.out);
+		super(System.out, System.out, System.in);
 	}
 
 	public BladeTest(File base) throws Exception {
@@ -39,17 +40,25 @@ public class BladeTest extends BladeCLI {
 	}
 
 	public BladeTest(PrintStream ps, File base) {
-		super(ps, ps);
+		super(ps, ps, System.in);
 
 		_base = base;
 	}
 
-	public BladeTest(PrintStream outputStream, PrintStream errorStream) {
-		this(outputStream, errorStream, null);
+	public BladeTest(PrintStream ps, InputStream in) {
+		this(ps, ps, in, null);
 	}
 
-	public BladeTest(PrintStream out, PrintStream err, File base) {
-		super(out, err);
+	public BladeTest(PrintStream outputStream, PrintStream errorStream) {
+		this(outputStream, errorStream, System.in, null);
+	}
+
+	public BladeTest(PrintStream outputStream, PrintStream errorStream, InputStream in) {
+		this(outputStream, errorStream, in, null);
+	}
+
+	public BladeTest(PrintStream out, PrintStream err, InputStream in, File base) {
+		super(out, err, in);
 
 		_base = base;
 	}
@@ -64,6 +73,16 @@ public class BladeTest extends BladeCLI {
 		}
 	}
 
+	@Override
+	public File getUserHomeDir() {
+		return _userHomeDir;
+	}
+
+	public void setUserHomeDir(File userHomeDir) {
+		_userHomeDir = userHomeDir;
+	}
+
 	private File _base;
+	private File _userHomeDir = super.getUserHomeDir();
 
 }

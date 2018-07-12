@@ -223,14 +223,18 @@ public class BladeUtil {
 		}
 	}
 
-	public static Collection<String> getTemplateNames() throws Exception {
-		Map<String, String> templates = getTemplates();
+	public static Collection<String> getTemplateNames(BladeCLI blade) throws Exception {
+		Map<String, String> templates = getTemplates(blade);
 
 		return templates.keySet();
 	}
 
-	public static Map<String, String> getTemplates() throws Exception {
-		Path extensions = Extensions.getDirectory();
+	public static Map<String, String> getTemplates(BladeCLI blade) throws Exception {
+		File bladeUserHome = blade.getUserHomeDir();
+
+		Path bladeUserHomePath = bladeUserHome.toPath();
+
+		Path extensions = Extensions.getDirectory(bladeUserHomePath);
 
 		Collection<File> templatesFiles = new HashSet<>();
 

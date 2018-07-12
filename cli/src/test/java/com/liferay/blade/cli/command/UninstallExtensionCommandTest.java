@@ -57,7 +57,8 @@ public class UninstallExtensionCommandTest {
 
 		PowerMock.mockStaticPartialNice(Extensions.class, "getDirectory");
 
-		IExpectationSetters<Path> extensionsDirMethod = EasyMock.expect(Extensions.getDirectory());
+		IExpectationSetters<Path> extensionsDirMethod = EasyMock.expect(
+			Extensions.getDirectory(EasyMock.isA(Path.class)));
 
 		Path extensionsDirPath = extensionsDir.toPath();
 
@@ -65,7 +66,7 @@ public class UninstallExtensionCommandTest {
 
 		PowerMock.replay(Extensions.class);
 
-		String output = TestUtil.runBlade(args);
+		String output = TestUtil.runBlade(tempFolder.getRoot(), args);
 
 		PowerMock.verifyAll();
 

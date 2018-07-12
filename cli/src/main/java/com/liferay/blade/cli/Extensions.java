@@ -24,6 +24,7 @@ import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.util.FileUtil;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.lang.reflect.Field;
@@ -84,10 +85,8 @@ public class Extensions implements AutoCloseable {
 		);
 	}
 
-	public static Path getDirectory() {
+	public static Path getDirectory(Path userHomePath) {
 		try {
-			Path userHomePath = BladeCLI.USER_HOME_DIR.toPath();
-
 			Path dotBladePath = userHomePath.resolve(".blade");
 
 			if (Files.notExists(dotBladePath)) {
@@ -239,7 +238,8 @@ public class Extensions implements AutoCloseable {
 		return argsList.toArray(new String[0]);
 	}
 
-	public Extensions(BladeSettings bladeSettings) {
+	public Extensions(BladeCLI blade, BladeSettings bladeSettings) {
+		_blade = blade;
 		_bladeSettings = bladeSettings;
 	}
 
@@ -254,6 +254,14 @@ public class Extensions implements AutoCloseable {
 		String profileName = _bladeSettings.getProfileName();
 
 		return _getCommands(profileName);
+	}
+
+	public Path getDirectory() {
+		File bladeUserHome = _blade.getUserHomeDir();
+
+		Path bladeUserHomePath = bladeUserHome.toPath();
+
+		return getDirectory(bladeUserHomePath);
 	}
 
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
@@ -397,6 +405,7 @@ public class Extensions implements AutoCloseable {
 		return _serviceLoaderClassLoader;
 	}
 
+	private final BladeCLI _blade;
 	private final BladeSettings _bladeSettings;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private URLClassLoader _serviceLoaderClassLoader = null;

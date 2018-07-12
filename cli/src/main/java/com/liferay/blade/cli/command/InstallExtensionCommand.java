@@ -248,7 +248,11 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		Path extensionName = extensionPath.getFileName();
 
 		if (_isExtension(extensionPath)) {
-			Path extensionsHome = Extensions.getDirectory();
+			File bladeUserHome = getBladeCLI().getUserHomeDir();
+
+			Path bladeUserHomePath = bladeUserHome.toPath();
+
+			Path extensionsHome = Extensions.getDirectory(bladeUserHomePath);
 
 			Path extensionInstallPath = extensionsHome.resolve(extensionName);
 
@@ -266,7 +270,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 				String message = String.format("Overwrite existing extension with version %s?", newExtensionVersion);
 
-				boolean overwrite = Prompter.confirm(message, System.in, bladeCLI.out(), Optional.of(false));
+				boolean overwrite = Prompter.confirm(message, bladeCLI.in(), bladeCLI.out(), Optional.of(false));
 
 				if (!overwrite) {
 					return;

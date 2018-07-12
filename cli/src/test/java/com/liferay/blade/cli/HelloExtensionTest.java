@@ -29,8 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import org.powermock.reflect.Whitebox;
-
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
@@ -42,8 +40,6 @@ public class HelloExtensionTest {
 		temporaryFolder.newFolder(".blade", "extensions");
 
 		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
-
-		Whitebox.setInternalState(BladeCLI.class, "USER_HOME_DIR", temporaryFolder.getRoot());
 
 		_setupTestExtensions();
 	}
@@ -58,6 +54,8 @@ public class HelloExtensionTest {
 
 		BladeTest bladeTest = new BladeTest();
 
+		bladeTest.setUserHomeDir(temporaryFolder.getRoot());
+
 		bladeTest.run(args);
 
 		BladeSettings bladeSettings = bladeTest.getSettings();
@@ -66,7 +64,7 @@ public class HelloExtensionTest {
 
 		args = new String[] {"--base", _workspaceDir.getPath() + "/newproject", "hello", "--name", "foobar"};
 
-		String content = TestUtil.runBlade(args);
+		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		Assert.assertTrue(content.contains("maven"));
 	}
@@ -75,7 +73,7 @@ public class HelloExtensionTest {
 	public void testHelp() throws Exception {
 		String[] args = {"hello", "--name", "foo"};
 
-		String output = TestUtil.runBlade(args);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		Assert.assertEquals("Hello foo!", output.trim());
 	}

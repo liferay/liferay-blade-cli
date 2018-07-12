@@ -17,7 +17,9 @@
 package com.liferay.blade.cli;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import java.nio.file.FileVisitResult;
@@ -63,7 +65,7 @@ public class TestUtil {
 			});
 	}
 
-	public static String runBlade(String... args) throws Exception {
+	public static String runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
 		PrintStream outputPrintStream = new PrintStream(outputStream);
@@ -72,7 +74,11 @@ public class TestUtil {
 
 		PrintStream errorPrintStream = new PrintStream(errorStream);
 
-		new BladeTest(outputPrintStream, errorPrintStream).run(args);
+		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in);
+
+		bladeTest.setUserHomeDir(userHomeDir);
+
+		bladeTest.run(args);
 
 		String error = errorStream.toString();
 
@@ -91,6 +97,14 @@ public class TestUtil {
 		String content = outputStream.toString();
 
 		return content;
+	}
+
+	public static String runBlade(File userHomeDir, String... args) throws Exception {
+		return runBlade(userHomeDir, System.in, args);
+	}
+
+	public static String runBlade(String... args) throws Exception {
+		return runBlade(new File(System.getProperty("user.home")), args);
 	}
 
 	public static void verifyBuild(String projectPath, String outputFileName) throws Exception {

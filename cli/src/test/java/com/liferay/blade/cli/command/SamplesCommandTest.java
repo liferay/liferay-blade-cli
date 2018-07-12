@@ -46,7 +46,7 @@ public class SamplesCommandTest {
 	public void testGetSample() throws Exception {
 		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "friendly-url"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/friendly-url");
 
@@ -65,7 +65,7 @@ public class SamplesCommandTest {
 	public void testGetSampleWithDependencies() throws Exception {
 		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "rest"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/rest");
 
@@ -84,7 +84,7 @@ public class SamplesCommandTest {
 	public void testGetSampleWithGradleWrapper() throws Exception {
 		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "authenticator-shiro"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/authenticator-shiro");
 
@@ -112,14 +112,14 @@ public class SamplesCommandTest {
 	public void testGetSampleWithGradleWrapperExisting() throws Exception {
 		String[] initArgs = {"--base", temporaryFolder.getRoot().getPath() + "/test/workspace", "init"};
 
-		String output = TestUtil.runBlade(initArgs);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), initArgs);
 
 		Assert.assertTrue(output, output == null || output.isEmpty());
 
 		String[] samplesArgs =
 			{"samples", "-d", temporaryFolder.getRoot().getPath() + "/test/workspace/modules", "auth-failure"};
 
-		output = TestUtil.runBlade(samplesArgs);
+		output = TestUtil.runBlade(temporaryFolder.getRoot(), samplesArgs);
 
 		Assert.assertTrue(output, output == null || output.isEmpty());
 
@@ -151,7 +151,7 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testListSamples() throws Exception {
-		String content = TestUtil.runBlade("samples");
+		String content = TestUtil.runBlade(temporaryFolder.getRoot(), "samples");
 
 		Assert.assertTrue(content.contains("ds-portlet"));
 	}

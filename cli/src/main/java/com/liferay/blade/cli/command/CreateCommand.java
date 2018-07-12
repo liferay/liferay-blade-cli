@@ -172,7 +172,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
 
-		Path customTemplatesPath = Extensions.getDirectory();
+		File bladeUserHome = getBladeCLI().getUserHomeDir();
+
+		Path bladeUserHomePath = bladeUserHome.toPath();
+
+		Path customTemplatesPath = Extensions.getDirectory(bladeUserHomePath);
 
 		archetypesDirs.add(FileUtil.getJarFile(ProjectTemplates.class));
 		archetypesDirs.add(customTemplatesPath.toFile());
@@ -299,7 +303,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
-		Collection<String> templateNames = BladeUtil.getTemplateNames();
+		Collection<String> templateNames = BladeUtil.getTemplateNames(getBladeCLI());
 
 		return templateNames.contains(templateName);
 	}
@@ -307,9 +311,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	private void _printTemplates() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		Map<String, String> templates = BladeUtil.getTemplates();
+		Map<String, String> templates = BladeUtil.getTemplates(bladeCLI);
 
-		List<String> templateNames = new ArrayList<>(BladeUtil.getTemplateNames());
+		List<String> templateNames = new ArrayList<>(BladeUtil.getTemplateNames(getBladeCLI()));
 
 		Collections.sort(templateNames);
 

@@ -16,11 +16,8 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.StringTestUtil;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.util.FileUtil;
 
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -39,7 +36,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import net.diibadaaba.zipdiff.DifferenceCalculator;
 import net.diibadaaba.zipdiff.Differences;
@@ -48,12 +44,9 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import org.powermock.reflect.Whitebox;
 
 /**
  * @author Christopher Bryan Boyd
@@ -61,30 +54,17 @@ import org.powermock.reflect.Whitebox;
  */
 public class InstallExtensionCommandTest {
 
-	@Before
-	public void setUp() throws Exception {
-		Whitebox.setInternalState(BladeCLI.class, "USER_HOME_DIR", temporaryFolder.getRoot());
-
-		BladeTest bladeTest = new BladeTest();
-
-		File cacheDir = bladeTest.getCacheDir();
-
-		if (cacheDir.exists()) {
-			FileUtil.deleteDir(cacheDir.toPath());
-		}
-	}
-
 	@Test
 	public void testInstallCustomExtension() throws Exception {
 		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
 
-		String output = TestUtil.runBlade(args);
+		File root = temporaryFolder.getRoot();
+
+		String output = TestUtil.runBlade(root, args);
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
 		Assert.assertTrue(output.contains(_sampleCommandJarFile.getName()));
-
-		File root = temporaryFolder.getRoot();
 
 		File extensionJar = new File(root, ".blade/extensions/" + _sampleCommandJarFile.getName());
 
@@ -103,7 +83,7 @@ public class InstallExtensionCommandTest {
 
 		Path extensionPath = extensionJar.toPath();
 
-		String output = TestUtil.runBlade(args);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		_testJarsDiff(_sampleCommandJarFile, extensionJar);
 
@@ -126,7 +106,7 @@ public class InstallExtensionCommandTest {
 
 		args = new String[] {"extension", "install", sampleCommandFile.getAbsolutePath()};
 
-		output = _testBladeWithInteractive(args, "n");
+		output = _testBladeWithInteractive(temporaryFolder.getRoot(), args, "n");
 
 		Assert.assertTrue(
 			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
@@ -137,7 +117,7 @@ public class InstallExtensionCommandTest {
 		Assert.assertTrue(sampleCommandFile.lastModified() == 0);
 		Assert.assertFalse(extensionPath.toFile().lastModified() == 0);
 
-		output = _testBladeWithInteractive(args, "defaultShouldBeNo");
+		output = _testBladeWithInteractive(temporaryFolder.getRoot(), args, "defaultShouldBeNo");
 
 		Assert.assertFalse(extensionPath.toFile().lastModified() == 0);
 		Assert.assertTrue(
@@ -160,7 +140,7 @@ public class InstallExtensionCommandTest {
 
 		Path extensionPath = extensionJar.toPath();
 
-		String output = TestUtil.runBlade(args);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		_testJarsDiff(_sampleCommandJarFile, extensionJar);
 
@@ -183,14 +163,17 @@ public class InstallExtensionCommandTest {
 
 		args = new String[] {"extension", "install", sampleCommandFile.getAbsolutePath()};
 
-		output = _testBladeWithInteractive(args, "y");
+		output = _testBladeWithInteractive(temporaryFolder.getRoot(), args, "y");
 
 		_testJarsDiff(sampleCommandFile, extensionJar);
 
 		Assert.assertTrue("Expected output to contain \"Overwrite\"\n" + output, output.contains("Overwrite"));
-		Assert.assertTrue(
-			"Expected output to contain \"installed successfully\"\n" + output,
-			output.contains(" installed successfully"));
+		boolean assertCorrect = output.contains(" installed successfully");
+
+		if (!assertCorrect) {
+			Assert.assertTrue("Expected output to contain \"installed successfully\"\n" + output, assertCorrect);
+		}
+
 		Assert.assertEquals(sampleCommandFile.lastModified(), extensionPath.toFile().lastModified());
 	}
 
@@ -198,11 +181,11 @@ public class InstallExtensionCommandTest {
 	public void testInstallCustomGithubExtension() throws Exception {
 		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
 
-		String output = TestUtil.runBlade(args);
+		File root = temporaryFolder.getRoot();
+
+		String output = TestUtil.runBlade(root, args);
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
-
-		File root = temporaryFolder.getRoot();
 
 		Path rootPath = root.toPath();
 
@@ -217,7 +200,7 @@ public class InstallExtensionCommandTest {
 	public void testInstallUninstallCustomExtension() throws Exception {
 		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
 
-		String output = TestUtil.runBlade(args);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -225,7 +208,7 @@ public class InstallExtensionCommandTest {
 
 		args = new String[] {"extension uninstall", _sampleCommandJarFile.getName()};
 
-		output = TestUtil.runBlade(args);
+		output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -336,34 +319,15 @@ public class InstallExtensionCommandTest {
 		Assert.assertFalse(message.toString(), realChange);
 	}
 
-	private String _testBladeWithInteractive(String[] args, String data) throws Exception {
-		String output;
-		InputStream testInput = new ByteArrayInputStream(data.getBytes("UTF-8"));
-		InputStream old = System.in;
+	private String _testBladeWithInteractive(File userHomeDir, String[] args, String data) throws Exception {
+		InputStream in = new ByteArrayInputStream(data.getBytes("UTF-8"));
 
 		try {
-			System.setIn(testInput);
-
-			CompletableFuture<String> futureString = CompletableFuture.supplyAsync(
-				() -> {
-					try {
-						return TestUtil.runBlade(args);
-					}
-					catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-				});
-
-			output = futureString.get();
+			return TestUtil.runBlade(userHomeDir, in, args);
 		}
 		catch (Exception e) {
-			throw e;
+			throw new RuntimeException(e);
 		}
-		finally {
-			System.setIn(old);
-		}
-
-		return output;
 	}
 
 	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));

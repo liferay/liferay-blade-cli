@@ -187,6 +187,21 @@ test {
 		dependsOn project.jar
 		systemProperty 'sampleTemplateJarFile', project.jar.archivePath
 	}
-}
 
+	int cores = Runtime.runtime.availableProcessors()
+
+	int parallelForks = 1
+
+	if (!debug) {
+		if (cores > 4) {
+
+			parallelForks = cores - 2
+		}
+		else if (cores > 2) {
+
+			parallelForks = cores - 1
+		}
+	}
+	maxParallelForks = parallelForks
+}
 version = "3.1.1"

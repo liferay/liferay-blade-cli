@@ -16,20 +16,14 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.util.FileUtil;
-
-import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import org.powermock.reflect.Whitebox;
 
 /**
  * @author Christopher Bryan Boyd
@@ -38,15 +32,9 @@ public class HelpCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Whitebox.setInternalState(BladeCLI.class, "USER_HOME_DIR", temporaryFolder.getRoot());
+		_bladeTest = new BladeTest();
 
-		BladeTest bladeTest = new BladeTest();
-
-		File cacheDir = bladeTest.getCacheDir();
-
-		if (cacheDir.exists()) {
-			FileUtil.deleteDir(cacheDir.toPath());
-		}
+		_bladeTest.setUserHomeDir(temporaryFolder.getRoot());
 	}
 
 	@Test
@@ -77,12 +65,14 @@ public class HelpCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static String _runBlade(String... args) throws Exception {
-		String content = TestUtil.runBlade(args);
+	private String _runBlade(String... args) throws Exception {
+		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		Assert.assertFalse(content, content.contains("No such command"));
 
 		return content;
 	}
+
+	private BladeTest _bladeTest;
 
 }
