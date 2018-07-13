@@ -31,6 +31,7 @@ import com.liferay.blade.cli.util.FileWatcher.Consumer;
 import java.io.File;
 import java.io.PrintStream;
 
+import java.net.ConnectException;
 import java.net.URI;
 
 import java.nio.file.Path;
@@ -59,7 +60,24 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		int port = 11311;
 
 		if (!BladeUtil.canConnect(host, port)) {
-			_addError("deploy", "Unable to connect to gogo shell on " + host + ":" + port);
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("Unable to connect to gogo shell on " + host + ":" + port);
+			sb.append(System.lineSeparator());
+			sb.append("Liferay may not be running, or the gogo shell may need to be enabled");
+			sb.append(System.lineSeparator());
+			sb.append("Please see this link for more details:");
+			sb.append(System.lineSeparator());
+			sb.append("https://issues.liferay.com/browse/LPS-82849");
+			sb.append(System.lineSeparator());
+
+			_addError(sb.toString());
+
+			if (getArgs().isTrace()) {
+				PrintStream err = getBladeCLI().err();
+
+				new ConnectException(sb.toString()).printStackTrace(err);
+			}
 
 			return;
 		}
@@ -112,7 +130,17 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		int resultCode = processResult.getResultCode();
 
 		if (resultCode > 0) {
-			_addError("Gradle assemble task failed.");
+			String errorMessage = "Gradle assemble task failed.";
+
+			_addError(errorMessage);
+
+			if (getArgs().isTrace()) {
+				PrintStream err = getBladeCLI().err();
+
+				_addError(processResult.getError());
+
+				new ConnectException(errorMessage).printStackTrace(err);
+			}
 
 			return;
 		}
@@ -127,11 +155,21 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 					_installOrUpdate(outputFile, host, port);
 				}
 				catch (Exception e) {
-					PrintStream err = getBladeCLI().err();
+					String message = e.getMessage();
 
-					err.println(e.getMessage());
+					Class<?> exceptionClass = e.getClass();
 
-					e.printStackTrace(err);
+					if (message == null) {
+						message = "DeployCommand._deploy threw " + exceptionClass.getSimpleName();
+					}
+
+					_addError(message);
+
+					if (getArgs().isTrace()) {
+						PrintStream err = getBladeCLI().err();
+
+						e.printStackTrace(err);
+					}
 				}
 			}
 		);
@@ -185,6 +223,21 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 					gradleExec.executeGradleCommand("assemble -x check -t");
 				}
 				catch (Exception e) {
+					String message = e.getMessage();
+
+					Class<?> exceptionClass = e.getClass();
+
+					if (message == null) {
+						message = "DeployCommand._deployWatch threw " + exceptionClass.getSimpleName();
+					}
+
+					_addError("deploy watch", message);
+
+					if (getArgs().isTrace()) {
+						PrintStream err = getBladeCLI().err();
+
+						e.printStackTrace(err);
+					}
 				}
 			}
 
@@ -206,6 +259,17 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 					}
 				}
 				catch (Exception e) {
+					String exceptionMessage = e.getMessage() == null ? "" : (System.lineSeparator() + e.getMessage());
+
+					String message = "Error: Bundle Insatllation failed: " + modified + exceptionMessage;
+
+					_addError(message);
+
+					if (getArgs().isTrace()) {
+						PrintStream err = getBladeCLI().err();
+
+						e.printStackTrace(err);
+					}
 				}
 			}
 
@@ -225,6 +289,8 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		long existingId = client.install(uri);
 
+		out.println("Installed bundle " + existingId);
+
 		if ((fragmentHost != null) && (hostId > 0)) {
 			client.refresh(hostId);
 
@@ -235,23 +301,24 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 			try {
 				if (!Objects.equals(existingId, checkedExistingId)) {
-					out.print("Error: Bundle IDs do not match.");
+					out.println("Error: Bundle IDs do not match.");
 				}
 				else {
-					if (checkedExistingId > 1) {
-						client.start(checkedExistingId);
-
-						out.println("Deployed bundle " + existingId);
-					}
-					else {
-						out.println("Error: Bundle failed to deploy: " + bsn);
-					}
+					_startBundle(client, bsn, out, existingId, checkedExistingId);
 				}
 			}
 			catch (Exception e) {
-				out.println("Error: Bundle failed to deploy: " + bsn);
+				String exceptionMessage = e.getMessage() == null ? "" : (System.lineSeparator() + e.getMessage());
 
-				e.printStackTrace(out);
+				String message = "Error: Bundle Deployment failed: " + bsn + exceptionMessage;
+
+				_addError("deploy watch", message);
+
+				if (getArgs().isTrace()) {
+					PrintStream err = getBladeCLI().err();
+
+					e.printStackTrace(err);
+				}
 			}
 		}
 	}
@@ -291,6 +358,21 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		PrintStream out = getBladeCLI().out();
 
 		out.println("Updated bundle " + existingId);
+	}
+
+	private void _startBundle(
+			LiferayBundleDeployer client, Entry<String, Attrs> bsn, PrintStream out, long existingId,
+			long checkedExistingId)
+		throws Exception {
+
+		if (checkedExistingId > 1) {
+			client.start(checkedExistingId);
+
+			out.println("Deployed bundle " + existingId);
+		}
+		else {
+			out.println("Error: Bundle failed to deploy: " + bsn);
+		}
 	}
 
 }

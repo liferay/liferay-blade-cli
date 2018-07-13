@@ -116,22 +116,32 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 	@Override
 	public void refresh(long id) throws Exception {
-		_sendGogo(String.format("refresh %s", id));
+		String output = _sendGogo(String.format("refresh %s", id));
+
+		System.out.println(output);
 	}
 
 	@Override
 	public void start(long id) throws Exception {
-		_sendGogo(String.format("start %s", id));
+		String request = String.format("start %s", id);
+
+		String response = _sendGogo(request);
+
+		_verify(request, response);
 	}
 
 	@Override
 	public void stop(long id) throws Exception {
-		_sendGogo(String.format("stop %s", id));
+		String output = _sendGogo(String.format("stop %s", id));
+
+		System.out.println(output);
 	}
 
 	@Override
 	public void update(long id, URI uri) throws Exception {
-		_sendGogo(String.format("update %s %s", id, uri.toASCIIString()));
+		String output = _sendGogo(String.format("update %s %s", id, uri.toASCIIString()));
+
+		System.out.println(output);
 	}
 
 	private static List<BundleDTO> _getBundles(GogoShellClient client) throws IOException {
@@ -219,6 +229,49 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 	private static final String[] _parseGogoResponse(String response) {
 		return response.split("\\r?\\n");
+	}
+
+	private static void _verify(String request, String response) throws Exception {
+		Objects.requireNonNull(request, "Request cannot be null");
+		Objects.requireNonNull(request, "Response cannot be null");
+		request = request.trim();
+		response = response.trim();
+
+		String requestWithoutBreaks = request.replace(System.lineSeparator(), "");
+		String responseWithoutBreaks = response.replace(System.lineSeparator(), "");
+		int requestLineBreakCount = request.length() - requestWithoutBreaks.length();
+		int responseLineBreakCount = response.length() - responseWithoutBreaks.length();
+
+		if (requestLineBreakCount != responseLineBreakCount) {
+			String exceptionString =
+				"Unexpected exception encountered while processing command \"" + request + "\":" +
+					System.lineSeparator() + response;
+
+			throw new Exception(exceptionString);
+		}
+		else {
+			String[] requestSplit = request.split(" ");
+			String[] responseSplit = response.split(" ");
+
+			if (requestSplit.length != responseSplit.length) {
+				String exceptionString =
+					"Unexpected response encountered while processing command \"" + request + "\":" +
+						System.lineSeparator() + response;
+
+				throw new Exception(exceptionString);
+			}
+			else {
+				for (int x = 0; x < requestSplit.length; x++) {
+					if (!Objects.equals(requestSplit[0], responseSplit[0])) {
+						String exceptionString =
+							"Unexpected response encountered while processing command \"" + request + "\":" +
+								System.lineSeparator() + response;
+
+						throw new Exception(exceptionString);
+					}
+				}
+			}
+		}
 	}
 
 	private String _sendGogo(String data) throws Exception {
