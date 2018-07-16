@@ -1,5 +1,5 @@
 Bundle-SymbolicName: com.liferay.blade.cli
-Bundle-Version: 3.1.0.${tstamp}
+Bundle-Version: ${project.version}.${tstamp}
 JPM-Command: blade
 Main-Class: com.liferay.blade.cli.BladeCLI
 Private-Package:\
