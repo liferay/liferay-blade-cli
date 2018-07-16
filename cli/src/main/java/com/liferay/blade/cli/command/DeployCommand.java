@@ -285,26 +285,35 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			URI uri)
 		throws Exception {
 
-		PrintStream out = getBladeCLI().out();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		long existingId = client.install(uri);
+		PrintStream out = bladeCLI.out();
 
-		out.println("Installed bundle " + existingId);
+		long installedId = client.install(uri);
+
+		out.println("Installed bundle " + installedId);
 
 		if ((fragmentHost != null) && (hostId > 0)) {
 			client.refresh(hostId);
 
-			out.println("Deployed fragment bundle " + existingId);
+			out.println("Deployed fragment bundle " + installedId);
 		}
 		else {
-			long checkedExistingId = client.getBundleId(bsn.getKey());
+			long existingId = client.getBundleId(bsn.getKey());
 
 			try {
-				if (!Objects.equals(existingId, checkedExistingId)) {
+				if (!Objects.equals(installedId, existingId)) {
 					out.println("Error: Bundle IDs do not match.");
 				}
 				else {
-					_startBundle(client, bsn, out, existingId, checkedExistingId);
+					if (existingId > 1) {
+						client.start(existingId);
+
+						out.println("Started bundle " + installedId);
+					}
+					else {
+						out.println("Error: bundle failed to start: " + bsn);
+					}
 				}
 			}
 			catch (Exception e) {
@@ -315,7 +324,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 				_addError("deploy watch", message);
 
 				if (getArgs().isTrace()) {
-					PrintStream err = getBladeCLI().err();
+					PrintStream err = bladeCLI.err();
 
 					e.printStackTrace(err);
 				}
@@ -358,21 +367,6 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		PrintStream out = getBladeCLI().out();
 
 		out.println("Updated bundle " + existingId);
-	}
-
-	private void _startBundle(
-			LiferayBundleDeployer client, Entry<String, Attrs> bsn, PrintStream out, long existingId,
-			long checkedExistingId)
-		throws Exception {
-
-		if (checkedExistingId > 1) {
-			client.start(checkedExistingId);
-
-			out.println("Deployed bundle " + existingId);
-		}
-		else {
-			out.println("Error: Bundle failed to deploy: " + bsn);
-		}
 	}
 
 }
