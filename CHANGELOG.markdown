@@ -1,6 +1,33 @@
 # Liferay Blade CLI Change Log
 
-## 3.0.0 - _unreleased, scheduled for inclusion_
+## 3.1.1 - Unreleased -
+
+- [BLADE-211] : Add Changelog using changelog plugin
+
+## 3.1.0 - 2018-07-05 - 570a5b7ae626ee0e7bf8751656104c5e33f8512b
+
+- [BLADE-214] : Create a `blade-extension` blade sample project, demonstrating how blade may be extended with custom commands
+- [BLADE-231] : Blade Custom Project Template Support
+- [BLADE-244] : As a developer, I would like my tomcat logs to be colorized
+- [BLADE-246] : create project from service template doesn't show that -s <service> is required
+- [BLADE-250] : extension install fails if you install same extension twice
+- [BLADE-251] : `blade gw` sometimes has trouble finding gradlew
+
+Updated to use Project Templates 4.1.0
+ - [IDE-4081] : Blade's MVC Portlet template doesn't generate javax.portlet.title Language key properly
+
+ - [LPS-78045] : Remove exported package from portal-portlet-bridge-soy
+ - [LPS-79301] : Project Templates: Remove build.gradle if build type is maven, pom.xml if gradle
+ - [LPS-79417] : Blade template to create a social bookmark module
+ - [LPS-79495] : Store Liferay-Versions in MANIFEST.MF of Project Templates
+ - [LPS-79496] : Change project templates velocity templates to check if Liferay Version starts with 7.0, 7.1, rather than checking whole string
+ - [LPS-79653] : Portlet 3.0: Upgrade to the Portlet 3.0.0 API
+ - [LPS-80284] : Update bndlib to 3.5.0
+ - [LPS-80404] : As a developer, I would like to see stacktraces from the gradlerunner build
+ - [LPS-80472] : Use local npm proxy in CI
+ - [LPS-82590] : Move project templates off snapshots
+
+## 3.0.0 - 2018-03-30 - 52ac672f21e8503f4371b6dbc403a9527582eff4
 
 ### Added
 - [BLADE-190]: As a developer, I would like blade to support deploying wars to Liferay
