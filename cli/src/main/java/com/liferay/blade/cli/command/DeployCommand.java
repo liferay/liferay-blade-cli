@@ -66,17 +66,15 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			sb.append("Unable to connect to gogo shell on " + host + ":" + port);
 			sb.append(System.lineSeparator());
 			sb.append("Liferay may not be running, or the gogo shell may need to be enabled. ");
-			sb.append("Please see this link for more details: " +
-				"https://dev.liferay.com/en/develop/reference/-/knowledge_base/7-1/using-the-felix-gogo-shell");
+			sb.append("Please see this link for more details: ");
+			sb.append("https://dev.liferay.com/en/develop/reference/-/knowledge_base/7-1/using-the-felix-gogo-shell");
 			sb.append(System.lineSeparator());
 
 			_addError(sb.toString());
 
-			if (getArgs().isTrace()) {
-				PrintStream err = bladeCLI.err();
+			PrintStream err = bladeCLI.err();
 
-				new ConnectException(sb.toString()).printStackTrace(err);
-			}
+			new ConnectException(sb.toString()).printStackTrace(err);
 
 			return;
 		}
@@ -133,13 +131,11 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 			_addError(errorMessage);
 
-			if (getArgs().isTrace()) {
-				PrintStream err = bladeCLI.err();
+			PrintStream err = bladeCLI.err();
 
-				_addError(processResult.getError());
+			_addError(processResult.getError());
 
-				new ConnectException(errorMessage).printStackTrace(err);
-			}
+			new ConnectException(errorMessage).printStackTrace(err);
 
 			return;
 		}
@@ -164,11 +160,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 					_addError(message);
 
-					if (getArgs().isTrace()) {
-						PrintStream err = bladeCLI.err();
+					PrintStream err = bladeCLI.err();
 
-						e.printStackTrace(err);
-					}
+					e.printStackTrace(err);
 				}
 			}
 		);
@@ -215,7 +209,6 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		);
 
 		BladeCLI bladeCLI = getBladeCLI();
-		DeployArgs deployArgs = getArgs();
 
 		new Thread() {
 
@@ -233,11 +226,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 					_addError("deploy watch", message);
 
-					if (deployArgs.isTrace()) {
-						PrintStream err = bladeCLI.err();
+					PrintStream err = bladeCLI.err();
 
-						e.printStackTrace(err);
-					}
+					e.printStackTrace(err);
 				}
 			}
 
@@ -265,11 +256,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 					_addError(message);
 
-					if (deployArgs.isTrace()) {
-						PrintStream err = bladeCLI.err();
+					PrintStream err = bladeCLI.err();
 
-						e.printStackTrace(err);
-					}
+					e.printStackTrace(err);
 				}
 			}
 
@@ -323,11 +312,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 				_addError("deploy watch", message);
 
-				if (getArgs().isTrace()) {
-					PrintStream err = bladeCLI.err();
+				PrintStream err = bladeCLI.err();
 
-					e.printStackTrace(err);
-				}
+				e.printStackTrace(err);
 			}
 		}
 	}
