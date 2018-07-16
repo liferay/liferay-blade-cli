@@ -56,6 +56,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 	@Override
 	public void execute() throws Exception {
+		BladeCLI bladeCLI = getBladeCLI();
 		String host = "localhost";
 		int port = 11311;
 
@@ -64,25 +65,21 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 			sb.append("Unable to connect to gogo shell on " + host + ":" + port);
 			sb.append(System.lineSeparator());
-			sb.append("Liferay may not be running, or the gogo shell may need to be enabled");
-			sb.append(System.lineSeparator());
-			sb.append("Please see this link for more details:");
-			sb.append(System.lineSeparator());
-			sb.append("https://issues.liferay.com/browse/LPS-82849");
+			sb.append("Liferay may not be running, or the gogo shell may need to be enabled. ");
+			sb.append("Please see this link for more details: " +
+				"https://dev.liferay.com/en/develop/reference/-/knowledge_base/7-1/using-the-felix-gogo-shell");
 			sb.append(System.lineSeparator());
 
 			_addError(sb.toString());
 
 			if (getArgs().isTrace()) {
-				PrintStream err = getBladeCLI().err();
+				PrintStream err = bladeCLI.err();
 
 				new ConnectException(sb.toString()).printStackTrace(err);
 			}
 
 			return;
 		}
-
-		BladeCLI bladeCLI = getBladeCLI();
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
@@ -129,13 +126,15 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		int resultCode = processResult.getResultCode();
 
+		BladeCLI bladeCLI = getBladeCLI();
+
 		if (resultCode > 0) {
 			String errorMessage = "Gradle assemble task failed.";
 
 			_addError(errorMessage);
 
 			if (getArgs().isTrace()) {
-				PrintStream err = getBladeCLI().err();
+				PrintStream err = bladeCLI.err();
 
 				_addError(processResult.getError());
 
@@ -166,7 +165,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 					_addError(message);
 
 					if (getArgs().isTrace()) {
-						PrintStream err = getBladeCLI().err();
+						PrintStream err = bladeCLI.err();
 
 						e.printStackTrace(err);
 					}
@@ -215,6 +214,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			Collectors.toSet()
 		);
 
+		BladeCLI bladeCLI = getBladeCLI();
+		DeployArgs deployArgs = getArgs();
+
 		new Thread() {
 
 			@Override
@@ -225,16 +227,14 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 				catch (Exception e) {
 					String message = e.getMessage();
 
-					Class<?> exceptionClass = e.getClass();
-
 					if (message == null) {
-						message = "DeployCommand._deployWatch threw " + exceptionClass.getSimpleName();
+						message = "Gradle build task failed.";
 					}
 
 					_addError("deploy watch", message);
 
-					if (getArgs().isTrace()) {
-						PrintStream err = getBladeCLI().err();
+					if (deployArgs.isTrace()) {
+						PrintStream err = bladeCLI.err();
 
 						e.printStackTrace(err);
 					}
@@ -253,7 +253,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 					File modifiedFile = file.getAbsoluteFile();
 
 					if (outputPaths.contains(modifiedFile.toPath())) {
-						getBladeCLI().out("installOrUpdate " + modifiedFile);
+						bladeCLI.out("installOrUpdate " + modifiedFile);
 
 						_installOrUpdate(modifiedFile, host, port);
 					}
@@ -265,8 +265,8 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 					_addError(message);
 
-					if (getArgs().isTrace()) {
-						PrintStream err = getBladeCLI().err();
+					if (deployArgs.isTrace()) {
+						PrintStream err = bladeCLI.err();
 
 						e.printStackTrace(err);
 					}
@@ -275,7 +275,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		};
 
-		File base = getBladeCLI().getBase();
+		File base = bladeCLI.getBase();
 
 		new FileWatcher(base.toPath(), true, consumer);
 	}
