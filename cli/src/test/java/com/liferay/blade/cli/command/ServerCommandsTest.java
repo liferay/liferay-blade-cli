@@ -18,18 +18,41 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.TestUtil;
 
+import java.util.Objects;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * @author Christopher Bryan Boyd
  */
-public class ServerStopCommandTest {
+public class ServerCommandsTest {
 
 	@Test
-	public void testCommandExists() throws Exception {
-		Assert.assertTrue(TestUtil.doesCommandExist("server", "stop"));
-		Assert.assertTrue(TestUtil.doesCommandExist("server stop"));
+	public void testStartCommandExists() throws Exception {
+		Assert.assertTrue(_doesCommandExist("server", "start"));
+		Assert.assertTrue(_doesCommandExist("server start"));
+	}
+
+	@Test
+	public void testStopCommandExists() throws Exception {
+		Assert.assertTrue(_doesCommandExist("server", "stop"));
+		Assert.assertTrue(_doesCommandExist("server stop"));
+	}
+
+	private static boolean _doesCommandExist(String... args) {
+		try {
+			TestUtil.runBlade(args);
+		}
+		catch (Throwable th) {
+			if (Objects.nonNull(th.getMessage()) && !th.getMessage().contains("No such command")) {
+				return true;
+			}
+
+			return false;
+		}
+
+		return false;
 	}
 
 }

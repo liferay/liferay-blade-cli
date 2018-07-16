@@ -28,7 +28,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import java.util.Objects;
 import java.util.Scanner;
 
 import org.gradle.testkit.runner.BuildTask;
@@ -62,21 +61,6 @@ public class TestUtil {
 				}
 
 			});
-	}
-
-	public static boolean doesCommandExist(String... args) {
-		try {
-			runBlade(args);
-		}
-		catch (Throwable th) {
-			if (Objects.nonNull(th.getMessage()) && !th.getMessage().contains("No such command")) {
-				return true;
-			}
-
-			return false;
-		}
-
-		return false;
 	}
 
 	public static String runBlade(String... args) throws Exception {
