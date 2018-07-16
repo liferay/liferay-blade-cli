@@ -31,6 +31,7 @@ import com.liferay.blade.cli.util.FileWatcher.Consumer;
 import java.io.File;
 import java.io.PrintStream;
 
+import java.net.ConnectException;
 import java.net.URI;
 
 import java.nio.file.Path;
@@ -55,16 +56,28 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 	@Override
 	public void execute() throws Exception {
+		BladeCLI bladeCLI = getBladeCLI();
 		String host = "localhost";
 		int port = 11311;
 
 		if (!BladeUtil.canConnect(host, port)) {
-			_addError("deploy", "Unable to connect to gogo shell on " + host + ":" + port);
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("Unable to connect to gogo shell on " + host + ":" + port);
+			sb.append(System.lineSeparator());
+			sb.append("Liferay may not be running, or the gogo shell may need to be enabled. ");
+			sb.append("Please see this link for more details: ");
+			sb.append("https://dev.liferay.com/en/develop/reference/-/knowledge_base/7-1/using-the-felix-gogo-shell");
+			sb.append(System.lineSeparator());
+
+			_addError(sb.toString());
+
+			PrintStream err = bladeCLI.err();
+
+			new ConnectException(sb.toString()).printStackTrace(err);
 
 			return;
 		}
-
-		BladeCLI bladeCLI = getBladeCLI();
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
@@ -111,8 +124,18 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		int resultCode = processResult.getResultCode();
 
+		BladeCLI bladeCLI = getBladeCLI();
+
 		if (resultCode > 0) {
-			_addError("Gradle assemble task failed.");
+			String errorMessage = "Gradle assemble task failed.";
+
+			_addError(errorMessage);
+
+			PrintStream err = bladeCLI.err();
+
+			_addError(processResult.getError());
+
+			new ConnectException(errorMessage).printStackTrace(err);
 
 			return;
 		}
@@ -127,9 +150,17 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 					_installOrUpdate(outputFile, host, port);
 				}
 				catch (Exception e) {
-					PrintStream err = getBladeCLI().err();
+					String message = e.getMessage();
 
-					err.println(e.getMessage());
+					Class<?> exceptionClass = e.getClass();
+
+					if (message == null) {
+						message = "DeployCommand._deploy threw " + exceptionClass.getSimpleName();
+					}
+
+					_addError(message);
+
+					PrintStream err = bladeCLI.err();
 
 					e.printStackTrace(err);
 				}
@@ -177,6 +208,8 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			Collectors.toSet()
 		);
 
+		BladeCLI bladeCLI = getBladeCLI();
+
 		new Thread() {
 
 			@Override
@@ -185,6 +218,17 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 					gradleExec.executeGradleCommand("assemble -x check -t");
 				}
 				catch (Exception e) {
+					String message = e.getMessage();
+
+					if (message == null) {
+						message = "Gradle build task failed.";
+					}
+
+					_addError("deploy watch", message);
+
+					PrintStream err = bladeCLI.err();
+
+					e.printStackTrace(err);
 				}
 			}
 
@@ -200,18 +244,27 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 					File modifiedFile = file.getAbsoluteFile();
 
 					if (outputPaths.contains(modifiedFile.toPath())) {
-						getBladeCLI().out("installOrUpdate " + modifiedFile);
+						bladeCLI.out("installOrUpdate " + modifiedFile);
 
 						_installOrUpdate(modifiedFile, host, port);
 					}
 				}
 				catch (Exception e) {
+					String exceptionMessage = e.getMessage() == null ? "" : (System.lineSeparator() + e.getMessage());
+
+					String message = "Error: Bundle Insatllation failed: " + modified + exceptionMessage;
+
+					_addError(message);
+
+					PrintStream err = bladeCLI.err();
+
+					e.printStackTrace(err);
 				}
 			}
 
 		};
 
-		File base = getBladeCLI().getBase();
+		File base = bladeCLI.getBase();
 
 		new FileWatcher(base.toPath(), true, consumer);
 	}
@@ -221,37 +274,47 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			URI uri)
 		throws Exception {
 
-		PrintStream out = getBladeCLI().out();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		long existingId = client.install(uri);
+		PrintStream out = bladeCLI.out();
+
+		long installedId = client.install(uri);
+
+		out.println("Installed bundle " + installedId);
 
 		if ((fragmentHost != null) && (hostId > 0)) {
 			client.refresh(hostId);
 
-			out.println("Deployed fragment bundle " + existingId);
+			out.println("Deployed fragment bundle " + installedId);
 		}
 		else {
-			long checkedExistingId = client.getBundleId(bsn.getKey());
+			long existingId = client.getBundleId(bsn.getKey());
 
 			try {
-				if (!Objects.equals(existingId, checkedExistingId)) {
-					out.print("Error: Bundle IDs do not match.");
+				if (!Objects.equals(installedId, existingId)) {
+					out.println("Error: Bundle IDs do not match.");
 				}
 				else {
-					if (checkedExistingId > 1) {
-						client.start(checkedExistingId);
+					if (existingId > 1) {
+						client.start(existingId);
 
-						out.println("Deployed bundle " + existingId);
+						out.println("Started bundle " + installedId);
 					}
 					else {
-						out.println("Error: Bundle failed to deploy: " + bsn);
+						out.println("Error: bundle failed to start: " + bsn);
 					}
 				}
 			}
 			catch (Exception e) {
-				out.println("Error: Bundle failed to deploy: " + bsn);
+				String exceptionMessage = e.getMessage() == null ? "" : (System.lineSeparator() + e.getMessage());
 
-				e.printStackTrace(out);
+				String message = "Error: Bundle Deployment failed: " + bsn + exceptionMessage;
+
+				_addError("deploy watch", message);
+
+				PrintStream err = bladeCLI.err();
+
+				e.printStackTrace(err);
 			}
 		}
 	}
