@@ -118,7 +118,7 @@ public class CreateArgs extends BaseArgs {
 	@Parameter(
 		description = "The version of Liferay to target when creating the project.", names = {"-v", "--liferay-version"}
 	)
-	private String _liferayVersion = "7.0";
+	private String _liferayVersion = "7.1";
 
 	@Parameter(description = "Prints a list of available project templates", names = {"-l", "--list-templates"})
 	private boolean _listTemplates;
