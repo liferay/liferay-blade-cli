@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +154,9 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		try (Stream<Path> list = Files.list(dir)) {
-			if (Files.notExists(dir) || !list.findAny().isPresent()) {
+			Collection<Path> paths = list.collect(Collectors.toList());
+
+			if (Files.notExists(dir) || paths.isEmpty()) {
 				bladeCLI.error(
 					" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
 						"create it.");
@@ -161,7 +164,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 				return;
 			}
 
-			for (Path file : list.collect(Collectors.toList())) {
+			for (Path file : paths) {
 				Path fileName = file.getFileName();
 
 				if (fileName.startsWith(serverType) && Files.isDirectory(file)) {
