@@ -206,7 +206,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
-		Assert.assertTrue(contents, contents.contains("7.1.0-b3"));
+		Assert.assertTrue(contents, contents.contains("7.1.0-ga1"));
 	}
 
 	@Test
@@ -217,7 +217,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
-		Assert.assertTrue(contents, contents.contains("7.0.6-ga7"));
+		Assert.assertTrue(contents, contents.contains("7.1.0-ga1"));
 	}
 
 	@Test

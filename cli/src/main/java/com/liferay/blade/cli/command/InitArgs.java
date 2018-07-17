@@ -59,10 +59,10 @@ public class InitArgs extends BaseArgs {
 	private boolean _force;
 
 	@Parameter(
-		description = "The version of Liferay to target when init the workspace. Available options are 7.0, 7.1. (default 7.0)",
+		description = "The version of Liferay to target when init the workspace. Available options are 7.0, 7.1. (default 7.1).",
 		names = {"-v", "--liferay-version"}
 	)
-	private String _liferayVersion = "7.0";
+	private String _liferayVersion = "7.1";
 
 	@Parameter(description = "[name]")
 	private String _name;
