@@ -180,9 +180,7 @@ public class Extensions implements AutoCloseable {
 					String[] foundStrArray = null;
 
 					for (String[] strArray : spaceCommandSplitCollection) {
-						if (argsList.size() == (x + strArray.length)) {
-						}
-						else if (argsList.size() > (x + (strArray.length - 1))) {
+						if (argsList.size() >= (x + strArray.length)) {
 							if (foundStrArray == null) {
 								boolean mismatch = false;
 
