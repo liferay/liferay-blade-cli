@@ -671,9 +671,9 @@ public class CreateCommandTest {
 
 		File jsp = _checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
-		_contains(jsp, ".*<aui:script require=\"npmangular@1.0.0\">.*");
+		_contains(jsp, ".*<aui:script require=\"<%= bootstrapRequire %>\">.*");
 
-		_contains(jsp, ".*npmangular100.default.*");
+		_contains(jsp, ".*bootstrapRequire.default.*");
 	}
 
 	@Test
@@ -1447,7 +1447,7 @@ public class CreateCommandTest {
 		File tempRoot = temporaryFolder.getRoot();
 
 		String[] sevenZeroArgs =
-			{"--base", tempRoot.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-zero"};
+			{"--base", tempRoot.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "-v", "7.0", "seven-zero"};
 
 		new BladeTest().run(sevenZeroArgs);
 
@@ -1458,7 +1458,7 @@ public class CreateCommandTest {
 		Assert.assertFalse(content.contains("js.loader.modules.extender.api"));
 
 		String[] sevenOneArgs =
-			{"--base", tempRoot.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "-v", "7.1", "seven-one"};
+			{"--base", tempRoot.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-one"};
 
 		new BladeTest().run(sevenOneArgs);
 
