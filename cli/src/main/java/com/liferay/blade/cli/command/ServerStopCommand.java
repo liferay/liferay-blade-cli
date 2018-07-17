@@ -44,9 +44,9 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		BladeCLI blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		File gradleWrapperFile = BladeUtil.getGradleWrapper(blade.getBase());
+		File gradleWrapperFile = BladeUtil.getGradleWrapper(bladeCLI.getBase());
 
 		if (gradleWrapperFile == null) {
 			throw new NoSuchElementException("Unable to locate Gradle Wrapper, cannot process command");
@@ -139,7 +139,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 				}
 			}
 			catch (Exception e) {
-				blade.error("Please execute this command from a Liferay project");
+				bladeCLI.error("Please execute this command from a Liferay project");
 			}
 		}
 	}
@@ -150,11 +150,11 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 	}
 
 	private void _commandServer(Path dir, String serverType) throws Exception {
-		BladeCLI blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
 		try (Stream<Path> list = Files.list(dir)) {
 			if (Files.notExists(dir) || !list.findAny().isPresent()) {
-				blade.error(
+				bladeCLI.error(
 					" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
 						"create it.");
 
@@ -178,18 +178,18 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 				}
 			}
 
-			blade.error(serverType + " not supported");
+			bladeCLI.error(serverType + " not supported");
 		}
 	}
 
 	private void _commmandJBossWildfly() throws Exception {
-		BladeCLI blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		blade.error("JBoss/Wildfly supports start command and debug flag");
+		bladeCLI.error("JBoss/Wildfly supports start command and debug flag");
 	}
 
 	private void _commmandTomcat(Path dir) throws Exception {
-		BladeCLI blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
 		Map<String, String> enviroment = new HashMap<>();
 
@@ -203,7 +203,8 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 		Path binPath = dir.resolve("bin");
 
-		Process process = BladeUtil.startProcess(blade, executable + " stop 60 -force", binPath.toFile(), enviroment);
+		Process process = BladeUtil.startProcess(
+			bladeCLI, executable + " stop 60 -force", binPath.toFile(), enviroment);
 
 		process.waitFor();
 	}
