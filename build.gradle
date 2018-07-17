@@ -1,3 +1,15 @@
+task clean(type:Delete)
+
+clean {
+	doFirst {
+		String mavenLocalRepo = System.getProperty("maven.local.repo")
+
+		if (mavenLocalRepo != null) {
+			delete mavenLocalRepo
+		}
+	}
+}
+
 subprojects {
 	plugins.withId("java") {
 		repositories {
