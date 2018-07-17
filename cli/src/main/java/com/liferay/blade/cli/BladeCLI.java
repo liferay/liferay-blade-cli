@@ -207,7 +207,9 @@ public class BladeCLI implements Runnable {
 		catch (Exception e) {
 			error(e.getMessage());
 
-			e.printStackTrace(err());
+			if (getBladeArgs().isTrace()) {
+				e.printStackTrace(err());
+			}
 		}
 	}
 
