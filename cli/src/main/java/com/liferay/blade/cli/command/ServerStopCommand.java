@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,7 +44,13 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		File gradleWrapperFile = BladeUtil.getGradleWrapper(_blade.getBase());
+		BladeCLI bladeCLI = getBladeCLI();
+
+		File gradleWrapperFile = BladeUtil.getGradleWrapper(bladeCLI.getBase());
+
+		if (gradleWrapperFile == null) {
+			throw new NoSuchElementException("Unable to locate Gradle Wrapper, cannot process command");
+		}
 
 		Path gradleWrapperPath = gradleWrapperFile.toPath();
 
@@ -132,7 +139,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 				}
 			}
 			catch (Exception e) {
-				_blade.error("Please execute this command from a Liferay project");
+				bladeCLI.error("Please execute this command from a Liferay project");
 			}
 		}
 	}
@@ -143,9 +150,11 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 	}
 
 	private void _commandServer(Path dir, String serverType) throws Exception {
+		BladeCLI bladeCLI = getBladeCLI();
+
 		try (Stream<Path> list = Files.list(dir)) {
 			if (Files.notExists(dir) || !list.findAny().isPresent()) {
-				_blade.error(
+				bladeCLI.error(
 					" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
 						"create it.");
 
@@ -169,15 +178,19 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 				}
 			}
 
-			_blade.error(serverType + " not supported");
+			bladeCLI.error(serverType + " not supported");
 		}
 	}
 
 	private void _commmandJBossWildfly() throws Exception {
-		_blade.error("JBoss/Wildfly supports start command and debug flag");
+		BladeCLI bladeCLI = getBladeCLI();
+
+		bladeCLI.error("JBoss/Wildfly supports start command and debug flag");
 	}
 
 	private void _commmandTomcat(Path dir) throws Exception {
+		BladeCLI bladeCLI = getBladeCLI();
+
 		Map<String, String> enviroment = new HashMap<>();
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
@@ -190,11 +203,10 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 		Path binPath = dir.resolve("bin");
 
-		Process process = BladeUtil.startProcess(_blade, executable + " stop 60 -force", binPath.toFile(), enviroment);
+		Process process = BladeUtil.startProcess(
+			bladeCLI, executable + " stop 60 -force", binPath.toFile(), enviroment);
 
 		process.waitFor();
 	}
-
-	private BladeCLI _blade;
 
 }
