@@ -29,23 +29,33 @@ import org.junit.Test;
 public class ServerCommandsTest {
 
 	@Test
-	public void testStartCommandExists() throws Exception {
-		Assert.assertTrue(_doesCommandExist("server", "start"));
-		Assert.assertTrue(_doesCommandExist("server start"));
+	public void testServerStartCommandExists() throws Exception {
+		Assert.assertTrue(_commandExists("server", "start"));
+		Assert.assertTrue(_commandExists("server start"));
+		Assert.assertFalse(_commandExists("server", "startx"));
+		Assert.assertFalse(_commandExists("server startx"));
+		Assert.assertFalse(_commandExists("serverx", "start"));
+		Assert.assertFalse(_commandExists("serverx start"));
 	}
 
 	@Test
-	public void testStopCommandExists() throws Exception {
-		Assert.assertTrue(_doesCommandExist("server", "stop"));
-		Assert.assertTrue(_doesCommandExist("server stop"));
+	public void testServerStopCommandExists() throws Exception {
+		Assert.assertTrue(_commandExists("server", "stop"));
+		Assert.assertTrue(_commandExists("server stop"));
+		Assert.assertFalse(_commandExists("server", "stopx"));
+		Assert.assertFalse(_commandExists("server stopx"));
+		Assert.assertFalse(_commandExists("serverx", "stopx"));
+		Assert.assertFalse(_commandExists("serverx stop"));
 	}
 
-	private static boolean _doesCommandExist(String... args) {
+	private static boolean _commandExists(String... args) {
 		try {
 			TestUtil.runBlade(args);
 		}
-		catch (Throwable th) {
-			if (Objects.nonNull(th.getMessage()) && !th.getMessage().contains("No such command")) {
+		catch (Throwable throwable) {
+			String message = throwable.getMessage();
+
+			if (Objects.nonNull(message) && !message.contains("No such command")) {
 				return true;
 			}
 
