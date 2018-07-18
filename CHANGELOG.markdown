@@ -1,8 +1,15 @@
 # Liferay Blade CLI Change Log
 
-## 3.1.1 - Unreleased -
+## 3.1.1 - 2018-07-18 - 5d9faab454e1023e3fbe8502365f752c26fcc7c9
 
 - [BLADE-211] : Add Changelog using changelog plugin
+- [BLADE-253] : Specify blade version in build config
+- [BLADE-257] : Correct server start command 
+- [BLADE-258] : Always alert users of deployment errors
+- [BLADE-259] : Fix NPE in server stop command
+- [BLADE-260] : Fix exception in server stop command
+- [BLADE-262] : Update to project template 4.1.1 artifact
+- [BLADE-264] : Update default version to 7.1
 
 ## 3.1.0 - 2018-07-05 - 570a5b7ae626ee0e7bf8751656104c5e33f8512b
 
