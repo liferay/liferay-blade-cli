@@ -37,8 +37,6 @@ public class HelloExtensionTest {
 
 	@Before
 	public void setUp() throws Exception {
-		temporaryFolder.newFolder(".blade", "extensions");
-
 		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
 		_setupTestExtensions();
@@ -52,9 +50,7 @@ public class HelloExtensionTest {
 
 		Assert.assertTrue(newproject.mkdirs());
 
-		BladeTest bladeTest = new BladeTest();
-
-		bladeTest.setUserHomeDir(temporaryFolder.getRoot());
+		BladeTest bladeTest = new BladeTest(temporaryFolder.getRoot());
 
 		bladeTest.run(args);
 

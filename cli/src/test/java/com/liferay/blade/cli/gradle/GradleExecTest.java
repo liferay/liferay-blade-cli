@@ -35,17 +35,24 @@ public class GradleExecTest {
 
 	@Test
 	public void testGradleWrapper() throws Exception {
-		File file = temporaryFolder.getRoot();
+		File temporaryDir = temporaryFolder.getRoot();
 
-		String[] args = {"create", "-t", "api", "foo"};
+		String[] args = {"--base", temporaryDir.getAbsolutePath(), "create", "-t", "api", "foo"};
 
-		new BladeTest(file).run(args);
+		new BladeTest().run(args);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		PrintStream ps = new PrintStream(baos);
 
-		BladeCLI blade = new BladeTest(ps, new File(file, "foo"));
+		BladeCLI blade = new BladeTest(ps) {
+
+			@Override
+			public File getBase() {
+				return new File(temporaryDir, "foo");
+			}
+
+		};
 
 		GradleExec gradleExec = new GradleExec(blade);
 

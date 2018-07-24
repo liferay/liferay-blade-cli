@@ -46,9 +46,7 @@ public class ExtensionsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_bladeTest = new BladeTest();
-
-		_bladeTest.setUserHomeDir(temporaryFolder.getRoot());
+		_bladeTest = new BladeTest(temporaryFolder.getRoot());
 	}
 
 	@Test
@@ -57,7 +55,7 @@ public class ExtensionsTest {
 
 		Map<String, BaseCommand<? extends BaseArgs>> commands;
 
-		try (Extensions extensions = new Extensions(_bladeTest, _bladeTest.getSettings())) {
+		try (Extensions extensions = new Extensions(_bladeTest.getSettings())) {
 			commands = extensions.getCommands();
 		}
 
@@ -76,24 +74,26 @@ public class ExtensionsTest {
 
 	@Test
 	public void testLoadCommandsBuiltIn() throws Exception {
-		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions(
-			_bladeTest, _bladeTest.getSettings()).getCommands();
+		try (Extensions extensions = new Extensions(_bladeTest.getSettings())) {
+			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
-		Assert.assertNotNull(commands);
+			Assert.assertNotNull(commands);
 
-		Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS, commands.size());
+			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS, commands.size());
+		}
 	}
 
 	@Test
 	public void testLoadCommandsWithCustomExtension() throws Exception {
 		_setupTestExtensions();
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = new Extensions(
-			_bladeTest, _bladeTest.getSettings()).getCommands();
+		try (Extensions extensions = new Extensions(_bladeTest.getSettings())) {
+			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
-		Assert.assertNotNull(commands);
+			Assert.assertNotNull(commands);
 
-		Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 1, commands.size());
+			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 1, commands.size());
+		}
 	}
 
 	@Test

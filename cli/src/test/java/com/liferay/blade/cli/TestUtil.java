@@ -74,9 +74,7 @@ public class TestUtil {
 
 		PrintStream errorPrintStream = new PrintStream(errorStream);
 
-		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in);
-
-		bladeTest.setUserHomeDir(userHomeDir);
+		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir);
 
 		bladeTest.run(args);
 
@@ -104,7 +102,7 @@ public class TestUtil {
 	}
 
 	public static String runBlade(String... args) throws Exception {
-		return runBlade(new File(System.getProperty("user.home")), args);
+		return runBlade(new File(System.getProperty("user.home")), System.in, args);
 	}
 
 	public static void verifyBuild(String projectPath, String outputFileName) throws Exception {

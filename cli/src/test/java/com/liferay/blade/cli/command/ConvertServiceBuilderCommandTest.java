@@ -49,19 +49,15 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest(temporaryFolder.getRoot());
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", SB_PROJECT_NAME};
 
-		blade = new BladeTest();
+		bladeTest = new BladeTest(temporaryFolder.getRoot());
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File sbWar = new File(projectDir, "wars/sample-service-builder-portlet");
 
@@ -75,11 +71,9 @@ public class ConvertServiceBuilderCommandTest {
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", SB_PROJECT_NAME};
 
-		blade = new BladeTest();
+		bladeTest = new BladeTest(temporaryFolder.getRoot());
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File moduleDir = new File(projectDir, "modules");
 
@@ -120,11 +114,9 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] args = {"--base", testdir.getPath(), "init", "-u"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest(temporaryFolder.getRoot());
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File pluginsSdkDir = new File(testdir, "plugins-sdk");
 
@@ -134,11 +126,9 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] convertArgs = {"--base", testdir.getPath(), "convert", "tasks-portlet", "foo"};
 
-		blade = new BladeTest();
+		bladeTest = new BladeTest(temporaryFolder.getRoot());
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(convertArgs);
+		bladeTest.run(convertArgs);
 
 		Assert.assertTrue(new File(testdir, "modules/foo/foo-api/build.gradle").exists());
 	}
@@ -149,11 +139,9 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] args = {"--base", testdir.getPath(), "init", "-u"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest(temporaryFolder.getRoot());
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File pluginsSdkDir = new File(testdir, "plugins-sdk");
 
@@ -163,11 +151,9 @@ public class ConvertServiceBuilderCommandTest {
 
 		String[] convertArgs = {"--base", testdir.getPath(), "convert", "tasks-portlet"};
 
-		blade = new BladeTest();
+		bladeTest = new BladeTest(temporaryFolder.getRoot());
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(convertArgs);
+		bladeTest.run(convertArgs);
 
 		Assert.assertTrue(new File(testdir, "modules/tasks/tasks-api/build.gradle").exists());
 

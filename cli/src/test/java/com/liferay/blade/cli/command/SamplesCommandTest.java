@@ -112,14 +112,14 @@ public class SamplesCommandTest {
 	public void testGetSampleWithGradleWrapperExisting() throws Exception {
 		String[] initArgs = {"--base", temporaryFolder.getRoot().getPath() + "/test/workspace", "init"};
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), initArgs);
+		String output = TestUtil.runBlade(initArgs);
 
 		Assert.assertTrue(output, output == null || output.isEmpty());
 
 		String[] samplesArgs =
 			{"samples", "-d", temporaryFolder.getRoot().getPath() + "/test/workspace/modules", "auth-failure"};
 
-		output = TestUtil.runBlade(temporaryFolder.getRoot(), samplesArgs);
+		output = TestUtil.runBlade(samplesArgs);
 
 		Assert.assertTrue(output, output == null || output.isEmpty());
 
@@ -151,7 +151,7 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testListSamples() throws Exception {
-		String content = TestUtil.runBlade(temporaryFolder.getRoot(), "samples");
+		String content = TestUtil.runBlade("samples");
 
 		Assert.assertTrue(content.contains("ds-portlet"));
 	}

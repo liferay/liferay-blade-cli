@@ -56,13 +56,11 @@ public class ConvertThemeCommandTest {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		PrintStream ps = new PrintStream(baos);
+		PrintStream out = new PrintStream(baos);
 
-		BladeTest blade = new BladeTest(ps);
+		BladeTest bladeTest = new BladeTest(out, null, System.in, temporaryFolder.getRoot());
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File oldCompassTheme = new File(workspace, "plugins-sdk/themes/compass-theme");
 

@@ -64,11 +64,9 @@ public class InitCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File gitdir = IO.getFile(projectDir, ".git");
 
@@ -93,11 +91,9 @@ public class InitCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File buildProperties = new File(projectDir, "plugins-sdk/build.properties");
 
@@ -114,11 +110,9 @@ public class InitCommandTest {
 	public void testDefaultInitWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertTrue(_workspaceDir.exists());
 
@@ -137,11 +131,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertFalse(new File(_workspaceDir, "build.gradle").exists());
 	}
@@ -150,11 +142,9 @@ public class InitCommandTest {
 	public void testDefaultInitWorkspaceDirectoryHasFilesForce() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertTrue(_workspaceDir.exists());
 
@@ -169,11 +159,9 @@ public class InitCommandTest {
 	public void testInitCommandGradleOption() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "gradle", "gradleworkspace"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File gradleWorkspace = new File(_workspaceDir, "gradleworkspace");
 
@@ -190,11 +178,9 @@ public class InitCommandTest {
 
 		_makeSDK(_workspaceDir);
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertTrue(new File(_workspaceDir, "build.gradle").exists());
 
@@ -219,11 +205,9 @@ public class InitCommandTest {
 	public void testInitWithLiferayVersion70() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", "7.0"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
@@ -234,11 +218,9 @@ public class InitCommandTest {
 	public void testInitWithLiferayVersion71() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", "7.1"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
@@ -249,11 +231,9 @@ public class InitCommandTest {
 	public void testInitWithLiferayVersionDefault() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
@@ -268,11 +248,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(newproject.mkdirs());
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertTrue(new File(newproject, "build.gradle").exists());
 
@@ -291,11 +269,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertFalse(new File(_workspaceDir, "newproject/build.gradle").exists());
 	}
@@ -304,11 +280,9 @@ public class InitCommandTest {
 	public void testInitWithNameWorkspaceNotExists() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/build.gradle").exists());
 
@@ -323,11 +297,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(newproject.mkdirs());
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertTrue(new File(newproject, "pom.xml").exists());
 
@@ -341,7 +313,7 @@ public class InitCommandTest {
 
 		Assert.assertTrue(metadataFile.exists());
 
-		BladeSettings bladeSettings = blade.getSettings();
+		BladeSettings bladeSettings = bladeTest.getSettings();
 
 		Assert.assertEquals("maven", bladeSettings.getProfileName());
 	}
@@ -354,11 +326,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertFalse(new File(_workspaceDir, "newproject/pom.xml").exists());
 	}
@@ -367,11 +337,9 @@ public class InitCommandTest {
 	public void testMavenInitWithNameWorkspaceNotExists() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/pom.xml").exists());
 
@@ -382,11 +350,9 @@ public class InitCommandTest {
 	public void testMavenInitWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertTrue(new File(_workspaceDir, "pom.xml").exists());
 
@@ -409,11 +375,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertFalse(new File(_workspaceDir, "pom.xml").exists());
 	}
@@ -422,11 +386,9 @@ public class InitCommandTest {
 	public void testMavenInitWorkspaceDirectoryHasFilesForce() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-b", "maven"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		Assert.assertTrue(_workspaceDir.exists());
 
@@ -453,11 +415,9 @@ public class InitCommandTest {
 
 		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "foo"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File file = IO.getFile(projectPath + "/foo");
 		File bndFile = IO.getFile(projectPath + "/foo/bnd.bnd");
@@ -472,11 +432,9 @@ public class InitCommandTest {
 
 		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "-b", "maven", "foo"};
 
-		BladeTest blade = new BladeTest();
+		BladeTest bladeTest = new BladeTest();
 
-		blade.setUserHomeDir(temporaryFolder.getRoot());
-
-		blade.run(args);
+		bladeTest.run(args);
 
 		File file = IO.getFile(projectPath + "/foo");
 		File bndFile = IO.getFile(projectPath + "/foo/bnd.bnd");

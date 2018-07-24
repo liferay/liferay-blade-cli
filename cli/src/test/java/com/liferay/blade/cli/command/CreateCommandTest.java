@@ -64,9 +64,7 @@ public class CreateCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_bladeTest = new BladeTest();
-
-		_bladeTest.setUserHomeDir(temporaryFolder.getRoot());
+		_bladeTest = new BladeTest(temporaryFolder.getRoot());
 	}
 
 	@Test
@@ -221,14 +219,14 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "loginHook"};
 
-		String content = TestUtil.runBlade(tempRoot, args);
+		String content = TestUtil.runBlade(args);
 
 		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
 
 		args = new String[]
 			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "-h", "com.liferay.login.web", "loginHook"};
 
-		content = TestUtil.runBlade(tempRoot, args);
+		content = TestUtil.runBlade(args);
 
 		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
 
@@ -596,7 +594,7 @@ public class CreateCommandTest {
 		String content = null;
 
 		try {
-			content = TestUtil.runBlade(tempRoot, args);
+			content = TestUtil.runBlade(args);
 		}
 		catch (Throwable t) {
 			content = t.getMessage();
@@ -833,7 +831,7 @@ public class CreateCommandTest {
 		String output = null;
 
 		try {
-			output = TestUtil.runBlade(tempRoot, args);
+			output = TestUtil.runBlade(args);
 		}
 		catch (Throwable t) {
 			output = t.getMessage();
@@ -846,7 +844,7 @@ public class CreateCommandTest {
 		args = new String[] {"create", "-t", "service", "-s com.test.Foo", "foo"};
 
 		try {
-			output = TestUtil.runBlade(tempRoot, args);
+			output = TestUtil.runBlade(args);
 		}
 		catch (Throwable t) {
 			output = t.getMessage();
@@ -1474,7 +1472,7 @@ public class CreateCommandTest {
 	public void testListTemplates() throws Exception {
 		String[] args = {"create", "-l"};
 
-		String templateList = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String templateList = TestUtil.runBlade(args);
 
 		Map<String, String> templates = ProjectTemplates.getTemplates();
 

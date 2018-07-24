@@ -16,11 +16,9 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -29,13 +27,6 @@ import org.junit.rules.TemporaryFolder;
  * @author Christopher Bryan Boyd
  */
 public class HelpCommandTest {
-
-	@Before
-	public void setUp() throws Exception {
-		_bladeTest = new BladeTest();
-
-		_bladeTest.setUserHomeDir(temporaryFolder.getRoot());
-	}
 
 	@Test
 	public void testHelpCommand() throws Exception {
@@ -72,7 +63,5 @@ public class HelpCommandTest {
 
 		return content;
 	}
-
-	private BladeTest _bladeTest;
 
 }
