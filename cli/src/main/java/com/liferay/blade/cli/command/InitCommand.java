@@ -185,9 +185,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		if ((build != null) && !build.equals("gradle")) {
-			getBladeCLI().setBase(destDir);
+			bladeCLI.setBase(destDir);
 
-			BladeSettings settings = getBladeCLI().getSettings();
+			BladeSettings settings = bladeCLI.getSettings();
 
 			settings.setProfileName(build);
 

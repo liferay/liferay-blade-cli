@@ -20,6 +20,7 @@ import aQute.bnd.header.Attrs;
 import aQute.bnd.osgi.Domain;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.LiferayBundleDeployer;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
@@ -81,7 +82,11 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		Set<File> outputFiles = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), bladeCLI.getBase());
+		BladeSettings bladeSettings = bladeCLI.getSettings();
+
+		Path cachePath = bladeSettings.getCachePath();
+
+		Set<File> outputFiles = GradleTooling.getOutputFiles(cachePath.toFile(), bladeCLI.getBase());
 
 		DeployArgs deployArgs = getArgs();
 

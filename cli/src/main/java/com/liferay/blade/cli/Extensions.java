@@ -84,37 +84,6 @@ public class Extensions implements AutoCloseable {
 		);
 	}
 
-	public static Path getDirectory() {
-		try {
-			Path userHomePath = BladeCLI.USER_HOME_DIR.toPath();
-
-			Path dotBladePath = userHomePath.resolve(".blade");
-
-			if (Files.notExists(dotBladePath)) {
-				Files.createDirectories(dotBladePath);
-			}
-			else if (!Files.isDirectory(dotBladePath)) {
-				throw new Exception(".blade is not a directory!");
-			}
-
-			Path extensions = dotBladePath.resolve("extensions");
-
-			if (Files.notExists(extensions)) {
-				Files.createDirectories(extensions);
-			}
-			else if (!Files.isDirectory(extensions)) {
-				throw new Exception(".blade/extensions is not a directory!");
-			}
-
-			return extensions;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-
-			throw new RuntimeException(e);
-		}
-	}
-
 	public static String[] sortArgs(Map<String, BaseCommand<? extends BaseArgs>> commands, String[] args)
 		throws Exception {
 
@@ -256,6 +225,10 @@ public class Extensions implements AutoCloseable {
 		return _getCommands(profileName);
 	}
 
+	public Path getPath() throws IOException {
+		return _bladeSettings.getExtensionPath();
+	}
+
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
 		Collection<String> flags = new ArrayList<>();
 
@@ -387,7 +360,7 @@ public class Extensions implements AutoCloseable {
 		if (_serviceLoaderClassLoader == null) {
 			Path tempExtensionsDirectory = Files.createTempDirectory("extensions");
 
-			FileUtil.copyDir(getDirectory(), tempExtensionsDirectory);
+			FileUtil.copyDir(getPath(), tempExtensionsDirectory);
 
 			URL[] jarUrls = _getJarUrls(tempExtensionsDirectory);
 

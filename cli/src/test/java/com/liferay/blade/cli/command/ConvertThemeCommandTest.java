@@ -42,7 +42,7 @@ public class ConvertThemeCommandTest {
 
 		String[] args = {"--base", workspace.getAbsolutePath(), "convert", "-l"};
 
-		String content = TestUtil.runBlade(args);
+		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		Assert.assertTrue(content, content.contains("compass-theme"));
 	}
@@ -56,9 +56,11 @@ public class ConvertThemeCommandTest {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		PrintStream ps = new PrintStream(baos);
+		PrintStream out = new PrintStream(baos);
 
-		new BladeTest(ps).run(args);
+		BladeTest bladeTest = new BladeTest(out, null, System.in, temporaryFolder.getRoot());
+
+		bladeTest.run(args);
 
 		File oldCompassTheme = new File(workspace, "plugins-sdk/themes/compass-theme");
 

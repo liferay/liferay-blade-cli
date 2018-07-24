@@ -16,58 +16,55 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
+import java.io.IOException;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.easymock.EasyMock;
-import org.easymock.IExpectationSetters;
+import java.nio.file.StandardCopyOption;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-
 /**
  * @author Christopher Bryan Boyd
+ * @author Gregory Amerson
  */
-@PrepareForTest({Extensions.class, UninstallExtensionCommand.class})
 public class UninstallExtensionCommandTest {
 
+	@Before
+	public void setUpTestExtensions() throws Exception {
+		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
+
+		extensionsDir.mkdirs();
+
+		Assert.assertTrue("Unable to create test extensions dir.", extensionsDir.exists());
+
+		Path extensionsPath = extensionsDir.toPath();
+
+		_setupTestExtension(extensionsPath, System.getProperty("sampleCommandJarFile"));
+	}
+
 	@Test
-	public void testUninstallCustomExtensionMock() throws Exception {
-		String jarName = "custom.blade.extension.jar";
+	public void testUninstallCustomExtension() throws Exception {
+		File sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
+
+		String jarName = sampleCommandJarFile.getName();
 
 		String[] args = {"extension", "uninstall", jarName};
 
-		File extensionsDir = new File(tempFolder.getRoot(), "extensions");
+		File extensionsDir = new File(temporaryFolder.getRoot(), "extensions");
 
 		extensionsDir.mkdirs();
 
 		File testJar = new File(extensionsDir, jarName);
 
-		Assert.assertTrue(testJar.createNewFile());
-
-		PowerMock.mockStaticPartialNice(Extensions.class, "getDirectory");
-
-		IExpectationSetters<Path> extensionsDirMethod = EasyMock.expect(Extensions.getDirectory());
-
-		Path extensionsDirPath = extensionsDir.toPath();
-
-		extensionsDirMethod.andReturn(extensionsDirPath).atLeastOnce();
-
-		PowerMock.replay(Extensions.class);
-
-		String output = TestUtil.runBlade(args);
-
-		PowerMock.verifyAll();
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		Assert.assertTrue(output.contains(" successful") && output.contains(jarName));
 
@@ -75,9 +72,18 @@ public class UninstallExtensionCommandTest {
 	}
 
 	@Rule
-	public final PowerMockRule rule = new PowerMockRule();
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	@Rule
-	public final TemporaryFolder tempFolder = new TemporaryFolder();
+	private static void _setupTestExtension(Path extensionsPath, String jarPath) throws IOException {
+		File sampleJarFile = new File(jarPath);
+
+		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
+
+		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
+
+		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
+
+		Assert.assertTrue(Files.exists(sampleJarPath));
+	}
 
 }

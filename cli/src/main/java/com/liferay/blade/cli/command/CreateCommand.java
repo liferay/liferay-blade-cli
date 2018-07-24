@@ -17,7 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.Extensions;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.project.templates.ProjectTemplates;
@@ -172,7 +172,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
 
-		Path customTemplatesPath = Extensions.getDirectory();
+		BladeSettings bladeSettings = bladeCLI.getSettings();
+
+		Path customTemplatesPath = bladeSettings.getExtensionPath();
 
 		archetypesDirs.add(FileUtil.getJarFile(ProjectTemplates.class));
 		archetypesDirs.add(customTemplatesPath.toFile());
@@ -299,7 +301,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
-		Collection<String> templateNames = BladeUtil.getTemplateNames();
+		Collection<String> templateNames = BladeUtil.getTemplateNames(getBladeCLI());
 
 		return templateNames.contains(templateName);
 	}
@@ -307,9 +309,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	private void _printTemplates() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		Map<String, String> templates = BladeUtil.getTemplates();
+		Map<String, String> templates = BladeUtil.getTemplates(bladeCLI);
 
-		List<String> templateNames = new ArrayList<>(BladeUtil.getTemplateNames());
+		List<String> templateNames = new ArrayList<>(BladeUtil.getTemplateNames(getBladeCLI()));
 
 		Collections.sort(templateNames);
 

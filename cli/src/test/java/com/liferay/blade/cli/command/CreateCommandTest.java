@@ -50,10 +50,9 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 import org.gradle.testkit.runner.BuildTask;
-import org.gradle.tooling.internal.consumer.ConnectorServices;
 
-import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -63,9 +62,9 @@ import org.junit.rules.TemporaryFolder;
  */
 public class CreateCommandTest {
 
-	@After
-	public void cleanUp() throws Exception {
-		ConnectorServices.reset();
+	@Before
+	public void setUp() throws Exception {
+		_bladeTest = new BladeTest(temporaryFolder.getRoot());
 	}
 
 	@Test
@@ -79,7 +78,7 @@ public class CreateCommandTest {
 
 		String projectPath = new File(tempRoot, "bar-activator").getAbsolutePath();
 
-		new BladeTest().run(gradleArgs);
+		_bladeTest.run(gradleArgs);
 
 		_checkGradleBuildFiles(projectPath);
 
@@ -93,7 +92,7 @@ public class CreateCommandTest {
 
 		FileUtil.deleteDir(Paths.get(projectPath));
 
-		new BladeTest().run(mavenArgs);
+		_bladeTest.run(mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
@@ -118,7 +117,7 @@ public class CreateCommandTest {
 
 		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
 
-		new BladeTest().run(gradleArgs);
+		_bladeTest.run(gradleArgs);
 
 		_checkGradleBuildFiles(projectPath);
 
@@ -138,7 +137,7 @@ public class CreateCommandTest {
 
 		FileUtil.deleteDir(Paths.get(projectPath));
 
-		new BladeTest().run(mavenArgs);
+		_bladeTest.run(mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
@@ -177,7 +176,7 @@ public class CreateCommandTest {
 
 		String projectPath = new File(tempRoot, "loginHook").getAbsolutePath();
 
-		new BladeTest().run(gradleArgs);
+		_bladeTest.run(gradleArgs);
 
 		_checkGradleBuildFiles(projectPath);
 
@@ -196,7 +195,7 @@ public class CreateCommandTest {
 
 		FileUtil.deleteDir(Paths.get(projectPath));
 
-		new BladeTest().run(mavenArgs);
+		_bladeTest.run(mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
@@ -233,7 +232,7 @@ public class CreateCommandTest {
 
 		args = new String[] {"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "-H", "1.0.0", "loginHook"};
 
-		content = TestUtil.runBlade(args);
+		content = TestUtil.runBlade(tempRoot, args);
 
 		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
 	}
@@ -245,7 +244,7 @@ public class CreateCommandTest {
 		String[] args =
 			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "-p", "com.liferay.test", "foo"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
 
@@ -276,7 +275,7 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "portlet-portlet"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "portlet-portlet").getAbsolutePath();
 
@@ -305,7 +304,7 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "portlet", "-c", "Foo", "gradle.test"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "gradle.test").getAbsolutePath();
 
@@ -334,7 +333,7 @@ public class CreateCommandTest {
 			"com.liferay.portal.kernel.events.LifecycleAction", "-c", "FooAction", "servicepreaction"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "servicepreaction").getAbsolutePath();
 
@@ -395,7 +394,7 @@ public class CreateCommandTest {
 			"com.liferay.backend.integration", "backend-integration"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "backend-integration").getAbsolutePath();
 
@@ -441,7 +440,7 @@ public class CreateCommandTest {
 			"guestbook"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "guestbook").getAbsolutePath();
 
@@ -499,7 +498,7 @@ public class CreateCommandTest {
 			"com.liferay.docs.guestbook"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "com.liferay.docs.guestbook").getAbsolutePath();
 
@@ -546,7 +545,7 @@ public class CreateCommandTest {
 			"com.liferay.portal.kernel.service.UserLocalServiceWrapper", "serviceoverride"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "serviceoverride").getAbsolutePath();
 
@@ -573,7 +572,7 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-t", "mvc-portlet", "-d", tempRoot.getAbsolutePath(), "-p", "foo.bar", "barfoo"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "barfoo").getAbsolutePath();
 
@@ -618,7 +617,7 @@ public class CreateCommandTest {
 
 		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
 
-		new BladeTest().run(gradleArgs);
+		_bladeTest.run(gradleArgs);
 
 		_checkGradleBuildFiles(projectPath);
 
@@ -638,7 +637,7 @@ public class CreateCommandTest {
 
 		FileUtil.deleteDir(Paths.get(projectPath));
 
-		new BladeTest().run(mavenArgs);
+		_bladeTest.run(mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
@@ -663,7 +662,7 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "npm-angular-portlet", "npmangular"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "npmangular").getAbsolutePath();
 
@@ -690,7 +689,7 @@ public class CreateCommandTest {
 			Assert.assertTrue(existFile.createNewFile());
 		}
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "exist").getAbsolutePath();
 
@@ -706,7 +705,7 @@ public class CreateCommandTest {
 			"icontest"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "icontest").getAbsolutePath();
 
@@ -736,7 +735,7 @@ public class CreateCommandTest {
 			"toolbartest"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "toolbartest").getAbsolutePath();
 
@@ -765,7 +764,7 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "hello-world-portlet"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "hello-world-portlet").getAbsolutePath();
 
@@ -797,7 +796,7 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "hello-world-refresh"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "hello-world-refresh").getAbsolutePath();
 
@@ -863,7 +862,7 @@ public class CreateCommandTest {
 			"simulator"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "simulator").getAbsolutePath();
 
@@ -892,7 +891,7 @@ public class CreateCommandTest {
 			"spring-test"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "spring-test").getAbsolutePath();
 
@@ -913,7 +912,7 @@ public class CreateCommandTest {
 		String[] args =
 			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "template-context-contributor", "blade-test"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "blade-test").getAbsolutePath();
 
@@ -941,7 +940,7 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "theme", "theme-test"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "theme-test").getAbsolutePath();
 
@@ -976,7 +975,7 @@ public class CreateCommandTest {
 			"theme-contributor-test"
 		};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "theme-contributor-test").getAbsolutePath();
 
@@ -1026,7 +1025,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = extensionsDir.getAbsolutePath();
 
@@ -1066,7 +1065,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		_checkFileExists(projectPath + "/gradle.test/build.gradle");
 
@@ -1103,7 +1102,7 @@ public class CreateCommandTest {
 
 		Assert.assertTrue(nestedDir.mkdirs());
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = nestedDir.getAbsolutePath();
 
@@ -1149,7 +1148,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		_checkFileExists(projectPath + "/workspace-sample/build.gradle");
 
@@ -1190,7 +1189,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		_checkFileExists(projectPath + "/sample/build.gradle");
 
@@ -1246,7 +1245,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		_checkFileExists(projectPath + "/workspace.sample/build.gradle");
 
@@ -1287,7 +1286,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		_checkFileExists(projectPath + "/foo");
 
@@ -1324,7 +1323,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		_checkFileExists(projectPath + "/foo");
 
@@ -1361,7 +1360,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(appsDir, "foo-refresh").getAbsolutePath();
 
@@ -1396,7 +1395,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(workspace, "wars/theme-test").getAbsolutePath();
 
@@ -1429,7 +1428,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		File buildGradle = new File(modulesDir, "foo/build.gradle");
 
@@ -1449,7 +1448,7 @@ public class CreateCommandTest {
 		String[] sevenZeroArgs =
 			{"--base", tempRoot.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "-v", "7.0", "seven-zero"};
 
-		new BladeTest().run(sevenZeroArgs);
+		_bladeTest.run(sevenZeroArgs);
 
 		File npmbundlerrc = new File(tempRoot, "seven-zero/build.gradle");
 
@@ -1460,7 +1459,7 @@ public class CreateCommandTest {
 		String[] sevenOneArgs =
 			{"--base", tempRoot.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-one"};
 
-		new BladeTest().run(sevenOneArgs);
+		_bladeTest.run(sevenOneArgs);
 
 		npmbundlerrc = new File(tempRoot, "seven-one/build.gradle");
 
@@ -1490,7 +1489,7 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "activatorXXX", "wrong-activator"};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(tempRoot, "wrong-activator").getAbsolutePath();
 
@@ -1563,7 +1562,7 @@ public class CreateCommandTest {
 	private void _makeWorkspace(File workspace) throws Exception {
 		String[] args = {"--base", workspace.getParentFile().getPath(), "init", workspace.getName()};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		Assert.assertTrue(BladeUtil.isWorkspace(workspace));
 	}
@@ -1571,7 +1570,7 @@ public class CreateCommandTest {
 	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {
 		String[] args = {"--base", workspace.toString(), "create", "-t", projectType, projectName};
 
-		new BladeTest().run(args);
+		_bladeTest.run(args);
 
 		String projectPath = new File(workspace, "wars/" + projectName).getAbsolutePath();
 
@@ -1597,5 +1596,7 @@ public class CreateCommandTest {
 			}
 		}
 	}
+
+	private BladeTest _bladeTest;
 
 }

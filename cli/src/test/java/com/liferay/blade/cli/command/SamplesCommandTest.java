@@ -46,7 +46,7 @@ public class SamplesCommandTest {
 	public void testGetSample() throws Exception {
 		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "friendly-url"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/friendly-url");
 
@@ -65,7 +65,7 @@ public class SamplesCommandTest {
 	public void testGetSampleWithDependencies() throws Exception {
 		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "rest"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/rest");
 
@@ -84,7 +84,7 @@ public class SamplesCommandTest {
 	public void testGetSampleWithGradleWrapper() throws Exception {
 		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "authenticator-shiro"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/authenticator-shiro");
 

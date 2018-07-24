@@ -27,9 +27,9 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -50,8 +50,6 @@ import org.fusesource.jansi.AnsiConsole;
  */
 public class BladeCLI implements Runnable {
 
-	public static final File USER_HOME_DIR = new File(System.getProperty("user.home"));
-
 	public static void main(String[] args) {
 		BladeCLI bladeCLI = new BladeCLI();
 
@@ -66,14 +64,15 @@ public class BladeCLI implements Runnable {
 	}
 
 	public BladeCLI() {
-		this(System.out, System.err);
+		this(System.out, System.err, System.in);
 	}
 
-	public BladeCLI(PrintStream out, PrintStream err) {
+	public BladeCLI(PrintStream out, PrintStream err, InputStream in) {
 		AnsiConsole.systemInstall();
 
 		_out = out;
 		_err = err;
+		_in = in;
 	}
 
 	public void addErrors(String prefix, Collection<String> data) {
@@ -107,24 +106,6 @@ public class BladeCLI implements Runnable {
 		return _commandArgs;
 	}
 
-	public Path getBundleDir() {
-		Path userHomePath = USER_HOME_DIR.toPath();
-
-		return userHomePath.resolve(".liferay/bundles");
-	}
-
-	public File getCacheDir() throws IOException {
-		Path userHomePath = USER_HOME_DIR.toPath();
-
-		Path cacheDir = userHomePath.resolve(".blade/cache");
-
-		if (!Files.exists(cacheDir)) {
-			Files.createDirectories(cacheDir);
-		}
-
-		return cacheDir.toFile();
-	}
-
 	public BladeSettings getSettings() throws IOException {
 		final File settingsFile;
 
@@ -134,12 +115,14 @@ public class BladeCLI implements Runnable {
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
 		else {
-			File homeDir = USER_HOME_DIR;
-
-			settingsFile = new File(homeDir, ".blade/settings.properties");
+			settingsFile = new File(_USER_HOME_DIR, ".blade/settings.properties");
 		}
 
 		return new BladeSettings(settingsFile);
+	}
+
+	public InputStream in() {
+		return _in;
 	}
 
 	public PrintStream out() {
@@ -340,6 +323,9 @@ public class BladeCLI implements Runnable {
 
 				command.execute();
 			}
+			catch (Throwable th) {
+				throw th;
+			}
 			finally {
 				thread.setContextClassLoader(currentClassLoader);
 			}
@@ -349,6 +335,8 @@ public class BladeCLI implements Runnable {
 		}
 	}
 
+	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
+
 	private static final Formatter _tracer = new Formatter(System.out);
 
 	private Path _basePath = Paths.get(".");
@@ -356,6 +344,7 @@ public class BladeCLI implements Runnable {
 	private BaseArgs _commandArgs;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final PrintStream _err;
+	private final InputStream _in;
 	private JCommander _jCommander;
 	private final PrintStream _out;
 

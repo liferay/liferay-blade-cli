@@ -16,12 +16,13 @@
 
 package com.liferay.blade.cli.util;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Scanner;
 
 /**
  * @author Christopher Bryan Boyd
@@ -69,8 +70,10 @@ public class Prompter {
 		while (!answer.isPresent()) {
 			out.println(questionWithPrompt);
 
-			try (Scanner scanner = new Scanner(in)) {
-				String decision = scanner.nextLine();
+			try (InputStreamReader isr = new InputStreamReader(in);
+				BufferedReader reader = new BufferedReader(isr)) {
+
+				String decision = reader.readLine();
 
 				decision = decision.toLowerCase();
 

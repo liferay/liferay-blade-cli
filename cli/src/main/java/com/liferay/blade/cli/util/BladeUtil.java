@@ -23,7 +23,7 @@ import aQute.bnd.osgi.Resource;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.Extensions;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.project.templates.ProjectTemplates;
 
@@ -223,14 +223,16 @@ public class BladeUtil {
 		}
 	}
 
-	public static Collection<String> getTemplateNames() throws Exception {
-		Map<String, String> templates = getTemplates();
+	public static Collection<String> getTemplateNames(BladeCLI blade) throws Exception {
+		Map<String, String> templates = getTemplates(blade);
 
 		return templates.keySet();
 	}
 
-	public static Map<String, String> getTemplates() throws Exception {
-		Path extensions = Extensions.getDirectory();
+	public static Map<String, String> getTemplates(BladeCLI bladeCLI) throws Exception {
+		BladeSettings bladeSettings = bladeCLI.getSettings();
+
+		Path extensions = bladeSettings.getExtensionPath();
 
 		Collection<File> templatesFiles = new HashSet<>();
 

@@ -16,8 +16,15 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.util.BladeUtil;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * @author Gregory Amerson
@@ -25,45 +32,87 @@ import java.io.PrintStream;
 public class BladeTest extends BladeCLI {
 
 	public BladeTest() throws Exception {
-		super(System.out, System.out);
+		super(System.out, System.out, System.in);
+
+		_userHomeDir = new File(System.getProperty("user.home"));
 	}
 
-	public BladeTest(File base) throws Exception {
+	public BladeTest(File userHomeDir) throws Exception {
 		this();
 
-		_base = base;
+		_userHomeDir = userHomeDir;
 	}
 
 	public BladeTest(PrintStream ps) {
 		this(ps, ps, null);
 	}
 
-	public BladeTest(PrintStream ps, File base) {
-		super(ps, ps);
-
-		_base = base;
+	public BladeTest(PrintStream ps, InputStream in) {
+		this(ps, ps, in);
 	}
 
 	public BladeTest(PrintStream outputStream, PrintStream errorStream) {
-		this(outputStream, errorStream, null);
+		this(outputStream, errorStream, System.in);
 	}
 
-	public BladeTest(PrintStream out, PrintStream err, File base) {
-		super(out, err);
+	public BladeTest(PrintStream outputStream, PrintStream errorStream, InputStream in) {
+		this(outputStream, errorStream, in, new File(System.getProperty("user.home")));
+	}
 
-		_base = base;
+	public BladeTest(PrintStream out, PrintStream err, InputStream in, File userHomeDir) {
+		super(out, err, in);
+
+		_userHomeDir = userHomeDir;
 	}
 
 	@Override
-	public File getBase() {
-		if (_base != null) {
-			return _base;
+	public BladeSettings getSettings() throws IOException {
+		final File settingsFile;
+
+		if (BladeUtil.isWorkspace(this)) {
+			File workspaceDir = BladeUtil.getWorkspaceDir(this);
+
+			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
 		else {
-			return super.getBase();
+			settingsFile = new File(_userHomeDir, ".blade/settings.properties");
 		}
+
+		return new BladeSettings(settingsFile) {
+
+			@Override
+			public Path getCachePath() {
+				Path userHomePath = _userHomeDir.toPath();
+
+				Path cachePath = userHomePath.resolve(".blade/cache");
+
+				try {
+					Files.createDirectories(cachePath);
+				}
+				catch (IOException ioe) {
+				}
+
+				return cachePath;
+			}
+
+			@Override
+			public Path getExtensionPath() {
+				Path userHomePath = _userHomeDir.toPath();
+
+				Path extensionsPath = userHomePath.resolve(".blade/extensions");
+
+				try {
+					Files.createDirectories(extensionsPath);
+				}
+				catch (IOException ioe) {
+				}
+
+				return extensionsPath;
+			}
+
+		};
 	}
 
-	private File _base;
+	private File _userHomeDir;
 
 }

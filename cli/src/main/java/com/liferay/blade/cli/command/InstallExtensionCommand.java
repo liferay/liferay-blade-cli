@@ -17,7 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.Extensions;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.gradle.ProcessResult;
@@ -211,7 +211,11 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		Set<File> outputFiles = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), projectPath.toFile());
+		BladeSettings bladeSettings = bladeCLI.getSettings();
+
+		Path cachePath = bladeSettings.getCachePath();
+
+		Set<File> outputFiles = GradleTooling.getOutputFiles(cachePath.toFile(), projectPath.toFile());
 
 		ProcessResult processResult = gradleExec.executeCommand("assemble -x check", projectPath.toFile());
 
@@ -248,15 +252,17 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		Path extensionName = extensionPath.getFileName();
 
 		if (_isExtension(extensionPath)) {
-			Path extensionsHome = Extensions.getDirectory();
+			BladeCLI bladeCLI = getBladeCLI();
 
-			Path extensionInstallPath = extensionsHome.resolve(extensionName);
+			BladeSettings bladeSettings = bladeCLI.getSettings();
+
+			Path extensionsPath = bladeSettings.getExtensionPath();
+
+			Path extensionInstallPath = extensionsPath.resolve(extensionName);
 
 			boolean exists = Files.exists(extensionInstallPath);
 
 			String newExtensionVersion = BladeUtil.getBundleVersion(extensionPath);
-
-			BladeCLI bladeCLI = getBladeCLI();
 
 			if (exists) {
 				bladeCLI.out(
@@ -266,7 +272,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 				String message = String.format("Overwrite existing extension with version %s?", newExtensionVersion);
 
-				boolean overwrite = Prompter.confirm(message, System.in, bladeCLI.out(), Optional.of(false));
+				boolean overwrite = Prompter.confirm(message, bladeCLI.in(), bladeCLI.out(), Optional.of(false));
 
 				if (!overwrite) {
 					return;
