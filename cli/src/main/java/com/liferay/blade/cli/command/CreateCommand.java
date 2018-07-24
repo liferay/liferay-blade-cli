@@ -17,7 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.Extensions;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.project.templates.ProjectTemplates;
@@ -172,11 +172,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
 
-		File bladeUserHome = getBladeCLI().getUserHomeDir();
+		BladeSettings bladeSettings = bladeCLI.getSettings();
 
-		Path bladeUserHomePath = bladeUserHome.toPath();
-
-		Path customTemplatesPath = Extensions.getDirectory(bladeUserHomePath);
+		Path customTemplatesPath = bladeSettings.getExtensionPath();
 
 		archetypesDirs.add(FileUtil.getJarFile(ProjectTemplates.class));
 		archetypesDirs.add(customTemplatesPath.toFile());

@@ -24,7 +24,6 @@ import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.util.FileUtil;
 
-import java.io.File;
 import java.io.IOException;
 
 import java.lang.reflect.Field;
@@ -83,35 +82,6 @@ public class Extensions implements AutoCloseable {
 		).collect(
 			Collectors.toList()
 		);
-	}
-
-	public static Path getDirectory(Path userHomePath) {
-		try {
-			Path dotBladePath = userHomePath.resolve(".blade");
-
-			if (Files.notExists(dotBladePath)) {
-				Files.createDirectories(dotBladePath);
-			}
-			else if (!Files.isDirectory(dotBladePath)) {
-				throw new Exception(".blade is not a directory!");
-			}
-
-			Path extensions = dotBladePath.resolve("extensions");
-
-			if (Files.notExists(extensions)) {
-				Files.createDirectories(extensions);
-			}
-			else if (!Files.isDirectory(extensions)) {
-				throw new Exception(".blade/extensions is not a directory!");
-			}
-
-			return extensions;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-
-			throw new RuntimeException(e);
-		}
 	}
 
 	public static String[] sortArgs(Map<String, BaseCommand<? extends BaseArgs>> commands, String[] args)
@@ -238,8 +208,7 @@ public class Extensions implements AutoCloseable {
 		return argsList.toArray(new String[0]);
 	}
 
-	public Extensions(BladeCLI blade, BladeSettings bladeSettings) {
-		_blade = blade;
+	public Extensions(BladeSettings bladeSettings) {
 		_bladeSettings = bladeSettings;
 	}
 
@@ -256,12 +225,8 @@ public class Extensions implements AutoCloseable {
 		return _getCommands(profileName);
 	}
 
-	public Path getDirectory() {
-		File bladeUserHome = _blade.getUserHomeDir();
-
-		Path bladeUserHomePath = bladeUserHome.toPath();
-
-		return getDirectory(bladeUserHomePath);
+	public Path getPath() throws IOException {
+		return _bladeSettings.getExtensionPath();
 	}
 
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
@@ -395,7 +360,7 @@ public class Extensions implements AutoCloseable {
 		if (_serviceLoaderClassLoader == null) {
 			Path tempExtensionsDirectory = Files.createTempDirectory("extensions");
 
-			FileUtil.copyDir(getDirectory(), tempExtensionsDirectory);
+			FileUtil.copyDir(getPath(), tempExtensionsDirectory);
 
 			URL[] jarUrls = _getJarUrls(tempExtensionsDirectory);
 
@@ -405,7 +370,6 @@ public class Extensions implements AutoCloseable {
 		return _serviceLoaderClassLoader;
 	}
 
-	private final BladeCLI _blade;
 	private final BladeSettings _bladeSettings;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private URLClassLoader _serviceLoaderClassLoader = null;

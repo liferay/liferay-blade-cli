@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -107,24 +106,6 @@ public class BladeCLI implements Runnable {
 		return _commandArgs;
 	}
 
-	public Path getBundleDir() {
-		Path userHomePath = getUserHomeDir().toPath();
-
-		return userHomePath.resolve(".liferay/bundles");
-	}
-
-	public File getCacheDir() throws IOException {
-		Path userHomePath = getUserHomeDir().toPath();
-
-		Path cacheDir = userHomePath.resolve(".blade/cache");
-
-		if (!Files.exists(cacheDir)) {
-			Files.createDirectories(cacheDir);
-		}
-
-		return cacheDir.toFile();
-	}
-
 	public BladeSettings getSettings() throws IOException {
 		final File settingsFile;
 
@@ -134,20 +115,10 @@ public class BladeCLI implements Runnable {
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
 		else {
-			File homeDir = getUserHomeDir();
-
-			settingsFile = new File(homeDir, ".blade/settings.properties");
+			settingsFile = new File(_USER_HOME_DIR, ".blade/settings.properties");
 		}
 
 		return new BladeSettings(settingsFile);
-	}
-
-	public File getUserHomeDir() {
-		if (_userHomeDir == null) {
-			_userHomeDir = new File(System.getProperty("user.home"));
-		}
-
-		return _userHomeDir;
 	}
 
 	public InputStream in() {
@@ -234,7 +205,7 @@ public class BladeCLI implements Runnable {
 
 		System.setErr(err());
 
-		Extensions extensions = new Extensions(this, getSettings());
+		Extensions extensions = new Extensions(getSettings());
 
 		_commands = extensions.getCommands();
 
@@ -364,6 +335,8 @@ public class BladeCLI implements Runnable {
 		}
 	}
 
+	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
+
 	private static final Formatter _tracer = new Formatter(System.out);
 
 	private Path _basePath = Paths.get(".");
@@ -374,6 +347,5 @@ public class BladeCLI implements Runnable {
 	private final InputStream _in;
 	private JCommander _jCommander;
 	private final PrintStream _out;
-	private File _userHomeDir = getUserHomeDir();
 
 }

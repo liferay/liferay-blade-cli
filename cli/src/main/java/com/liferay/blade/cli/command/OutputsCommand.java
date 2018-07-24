@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
@@ -44,7 +45,11 @@ public class OutputsCommand extends BaseCommand<OutputsArgs> {
 
 		final Path basePathRoot = basePath.getRoot();
 
-		final Set<File> outputs = GradleTooling.getOutputFiles(bladeCLI.getCacheDir(), base);
+		BladeSettings bladeSettings = bladeCLI.getSettings();
+
+		Path cachePath = bladeSettings.getCachePath();
+
+		final Set<File> outputs = GradleTooling.getOutputFiles(cachePath.toFile(), base);
 
 		for (File output : outputs) {
 			Path outputPath = output.toPath();
