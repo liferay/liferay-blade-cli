@@ -112,19 +112,6 @@ repositories {
 	}
 }
 
-sourceSets {
-	zips {
-		resources {
-			srcDir "${projectDir}"
-			include "deps.zip"
-			include "wrapper.zip"
-		}
-	}
-	test {
-		runtimeClasspath += sourceSets.zips.output
-	}
-}
-
 publishing {
 	publications {
 		bladeJar(MavenPublication) {
@@ -138,6 +125,19 @@ publishing {
 
 			from components.java
 		}
+	}
+}
+
+sourceSets {
+	zips {
+		resources {
+			srcDir "${projectDir}"
+			include "deps.zip"
+			include "wrapper.zip"
+		}
+	}
+	test {
+		runtimeClasspath += sourceSets.zips.output
 	}
 }
 
@@ -188,20 +188,22 @@ test {
 		systemProperty 'sampleTemplateJarFile', project.jar.archivePath
 	}
 
-	int cores = Runtime.runtime.availableProcessors()
+	int availableProcessors = Runtime.runtime.availableProcessors()
 
-	int parallelForks = 1
+	int forks = 1
 
 	if (!debug) {
-		if (cores > 4) {
+		if (availableProcessors > 4) {
 
-			parallelForks = cores - 2
+			forks = availableProcessors - 2
 		}
-		else if (cores > 2) {
+		else if (availableProcessors > 2) {
 
-			parallelForks = cores - 1
+			forks = availableProcessors - 1
 		}
 	}
-	maxParallelForks = parallelForks
+
+	maxParallelForks = forks
 }
+
 version = "3.1.1"
