@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,9 +28,9 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Scanner;
 
 import org.gradle.testkit.runner.BuildTask;
-
 import org.junit.Assert;
 
 /**
@@ -68,36 +67,41 @@ public class TestUtil {
 
 		PrintStream outputPrintStream = new PrintStream(outputStream);
 
-		boolean errors = blade.runBlade(args);
+		ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
 
-		StringBuilder sb = new StringBuilder();
-		String output = blade.getOutput();
+		PrintStream errorPrintStream = new PrintStream(errorStream);
 
 		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir);
 
+		return runBlade(bladeTest, outputPrintStream, errorPrintStream);
+	}
+
+	public static String runBlade(BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, String... args) throws Exception {
+		return runBlade(bladeTest, outputStream, errorStream, true, args);
+	}
+
+	public static String runBlade(BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, boolean assertErrors, String... args) throws Exception {
 		bladeTest.run(args);
 
 		String error = errorStream.toString();
 
-		String error = blade.getError();
+		try (Scanner scanner = new Scanner(error)) {
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
 
-		if (error != null) {
-			if (errors && checkAssert) {
-				Assert.fail("Errors were encountered while running blade: " + System.lineSeparator() + error);
+				if (line.startsWith("SLF4J:")) {
+					continue;
+				}
+
+				if (assertErrors) {
+					Assert.fail("Encountered error at line: " + line + "\n" + error);
+				}
 			}
-
-			if (sb.length() > 0) {
-				sb.append(System.lineSeparator());
-			}
-
-			sb.append(error);
 		}
 
-		return sb.toString();
-	}
+		String content = outputStream.toString();
 
-	public static String runBlade(String... args) throws Exception {
-		return runBlade(true, args);
+		return content;
 	}
 
 	public static String runBlade(File userHomeDir, String... args) throws Exception {

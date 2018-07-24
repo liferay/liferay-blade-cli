@@ -17,63 +17,51 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeIOTest;
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.StringPrintStream;
+import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.ProcessResult;
-import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
+import java.io.PrintStream;
 
 import org.easymock.EasyMock;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 
 /**
  * @author Christopher Bryan Boyd
  */
 @PrepareForTest(InstallExtensionCommand.class)
-@RunWith(PowerMockRunner.class)
 public class GradlePrintErrorTest {
-
-	@Before
-	public void setUp() throws Exception {
-		Whitebox.setInternalState(BladeCLI.class, "USER_HOME_DIR", temporaryFolder.getRoot());
-
-		BladeTest bladeTest = new BladeTest();
-
-		File cacheDir = bladeTest.getCacheDir();
-
-		if (cacheDir.exists()) {
-			FileUtil.deleteDir(cacheDir.toPath());
-		}
-	}
 
 	@Test
 	public void testGradleError() throws Exception {
 		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
 
-		BladeIOTest blade = BladeIOTest.getBlade();
+		PrintStream outputPrintStream = StringPrintStream.newInstance();
 
-		PowerMock.expectNew(GradleExec.class, EasyMock.isA(BladeTest.class)).andReturn(new GradleExecSpecial(blade));
+		PrintStream errorPrintStream = StringPrintStream.newInstance();
+
+		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, null, temporaryFolder.getRoot());
+
+		PowerMock.expectNew(GradleExec.class, EasyMock.isA(BladeTest.class)).andReturn(new GradleExecSpecial(bladeTest));
 
 		PowerMock.replay(GradleExec.class);
 
-		Assert.assertTrue(blade.runBlade(args));
+		TestUtil.runBlade(bladeTest, outputPrintStream, errorPrintStream, false, args);
 
-		String output = blade.getOutput() + System.lineSeparator() + blade.getError();
+		String error = errorPrintStream.toString();
 
-		boolean buildFailedBoolean = output.contains("BUILD FAILED");
+		boolean buildFailedBoolean = error.contains("BUILD FAILED");
+
+		String output = outputPrintStream.toString();
 
 		boolean foobarBoolean = output.contains("foobar");
 
@@ -81,6 +69,9 @@ public class GradlePrintErrorTest {
 
 		PowerMock.verifyAll();
 	}
+
+	@Rule
+	public final PowerMockRule rule = new PowerMockRule();
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
