@@ -233,7 +233,7 @@ public class BladeUtil {
 	}
 
 	public static Map<String, String> getTemplates(BladeCLI bladeCLI) throws Exception {
-		Path extensions = bladeCLI.getExtensionPath();
+		Path extensions = bladeCLI.getExtensionsPath();
 
 		Collection<File> templatesFiles = new HashSet<>();
 

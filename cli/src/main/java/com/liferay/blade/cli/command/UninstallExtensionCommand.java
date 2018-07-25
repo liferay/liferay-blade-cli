@@ -55,7 +55,7 @@ public class UninstallExtensionCommand extends BaseCommand<UninstallExtensionArg
 	private void _removeExtension(String name) throws IOException {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		Path extensionsHome = bladeCLI.getExtensionPath();
+		Path extensionsHome = bladeCLI.getExtensionsPath();
 
 		Path extensionPath = extensionsHome.resolve(name);
 

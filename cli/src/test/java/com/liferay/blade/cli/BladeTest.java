@@ -81,7 +81,7 @@ public class BladeTest extends BladeCLI {
 	}
 
 	@Override
-	public Path getExtensionPath() {
+	public Path getExtensionsPath() {
 		Path userHomePath = _userHomeDir.toPath();
 
 		Path extensionsPath = userHomePath.resolve(".blade/extensions");

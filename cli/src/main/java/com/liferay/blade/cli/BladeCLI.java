@@ -114,7 +114,7 @@ public class BladeCLI implements Runnable {
 		return cachePath;
 	}
 
-	public Path getExtensionPath() {
+	public Path getExtensionsPath() {
 		try {
 			Path userHomePath = _USER_HOME_DIR.toPath();
 
@@ -246,7 +246,7 @@ public class BladeCLI implements Runnable {
 
 		System.setErr(err());
 
-		Extensions extensions = new Extensions(getExtensionPath(), getSettings());
+		Extensions extensions = new Extensions(getExtensionsPath(), getSettings());
 
 		_commands = extensions.getCommands();
 

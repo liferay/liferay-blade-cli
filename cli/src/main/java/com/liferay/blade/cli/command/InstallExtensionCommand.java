@@ -251,7 +251,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		if (_isExtension(extensionPath)) {
 			BladeCLI bladeCLI = getBladeCLI();
 
-			Path extensionsPath = bladeCLI.getExtensionPath();
+			Path extensionsPath = bladeCLI.getExtensionsPath();
 
 			Path extensionInstallPath = extensionsPath.resolve(extensionName);
 
