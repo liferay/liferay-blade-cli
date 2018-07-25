@@ -66,6 +66,36 @@ public class BladeTest extends BladeCLI {
 	}
 
 	@Override
+	public Path getCachePath() {
+		Path userHomePath = _userHomeDir.toPath();
+
+		Path cachePath = userHomePath.resolve(".blade/cache");
+
+		try {
+			Files.createDirectories(cachePath);
+		}
+		catch (IOException ioe) {
+		}
+
+		return cachePath;
+	}
+
+	@Override
+	public Path getExtensionPath() {
+		Path userHomePath = _userHomeDir.toPath();
+
+		Path extensionsPath = userHomePath.resolve(".blade/extensions");
+
+		try {
+			Files.createDirectories(extensionsPath);
+		}
+		catch (IOException ioe) {
+		}
+
+		return extensionsPath;
+	}
+
+	@Override
 	public BladeSettings getSettings() throws IOException {
 		final File settingsFile;
 
@@ -78,39 +108,7 @@ public class BladeTest extends BladeCLI {
 			settingsFile = new File(_userHomeDir, ".blade/settings.properties");
 		}
 
-		return new BladeSettings(settingsFile) {
-
-			@Override
-			public Path getCachePath() {
-				Path userHomePath = _userHomeDir.toPath();
-
-				Path cachePath = userHomePath.resolve(".blade/cache");
-
-				try {
-					Files.createDirectories(cachePath);
-				}
-				catch (IOException ioe) {
-				}
-
-				return cachePath;
-			}
-
-			@Override
-			public Path getExtensionPath() {
-				Path userHomePath = _userHomeDir.toPath();
-
-				Path extensionsPath = userHomePath.resolve(".blade/extensions");
-
-				try {
-					Files.createDirectories(extensionsPath);
-				}
-				catch (IOException ioe) {
-				}
-
-				return extensionsPath;
-			}
-
-		};
+		return new BladeSettings(settingsFile);
 	}
 
 	private File _userHomeDir;

@@ -17,7 +17,6 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
@@ -85,12 +84,10 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		File workDir = samplesArgs.getDir();
 
 		if (workDir == null) {
-			workDir = bladeCLI.getBase();
+			workDir = new File(samplesArgs.getBase());
 		}
 
-		BladeSettings bladeSettings = bladeCLI.getSettings();
-
-		Path cachePath = bladeSettings.getCachePath();
+		Path cachePath = bladeCLI.getCachePath();
 
 		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
 
@@ -132,9 +129,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	private boolean _downloadBladeRepoIfNeeded() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BladeSettings bladeSettings = bladeCLI.getSettings();
-
-		Path cachePath = bladeSettings.getCachePath();
+		Path cachePath = bladeCLI.getCachePath();
 
 		File bladeRepoArchive = new File(cachePath.toFile(), _BLADE_REPO_ARCHIVE_NAME);
 
@@ -166,9 +161,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	private void _extractBladeRepo() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BladeSettings bladeSettings = bladeCLI.getSettings();
-
-		Path cachePath = bladeSettings.getCachePath();
+		Path cachePath = bladeCLI.getCachePath();
 
 		File bladeRepoArchive = new File(cachePath.toFile(), _BLADE_REPO_ARCHIVE_NAME);
 
@@ -178,9 +171,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	private void _listSamples() throws IOException {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BladeSettings bladeSettings = bladeCLI.getSettings();
-
-		Path cachePath = bladeSettings.getCachePath();
+		Path cachePath = bladeCLI.getCachePath();
 
 		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
 
@@ -308,9 +299,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	private void _updateBuildGradle(File dir) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BladeSettings bladeSettings = bladeCLI.getSettings();
-
-		Path cachePath = bladeSettings.getCachePath();
+		Path cachePath = bladeCLI.getCachePath();
 
 		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
 

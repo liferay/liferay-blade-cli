@@ -22,6 +22,7 @@ import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.MavenRunnerUtil;
+import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
@@ -75,6 +76,19 @@ public class InitCommandTest {
 		File oldGitIgnore = IO.getFile(projectDir, "plugins-sdk/.gitignore");
 
 		Assert.assertTrue(oldGitIgnore.exists());
+	}
+
+	@Test
+	public void testBladeInitEmptyDirectory() throws Exception {
+		File emptyDir = temporaryFolder.newFolder();
+
+		String[] args = {"--base", emptyDir.getPath(), "init"};
+
+		TestUtil.runBlade(args);
+
+		boolean workspace = BladeUtil.isWorkspace(emptyDir);
+
+		Assert.assertTrue(workspace);
 	}
 
 	@Test

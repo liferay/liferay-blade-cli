@@ -23,14 +23,15 @@ import aQute.bnd.osgi.Resource;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,12 +55,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -230,9 +233,7 @@ public class BladeUtil {
 	}
 
 	public static Map<String, String> getTemplates(BladeCLI bladeCLI) throws Exception {
-		BladeSettings bladeSettings = bladeCLI.getSettings();
-
-		Path extensions = bladeSettings.getExtensionPath();
+		Path extensions = bladeCLI.getExtensionPath();
 
 		Collection<File> templatesFiles = new HashSet<>();
 
@@ -242,7 +243,9 @@ public class BladeUtil {
 	}
 
 	public static File getWorkspaceDir(BladeCLI blade) {
-		return getWorkspaceDir(blade.getBase());
+		BaseArgs args = blade.getBladeArgs();
+
+		return getWorkspaceDir(new File(args.getBase()));
 	}
 
 	public static File getWorkspaceDir(File dir) {
@@ -257,6 +260,50 @@ public class BladeUtil {
 
 		if (_isWorkspacePomFile(new File(mavenParent, "pom.xml"))) {
 			return mavenParent;
+		}
+
+		FilenameFilter gradleFilter = new FilenameFilter()
+		{
+			public boolean accept(File dir, String name)	 {
+				 return _SETTINGS_GRADLE_FILE_NAME.equals(name) || _GRADLE_PROPERTIES_FILE_NAME.equals(name);
+			  }
+		};
+
+		File[] matches = dir.listFiles(gradleFilter);
+
+		if (Objects.nonNull(matches) && (matches.length > 0)) {
+			return dir;
+		}
+		else {
+			File mavenPom = new File(dir, "pom.xml");
+
+			if (mavenPom.exists() && _isWorkspacePomFile(mavenPom)) {
+				return dir;
+			}
+		}
+
+		try {
+			if (dir.exists() && dir.isDirectory() && !isDirEmpty(dir.toPath())) {
+				for (File file : dir.listFiles()) {
+					if (file.isDirectory()) {
+						File[] subdirMatches = file.listFiles(gradleFilter);
+
+						if (Objects.nonNull(subdirMatches) && (subdirMatches.length > 0)) {
+							return file;
+						}
+						else {
+							File subdiravenPom = new File(file, "pom.xml");
+
+							if (subdiravenPom.exists() && _isWorkspacePomFile(subdiravenPom)) {
+								return file;
+							}
+						}
+					}
+				}
+			}
+		}
+		catch (Throwable th) {
+			throw new RuntimeException("Fatal Error while locating Workspace Directory", th);
 		}
 
 		return null;
@@ -328,11 +375,13 @@ public class BladeUtil {
 	public static boolean isWorkspace(BladeCLI blade) {
 		File dirToCheck;
 
-		if ((blade == null) || (blade.getBase() == null)) {
+		if (blade == null) {
 			dirToCheck = new File(".").getAbsoluteFile();
 		}
 		else {
-			dirToCheck = blade.getBase();
+			BaseArgs args = blade.getBladeArgs();
+
+			dirToCheck = new File(args.getBase());
 		}
 
 		return isWorkspace(dirToCheck);
@@ -340,6 +389,10 @@ public class BladeUtil {
 
 	public static boolean isWorkspace(File dir) {
 		File workspaceDir = getWorkspaceDir(dir);
+
+		if (Objects.isNull(dir)) {
+			return false;
+		}
 
 		File gradleFile = new File(workspaceDir, _SETTINGS_GRADLE_FILE_NAME);
 
@@ -423,13 +476,17 @@ public class BladeUtil {
 			try (ZipFile zipFile = new ZipFile(path.toFile())) {
 				Stream<? extends ZipEntry> stream = zipFile.stream();
 
-				return stream.filter(
-					entry -> !entry.isDirectory()
-				).map(
-					ZipEntry::getName
-				).anyMatch(
-					test
-				);
+				Collection<ZipEntry> entryCollection = stream.collect(Collectors.toSet());
+
+				for (ZipEntry zipEntry : entryCollection) {
+					if (!zipEntry.isDirectory()) {
+						String entryName = zipEntry.getName();
+
+						if (test.test(entryName)) {
+							return true;
+						}
+					}
+				}
 
 			}
 			catch (Exception e) {
@@ -462,7 +519,11 @@ public class BladeUtil {
 	}
 
 	public static Process startProcess(BladeCLI blade, String command) throws Exception {
-		return startProcess(blade, command, blade.getBase(), null, true);
+		BaseArgs args = blade.getBladeArgs();
+
+		File baseDir = new File(args.getBase());
+
+		return startProcess(blade, command, baseDir, null, true);
 	}
 
 	public static Process startProcess(BladeCLI blade, String command, File dir, boolean inheritIO) throws Exception {

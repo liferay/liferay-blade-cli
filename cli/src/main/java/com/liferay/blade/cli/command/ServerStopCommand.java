@@ -47,7 +47,11 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		File gradleWrapperFile = BladeUtil.getGradleWrapper(bladeCLI.getBase());
+		BaseArgs args = bladeCLI.getBladeArgs();
+
+		File baseDir = new File(args.getBase());
+
+		File gradleWrapperFile = BladeUtil.getGradleWrapper(baseDir);
 
 		if (gradleWrapperFile == null) {
 			throw new NoSuchElementException("Unable to locate Gradle Wrapper, cannot process command");

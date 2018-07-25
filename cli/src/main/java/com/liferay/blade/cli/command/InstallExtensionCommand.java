@@ -17,7 +17,6 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.gradle.ProcessResult;
@@ -211,9 +210,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		BladeSettings bladeSettings = bladeCLI.getSettings();
-
-		Path cachePath = bladeSettings.getCachePath();
+		Path cachePath = bladeCLI.getCachePath();
 
 		Set<File> outputFiles = GradleTooling.getOutputFiles(cachePath.toFile(), projectPath.toFile());
 
@@ -254,9 +251,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		if (_isExtension(extensionPath)) {
 			BladeCLI bladeCLI = getBladeCLI();
 
-			BladeSettings bladeSettings = bladeCLI.getSettings();
-
-			Path extensionsPath = bladeSettings.getExtensionPath();
+			Path extensionsPath = bladeCLI.getExtensionPath();
 
 			Path extensionInstallPath = extensionsPath.resolve(extensionName);
 

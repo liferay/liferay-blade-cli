@@ -208,7 +208,8 @@ public class Extensions implements AutoCloseable {
 		return argsList.toArray(new String[0]);
 	}
 
-	public Extensions(BladeSettings bladeSettings) {
+	public Extensions(Path extensionsPath, BladeSettings bladeSettings) {
+		_extensionsPath = extensionsPath;
 		_bladeSettings = bladeSettings;
 	}
 
@@ -226,7 +227,7 @@ public class Extensions implements AutoCloseable {
 	}
 
 	public Path getPath() throws IOException {
-		return _bladeSettings.getExtensionPath();
+		return _extensionsPath;
 	}
 
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
@@ -372,6 +373,7 @@ public class Extensions implements AutoCloseable {
 
 	private final BladeSettings _bladeSettings;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
+	private final Path _extensionsPath;
 	private URLClassLoader _serviceLoaderClassLoader = null;
 
 }

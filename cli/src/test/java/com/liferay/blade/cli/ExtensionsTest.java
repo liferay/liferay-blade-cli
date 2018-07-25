@@ -55,7 +55,7 @@ public class ExtensionsTest {
 
 		Map<String, BaseCommand<? extends BaseArgs>> commands;
 
-		try (Extensions extensions = new Extensions(_bladeTest.getSettings())) {
+		try (Extensions extensions = new Extensions(_bladeTest.getExtensionPath(), _bladeTest.getSettings())) {
 			commands = extensions.getCommands();
 		}
 
@@ -74,7 +74,7 @@ public class ExtensionsTest {
 
 	@Test
 	public void testLoadCommandsBuiltIn() throws Exception {
-		try (Extensions extensions = new Extensions(_bladeTest.getSettings())) {
+		try (Extensions extensions = new Extensions(_bladeTest.getExtensionPath(), _bladeTest.getSettings())) {
 			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
 			Assert.assertNotNull(commands);
@@ -87,7 +87,7 @@ public class ExtensionsTest {
 	public void testLoadCommandsWithCustomExtension() throws Exception {
 		_setupTestExtensions();
 
-		try (Extensions extensions = new Extensions(_bladeTest.getSettings())) {
+		try (Extensions extensions = new Extensions(_bladeTest.getExtensionPath(), _bladeTest.getSettings())) {
 			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
 			Assert.assertNotNull(commands);

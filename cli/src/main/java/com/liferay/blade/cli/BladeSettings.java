@@ -21,9 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import java.util.Properties;
 
 /**
@@ -37,49 +34,6 @@ public class BladeSettings {
 
 		if (_settingsFile.exists()) {
 			load();
-		}
-	}
-
-	public Path getCachePath() throws IOException {
-		Path userHomePath = _USER_HOME_DIR.toPath();
-
-		Path cachePath = userHomePath.resolve(".blade/cache");
-
-		if (!Files.exists(cachePath)) {
-			Files.createDirectories(cachePath);
-		}
-
-		return cachePath;
-	}
-
-	public Path getExtensionPath() {
-		try {
-			Path userHomePath = _USER_HOME_DIR.toPath();
-
-			Path dotBladePath = userHomePath.resolve(".blade");
-
-			if (Files.notExists(dotBladePath)) {
-				Files.createDirectories(dotBladePath);
-			}
-			else if (!Files.isDirectory(dotBladePath)) {
-				throw new Exception(".blade is not a directory!");
-			}
-
-			Path extensions = dotBladePath.resolve("extensions");
-
-			if (Files.notExists(extensions)) {
-				Files.createDirectories(extensions);
-			}
-			else if (!Files.isDirectory(extensions)) {
-				throw new Exception(".blade/extensions is not a directory!");
-			}
-
-			return extensions;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-
-			throw new RuntimeException(e);
 		}
 	}
 

@@ -18,6 +18,7 @@ package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.StringConverter;
+import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
@@ -48,7 +49,11 @@ public class GradleExec {
 	}
 
 	public ProcessResult executeGradleCommand(String cmd) throws Exception {
-		return executeCommand(cmd, _blade.getBase());
+		BaseArgs args = _blade.getBladeArgs();
+
+		File baseDir = new File(args.getBase());
+
+		return executeCommand(cmd, baseDir);
 	}
 
 	private static boolean _isGradleInstalled() {
@@ -100,7 +105,11 @@ public class GradleExec {
 		String executable = "gradle";
 
 		if (gradlew == null) {
-			gradlew = BladeUtil.getGradleWrapper(_blade.getBase());
+			BaseArgs args = _blade.getBladeArgs();
+
+			File baseDir = new File(args.getBase());
+
+			gradlew = BladeUtil.getGradleWrapper(baseDir);
 		}
 
 		if ((gradlew != null) && gradlew.exists()) {
