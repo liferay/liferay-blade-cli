@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import java.util.Collection;
 import java.util.Formatter;
@@ -98,15 +98,11 @@ public class BladeCLI implements Runnable {
 		err(message);
 	}
 
-	public File getBase() {
-		return _basePath.toFile();
-	}
-
 	public BaseArgs getBladeArgs() {
 		return _commandArgs;
 	}
 
-	public BladeSettings getSettings() throws IOException {
+	public BladeSettings getBladeSettings() throws IOException {
 		final File settingsFile;
 
 		if (BladeUtil.isWorkspace(this)) {
@@ -119,6 +115,49 @@ public class BladeCLI implements Runnable {
 		}
 
 		return new BladeSettings(settingsFile);
+	}
+
+	public Path getCachePath() throws IOException {
+		Path userHomePath = _USER_HOME_DIR.toPath();
+
+		Path cachePath = userHomePath.resolve(".blade/cache");
+
+		if (!Files.exists(cachePath)) {
+			Files.createDirectories(cachePath);
+		}
+
+		return cachePath;
+	}
+
+	public Path getExtensionsPath() {
+		try {
+			Path userHomePath = _USER_HOME_DIR.toPath();
+
+			Path dotBladePath = userHomePath.resolve(".blade");
+
+			if (Files.notExists(dotBladePath)) {
+				Files.createDirectories(dotBladePath);
+			}
+			else if (!Files.isDirectory(dotBladePath)) {
+				throw new Exception(".blade is not a directory!");
+			}
+
+			Path extensions = dotBladePath.resolve("extensions");
+
+			if (Files.notExists(extensions)) {
+				Files.createDirectories(extensions);
+			}
+			else if (!Files.isDirectory(extensions)) {
+				throw new Exception(".blade/extensions is not a directory!");
+			}
+
+			return extensions;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+
+			throw new RuntimeException(e);
+		}
 	}
 
 	public InputStream in() {
@@ -199,13 +238,15 @@ public class BladeCLI implements Runnable {
 	public void run(String[] args) throws Exception {
 		String basePath = _extractBasePath(args);
 
-		setBase(new File(basePath));
+		File baseDir = new File(basePath);
+
+		_commandArgs.setBase(baseDir);
 
 		System.setOut(out());
 
 		System.setErr(err());
 
-		Extensions extensions = new Extensions(getSettings());
+		Extensions extensions = new Extensions(getBladeSettings(), getExtensionsPath());
 
 		_commands = extensions.getCommands();
 
@@ -250,6 +291,8 @@ public class BladeCLI implements Runnable {
 
 				_commandArgs = (BaseArgs)commandArgs;
 
+				_commandArgs.setBase(baseDir);
+
 				run();
 			}
 			catch (MissingCommandException mce) {
@@ -271,10 +314,6 @@ public class BladeCLI implements Runnable {
 		}
 
 		extensions.close();
-	}
-
-	public void setBase(File baseDir) {
-		_basePath = baseDir.toPath();
 	}
 
 	public void trace(String s, Object... args) {
@@ -339,9 +378,8 @@ public class BladeCLI implements Runnable {
 
 	private static final Formatter _tracer = new Formatter(System.out);
 
-	private Path _basePath = Paths.get(".");
 	private String _command;
-	private BaseArgs _commandArgs;
+	private BaseArgs _commandArgs = new BaseArgs();
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final PrintStream _err;
 	private final InputStream _in;

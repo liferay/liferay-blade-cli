@@ -45,14 +45,7 @@ public class GradleExecTest {
 
 		PrintStream ps = new PrintStream(baos);
 
-		BladeCLI blade = new BladeTest(ps) {
-
-			@Override
-			public File getBase() {
-				return new File(temporaryDir, "foo");
-			}
-
-		};
+		BladeCLI blade = new BladeTest(ps);
 
 		GradleExec gradleExec = new GradleExec(blade);
 

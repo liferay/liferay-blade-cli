@@ -17,7 +17,6 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.project.templates.ProjectTemplates;
@@ -172,9 +171,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
 
-		BladeSettings bladeSettings = bladeCLI.getSettings();
-
-		Path customTemplatesPath = bladeSettings.getExtensionPath();
+		Path customTemplatesPath = bladeCLI.getExtensionsPath();
 
 		archetypesDirs.add(FileUtil.getJarFile(ProjectTemplates.class));
 		archetypesDirs.add(customTemplatesPath.toFile());
@@ -239,9 +236,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	private File _getDefaultModulesDir() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		File base = bladeCLI.getBase();
+		BaseArgs args = bladeCLI.getBladeArgs();
 
-		File baseDir = base.getAbsoluteFile();
+		File base = new File(args.getBase());
+
+		File baseDir = base.getCanonicalFile();
 
 		if (!BladeUtil.isWorkspace(baseDir)) {
 			return baseDir;
@@ -269,9 +268,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	private File _getDefaultWarsDir() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		File base = bladeCLI.getBase();
+		BaseArgs args = bladeCLI.getBladeArgs();
 
-		File baseDir = base.getAbsoluteFile();
+		File base = new File(args.getBase());
+
+		File baseDir = base.getCanonicalFile();
 
 		if (!BladeUtil.isWorkspace(baseDir)) {
 			return baseDir;

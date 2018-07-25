@@ -17,7 +17,6 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeSettings;
 
 import java.io.IOException;
 
@@ -56,9 +55,7 @@ public class UninstallExtensionCommand extends BaseCommand<UninstallExtensionArg
 	private void _removeExtension(String name) throws IOException {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BladeSettings bladeSettings = bladeCLI.getSettings();
-
-		Path extensionsHome = bladeSettings.getExtensionPath();
+		Path extensionsHome = bladeCLI.getExtensionsPath();
 
 		Path extensionPath = extensionsHome.resolve(name);
 

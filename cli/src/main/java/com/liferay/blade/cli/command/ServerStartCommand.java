@@ -45,7 +45,11 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 	public void execute() throws Exception {
 		BladeCLI blade = getBladeCLI();
 
-		File gradleWrapperFile = BladeUtil.getGradleWrapper(blade.getBase());
+		BaseArgs args = blade.getBladeArgs();
+
+		File baseDir = new File(args.getBase());
+
+		File gradleWrapperFile = BladeUtil.getGradleWrapper(baseDir);
 
 		Path gradleWrapperPath = gradleWrapperFile.toPath();
 

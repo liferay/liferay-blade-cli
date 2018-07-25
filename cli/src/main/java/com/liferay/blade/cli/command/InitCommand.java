@@ -40,6 +40,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -56,11 +57,22 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		InitArgs initArgs = getArgs();
 		BladeCLI bladeCLI = getBladeCLI();
 
+		BaseArgs args = bladeCLI.getBladeArgs();
+
 		String name = initArgs.getName();
 
 		String build = initArgs.getBuild();
 
-		File destDir = name != null ? new File(bladeCLI.getBase(), name) : bladeCLI.getBase();
+		File baseDir = new File(args.getBase());
+
+		final File destDir;
+
+		if (Objects.nonNull(name)) {
+			destDir = new File(baseDir, name);
+		}
+		else {
+			destDir = baseDir;
+		}
 
 		File temp = null;
 
@@ -185,9 +197,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		if ((build != null) && !build.equals("gradle")) {
-			bladeCLI.setBase(destDir);
-
-			BladeSettings settings = bladeCLI.getSettings();
+			BladeSettings settings = bladeCLI.getBladeSettings();
 
 			settings.setProfileName(build);
 
