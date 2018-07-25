@@ -27,10 +27,12 @@ import java.io.File;
 import java.io.PrintStream;
 
 import org.easymock.EasyMock;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
@@ -51,7 +53,8 @@ public class GradlePrintErrorTest {
 
 		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, null, temporaryFolder.getRoot());
 
-		PowerMock.expectNew(GradleExec.class, EasyMock.isA(BladeTest.class)).andReturn(new GradleExecSpecial(bladeTest));
+		PowerMock.expectNew(
+			GradleExec.class, EasyMock.isA(BladeTest.class)).andReturn(new GradleExecSpecial(bladeTest));
 
 		PowerMock.replay(GradleExec.class);
 
@@ -61,9 +64,7 @@ public class GradlePrintErrorTest {
 
 		boolean buildFailedBoolean = error.contains("BUILD FAILED");
 
-		String output = outputPrintStream.toString();
-
-		boolean foobarBoolean = output.contains("foobar");
+		boolean foobarBoolean = error.contains("foobar");
 
 		Assert.assertTrue(buildFailedBoolean && foobarBoolean);
 

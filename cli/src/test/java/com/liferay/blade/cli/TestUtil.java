@@ -16,11 +16,11 @@
 
 package com.liferay.blade.cli;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,9 +28,11 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.util.Scanner;
 
 import org.gradle.testkit.runner.BuildTask;
+
 import org.junit.Assert;
 
 /**
@@ -62,25 +64,11 @@ public class TestUtil {
 			});
 	}
 
-	public static String runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+	public static String runBlade(
+			BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, boolean assertErrors,
+			String... args)
+		throws Exception {
 
-		PrintStream outputPrintStream = new PrintStream(outputStream);
-
-		ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-
-		PrintStream errorPrintStream = new PrintStream(errorStream);
-
-		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir);
-
-		return runBlade(bladeTest, outputPrintStream, errorPrintStream);
-	}
-
-	public static String runBlade(BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, String... args) throws Exception {
-		return runBlade(bladeTest, outputStream, errorStream, true, args);
-	}
-
-	public static String runBlade(BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, boolean assertErrors, String... args) throws Exception {
 		bladeTest.run(args);
 
 		String error = errorStream.toString();
@@ -102,6 +90,23 @@ public class TestUtil {
 		String content = outputStream.toString();
 
 		return content;
+	}
+
+	public static String runBlade(
+			BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, String... args)
+		throws Exception {
+
+		return runBlade(bladeTest, outputStream, errorStream, true, args);
+	}
+
+	public static String runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
+		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
+
+		StringPrintStream errorPrintStream = StringPrintStream.newInstance();
+
+		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir);
+
+		return runBlade(bladeTest, outputPrintStream, errorPrintStream, args);
 	}
 
 	public static String runBlade(File userHomeDir, String... args) throws Exception {
