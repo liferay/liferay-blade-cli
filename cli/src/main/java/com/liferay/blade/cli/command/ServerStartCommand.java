@@ -161,25 +161,25 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		Stream<Path> stream = Files.find(
 			dir, Integer.MAX_VALUE,
-			(file, bbfa) -> {
-				Path fileName = file.getFileName();
+			(path, attrs) -> {
+				Path fileName = path.getFileName();
 
 				String fileNameString = String.valueOf(fileName);
 
 				boolean match = false;
 
-				if (fileNameString.startsWith(serverType) && Files.isDirectory(file)) {
+				if (fileNameString.startsWith(serverType) && Files.isDirectory(path)) {
 					match = true;
 				}
 
 				if (match) {
 					if ("tomcat".equals(serverType)) {
-						Path executable = file.resolve(Paths.get("bin", _getTomcatExecutable()));
+						Path executable = path.resolve(Paths.get("bin", _getTomcatExecutable()));
 
 						match = Files.exists(executable);
 					}
 					else if ("jboss".equals(serverType) || "wildfly".equals(serverType)) {
-						Path executable = file.resolve(Paths.get("bin", _getJBossWildflyExecutable()));
+						Path executable = path.resolve(Paths.get("bin", _getJBossWildflyExecutable()));
 
 						match = Files.exists(executable);
 					}
