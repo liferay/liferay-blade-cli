@@ -282,15 +282,15 @@ public class BladeUtil {
 			if (dir.exists() && dir.isDirectory() && !isDirEmpty(dir.toPath())) {
 				for (File file : dir.listFiles()) {
 					if (file.isDirectory()) {
-						File[] subdirMatches = file.listFiles(gradleFilter);
+						File[] gradleChildren = file.listFiles(gradleFilter);
 
-						if (Objects.nonNull(subdirMatches) && (subdirMatches.length > 0)) {
+						if (Objects.nonNull(gradleChildren) && (gradleChildren.length > 0)) {
 							return file;
 						}
 						else {
-							File subdiravenPom = new File(file, "pom.xml");
+							File childPom = new File(file, "pom.xml");
 
-							if (subdiravenPom.exists() && _isWorkspacePomFile(subdiravenPom)) {
+							if (childPom.exists() && _isWorkspacePomFile(childPom)) {
 								return file;
 							}
 						}
@@ -299,7 +299,7 @@ public class BladeUtil {
 			}
 		}
 		catch (Throwable th) {
-			throw new RuntimeException("Fatal Error while locating Workspace Directory", th);
+			throw new RuntimeException("Error while detecting a workspace directory.", th);
 		}
 
 		return null;
