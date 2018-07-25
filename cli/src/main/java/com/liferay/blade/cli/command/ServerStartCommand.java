@@ -148,26 +148,6 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		return ServerStartArgs.class;
 	}
 
-	protected String getJBossWildflyExecutable() {
-		String executable = "./standalone.sh";
-
-		if (BladeUtil.isWindows()) {
-			executable = "standalone.bat";
-		}
-
-		return executable;
-	}
-
-	protected String getTomcatExecutable() {
-		String executable = "./catalina.sh";
-
-		if (BladeUtil.isWindows()) {
-			executable = "catalina.bat";
-		}
-
-		return executable;
-	}
-
 	private void _commandServer(Path dir, String serverType) throws Exception {
 		BladeCLI blade = getBladeCLI();
 
@@ -194,12 +174,12 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 				if (match) {
 					if ("tomcat".equals(serverType)) {
-						Path executable = file.resolve(Paths.get("bin", getTomcatExecutable()));
+						Path executable = file.resolve(Paths.get("bin", _getTomcatExecutable()));
 
 						match = Files.exists(executable);
 					}
 					else if ("jboss".equals(serverType) || "wildfly".equals(serverType)) {
-						Path executable = file.resolve(Paths.get("bin", getJBossWildflyExecutable()));
+						Path executable = file.resolve(Paths.get("bin", _getJBossWildflyExecutable()));
 
 						match = Files.exists(executable);
 					}
@@ -240,7 +220,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		Map<String, String> enviroment = new HashMap<>();
 
-		String executable = getJBossWildflyExecutable();
+		String executable = _getJBossWildflyExecutable();
 
 		String debug = "";
 
@@ -264,7 +244,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
 
-		String executable = getTomcatExecutable();
+		String executable = _getTomcatExecutable();
 
 		String startCommand = " run";
 
@@ -314,6 +294,26 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 			tailProcess.waitFor();
 		}
+	}
+
+	private String _getJBossWildflyExecutable() {
+		String executable = "./standalone.sh";
+
+		if (BladeUtil.isWindows()) {
+			executable = "standalone.bat";
+		}
+
+		return executable;
+	}
+
+	private String _getTomcatExecutable() {
+		String executable = "./catalina.sh";
+
+		if (BladeUtil.isWindows()) {
+			executable = "catalina.bat";
+		}
+
+		return executable;
 	}
 
 }
