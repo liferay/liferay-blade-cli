@@ -262,12 +262,8 @@ public class BladeUtil {
 			return mavenParent;
 		}
 
-		FilenameFilter gradleFilter = new FilenameFilter()
-		{
-			public boolean accept(File dir, String name)	 {
-				 return _SETTINGS_GRADLE_FILE_NAME.equals(name) || _GRADLE_PROPERTIES_FILE_NAME.equals(name);
-			  }
-		};
+		FilenameFilter gradleFilter =
+			(file, name) -> _SETTINGS_GRADLE_FILE_NAME.equals(name) || _GRADLE_PROPERTIES_FILE_NAME.equals(name);
 
 		File[] matches = dir.listFiles(gradleFilter);
 
