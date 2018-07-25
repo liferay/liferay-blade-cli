@@ -65,7 +65,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		File baseDir = new File(args.getBase());
 
-		File destDir;
+		final File destDir;
 
 		if (Objects.nonNull(name)) {
 			destDir = new File(baseDir, name);
@@ -197,7 +197,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		if ((build != null) && !build.equals("gradle")) {
-			BladeSettings settings = bladeCLI.getSettings();
+			BladeSettings settings = bladeCLI.getBladeSettings();
 
 			settings.setProfileName(build);
 

@@ -54,7 +54,7 @@ public class HelloExtensionTest {
 
 		bladeTest.run(args);
 
-		BladeSettings bladeSettings = bladeTest.getSettings();
+		BladeSettings bladeSettings = bladeTest.getBladeSettings();
 
 		Assert.assertEquals("maven", bladeSettings.getProfileName());
 

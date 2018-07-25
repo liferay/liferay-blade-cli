@@ -327,7 +327,7 @@ public class InitCommandTest {
 
 		Assert.assertTrue(metadataFile.exists());
 
-		BladeSettings bladeSettings = bladeTest.getSettings();
+		BladeSettings bladeSettings = bladeTest.getBladeSettings();
 
 		Assert.assertEquals("maven", bladeSettings.getProfileName());
 	}

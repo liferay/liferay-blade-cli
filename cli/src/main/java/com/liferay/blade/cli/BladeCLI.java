@@ -102,6 +102,21 @@ public class BladeCLI implements Runnable {
 		return _commandArgs;
 	}
 
+	public BladeSettings getBladeSettings() throws IOException {
+		final File settingsFile;
+
+		if (BladeUtil.isWorkspace(this)) {
+			File workspaceDir = BladeUtil.getWorkspaceDir(this);
+
+			settingsFile = new File(workspaceDir, ".blade/settings.properties");
+		}
+		else {
+			settingsFile = new File(_USER_HOME_DIR, ".blade/settings.properties");
+		}
+
+		return new BladeSettings(settingsFile);
+	}
+
 	public Path getCachePath() throws IOException {
 		Path userHomePath = _USER_HOME_DIR.toPath();
 
@@ -143,21 +158,6 @@ public class BladeCLI implements Runnable {
 
 			throw new RuntimeException(e);
 		}
-	}
-
-	public BladeSettings getSettings() throws IOException {
-		final File settingsFile;
-
-		if (BladeUtil.isWorkspace(this)) {
-			File workspaceDir = BladeUtil.getWorkspaceDir(this);
-
-			settingsFile = new File(workspaceDir, ".blade/settings.properties");
-		}
-		else {
-			settingsFile = new File(_USER_HOME_DIR, ".blade/settings.properties");
-		}
-
-		return new BladeSettings(settingsFile);
 	}
 
 	public InputStream in() {
@@ -246,7 +246,7 @@ public class BladeCLI implements Runnable {
 
 		System.setErr(err());
 
-		Extensions extensions = new Extensions(getExtensionsPath(), getSettings());
+		Extensions extensions = new Extensions(getBladeSettings(), getExtensionsPath());
 
 		_commands = extensions.getCommands();
 

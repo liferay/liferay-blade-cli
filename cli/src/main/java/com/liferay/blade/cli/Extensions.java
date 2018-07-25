@@ -208,9 +208,9 @@ public class Extensions implements AutoCloseable {
 		return argsList.toArray(new String[0]);
 	}
 
-	public Extensions(Path extensionsPath, BladeSettings bladeSettings) {
-		_extensionsPath = extensionsPath;
+	public Extensions(BladeSettings bladeSettings, Path extensionsPath) {
 		_bladeSettings = bladeSettings;
+		_extensionsPath = extensionsPath;
 	}
 
 	@Override

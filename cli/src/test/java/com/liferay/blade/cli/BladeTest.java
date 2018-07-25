@@ -66,6 +66,22 @@ public class BladeTest extends BladeCLI {
 	}
 
 	@Override
+	public BladeSettings getBladeSettings() throws IOException {
+		final File settingsFile;
+
+		if (BladeUtil.isWorkspace(this)) {
+			File workspaceDir = BladeUtil.getWorkspaceDir(this);
+
+			settingsFile = new File(workspaceDir, ".blade/settings.properties");
+		}
+		else {
+			settingsFile = new File(_userHomeDir, ".blade/settings.properties");
+		}
+
+		return new BladeSettings(settingsFile);
+	}
+
+	@Override
 	public Path getCachePath() {
 		Path userHomePath = _userHomeDir.toPath();
 
@@ -93,22 +109,6 @@ public class BladeTest extends BladeCLI {
 		}
 
 		return extensionsPath;
-	}
-
-	@Override
-	public BladeSettings getSettings() throws IOException {
-		final File settingsFile;
-
-		if (BladeUtil.isWorkspace(this)) {
-			File workspaceDir = BladeUtil.getWorkspaceDir(this);
-
-			settingsFile = new File(workspaceDir, ".blade/settings.properties");
-		}
-		else {
-			settingsFile = new File(_userHomeDir, ".blade/settings.properties");
-		}
-
-		return new BladeSettings(settingsFile);
 	}
 
 	private File _userHomeDir;
