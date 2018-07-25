@@ -299,7 +299,7 @@ public class BladeUtil {
 			}
 		}
 		catch (Throwable th) {
-			throw new RuntimeException("Error while detecting a workspace directory.", th);
+			throw new RuntimeException("Error while detecting a workspace directory", th);
 		}
 
 		return null;
