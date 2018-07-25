@@ -37,10 +37,11 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Christopher Bryan Boyd
@@ -157,6 +158,18 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		return InstallExtensionArgs.class;
 	}
 
+	private static Set<Path> _getExistingPaths(Set<File> outputFiles) {
+		Stream<File> stream = outputFiles.stream();
+
+		return stream.map(
+			File::toPath
+		).filter(
+			Files::exists
+		).collect(
+			Collectors.toSet()
+		);
+	}
+
 	private static boolean _isArchetype(Path path) {
 		return BladeUtil.searchZip(path, name -> name.endsWith("archetype-metadata.xml"));
 	}
@@ -216,33 +229,15 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		ProcessResult processResult = gradleExec.executeCommand("assemble -x check", projectPath.toFile());
 
-		if (processResult.getResultCode() > 0) {
-			StringBuilder sb = new StringBuilder();
+		int resultCode = processResult.getResultCode();
 
-			sb.append(processResult.getError());
-			sb.append('\n');
-			sb.append(processResult.getOutput());
-			sb.append('\n');
+		if (resultCode > 0) {
+			String output = processResult.get();
 
-			throw new RuntimeException(
-				"Gradle command returned error code " + processResult.getResultCode() + "\n " + sb.toString());
+			throw new Exception("Gradle command returned error code " + resultCode + System.lineSeparator() + output);
 		}
 
-		Set<Path> extensionPaths = new HashSet<>();
-
-		Iterator<File> i = outputFiles.iterator();
-
-		if (i.hasNext()) {
-			File next = i.next();
-
-			Path outputPath = next.toPath();
-
-			if (Files.exists(outputPath)) {
-				extensionPaths.add(outputPath);
-			}
-		}
-
-		return extensionPaths;
+		return _getExistingPaths(outputFiles);
 	}
 
 	private void _installExtension(Path extensionPath) throws IOException {

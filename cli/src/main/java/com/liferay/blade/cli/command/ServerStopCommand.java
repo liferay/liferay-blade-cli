@@ -196,8 +196,6 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 	}
 
 	private void _commmandTomcat(Path dir) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
 		Map<String, String> enviroment = new HashMap<>();
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
@@ -210,8 +208,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 		Path binPath = dir.resolve("bin");
 
-		Process process = BladeUtil.startProcess(
-			bladeCLI, executable + " stop 60 -force", binPath.toFile(), enviroment);
+		Process process = BladeUtil.startProcess(executable + " stop 60 -force", binPath.toFile(), enviroment);
 
 		process.waitFor();
 	}

@@ -18,6 +18,7 @@ package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.StringConverter;
+import com.liferay.blade.cli.StringPrintStream;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
 
@@ -37,13 +38,17 @@ public class GradleExec {
 	public ProcessResult executeCommand(String cmd, File dir) throws Exception {
 		String executable = _getGradleExecutable(dir);
 
-		Process process = BladeUtil.startProcess(_blade, "\"" + executable + "\" " + cmd, dir, true);
+		StringPrintStream outputStream = StringPrintStream.newInstance();
+
+		StringPrintStream errorStream = StringPrintStream.newInstance();
+
+		Process process = BladeUtil.startProcess("\"" + executable + "\" " + cmd, dir, outputStream, errorStream);
 
 		int returnCode = process.waitFor();
 
-		String output = StringConverter.frommInputStream(process.getInputStream());
+		String output = outputStream.get();
 
-		String error = StringConverter.frommInputStream(process.getErrorStream());
+		String error = errorStream.get();
 
 		return new ProcessResult(returnCode, output, error);
 	}

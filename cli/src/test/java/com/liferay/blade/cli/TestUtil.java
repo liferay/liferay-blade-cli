@@ -16,7 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,16 +64,10 @@ public class TestUtil {
 			});
 	}
 
-	public static String runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-		PrintStream outputPrintStream = new PrintStream(outputStream);
-
-		ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-
-		PrintStream errorPrintStream = new PrintStream(errorStream);
-
-		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir);
+	public static String runBlade(
+			BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, boolean assertErrors,
+			String... args)
+		throws Exception {
 
 		bladeTest.run(args);
 
@@ -88,13 +81,32 @@ public class TestUtil {
 					continue;
 				}
 
-				Assert.fail("Encountered error at line: " + line + "\n" + error);
+				if (assertErrors) {
+					Assert.fail("Encountered error at line: " + line + "\n" + error);
+				}
 			}
 		}
 
 		String content = outputStream.toString();
 
 		return content;
+	}
+
+	public static String runBlade(
+			BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, String... args)
+		throws Exception {
+
+		return runBlade(bladeTest, outputStream, errorStream, true, args);
+	}
+
+	public static String runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
+		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
+
+		StringPrintStream errorPrintStream = StringPrintStream.newInstance();
+
+		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir);
+
+		return runBlade(bladeTest, outputPrintStream, errorPrintStream, args);
 	}
 
 	public static String runBlade(File userHomeDir, String... args) throws Exception {
