@@ -1,3 +1,4 @@
 include "cli"
 include "extensions:sample-command"
+include "extensions:sample-profile"
 include "extensions:sample-template"

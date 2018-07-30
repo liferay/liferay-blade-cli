@@ -1,0 +1,39 @@
+buildscript {
+	dependencies {
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
+		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
+	}
+
+	repositories {
+		maven {
+			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+		}
+	}
+}
+
+apply plugin: 'biz.aQute.bnd.builder'
+apply plugin: 'com.liferay.source.formatter'
+apply plugin: 'java'
+
+checkSourceFormatting {
+	maxLineLength = 120
+}
+
+dependencies {
+	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
+	compileOnly project(":cli")
+}
+
+formatSource {
+	maxLineLength = 120
+}
+
+repositories {
+	maven {
+		url "https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/lastSuccessfulBuild/artifact/mavenRepo/"
+	}
+	maven {
+		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+	}
+}

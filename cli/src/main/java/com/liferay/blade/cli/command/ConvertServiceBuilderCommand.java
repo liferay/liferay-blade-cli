@@ -99,7 +99,7 @@ public class ConvertServiceBuilderCommand {
 		File project = new File(_warsDir, projectName);
 
 		if (!project.exists()) {
-			_blade.error("The project " + projectName + " doesn't exist in " + _warsDir.getPath());
+			_blade.error("The project " + projectName + " does not exist in " + _warsDir.getPath());
 
 			return;
 		}

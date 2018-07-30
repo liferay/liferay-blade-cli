@@ -103,7 +103,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 		if (!pluginsSdkDir.exists()) {
 			bladeCLI.error(
-				"Plugins SDK folder " + pluginsSdkDirPath + " doesn't exist.\nPlease edit gradle.properties and set " +
+				"Plugins SDK folder " + pluginsSdkDirPath + " does not exist.\nPlease edit gradle.properties and set " +
 					WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
 
 			return;

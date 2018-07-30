@@ -578,7 +578,7 @@ Properties moved to OSGI configuration:
 	xsl.template.secure.processing.enabled can match with the following OSGI properties:
 		xslSecureProcessingEnabled from com.liferay.xsl.content.web.configuration.XSLContentConfiguration
 
-We haven't found a new property for the following old properties (check if you still need them or check the documentation to find a replacement):
+We have not found a new property for the following old properties (check if you still need them or check the documentation to find a replacement):
 	aim.login
 	aim.password
 	asset.entry.validator

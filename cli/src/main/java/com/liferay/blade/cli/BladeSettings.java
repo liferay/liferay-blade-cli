@@ -63,8 +63,6 @@ public class BladeSettings {
 		_properties.setProperty("profile.name", profileName);
 	}
 
-	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
-
 	private final Properties _properties = new Properties();
 	private final File _settingsFile;
 

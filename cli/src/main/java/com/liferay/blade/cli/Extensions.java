@@ -305,7 +305,7 @@ public class Extensions implements AutoCloseable {
 
 		if (parameters == null) {
 			throw new IllegalArgumentException(
-				"Loaded base command class that doesn't have a Parameters annotation " + argsClass.getName());
+				"Loaded base command class that does not have a Parameters annotation " + argsClass.getName());
 		}
 
 		String[] commandNames = parameters.commandNames();
