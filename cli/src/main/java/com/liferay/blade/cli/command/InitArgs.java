@@ -53,7 +53,7 @@ public class InitArgs extends BaseArgs {
 		description = "Specify the build type of liferay workspace. Available options are gradle, maven. (default gradle)",
 		names = {"-b", "--build"}
 	)
-	private String _build;
+	private String _build = "gradle";
 
 	@Parameter(description = "create anyway if there are files located at target folder", names = {"-f", "--force"})
 	private boolean _force;
