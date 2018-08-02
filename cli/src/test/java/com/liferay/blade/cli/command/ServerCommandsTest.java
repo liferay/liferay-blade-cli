@@ -16,44 +16,21 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
-import java.io.PrintStream;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import java.util.Map;
 import java.util.Objects;
-
-import org.easymock.EasyMock;
-import org.easymock.IExpectationSetters;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-
-import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Christopher Bryan Boyd
  */
-@PrepareForTest(
-	{
-		BladeCLI.class, BladeTest.class, BladeUtil.class, ServerStartCommand.class, ServerStopCommand.class,
-		TestUtil.class
-	}
-)
-@RunWith(PowerMockRunner.class)
 public class ServerCommandsTest {
 
 	@Before
@@ -70,8 +47,6 @@ public class ServerCommandsTest {
 		_testServerStart();
 
 		_testServerStop();
-
-		PowerMock.verifyAll();
 	}
 
 	@Test
@@ -114,30 +89,6 @@ public class ServerCommandsTest {
 		return false;
 	}
 
-	private Process _buildMockProcess() {
-		Process mockProcess = EasyMock.createNiceMock(Process.class);
-
-		EasyMock.replay(mockProcess);
-
-		Object[] args = EasyMock.getCurrentArguments();
-
-		String executable = String.valueOf(args[0]);
-
-		String[] executableSplit = executable.split(" ");
-
-		String executableName = executableSplit[0];
-
-		File binFolder = (File)args[1];
-
-		Path executablePath = binFolder.toPath();
-
-		executablePath = executablePath.resolve(executableName).normalize();
-
-		Assert.assertTrue(Files.exists(executablePath));
-
-		return mockProcess;
-	}
-
 	private void _initBundle() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "gw", "initBundle"};
 
@@ -151,40 +102,15 @@ public class ServerCommandsTest {
 	}
 
 	private void _testServerStart() throws Exception {
-		PowerMock.mockStaticPartialNice(
-			BladeUtil.class, "startProcess", String.class, File.class, Map.class, PrintStream.class, PrintStream.class);
-
-		IExpectationSetters<Process> startProcessExpect = EasyMock.expect(
-			BladeUtil.startProcess(
-				EasyMock.anyString(), EasyMock.isA(File.class), EasyMock.isA(Map.class),
-				EasyMock.isA(PrintStream.class), EasyMock.isA(PrintStream.class)));
-
-		startProcessExpect.andAnswer(() -> _buildMockProcess()).once();
-
-		PowerMock.replay(BladeUtil.class);
-
 		String[] args = {"--base", _workspaceDir.getPath(), "server", "start"};
 
 		TestUtil.runBlade(args);
-
-		PowerMock.verify(BladeUtil.class);
 	}
 
 	private void _testServerStop() throws Exception {
-		PowerMock.mockStaticPartialNice(BladeUtil.class, "startProcess", String.class, File.class, Map.class);
-
-		IExpectationSetters<Process> startProcessExpect = EasyMock.expect(
-			BladeUtil.startProcess(EasyMock.anyString(), EasyMock.isA(File.class), EasyMock.isA(Map.class)));
-
-		startProcessExpect.andAnswer(() -> _buildMockProcess()).once();
-
-		PowerMock.replay(BladeUtil.class);
-
 		String[] args = {"--base", _workspaceDir.getPath(), "server", "stop"};
 
 		TestUtil.runBlade(args);
-
-		PowerMock.verify(BladeUtil.class);
 	}
 
 	private File _workspaceDir = null;
