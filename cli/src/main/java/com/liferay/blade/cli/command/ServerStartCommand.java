@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Stream;
 
 /**
  * @author David Truong
@@ -149,48 +149,17 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 	}
 
 	private void _commandServer(Path dir, String serverType) throws Exception {
-		BladeCLI blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
 		if (Files.notExists(dir) || BladeUtil.isDirEmpty(dir)) {
-			blade.error(
+			bladeCLI.error(
 				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
 					"create it.");
 
 			return;
 		}
 
-		Stream<Path> stream = Files.find(
-			dir, Integer.MAX_VALUE,
-			(path, attrs) -> {
-				Path fileName = path.getFileName();
-
-				String fileNameString = String.valueOf(fileName);
-
-				boolean match = false;
-
-				if (fileNameString.startsWith(serverType) && Files.isDirectory(path)) {
-					match = true;
-				}
-
-				if (match) {
-					if ("tomcat".equals(serverType)) {
-						Path executable = path.resolve(Paths.get("bin", _getTomcatExecutable()));
-
-						match = Files.exists(executable);
-					}
-					else if ("jboss".equals(serverType) || "wildfly".equals(serverType)) {
-						Path executable = path.resolve(Paths.get("bin", _getJBossWildflyExecutable()));
-
-						match = Files.exists(executable);
-					}
-				}
-
-				return match;
-			});
-
-		Optional<Path> server = stream.findFirst();
-
-		stream.close();
+		Optional<Path> server = FileUtil.findServerFolderByType(dir, serverType);
 
 		boolean success = false;
 
@@ -210,7 +179,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		}
 
 		if (!success) {
-			blade.error(serverType + " not supported");
+			bladeCLI.error(serverType + " not supported");
 		}
 	}
 
@@ -220,7 +189,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		Map<String, String> enviroment = new HashMap<>();
 
-		String executable = _getJBossWildflyExecutable();
+		String executable = FileUtil.getJBossWildflyExecutable();
 
 		String debug = "";
 
@@ -244,7 +213,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
 
-		String executable = _getTomcatExecutable();
+		String executable = FileUtil.getTomcatExecutable();
 
 		String startCommand = " run";
 
@@ -294,26 +263,6 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 			tailProcess.waitFor();
 		}
-	}
-
-	private String _getJBossWildflyExecutable() {
-		String executable = "./standalone.sh";
-
-		if (BladeUtil.isWindows()) {
-			executable = "standalone.bat";
-		}
-
-		return executable;
-	}
-
-	private String _getTomcatExecutable() {
-		String executable = "./catalina.sh";
-
-		if (BladeUtil.isWindows()) {
-			executable = "catalina.bat";
-		}
-
-		return executable;
 	}
 
 }
