@@ -42,9 +42,9 @@ public class ServerCommandsTest {
 
 	@Test
 	public void testServerCommands() throws Exception {
-		_initWorkspace();
+		TestUtil.runBlade(new String[] {"--base", _workspaceDir.getPath(), "init", "-v", "7.1"});
 
-		_initBundle();
+		TestUtil.runBlade(new String[] {"--base", _workspaceDir.getPath(), "gw", "initBundle"});
 
 		_testServerStart();
 
@@ -91,26 +91,14 @@ public class ServerCommandsTest {
 		return false;
 	}
 
-	private void _initBundle() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "gw", "initBundle"};
-
-		TestUtil.runBlade(args);
-	}
-
-	private void _initWorkspace() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", "7.1"};
-
-		TestUtil.runBlade(args);
-	}
-
 	private void _testServerStart() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "server", "start"};
 
-		BladeTestResults results = TestUtil.runBlade(args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
 
-		BladeCLI blade = results.getBlade();
+		BladeCLI bladeCLI = bladeTestResults.getBladeCLI();
 
-		BaseCommand<?> serverStartCommand = blade.getCommand();
+		BaseCommand<?> serverStartCommand = bladeCLI.getCommand();
 
 		((AutoCloseable)serverStartCommand).close();
 	}

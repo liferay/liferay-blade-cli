@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 /**
@@ -30,36 +32,35 @@ import java.util.stream.Stream;
  */
 public class ServerUtil {
 
-	public static Optional<Path> findServerFolderByType(Path dir, String serverType) throws IOException {
-		try (Stream<Path> stream = Files.find(
-				dir, Integer.MAX_VALUE,
-				(path, attrs) -> {
-					Path fileName = path.getFileName();
+	public static Optional<Path> findServerBinFolder(Path dir, String serverType) throws IOException {
+		BiPredicate<Path, BasicFileAttributes> binFolderMatcher = (path, attrs) -> {
+			Path fileName = path.getFileName();
 
-					String fileNameString = String.valueOf(fileName);
+			String fileNameString = String.valueOf(fileName);
 
-					boolean match = false;
+			boolean match = false;
 
-					if (fileNameString.startsWith(serverType) && Files.isDirectory(path)) {
-						match = true;
-					}
+			if (fileNameString.startsWith(serverType) && Files.isDirectory(path)) {
+				match = true;
+			}
 
-					if (match) {
-						if ("tomcat".equals(serverType)) {
-							Path executable = path.resolve(Paths.get("bin", getTomcatExecutable()));
+			if (match) {
+				if ("tomcat".equals(serverType)) {
+					Path executable = path.resolve(Paths.get("bin", getTomcatExecutable()));
 
-							match = Files.exists(executable);
-						}
-						else if ("jboss".equals(serverType) || "wildfly".equals(serverType)) {
-							Path executable = path.resolve(Paths.get("bin", getJBossWildflyExecutable()));
+					match = Files.exists(executable);
+				}
+				else if ("jboss".equals(serverType) || "wildfly".equals(serverType)) {
+					Path executable = path.resolve(Paths.get("bin", getJBossWildflyExecutable()));
 
-							match = Files.exists(executable);
-						}
-					}
+					match = Files.exists(executable);
+				}
+			}
 
-					return match;
-				})) {
+			return match;
+		};
 
+		try (Stream<Path> stream = Files.find(dir, Integer.MAX_VALUE, binFolderMatcher)) {
 			return stream.findFirst();
 		}
 	}

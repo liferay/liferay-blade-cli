@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.StringTestUtil;
 import com.liferay.blade.cli.TestUtil;
 
@@ -60,7 +61,9 @@ public class InstallExtensionCommandTest {
 
 		File root = temporaryFolder.getRoot();
 
-		String output = TestUtil.runBlade(root, args).getOutput();
+		BladeTestResults bladeTestResults = TestUtil.runBlade(root, args);
+
+		String output = bladeTestResults.getOutput();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -83,7 +86,9 @@ public class InstallExtensionCommandTest {
 
 		Path extensionPath = extensionJar.toPath();
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
+		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		String output = bladeTestResults.getOutput();
 
 		_testJarsDiff(_sampleCommandJarFile, extensionJar);
 
@@ -140,7 +145,9 @@ public class InstallExtensionCommandTest {
 
 		Path extensionPath = extensionJar.toPath();
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
+		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		String output = bladeTestResults.getOutput();
 
 		_testJarsDiff(_sampleCommandJarFile, extensionJar);
 
@@ -183,7 +190,9 @@ public class InstallExtensionCommandTest {
 
 		File root = temporaryFolder.getRoot();
 
-		String output = TestUtil.runBlade(root, args).getOutput();
+		BladeTestResults bladeTestResults = TestUtil.runBlade(root, args);
+
+		String output = bladeTestResults.getOutput();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -200,7 +209,9 @@ public class InstallExtensionCommandTest {
 	public void testInstallUninstallCustomExtension() throws Exception {
 		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
+		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		String output = bladeTestResults.getOutput();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -208,7 +219,9 @@ public class InstallExtensionCommandTest {
 
 		args = new String[] {"extension uninstall", _sampleCommandJarFile.getName()};
 
-		output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
+		bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		output = bladeTestResults.getOutput();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -323,7 +336,9 @@ public class InstallExtensionCommandTest {
 		InputStream in = new ByteArrayInputStream(data.getBytes("UTF-8"));
 
 		try {
-			return TestUtil.runBlade(userHomeDir, in, args).getOutput();
+			BladeTestResults bladeTestResults = TestUtil.runBlade(userHomeDir, in, args);
+
+			return bladeTestResults.getOutput();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);

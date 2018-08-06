@@ -21,14 +21,14 @@ package com.liferay.blade.cli;
  */
 public class BladeTestResults {
 
-	public BladeTestResults(BladeCLI blade, String output, String errors) {
-		_blade = blade;
+	public BladeTestResults(BladeCLI bladeCLI, String output, String errors) {
+		_bladeCLI = bladeCLI;
 		_output = output;
 		_errors = errors;
 	}
 
-	public BladeCLI getBlade() {
-		return _blade;
+	public BladeCLI getBladeCLI() {
+		return _bladeCLI;
 	}
 
 	public String getErrors() {
@@ -39,8 +39,8 @@ public class BladeTestResults {
 		return _output;
 	}
 
-	private BladeCLI _blade;
-	private String _errors;
-	private String _output;
+	private final BladeCLI _bladeCLI;
+	private final String _errors;
+	private final String _output;
 
 }

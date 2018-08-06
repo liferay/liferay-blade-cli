@@ -60,16 +60,20 @@ public class HelloExtensionTest {
 
 		args = new String[] {"--base", _workspaceDir.getPath() + "/newproject", "hello", "--name", "foobar"};
 
-		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
+		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
-		Assert.assertTrue(content.contains("maven"));
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output.contains("maven"));
 	}
 
 	@Test
 	public void testHelp() throws Exception {
 		String[] args = {"hello", "--name", "foo"};
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
+		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		String output = bladeTestResults.getOutput();
 
 		Assert.assertEquals("Hello foo!", output.trim());
 	}

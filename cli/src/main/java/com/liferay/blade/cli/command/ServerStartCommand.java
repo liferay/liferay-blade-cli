@@ -57,11 +57,11 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements 
 
 	@Override
 	public void execute() throws Exception {
-		BladeCLI blade = getBladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = blade.getBladeArgs();
+		BaseArgs baseArgs = bladeCLI.getBladeArgs();
 
-		File baseDir = new File(args.getBase());
+		File baseDir = new File(baseArgs.getBase());
 
 		File gradleWrapperFile = BladeUtil.getGradleWrapper(baseDir);
 
@@ -152,7 +152,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements 
 				}
 			}
 			catch (Exception e) {
-				blade.error("Please execute this command from a Liferay project");
+				bladeCLI.error("Please execute this command from a Liferay project");
 			}
 		}
 	}
@@ -173,12 +173,12 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements 
 			return;
 		}
 
-		Optional<Path> server = ServerUtil.findServerFolderByType(dir, serverType);
+		Optional<Path> serverBinFolder = ServerUtil.findServerBinFolder(dir, serverType);
 
 		boolean success = false;
 
-		if (server.isPresent()) {
-			Path file = server.get();
+		if (serverBinFolder.isPresent()) {
+			Path file = serverBinFolder.get();
 
 			if (serverType.equals("tomcat")) {
 				_commmandTomcat(file);

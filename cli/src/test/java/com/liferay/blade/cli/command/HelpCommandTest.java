@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
 import org.junit.Assert;
@@ -57,11 +58,13 @@ public class HelpCommandTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private String _runBlade(String... args) throws Exception {
-		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
+		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
-		Assert.assertFalse(content, content.contains("No such command"));
+		String output = bladeTestResults.getOutput();
 
-		return content;
+		Assert.assertFalse(output, output.contains("No such command"));
+
+		return output;
 	}
 
 }
