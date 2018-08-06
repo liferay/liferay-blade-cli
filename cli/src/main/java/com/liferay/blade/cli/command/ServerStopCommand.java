@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ServerUtil;
 
 import java.io.File;
 
@@ -26,14 +27,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author David Truong
@@ -157,34 +156,32 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 	private void _commandServer(Path dir, String serverType) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		try (Stream<Path> list = Files.list(dir)) {
-			Collection<Path> paths = list.collect(Collectors.toList());
+		if (Files.notExists(dir) || BladeUtil.isDirEmpty(dir)) {
+			bladeCLI.error(
+				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
+					"create it.");
 
-			if (Files.notExists(dir) || paths.isEmpty()) {
-				bladeCLI.error(
-					" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
-						"create it.");
+			return;
+		}
 
-				return;
+		Optional<Path> server = ServerUtil.findServerBinFolder(dir, serverType);
+
+		boolean success = false;
+
+		if (server.isPresent()) {
+			Path file = server.get();
+
+			if (serverType.equals("tomcat")) {
+				_commmandTomcat(file);
+
+				success = true;
 			}
-
-			for (Path file : paths) {
-				Path fileName = file.getFileName();
-
-				if (fileName.startsWith(serverType) && Files.isDirectory(file)) {
-					if (serverType.equals("tomcat")) {
-						_commmandTomcat(file);
-
-						return;
-					}
-					else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
-						_commmandJBossWildfly();
-
-						return;
-					}
-				}
+			else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
+				_commmandJBossWildfly();
 			}
+		}
 
+		if (!success) {
 			bladeCLI.error(serverType + " not supported");
 		}
 	}
@@ -200,11 +197,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
 
-		String executable = "./catalina.sh";
-
-		if (BladeUtil.isWindows()) {
-			executable = "catalina.bat";
-		}
+		String executable = ServerUtil.getTomcatExecutable();
 
 		Path binPath = dir.resolve("bin");
 

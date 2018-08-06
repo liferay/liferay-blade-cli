@@ -27,14 +27,12 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.project.templates.ProjectTemplates;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -57,6 +55,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -446,19 +445,15 @@ public class BladeUtil {
 
 				@Override
 				public void run() {
-					try (InputStreamReader isr = new InputStreamReader(inputStream);
-						BufferedReader br = new BufferedReader(isr)) {
 
-						String line = null;
+					try (Scanner scanner = new Scanner(inputStream)) {
+						while (scanner.hasNextLine()) {
+							String line = scanner.nextLine();
 
-						while ((line = br.readLine()) != null) {
-							AnsiLinePrinter.println(printStream, line);
+							if (line != null) {
+								AnsiLinePrinter.println(printStream, line);
+							}
 						}
-
-						inputStream.close();
-					}
-					catch (IOException ioe) {
-						ioe.printStackTrace();
 					}
 				}
 

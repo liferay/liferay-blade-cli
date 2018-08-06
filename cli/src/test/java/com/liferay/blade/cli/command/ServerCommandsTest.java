@@ -16,17 +16,40 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
+
+import java.io.File;
 
 import java.util.Objects;
 
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Christopher Bryan Boyd
  */
 public class ServerCommandsTest {
+
+	@Before
+	public void setUp() throws Exception {
+		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
+	}
+
+	@Test
+	public void testServerCommands() throws Exception {
+		TestUtil.runBlade(new String[] {"--base", _workspaceDir.getPath(), "init", "-v", "7.1"});
+
+		TestUtil.runBlade(new String[] {"--base", _workspaceDir.getPath(), "gw", "initBundle"});
+
+		_testServerStart();
+
+		_testServerStop();
+	}
 
 	@Test
 	public void testServerStartCommandExists() throws Exception {
@@ -48,6 +71,9 @@ public class ServerCommandsTest {
 		Assert.assertFalse(_commandExists("serverx stop"));
 	}
 
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
 	private static boolean _commandExists(String... args) {
 		try {
 			TestUtil.runBlade(args);
@@ -64,5 +90,25 @@ public class ServerCommandsTest {
 
 		return false;
 	}
+
+	private void _testServerStart() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "server", "start"};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
+
+		BladeCLI bladeCLI = bladeTestResults.getBladeCLI();
+
+		BaseCommand<?> serverStartCommand = bladeCLI.getCommand();
+
+		((AutoCloseable)serverStartCommand).close();
+	}
+
+	private void _testServerStop() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "server", "stop"};
+
+		TestUtil.runBlade(args);
+	}
+
+	private File _workspaceDir = null;
 
 }

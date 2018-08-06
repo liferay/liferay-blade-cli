@@ -20,6 +20,7 @@ import aQute.bnd.osgi.Domain;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.LiferayBundleDeployer;
 import com.liferay.blade.cli.MockUtil;
 import com.liferay.blade.cli.TestUtil;
@@ -124,11 +125,13 @@ public class DeployCommandTest {
 
 		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
 
-		String content = TestUtil.runBlade(args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
+
+		String output = bladeTestResults.getOutput();
 
 		PowerMock.verifyAll();
 
-		Assert.assertTrue(content.contains(String.format("Updated bundle %s", atomicLong.get())));
+		Assert.assertTrue(output.contains(String.format("Updated bundle %s", atomicLong.get())));
 	}
 
 	@Test
@@ -189,7 +192,7 @@ public class DeployCommandTest {
 
 		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
 
-		String content = TestUtil.runBlade(args);
+		String content = TestUtil.runBlade(args).getOutput();
 
 		PowerMock.verifyAll();
 

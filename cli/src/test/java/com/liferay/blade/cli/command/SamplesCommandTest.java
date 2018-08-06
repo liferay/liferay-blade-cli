@@ -18,6 +18,7 @@ package com.liferay.blade.cli.command;
 
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 
@@ -112,14 +113,18 @@ public class SamplesCommandTest {
 	public void testGetSampleWithGradleWrapperExisting() throws Exception {
 		String[] initArgs = {"--base", temporaryFolder.getRoot().getPath() + "/test/workspace", "init"};
 
-		String output = TestUtil.runBlade(initArgs);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(initArgs);
+
+		String output = bladeTestResults.getOutput();
 
 		Assert.assertTrue(output, output == null || output.isEmpty());
 
 		String[] samplesArgs =
 			{"samples", "-d", temporaryFolder.getRoot().getPath() + "/test/workspace/modules", "auth-failure"};
 
-		output = TestUtil.runBlade(samplesArgs);
+		bladeTestResults = TestUtil.runBlade(samplesArgs);
+
+		output = bladeTestResults.getOutput();
 
 		Assert.assertTrue(output, output == null || output.isEmpty());
 
@@ -151,9 +156,11 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testListSamples() throws Exception {
-		String content = TestUtil.runBlade("samples");
+		BladeTestResults bladeTestResults = TestUtil.runBlade("samples");
 
-		Assert.assertTrue(content.contains("ds-portlet"));
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output.contains("ds-portlet"));
 	}
 
 	@Rule

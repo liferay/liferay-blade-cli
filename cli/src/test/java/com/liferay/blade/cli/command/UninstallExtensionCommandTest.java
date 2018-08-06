@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -64,7 +65,9 @@ public class UninstallExtensionCommandTest {
 
 		File testJar = new File(extensionsDir, jarName);
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		String output = bladeTestResults.getOutput();
 
 		Assert.assertTrue(output.contains(" successful") && output.contains(jarName));
 

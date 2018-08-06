@@ -23,6 +23,7 @@ import aQute.bnd.osgi.Jar;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.MavenRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
@@ -219,22 +220,24 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "loginHook"};
 
-		String content = TestUtil.runBlade(args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
 
-		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output, output.contains("\"-t fragment\" options missing"));
 
 		args = new String[]
 			{"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "-h", "com.liferay.login.web", "loginHook"};
 
-		content = TestUtil.runBlade(args);
+		output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
+		Assert.assertTrue(output, output.contains("\"-t fragment\" options missing"));
 
 		args = new String[] {"create", "-d", tempRoot.getAbsolutePath(), "-t", "fragment", "-H", "1.0.0", "loginHook"};
 
-		content = TestUtil.runBlade(tempRoot, args);
+		output = TestUtil.runBlade(tempRoot, args).getOutput();
 
-		Assert.assertTrue(content, content.contains("\"-t fragment\" options missing"));
+		Assert.assertTrue(output, output.contains("\"-t fragment\" options missing"));
 	}
 
 	@Test
@@ -591,18 +594,20 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "foobar", "-d", tempRoot.getAbsolutePath()};
 
-		String content = null;
+		String output = null;
 
 		try {
-			content = TestUtil.runBlade(args);
+			BladeTestResults bladeTestResults = TestUtil.runBlade(args);
+
+			output = bladeTestResults.getOutput();
 		}
 		catch (Throwable t) {
-			content = t.getMessage();
+			output = t.getMessage();
 		}
 
-		Assert.assertNotNull(content);
+		Assert.assertNotNull(output);
 
-		boolean containsError = content.contains("The following option is required");
+		boolean containsError = output.contains("The following option is required");
 
 		Assert.assertTrue(containsError);
 	}
@@ -828,29 +833,33 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "service", "foo"};
 
-		String output = null;
+		String errors = null;
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(false, args);
 
 		try {
-			output = TestUtil.runBlade(args);
+			errors = bladeTestResults.getErrors();
 		}
 		catch (Throwable t) {
-			output = t.getMessage();
+			errors = t.getMessage();
 		}
 
-		Assert.assertNotNull(output);
+		Assert.assertNotNull(errors);
 
-		Assert.assertTrue(output, output.contains("Usage:"));
+		Assert.assertTrue(errors, errors.contains("Usage:"));
 
 		args = new String[] {"create", "-t", "service", "-s com.test.Foo", "foo"};
 
+		bladeTestResults = TestUtil.runBlade(false, args);
+
 		try {
-			output = TestUtil.runBlade(args);
+			errors = bladeTestResults.getErrors();
 		}
 		catch (Throwable t) {
-			output = t.getMessage();
+			errors = t.getMessage();
 		}
 
-		Assert.assertFalse(output, output.contains("Usage:"));
+		Assert.assertFalse(errors, errors.contains("Usage:"));
 	}
 
 	@Test
@@ -1472,14 +1481,16 @@ public class CreateCommandTest {
 	public void testListTemplates() throws Exception {
 		String[] args = {"create", "-l"};
 
-		String templateList = TestUtil.runBlade(args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
+
+		String output = bladeTestResults.getOutput();
 
 		Map<String, String> templates = ProjectTemplates.getTemplates();
 
 		List<String> templateNames = new ArrayList<>(templates.keySet());
 
 		for (String templateName : templateNames) {
-			Assert.assertTrue(templateList.contains(templateName));
+			Assert.assertTrue(output.contains(templateName));
 		}
 	}
 
