@@ -833,31 +833,33 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "service", "foo"};
 
-		String output = null;
+		String errors = null;
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(false, args);
 
 		try {
-			output = bladeTestResults.getOutput();
+			errors = bladeTestResults.getErrors();
 		}
 		catch (Throwable t) {
-			output = t.getMessage();
+			errors = t.getMessage();
 		}
 
-		Assert.assertNotNull(output);
+		Assert.assertNotNull(errors);
 
-		Assert.assertTrue(output, output.contains("Usage:"));
+		Assert.assertTrue(errors, errors.contains("Usage:"));
 
 		args = new String[] {"create", "-t", "service", "-s com.test.Foo", "foo"};
 
+		bladeTestResults = TestUtil.runBlade(false, args);
+
 		try {
-			output = bladeTestResults.getOutput();
+			errors = bladeTestResults.getErrors();
 		}
 		catch (Throwable t) {
-			output = t.getMessage();
+			errors = t.getMessage();
 		}
 
-		Assert.assertFalse(output, output.contains("Usage:"));
+		Assert.assertFalse(errors, errors.contains("Usage:"));
 	}
 
 	@Test

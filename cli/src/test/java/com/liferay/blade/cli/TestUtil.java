@@ -103,22 +103,32 @@ public class TestUtil {
 		return runBlade(bladeTest, outputStream, errorStream, true, args);
 	}
 
-	public static BladeTestResults runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
+	public static BladeTestResults runBlade(boolean assertErrors, String... args) throws Exception {
+		return runBlade(new File(System.getProperty("user.home")), System.in, assertErrors, args);
+	}
+
+	public static BladeTestResults runBlade(File userHomeDir, InputStream in, boolean assertErrors, String... args)
+		throws Exception {
+
 		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
 
 		StringPrintStream errorPrintStream = StringPrintStream.newInstance();
 
 		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir);
 
-		return runBlade(bladeTest, outputPrintStream, errorPrintStream, args);
+		return runBlade(bladeTest, outputPrintStream, errorPrintStream, assertErrors, args);
+	}
+
+	public static BladeTestResults runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
+		return runBlade(userHomeDir, in, true, args);
 	}
 
 	public static BladeTestResults runBlade(File userHomeDir, String... args) throws Exception {
-		return runBlade(userHomeDir, System.in, args);
+		return runBlade(userHomeDir, System.in, true, args);
 	}
 
 	public static BladeTestResults runBlade(String... args) throws Exception {
-		return runBlade(new File(System.getProperty("user.home")), System.in, args);
+		return runBlade(new File(System.getProperty("user.home")), System.in, true, args);
 	}
 
 	public static void verifyBuild(String projectPath, String outputFileName) throws Exception {
