@@ -19,7 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.ServerUtil;
 
 import java.io.File;
 
@@ -164,7 +164,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 			return;
 		}
 
-		Optional<Path> server = FileUtil.findServerFolderByType(dir, serverType);
+		Optional<Path> server = ServerUtil.findServerFolderByType(dir, serverType);
 
 		boolean success = false;
 
@@ -197,7 +197,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
 
-		String executable = FileUtil.getTomcatExecutable();
+		String executable = ServerUtil.getTomcatExecutable();
 
 		Path binPath = dir.resolve("bin");
 

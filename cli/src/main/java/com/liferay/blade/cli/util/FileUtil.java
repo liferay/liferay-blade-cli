@@ -21,13 +21,9 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * @author Gregory Amerson
@@ -64,60 +60,6 @@ public class FileUtil {
 				}
 
 			});
-	}
-
-	public static Optional<Path> findServerFolderByType(Path dir, String serverType) throws IOException {
-		try (Stream<Path> stream = Files.find(
-				dir, Integer.MAX_VALUE,
-				(path, attrs) -> {
-					Path fileName = path.getFileName();
-
-					String fileNameString = String.valueOf(fileName);
-
-					boolean match = false;
-
-					if (fileNameString.startsWith(serverType) && Files.isDirectory(path)) {
-						match = true;
-					}
-
-					if (match) {
-						if ("tomcat".equals(serverType)) {
-							Path executable = path.resolve(Paths.get("bin", getTomcatExecutable()));
-
-							match = Files.exists(executable);
-						}
-						else if ("jboss".equals(serverType) || "wildfly".equals(serverType)) {
-							Path executable = path.resolve(Paths.get("bin", getJBossWildflyExecutable()));
-
-							match = Files.exists(executable);
-						}
-					}
-
-					return match;
-				})) {
-
-			return stream.findFirst();
-		}
-	}
-
-	public static String getJBossWildflyExecutable() {
-		String executable = "./standalone.sh";
-
-		if (BladeUtil.isWindows()) {
-			executable = "standalone.bat";
-		}
-
-		return executable;
-	}
-
-	public static String getTomcatExecutable() {
-		String executable = "./catalina.sh";
-
-		if (BladeUtil.isWindows()) {
-			executable = "catalina.bat";
-		}
-
-		return executable;
 	}
 
 }

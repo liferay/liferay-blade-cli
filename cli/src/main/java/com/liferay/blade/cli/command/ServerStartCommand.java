@@ -19,7 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.ServerUtil;
 
 import java.io.File;
 
@@ -173,7 +173,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements 
 			return;
 		}
 
-		Optional<Path> server = FileUtil.findServerFolderByType(dir, serverType);
+		Optional<Path> server = ServerUtil.findServerFolderByType(dir, serverType);
 
 		boolean success = false;
 
@@ -203,7 +203,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements 
 
 		Map<String, String> enviroment = new HashMap<>();
 
-		String executable = FileUtil.getJBossWildflyExecutable();
+		String executable = ServerUtil.getJBossWildflyExecutable();
 
 		String debug = "";
 
@@ -229,7 +229,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements 
 
 		enviroment.put("CATALINA_PID", "catalina.pid");
 
-		String executable = FileUtil.getTomcatExecutable();
+		String executable = ServerUtil.getTomcatExecutable();
 
 		String startCommand = " run";
 
