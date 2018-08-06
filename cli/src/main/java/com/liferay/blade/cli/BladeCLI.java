@@ -134,6 +134,10 @@ public class BladeCLI implements Runnable {
 		return cachePath;
 	}
 
+	public BaseCommand<?> getCommand() {
+		return _baseCommand;
+	}
+
 	public Path getExtensionsPath() {
 		try {
 			Path userHomePath = _USER_HOME_DIR.toPath();
@@ -355,6 +359,7 @@ public class BladeCLI implements Runnable {
 		}
 
 		if (command != null) {
+			_baseCommand = command;
 			command.setArgs(_commandArgs);
 			command.setBlade(this);
 
@@ -371,6 +376,10 @@ public class BladeCLI implements Runnable {
 				throw th;
 			}
 			finally {
+				if (command instanceof AutoCloseable) {
+					((AutoCloseable)command).close();
+				}
+
 				thread.setContextClassLoader(currentClassLoader);
 			}
 		}
@@ -383,6 +392,7 @@ public class BladeCLI implements Runnable {
 
 	private static final Formatter _tracer = new Formatter(System.out);
 
+	private BaseCommand<?> _baseCommand;
 	private String _command;
 	private BaseArgs _commandArgs = new BaseArgs();
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;

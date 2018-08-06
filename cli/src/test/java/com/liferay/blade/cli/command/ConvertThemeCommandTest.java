@@ -42,7 +42,7 @@ public class ConvertThemeCommandTest {
 
 		String[] args = {"--base", workspace.getAbsolutePath(), "convert", "-l"};
 
-		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
 
 		Assert.assertTrue(content, content.contains("compass-theme"));
 	}

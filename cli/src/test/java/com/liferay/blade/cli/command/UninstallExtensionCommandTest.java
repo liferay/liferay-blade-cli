@@ -64,7 +64,7 @@ public class UninstallExtensionCommandTest {
 
 		File testJar = new File(extensionsDir, jarName);
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
 
 		Assert.assertTrue(output.contains(" successful") && output.contains(jarName));
 

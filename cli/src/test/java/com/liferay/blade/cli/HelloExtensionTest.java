@@ -60,7 +60,7 @@ public class HelloExtensionTest {
 
 		args = new String[] {"--base", _workspaceDir.getPath() + "/newproject", "hello", "--name", "foobar"};
 
-		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
 
 		Assert.assertTrue(content.contains("maven"));
 	}
@@ -69,7 +69,7 @@ public class HelloExtensionTest {
 	public void testHelp() throws Exception {
 		String[] args = {"hello", "--name", "foo"};
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
 
 		Assert.assertEquals("Hello foo!", output.trim());
 	}

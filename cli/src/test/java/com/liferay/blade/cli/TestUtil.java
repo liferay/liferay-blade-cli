@@ -64,7 +64,7 @@ public class TestUtil {
 			});
 	}
 
-	public static String runBlade(
+	public static BladeTestResults runBlade(
 			BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, boolean assertErrors,
 			String... args)
 		throws Exception {
@@ -81,6 +81,10 @@ public class TestUtil {
 					continue;
 				}
 
+				if (line.contains("LC_ALL: cannot change locale")) {
+					continue;
+				}
+
 				if (assertErrors) {
 					Assert.fail("Encountered error at line: " + line + "\n" + error);
 				}
@@ -89,17 +93,17 @@ public class TestUtil {
 
 		String content = outputStream.toString();
 
-		return content;
+		return new BladeTestResults(bladeTest, content, error);
 	}
 
-	public static String runBlade(
+	public static BladeTestResults runBlade(
 			BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, String... args)
 		throws Exception {
 
 		return runBlade(bladeTest, outputStream, errorStream, true, args);
 	}
 
-	public static String runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
+	public static BladeTestResults runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
 		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
 
 		StringPrintStream errorPrintStream = StringPrintStream.newInstance();
@@ -109,11 +113,11 @@ public class TestUtil {
 		return runBlade(bladeTest, outputPrintStream, errorPrintStream, args);
 	}
 
-	public static String runBlade(File userHomeDir, String... args) throws Exception {
+	public static BladeTestResults runBlade(File userHomeDir, String... args) throws Exception {
 		return runBlade(userHomeDir, System.in, args);
 	}
 
-	public static String runBlade(String... args) throws Exception {
+	public static BladeTestResults runBlade(String... args) throws Exception {
 		return runBlade(new File(System.getProperty("user.home")), System.in, args);
 	}
 

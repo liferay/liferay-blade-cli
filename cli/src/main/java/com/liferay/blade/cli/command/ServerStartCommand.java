@@ -27,7 +27,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,9 +38,21 @@ import java.util.Properties;
 /**
  * @author David Truong
  */
-public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
+public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements AutoCloseable {
 
 	public ServerStartCommand() {
+	}
+
+	@Override
+	public void close() throws Exception {
+		for (Process process : _processes) {
+			try {
+				process.destroy();
+			}
+			catch (Exception e) {
+				getBladeCLI().error(e);
+			}
+		}
 	}
 
 	@Override
@@ -202,6 +216,8 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		Process process = BladeUtil.startProcess(
 			executable + debug, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.err());
 
+		_processes.add(process);
+
 		process.waitFor();
 	}
 
@@ -241,6 +257,8 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		final Process process = BladeUtil.startProcess(
 			executable + startCommand, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.err());
 
+		_processes.add(process);
+
 		Runtime runtime = Runtime.getRuntime();
 
 		runtime.addShutdownHook(
@@ -261,8 +279,12 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		if (serverStartArgs.isBackground() && serverStartArgs.isTail()) {
 			Process tailProcess = BladeUtil.startProcess("tail -f catalina.out", logsPath.toFile(), enviroment);
 
+			_processes.add(tailProcess);
+
 			tailProcess.waitFor();
 		}
 	}
+
+	private Collection<Process> _processes = new HashSet<>();
 
 }

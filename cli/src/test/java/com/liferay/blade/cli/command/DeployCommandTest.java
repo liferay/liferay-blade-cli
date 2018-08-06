@@ -124,7 +124,7 @@ public class DeployCommandTest {
 
 		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
 
-		String content = TestUtil.runBlade(args);
+		String content = TestUtil.runBlade(args).getOutput();
 
 		PowerMock.verifyAll();
 
@@ -189,7 +189,7 @@ public class DeployCommandTest {
 
 		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
 
-		String content = TestUtil.runBlade(args);
+		String content = TestUtil.runBlade(args).getOutput();
 
 		PowerMock.verifyAll();
 

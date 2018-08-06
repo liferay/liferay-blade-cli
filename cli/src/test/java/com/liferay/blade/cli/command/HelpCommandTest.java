@@ -57,7 +57,7 @@ public class HelpCommandTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private String _runBlade(String... args) throws Exception {
-		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String content = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
 
 		Assert.assertFalse(content, content.contains("No such command"));
 

@@ -60,7 +60,7 @@ public class InstallExtensionCommandTest {
 
 		File root = temporaryFolder.getRoot();
 
-		String output = TestUtil.runBlade(root, args);
+		String output = TestUtil.runBlade(root, args).getOutput();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -83,7 +83,7 @@ public class InstallExtensionCommandTest {
 
 		Path extensionPath = extensionJar.toPath();
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
 
 		_testJarsDiff(_sampleCommandJarFile, extensionJar);
 
@@ -140,7 +140,7 @@ public class InstallExtensionCommandTest {
 
 		Path extensionPath = extensionJar.toPath();
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
 
 		_testJarsDiff(_sampleCommandJarFile, extensionJar);
 
@@ -183,7 +183,7 @@ public class InstallExtensionCommandTest {
 
 		File root = temporaryFolder.getRoot();
 
-		String output = TestUtil.runBlade(root, args);
+		String output = TestUtil.runBlade(root, args).getOutput();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -200,7 +200,7 @@ public class InstallExtensionCommandTest {
 	public void testInstallUninstallCustomExtension() throws Exception {
 		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
 
-		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -208,7 +208,7 @@ public class InstallExtensionCommandTest {
 
 		args = new String[] {"extension uninstall", _sampleCommandJarFile.getName()};
 
-		output = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		output = TestUtil.runBlade(temporaryFolder.getRoot(), args).getOutput();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
@@ -323,7 +323,7 @@ public class InstallExtensionCommandTest {
 		InputStream in = new ByteArrayInputStream(data.getBytes("UTF-8"));
 
 		try {
-			return TestUtil.runBlade(userHomeDir, in, args);
+			return TestUtil.runBlade(userHomeDir, in, args).getOutput();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);

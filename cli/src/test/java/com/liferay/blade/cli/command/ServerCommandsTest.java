@@ -16,6 +16,8 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -104,7 +106,13 @@ public class ServerCommandsTest {
 	private void _testServerStart() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "server", "start"};
 
-		TestUtil.runBlade(args);
+		BladeTestResults results = TestUtil.runBlade(args);
+
+		BladeCLI blade = results.getBlade();
+
+		BaseCommand<?> serverStartCommand = blade.getCommand();
+
+		((AutoCloseable)serverStartCommand).close();
 	}
 
 	private void _testServerStop() throws Exception {
