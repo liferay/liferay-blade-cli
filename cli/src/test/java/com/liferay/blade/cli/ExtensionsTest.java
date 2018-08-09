@@ -104,9 +104,9 @@ public class ExtensionsTest {
 
 		BladeSettings bladeSettings = _bladeTest.getBladeSettings();
 
-		bladeSettings.setProfileName("bar");
+		bladeSettings.setProfileName("foo");
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-b", "bar"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-b", "foo"};
 
 		BladeTest bladeTest = new BladeTest();
 
@@ -118,19 +118,15 @@ public class ExtensionsTest {
 
 		String output = results.getOutput();
 
-		Assert.assertTrue(output.contains("FooProfileCommand"));
+		Assert.assertTrue(output, output.contains("NewCommand"));
 
-		Assert.assertFalse(output.contains("FooCommand"));
-
-		args = new String[] {"foo", "bar"};
+		args = new String[] {"deploy", "--watch"};
 
 		results = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		output = results.getOutput();
 
-		Assert.assertTrue(output.contains("FooCommand"));
-
-		Assert.assertFalse(output.contains("FooProfileCommand"));
+		Assert.assertTrue(output, output.contains("OverriddenCommand says true"));
 	}
 
 	@Test
