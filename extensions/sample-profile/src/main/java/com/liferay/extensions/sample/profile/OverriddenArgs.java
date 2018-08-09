@@ -16,25 +16,10 @@
 
 package com.liferay.extensions.sample.profile;
 
-import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.command.BladeProfile;
+import com.liferay.blade.cli.command.DeployArgs;
 
 /**
  * @author Liferay
  */
-@BladeProfile("bar")
-public class FooProfileCommand extends BaseCommand<FooArgs> {
-
-	@Override
-	public void execute() throws Exception {
-		FooArgs args = getArgs();
-
-		getBladeCLI().out("FooProfileCommand says " + args.getData());
-	}
-
-	@Override
-	public Class<FooArgs> getArgsClass() {
-		return FooArgs.class;
-	}
-
+public class OverriddenArgs extends DeployArgs {
 }

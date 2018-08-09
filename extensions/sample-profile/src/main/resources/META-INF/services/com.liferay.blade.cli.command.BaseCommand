@@ -1,2 +1,2 @@
-com.liferay.extensions.sample.profile.FooCommand
-com.liferay.extensions.sample.profile.FooProfileCommand
+com.liferay.extensions.sample.profile.NewCommand
+com.liferay.extensions.sample.profile.OverriddenCommand

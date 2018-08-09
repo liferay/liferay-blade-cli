@@ -16,22 +16,26 @@
 
 package com.liferay.extensions.sample.profile;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
-import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.command.BladeProfile;
+import com.liferay.blade.cli.command.DeployArgs;
 
 /**
  * @author Liferay
  */
-@Parameters(commandDescription = "Foo Command", commandNames = "foo")
-public class FooArgs extends BaseArgs {
+@BladeProfile("foo")
+public class OverriddenCommand extends BaseCommand<DeployArgs> {
 
-	public String getData() {
-		return _data;
+	@Override
+	public void execute() throws Exception {
+		DeployArgs args = getArgs();
+
+		getBladeCLI().out("OverriddenCommand says " + args.isWatch());
 	}
 
-	@Parameter(description = "Default data", required = true)
-	private String _data;
+	@Override
+	public Class<DeployArgs> getArgsClass() {
+		return DeployArgs.class;
+	}
 
 }

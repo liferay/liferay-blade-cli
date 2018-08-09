@@ -16,23 +16,22 @@
 
 package com.liferay.extensions.sample.profile;
 
-import com.liferay.blade.cli.command.BaseCommand;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+
+import com.liferay.blade.cli.command.BaseArgs;
 
 /**
  * @author Liferay
  */
-public class FooCommand extends BaseCommand<FooArgs> {
+@Parameters(commandDescription = "New Command", commandNames = "foo")
+public class NewArgs extends BaseArgs {
 
-	@Override
-	public void execute() throws Exception {
-		FooArgs args = getArgs();
-
-		getBladeCLI().out("FooCommand says " + args.getData());
+	public String getData() {
+		return _data;
 	}
 
-	@Override
-	public Class<FooArgs> getArgsClass() {
-		return FooArgs.class;
-	}
+	@Parameter(description = "Default data", required = true)
+	private String _data;
 
 }
