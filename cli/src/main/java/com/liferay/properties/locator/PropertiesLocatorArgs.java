@@ -82,7 +82,7 @@ public class PropertiesLocatorArgs {
 	)
 	private File _propertiesFile;
 
-	@Parameter(description = "Don't write any output.", names = {"-q", "--quiet"})
+	@Parameter(description = "Do not write any output.", names = {"-q", "--quiet"})
 	private boolean _quiet;
 
 }

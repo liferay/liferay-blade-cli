@@ -1,0 +1,3 @@
+Bundle-Name: custom-profile
+Bundle-SymbolicName: com.liferay.extensions.sample.profile
+Bundle-Version: 1.0.0

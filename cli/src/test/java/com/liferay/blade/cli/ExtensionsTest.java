@@ -92,8 +92,41 @@ public class ExtensionsTest {
 
 			Assert.assertNotNull(commands);
 
-			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 1, commands.size());
+			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 2, commands.size());
 		}
+	}
+
+	@Test
+	public void testProfileExtension() throws Exception {
+		_setupTestExtensions();
+
+		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
+
+		BladeSettings bladeSettings = _bladeTest.getBladeSettings();
+
+		bladeSettings.setProfileName("foo");
+
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-b", "foo"};
+
+		BladeTest bladeTest = new BladeTest();
+
+		bladeTest.run(args);
+
+		args = new String[] {"--base", workspaceDir.getPath(), "foo", "bar"};
+
+		BladeTestResults results = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		String output = results.getOutput();
+
+		Assert.assertTrue(output, output.contains("NewCommand"));
+
+		args = new String[] {"--base", workspaceDir.getPath(), "deploy", "--watch"};
+
+		results = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		output = results.getOutput();
+
+		Assert.assertTrue(output, output.contains("OverriddenCommand says true"));
 	}
 
 	@Test
@@ -134,18 +167,6 @@ public class ExtensionsTest {
 		Assert.assertTrue(Files.exists(sampleJarPath));
 	}
 
-	private static void _setupTestTemplate(Path extensionsPath, String jarPath) throws IOException {
-		File sampleJarFile = new File(jarPath);
-
-		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
-
-		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
-
-		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
-
-		Assert.assertTrue(Files.exists(sampleJarPath));
-	}
-
 	private void _setupTestExtensions() throws Exception {
 		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
 
@@ -156,7 +177,8 @@ public class ExtensionsTest {
 		Path extensionsPath = extensionsDir.toPath();
 
 		_setupTestExtension(extensionsPath, System.getProperty("sampleCommandJarFile"));
-		_setupTestTemplate(extensionsPath, System.getProperty("sampleTemplateJarFile"));
+		_setupTestExtension(extensionsPath, System.getProperty("sampleProfileJarFile"));
+		_setupTestExtension(extensionsPath, System.getProperty("sampleTemplateJarFile"));
 	}
 
 	private static final int _NUM_BUILTIN_COMMANDS = 17;

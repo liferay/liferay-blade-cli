@@ -183,6 +183,11 @@ test {
 		systemProperty 'sampleCommandJarFile', project.jar.archivePath
 	}
 
+	project(':extensions:sample-profile').afterEvaluate { project ->
+		dependsOn project.jar
+		systemProperty 'sampleProfileJarFile', project.jar.archivePath
+	}
+
 	project(':extensions:sample-template').afterEvaluate { project ->
 		dependsOn project.jar
 		systemProperty 'sampleTemplateJarFile', project.jar.archivePath

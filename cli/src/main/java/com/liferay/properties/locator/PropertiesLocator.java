@@ -144,7 +144,7 @@ public class PropertiesLocator {
 
 			_outputFile.println();
 			_outputFile.println(
-				"We haven't found a new property for the following old properties (check if you still need them or " +
+				"We have not found a new property for the following old properties (check if you still need them or " +
 					"check the documentation to find a replacement):");
 
 			Stream<PropertyProblem> problemsStream = problems.stream();
@@ -663,7 +663,7 @@ public class PropertiesLocator {
 		}
 
 		if (properties.isEmpty()) {
-			throw new Exception("File portal.properties doesn't exist in " + bundlePath);
+			throw new Exception("File portal.properties does not exist in " + bundlePath);
 		}
 
 		return properties;
