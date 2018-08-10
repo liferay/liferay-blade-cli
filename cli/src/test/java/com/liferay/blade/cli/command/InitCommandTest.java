@@ -501,6 +501,8 @@ public class InitCommandTest {
 
 		String projectPath = _workspaceDir.getPath() + "/modules/foo";
 
+		TestUtil.updateMavenRepositories(projectPath);
+
 		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");

@@ -207,6 +207,8 @@ public class CreateCommandTest {
 				".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$"
 			});
 
+		TestUtil.updateMavenRepositories(projectPath);
+
 		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenRunnerUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
@@ -653,6 +655,8 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
+
+		TestUtil.updateMavenRepositories(projectPath);
 
 		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
