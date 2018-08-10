@@ -16,10 +16,13 @@
 
 package com.liferay.extensions.sample.profile;
 
+import com.beust.jcommander.Parameters;
+
 import com.liferay.blade.cli.command.DeployArgs;
 
 /**
  * @author Liferay
  */
+@Parameters(commandDescription = "Overriden Deploy Command", commandNames = "deploy")
 public class OverriddenArgs extends DeployArgs {
 }

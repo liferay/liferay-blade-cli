@@ -120,7 +120,7 @@ public class ExtensionsTest {
 
 		Assert.assertTrue(output, output.contains("NewCommand"));
 
-		args = new String[] {"deploy", "--watch"};
+		args = new String[] {"--base", workspaceDir.getPath(), "deploy", "--watch"};
 
 		results = TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
