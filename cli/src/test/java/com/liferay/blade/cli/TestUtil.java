@@ -31,12 +31,24 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.Scanner;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
 /**
  * @author Christopher Bryan Boyd
+ * @author Gregory Amerson
  */
 public class TestUtil {
 
@@ -131,6 +143,29 @@ public class TestUtil {
 		return runBlade(new File(System.getProperty("user.home")), System.in, true, args);
 	}
 
+	public static void updateMavenRepositories(String projectPath) throws Exception {
+		File pomXmlFile = new File(projectPath + "/pom.xml");
+
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+		Document document = documentBuilder.parse(pomXmlFile);
+
+		_addNexusRepositoriesElement(document, "repositories", "repository");
+		_addNexusRepositoriesElement(document, "pluginRepositories", "pluginRepository");
+
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+
+		Transformer transformer = transformerFactory.newTransformer();
+
+		DOMSource domSource = new DOMSource(document);
+
+		StreamResult streamResult = new StreamResult(pomXmlFile);
+
+		transformer.transform(domSource, streamResult);
+	}
+
 	public static void verifyBuild(String projectPath, String outputFileName) throws Exception {
 		verifyBuild(projectPath, "build", outputFileName);
 	}
@@ -158,5 +193,36 @@ public class TestUtil {
 
 		GradleRunnerUtil.verifyBuildOutput(projectPath, outputFileName);
 	}
+
+	private static void _addNexusRepositoriesElement(Document document, String parentElementName, String elementName) {
+		Element projectElement = document.getDocumentElement();
+
+		Element repositoriesElement = XMLTestUtil.getChildElement(projectElement, parentElementName);
+
+		if (repositoriesElement == null) {
+			repositoriesElement = document.createElement(parentElementName);
+
+			projectElement.appendChild(repositoriesElement);
+		}
+
+		Element repositoryElement = document.createElement(elementName);
+
+		Element idElement = document.createElement("id");
+
+		idElement.appendChild(document.createTextNode(System.currentTimeMillis() + ""));
+
+		Element urlElement = document.createElement("url");
+
+		Text urlText = document.createTextNode(_REPOSITORY_CDN_URL);
+
+		urlElement.appendChild(urlText);
+
+		repositoryElement.appendChild(idElement);
+		repositoryElement.appendChild(urlElement);
+
+		repositoriesElement.appendChild(repositoryElement);
+	}
+
+	private static final String _REPOSITORY_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/groups/public";
 
 }
