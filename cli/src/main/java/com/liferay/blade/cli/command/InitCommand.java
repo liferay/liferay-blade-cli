@@ -151,9 +151,13 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
-		if (name == null) {
+		if ((name == null) || Objects.equals(name, ".")) {
 			name = destDir.getName();
 		}
+
+		Path destPath = destDir.toPath();
+
+		destPath = destPath.normalize();
 
 		File destParentDir = destDir.getParentFile();
 

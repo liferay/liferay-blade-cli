@@ -108,6 +108,21 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testBladeInitEmptyDirectoryHandleTwoDots() throws Exception {
+		File emptyDir = temporaryFolder.newFolder();
+
+		String pathStringToTest = new File(emptyDir.getPath(), ".").getAbsolutePath();
+
+		String[] args = {"--base", pathStringToTest, "init", "."};
+
+		TestUtil.runBlade(args);
+
+		boolean workspace = BladeUtil.isWorkspace(emptyDir);
+
+		Assert.assertTrue(workspace);
+	}
+
+	@Test
 	public void testBladeInitUpgradePluginsSDKTo70() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/testUpgradePluginsSDKTo70");
 

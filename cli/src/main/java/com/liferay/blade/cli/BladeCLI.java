@@ -247,7 +247,7 @@ public class BladeCLI implements Runnable {
 	public void run(String[] args) throws Exception {
 		String basePath = _extractBasePath(args);
 
-		File baseDir = new File(basePath);
+		File baseDir = new File(basePath).getAbsoluteFile();
 
 		_commandArgs.setBase(baseDir);
 
