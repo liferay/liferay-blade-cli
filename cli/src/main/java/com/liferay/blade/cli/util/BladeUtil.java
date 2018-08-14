@@ -19,6 +19,7 @@ package com.liferay.blade.cli.util;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.Processor;
 import aQute.bnd.osgi.Resource;
+import aQute.bnd.version.Version;
 
 import aQute.lib.io.IO;
 
@@ -67,8 +68,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.apache.maven.artifact.versioning.ComparableVersion;
-
 /**
  * @author Gregory Amerson
  * @author David Truong
@@ -108,44 +107,6 @@ public class BladeUtil {
 				}
 			}
 		}
-	}
-
-	public static boolean isDependencyManagementEnabled(File dir) {
-		if (!isWorkspace(dir)) {
-			return false;
-		}
-
-		Properties properties = getGradleProperties(dir);
-
-		String targetPlatformVersionKey = "liferay.workspace.target.platform.version";
-
-		boolean targetPlatformEnabled = properties.containsKey(targetPlatformVersionKey);
-
-		try {
-			String settingsGradleFileContent = read(getSettingGradleFile(dir));
-
-			Matcher matcher = WorkspaceConstants.patternGradleWorkspacePlugin.matcher(settingsGradleFileContent);
-
-			if (!targetPlatformEnabled || !matcher.find()) {
-				return false;
-			}
-
-			String pluginVersion = matcher.group(1);
-
-			ComparableVersion minComparableVersion = new ComparableVersion("1.9.2");
-
-			ComparableVersion pluginComparableVersion = new ComparableVersion(pluginVersion);
-
-			int result = pluginComparableVersion.compareTo(minComparableVersion);
-
-			if (result >= 0) {
-				return true;
-			}
-		}
-		catch (Exception e) {
-		}
-
-		return false;
 	}
 
 	public static void downloadGithubProject(String url, Path target) throws IOException {
@@ -360,6 +321,42 @@ public class BladeUtil {
 			if ((parent != null) && parent.exists()) {
 				return hasGradleWrapper(parent);
 			}
+		}
+
+		return false;
+	}
+
+	public static boolean isDependencyManagementEnabled(File dir) {
+		if (!isWorkspace(dir)) {
+			return false;
+		}
+
+		Properties properties = getGradleProperties(dir);
+
+		String targetPlatformVersionKey = "liferay.workspace.target.platform.version";
+
+		boolean targetPlatformEnabled = properties.containsKey(targetPlatformVersionKey);
+
+		try {
+			String settingsGradleFileContent = read(getSettingGradleFile(dir));
+
+			Matcher matcher = WorkspaceConstants.patternGradleWorkspacePlugin.matcher(settingsGradleFileContent);
+
+			if (!targetPlatformEnabled || !matcher.find()) {
+				return false;
+			}
+
+			Version minVersion = new Version(1, 9, 2);
+
+			Version pluginVersion = new Version(matcher.group(1));
+
+			int result = pluginVersion.compareTo(minVersion);
+
+			if (result >= 0) {
+				return true;
+			}
+		}
+		catch (Exception e) {
 		}
 
 		return false;
