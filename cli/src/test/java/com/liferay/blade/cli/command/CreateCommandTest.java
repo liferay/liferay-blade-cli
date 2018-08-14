@@ -32,7 +32,6 @@ import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -966,15 +965,6 @@ public class CreateCommandTest {
 		File properties = _checkFileExists(projectPath + "/src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
 		_contains(properties, ".*^name=theme-test.*");
-
-		File buildFile = new File(projectPath, "build.gradle");
-
-		FileWriter fileWriter = new FileWriter(buildFile, true);
-
-		BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
-
-		bufferWriter.write("\nbuildTheme { jvmArgs \"-Djava.awt.headless=true\" }");
-		bufferWriter.close();
 
 		TestUtil.verifyBuild(projectPath, "theme-test.war");
 	}
