@@ -161,6 +161,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setClassName(createArgs.getClassname());
 		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
+		projectTemplatesArgs.setDependencyManagementEnabled(BladeUtil.dependencyManagerEnable(dir));
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
 		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
 		projectTemplatesArgs.setLiferayVersion(createArgs.getLiferayVersion());

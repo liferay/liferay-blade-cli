@@ -48,6 +48,9 @@ public class WorkspaceConstants {
 
 	public static final String DEFAULT_WARS_DIR_PROPERTY = "liferay.workspace.wars.dir";
 
+	public static final Pattern patternGradleWorkspacePlugin = Pattern.compile(
+		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:\\s*\"(\\d(\\.\\d+){2,3})\"", Pattern.DOTALL);
+
 	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
 

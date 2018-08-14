@@ -51,6 +51,8 @@ Private-Package:\
 	org.apache.commons.lang3.exception,\
 	org.apache.commons.lang3.text,\
 	\
+	org.apache.maven.artifact.versioning,\
+	\
 	org.gradle.*,\
 	\
 	org.objectweb.asm.*,\

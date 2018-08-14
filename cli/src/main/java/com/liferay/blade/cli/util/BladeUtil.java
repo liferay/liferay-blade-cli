@@ -67,6 +67,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.apache.maven.artifact.versioning.ComparableVersion;
+
 /**
  * @author Gregory Amerson
  * @author David Truong
@@ -106,6 +108,46 @@ public class BladeUtil {
 				}
 			}
 		}
+	}
+
+	public static boolean dependencyManagerEnable(File dir) {
+		if (!isWorkspace(dir)) {
+			return false;
+		}
+
+		File settingGradle = getSettingGradleFile(dir);
+
+		Properties gradleProperties = getGradleProperties(dir);
+
+		String targetPlatformKey = "liferay.workspace.target.platform.version";
+
+		boolean containsTargetPlatformProperty = gradleProperties.containsKey(targetPlatformKey);
+
+		try {
+			String settingScript = read(settingGradle);
+
+			Matcher matcher = WorkspaceConstants.patternGradleWorkspacePlugin.matcher(settingScript);
+
+			if (!containsTargetPlatformProperty || !matcher.find()) {
+				return false;
+			}
+
+			String pluginVersion = matcher.group(1);
+
+			ComparableVersion currentVersion = new ComparableVersion(pluginVersion);
+
+			ComparableVersion minSupportVersion = new ComparableVersion("1.9.2");
+
+			int result = currentVersion.compareTo(minSupportVersion);
+
+			if (result >= 0) {
+				return true;
+			}
+		}
+		catch (Exception e) {
+		}
+
+		return false;
 	}
 
 	public static void downloadGithubProject(String url, Path target) throws IOException {
@@ -223,6 +265,12 @@ public class BladeUtil {
 		catch (Exception e) {
 			return null;
 		}
+	}
+
+	public static File getSettingGradleFile(File dir) {
+		File settingGradleFile = new File(getWorkspaceDir(dir), _SETTINGS_GRADLE_FILE_NAME);
+
+		return settingGradleFile;
 	}
 
 	public static Collection<String> getTemplateNames(BladeCLI blade) throws Exception {
