@@ -20,6 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ServerUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 
@@ -75,8 +76,8 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements 
 
 		Path rootDirPath = rootDir.toPath();
 
-		if (BladeUtil.isWorkspace(rootDir)) {
-			Properties properties = BladeUtil.getGradleProperties(rootDir);
+		if (WorkspaceUtil.isWorkspace(rootDir)) {
+			Properties properties = WorkspaceUtil.getGradleProperties(rootDir);
 
 			String liferayHomePath = properties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR_PROPERTY);
 

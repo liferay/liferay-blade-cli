@@ -27,8 +27,8 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.MavenRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
@@ -1579,7 +1579,7 @@ public class CreateCommandTest {
 
 		_bladeTest.run(args);
 
-		Assert.assertTrue(BladeUtil.isWorkspace(workspace));
+		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
 	}
 
 	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {

@@ -24,6 +24,7 @@ import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.MavenRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,7 +87,7 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(args);
 
-		boolean workspace = BladeUtil.isWorkspace(emptyDir);
+		boolean workspace = WorkspaceUtil.isWorkspace(emptyDir);
 
 		Assert.assertTrue(workspace);
 	}
@@ -101,7 +102,7 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(args);
 
-		boolean workspace = BladeUtil.isWorkspace(emptyDir);
+		boolean workspace = WorkspaceUtil.isWorkspace(emptyDir);
 
 		Assert.assertTrue(workspace);
 	}

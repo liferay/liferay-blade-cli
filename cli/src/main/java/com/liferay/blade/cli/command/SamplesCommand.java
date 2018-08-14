@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -307,7 +308,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		String script = BladeUtil.read(sampleGradleFile);
 
-		if (!BladeUtil.isWorkspace(dir)) {
+		if (!WorkspaceUtil.isWorkspace(dir)) {
 			File parentBuildGradleFile = new File(bladeRepo, "gradle/build.gradle");
 
 			String parentBuildScript = _parseGradleScript(BladeUtil.read(parentBuildGradleFile), "buildscript", false);

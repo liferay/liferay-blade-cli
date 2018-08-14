@@ -23,14 +23,11 @@ import aQute.bnd.osgi.Resource;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -53,14 +50,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -173,18 +168,6 @@ public class BladeUtil {
 		return getManifestProperty(pathToJar, "Bundle-Version");
 	}
 
-	public static Properties getGradleProperties(File dir) {
-		File file = getGradlePropertiesFile(dir);
-
-		return getProperties(file);
-	}
-
-	public static File getGradlePropertiesFile(File dir) {
-		File gradlePropertiesFile = new File(getWorkspaceDir(dir), _GRADLE_PROPERTIES_FILE_NAME);
-
-		return gradlePropertiesFile;
-	}
-
 	public static File getGradleWrapper(File dir) {
 		File gradleRoot = findParentFile(dir, new String[] {_GRADLEW_UNIX_FILE_NAME, _GRADLEW_WINDOWS_FILE_NAME}, true);
 
@@ -241,71 +224,8 @@ public class BladeUtil {
 		return ProjectTemplates.getTemplates(templatesFiles);
 	}
 
-	public static File getWorkspaceDir(BladeCLI blade) {
-		BaseArgs args = blade.getBladeArgs();
-
-		return getWorkspaceDir(new File(args.getBase()));
-	}
-
-	public static File getWorkspaceDir(File dir) {
-		File gradleParent = findParentFile(
-			dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
-
-		if ((gradleParent != null) && gradleParent.exists()) {
-			return gradleParent;
-		}
-
-		File mavenParent = findParentFile(dir, new String[] {"pom.xml"}, true);
-
-		if (_isWorkspacePomFile(new File(mavenParent, "pom.xml"))) {
-			return mavenParent;
-		}
-
-		FilenameFilter gradleFilter =
-			(file, name) -> _SETTINGS_GRADLE_FILE_NAME.equals(name) || _GRADLE_PROPERTIES_FILE_NAME.equals(name);
-
-		File[] matches = dir.listFiles(gradleFilter);
-
-		if (Objects.nonNull(matches) && (matches.length > 0)) {
-			return dir;
-		}
-		else {
-			File mavenPom = new File(dir, "pom.xml");
-
-			if (mavenPom.exists() && _isWorkspacePomFile(mavenPom)) {
-				return dir;
-			}
-		}
-
-		try {
-			if (dir.exists() && dir.isDirectory() && !isDirEmpty(dir.toPath())) {
-				for (File file : dir.listFiles()) {
-					if (file.isDirectory()) {
-						File[] gradleChildren = file.listFiles(gradleFilter);
-
-						if (Objects.nonNull(gradleChildren) && (gradleChildren.length > 0)) {
-							return file;
-						}
-						else {
-							File childPom = new File(file, "pom.xml");
-
-							if (childPom.exists() && _isWorkspacePomFile(childPom)) {
-								return file;
-							}
-						}
-					}
-				}
-			}
-		}
-		catch (Throwable th) {
-			throw new RuntimeException("Error while detecting a workspace directory", th);
-		}
-
-		return null;
-	}
-
 	public static boolean hasGradleWrapper(File dir) {
-		if (new File(dir, "gradlew").exists() && new File(dir, "gradlew.bat").exists()) {
+		if (new File(dir, _GRADLEW_UNIX_FILE_NAME).exists() && new File(dir, _GRADLEW_WINDOWS_FILE_NAME).exists()) {
 			return true;
 		}
 		else {
@@ -365,65 +285,6 @@ public class BladeUtil {
 		osName = osName.toLowerCase();
 
 		return osName.contains("windows");
-	}
-
-	public static boolean isWorkspace(BladeCLI blade) {
-		File dirToCheck;
-
-		if (blade == null) {
-			dirToCheck = new File(".").getAbsoluteFile();
-		}
-		else {
-			BaseArgs args = blade.getBladeArgs();
-
-			dirToCheck = new File(args.getBase());
-		}
-
-		return isWorkspace(dirToCheck);
-	}
-
-	public static boolean isWorkspace(File dir) {
-		File workspaceDir = getWorkspaceDir(dir);
-
-		if (Objects.isNull(dir)) {
-			return false;
-		}
-
-		File gradleFile = new File(workspaceDir, _SETTINGS_GRADLE_FILE_NAME);
-
-		if (!gradleFile.exists()) {
-			File pomFile = new File(workspaceDir, "pom.xml");
-
-			if (_isWorkspacePomFile(pomFile)) {
-				return true;
-			}
-
-			return false;
-		}
-
-		try {
-			String script = read(gradleFile);
-
-			Matcher matcher = WorkspaceConstants.patternWorkspacePlugin.matcher(script);
-
-			if (matcher.find()) {
-				return true;
-			}
-			else {
-				//For workspace plugin < 1.0.5
-
-				gradleFile = new File(workspaceDir, _BUILD_GRADLE_FILE_NAME);
-
-				script = read(gradleFile);
-
-				matcher = WorkspaceConstants.patternWorkspacePlugin.matcher(script);
-
-				return matcher.find();
-			}
-		}
-		catch (Exception e) {
-			return false;
-		}
 	}
 
 	public static boolean isZipValid(File file) {
@@ -698,28 +559,6 @@ public class BladeUtil {
 		return false;
 	}
 
-	private static boolean _isWorkspacePomFile(File pomFile) {
-		boolean pom = false;
-
-		if ((pomFile != null) && "pom.xml".equals(pomFile.getName()) && pomFile.exists()) {
-			pom = true;
-		}
-
-		if (pom) {
-			try {
-				String content = read(pomFile);
-
-				if (content.contains("portal.tools.bundle.support")) {
-					return true;
-				}
-			}
-			catch (Exception e) {
-			}
-		}
-
-		return false;
-	}
-
 	private static final String[] _APP_SERVER_PROPERTIES_FILE_NAMES = {
 		"app.server." + System.getProperty("user.name") + ".properties",
 		"app.server." + System.getenv("COMPUTERNAME") + ".properties",
@@ -730,14 +569,8 @@ public class BladeUtil {
 		"build." + System.getenv("HOSTNAME") + ".properties", "build.properties"
 	};
 
-	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
-
-	private static final String _GRADLE_PROPERTIES_FILE_NAME = "gradle.properties";
-
 	private static final String _GRADLEW_UNIX_FILE_NAME = "gradlew";
 
 	private static final String _GRADLEW_WINDOWS_FILE_NAME = "gradlew.bat";
-
-	private static final String _SETTINGS_GRADLE_FILE_NAME = "settings.gradle";
 
 }
