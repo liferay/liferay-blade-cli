@@ -95,30 +95,6 @@ public class WorkspaceUtil {
 			}
 		}
 
-		try {
-			if (dir.exists() && dir.isDirectory() && !BladeUtil.isDirEmpty(dir.toPath())) {
-				for (File file : dir.listFiles()) {
-					if (file.isDirectory()) {
-						File[] gradleChildren = file.listFiles(gradleFilter);
-
-						if (Objects.nonNull(gradleChildren) && (gradleChildren.length > 0)) {
-							return file;
-						}
-						else {
-							File childPom = new File(file, "pom.xml");
-
-							if (childPom.exists() && _isWorkspacePomFile(childPom)) {
-								return file;
-							}
-						}
-					}
-				}
-			}
-		}
-		catch (Throwable th) {
-			throw new RuntimeException("Error while detecting a workspace directory", th);
-		}
-
 		return null;
 	}
 
@@ -175,7 +151,7 @@ public class WorkspaceUtil {
 	public static boolean isWorkspace(File dir) {
 		File workspaceDir = getWorkspaceDir(dir);
 
-		if (Objects.isNull(dir)) {
+		if (Objects.isNull(dir) || Objects.isNull(workspaceDir)) {
 			return false;
 		}
 
