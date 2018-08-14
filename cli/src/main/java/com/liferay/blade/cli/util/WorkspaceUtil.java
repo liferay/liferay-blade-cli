@@ -37,7 +37,8 @@ public class WorkspaceUtil {
 	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
 	public static final Pattern patternWorkspacePluginVersion = Pattern.compile(
-		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:\\s*\"([0-9\\.]+)\"", Pattern.DOTALL);
+		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:\\s*\"([0-9\\.]+)\".*",
+		Pattern.MULTILINE | Pattern.DOTALL);
 
 	public static Properties getGradleProperties(File dir) {
 		File file = getGradlePropertiesFile(dir);

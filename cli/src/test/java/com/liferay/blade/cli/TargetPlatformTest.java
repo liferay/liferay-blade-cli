@@ -50,13 +50,13 @@ public class TargetPlatformTest {
 		TestUtil.runBlade(args);
 
 		_gradlePropertiesFile = WorkspaceUtil.getGradlePropertiesFile(_gradleWorkspaceDir);
-		_settingGradleFile = WorkspaceUtil.getSettingGradleFile(_gradleWorkspaceDir);
+		_settingsGradleFile = WorkspaceUtil.getSettingGradleFile(_gradleWorkspaceDir);
 	}
 
 	@Test
 	public void testCreateTargetPlatformActivator() throws Exception {
-		_targetPlatformSettingConfigure(true);
-		_targetPlatformPropertiesConfigure(true);
+		_setWorkspacePluginVersion("1.10.2");
+		_setTargetPlatformVersionProperty("7.1.0");
 
 		String[] args =
 			{"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "target-platform-activator"};
@@ -79,8 +79,7 @@ public class TargetPlatformTest {
 
 	@Test
 	public void testOnlyPropertiesNotSupportTargetPlatform() throws Exception {
-		_targetPlatformSettingConfigure(true);
-		_targetPlatformPropertiesConfigure(false);
+		_setWorkspacePluginVersion("1.10.2");
 
 		String[] args =
 			{"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "properties-not-support"};
@@ -103,8 +102,8 @@ public class TargetPlatformTest {
 
 	@Test
 	public void testOnlySettingNotSupportTargetPlatform() throws Exception {
-		_targetPlatformSettingConfigure(false);
-		_targetPlatformPropertiesConfigure(true);
+		_setWorkspacePluginVersion("1.9.0");
+		_setTargetPlatformVersionProperty("7.1.0");
 
 		String[] args =
 			{"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "setting-not-support"};
@@ -149,47 +148,30 @@ public class TargetPlatformTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private void _targetPlatformPropertiesConfigure(boolean support) throws IOException {
+	private void _setTargetPlatformVersionProperty(String version) throws IOException {
 		Properties properties = WorkspaceUtil.getGradleProperties(_gradlePropertiesFile);
 
-		String newPorperties = "";
-
-		if (support) {
-			if (!properties.containsKey("liferay.workspace.target.platform.version")) {
-				newPorperties = "liferay.workspace.target.platform.version = 7.0-GA7";
-			}
-		}
-
-		byte[] bytes = newPorperties.getBytes();
+		properties.setProperty("liferay.workspace.target.platform.version", version);
 
 		try (OutputStream outputStream = Files.newOutputStream(_gradlePropertiesFile.toPath())) {
-			outputStream.write(bytes);
+			properties.store(outputStream, "");
 		}
 	}
 
-	private void _targetPlatformSettingConfigure(boolean support) throws IOException {
-		String settingScript = BladeUtil.read(_settingGradleFile);
+	private void _setWorkspacePluginVersion(String version) throws IOException {
+		String settingsScript = BladeUtil.read(_settingsGradleFile);
 
-		Matcher matcher = WorkspaceUtil.patternWorkspacePluginVersion.matcher(settingScript);
+		Matcher matcher = WorkspaceUtil.patternWorkspacePluginVersion.matcher(settingsScript);
 
-		if (!matcher.find()) {
-			return;
-		}
+		Assert.assertTrue(settingsScript, matcher.matches());
 
 		String pluginVersion = matcher.group(1);
 
-		String newSettingScript = null;
+		String newSettingsScript = settingsScript.replaceFirst(pluginVersion, version);
 
-		if (support) {
-			newSettingScript = settingScript.replaceFirst(pluginVersion, "1.10.2");
-		}
-		else {
-			newSettingScript = settingScript.replaceFirst(pluginVersion, "1.9.0");
-		}
+		byte[] bytes = newSettingsScript.getBytes();
 
-		byte[] bytes = newSettingScript.getBytes();
-
-		try (OutputStream outputStream = Files.newOutputStream(_settingGradleFile.toPath())) {
+		try (OutputStream outputStream = Files.newOutputStream(_settingsGradleFile.toPath())) {
 			outputStream.write(bytes);
 		}
 	}
@@ -197,6 +179,6 @@ public class TargetPlatformTest {
 	private File _gradlePropertiesFile = null;
 	private File _gradleWorkspaceDir = null;
 	private File _nonGradleWorkspaceDir = null;
-	private File _settingGradleFile = null;
+	private File _settingsGradleFile = null;
 
 }
