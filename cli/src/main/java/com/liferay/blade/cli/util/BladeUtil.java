@@ -115,30 +115,28 @@ public class BladeUtil {
 			return false;
 		}
 
-		File settingGradle = getSettingGradleFile(dir);
+		Properties properties = getGradleProperties(dir);
 
-		Properties gradleProperties = getGradleProperties(dir);
+		String targetPlatformVersionKey = "liferay.workspace.target.platform.version";
 
-		String targetPlatformKey = "liferay.workspace.target.platform.version";
-
-		boolean containsTargetPlatformProperty = gradleProperties.containsKey(targetPlatformKey);
+		boolean targetPlatformEnabled = properties.containsKey(targetPlatformVersionKey);
 
 		try {
-			String settingScript = read(settingGradle);
+			String settingsGradleFileContent = read(getSettingGradleFile(dir));
 
-			Matcher matcher = WorkspaceConstants.patternGradleWorkspacePlugin.matcher(settingScript);
+			Matcher matcher = WorkspaceConstants.patternGradleWorkspacePlugin.matcher(settingsGradleFileContent);
 
-			if (!containsTargetPlatformProperty || !matcher.find()) {
+			if (!targetPlatformEnabled || !matcher.find()) {
 				return false;
 			}
 
 			String pluginVersion = matcher.group(1);
 
-			ComparableVersion currentVersion = new ComparableVersion(pluginVersion);
+			ComparableVersion minComparableVersion = new ComparableVersion("1.9.2");
 
-			ComparableVersion minSupportVersion = new ComparableVersion("1.9.2");
+			ComparableVersion pluginComparableVersion = new ComparableVersion(pluginVersion);
 
-			int result = currentVersion.compareTo(minSupportVersion);
+			int result = pluginComparableVersion.compareTo(minComparableVersion);
 
 			if (result >= 0) {
 				return true;
