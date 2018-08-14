@@ -167,7 +167,7 @@ public class TargetPlatformTest {
 	private void _targetPlatformSettingConfigure(boolean support) throws IOException {
 		String settingScript = BladeUtil.read(_settingGradle);
 
-		Matcher matcher = WorkspaceConstants.patternGradleWorkspacePlugin.matcher(settingScript);
+		Matcher matcher = WorkspaceConstants.patternWorkspacePluginVersion.matcher(settingScript);
 
 		if (!matcher.find()) {
 			return;

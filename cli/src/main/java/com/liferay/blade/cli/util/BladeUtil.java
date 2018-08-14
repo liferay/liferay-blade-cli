@@ -340,7 +340,7 @@ public class BladeUtil {
 		try {
 			String settingsGradleFileContent = read(getSettingGradleFile(dir));
 
-			Matcher matcher = WorkspaceConstants.patternGradleWorkspacePlugin.matcher(settingsGradleFileContent);
+			Matcher matcher = WorkspaceConstants.patternWorkspacePluginVersion.matcher(settingsGradleFileContent);
 
 			if (!targetPlatformEnabled || !matcher.find()) {
 				return false;
