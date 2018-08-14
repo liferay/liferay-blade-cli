@@ -41,16 +41,16 @@ public class TargetPlatformTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_gradleWorkspaceDir = temporaryFolder.newFolder("build", "test", "gradle-workspace");
+		_gradleWorkspaceDir = temporaryFolder.newFolder("gradle-workspace");
 
-		_notWorkspaceDir = temporaryFolder.newFolder("build", "test", "not-workspace");
+		_nonGradleWorkspaceDir = temporaryFolder.newFolder("non-gradle-workspace");
 
 		String[] args = {"init", "--base", _gradleWorkspaceDir.getAbsolutePath()};
 
-		new BladeTest().run(args);
+		TestUtil.runBlade(args);
 
-		_settingGradle = WorkspaceUtil.getSettingGradleFile(_gradleWorkspaceDir);
-		_gradlePorperties = WorkspaceUtil.getGradlePropertiesFile(_gradleWorkspaceDir);
+		_gradlePropertiesFile = WorkspaceUtil.getGradlePropertiesFile(_gradleWorkspaceDir);
+		_settingGradleFile = WorkspaceUtil.getSettingGradleFile(_gradleWorkspaceDir);
 	}
 
 	@Test
@@ -127,12 +127,14 @@ public class TargetPlatformTest {
 
 	@Test
 	public void testWithoutWorkspace() throws Exception {
-		String[] args =
-			{"--base", _notWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "without-workspace-activator"};
+		String[] args = {
+			"--base", _nonGradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator",
+			"without-workspace-activator"
+		};
 
 		new BladeTest().run(args);
 
-		File project = new File(_notWorkspaceDir, "without-workspace-activator");
+		File project = new File(_nonGradleWorkspaceDir, "without-workspace-activator");
 
 		File buildFile = new File(project, "build.gradle");
 
@@ -148,7 +150,7 @@ public class TargetPlatformTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _targetPlatformPropertiesConfigure(boolean support) throws IOException {
-		Properties properties = WorkspaceUtil.getGradleProperties(_gradlePorperties);
+		Properties properties = WorkspaceUtil.getGradleProperties(_gradlePropertiesFile);
 
 		String newPorperties = "";
 
@@ -160,13 +162,13 @@ public class TargetPlatformTest {
 
 		byte[] bytes = newPorperties.getBytes();
 
-		try (OutputStream outputStream = Files.newOutputStream(_gradlePorperties.toPath())) {
+		try (OutputStream outputStream = Files.newOutputStream(_gradlePropertiesFile.toPath())) {
 			outputStream.write(bytes);
 		}
 	}
 
 	private void _targetPlatformSettingConfigure(boolean support) throws IOException {
-		String settingScript = BladeUtil.read(_settingGradle);
+		String settingScript = BladeUtil.read(_settingGradleFile);
 
 		Matcher matcher = WorkspaceUtil.patternWorkspacePluginVersion.matcher(settingScript);
 
@@ -187,14 +189,14 @@ public class TargetPlatformTest {
 
 		byte[] bytes = newSettingScript.getBytes();
 
-		try (OutputStream outputStream = Files.newOutputStream(_settingGradle.toPath())) {
+		try (OutputStream outputStream = Files.newOutputStream(_settingGradleFile.toPath())) {
 			outputStream.write(bytes);
 		}
 	}
 
-	private File _gradlePorperties = null;
+	private File _gradlePropertiesFile = null;
 	private File _gradleWorkspaceDir = null;
-	private File _notWorkspaceDir = null;
-	private File _settingGradle = null;
+	private File _nonGradleWorkspaceDir = null;
+	private File _settingGradleFile = null;
 
 }
