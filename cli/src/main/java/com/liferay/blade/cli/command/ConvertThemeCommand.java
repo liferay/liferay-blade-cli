@@ -20,6 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 
@@ -43,9 +44,9 @@ public class ConvertThemeCommand {
 		_blade = blade;
 		_args = args;
 
-		File projectDir = BladeUtil.getWorkspaceDir(_blade);
+		File projectDir = WorkspaceUtil.getWorkspaceDir(_blade);
 
-		Properties gradleProperties = BladeUtil.getGradleProperties(projectDir);
+		Properties gradleProperties = WorkspaceUtil.getGradleProperties(projectDir);
 
 		String pluginsSDKDirPath = null;
 
@@ -77,7 +78,7 @@ public class ConvertThemeCommand {
 
 		final String themeName = !args.isEmpty() ? args.get(0) : null;
 
-		if (!BladeUtil.isWorkspace(_blade)) {
+		if (!WorkspaceUtil.isWorkspace(_blade)) {
 			_blade.error("Please execute this in a Liferay Workspace Project");
 
 			return;

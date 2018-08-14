@@ -23,7 +23,7 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -110,8 +110,8 @@ public class BladeCLI implements Runnable {
 	public BladeSettings getBladeSettings() throws IOException {
 		final File settingsFile;
 
-		if (BladeUtil.isWorkspace(this)) {
-			File workspaceDir = BladeUtil.getWorkspaceDir(this);
+		if (WorkspaceUtil.isWorkspace(this)) {
+			File workspaceDir = WorkspaceUtil.getWorkspaceDir(this);
 
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}

@@ -20,8 +20,8 @@ import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CopyDirVisitor;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
@@ -67,9 +67,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		BladeCLI bladeCLI = getBladeCLI();
 		ConvertArgs convertArgs = getArgs();
 
-		File projectDir = BladeUtil.getWorkspaceDir(bladeCLI);
+		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
 
-		Properties gradleProperties = BladeUtil.getGradleProperties(projectDir);
+		Properties gradleProperties = WorkspaceUtil.getGradleProperties(projectDir);
 
 		String pluginsSdkDirPath = null;
 
@@ -113,7 +113,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 		final String pluginName = name.isEmpty() ? null : name.get(0);
 
-		if (!BladeUtil.isWorkspace(bladeCLI)) {
+		if (!WorkspaceUtil.isWorkspace(bladeCLI)) {
 			bladeCLI.error("Please execute this in a Liferay Workspace project");
 
 			return;

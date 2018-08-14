@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 import com.liferay.project.templates.internal.util.FileUtil;
@@ -161,7 +162,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setClassName(createArgs.getClassname());
 		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
-		projectTemplatesArgs.setDependencyManagementEnabled(BladeUtil.isDependencyManagementEnabled(dir));
+		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
 		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
 		projectTemplatesArgs.setLiferayVersion(createArgs.getLiferayVersion());
@@ -243,11 +244,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = base.getCanonicalFile();
 
-		if (!BladeUtil.isWorkspace(baseDir)) {
+		if (!WorkspaceUtil.isWorkspace(baseDir)) {
 			return baseDir;
 		}
 
-		Properties properties = BladeUtil.getGradleProperties(baseDir);
+		Properties properties = WorkspaceUtil.getGradleProperties(baseDir);
 
 		String modulesDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
 
@@ -255,7 +256,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			modulesDirValue = WorkspaceConstants.DEFAULT_MODULES_DIR;
 		}
 
-		File projectDir = BladeUtil.getWorkspaceDir(bladeCLI);
+		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
 
 		File modulesDir = new File(projectDir, modulesDirValue);
 
@@ -275,11 +276,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = base.getCanonicalFile();
 
-		if (!BladeUtil.isWorkspace(baseDir)) {
+		if (!WorkspaceUtil.isWorkspace(baseDir)) {
 			return baseDir;
 		}
 
-		Properties properties = BladeUtil.getGradleProperties(baseDir);
+		Properties properties = WorkspaceUtil.getGradleProperties(baseDir);
 
 		String warsDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 
@@ -291,7 +292,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			warsDirValue = warsDirValue.split(",")[0];
 		}
 
-		File projectDir = BladeUtil.getWorkspaceDir(bladeCLI);
+		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
 
 		File warsDir = new File(projectDir, warsDirValue);
 

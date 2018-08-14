@@ -17,6 +17,7 @@
 package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,8 +49,8 @@ public class TargetPlatformTest {
 
 		new BladeTest().run(args);
 
-		_settingGradle = BladeUtil.getSettingGradleFile(_gradleWorkspaceDir);
-		_gradlePorperties = BladeUtil.getGradlePropertiesFile(_gradleWorkspaceDir);
+		_settingGradle = WorkspaceUtil.getSettingGradleFile(_gradleWorkspaceDir);
+		_gradlePorperties = WorkspaceUtil.getGradlePropertiesFile(_gradleWorkspaceDir);
 	}
 
 	@Test
@@ -147,7 +148,7 @@ public class TargetPlatformTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _targetPlatformPropertiesConfigure(boolean support) throws IOException {
-		Properties properties = BladeUtil.getGradleProperties(_gradlePorperties);
+		Properties properties = WorkspaceUtil.getGradleProperties(_gradlePorperties);
 
 		String newPorperties = "";
 
@@ -167,7 +168,7 @@ public class TargetPlatformTest {
 	private void _targetPlatformSettingConfigure(boolean support) throws IOException {
 		String settingScript = BladeUtil.read(_settingGradle);
 
-		Matcher matcher = WorkspaceConstants.patternWorkspacePluginVersion.matcher(settingScript);
+		Matcher matcher = WorkspaceUtil.patternWorkspacePluginVersion.matcher(settingScript);
 
 		if (!matcher.find()) {
 			return;

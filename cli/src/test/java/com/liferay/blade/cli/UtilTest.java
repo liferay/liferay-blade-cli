@@ -20,6 +20,7 @@ import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 
@@ -118,7 +119,7 @@ public class UtilTest {
 
 		Files.write(gradleFile.toPath(), plugin.getBytes());
 
-		Assert.assertTrue(BladeUtil.isWorkspace(workspace));
+		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
 	}
 
 	@Test
@@ -133,7 +134,7 @@ public class UtilTest {
 
 		Files.write(gradleFile.toPath(), plugin.getBytes());
 
-		Assert.assertTrue(BladeUtil.isWorkspace(workspace));
+		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
 	}
 
 	@Test
@@ -152,7 +153,7 @@ public class UtilTest {
 
 		Files.write(buildFile.toPath(), plugin.getBytes());
 
-		Assert.assertTrue(BladeUtil.isWorkspace(workspace));
+		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
 	}
 
 	@Rule
