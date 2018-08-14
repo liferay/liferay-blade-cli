@@ -110,7 +110,7 @@ public class BladeUtil {
 		}
 	}
 
-	public static boolean dependencyManagerEnable(File dir) {
+	public static boolean isDependencyManagementEnabled(File dir) {
 		if (!isWorkspace(dir)) {
 			return false;
 		}
