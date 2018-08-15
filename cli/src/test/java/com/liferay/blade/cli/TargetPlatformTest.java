@@ -99,7 +99,7 @@ public class TargetPlatformTest {
 	@Test
 	public void testWorkspacePluginVersionIncompatibleVersion() throws Exception {
 		_setTargetPlatformVersionProperty("7.1.0");
-		_setWorkspacePluginVersion("1.9.0");
+		_setWorkspacePluginVersion("1.8.0");
 
 		String[] args = {"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"};
 
