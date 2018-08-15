@@ -117,7 +117,7 @@ public class WorkspaceUtil {
 				return false;
 			}
 
-			Version minVersion = new Version(1, 9, 2);
+			Version minVersion = new Version(1, 9, 0);
 
 			Version pluginVersion = new Version(matcher.group(1));
 
