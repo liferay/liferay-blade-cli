@@ -117,7 +117,7 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(args);
 
-		boolean workspace = BladeUtil.isWorkspace(emptyDir);
+		boolean workspace = WorkspaceUtil.isWorkspace(emptyDir);
 
 		Assert.assertTrue(workspace);
 	}
