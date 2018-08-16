@@ -16,12 +16,14 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeTestResults;
+import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.StringPrintStream;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 import org.junit.Assert;
@@ -29,6 +31,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import org.zeroturnaround.process.PidProcess;
+import org.zeroturnaround.process.PidUtil;
+import org.zeroturnaround.process.Processes;
 
 /**
  * @author Christopher Bryan Boyd
@@ -47,8 +53,6 @@ public class ServerCommandsTest {
 		TestUtil.runBlade(new String[] {"--base", _workspaceDir.getPath(), "gw", "initBundle"});
 
 		_testServerStart();
-
-		_testServerStop();
 	}
 
 	@Test
@@ -94,19 +98,50 @@ public class ServerCommandsTest {
 	private void _testServerStart() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "server", "start"};
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
+		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
 
-		BladeCLI bladeCLI = bladeTestResults.getBladeCLI();
+		StringPrintStream errorPrintStream = StringPrintStream.newInstance();
 
-		BaseCommand<?> serverStartCommand = bladeCLI.getCommand();
+		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream);
 
-		((AutoCloseable)serverStartCommand).close();
-	}
+		Thread thread = new Thread() {
 
-	private void _testServerStop() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "server", "stop"};
+			@Override
+			public void run() {
+				try {
+					bladeTest.run(args);
+				}
+				catch (Exception e) {
+				}
+			}
 
-		TestUtil.runBlade(args);
+		};
+
+		thread.setDaemon(true);
+
+		thread.run();
+
+		Thread.sleep(1);
+
+		ServerStartCommand serverStartCommand = (ServerStartCommand)bladeTest.getCommand();
+
+		Collection<Process> processes = serverStartCommand.getProcesses();
+
+		Assert.assertFalse("Expected server start process to have started.", processes.isEmpty());
+
+		Iterator<Process> iterator = processes.iterator();
+
+		Process process = iterator.next();
+
+		Assert.assertTrue("Expected server start process to be alive.", process.isAlive());
+
+		int pid = PidUtil.getPid(process);
+
+		PidProcess pidProcess = Processes.newPidProcess(pid);
+
+		pidProcess.destroyForcefully();
+
+		Assert.assertFalse("Expected server start process to be destroyed.", pidProcess.isAlive());
 	}
 
 	private File _workspaceDir = null;

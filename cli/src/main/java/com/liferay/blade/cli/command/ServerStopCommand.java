@@ -165,7 +165,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 			return;
 		}
 
-		Optional<Path> server = ServerUtil.findServerBinFolder(dir, serverType);
+		Optional<Path> server = ServerUtil.findServerFolder(dir, serverType);
 
 		boolean success = false;
 

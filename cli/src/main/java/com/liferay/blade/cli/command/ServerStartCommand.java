@@ -39,21 +39,9 @@ import java.util.Properties;
 /**
  * @author David Truong
  */
-public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements AutoCloseable {
+public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 	public ServerStartCommand() {
-	}
-
-	@Override
-	public void close() throws Exception {
-		for (Process process : _processes) {
-			try {
-				process.destroy();
-			}
-			catch (Exception e) {
-				getBladeCLI().error(e);
-			}
-		}
 	}
 
 	@Override
@@ -163,6 +151,10 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements 
 		return ServerStartArgs.class;
 	}
 
+	public Collection<Process> getProcesses() {
+		return _processes;
+	}
+
 	private void _commandServer(Path dir, String serverType) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -174,12 +166,12 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements 
 			return;
 		}
 
-		Optional<Path> serverBinFolder = ServerUtil.findServerBinFolder(dir, serverType);
+		Optional<Path> serverFolder = ServerUtil.findServerFolder(dir, serverType);
 
 		boolean success = false;
 
-		if (serverBinFolder.isPresent()) {
-			Path file = serverBinFolder.get();
+		if (serverFolder.isPresent()) {
+			Path file = serverFolder.get();
 
 			if (serverType.equals("tomcat")) {
 				_commmandTomcat(file);
