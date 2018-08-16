@@ -100,7 +100,7 @@ public class ServerCommandsTest {
 
 		BaseCommand<?> serverStartCommand = bladeCLI.getCommand();
 
-		((AutoCloseable)serverStartCommand).close();
+		//((AutoCloseable)serverStartCommand).close();
 	}
 
 	private void _testServerStop() throws Exception {

@@ -39,21 +39,9 @@ import java.util.Properties;
 /**
  * @author David Truong
  */
-public class ServerStartCommand extends BaseCommand<ServerStartArgs> implements AutoCloseable {
+public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 	public ServerStartCommand() {
-	}
-
-	@Override
-	public void close() throws Exception {
-		for (Process process : _processes) {
-			try {
-				process.destroy();
-			}
-			catch (Exception e) {
-				getBladeCLI().error(e);
-			}
-		}
 	}
 
 	@Override
