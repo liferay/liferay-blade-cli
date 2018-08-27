@@ -161,6 +161,63 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateExtModule() throws Exception {
+		File tempRoot = temporaryFolder.getRoot();
+
+		String[] gradleArgs = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "-e", "com.liferay.login.web", "-E",
+			"1.0.0", "loginExt"
+		};
+
+		String projectPath = new File(tempRoot, "loginExt").getAbsolutePath();
+
+		_bladeTest.run(gradleArgs);
+
+		_contains(
+			_checkFileExists(projectPath + "/build.gradle"),
+			new String[] {
+				".*^apply plugin: \"com.liferay.osgi.ext.plugin\".*$",
+				"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\", version: \"1.0.0\".*$"
+			});
+
+		String buildJarName = "com.liferay.login.web-1.0.0.ext.jar";
+
+		TestUtil.verifyBuild(projectPath, buildJarName);
+
+		_verifyImportPackage(new File(projectPath, "build/libs/" + buildJarName));
+
+		FileUtil.deleteDir(Paths.get(projectPath));
+	}
+
+	@Test
+	public void testCreateExtModuleWithoutOriginalModuleOptions() throws Exception {
+		File tempRoot = temporaryFolder.getRoot();
+
+		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "loginExt"};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
+
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output, output.contains("\"-t modules-ext\" options missing"));
+
+		args = new String[] {
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "-e", "com.liferay.login.web", "loginExt"
+		};
+
+		output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output, output.contains("\"-t modules-ext\" options missing"));
+
+		args =
+			new String[] {"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "-E", "1.0.0", "loginExt"};
+
+		output = TestUtil.runBlade(tempRoot, args).getOutput();
+
+		Assert.assertTrue(output, output.contains("\"-t modules-ext\" options missing"));
+	}
+
+	@Test
 	public void testCreateFragment() throws Exception {
 		File tempRoot = temporaryFolder.getRoot();
 
@@ -1011,6 +1068,48 @@ public class CreateCommandTest {
 		_makeWorkspace(workspace);
 
 		_testCreateWar(workspace, "war-mvc-portlet", "war-portlet-test");
+	}
+
+	@Test
+	public void testCreateWorkspaceGradleExtModule() throws Exception {
+		File tempRoot = temporaryFolder.getRoot();
+
+		File workspace = new File(tempRoot, "workspace");
+
+		File extDir = new File(workspace, "ext");
+
+		_makeWorkspace(workspace);
+
+		String[] gradleArgs = {
+			"create", "-d", extDir.getAbsolutePath(), "-t", "modules-ext", "-e", "com.liferay.login.web", "-E", "1.0.0",
+			"loginExt"
+		};
+
+		_bladeTest.run(gradleArgs);
+
+		String projectPath = extDir.getAbsolutePath();
+
+		_checkFileExists(projectPath + "/loginExt");
+
+		_contains(
+			_checkFileExists(projectPath + "/loginExt/build.gradle"),
+			new String[] {
+				"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\", version: \"1.0.0\".*$"
+			});
+
+		_lacks(
+			_checkFileExists(projectPath + "/loginExt/build.gradle"),
+			".*^apply plugin: \"com.liferay.osgi.ext.plugin\".*$");
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		String extJarName = "com.liferay.login.web-1.0.0.ext.jar";
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/loginExt", extJarName);
+
+		_verifyImportPackage(new File(projectPath, "loginExt/build/libs/" + extJarName));
 	}
 
 	@Test

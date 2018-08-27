@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author Gregory Amerson
  * @author David Truong
  * @author Christopher Boyd
+ * @author Charles Wu
  */
 public class CreateCommand extends BaseCommand<CreateArgs> {
 
@@ -107,10 +108,50 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 				if (!hasHostBundleBSN) {
 					sb.append("Host Bundle BSN (\"-h\", \"--host-bundle-bsn\") is required.");
+					sb.append(System.lineSeparator());
 				}
 
 				if (!hasHostBundleVersion) {
 					sb.append("Host Bundle Version (\"-H\", \"--host-bundle-version\") is required.");
+					sb.append(System.lineSeparator());
+				}
+
+				bladeCLI.printUsage("create", sb.toString());
+
+				return;
+			}
+		}
+		else if (template.equals("modules-ext")) {
+			if ("maven".equals(createArgs.getBuild())) {
+				bladeCLI.err(
+					"Modules Ext projects are not supported with Maven build. Please use Gradle build instead.");
+
+				return;
+			}
+
+			boolean hasOrinalModule = false;
+
+			if (createArgs.getOriginalModuleName() != null) {
+				hasOrinalModule = true;
+			}
+
+			boolean hasOrinalModuleVersion = false;
+
+			if (createArgs.getOriginalModuleVersion() != null) {
+				hasOrinalModuleVersion = true;
+			}
+
+			if (!hasOrinalModule || !hasOrinalModuleVersion) {
+				StringBuilder sb = new StringBuilder("\"-t modules-ext\" options missing:" + System.lineSeparator());
+
+				if (!hasOrinalModule) {
+					sb.append("Original Module name (\"-e\", \"--original-module-name\") is required.");
+					sb.append(System.lineSeparator());
+				}
+
+				if (!hasOrinalModuleVersion) {
+					sb.append("Original Module Version (\"-E\", \"--original-module-version\") is required.");
+					sb.append(System.lineSeparator());
 				}
 
 				bladeCLI.printUsage("create", sb.toString());
@@ -145,6 +186,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			dir = _getDefaultWarsDir();
 		}
+		else if (template.startsWith("modules-ext")) {
+			dir = _getDefaultExtsDir();
+		}
 		else {
 			dir = _getDefaultModulesDir();
 		}
@@ -164,6 +208,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
+		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
+		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
 		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
 		projectTemplatesArgs.setLiferayVersion(createArgs.getLiferayVersion());
 		projectTemplatesArgs.setName(name);
@@ -233,6 +279,38 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 	private void _addError(String prefix, String msg) {
 		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
+	}
+
+	private File _getDefaultExtsDir() throws Exception {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		BaseArgs args = bladeCLI.getBladeArgs();
+
+		File base = new File(args.getBase());
+
+		File baseDir = base.getCanonicalFile();
+
+		if (!WorkspaceUtil.isWorkspace(baseDir)) {
+			return baseDir;
+		}
+
+		Properties properties = WorkspaceUtil.getGradleProperties(baseDir);
+
+		String extsDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_EXTS_DIR_PROPERTY);
+
+		if (extsDirValue == null) {
+			extsDirValue = WorkspaceConstants.DEFAULT_EXTS_DIR;
+		}
+
+		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+
+		File extsDir = new File(projectDir, extsDirValue);
+
+		if (_containsDir(baseDir, extsDir)) {
+			return baseDir;
+		}
+
+		return extsDir;
 	}
 
 	private File _getDefaultModulesDir() throws Exception {

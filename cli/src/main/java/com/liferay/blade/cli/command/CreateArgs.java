@@ -23,6 +23,7 @@ import java.io.File;
 
 /**
  * @author Gregory Amerson
+ * @author Charles Wu
  */
 @Parameters(
 	commandDescription = "Creates a new Liferay module project from several available templates.",
@@ -60,6 +61,14 @@ public class CreateArgs extends BaseArgs {
 
 	public String getName() {
 		return _name;
+	}
+
+	public String getOriginalModuleName() {
+		return _originalModuleName;
+	}
+
+	public String getOriginalModuleVersion() {
+		return _originalModuleVersion;
 	}
 
 	public String getPackageName() {
@@ -126,6 +135,18 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(description = "The project name")
 	private String _name;
+
+	@Parameter(
+		description = "If a new ext module needs to be created, provide the name of the target module. Required for \"-t modules-ext\".",
+		names = {"-e", "--original-module-name"}
+	)
+	private String _originalModuleName;
+
+	@Parameter(
+		description = "If a new ext module needs to be created, provide the version of the target module. Required for \"-t modules-ext\".",
+		names = {"-E", "--original-module-version"}
+	)
+	private String _originalModuleVersion;
 
 	@Parameter(description = "The Java package to use when generating Java source.", names = {"-p", "--package-name"})
 	private String _packageName;
