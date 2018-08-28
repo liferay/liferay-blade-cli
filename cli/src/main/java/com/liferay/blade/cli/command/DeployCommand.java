@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.dto.BundleDTO;
 
 /**
@@ -108,7 +109,14 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		long bundleId = deployer.install(uri);
 
 		if (bundleId > 0) {
-			deployer.start(bundleId);
+			BundleDTO bundle = deployer.getBundle(bundleId);
+
+			if (bundle.state == Bundle.INSTALLED) {
+				deployer.start(bundleId);
+			}
+			else if (bundle.state == Bundle.ACTIVE) {
+				deployer.update(bundleId, uri);
+			}
 		}
 		else {
 			throw new Exception("Failed to deploy war: " + file.getAbsolutePath());
@@ -337,11 +345,11 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 			Entry<String, Attrs> bsn = bundle.getBundleSymbolicName();
 
-			if (bsn != null) {
-				_deployBundle(file, client, bundle, bsn);
-			}
-			else if (name.endsWith(".war")) {
+			if (name.endsWith(".war")) {
 				_deployWar(file, client);
+			}
+			else if (bsn != null) {
+				_deployBundle(file, client, bundle, bsn);
 			}
 		}
 	}
