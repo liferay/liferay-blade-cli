@@ -35,6 +35,8 @@ public interface LiferayBundleDeployer extends AutoCloseable {
 		return new LiferayBundleDeployerImpl(host, port);
 	}
 
+	public BundleDTO getBundle(long id) throws Exception;
+
 	public long getBundleId(Collection<BundleDTO> bundles, String name) throws Exception;
 
 	public default long getBundleId(String name) throws Exception {
@@ -64,6 +66,8 @@ public interface LiferayBundleDeployer extends AutoCloseable {
 	public void start(long id) throws Exception;
 
 	public void stop(long id) throws Exception;
+
+	public void uninstall(long id) throws Exception;
 
 	public void update(long id, URI uri) throws Exception;
 
