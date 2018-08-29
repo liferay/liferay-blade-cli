@@ -2,7 +2,7 @@ import com.liferay.project.templates.ProjectTemplates
 
 buildscript {
 	dependencies{
-		classpath group: "com.liferay", name: "com.liferay.project.templates", version: "4.0.0"
+		classpath group: "com.liferay", name: "com.liferay.project.templates", version: "4.1.6"
 	}
 	repositories {
 		maven {
@@ -16,7 +16,7 @@ configurations {
 }
 
 dependencies {
-	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.0.0"
+	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.1.6"
 }
 
 repositories {
@@ -32,7 +32,7 @@ task createSamples {
 		liferayVersionArg = liferayVersion
 	}
 	else {
-		liferayVersionArg = '7.0'
+		liferayVersionArg = '7.1'
 	}
 
 	def templateNames = ProjectTemplates.getTemplates().keySet()
