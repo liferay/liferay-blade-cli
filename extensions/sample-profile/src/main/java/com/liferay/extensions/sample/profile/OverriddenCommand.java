@@ -18,24 +18,23 @@ package com.liferay.extensions.sample.profile;
 
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.DeployArgs;
 
 /**
  * @author Liferay
  */
 @BladeProfile("foo")
-public class OverriddenCommand extends BaseCommand<DeployArgs> {
+public class OverriddenCommand extends BaseCommand<OverriddenArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		DeployArgs args = getArgs();
+		OverriddenArgs args = getArgs();
 
 		getBladeCLI().out("OverriddenCommand says " + args.isWatch());
 	}
 
 	@Override
-	public Class<DeployArgs> getArgsClass() {
-		return DeployArgs.class;
+	public Class<OverriddenArgs> getArgsClass() {
+		return OverriddenArgs.class;
 	}
 
 }
