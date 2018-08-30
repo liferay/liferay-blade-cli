@@ -83,7 +83,9 @@ public class BndProperties extends Properties {
 						inputValue.setFormatedValue(formatedValueBuilder.toString());
 					}
 					else {
-						originalValueBuilder.append(",").append(newValue);
+						originalValueBuilder.append(",");
+						originalValueBuilder.append(newValue);
+
 						inputValue.setFormatedValue(originalValueBuilder.toString());
 					}
 				}

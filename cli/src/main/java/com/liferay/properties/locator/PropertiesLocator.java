@@ -223,9 +223,11 @@ public class PropertiesLocator {
 								ZipEntry zipEntryJar = jarIs.getNextEntry();
 
 								while (zipEntryJar != null) {
-									if (zipEntryJar.getName().endsWith("Configuration.class")) {
+									String name = zipEntryJar.getName();
+
+									if (name.endsWith("Configuration.class")) {
 										configClassesMap.put(
-											zipEntryJar.getName().replace(".class", StringPool.BLANK),
+											name.replace(".class", StringPool.BLANK),
 											new ConfigurationClassData(jarIs));
 									}
 
@@ -337,7 +339,12 @@ public class PropertiesLocator {
 					Stream<Pair<String, String>> replacementsStream = replacements.stream();
 
 					replacementsStream.sorted(
-						(r1, r2) -> r1.first().compareTo(r2.first())
+						(r1, r2) -> {
+							String r1First = r1.first();
+							String r2First = r2.first();
+
+							return r1First.compareTo(r2First);
+						}
 					).forEach(
 						replacement -> {
 							String path = replacement.first();
@@ -383,19 +390,21 @@ public class PropertiesLocator {
 			Stream<Path> filter = paths.filter(ignoreStateFilter);
 
 			filter.map(
-				jarPath -> jarPath.toAbsolutePath().toString()
+				jarPath -> jarPath.toAbsolutePath()
+			).map(
+				absolutePath -> absolutePath.toString()
 			).filter(
 				PropertiesLocator::_isLiferayJar
 			).forEach(
-				jarAbsolutePath -> {
-					try (JarFile jarFile = new JarFile(jarAbsolutePath)) {
+				absolutePath -> {
+					try (JarFile jarFile = new JarFile(absolutePath)) {
 						JarEntry portletPropertiesFile = jarFile.getJarEntry("portlet.properties");
 
 						Properties portletProperties = new Properties();
 
 						if (portletPropertiesFile != null) {
 							_getPropertiesFromJar(
-								"jar:file:" + jarAbsolutePath + "!/portlet.properties", portletProperties);
+								"jar:file:" + absolutePath + "!/portlet.properties", portletProperties);
 						}
 
 						Enumeration<Object> enuKeys = portletProperties.keys();
@@ -408,7 +417,7 @@ public class PropertiesLocator {
 
 						if (propertyKeys.length != 0) {
 							portletsProperties.add(
-								new Pair<String, String[]>(jarAbsolutePath + "/portlet.properties", propertyKeys));
+								new Pair<String, String[]>(absolutePath + "/portlet.properties", propertyKeys));
 						}
 					}
 					catch (Exception e) {
@@ -424,7 +433,9 @@ public class PropertiesLocator {
 			Stream<Path> filter2 = filter.filter(lpkgFilter);
 
 			filter2.map(
-				lpkgPath -> lpkgPath.toAbsolutePath().toString()
+				lpkgPath -> lpkgPath.toAbsolutePath()
+			).map(
+				absolutePath -> absolutePath.toString()
 			).forEach(
 				lpkgAbsolutePath -> {
 					try (ZipFile zipFile = new ZipFile(lpkgAbsolutePath)) {
@@ -440,7 +451,9 @@ public class PropertiesLocator {
 									ZipEntry zipEntryJar = jarIs.getNextEntry();
 
 									while (zipEntryJar != null) {
-										if (zipEntryJar.getName().equals("portlet.properties")) {
+										String zipEntryJarName = zipEntryJar.getName();
+
+										if (zipEntryJarName.equals("portlet.properties")) {
 											Properties portletProperties = new Properties();
 
 											portletProperties.load(jarIs);
@@ -535,7 +548,11 @@ public class PropertiesLocator {
 					_outputFile.println(foundProperty + " can match with the following portlet properties:");
 				}
 			).flatMap(
-				problem -> problem.getReplacements().stream()
+				problem -> {
+					List<Pair<String, String>> replacements = problem.getReplacements();
+
+					return replacements.stream();
+				}
 			).forEach(
 				replacement -> {
 					Path modulePath = Paths.get(replacement.first());

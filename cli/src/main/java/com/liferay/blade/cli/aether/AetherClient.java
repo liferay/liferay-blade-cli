@@ -121,7 +121,9 @@ public class AetherClient {
 		try {
 			DefaultSettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
 
-			return builder.build(request).getEffectiveSettings();
+			return builder.build(
+				request
+			).getEffectiveSettings();
 		}
 		catch (SettingsBuildingException sbe) {
 			sbe.printStackTrace();
