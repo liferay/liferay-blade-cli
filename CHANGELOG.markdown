@@ -1,5 +1,18 @@
 # Liferay Blade CLI Change Log
 
+## 3.1.2 - 2018-08-30 - ba8e7d64a866b4fbef383be37522d0eaf3bc8b4f
+
+- [BLADE-256]: As a developer, i'd like tests to run in parallel
+- [BLADE-265]: Print Gradle Errors in Test Results
+- [BLADE-270]: blade init will fails if run in the empty folder
+- [BLADE-271]: blade server start for finding the right server to start
+- [BLADE-274]: blade deploy does not start wars on reinstall
+- [BLADE-276]: blade init . doesn't create a workspace
+- [BLADE-277]: `blade server stop` not recognizing folder names correctly
+- [BLADE-280]: update to project templates 4.1.5
+- [BLADE-281]: Creating project templates in workspace that has TP enabled should use TP enabled version of project template
+- [BLADE-284]: update to project templates 4.1.6
+
 ## 3.1.1 - 2018-07-18 - 5d9faab454e1023e3fbe8502365f752c26fcc7c9
 
 - [BLADE-211]: Add Changelog using changelog plugin
@@ -112,12 +125,22 @@ Updated to use Project Templates 4.1.0
 [BLADE-250]: https://issues.liferay.com/browse/BLADE-250
 [BLADE-251]: https://issues.liferay.com/browse/BLADE-251
 [BLADE-253]: https://issues.liferay.com/browse/BLADE-253
+[BLADE-256]: https://issues.liferay.com/browse/BLADE-256
 [BLADE-257]: https://issues.liferay.com/browse/BLADE-257
 [BLADE-258]: https://issues.liferay.com/browse/BLADE-258
 [BLADE-259]: https://issues.liferay.com/browse/BLADE-259
 [BLADE-260]: https://issues.liferay.com/browse/BLADE-260
 [BLADE-262]: https://issues.liferay.com/browse/BLADE-262
 [BLADE-264]: https://issues.liferay.com/browse/BLADE-264
+[BLADE-265]: https://issues.liferay.com/browse/BLADE-265
+[BLADE-270]: https://issues.liferay.com/browse/BLADE-270
+[BLADE-271]: https://issues.liferay.com/browse/BLADE-271
+[BLADE-274]: https://issues.liferay.com/browse/BLADE-274
+[BLADE-276]: https://issues.liferay.com/browse/BLADE-276
+[BLADE-277]: https://issues.liferay.com/browse/BLADE-277
+[BLADE-280]: https://issues.liferay.com/browse/BLADE-280
+[BLADE-281]: https://issues.liferay.com/browse/BLADE-281
+[BLADE-284]: https://issues.liferay.com/browse/BLADE-284
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
