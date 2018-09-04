@@ -32,18 +32,20 @@ public class OpenCommand extends BaseCommand<OpenArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		File fileName = getArgs().getFile();
+		String fileName = getArgs().getFile();
 
-		if (!fileName.exists()) {
-			_addError("open", "Unable to find specified file " + fileName.getAbsolutePath());
+		File file = new File(fileName).getAbsoluteFile();
+
+		if (!file.exists()) {
+			_addError("open", "Unable to find specified file " + file.getAbsolutePath());
 
 			return;
 		}
 
 		IDEConnector connector = new IDEConnector();
 
-		if (fileName.isDirectory()) {
-			Object retval = connector.openDir(fileName);
+		if (file.isDirectory()) {
+			Object retval = connector.openDir(file);
 
 			if (retval != null) {
 				_addError("open", retval.toString());
