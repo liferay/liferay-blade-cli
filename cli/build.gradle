@@ -172,6 +172,17 @@ task unzipPortal(dependsOn: downloadPortal, type: Copy) {
 	from zipTree(downloadPortal.dest)
 	into buildDir
 }
+task cliTestDependencies(type: Jar) {
+	from sourceSets.test.output
+	classifier = 'tests'
+}
+configurations {
+	testArtifacts
+}
+
+artifacts {
+	 testArtifacts cliTestDependencies
+}
 
 test {
 	dependsOn createDepsZip, createWrapperZip, unzipPortal

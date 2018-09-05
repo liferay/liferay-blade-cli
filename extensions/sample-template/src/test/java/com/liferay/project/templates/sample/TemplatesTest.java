@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.project.templates.sample;
 
-import com.liferay.blade.cli.command.BaseArgs;
-import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import java.util.Map;
-import java.util.Objects;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,13 +34,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import org.powermock.modules.junit4.rule.PowerMockRule;
-
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class ExtensionsTest {
+public class TemplatesTest {
 
 	@Before
 	public void setUp() throws Exception {
@@ -49,56 +46,24 @@ public class ExtensionsTest {
 	}
 
 	@Test
-	public void testArgsSort() throws Exception {
-		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2"};
+	public void testProjectTemplatesBuiltIn() throws Exception {
+		Map<String, String> templates = BladeUtil.getTemplates(_bladeTest);
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands;
+		Assert.assertNotNull(templates);
 
-		try (Extensions extensions = new Extensions(_bladeTest.getBladeSettings(), _bladeTest.getExtensionsPath())) {
-			commands = extensions.getCommands();
-		}
-
-		String[] sortedArgs = Extensions.sortArgs(commands, args);
-
-		boolean correctSort = false;
-
-		for (String arg : sortedArgs) {
-			if (Objects.equals(arg, "extension install")) {
-				correctSort = true;
-			}
-		}
-
-		Assert.assertTrue(correctSort);
+		Assert.assertEquals(templates.toString(), _NUM_BUILTIN_TEMPLATES, templates.size());
 	}
 
 	@Test
-	public void testLoadCommandsBuiltIn() throws Exception {
-		try (Extensions extensions = new Extensions(_bladeTest.getBladeSettings(), _bladeTest.getExtensionsPath())) {
-			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
-
-			Assert.assertNotNull(commands);
-
-			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS, commands.size());
-		}
-	}
-
-	@Test
-	public void testLoadCommandsWithCustomExtension() throws Exception {
+	public void testProjectTemplatesWithCustom() throws Exception {
 		_setupTestExtensions();
 
-		BladeTest bladeTest = new BladeTest(temporaryFolder.getRoot());
+		Map<String, String> templates = BladeUtil.getTemplates(_bladeTest);
 
-		try (Extensions extensions = new Extensions(bladeTest.getBladeSettings(), bladeTest.getExtensionsPath())) {
-			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+		Assert.assertNotNull(templates);
 
-			Assert.assertNotNull(commands);
-
-			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 2, commands.size());
-		}
+		Assert.assertEquals(templates.toString(), _NUM_BUILTIN_TEMPLATES + 1, templates.size());
 	}
-
-	@Rule
-	public final PowerMockRule rule = new PowerMockRule();
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -124,14 +89,11 @@ public class ExtensionsTest {
 
 		Path extensionsPath = extensionsDir.toPath();
 
-		_setupTestExtension(extensionsPath, System.getProperty("sampleCommandJarFile"));
-		_setupTestExtension(extensionsPath, System.getProperty("sampleProfileJarFile"));
 		_setupTestExtension(extensionsPath, System.getProperty("sampleTemplateJarFile"));
 	}
 
-	private static final int _NUM_BUILTIN_COMMANDS = 17;
-
 	private static final int _NUM_BUILTIN_TEMPLATES = 38;
+
 	private BladeTest _bladeTest;
 
 }
