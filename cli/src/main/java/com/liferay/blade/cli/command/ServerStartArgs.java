@@ -21,6 +21,7 @@ import com.beust.jcommander.Parameters;
 
 /**
  * @author Gregory Amerson
+ * @author Simon Jiang
  */
 @Parameters(commandDescription = "Start server defined by your Liferay project", commandNames = "server start")
 public class ServerStartArgs extends BaseArgs {
@@ -35,6 +36,14 @@ public class ServerStartArgs extends BaseArgs {
 
 	public boolean isTail() {
 		return _tail;
+	}
+
+	public void setBackground(boolean background) {
+		_background = background;
+	}
+
+	public void setDebug(boolean debug) {
+		_debug = debug;
 	}
 
 	@Parameter(description = "Start server in background", names = {"-b", "--background"})
