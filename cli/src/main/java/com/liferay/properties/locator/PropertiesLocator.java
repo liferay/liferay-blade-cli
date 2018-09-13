@@ -1017,13 +1017,11 @@ public class PropertiesLocator {
 		File.separator + "WEB-INF" + File.separator + "lib" + File.separator + "portal-impl.jar";
 
 	private static PrintWriter _outputFile;
-	private static final Map<String, String> _portletNameEquivalences;
-
-	static {
-		_portletNameEquivalences = new HashMap<>();
-
-		_portletNameEquivalences.put("dl", "document-library");
-	}
+	private static final Map<String, String> _portletNameEquivalences = new HashMap<String, String>() {
+		{
+			put("dl", "document-library");
+		}
+	};
 
 	private SortedSet<PropertyProblem> _problems;
 
