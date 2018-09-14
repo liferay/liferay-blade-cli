@@ -137,14 +137,14 @@ public class CreateArgs extends BaseArgs {
 	private String _name;
 
 	@Parameter(
-		description = "If a new ext module needs to be created, provide the name of the target module. Required for \"-t modules-ext\".",
-		names = {"-e", "--original-module-name"}
+		description = "Sets the name of the original module when creating a project with modules-ext template.",
+		names = {"-m", "--original-module-name"}
 	)
 	private String _originalModuleName;
 
 	@Parameter(
-		description = "If a new ext module needs to be created, provide the version of the target module. Required for \"-t modules-ext\".",
-		names = {"-E", "--original-module-version"}
+		description = "Sets the version of the original module when creating a project with modules-ext template.",
+		names = {"-M", "--original-module-version"}
 	)
 	private String _originalModuleVersion;
 

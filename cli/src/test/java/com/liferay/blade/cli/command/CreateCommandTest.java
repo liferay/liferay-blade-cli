@@ -165,7 +165,7 @@ public class CreateCommandTest {
 		File tempRoot = temporaryFolder.getRoot();
 
 		String[] gradleArgs = {
-			"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "-e", "com.liferay.login.web", "-E",
+			"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "-m", "com.liferay.login.web", "-M",
 			"1.0.0", "loginExt"
 		};
 
@@ -199,22 +199,14 @@ public class CreateCommandTest {
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output.contains("\"-t modules-ext\" options missing"));
-
-		args = new String[] {
-			"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "-e", "com.liferay.login.web", "loginExt"
-		};
-
-		output = bladeTestResults.getOutput();
-
-		Assert.assertTrue(output, output.contains("\"-t modules-ext\" options missing"));
+		Assert.assertTrue(output, output.contains("modules-ext options"));
 
 		args =
-			new String[] {"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "-E", "1.0.0", "loginExt"};
+			new String[] {"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "-M", "1.0.0", "loginExt"};
 
 		output = TestUtil.runBlade(tempRoot, args).getOutput();
 
-		Assert.assertTrue(output, output.contains("\"-t modules-ext\" options missing"));
+		Assert.assertTrue(output, output.contains("modules-ext options"));
 	}
 
 	@Test
@@ -1081,7 +1073,7 @@ public class CreateCommandTest {
 		_makeWorkspace(workspace);
 
 		String[] gradleArgs = {
-			"create", "-d", extDir.getAbsolutePath(), "-t", "modules-ext", "-e", "com.liferay.login.web", "-E", "1.0.0",
+			"create", "-d", extDir.getAbsolutePath(), "-t", "modules-ext", "-m", "com.liferay.login.web", "-M", "1.0.0",
 			"loginExt"
 		};
 

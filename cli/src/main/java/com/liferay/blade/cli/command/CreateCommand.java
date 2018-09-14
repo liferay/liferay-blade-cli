@@ -129,30 +129,23 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 				return;
 			}
 
-			boolean hasOrinalModule = false;
+			boolean hasOriginalModuleName = false;
 
 			if (createArgs.getOriginalModuleName() != null) {
-				hasOrinalModule = true;
+				hasOriginalModuleName = true;
 			}
 
-			boolean hasOrinalModuleVersion = false;
+			if (!hasOriginalModuleName) {
+				StringBuilder sb = new StringBuilder();
 
-			if (createArgs.getOriginalModuleVersion() != null) {
-				hasOrinalModuleVersion = true;
-			}
-
-			if (!hasOrinalModule || !hasOrinalModuleVersion) {
-				StringBuilder sb = new StringBuilder("\"-t modules-ext\" options missing:" + System.lineSeparator());
-
-				if (!hasOrinalModule) {
-					sb.append("Original Module name (\"-e\", \"--original-module-name\") is required.");
-					sb.append(System.lineSeparator());
-				}
-
-				if (!hasOrinalModuleVersion) {
-					sb.append("Original Module Version (\"-E\", \"--original-module-version\") is required.");
-					sb.append(System.lineSeparator());
-				}
+				sb.append("modules-ext options missing:");
+				sb.append(System.lineSeparator());
+				sb.append("\"-m\", \"--original-module-name\") is required.");
+				sb.append(System.lineSeparator());
+				sb.append(
+					"\"-M\", \"--original-module-version\") is required unless you have enabled target platform.");
+				sb.append(System.lineSeparator());
+				sb.append(System.lineSeparator());
 
 				bladeCLI.printUsage("create", sb.toString());
 
@@ -187,7 +180,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			dir = _getDefaultWarsDir();
 		}
 		else if (template.startsWith("modules-ext")) {
-			dir = _getDefaultExtsDir();
+			dir = _getDefaultExtDir();
 		}
 		else {
 			dir = _getDefaultModulesDir();
@@ -281,7 +274,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private File _getDefaultExtsDir() throws Exception {
+	private File _getDefaultExtDir() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs args = bladeCLI.getBladeArgs();
@@ -296,21 +289,21 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		Properties properties = WorkspaceUtil.getGradleProperties(baseDir);
 
-		String extsDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_EXTS_DIR_PROPERTY);
+		String extDirProperty = (String)properties.get(WorkspaceConstants.DEFAULT_EXT_DIR_PROPERTY);
 
-		if (extsDirValue == null) {
-			extsDirValue = WorkspaceConstants.DEFAULT_EXTS_DIR;
+		if (extDirProperty == null) {
+			extDirProperty = WorkspaceConstants.DEFAULT_EXT_DIR;
 		}
 
 		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
 
-		File extsDir = new File(projectDir, extsDirValue);
+		File extDir = new File(projectDir, extDirProperty);
 
-		if (_containsDir(baseDir, extsDir)) {
+		if (_containsDir(baseDir, extDir)) {
 			return baseDir;
 		}
 
-		return extsDir;
+		return extDir;
 	}
 
 	private File _getDefaultModulesDir() throws Exception {
