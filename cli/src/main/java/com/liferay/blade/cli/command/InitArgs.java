@@ -49,6 +49,30 @@ public class InitArgs extends BaseArgs {
 		return _upgrade;
 	}
 
+	public void setBuild(String build) {
+		_build = build;
+	}
+
+	public void setForce(boolean force) {
+		_force = force;
+	}
+
+	public void setLiferayVersion(String liferayVersion) {
+		_liferayVersion = liferayVersion;
+	}
+
+	public void setName(String name) {
+		_name = name;
+	}
+
+	public void setRefresh(boolean refresh) {
+		_refresh = refresh;
+	}
+
+	public void setUpgrade(boolean upgrade) {
+		_upgrade = upgrade;
+	}
+
 	@Parameter(
 		description = "Specify the build type of liferay workspace. Available options are gradle, maven. (default gradle)",
 		names = {"-b", "--build"}
