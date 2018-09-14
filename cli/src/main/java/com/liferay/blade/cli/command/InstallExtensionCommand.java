@@ -227,7 +227,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		Set<File> outputFiles = GradleTooling.getOutputFiles(cachePath.toFile(), projectPath.toFile());
 
-		ProcessResult processResult = gradleExec.executeCommand("assemble -x check", projectPath.toFile());
+		ProcessResult processResult = gradleExec.executeTask("assemble -x check", projectPath.toFile());
 
 		int resultCode = processResult.getResultCode();
 

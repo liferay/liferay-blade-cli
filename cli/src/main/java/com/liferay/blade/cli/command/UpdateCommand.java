@@ -42,10 +42,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		else {
 			BaseArgs baseArgs = bladeCLI.getBladeArgs();
 
-			File base = new File(baseArgs.getBase());
+			File baseDir = new File(baseArgs.getBase());
 
 			Process process = BladeUtil.startProcess(
-				base, "jpm install -f https://releases.liferay.com/tools/blade-cli/latest/blade.jar");
+				"jpm install -f https://releases.liferay.com/tools/blade-cli/latest/blade.jar", baseDir);
 
 			int errCode = process.waitFor();
 

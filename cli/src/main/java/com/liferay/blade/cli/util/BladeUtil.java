@@ -370,7 +370,7 @@ public class BladeUtil {
 		processBuilder.command(commands);
 	}
 
-	public static Process startProcess(File workingDir, String command) throws Exception {
+	public static Process startProcess(String command, File workingDir) throws Exception {
 		return startProcess(command, workingDir, null);
 	}
 

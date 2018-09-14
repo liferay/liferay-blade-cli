@@ -183,7 +183,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			if (initArgs.isUpgrade() && !mavenBuild) {
 				GradleExec gradleExec = new GradleExec(bladeCLI);
 
-				gradleExec.executeGradleCommand("upgradePluginsSDK");
+				gradleExec.executeTask("upgradePluginsSDK");
 			}
 
 			File gitFile = new File(temp, ".git");

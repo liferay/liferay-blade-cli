@@ -132,7 +132,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 	}
 
 	private void _deploy(GradleExec gradle, Set<File> outputFiles, String host, int port) throws Exception {
-		ProcessResult processResult = gradle.executeGradleCommand("assemble -x check");
+		ProcessResult processResult = gradle.executeTask("assemble -x check");
 
 		int resultCode = processResult.getResultCode();
 
@@ -227,7 +227,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			@Override
 			public void run() {
 				try {
-					gradleExec.executeGradleCommand("assemble -x check -t");
+					gradleExec.executeTask("assemble -x check -t");
 				}
 				catch (Exception e) {
 					String message = e.getMessage();

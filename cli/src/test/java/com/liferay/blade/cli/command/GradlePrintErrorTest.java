@@ -84,10 +84,10 @@ public class GradlePrintErrorTest {
 		}
 
 		@Override
-		public ProcessResult executeCommand(String cmd, File dir) throws Exception {
+		public ProcessResult executeTask(String cmd, File dir) throws Exception {
 			cmd = cmd.replace("assemble", "foobar");
 
-			return super.executeCommand(cmd, dir);
+			return super.executeTask(cmd, dir);
 		}
 
 	}

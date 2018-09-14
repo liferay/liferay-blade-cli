@@ -23,11 +23,11 @@ import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
-
 import java.util.NoSuchElementException;
 
 /**
  * @author David Truong
+ * @author Gregory Amerson
  */
 public class GradleExec {
 
@@ -35,30 +35,43 @@ public class GradleExec {
 		_blade = blade;
 	}
 
-	public ProcessResult executeCommand(String cmd, File dir) throws Exception {
-		String executable = _getGradleExecutable(dir);
-
-		StringPrintStream outputStream = StringPrintStream.newInstance();
-
-		StringPrintStream errorStream = StringPrintStream.newInstance();
-
-		Process process = BladeUtil.startProcess("\"" + executable + "\" " + cmd, dir, outputStream, errorStream);
-
-		int returnCode = process.waitFor();
-
-		String output = outputStream.get();
-
-		String error = errorStream.get();
-
-		return new ProcessResult(returnCode, output, error);
-	}
-
-	public ProcessResult executeGradleCommand(String cmd) throws Exception {
+	public ProcessResult executeTask(String task) throws Exception {
 		BaseArgs args = _blade.getBladeArgs();
 
 		File baseDir = new File(args.getBase());
 
-		return executeCommand(cmd, baseDir);
+		return executeTask(task, baseDir, true);
+	}
+
+	public ProcessResult executeTask(String task, File baseDir) throws Exception {
+		return executeTask(task, baseDir, true);
+	}
+
+	public ProcessResult executeTask(String task, File dir, boolean captureOutput) throws Exception {
+		String executable = _getGradleExecutable(dir);
+
+		if (captureOutput) {
+			StringPrintStream outputStream = StringPrintStream.newInstance();
+
+			StringPrintStream errorStream = StringPrintStream.newInstance();
+
+			Process process = BladeUtil.startProcess("\"" + executable + "\" " + task, dir, outputStream, errorStream);
+
+			int returnCode = process.waitFor();
+
+			String output = outputStream.get();
+
+			String error = errorStream.get();
+
+			return new ProcessResult(returnCode, output, error);
+		}
+		else {
+			Process process = BladeUtil.startProcess("\"" + executable + "\" " + task, dir);
+
+			int returnCode = process.waitFor();
+
+			return new ProcessResult(returnCode, null, null);
+		}
 	}
 
 	private static boolean _isGradleInstalled() {
