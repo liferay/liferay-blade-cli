@@ -103,26 +103,6 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		return DeployArgs.class;
 	}
 
-	private static void _deployWar(File file, LiferayBundleDeployer deployer) throws Exception {
-		URI uri = file.toURI();
-
-		long bundleId = deployer.install(uri);
-
-		if (bundleId > 0) {
-			BundleDTO bundle = deployer.getBundle(bundleId);
-
-			if (bundle.state == Bundle.INSTALLED) {
-				deployer.start(bundleId);
-			}
-			else if (bundle.state == Bundle.ACTIVE) {
-				deployer.update(bundleId, uri);
-			}
-		}
-		else {
-			throw new Exception("Failed to deploy war: " + file.getAbsolutePath());
-		}
-	}
-
 	private void _addError(String msg) {
 		getBladeCLI().addErrors("deploy", Collections.singleton(msg));
 	}
@@ -204,6 +184,36 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		}
 		else {
 			_installNewBundle(client, bsn, fragmentHost, hostId, uri);
+		}
+	}
+
+	private void _deployWar(File file, LiferayBundleDeployer liferayBundleDeployer) throws Exception {
+		URI uri = file.toURI();
+
+		long bundleId = liferayBundleDeployer.install(uri);
+
+		if (bundleId > 0) {
+			BladeCLI bladeCLI = getBladeCLI();
+
+			PrintStream out = bladeCLI.out();
+
+			out.println("Installed bundle " + bundleId);
+
+			BundleDTO bundle = liferayBundleDeployer.getBundle(bundleId);
+
+			if (bundle.state == Bundle.INSTALLED) {
+				liferayBundleDeployer.start(bundleId);
+
+				out.println("Started bundle " + bundleId);
+			}
+			else if (bundle.state == Bundle.ACTIVE) {
+				liferayBundleDeployer.update(bundleId, uri);
+
+				out.println("Updated bundle " + bundleId);
+			}
+		}
+		else {
+			throw new Exception("Failed to deploy war: " + file.getAbsolutePath());
 		}
 	}
 
@@ -341,15 +351,20 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 			name = name.toLowerCase();
 
-			Domain bundle = Domain.domain(file);
-
-			Entry<String, Attrs> bsn = bundle.getBundleSymbolicName();
-
 			if (name.endsWith(".war")) {
 				_deployWar(file, client);
 			}
-			else if (bsn != null) {
-				_deployBundle(file, client, bundle, bsn);
+			else {
+				Domain bundle = Domain.domain(file);
+
+				Entry<String, Attrs> bsn = bundle.getBundleSymbolicName();
+
+				if (bsn != null) {
+					_deployBundle(file, client, bundle, bsn);
+				}
+				else {
+					getBladeCLI().err("Unable to install or update " + file.getName() + "as it is not a bundle.");
+				}
 			}
 		}
 	}

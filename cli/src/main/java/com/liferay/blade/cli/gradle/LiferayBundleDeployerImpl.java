@@ -139,9 +139,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 	@Override
 	public void refresh(long id) throws Exception {
-		String output = _sendGogo(String.format("refresh %s", id));
-
-		System.out.println(output);
+		_sendGogo(String.format("refresh %s", id));
 	}
 
 	@Override
@@ -155,16 +153,12 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 	@Override
 	public void stop(long id) throws Exception {
-		String output = _sendGogo(String.format("stop %s", id));
-
-		System.out.println(output);
+		_sendGogo(String.format("stop %s", id));
 	}
 
 	@Override
 	public void uninstall(long id) throws Exception {
-		String output = _sendGogo(String.format("uninstall %s", id));
-
-		System.out.println(output);
+		_sendGogo(String.format("uninstall %s", id));
 	}
 
 	@Override
@@ -180,9 +174,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 			installString = _sendGogo(String.format("update %s %s", id, uri.toASCIIString()));
 		}
 
-		String response = _sendGogo(installString);
-
-		System.out.println(response);
+		_sendGogo(installString);
 	}
 
 	private static List<BundleDTO> _getBundles(GogoShellClient client) throws IOException {
