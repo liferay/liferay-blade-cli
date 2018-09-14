@@ -16,12 +16,16 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.gradle.GradleExec;
+
+import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author David Truong
+ * @author Gregory Amerson
  */
 public class GradleWrapperCommand extends BaseCommand<GradleWrapperArgs> {
 
@@ -32,9 +36,15 @@ public class GradleWrapperCommand extends BaseCommand<GradleWrapperArgs> {
 	public void execute() throws Exception {
 		String gradleCommand = StringUtils.join(getArgs().getArgs(), " ");
 
-		GradleExec gradleExec = new GradleExec(getBladeCLI());
+		BladeCLI bladeCLI = getBladeCLI();
 
-		gradleExec.executeGradleCommand(gradleCommand);
+		GradleExec gradleExec = new GradleExec(bladeCLI);
+
+		BaseArgs args = bladeCLI.getBladeArgs();
+
+		File baseDir = new File(args.getBase());
+
+		gradleExec.executeTask(gradleCommand, baseDir, false);
 	}
 
 	@Override

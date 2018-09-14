@@ -49,7 +49,7 @@ public class GradleExecTest {
 
 		GradleExec gradleExec = new GradleExec(blade);
 
-		ProcessResult result = gradleExec.executeGradleCommand("tasks");
+		ProcessResult result = gradleExec.executeTask("tasks");
 
 		int resultCode = result.getResultCode();
 

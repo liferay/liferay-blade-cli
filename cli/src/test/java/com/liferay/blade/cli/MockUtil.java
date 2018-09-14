@@ -125,7 +125,7 @@ public class MockUtil {
 		GradleExec gradle = EasyMock.createNiceMock(GradleExec.class);
 
 		EasyMock.expect(
-			gradle.executeGradleCommand(EasyMock.anyString())
+			gradle.executeTask(EasyMock.anyString())
 		).andStubReturn(
 			result
 		);
