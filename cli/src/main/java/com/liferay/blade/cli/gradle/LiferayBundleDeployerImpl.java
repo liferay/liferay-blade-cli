@@ -125,6 +125,8 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 		String response = _sendGogo(installString);
 
+		System.out.println(response);
+
 		try {
 			Matcher matcher = _installResponse.matcher(response);
 
@@ -149,6 +151,8 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		String request = String.format("start %s", id);
 
 		String response = _sendGogo(request);
+
+		System.out.println(response);
 
 		_verify(request, response);
 	}
