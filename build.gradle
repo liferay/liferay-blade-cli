@@ -1,4 +1,23 @@
+buildscript {
+	dependencies {
+		classpath "com.gradle:build-scan-plugin:1.16"
+	}
+
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+}
+
+apply plugin: "com.gradle.build-scan"
+
 task clean(type:Delete)
+
+buildScan {
+	termsOfServiceUrl = "https://gradle.com/terms-of-service"
+	termsOfServiceAgree = "yes"
+}
 
 clean {
 	doFirst {
