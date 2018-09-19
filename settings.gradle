@@ -1,4 +1,5 @@
 include "cli"
+include "extensions:maven-profile"
 include "extensions:sample-command"
 include "extensions:sample-profile"
 include "extensions:sample-template"

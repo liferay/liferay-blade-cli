@@ -25,7 +25,6 @@ import aQute.lib.io.IO;
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
-import com.liferay.blade.cli.MavenRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
@@ -73,9 +72,6 @@ public class CreateCommandTest {
 
 		String[] gradleArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "activator", "bar-activator"};
 
-		String[] mavenArgs =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "activator", "bar-activator"};
-
 		String projectPath = new File(tempRoot, "bar-activator").getAbsolutePath();
 
 		_bladeTest.run(gradleArgs);
@@ -91,20 +87,6 @@ public class CreateCommandTest {
 		_verifyImportPackage(new File(projectPath, "build/libs/bar.activator-1.0.0.jar"));
 
 		FileUtil.deleteDir(Paths.get(projectPath));
-
-		_bladeTest.run(mavenArgs);
-
-		_checkMavenBuildFiles(projectPath);
-
-		_contains(
-			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
-			".*^public class BarActivator implements BundleActivator.*$");
-
-		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
-
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "target/bar-activator-1.0.0.jar"));
 	}
 
 	@Test
@@ -112,8 +94,6 @@ public class CreateCommandTest {
 		File tempRoot = temporaryFolder.getRoot();
 
 		String[] gradleArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "api", "foo"};
-
-		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "api", "foo"};
 
 		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
 
@@ -128,30 +108,6 @@ public class CreateCommandTest {
 		TestUtil.verifyBuild(projectPath, "foo-1.0.0.jar");
 
 		try (Jar jar = new Jar(new File(projectPath, "build/libs/foo-1.0.0.jar"))) {
-			Manifest manifest = jar.getManifest();
-
-			Attributes mainAttributes = manifest.getMainAttributes();
-
-			Assert.assertEquals("foo.api;version=\"1.0.0\"", mainAttributes.getValue("Export-Package"));
-		}
-
-		FileUtil.deleteDir(Paths.get(projectPath));
-
-		_bladeTest.run(mavenArgs);
-
-		_checkMavenBuildFiles(projectPath);
-
-		_contains(_checkFileExists(projectPath + "/src/main/java/foo/api/Foo.java"), ".*^public interface Foo.*");
-
-		_contains(_checkFileExists(projectPath + "/src/main/resources/foo/api/packageinfo"), "version 1.0.0");
-
-		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
-
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
-
-		try (Jar jar = new Jar(new File(projectPath, "target/foo-1.0.0.jar"))) {
 			Manifest manifest = jar.getManifest();
 
 			Attributes mainAttributes = manifest.getMainAttributes();
@@ -185,8 +141,6 @@ public class CreateCommandTest {
 		TestUtil.verifyBuild(projectPath, buildJarName);
 
 		_verifyImportPackage(new File(projectPath, "build/libs/" + buildJarName));
-
-		FileUtil.deleteDir(Paths.get(projectPath));
 	}
 
 	@Test
@@ -218,11 +172,6 @@ public class CreateCommandTest {
 			"loginHook"
 		};
 
-		String[] mavenArgs = {
-			"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "fragment", "-h", "com.liferay.login.web",
-			"-H", "1.0.0", "loginHook"
-		};
-
 		String projectPath = new File(tempRoot, "loginHook").getAbsolutePath();
 
 		_bladeTest.run(gradleArgs);
@@ -241,27 +190,6 @@ public class CreateCommandTest {
 		TestUtil.verifyBuild(projectPath, "loginhook-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "build/libs/loginhook-1.0.0.jar"));
-
-		FileUtil.deleteDir(Paths.get(projectPath));
-
-		_bladeTest.run(mavenArgs);
-
-		_checkMavenBuildFiles(projectPath);
-
-		_contains(
-			_checkFileExists(projectPath + "/bnd.bnd"),
-			new String[] {
-				".*^Bundle-SymbolicName: loginhook.*$",
-				".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$"
-			});
-
-		TestUtil.updateMavenRepositories(projectPath);
-
-		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
-
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "target/loginHook-1.0.0.jar"));
 	}
 
 	@Test
@@ -668,8 +596,6 @@ public class CreateCommandTest {
 
 		String[] gradleArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "mvc-portlet", "foo"};
 
-		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "mvc-portlet", "foo"};
-
 		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
 
 		_bladeTest.run(gradleArgs);
@@ -689,28 +615,6 @@ public class CreateCommandTest {
 		TestUtil.verifyBuild(projectPath, "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "build/libs/foo-1.0.0.jar"));
-
-		FileUtil.deleteDir(Paths.get(projectPath));
-
-		_bladeTest.run(mavenArgs);
-
-		_checkMavenBuildFiles(projectPath);
-
-		_contains(
-			_checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
-			".*^public class FooPortlet extends MVCPortlet.*$");
-
-		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
-
-		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
-
-		TestUtil.updateMavenRepositories(projectPath);
-
-		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
-
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 	}
 
 	@Test
@@ -1617,14 +1521,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/build.gradle");
 		_checkFileExists(projectPath + "/gradlew");
 		_checkFileExists(projectPath + "/gradlew.bat");
-	}
-
-	private void _checkMavenBuildFiles(String projectPath) {
-		_checkFileExists(projectPath);
-		_checkFileExists(projectPath + "/bnd.bnd");
-		_checkFileExists(projectPath + "/pom.xml");
-		_checkFileExists(projectPath + "/mvnw");
-		_checkFileExists(projectPath + "/mvnw.cmd");
 	}
 
 	private void _contains(File file, String pattern) throws Exception {
