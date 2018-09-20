@@ -21,12 +21,12 @@ checkSourceFormatting {
 }
 
 dependencies {
-	compile project(":cli")
-
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
+	compileOnly project(":cli")
 
 	testCompile gradleTestKit()
 	testCompile group: "junit", name: "junit", version: "4.12"
+	testCompile project(":cli")
 	testCompile project(path: ":cli", configuration: "testApi")
 }
 
