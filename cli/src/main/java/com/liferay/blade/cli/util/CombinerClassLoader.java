@@ -35,10 +35,10 @@ import java.util.stream.Stream;
 /**
  * @author Christopher Bryan Boyd
  */
-public class ClassLoaderCombiner extends ClassLoader {
+public class CombinerClassLoader extends ClassLoader {
 
 	public static ClassLoader newInstance(ClassLoader parent, ClassLoader... additionalClassLoaders) {
-		ClassLoaderCombiner classLoader = new ClassLoaderCombiner(parent);
+		CombinerClassLoader classLoader = new CombinerClassLoader(parent);
 
 		if (additionalClassLoaders.length > 0) {
 			for (ClassLoader additionalClassLoader : additionalClassLoaders) {
@@ -128,7 +128,7 @@ public class ClassLoaderCombiner extends ClassLoader {
 		}
 	}
 
-	private ClassLoaderCombiner(ClassLoader parent) {
+	private CombinerClassLoader(ClassLoader parent) {
 		super(parent);
 
 		_additionalClassLoaderCollection = new ArrayList<>();
