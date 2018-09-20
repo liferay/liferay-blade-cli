@@ -74,7 +74,7 @@ public class CombinerClassLoader extends ClassLoader {
 
 	@Override
 	protected URL findResource(String name) {
-		Stream<ClassLoader> urlStream = _additionalClassLoaderCollection.stream();
+		Stream<ClassLoader> urlStream = _additionalClassLoaders.stream();
 
 		return urlStream.map(
 			c -> c.getResource(name)
@@ -88,7 +88,7 @@ public class CombinerClassLoader extends ClassLoader {
 
 	@Override
 	protected Enumeration<URL> findResources(String name) throws IOException {
-		Stream<ClassLoader> urlStream = _additionalClassLoaderCollection.stream();
+		Stream<ClassLoader> urlStream = _additionalClassLoaders.stream();
 
 		Collection<URL> urlCollection = urlStream.map(
 			c -> _getResources(c, name)
@@ -134,13 +134,13 @@ public class CombinerClassLoader extends ClassLoader {
 	private CombinerClassLoader(ClassLoader parent) {
 		super(parent);
 
-		_additionalClassLoaderCollection = new ArrayList<>();
+		_additionalClassLoaders = new ArrayList<>();
 	}
 
 	private void _add(ClassLoader classLoader) {
-		_additionalClassLoaderCollection.add(classLoader);
+		_additionalClassLoaders.add(classLoader);
 	}
 
-	private Collection<ClassLoader> _additionalClassLoaderCollection;
+	private Collection<ClassLoader> _additionalClassLoaders;
 
 }
