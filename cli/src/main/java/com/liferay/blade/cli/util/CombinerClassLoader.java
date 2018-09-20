@@ -37,18 +37,19 @@ import java.util.stream.Stream;
  */
 public class CombinerClassLoader extends ClassLoader {
 
-	public static ClassLoader newInstance(ClassLoader parent, ClassLoader... additionalClassLoaders) {
-		CombinerClassLoader classLoader = new CombinerClassLoader(parent);
+	public static ClassLoader newInstance(ClassLoader parentClassLoader, ClassLoader... additionalClassLoaders) {
+		CombinerClassLoader combinerClassLoader = new CombinerClassLoader(parentClassLoader);
 
 		if (additionalClassLoaders.length > 0) {
 			for (ClassLoader additionalClassLoader : additionalClassLoaders) {
-				classLoader._additionalClassLoaderCollection.add(additionalClassLoader);
+				combinerClassLoader._add(additionalClassLoader);
 			}
 		}
 
-		return classLoader;
+		return combinerClassLoader;
 	}
 
+	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		String path = name.replace('.', '/');
 
@@ -71,6 +72,7 @@ public class CombinerClassLoader extends ClassLoader {
 		}
 	}
 
+	@Override
 	protected URL findResource(String name) {
 		Stream<ClassLoader> urlStream = _additionalClassLoaderCollection.stream();
 
@@ -84,6 +86,7 @@ public class CombinerClassLoader extends ClassLoader {
 		);
 	}
 
+	@Override
 	protected Enumeration<URL> findResources(String name) throws IOException {
 		Stream<ClassLoader> urlStream = _additionalClassLoaderCollection.stream();
 
@@ -132,6 +135,10 @@ public class CombinerClassLoader extends ClassLoader {
 		super(parent);
 
 		_additionalClassLoaderCollection = new ArrayList<>();
+	}
+
+	private void _add(ClassLoader classLoader) {
+		_additionalClassLoaderCollection.add(classLoader);
 	}
 
 	private Collection<ClassLoader> _additionalClassLoaderCollection;
