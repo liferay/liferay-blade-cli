@@ -1,7 +1,13 @@
 <?xml version="1.0"?>
 
 <suppressions>
+	<checkstyle>
+		<suppress checks="MemberNameCheck" files="src/main/java/com/liferay/blade/cli/util/JoinClassLoader\.java" />
+		<suppress checks="MethodNameCheck" files="src/main/java/com/liferay/blade/cli/util/JoinClassLoader\.java" />
+		<suppress checks="MissingAuthorCheck" files="src/main/java/com/liferay/blade/cli/util/JoinClassLoader\.java" />
+	</checkstyle>
 	<source-check>
 		<suppress checks="CopyrightCheck" files="src/main/java/com/liferay/blade/cli/util/FileWatcher\.java" />
+		<suppress checks="CopyrightCheck" files="src/main/java/com/liferay/blade/cli/util/JoinClassLoader\.java" />
 	</source-check>
 </suppressions>
