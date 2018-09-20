@@ -21,7 +21,7 @@ apply plugin: "com.liferay.source.formatter"
 apply plugin: "java"
 apply plugin: "maven-publish"
 
-task cliTestDependencies(type: Jar)
+task cliTestJar(type: Jar)
 task createDepsZip(type:Zip)
 task createWrapperZip(type:Zip)
 
@@ -30,7 +30,7 @@ configurations {
 }
 
 artifacts {
-	 testApi cliTestDependencies
+	 testApi cliTestJar
 }
 
 buildChangeLog {
@@ -46,7 +46,7 @@ clean.doFirst {
 	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
 }
 
-cliTestDependencies {
+cliTestJar {
 	classifier = 'tests'
 	from sourceSets.test.output
 }
