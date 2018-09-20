@@ -131,7 +131,6 @@ public class ExtensionsTest {
 
 	private static final int _NUM_BUILTIN_COMMANDS = 17;
 
-	private static final int _NUM_BUILTIN_TEMPLATES = 38;
 	private BladeTest _bladeTest;
 
 }
