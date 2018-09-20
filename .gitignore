@@ -4,6 +4,7 @@
 .idea
 .project
 .settings
+.vscode
 bin
 build
 mavenRepo
