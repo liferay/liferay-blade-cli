@@ -21,8 +21,17 @@ apply plugin: "com.liferay.source.formatter"
 apply plugin: "java"
 apply plugin: "maven-publish"
 
+task cliTestJar(type: Jar)
 task createDepsZip(type:Zip)
 task createWrapperZip(type:Zip)
+
+configurations {
+	testApi
+}
+
+artifacts {
+	 testApi cliTestJar
+}
 
 buildChangeLog {
 	changeLogHeader= "BLADE Version ${project.version}"
@@ -35,6 +44,11 @@ checkSourceFormatting {
 
 clean.doFirst {
 	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
+}
+
+cliTestJar {
+	classifier = 'tests'
+	from sourceSets.test.output
 }
 
 createDepsZip {
