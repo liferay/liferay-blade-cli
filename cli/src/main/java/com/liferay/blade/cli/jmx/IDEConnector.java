@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
@@ -33,8 +34,10 @@ import javax.management.ObjectName;
  */
 public class IDEConnector extends JMXLocalConnector {
 
-	public IDEConnector() throws MalformedURLException {
-		super(_NAME + ":type=" + _TYPE + ",*");
+	public IDEConnector(Consumer<String> logger) throws MalformedURLException {
+		super(_NAME + ":type=" + _TYPE + ",*", logger);
+
+		_logger = logger;
 	}
 
 	public Object openDir(File dir) throws Exception {
@@ -43,6 +46,8 @@ public class IDEConnector extends JMXLocalConnector {
 		File absoluteDir = dir.getAbsoluteFile();
 
 		String absolutePath = absoluteDir.getAbsolutePath();
+
+		_logger.accept("Invoking WorkspaceHelper.openDir(" + absolutePath + ")");
 
 		return mBeanServerConnection.invoke(
 			workspaceHelper, "openDir", new Object[] {absolutePath}, new String[] {String.class.getName()});
@@ -67,5 +72,7 @@ public class IDEConnector extends JMXLocalConnector {
 	private static final String _NAME = "com.liferay.ide.ui";
 
 	private static final String _TYPE = "WorkspaceHelper";
+
+	private Consumer<String> _logger;
 
 }

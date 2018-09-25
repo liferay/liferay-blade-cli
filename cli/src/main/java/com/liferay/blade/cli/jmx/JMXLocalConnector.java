@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
+import java.util.function.Consumer;
 
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
@@ -50,11 +51,12 @@ public class JMXLocalConnector {
 	 * for the osgi.core MBeans. This will stop searching for VMs once the
 	 * MBeans are found. Beware if you have multiple JVMs with osgi.core MBeans
 	 * published.
+	 * @param logger
 	 *
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static String getLocalConnectorAddress(String objName) {
+	public static String getLocalConnectorAddress(String objName, Consumer<String> logger) {
 		Thread thread = Thread.currentThread();
 
 		ClassLoader cl = thread.getContextClassLoader();
@@ -67,17 +69,26 @@ public class JMXLocalConnector {
 			if (toolsClassloader != null) {
 				thread.setContextClassLoader(toolsClassloader);
 
+				logger.accept("Trying to load VirtualMachine class...");
+
 				Class< ? > vmClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachine");
 
 				Method listMethod = vmClass.getMethod("list");
 
 				List<Object> vmds = (List<Object>)listMethod.invoke(null);
 
+				logger.accept("Found " + vmds.size() + " vms on this machine.");
+
 				for (Object vmd : vmds) {
-					String localConnectorAddress = _attach(toolsClassloader, vmClass, vmd, objName);
+					String localConnectorAddress = _attach(toolsClassloader, vmClass, vmd, objName, logger);
 
 					if (localConnectorAddress != null) {
+						logger.accept("Using localConnectorAddress=" + localConnectorAddress);
+
 						return localConnectorAddress;
+					}
+					else {
+						logger.accept("Could not find " + objName + " in this vm.");
 					}
 				}
 			}
@@ -143,13 +154,15 @@ public class JMXLocalConnector {
 		}
 	}
 
-	public JMXLocalConnector(String objectName) throws MalformedURLException {
-		this(new JMXServiceURL(getLocalConnectorAddress(objectName)));
+	public JMXLocalConnector(String objectName, Consumer<String> logger) throws MalformedURLException {
+		this(new JMXServiceURL(getLocalConnectorAddress(objectName, logger)));
 	}
 
 	protected MBeanServerConnection mBeanServerConnection;
 
-	private static String _attach(ClassLoader toolsClassloader, Class<?> vmClass, Object vmd, String name) {
+	private static String _attach(
+		ClassLoader toolsClassloader, Class<?> vmClass, Object vmd, String name, Consumer<String> logger) {
+
 		try {
 			Class< ? > vmdClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
 
@@ -157,9 +170,13 @@ public class JMXLocalConnector {
 
 			String id = (String)idMethod.invoke(vmd);
 
+			logger.accept("Found vm id of " + id + ". Trying to attach...");
+
 			Method attachMethod = vmClass.getMethod("attach", String.class);
 
 			Object vm = attachMethod.invoke(null, id);
+
+			logger.accept("Attached to vm = " + vm);
 
 			try {
 				Method getAgentProperties = vmClass.getMethod("getAgentProperties");
@@ -169,30 +186,51 @@ public class JMXLocalConnector {
 				String localConnectorAddress = agentProperties.getProperty(
 					"com.sun.management.jmxremote.localConnectorAddress");
 
+				logger.accept("Trying to get localConnectorAddress=" + localConnectorAddress);
+
 				if (localConnectorAddress == null) {
+					logger.accept("localConnectorAdress is null, trying to load management-agent.jar.");
+
 					File agentJar = _findJdkJar("management-agent.jar");
 
 					if (agentJar != null) {
+						logger.accept("Found agent jar = " + agentJar);
+
 						Method loadAgent = vmClass.getMethod("loadAgent", String.class);
 
+						logger.accept("Invoking loadAgent...");
+
 						loadAgent.invoke(vm, agentJar.getCanonicalPath());
+
+						logger.accept("Managemet agent loaded, trying to find localConnectorAddress");
 
 						agentProperties = (Properties)getAgentProperties.invoke(vm);
 
 						localConnectorAddress = agentProperties.getProperty(
 							"com.sun.management.jmxremote.localConnectorAddress");
 					}
+					else {
+						logger.accept("Could not find management-agent.jar at location " + agentJar);
+					}
 				}
 
 				if (localConnectorAddress != null) {
+					logger.accept("Found localConnectorAddress=" + localConnectorAddress);
+
 					final JMXServiceURL jmxServiceURL = new JMXServiceURL(localConnectorAddress);
 
 					final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxServiceURL, null);
 
+					logger.accept("Getting mbean server connection...");
+
 					final MBeanServerConnection mBeanServerConnection = jmxConnector.getMBeanServerConnection();
 
 					if (mBeanServerConnection != null) {
+						logger.accept("querying for objectname " + name);
+
 						final ObjectName objectName = _getObjectName(name, mBeanServerConnection);
+
+						logger.accept("found objectName = " + objectName);
 
 						if (objectName != null) {
 							return localConnectorAddress;
@@ -274,7 +312,7 @@ public class JMXLocalConnector {
 			return new URLClassLoader(urls, parent);
 		}
 
-		return null;
+		throw new IOException("Could not find tools.jar in JDK at this location: " + toolsJar);
 	}
 
 }

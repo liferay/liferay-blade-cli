@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
@@ -47,8 +48,8 @@ import org.osgi.framework.dto.BundleDTO;
  */
 public class JMXBundleDeployer extends JMXLocalConnector {
 
-	public JMXBundleDeployer() throws MalformedURLException {
-		super(_NAME + ":type=" + _TYPE + ",*");
+	public JMXBundleDeployer(Consumer<String> logger) throws MalformedURLException {
+		super(_NAME + ":type=" + _TYPE + ",*", logger);
 	}
 
 	public JMXBundleDeployer(int port) throws MalformedURLException {
