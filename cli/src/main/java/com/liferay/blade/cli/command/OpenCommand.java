@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.jmx.IDEConnector;
 
 import java.io.File;
@@ -32,9 +33,17 @@ public class OpenCommand extends BaseCommand<OpenArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		String fileName = getArgs().getFile();
+		OpenArgs openArgs = getArgs();
 
-		File file = new File(fileName).getAbsoluteFile();
+		String fileName = openArgs.getFile();
+
+		if (fileName == null) {
+			fileName = openArgs.getBase();
+		}
+
+		File file = new File(fileName);
+
+		file = file.getAbsoluteFile();
 
 		if (!file.exists()) {
 			_addError("open", "Unable to find specified file " + file.getAbsolutePath());
@@ -42,7 +51,11 @@ public class OpenCommand extends BaseCommand<OpenArgs> {
 			return;
 		}
 
-		IDEConnector connector = new IDEConnector();
+		BladeCLI bladeCLI = getBladeCLI();
+
+		bladeCLI.trace("Trying to open directory : " + file);
+
+		IDEConnector connector = new IDEConnector(trace -> bladeCLI.trace(trace));
 
 		if (file.isDirectory()) {
 			Object retval = connector.openDir(file);
