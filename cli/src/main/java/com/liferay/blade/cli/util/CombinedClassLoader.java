@@ -35,18 +35,12 @@ import java.util.stream.Stream;
 /**
  * @author Christopher Bryan Boyd
  */
-public class CombinerClassLoader extends ClassLoader {
+public class CombinedClassLoader extends ClassLoader {
 
-	public static ClassLoader newInstance(ClassLoader parentClassLoader, ClassLoader... additionalClassLoaders) {
-		CombinerClassLoader combinerClassLoader = new CombinerClassLoader(parentClassLoader);
-
-		if (additionalClassLoaders.length > 0) {
-			for (ClassLoader additionalClassLoader : additionalClassLoaders) {
-				combinerClassLoader._add(additionalClassLoader);
-			}
+	public CombinedClassLoader(ClassLoader... classLoaders) {
+		for (ClassLoader classLoader : classLoaders) {
+			_add(classLoader);
 		}
-
-		return combinerClassLoader;
 	}
 
 	@Override
@@ -74,7 +68,7 @@ public class CombinerClassLoader extends ClassLoader {
 
 	@Override
 	protected URL findResource(String name) {
-		Stream<ClassLoader> urlStream = _additionalClassLoaders.stream();
+		Stream<ClassLoader> urlStream = _classLoaders.stream();
 
 		return urlStream.map(
 			c -> c.getResource(name)
@@ -88,7 +82,7 @@ public class CombinerClassLoader extends ClassLoader {
 
 	@Override
 	protected Enumeration<URL> findResources(String name) throws IOException {
-		Stream<ClassLoader> urlStream = _additionalClassLoaders.stream();
+		Stream<ClassLoader> urlStream = _classLoaders.stream();
 
 		Collection<URL> urlCollection = urlStream.map(
 			c -> _getResources(c, name)
@@ -131,16 +125,10 @@ public class CombinerClassLoader extends ClassLoader {
 		}
 	}
 
-	private CombinerClassLoader(ClassLoader parent) {
-		super(parent);
-
-		_additionalClassLoaders = new ArrayList<>();
-	}
-
 	private void _add(ClassLoader classLoader) {
-		_additionalClassLoaders.add(classLoader);
+		_classLoaders.add(classLoader);
 	}
 
-	private Collection<ClassLoader> _additionalClassLoaders;
+	private Collection<ClassLoader> _classLoaders = new ArrayList<>();
 
 }

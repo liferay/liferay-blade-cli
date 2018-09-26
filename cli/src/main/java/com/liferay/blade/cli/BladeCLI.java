@@ -23,7 +23,7 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.util.CombinerClassLoader;
+import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
@@ -368,8 +368,7 @@ public class BladeCLI implements Runnable {
 
 			ClassLoader currentClassLoader = thread.getContextClassLoader();
 
-			ClassLoader combinedClassLoader = CombinerClassLoader.newInstance(
-				currentClassLoader, command.getClassLoader());
+			ClassLoader combinedClassLoader = new CombinedClassLoader(currentClassLoader, command.getClassLoader());
 
 			try {
 				thread.setContextClassLoader(combinedClassLoader);
