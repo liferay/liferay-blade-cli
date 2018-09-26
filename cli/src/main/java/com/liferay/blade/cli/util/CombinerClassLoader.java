@@ -38,7 +38,9 @@ import java.util.stream.Stream;
 public class CombinerClassLoader extends ClassLoader {
 
 	public static ClassLoader newInstance(ClassLoader parentClassLoader, ClassLoader... additionalClassLoaders) {
-		CombinerClassLoader combinerClassLoader = new CombinerClassLoader(parentClassLoader);
+		CombinerClassLoader combinerClassLoader = new CombinerClassLoader();
+
+		combinerClassLoader._add(parentClassLoader);
 
 		if (additionalClassLoaders.length > 0) {
 			for (ClassLoader additionalClassLoader : additionalClassLoaders) {
@@ -74,9 +76,11 @@ public class CombinerClassLoader extends ClassLoader {
 
 	@Override
 	protected URL findResource(String name) {
+		URL resource;
+
 		Stream<ClassLoader> urlStream = _additionalClassLoaders.stream();
 
-		return urlStream.map(
+		resource = urlStream.map(
 			c -> c.getResource(name)
 		).filter(
 			Objects::nonNull
@@ -84,6 +88,8 @@ public class CombinerClassLoader extends ClassLoader {
 		).orElse(
 			null
 		);
+
+		return resource;
 	}
 
 	@Override
@@ -131,9 +137,7 @@ public class CombinerClassLoader extends ClassLoader {
 		}
 	}
 
-	private CombinerClassLoader(ClassLoader parent) {
-		super(parent);
-
+	private CombinerClassLoader() {
 		_additionalClassLoaders = new ArrayList<>();
 	}
 
