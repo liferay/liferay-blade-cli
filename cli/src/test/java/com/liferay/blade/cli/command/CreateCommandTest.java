@@ -967,6 +967,45 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceDefaultLiferayVersion() throws Exception {
+		File tempRoot = temporaryFolder.getRoot();
+
+		File workspace70 = new File(tempRoot, "workspace70");
+
+		File modulesDir = new File(workspace70, "modules");
+
+		_makeWorkspace70(workspace70);
+
+		String[] sevenZeroArgs =
+			{"--base", workspace70.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-zero"};
+
+		_bladeTest.run(sevenZeroArgs);
+
+		File npmbundlerrc = new File(modulesDir, "seven-zero/build.gradle");
+
+		String content = new String(IO.read(npmbundlerrc));
+
+		Assert.assertFalse(content, content.contains("js.loader.modules.extender.api"));
+
+		File workspace71 = new File(tempRoot, "workspace71");
+
+		modulesDir = new File(workspace71, "modules");
+
+		_makeWorkspace(workspace71);
+
+		String[] sevenOneArgs =
+			{"--base", workspace71.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-one"};
+
+		_bladeTest.run(sevenOneArgs);
+
+		npmbundlerrc = new File(modulesDir, "seven-one/build.gradle");
+
+		content = new String(IO.read(npmbundlerrc));
+
+		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
+	}
+
+	@Test
 	public void testCreateWorkspaceGradleExtModule() throws Exception {
 		File tempRoot = temporaryFolder.getRoot();
 
@@ -1553,6 +1592,14 @@ public class CreateCommandTest {
 
 	private void _makeWorkspace(File workspace) throws Exception {
 		String[] args = {"--base", workspace.getParentFile().getPath(), "init", workspace.getName()};
+
+		_bladeTest.run(args);
+
+		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
+	}
+
+	private void _makeWorkspace70(File workspace) throws Exception {
+		String[] args = {"--base", workspace.getParentFile().getPath(), "init", workspace.getName(), "-v", "7.0"};
 
 		_bladeTest.run(args);
 

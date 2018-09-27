@@ -255,6 +255,10 @@ public class InitCommandTest {
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
 		Assert.assertTrue(contents, contents.contains("7.0.6-ga7"));
+
+		String properties = new String(Files.readAllBytes(new File(_workspaceDir, ".blade/settings.properties").toPath()));
+
+		Assert.assertTrue(properties, properties.contains("default.liferay.version=7.0"));
 	}
 
 	@Test
@@ -268,6 +272,10 @@ public class InitCommandTest {
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
 		Assert.assertTrue(contents, contents.contains("7.1.0-ga1"));
+
+		String properties = new String(Files.readAllBytes(new File(_workspaceDir, ".blade/settings.properties").toPath()));
+
+		Assert.assertTrue(properties, properties.contains("default.liferay.version=7.1"));
 	}
 
 	@Test
@@ -281,6 +289,10 @@ public class InitCommandTest {
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
 		Assert.assertTrue(contents, contents.contains("7.1.0-ga1"));
+
+		String properties = new String(Files.readAllBytes(new File(_workspaceDir, ".blade/settings.properties").toPath()));
+
+		Assert.assertTrue(properties, properties.contains("default.liferay.version=7.1"));
 	}
 
 	@Test
