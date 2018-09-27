@@ -23,8 +23,9 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.util.CombinedClassLoader;
+import com.liferay.blade.cli.command.CreateArgs;
 import com.liferay.blade.cli.command.SamplesArgs;
+import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
@@ -138,6 +139,14 @@ public class BladeCLI implements Runnable {
 
 	public BaseCommand<?> getCommand() {
 		return _baseCommand;
+	}
+
+	public String getDefaultLiferayVersion() throws IOException {
+		BladeSettings settingsFile = getBladeSettings();
+
+		_defaultLiferayVersion = settingsFile.getDefaultLiferayVersion();
+
+		return _defaultLiferayVersion;
 	}
 
 	public Path getExtensionsPath() {
@@ -305,30 +314,32 @@ public class BladeCLI implements Runnable {
 				_commandArgs.setBase(baseDir);
 
 				if (_commandArgs instanceof CreateArgs) {
-				    CreateArgs createArgs = (CreateArgs)_commandArgs;
+					CreateArgs createArgs = (CreateArgs)_commandArgs;
 
-				    String liferayVersion;
+					String liferayVersion;
 
-				    if (WorkspaceUtil.isWorkspace(this)) {
-				        liferayVersion = getDefaultLiferayVersion();
+					if (WorkspaceUtil.isWorkspace(this)) {
+						liferayVersion = getDefaultLiferayVersion();
 
-				    } else {
-				        liferayVersion = "7.1";
-				    }
-				    createArgs.setLiferayVersion(liferayVersion);
+					} else {
+						liferayVersion = "7.1";
+					}
+
+					createArgs.setLiferayVersion(liferayVersion);
 				}
-				else if(_commandArgs instanceof SamplesArgs) {
+				else if (_commandArgs instanceof SamplesArgs) {
 					SamplesArgs sampleArgs = (SamplesArgs)_commandArgs;
 
 					String liferayVersion;
 
-				    if (WorkspaceUtil.isWorkspace(this)) {
-				        liferayVersion = getDefaultLiferayVersion();
+					if (WorkspaceUtil.isWorkspace(this)) {
+						liferayVersion = getDefaultLiferayVersion();
 
-				    } else {
-				        liferayVersion = "7.1";
-				    }
-				    sampleArgs.setLiferayVersion(liferayVersion);
+					} else {
+						liferayVersion = "7.1";
+					}
+
+					sampleArgs.setLiferayVersion(liferayVersion);
 				}
 
 				run();
@@ -359,14 +370,6 @@ public class BladeCLI implements Runnable {
 			_tracer.format("# " + s + "%n", args);
 			_tracer.flush();
 		}
-	}
-
-	public String getDefaultLiferayVersion() throws IOException {
-		BladeSettings settingsFile = getBladeSettings();
-
-		_defaultLiferayVersion = settingsFile.getDefaultLiferayVersion();
-
-		return _defaultLiferayVersion;
 	}
 
 	private static String _extractBasePath(String[] args) {
