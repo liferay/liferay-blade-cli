@@ -320,8 +320,8 @@ public class BladeCLI implements Runnable {
 
 					if (WorkspaceUtil.isWorkspace(this)) {
 						liferayVersion = getDefaultLiferayVersion();
-
-					} else {
+					}
+					else {
 						liferayVersion = "7.1";
 					}
 
