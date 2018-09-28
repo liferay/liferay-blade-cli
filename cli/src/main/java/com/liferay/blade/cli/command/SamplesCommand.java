@@ -53,9 +53,9 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		final String liferayVersion = samplesArgs.getLiferayVersion();
 
-		_BLADE_REPO_ARCHIVE_NAME = _setBladeRepoArchiveName(liferayVersion);
-		_BLADE_REPO_NAME = _setBladeRepoName(liferayVersion);
-		_BLADE_REPO_URL = _setBladeRepoUrl(liferayVersion);
+		_setBladeRepoName(liferayVersion);
+		_setBladeRepoArchiveName(liferayVersion);
+		_setBladeRepoUrl(liferayVersion);
 
 		final String sampleName = samplesArgs.getSampleName();
 
@@ -96,7 +96,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
+		File bladeRepo = new File(cachePath.toFile(), _bladeRepoName);
 
 		String buildType = samplesArgs.getBuild();
 
@@ -142,7 +142,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepoArchive = new File(cachePath.toFile(), _BLADE_REPO_ARCHIVE_NAME);
+		File bladeRepoArchive = new File(cachePath.toFile(), _bladeRepoArchiveName);
 
 		Date now = new Date();
 
@@ -161,7 +161,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		}
 
 		if (!bladeRepoArchive.exists()) {
-			BladeUtil.downloadLink(_BLADE_REPO_URL, bladeRepoArchive.toPath());
+			BladeUtil.downloadLink(_bladeRepoUrl, bladeRepoArchive.toPath());
 
 			return true;
 		}
@@ -174,7 +174,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepoArchive = new File(cachePath.toFile(), _BLADE_REPO_ARCHIVE_NAME);
+		File bladeRepoArchive = new File(cachePath.toFile(), _bladeRepoArchiveName);
 
 		BladeUtil.unzip(bladeRepoArchive, cachePath.toFile(), null);
 	}
@@ -185,7 +185,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
+		File bladeRepo = new File(cachePath.toFile(), _bladeRepoName);
 
 		String buildType = samplesArgs.getBuild();
 
@@ -310,31 +310,24 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return _removeGradleSection(script.substring(0, begin) + script.substring(end, script.length()), section);
 	}
 
-	private String _setBladeRepoArchiveName(String liferayVersion) {
-		_BLADE_REPO_ARCHIVE_NAME = _BLADE_REPO_NAME + ".zip";
-
-		return _BLADE_REPO_ARCHIVE_NAME;
+	private void _setBladeRepoArchiveName(String liferayVersion) {
+		_bladeRepoArchiveName = _bladeRepoName + ".zip";
 	}
 
-	private String _setBladeRepoName(String liferayVersion) {
-		_BLADE_REPO_NAME = "liferay-blade-samples-" + liferayVersion;
-
-		return _BLADE_REPO_NAME;
+	private void _setBladeRepoName(String liferayVersion) {
+		_bladeRepoName = "liferay-blade-samples-" + liferayVersion;
 	}
 
-	private String _setBladeRepoUrl(String liferayVersion) {
-		_BLADE_REPO_URL = "https://github.com/liferay/liferay-blade-samples/archive/" + liferayVersion + ".zip";
-
-		return _BLADE_REPO_URL;
+	private void _setBladeRepoUrl(String liferayVersion) {
+		_bladeRepoUrl = "https://github.com/liferay/liferay-blade-samples/archive/" + liferayVersion + ".zip";
 	}
-
 
 	private void _updateBuildGradle(File dir) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
+		File bladeRepo = new File(cachePath.toFile(), _bladeRepoName);
 
 		File sampleGradleFile = new File(dir, "build.gradle");
 
@@ -358,15 +351,13 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		Files.write(sampleGradleFile.toPath(), script.getBytes());
 	}
 
-	private static String _BLADE_REPO_ARCHIVE_NAME;
-
-	private static String _BLADE_REPO_NAME;
-
-	private static String _BLADE_REPO_URL;
-
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
 	private static final Collection<String> _topLevelFolders = Arrays.asList(
 		"apps", "extensions", "overrides", "themes");
+
+	private String _bladeRepoArchiveName;
+	private String _bladeRepoName;
+	private String _bladeRepoUrl;
 
 }

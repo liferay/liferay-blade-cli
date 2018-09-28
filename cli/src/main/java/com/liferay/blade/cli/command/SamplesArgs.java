@@ -47,7 +47,7 @@ public class SamplesArgs extends BaseArgs {
 		description = "Specify the build type of the project. Available options are gradle, maven. (gradle is default)",
 		names = {"-b", "--build"}
 	)
-	private static String _build = "gradle";
+	private String _build = "gradle";
 
 	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
 	private File _dir;
