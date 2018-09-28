@@ -63,8 +63,10 @@ public class SamplesCommandTest {
 	}
 
 	@Test
-	public void testGetSampleMaven() throws Exception {
-		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "-b", "maven", "friendly-url"};
+	public void testGetSampleMaven70() throws Exception {
+		String[] args = {
+			"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "-b", "maven", "-v", "7.0", "friendly-url"
+		};
 
 		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
@@ -77,6 +79,37 @@ public class SamplesCommandTest {
 
 		Assert.assertFalse(gradleBuildFile.exists());
 		Assert.assertTrue(mavenBuildFile.exists());
+
+		String content = new String(IO.read(mavenBuildFile));
+
+		Assert.assertTrue(
+			content,
+			content.contains("<artifactId>com.liferay.portal.kernel</artifactId>\n\t\t\t<version>2.0.0</version>"));
+	}
+
+	@Test
+	public void testGetSampleMaven71() throws Exception {
+		String[] args = {
+			"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "-b", "maven", "-v", "7.1", "friendly-url"
+		};
+
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		File projectDir = new File(temporaryFolder.getRoot(), "test/friendly-url");
+
+		Assert.assertTrue(projectDir.exists());
+
+		File gradleBuildFile = IO.getFile(projectDir, "build.gradle");
+		File mavenBuildFile = IO.getFile(projectDir, "pom.xml");
+
+		Assert.assertFalse(gradleBuildFile.exists());
+		Assert.assertTrue(mavenBuildFile.exists());
+
+		String content = new String(IO.read(mavenBuildFile));
+
+		Assert.assertTrue(
+			content,
+			content.contains("<artifactId>com.liferay.portal.kernel</artifactId>\n\t\t\t<version>3.0.0</version>"));
 	}
 
 	@Test
@@ -172,7 +205,7 @@ public class SamplesCommandTest {
 	}
 
 	@Test
-	public void testGetSampleWithVersions() throws Exception {
+	public void testGetSampleWithVersion70() throws Exception {
 		String[] args70 = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "-v", "7.0", "jsp-portlet"};
 
 		TestUtil.runBlade(temporaryFolder.getRoot(), args70);
@@ -192,25 +225,28 @@ public class SamplesCommandTest {
 		String projectPath = projectDir.getPath();
 
 		TestUtil.verifyBuild(projectPath, "com.liferay.blade.jsp.portlet-1.0.0.jar");
+	}
 
+	@Test
+	public void testGetSampleWithVersion71() throws Exception {
 		String[] args71 =
 			{"samples", "-d", temporaryFolder.getRoot().getPath() + "/test71", "-v", "7.1", "jsp-portlet"};
 
 		TestUtil.runBlade(temporaryFolder.getRoot(), args71);
 
-		projectDir = new File(temporaryFolder.getRoot(), "test71/jsp-portlet");
+		File projectDir = new File(temporaryFolder.getRoot(), "test71/jsp-portlet");
 
 		Assert.assertTrue(projectDir.exists());
 
-		buildFile = IO.getFile(projectDir, "build.gradle");
+		File buildFile = IO.getFile(projectDir, "build.gradle");
 
-		content = new String(IO.read(buildFile));
+		String content = new String(IO.read(buildFile));
 
 		Assert.assertTrue(buildFile.exists());
 
 		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"3.0.0\""));
 
-		projectPath = projectDir.getPath();
+		String projectPath = projectDir.getPath();
 
 		TestUtil.verifyBuild(projectPath, "com.liferay.blade.jsp.portlet-1.0.0.jar");
 	}
