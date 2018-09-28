@@ -51,6 +51,10 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	public void execute() throws Exception {
 		SamplesArgs samplesArgs = getArgs();
 
+		final String liferayVersion = samplesArgs.getLiferayVersion();
+
+		_setLiferayVersion(liferayVersion);
+
 		final String sampleName = samplesArgs.getSampleName();
 
 		if (_downloadBladeRepoIfNeeded()) {
@@ -297,6 +301,12 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return _removeGradleSection(script.substring(0, begin) + script.substring(end, script.length()), section);
 	}
 
+	private void _setLiferayVersion(String liferayVersion) {
+		_BLADE_REPO_ARCHIVE_NAME = _BLADE_REPO_NAME + ".zip";
+		_BLADE_REPO_NAME = "liferay-blade-samples-" + liferayVersion;
+		_BLADE_REPO_URL = "https://github.com/liferay/liferay-blade-samples/archive/" + liferayVersion + ".zip";
+	}
+
 	private void _updateBuildGradle(File dir) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -326,11 +336,11 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		Files.write(sampleGradleFile.toPath(), script.getBytes());
 	}
 
-	private static final String _BLADE_REPO_ARCHIVE_NAME = "liferay-blade-samples-master.zip";
+	private static String _BLADE_REPO_ARCHIVE_NAME;
 
-	private static final String _BLADE_REPO_NAME = "liferay-blade-samples-master";
+	private static String _BLADE_REPO_NAME;
 
-	private static final String _BLADE_REPO_URL = "https://github.com/liferay/liferay-blade-samples/archive/master.zip";
+	private static String _BLADE_REPO_URL;
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
