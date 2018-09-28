@@ -93,7 +93,7 @@ public class ExtensionsTest {
 
 			Assert.assertNotNull(commands);
 
-			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 2, commands.size());
+			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 1, commands.size());
 		}
 	}
 
