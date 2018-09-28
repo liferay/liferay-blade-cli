@@ -35,8 +35,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import org.powermock.modules.junit4.rule.PowerMockRule;
-
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
@@ -97,8 +95,30 @@ public class ExtensionsTest {
 		}
 	}
 
-	@Rule
-	public final PowerMockRule rule = new PowerMockRule();
+	@Test
+	public void testLoadCommandsWithCustomExtensionInWorkspace() throws Exception {
+		_setupTestExtensions();
+
+		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
+
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-b", "foo"};
+
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		BladeTest bladeTest = new BladeTest(temporaryFolder.getRoot());
+
+		BladeSettings settings = bladeTest.getBladeSettings();
+
+		settings.setProfileName("foo");
+
+		try (Extensions extensions = new Extensions(settings, bladeTest.getExtensionsPath())) {
+			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+
+			Assert.assertNotNull(commands);
+
+			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 2, commands.size());
+		}
+	}
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
