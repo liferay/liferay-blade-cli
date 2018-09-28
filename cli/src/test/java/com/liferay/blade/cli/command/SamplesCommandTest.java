@@ -63,6 +63,23 @@ public class SamplesCommandTest {
 	}
 
 	@Test
+	public void testGetSampleMaven() throws Exception {
+		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "-b", "maven", "friendly-url"};
+
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+
+		File projectDir = new File(temporaryFolder.getRoot(), "test/friendly-url");
+
+		Assert.assertTrue(projectDir.exists());
+
+		File gradleBuildFile = IO.getFile(projectDir, "build.gradle");
+		File mavenBuildFile = IO.getFile(projectDir, "pom.xml");
+
+		Assert.assertFalse(gradleBuildFile.exists());
+		Assert.assertTrue(mavenBuildFile.exists());
+	}
+
+	@Test
 	public void testGetSampleWithVersions() throws Exception {
 		String[] args70 = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "-v", "7.0", "jsp-portlet"};
 
