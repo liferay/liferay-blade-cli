@@ -322,7 +322,6 @@ public class BladeCLI implements Runnable {
 
 						createArgs.setLiferayVersion(liferayVersion);
 					}
-
 				}
 
 				run();
