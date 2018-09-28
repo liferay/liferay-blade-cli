@@ -54,7 +54,9 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		final String liferayVersion = samplesArgs.getLiferayVersion();
 
 		_setBladeRepoName(liferayVersion);
-		_setBladeRepoArchiveName(liferayVersion);
+
+		_setBladeRepoArchiveName();
+
 		_setBladeRepoUrl(liferayVersion);
 
 		final String sampleName = samplesArgs.getSampleName();
@@ -310,7 +312,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return _removeGradleSection(script.substring(0, begin) + script.substring(end, script.length()), section);
 	}
 
-	private void _setBladeRepoArchiveName(String liferayVersion) {
+	private void _setBladeRepoArchiveName() {
 		_bladeRepoArchiveName = _bladeRepoName + ".zip";
 	}
 
