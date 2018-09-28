@@ -149,7 +149,7 @@ public class ExtensionsTest {
 		_setupTestExtension(extensionsPath, System.getProperty("sampleTemplateJarFile"));
 	}
 
-	private static final int _NUM_BUILTIN_COMMANDS = 17;
+	private static final int _NUM_BUILTIN_COMMANDS = 18;
 
 	private BladeTest _bladeTest;
 
