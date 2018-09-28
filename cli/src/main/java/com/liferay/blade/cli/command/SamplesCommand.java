@@ -53,7 +53,9 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		final String liferayVersion = samplesArgs.getLiferayVersion();
 
-		_setLiferayVersion(liferayVersion);
+		_BLADE_REPO_ARCHIVE_NAME = _setBladeRepoArchiveName(liferayVersion);
+		_BLADE_REPO_NAME = _setBladeRepoName(liferayVersion);
+		_BLADE_REPO_URL = _setBladeRepoUrl(liferayVersion);
 
 		final String sampleName = samplesArgs.getSampleName();
 
@@ -96,11 +98,13 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
 
-		File gradleSamples = new File(bladeRepo, "gradle");
+		String buildType = samplesArgs.getBuild();
+
+		File samples = new File(bladeRepo, buildType);
 
 		SamplesVisitor visitor = new SamplesVisitor();
 
-		for (File file : gradleSamples.listFiles()) {
+		for (File file : samples.listFiles()) {
 			String fileName = file.getName();
 
 			if (file.isDirectory() && _topLevelFolders.contains(fileName)) {
@@ -118,7 +122,9 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 				FileUtil.copyDir(path, dest.toPath());
 
-				_updateBuildGradle(dest);
+				if (buildType.equals("gradle")) {
+					_updateBuildGradle(dest);
+				}
 
 				if (!BladeUtil.hasGradleWrapper(dest)) {
 					_addGradleWrapper(dest);
@@ -175,16 +181,19 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 	private void _listSamples() throws IOException {
 		BladeCLI bladeCLI = getBladeCLI();
+		SamplesArgs samplesArgs = getArgs();
 
 		Path cachePath = bladeCLI.getCachePath();
 
 		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
 
-		File gradleSamples = new File(bladeRepo, "gradle");
+		String buildType = samplesArgs.getBuild();
+
+		File samples = new File(bladeRepo, buildType);
 
 		Map<String, List<Path>> samplesMap = new HashMap<>();
 
-		for (File file : gradleSamples.listFiles()) {
+		for (File file : samples.listFiles()) {
 			String fileName = file.getName();
 
 			if (file.isDirectory() && _topLevelFolders.contains(fileName)) {
@@ -192,20 +201,20 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 				Files.walkFileTree(file.toPath(), visitor);
 
-				List<Path> samples = samplesMap.get(fileName);
+				List<Path> samplesList = samplesMap.get(fileName);
 
-				if (samples == null) {
-					samples = new ArrayList<>();
+				if (samplesList == null) {
+					samplesList = new ArrayList<>();
 
-					samplesMap.put(fileName, samples);
+					samplesMap.put(fileName, samplesList);
 				}
 
 				for (Path path : visitor.getPaths()) {
-					samples.add(path.getFileName());
+					samplesList.add(path.getFileName());
 				}
 
 				if (samplesMap.containsKey(fileName)) {
-					Collections.sort(samples);
+					Collections.sort(samplesList);
 				}
 			}
 		}
@@ -301,11 +310,24 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return _removeGradleSection(script.substring(0, begin) + script.substring(end, script.length()), section);
 	}
 
-	private void _setLiferayVersion(String liferayVersion) {
+	private String _setBladeRepoArchiveName(String liferayVersion) {
 		_BLADE_REPO_ARCHIVE_NAME = _BLADE_REPO_NAME + ".zip";
-		_BLADE_REPO_NAME = "liferay-blade-samples-" + liferayVersion;
-		_BLADE_REPO_URL = "https://github.com/liferay/liferay-blade-samples/archive/" + liferayVersion + ".zip";
+
+		return _BLADE_REPO_ARCHIVE_NAME;
 	}
+
+	private String _setBladeRepoName(String liferayVersion) {
+		_BLADE_REPO_NAME = "liferay-blade-samples-" + liferayVersion;
+
+		return _BLADE_REPO_NAME;
+	}
+
+	private String _setBladeRepoUrl(String liferayVersion) {
+		_BLADE_REPO_URL = "https://github.com/liferay/liferay-blade-samples/archive/" + liferayVersion + ".zip";
+
+		return _BLADE_REPO_URL;
+	}
+
 
 	private void _updateBuildGradle(File dir) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
