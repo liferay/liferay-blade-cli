@@ -27,6 +27,10 @@ import java.io.File;
 @Parameters(commandDescription = "Generate a sample project", commandNames = "samples")
 public class SamplesArgs extends BaseArgs {
 
+	public String getBuild() {
+		return _build;
+	}
+
 	public File getDir() {
 		return _dir;
 	}
@@ -38,6 +42,12 @@ public class SamplesArgs extends BaseArgs {
 	public String getSampleName() {
 		return _sampleName;
 	}
+
+	@Parameter(
+		description = "Specify the build type of the project. Available options are gradle, maven. (gradle is default)",
+		names = {"-b", "--build"}
+	)
+	private static String _build = "gradle";
 
 	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
 	private File _dir;
