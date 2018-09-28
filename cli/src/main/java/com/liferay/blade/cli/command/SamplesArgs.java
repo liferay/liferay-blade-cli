@@ -35,10 +35,6 @@ public class SamplesArgs extends BaseArgs {
 		return _dir;
 	}
 
-	public String getLiferayVersion() {
-		return _liferayVersion;
-	}
-
 	public String getSampleName() {
 		return _sampleName;
 	}
