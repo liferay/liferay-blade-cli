@@ -319,12 +319,10 @@ public class BladeCLI implements Runnable {
 
 					if (WorkspaceUtil.isWorkspace(this)) {
 						liferayVersion = getDefaultLiferayVersion();
-					}
-					else {
-						liferayVersion = "7.1";
+
+						createArgs.setLiferayVersion(liferayVersion);
 					}
 
-					createArgs.setLiferayVersion(liferayVersion);
 				}
 
 				run();
