@@ -347,6 +347,15 @@ public class Extensions implements AutoCloseable {
 					}
 				}
 			}
+			else {
+				for (BaseCommand<?> baseCommand : allCommands) {
+					Collection<String> profileNames = getBladeProfiles(baseCommand.getClass());
+
+					if ((profileNames != null) && !profileNames.isEmpty()) {
+						commandsToRemove.add(baseCommand);
+					}
+				}
+			}
 
 			allCommands.removeAll(commandsToRemove);
 
