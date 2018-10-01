@@ -140,14 +140,6 @@ public class BladeCLI implements Runnable {
 		return _baseCommand;
 	}
 
-	public String getDefaultLiferayVersion() throws IOException {
-		BladeSettings settingsFile = getBladeSettings();
-
-		_defaultLiferayVersion = settingsFile.getDefaultLiferayVersion();
-
-		return _defaultLiferayVersion;
-	}
-
 	public Path getExtensionsPath() {
 		try {
 			Path userHomePath = _USER_HOME_DIR.toPath();
@@ -420,7 +412,6 @@ public class BladeCLI implements Runnable {
 	private String _command;
 	private BaseArgs _commandArgs = new BaseArgs();
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
-	private String _defaultLiferayVersion;
 	private final PrintStream _err;
 	private final InputStream _in;
 	private JCommander _jCommander;
