@@ -22,7 +22,7 @@ import com.beust.jcommander.Parameters;
  * @author Christopher Bryan Boyd
  */
 @Parameters(
-	commandDescription = "Downloads and unzips the server bundle defined by your Liferay project",
+	commandDescription = "Initializes the Liferay server configured in this workspace project.",
 	commandNames = "server init"
 )
 public class ServerInitArgs extends BaseArgs {

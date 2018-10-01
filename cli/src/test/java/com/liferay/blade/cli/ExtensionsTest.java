@@ -21,6 +21,9 @@ import com.liferay.blade.cli.command.BaseCommand;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -123,6 +126,27 @@ public class ExtensionsTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static int _getBuiltinCommandsCount() {
+		int countOfLines = 0;
+		ClassLoader classLoader = ExtensionsTest.class.getClassLoader();
+
+		InputStream inputStream = classLoader.getResourceAsStream(
+			"META-INF/services/com.liferay.blade.cli.command.BaseCommand");
+
+		try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			LineNumberReader lineNumberReader = new LineNumberReader(inputStreamReader)) {
+
+			while (lineNumberReader.readLine() != null) {
+				countOfLines++;
+			}
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+
+		return countOfLines;
+	}
+
 	private static void _setupTestExtension(Path extensionsPath, String jarPath) throws IOException {
 		File sampleJarFile = new File(jarPath);
 
@@ -149,7 +173,7 @@ public class ExtensionsTest {
 		_setupTestExtension(extensionsPath, System.getProperty("sampleTemplateJarFile"));
 	}
 
-	private static final int _NUM_BUILTIN_COMMANDS = 18;
+	private static final int _NUM_BUILTIN_COMMANDS = _getBuiltinCommandsCount();
 
 	private BladeTest _bladeTest;
 

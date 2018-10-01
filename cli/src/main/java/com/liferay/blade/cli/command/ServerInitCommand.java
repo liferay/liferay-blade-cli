@@ -19,13 +19,9 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.ProcessResult;
-import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
-import java.io.PrintStream;
-
-import java.net.ConnectException;
 
 /**
  * @author Christopher Bryan Boyd
@@ -44,9 +40,7 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 		File baseDir = new File(baseArgs.getBase());
 
 		if (WorkspaceUtil.isWorkspace(baseDir)) {
-			File gradleWrapperFile = BladeUtil.getGradleWrapper(baseDir);
-
-			if (gradleWrapperFile != null) {
+			if (GradleExec.isGradleProject(baseDir)) {
 				GradleExec gradleExec = new GradleExec(bladeCLI);
 
 				ProcessResult processResult = gradleExec.executeTask("initBundle");
@@ -56,25 +50,15 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 				if (resultCode > 0) {
 					String errorMessage = "Gradle assemble task failed.";
 
-					getBladeCLI().error(errorMessage);
-
-					PrintStream err = bladeCLI.err();
-
-					getBladeCLI().error(processResult.getError());
-
-					new ConnectException(errorMessage).printStackTrace(err);
-
-					return;
+					bladeCLI.error(errorMessage);
 				}
 
-				getBladeCLI().out(processResult.getOutput());
-			}
-			else {
-				getBladeCLI().error("`server init` is only currently supported for gradle.");
+				bladeCLI.out(processResult.getOutput());
+				bladeCLI.error(processResult.getError());
 			}
 		}
 		else {
-			getBladeCLI().error("`server init` is only supported inside a liferay workspace.");
+			bladeCLI.error("`server init` is only supported inside a liferay workspace.");
 		}
 	}
 
