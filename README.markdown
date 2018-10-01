@@ -8,7 +8,7 @@ Liferay 7 module development.
 Please refer to the documentation on Liferay's Developer Network for information
 on how to download and use Blade CLI:
 
-https://dev.liferay.com/develop/tutorials/-/knowledge_base/7-0/blade-cli
+https://dev.liferay.com/develop/tutorials/-/knowledge_base/7-1/blade-cli
 
 ## Release
 
