@@ -310,7 +310,7 @@ public class BladeCLI implements Runnable {
 					String liferayVersion;
 
 					if (WorkspaceUtil.isWorkspace(this)) {
-						liferayVersion = getDefaultLiferayVersion();
+						liferayVersion = BladeSettings.getLiferayVersionDefault();
 
 						createArgs.setLiferayVersion(liferayVersion);
 					}

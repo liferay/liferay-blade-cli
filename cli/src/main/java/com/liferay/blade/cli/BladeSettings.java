@@ -37,8 +37,8 @@ public class BladeSettings {
 		}
 	}
 
-	public String getDefaultLiferayVersion() {
-		return _properties.getProperty("default.liferay.version");
+	public static String getLiferayVersionDefault() {
+		return _properties.getProperty("liferay.version.default");
 	}
 
 	public String getProfileName() {
@@ -63,15 +63,15 @@ public class BladeSettings {
 		}
 	}
 
-	public void setDefaultLiferayVersion(String defaultLiferayVersion) {
-		_properties.setProperty("default.liferay.version", defaultLiferayVersion);
+	public void setLiferayVersionDefault(String liferayVersionDefault) {
+		_properties.setProperty("liferay.version.default", liferayVersionDefault);
 	}
 
 	public void setProfileName(String profileName) {
 		_properties.setProperty("profile.name", profileName);
 	}
 
-	private final Properties _properties = new Properties();
+	private final static Properties _properties = new Properties();
 	private final File _settingsFile;
 
 }
