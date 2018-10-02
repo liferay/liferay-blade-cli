@@ -54,7 +54,12 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 				}
 
 				bladeCLI.out(processResult.getOutput());
-				bladeCLI.error(processResult.getError());
+
+				String error = processResult.getError();
+
+				if ((error != null) && (error.length() > 0)) {
+					bladeCLI.error(error);
+				}
 			}
 		}
 		else {
