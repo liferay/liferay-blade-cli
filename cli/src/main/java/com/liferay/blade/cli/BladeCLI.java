@@ -23,7 +23,6 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.command.CreateArgs;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 
@@ -303,18 +302,6 @@ public class BladeCLI implements Runnable {
 				_commandArgs = (BaseArgs)commandArgs;
 
 				_commandArgs.setBase(baseDir);
-
-				if (_commandArgs instanceof CreateArgs) {
-					CreateArgs createArgs = (CreateArgs)_commandArgs;
-
-					String liferayVersion;
-
-					if (WorkspaceUtil.isWorkspace(this)) {
-						liferayVersion = BladeSettings.getLiferayVersionDefault();
-
-						createArgs.setLiferayVersion(liferayVersion);
-					}
-				}
 
 				run();
 			}

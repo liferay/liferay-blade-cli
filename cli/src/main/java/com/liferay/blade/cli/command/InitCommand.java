@@ -57,6 +57,8 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		InitArgs initArgs = getArgs();
 		BladeCLI bladeCLI = getBladeCLI();
 
+		BladeSettings settings = bladeCLI.getBladeSettings();
+
 		BaseArgs args = bladeCLI.getBladeArgs();
 
 		String name = initArgs.getName();
@@ -205,13 +207,11 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		args.setBase(destDir);
 
-		BladeSettings settings = bladeCLI.getBladeSettings();
-
 		settings.setProfileName(build);
 
 		String defaultLiferayVersion = initArgs.getLiferayVersion();
 
-		settings.setLiferayVersionDefault(defaultLiferayVersion);
+		settings.setLiferayVersion(defaultLiferayVersion);
 
 		settings.save();
 	}

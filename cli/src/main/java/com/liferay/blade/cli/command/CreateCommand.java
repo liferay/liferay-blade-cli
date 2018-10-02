@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
@@ -201,10 +202,19 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
+
+		BladeSettings bladeSettings = bladeCLI.getBladeSettings();
+
+		if(!bladeSettings.getLiferayVersion().isEmpty()) {
+			projectTemplatesArgs.setLiferayVersion(bladeSettings.getLiferayVersion());
+		}
+		else {
+			projectTemplatesArgs.setLiferayVersion(createArgs.getLiferayVersion());
+		}
+
 		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
 		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
 		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
-		projectTemplatesArgs.setLiferayVersion(createArgs.getLiferayVersion());
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
 		projectTemplatesArgs.setService(createArgs.getService());
