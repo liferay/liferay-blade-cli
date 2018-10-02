@@ -48,7 +48,7 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 				int resultCode = processResult.getResultCode();
 
 				if (resultCode > 0) {
-					String errorMessage = "Gradle assemble task failed.";
+					String errorMessage = "Gradle initBundle task failed.";
 
 					bladeCLI.error(errorMessage);
 				}
@@ -58,7 +58,7 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 			}
 		}
 		else {
-			bladeCLI.error("`server init` is only supported inside a liferay workspace.");
+			bladeCLI.error("'server init' command is only supported inside a Liferay workspace.");
 		}
 	}
 
