@@ -29,7 +29,7 @@ import java.util.Properties;
  */
 public class BladeSettings {
 
-	public static String getLiferayVersionDefault() {
+	public String getLiferayVersion() {
 		return _properties.getProperty("liferay.version.default");
 	}
 
@@ -63,8 +63,8 @@ public class BladeSettings {
 		}
 	}
 
-	public void setLiferayVersionDefault(String liferayVersionDefault) {
-		_properties.setProperty("liferay.version.default", liferayVersionDefault);
+	public void setLiferayVersion(String liferayVersion) {
+		_properties.setProperty("liferay.version.default", liferayVersion);
 	}
 
 	public void setProfileName(String profileName) {
