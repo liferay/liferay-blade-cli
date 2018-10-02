@@ -49,19 +49,28 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		SamplesArgs samplesArgs = getArgs();
+		final SamplesArgs samplesArgs = getArgs();
+
+		final String liferayVersion = samplesArgs.getLiferayVersion();
+
+		final String bladeRepoName = "liferay-blade-samples-" + liferayVersion;
+
+		final String bladeRepoArchiveName = bladeRepoName + ".zip";
+
+		final String bladeRepoUrl =
+			"https://github.com/liferay/liferay-blade-samples/archive/" + liferayVersion + ".zip";
 
 		final String sampleName = samplesArgs.getSampleName();
 
-		if (_downloadBladeRepoIfNeeded()) {
-			_extractBladeRepo();
+		if (_downloadBladeRepoIfNeeded(bladeRepoArchiveName, bladeRepoUrl)) {
+			_extractBladeRepo(bladeRepoArchiveName);
 		}
 
 		if (sampleName == null) {
-			_listSamples();
+			_listSamples(bladeRepoName);
 		}
 		else {
-			_copySample(sampleName);
+			_copySample(sampleName, bladeRepoName);
 		}
 	}
 
@@ -78,7 +87,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		new File(dest, "gradlew").setExecutable(true);
 	}
 
-	private void _copySample(String sampleName) throws Exception {
+	private void _copySample(String sampleName, String bladeRepoName) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 		SamplesArgs samplesArgs = getArgs();
 
@@ -90,13 +99,15 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
+		File bladeRepo = new File(cachePath.toFile(), bladeRepoName);
 
-		File gradleSamples = new File(bladeRepo, "gradle");
+		String buildType = samplesArgs.getBuild();
+
+		File samples = new File(bladeRepo, buildType);
 
 		SamplesVisitor visitor = new SamplesVisitor();
 
-		for (File file : gradleSamples.listFiles()) {
+		for (File file : samples.listFiles()) {
 			String fileName = file.getName();
 
 			if (file.isDirectory() && _topLevelFolders.contains(fileName)) {
@@ -114,7 +125,9 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 				FileUtil.copyDir(path, dest.toPath());
 
-				_updateBuildGradle(dest);
+				if (buildType.equals("gradle")) {
+					_updateBuildGradle(dest, bladeRepoName);
+				}
 
 				if (!BladeUtil.hasGradleWrapper(dest)) {
 					_addGradleWrapper(dest);
@@ -127,12 +140,12 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return s.replaceAll("(?m)^\t", "");
 	}
 
-	private boolean _downloadBladeRepoIfNeeded() throws Exception {
+	private boolean _downloadBladeRepoIfNeeded(String bladeRepoArchiveName, String bladeRepoUrl) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepoArchive = new File(cachePath.toFile(), _BLADE_REPO_ARCHIVE_NAME);
+		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
 
 		Date now = new Date();
 
@@ -151,7 +164,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		}
 
 		if (!bladeRepoArchive.exists()) {
-			BladeUtil.downloadLink(_BLADE_REPO_URL, bladeRepoArchive.toPath());
+			BladeUtil.downloadLink(bladeRepoUrl, bladeRepoArchive.toPath());
 
 			return true;
 		}
@@ -159,28 +172,31 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return false;
 	}
 
-	private void _extractBladeRepo() throws Exception {
+	private void _extractBladeRepo(String bladeRepoArchiveName) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepoArchive = new File(cachePath.toFile(), _BLADE_REPO_ARCHIVE_NAME);
+		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
 
 		BladeUtil.unzip(bladeRepoArchive, cachePath.toFile(), null);
 	}
 
-	private void _listSamples() throws IOException {
+	private void _listSamples(String bladeRepoName) throws IOException {
 		BladeCLI bladeCLI = getBladeCLI();
+		SamplesArgs samplesArgs = getArgs();
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
+		File bladeRepo = new File(cachePath.toFile(), bladeRepoName);
 
-		File gradleSamples = new File(bladeRepo, "gradle");
+		String buildType = samplesArgs.getBuild();
+
+		File samples = new File(bladeRepo, buildType);
 
 		Map<String, List<Path>> samplesMap = new HashMap<>();
 
-		for (File file : gradleSamples.listFiles()) {
+		for (File file : samples.listFiles()) {
 			String fileName = file.getName();
 
 			if (file.isDirectory() && _topLevelFolders.contains(fileName)) {
@@ -188,20 +204,20 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 				Files.walkFileTree(file.toPath(), visitor);
 
-				List<Path> samples = samplesMap.get(fileName);
+				List<Path> samplesList = samplesMap.get(fileName);
 
-				if (samples == null) {
-					samples = new ArrayList<>();
+				if (samplesList == null) {
+					samplesList = new ArrayList<>();
 
-					samplesMap.put(fileName, samples);
+					samplesMap.put(fileName, samplesList);
 				}
 
 				for (Path path : visitor.getPaths()) {
-					samples.add(path.getFileName());
+					samplesList.add(path.getFileName());
 				}
 
 				if (samplesMap.containsKey(fileName)) {
-					Collections.sort(samples);
+					Collections.sort(samplesList);
 				}
 			}
 		}
@@ -297,12 +313,12 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return _removeGradleSection(script.substring(0, begin) + script.substring(end, script.length()), section);
 	}
 
-	private void _updateBuildGradle(File dir) throws Exception {
+	private void _updateBuildGradle(File dir, String bladeRepoName) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		File bladeRepo = new File(cachePath.toFile(), _BLADE_REPO_NAME);
+		File bladeRepo = new File(cachePath.toFile(), bladeRepoName);
 
 		File sampleGradleFile = new File(dir, "build.gradle");
 
@@ -325,12 +341,6 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Files.write(sampleGradleFile.toPath(), script.getBytes());
 	}
-
-	private static final String _BLADE_REPO_ARCHIVE_NAME = "liferay-blade-samples-master.zip";
-
-	private static final String _BLADE_REPO_NAME = "liferay-blade-samples-master";
-
-	private static final String _BLADE_REPO_URL = "https://github.com/liferay/liferay-blade-samples/archive/master.zip";
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
 

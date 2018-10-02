@@ -27,16 +27,36 @@ import java.io.File;
 @Parameters(commandDescription = "Generate a sample project", commandNames = "samples")
 public class SamplesArgs extends BaseArgs {
 
+	public String getBuild() {
+		return _build;
+	}
+
 	public File getDir() {
 		return _dir;
+	}
+
+	public String getLiferayVersion() {
+		return _liferayVersion;
 	}
 
 	public String getSampleName() {
 		return _sampleName;
 	}
 
+	@Parameter(
+		description = "Specify the build type of the project. Available options are gradle, maven. (gradle is default)",
+		names = {"-b", "--build"}
+	)
+	private String _build = "gradle";
+
 	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
 	private File _dir;
+
+	@Parameter(
+		description = "The version of Liferay to target when downloading the sample project. Available options are 7.0, 7.1. (default 7.1).",
+		names = {"-v", "--liferay-version"}
+	)
+	private String _liferayVersion = "7.1";
 
 	@Parameter(description = "name")
 	private String _sampleName;
