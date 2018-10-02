@@ -64,13 +64,13 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleMaven70() throws Exception {
-		String[] args = {
-			"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "-b", "maven", "-v", "7.0", "friendly-url"
-		};
+		File root = temporaryFolder.getRoot();
 
-		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String[] args = {"samples", "-d", root.getPath() + "/test", "-b", "maven", "-v", "7.0", "friendly-url"};
 
-		File projectDir = new File(temporaryFolder.getRoot(), "test/friendly-url");
+		TestUtil.runBlade(root, args);
+
+		File projectDir = new File(root, "test/friendly-url");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -89,13 +89,13 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleMaven71() throws Exception {
-		String[] args = {
-			"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "-b", "maven", "-v", "7.1", "friendly-url"
-		};
+		File root = temporaryFolder.getRoot();
 
-		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String[] args = {"samples", "-d", root.getPath() + "/test", "-b", "maven", "-v", "7.1", "friendly-url"};
 
-		File projectDir = new File(temporaryFolder.getRoot(), "test/friendly-url");
+		TestUtil.runBlade(root, args);
+
+		File projectDir = new File(root, "test/friendly-url");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -206,11 +206,13 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithVersion70() throws Exception {
-		String[] args70 = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "-v", "7.0", "jsp-portlet"};
+		File root = temporaryFolder.getRoot();
 
-		TestUtil.runBlade(temporaryFolder.getRoot(), args70);
+		String[] args = {"samples", "-d", root.getPath() + "/test", "-v", "7.0", "jsp-portlet"};
 
-		File projectDir = new File(temporaryFolder.getRoot(), "test/jsp-portlet");
+		TestUtil.runBlade(root, args);
+
+		File projectDir = new File(root, "test/jsp-portlet");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -229,12 +231,13 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithVersion71() throws Exception {
-		String[] args71 =
-			{"samples", "-d", temporaryFolder.getRoot().getPath() + "/test71", "-v", "7.1", "jsp-portlet"};
+		File root = temporaryFolder.getRoot();
 
-		TestUtil.runBlade(temporaryFolder.getRoot(), args71);
+		String[] args = {"samples", "-d", root.getPath() + "/test71", "-v", "7.1", "jsp-portlet"};
 
-		File projectDir = new File(temporaryFolder.getRoot(), "test71/jsp-portlet");
+		TestUtil.runBlade(root, args);
+
+		File projectDir = new File(root, "test71/jsp-portlet");
 
 		Assert.assertTrue(projectDir.exists());
 
