@@ -22,8 +22,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
-import org.codehaus.plexus.util.FileUtils;
-
 import org.junit.Assert;
 
 /**
@@ -57,14 +55,9 @@ public class MavenRunnerUtil {
 		try {
 			Runtime runtime = Runtime.getRuntime();
 
-			if (windows) {
-				File mvnw = new File("mvnw.cmd");
-
-				FileUtils.copyFile(mvnw, new File(projectPath + "/mvnw.cmd"));
-			}
-
 			Process process = runtime.exec(
-				(windows ? ".\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(), null, new File(projectPath));
+				(windows ? "cmd.exe /c .\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(), null,
+				new File(projectPath));
 
 			BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));

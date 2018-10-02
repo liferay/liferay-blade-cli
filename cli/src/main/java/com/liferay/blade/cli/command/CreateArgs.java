@@ -87,6 +87,10 @@ public class CreateArgs extends BaseArgs {
 		return _listTemplates;
 	}
 
+	public void setBuild(String build) {
+		_build = build;
+	}
+
 	public void setName(String name) {
 		_name = name;
 	}
