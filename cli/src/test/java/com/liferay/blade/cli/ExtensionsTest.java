@@ -21,6 +21,7 @@ import com.liferay.blade.cli.command.BaseCommand;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +29,7 @@ import java.nio.file.StandardCopyOption;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -76,7 +78,7 @@ public class ExtensionsTest {
 
 			Assert.assertNotNull(commands);
 
-			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS, commands.size());
+			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT, commands.size());
 		}
 	}
 
@@ -91,7 +93,7 @@ public class ExtensionsTest {
 
 			Assert.assertNotNull(commands);
 
-			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 1, commands.size());
+			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 1, commands.size());
 		}
 	}
 
@@ -116,12 +118,30 @@ public class ExtensionsTest {
 
 			Assert.assertNotNull(commands);
 
-			Assert.assertEquals(commands.toString(), _NUM_BUILTIN_COMMANDS + 2, commands.size());
+			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 2, commands.size());
 		}
 	}
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private static int _getBuiltInCommandsCount() {
+		ClassLoader classLoader = ExtensionsTest.class.getClassLoader();
+
+		InputStream inputStream = classLoader.getResourceAsStream(
+			"META-INF/services/com.liferay.blade.cli.command.BaseCommand");
+
+		try (Scanner scanner = new Scanner(inputStream)) {
+			int numLines = 0;
+
+			while (scanner.hasNextLine()) {
+				scanner.nextLine();
+				numLines++;
+			}
+
+			return numLines;
+		}
+	}
 
 	private static void _setupTestExtension(Path extensionsPath, String jarPath) throws IOException {
 		File sampleJarFile = new File(jarPath);
@@ -149,7 +169,7 @@ public class ExtensionsTest {
 		_setupTestExtension(extensionsPath, System.getProperty("sampleTemplateJarFile"));
 	}
 
-	private static final int _NUM_BUILTIN_COMMANDS = 17;
+	private static final int _BUILT_IN_COMMANDS_COUNT = _getBuiltInCommandsCount();
 
 	private BladeTest _bladeTest;
 

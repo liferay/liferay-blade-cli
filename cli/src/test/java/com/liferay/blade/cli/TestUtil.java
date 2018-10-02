@@ -89,16 +89,18 @@ public class TestUtil {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 
-				if (line.startsWith("SLF4J:")) {
-					continue;
-				}
+				if ((line != null) && (line.length() > 0)) {
+					if (line.startsWith("SLF4J:")) {
+						continue;
+					}
 
-				if (line.contains("LC_ALL: cannot change locale")) {
-					continue;
-				}
+					if (line.contains("LC_ALL: cannot change locale")) {
+						continue;
+					}
 
-				if (assertErrors) {
-					Assert.fail("Encountered error at line: " + line + "\n" + error);
+					if (assertErrors) {
+						Assert.fail("Encountered error at line: " + line + "\n" + error);
+					}
 				}
 			}
 		}

@@ -56,6 +56,23 @@ public class ServerCommandsTest {
 	}
 
 	@Test
+	public void testServerInit() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init"};
+
+		TestUtil.runBlade(args);
+
+		args = new String[] {"--base", _workspaceDir.getPath(), "server", "init"};
+
+		File bundlesDirectory = new File(_workspaceDir.getPath(), "bundles");
+
+		Assert.assertFalse(bundlesDirectory.exists());
+
+		TestUtil.runBlade(args);
+
+		Assert.assertTrue(bundlesDirectory.exists());
+	}
+
+	@Test
 	public void testServerStartCommandExists() throws Exception {
 		Assert.assertTrue(_commandExists("server", "start"));
 		Assert.assertTrue(_commandExists("server start"));
