@@ -56,7 +56,7 @@ public class SamplesArgs extends BaseArgs {
 		description = "The version of Liferay to target when downloading the sample project. Available options are 7.0, 7.1. (default 7.1).",
 		names = {"-v", "--liferay-version"}
 	)
-	private String _liferayVersion = "7.1";
+	private String _liferayVersion;
 
 	@Parameter(description = "name")
 	private String _sampleName;

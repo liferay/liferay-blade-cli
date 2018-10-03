@@ -203,15 +203,17 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			IO.deleteWithException(temp);
 		}
 
-		if ((build != null) && !build.equals("gradle")) {
-			args.setBase(destDir);
+		args.setBase(destDir);
 
-			BladeSettings settings = bladeCLI.getBladeSettings();
+		BladeSettings settings = bladeCLI.getBladeSettings();
 
-			settings.setProfileName(build);
+		settings.setProfileName(build);
 
-			settings.save();
-		}
+		String liferayVersion = initArgs.getLiferayVersion();
+
+		settings.setLiferayVersionDefault(liferayVersion);
+
+		settings.save();
 	}
 
 	@Override

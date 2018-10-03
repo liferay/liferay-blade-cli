@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
@@ -25,6 +26,7 @@ import com.liferay.project.templates.ProjectTemplatesArgs;
 import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import java.nio.file.Path;
@@ -201,10 +203,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
+		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
 		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
 		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
 		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
-		projectTemplatesArgs.setLiferayVersion(createArgs.getLiferayVersion());
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
 		projectTemplatesArgs.setService(createArgs.getService());
@@ -372,6 +374,18 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 
 		return warsDir;
+	}
+
+	private String _getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
+		String liferayVersion = createArgs.getLiferayVersion();
+
+		if (liferayVersion == null) {
+			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
+
+			liferayVersion = bladeSettings.getLiferayVersionDefault();
+		}
+
+		return liferayVersion;
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {

@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
@@ -49,9 +50,11 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 	@Override
 	public void execute() throws Exception {
+		BladeCLI bladeCLI = getBladeCLI();
+
 		final SamplesArgs samplesArgs = getArgs();
 
-		final String liferayVersion = samplesArgs.getLiferayVersion();
+		String liferayVersion = _getLiferayVersion(bladeCLI, samplesArgs);
 
 		final String bladeRepoName = "liferay-blade-samples-" + liferayVersion;
 
@@ -180,6 +183,18 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
 
 		BladeUtil.unzip(bladeRepoArchive, cachePath.toFile(), null);
+	}
+
+	private String _getLiferayVersion(BladeCLI bladeCLI, SamplesArgs samplesArgs) throws IOException {
+		String liferayVersion = samplesArgs.getLiferayVersion();
+
+		if (liferayVersion == null) {
+			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
+
+			liferayVersion = bladeSettings.getLiferayVersionDefault();
+		}
+
+		return liferayVersion;
 	}
 
 	private void _listSamples(String bladeRepoName) throws IOException {
