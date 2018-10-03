@@ -26,6 +26,7 @@ import com.liferay.project.templates.ProjectTemplatesArgs;
 import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import java.nio.file.Path;
@@ -60,8 +61,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	public void execute() throws Exception {
 		CreateArgs createArgs = getArgs();
 		BladeCLI bladeCLI = getBladeCLI();
-
-		BladeSettings bladeSettings = bladeCLI.getBladeSettings();
 
 		if (createArgs.isListTemplates()) {
 			_printTemplates();
@@ -204,21 +203,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
-
-		String liferayVersion;
-
-		if (createArgs.getLiferayVersion() != null) {
-			liferayVersion = createArgs.getLiferayVersion();
-
-			bladeSettings.setLiferayVersionDefault(liferayVersion);
-
-			bladeSettings.save();
-		}
-		else {
-			liferayVersion = bladeSettings.getLiferayVersionDefault();
-		}
-
-		projectTemplatesArgs.setLiferayVersion(liferayVersion);
+		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
 		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
 		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
 		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
@@ -389,6 +374,20 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 
 		return warsDir;
+	}
+
+	private String _getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
+		String liferayVersion = createArgs.getLiferayVersion();
+
+		if (liferayVersion != null) {
+			return liferayVersion;
+		}
+
+		BladeSettings bladeSettings = bladeCLI.getBladeSettings();
+
+		liferayVersion = bladeSettings.getLiferayVersionDefault();
+
+		return liferayVersion;
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
