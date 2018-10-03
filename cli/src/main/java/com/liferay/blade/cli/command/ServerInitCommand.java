@@ -25,6 +25,7 @@ import java.io.File;
 
 /**
  * @author Christopher Bryan Boyd
+ * @author Gregory Amerson
  */
 public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 
@@ -41,24 +42,17 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 
 		if (WorkspaceUtil.isWorkspace(baseDir)) {
 			if (GradleExec.isGradleProject(baseDir)) {
+				bladeCLI.out("Executing gradle task initBundle...\n");
+
 				GradleExec gradleExec = new GradleExec(bladeCLI);
 
-				ProcessResult processResult = gradleExec.executeTask("initBundle");
+				ProcessResult processResult = gradleExec.executeTask("initBundle", false);
 
-				int resultCode = processResult.getResultCode();
-
-				if (resultCode > 0) {
-					String errorMessage = "Gradle initBundle task failed.";
-
-					bladeCLI.error(errorMessage);
+				if (processResult.getResultCode() == 0) {
+					bladeCLI.out("\nserver init completed successfully.");
 				}
-
-				bladeCLI.out(processResult.getOutput());
-
-				String error = processResult.getError();
-
-				if ((error != null) && (error.length() > 0)) {
-					bladeCLI.error(error);
+				else {
+					bladeCLI.err("\nerror: server init failed.  See error output above.");
 				}
 			}
 		}

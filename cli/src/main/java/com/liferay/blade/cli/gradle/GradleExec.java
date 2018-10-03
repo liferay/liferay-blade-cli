@@ -60,6 +60,14 @@ public class GradleExec {
 		return executeTask(task, baseDir, true);
 	}
 
+	public ProcessResult executeTask(String task, boolean captureOutput) throws Exception {
+		BaseArgs args = _blade.getBladeArgs();
+
+		File baseDir = new File(args.getBase());
+
+		return executeTask(task, baseDir, captureOutput);
+	}
+
 	public ProcessResult executeTask(String task, File baseDir) throws Exception {
 		return executeTask(task, baseDir, true);
 	}
