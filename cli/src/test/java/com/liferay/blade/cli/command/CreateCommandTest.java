@@ -32,8 +32,10 @@ import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.Writer;
 
 import java.nio.file.Paths;
@@ -41,6 +43,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -1285,9 +1288,9 @@ public class CreateCommandTest {
 
 		_bladeTest.run(sevenZeroArgs);
 
-		File npmbundlerrc = new File(modulesDir, "seven-zero/build.gradle");
+		File buildGradle = new File(modulesDir, "seven-zero/build.gradle");
 
-		String content = new String(IO.read(npmbundlerrc));
+		String content = new String(IO.read(buildGradle));
 
 		Assert.assertFalse(content, content.contains("js.loader.modules.extender.api"));
 	}
@@ -1307,9 +1310,9 @@ public class CreateCommandTest {
 
 		_bladeTest.run(sevenOneArgs);
 
-		File npmbundlerrc = new File(modulesDir, "seven-one/build.gradle");
+		File buildGradle = new File(modulesDir, "seven-one/build.gradle");
 
-		String content = new String(IO.read(npmbundlerrc));
+		String content = new String(IO.read(buildGradle));
 
 		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
 	}
@@ -1492,9 +1495,9 @@ public class CreateCommandTest {
 
 		_bladeTest.run(sevenZeroArgs);
 
-		File npmbundlerrc = new File(tempRoot, "seven-zero/build.gradle");
+		File buildGradle = new File(tempRoot, "seven-zero/build.gradle");
 
-		String content = new String(IO.read(npmbundlerrc));
+		String content = new String(IO.read(buildGradle));
 
 		Assert.assertFalse(content.contains("js.loader.modules.extender.api"));
 	}
@@ -1508,9 +1511,9 @@ public class CreateCommandTest {
 
 		_bladeTest.run(sevenOneArgs);
 
-		File npmbundlerrc = new File(tempRoot, "seven-one/build.gradle");
+		File buildGradle = new File(tempRoot, "seven-one/build.gradle");
 
-		String content = new String(IO.read(npmbundlerrc));
+		String content = new String(IO.read(buildGradle));
 
 		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
 	}
@@ -1606,6 +1609,16 @@ public class CreateCommandTest {
 		_bladeTest.run(args);
 
 		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
+
+		File bladeSettings = new File(workspace, ".blade/settings.properties");
+
+		try (InputStream inputStream = new FileInputStream(bladeSettings)) {
+			Properties properties = new Properties();
+
+			properties.load(inputStream);
+
+			Assert.assertEquals("7.1", properties.getProperty("liferay.version.default"));
+		}
 	}
 
 	private void _makeWorkspace70(File workspace) throws Exception {
@@ -1614,6 +1627,16 @@ public class CreateCommandTest {
 		_bladeTest.run(args);
 
 		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
+
+		File bladeSettings = new File(workspace, ".blade/settings.properties");
+
+		try (InputStream inputStream = new FileInputStream(bladeSettings)) {
+			Properties properties = new Properties();
+
+			properties.load(inputStream);
+
+			Assert.assertEquals("7.0", properties.getProperty("liferay.version.default"));
+		}
 	}
 
 	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {
