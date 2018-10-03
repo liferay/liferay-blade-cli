@@ -379,13 +379,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	private String _getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
 		String liferayVersion = createArgs.getLiferayVersion();
 
-		if (liferayVersion != null) {
-			return liferayVersion;
+		if (liferayVersion == null) {
+			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
+
+			liferayVersion = bladeSettings.getLiferayVersionDefault();
 		}
-
-		BladeSettings bladeSettings = bladeCLI.getBladeSettings();
-
-		liferayVersion = bladeSettings.getLiferayVersionDefault();
 
 		return liferayVersion;
 	}

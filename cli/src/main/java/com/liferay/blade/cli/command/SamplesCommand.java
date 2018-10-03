@@ -52,22 +52,9 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BladeSettings bladeSettings = bladeCLI.getBladeSettings();
-
 		final SamplesArgs samplesArgs = getArgs();
 
-		String liferayVersion;
-
-		if (samplesArgs.getLiferayVersion() != null) {
-			liferayVersion = samplesArgs.getLiferayVersion();
-
-			bladeSettings.setLiferayVersionDefault(liferayVersion);
-
-			bladeSettings.save();
-		}
-		else {
-			liferayVersion = bladeSettings.getLiferayVersionDefault();
-		}
+		String liferayVersion = _getLiferayVersion(bladeCLI, samplesArgs);
 
 		final String bladeRepoName = "liferay-blade-samples-" + liferayVersion;
 
@@ -196,6 +183,18 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
 
 		BladeUtil.unzip(bladeRepoArchive, cachePath.toFile(), null);
+	}
+
+	private String _getLiferayVersion(BladeCLI bladeCLI, SamplesArgs samplesArgs) throws IOException {
+		String liferayVersion = samplesArgs.getLiferayVersion();
+
+		if (liferayVersion == null) {
+			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
+
+			liferayVersion = bladeSettings.getLiferayVersionDefault();
+		}
+
+		return liferayVersion;
 	}
 
 	private void _listSamples(String bladeRepoName) throws IOException {

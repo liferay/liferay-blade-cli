@@ -209,9 +209,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		settings.setProfileName(build);
 
-		String defaultLiferayVersion = initArgs.getLiferayVersion();
+		String liferayVersion = initArgs.getLiferayVersion();
 
-		settings.setLiferayVersionDefault(defaultLiferayVersion);
+		settings.setLiferayVersionDefault(liferayVersion);
 
 		settings.save();
 	}
