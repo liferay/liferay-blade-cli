@@ -20,6 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
@@ -56,13 +57,18 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		final SamplesArgs samplesArgs = getArgs();
 
-		final String liferayVersion;
+		String bladeSettingsContent = bladeSettings.toString();
+		String liferayVersion;
 
-		if(!bladeSettings.getLiferayVersion().isEmpty()) {
+		if (!StringUtil.isNullOrEmpty(bladeSettingsContent) && (bladeSettings.getLiferayVersion() != null)) {
 			liferayVersion = bladeSettings.getLiferayVersion();
 		}
 		else {
 			liferayVersion = samplesArgs.getLiferayVersion();
+
+			bladeSettings.setLiferayVersion(liferayVersion);
+
+			bladeSettings.save();
 		}
 
 		final String bladeRepoName = "liferay-blade-samples-" + liferayVersion;

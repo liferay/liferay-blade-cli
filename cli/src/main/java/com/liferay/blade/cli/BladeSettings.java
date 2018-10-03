@@ -29,16 +29,16 @@ import java.util.Properties;
  */
 public class BladeSettings {
 
-	public String getLiferayVersion() {
-		return _properties.getProperty("liferay.version.default");
-	}
-
 	public BladeSettings(File settingsFile) throws IOException {
 		_settingsFile = settingsFile;
 
 		if (_settingsFile.exists()) {
 			load();
 		}
+	}
+
+	public String getLiferayVersion() {
+		return _properties.getProperty("liferay.version.default");
 	}
 
 	public String getProfileName() {
@@ -71,8 +71,7 @@ public class BladeSettings {
 		_properties.setProperty("profile.name", profileName);
 	}
 
-	private static final Properties _properties = new Properties();
-
+	private final Properties _properties = new Properties();
 	private final File _settingsFile;
 
 }
