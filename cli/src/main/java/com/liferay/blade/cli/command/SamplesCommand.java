@@ -61,12 +61,12 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		if (samplesArgs.getLiferayVersion() != null) {
 			liferayVersion = samplesArgs.getLiferayVersion();
 
-			bladeSettings.setLiferayVersion(liferayVersion);
+			bladeSettings.setLiferayVersionDefault(liferayVersion);
 
 			bladeSettings.save();
 		}
 		else {
-			liferayVersion = bladeSettings.getLiferayVersion();
+			liferayVersion = bladeSettings.getLiferayVersionDefault();
 		}
 
 		final String bladeRepoName = "liferay-blade-samples-" + liferayVersion;

@@ -210,12 +210,12 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		if (createArgs.getLiferayVersion() != null) {
 			liferayVersion = createArgs.getLiferayVersion();
 
-			bladeSettings.setLiferayVersion(liferayVersion);
+			bladeSettings.setLiferayVersionDefault(liferayVersion);
 
 			bladeSettings.save();
 		}
 		else {
-			liferayVersion = bladeSettings.getLiferayVersion();
+			liferayVersion = bladeSettings.getLiferayVersionDefault();
 		}
 
 		projectTemplatesArgs.setLiferayVersion(liferayVersion);

@@ -37,7 +37,7 @@ public class BladeSettings {
 		}
 	}
 
-	public String getLiferayVersion() {
+	public String getLiferayVersionDefault() {
 		if (_properties.getProperty("liferay.version.default") != null) {
 			return _properties.getProperty("liferay.version.default");
 		}
@@ -68,7 +68,7 @@ public class BladeSettings {
 		}
 	}
 
-	public void setLiferayVersion(String liferayVersion) {
+	public void setLiferayVersionDefault(String liferayVersion) {
 		_properties.setProperty("liferay.version.default", liferayVersion);
 	}
 
