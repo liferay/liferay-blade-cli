@@ -20,7 +20,6 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
@@ -206,18 +205,17 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
 
-		String bladeSettingsContent = bladeSettings.toString();
 		String liferayVersion;
 
-		if (!StringUtil.isNullOrEmpty(bladeSettingsContent) && (bladeSettings.getLiferayVersion() != null)) {
-			liferayVersion = bladeSettings.getLiferayVersion();
-		}
-		else {
+		if (createArgs.getLiferayVersion() != null) {
 			liferayVersion = createArgs.getLiferayVersion();
 
 			bladeSettings.setLiferayVersion(liferayVersion);
 
 			bladeSettings.save();
+		}
+		else {
+			liferayVersion = bladeSettings.getLiferayVersion();
 		}
 
 		projectTemplatesArgs.setLiferayVersion(liferayVersion);
