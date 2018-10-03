@@ -45,6 +45,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -186,6 +187,8 @@ public class InstallExtensionCommandTest {
 
 	@Test
 	public void testInstallCustomGithubExtension() throws Exception {
+		Assume.assumeFalse(_isWindows());
+
 		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
 
 		File root = temporaryFolder.getRoot();
@@ -330,6 +333,14 @@ public class InstallExtensionCommandTest {
 		}
 
 		Assert.assertFalse(message.toString(), realChange);
+	}
+
+	private boolean _isWindows() {
+		String osName = System.getProperty("os.name");
+
+		osName = osName.toLowerCase();
+
+		return osName.contains("win");
 	}
 
 	private String _testBladeWithInteractive(File userHomeDir, String[] args, String data) throws Exception {
