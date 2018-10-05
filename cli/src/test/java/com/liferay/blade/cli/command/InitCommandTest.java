@@ -150,6 +150,31 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testBladeInitWithCustomProfile() throws Exception {
+		File tempDir = temporaryFolder.newFolder();
+
+		String basePath = new File(tempDir.getPath(), ".").getAbsolutePath();
+
+		String[] args = {"--base", basePath, "init", "-p", "myprofile"};
+
+		TestUtil.runBlade(args);
+
+		Assert.assertTrue(WorkspaceUtil.isWorkspace(tempDir));
+
+		File settingsFile = new File(basePath + "/.blade/settings.properties");
+
+		Properties props = new Properties();
+
+		try (FileInputStream fileInputStream = new FileInputStream(settingsFile)) {
+			props.load(fileInputStream);
+
+			String profileName = props.getProperty("profile.name");
+
+			Assert.assertEquals("myprofile", profileName);
+		}
+	}
+
+	@Test
 	public void testDefaultInitWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 

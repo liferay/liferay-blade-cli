@@ -24,6 +24,8 @@ import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.project.templates.ProjectTemplates;
+import com.liferay.project.templates.internal.util.FileUtil;
+import com.liferay.project.templates.internal.util.ProjectTemplatesUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,6 +47,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -181,6 +184,37 @@ public class BladeUtil {
 		}
 
 		return null;
+	}
+
+	public static Map<String, String> getInitTemplates(BladeCLI bladeCLI) {
+		Map<String, String> initTemplates = new HashMap<>();
+
+		initTemplates.put("workspace", "Liferay Workspace built with Gradle or Maven.");
+
+		Path extensions = bladeCLI.getExtensionsPath();
+
+		try {
+			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(
+				extensions, "*.project.templates.workspace*");
+
+			Iterator<Path> iterator = directoryStream.iterator();
+
+			while (iterator.hasNext()) {
+				Path path = iterator.next();
+
+				String fileName = String.valueOf(path.getFileName());
+
+				String template = ProjectTemplatesUtil.getTemplateName(fileName);
+
+				String bundleDescription = FileUtil.getManifestProperty(path.toFile(), "Bundle-Description");
+
+				initTemplates.put(template, bundleDescription);
+			}
+		}
+		catch (IOException ioe) {
+		}
+
+		return initTemplates;
 	}
 
 	public static String getManifestProperty(Path pathToJar, String propertyName) throws IOException {

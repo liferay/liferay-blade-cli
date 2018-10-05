@@ -40,8 +40,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author Gregory Amerson
@@ -151,6 +153,13 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
+		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
+
+		Path customTemplatesPath = bladeCLI.getExtensionsPath();
+
+		archetypesDirs.add(FileUtil.getJarFile(ProjectTemplates.class));
+		archetypesDirs.add(customTemplatesPath.toFile());
+
 		if ((name == null) || Objects.equals(name, ".")) {
 			name = destDir.getName();
 		}
@@ -171,7 +180,23 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		projectTemplatesArgs.setLiferayVersion(initArgs.getLiferayVersion());
 		projectTemplatesArgs.setMaven(mavenBuild);
 		projectTemplatesArgs.setName(name);
-		projectTemplatesArgs.setTemplate("workspace");
+
+		String template = "workspace";
+
+		Map<String, String> initTemplates = BladeUtil.getInitTemplates(bladeCLI);
+
+		String profileName = initArgs.getProfileName();
+
+		if (profileName != null) {
+			Set<String> templateNames = initTemplates.keySet();
+			String customInitTemplateName = "workspace-" + profileName;
+
+			if (templateNames.contains(customInitTemplateName)) {
+				template = customInitTemplateName;
+			}
+		}
+
+		projectTemplatesArgs.setTemplate(template);
 
 		new ProjectTemplates(projectTemplatesArgs);
 
@@ -207,7 +232,11 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		BladeSettings settings = bladeCLI.getBladeSettings();
 
-		settings.setProfileName(build);
+		if (profileName == null) {
+			profileName = build;
+		}
+
+		settings.setProfileName(profileName);
 
 		String liferayVersion = initArgs.getLiferayVersion();
 
