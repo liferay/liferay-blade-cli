@@ -64,19 +64,18 @@ Once you have your command, build it with gradle `gradle build` and then you sho
 it in blade by running `$ blade extension install /path/to/your/blade-command/build/libs/blade-command.jar` or by simply copying
 the file to ${user.home}/.blade/extensions
 
-** Give it a try! **
+**Give it a try!**
 ```
 $ blade help
 ```
 Now you should see your new custom command listed!.  If not, contact us on our #blade forum on the Liferay community slack channel.  https://community.liferay.com/it/chat
 blade channel is here: https://liferay-community.slack.com/messages/C5US8D29Y
 
-
 ### Custom project templates
 
 Blade comes with over 37+ project templates (whew!) right now, but many times you may feel that those are too simple or
 don't fit the right need for your development team.  You can create new custom project templates that fit exactly in
-your own team's workflow and have blade use it instead.  Tto do that simply follow the example receipt here for how to
+your own team's workflow and have blade use it instead.  To do that simply follow the example receipt here for how to
 build your own custom project template.
 
 https://github.com/liferay/liferay-blade-cli/tree/master/extensions/sample-template
@@ -90,7 +89,7 @@ Here are a few things to notice from this sample.
 Once you have your custom template you can install it by just copying to ${user.home}/.blade/extensions or using the
 `$ blade extension install /path/to/org.myorg.project.templates.mywebapp-1.0.0.jar`
 
-** Give it a try! **
+**Give it a try!**
 ```
 $ blade create -l
 ```
@@ -120,7 +119,7 @@ would need to be overridden.
 
 The way to "override" existing commands can be see here in the example: https://github.com/liferay/liferay-blade-cli/tree/master/extensions/sample-profile/src/main/java/com/liferay/extensions/sample/profile
 
-Here we have a "new" command that is only availble in this profile and also an "overridden" command that overrides an existing blade command just for this profle.
+Here we have a "new" command that is only available in this profile and also an "overridden" command that overrides an existing blade command just for this profile.
 
 The way that a "profile" is set, so that blade knows which profile is active depends on the following file in the base
 of your Liferay workspace
@@ -136,8 +135,8 @@ $ blade init -p myprofile my-new-custom-workspace
 After that you will see there is a `my-new-custom-workspace/.blade/settings.properties` file containing the following:
 ```
 liferay.version.default=7.1
-profile.name=myprofile ```
-
+profile.name=myprofile
+```
 
 ## Roadmap
 
