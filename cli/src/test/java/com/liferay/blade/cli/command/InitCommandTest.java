@@ -153,7 +153,7 @@ public class InitCommandTest {
 	public void testBladeInitWithCustomProfile() throws Exception {
 		File tempDir = temporaryFolder.newFolder();
 
-		String basePath = new File(tempDir.getPath(), ".").getAbsolutePath();
+		String basePath = new File(tempDir.getPath()).getAbsolutePath();
 
 		String[] args = {"--base", basePath, "init", "-p", "myprofile"};
 
@@ -161,7 +161,7 @@ public class InitCommandTest {
 
 		Assert.assertTrue(WorkspaceUtil.isWorkspace(tempDir));
 
-		File settingsFile = new File(basePath + "/.blade/settings.properties");
+		File settingsFile = new File(basePath, ".blade/settings.properties");
 
 		Properties props = new Properties();
 
