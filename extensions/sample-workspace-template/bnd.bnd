@@ -1,0 +1,9 @@
+Bundle-Description: Creates a sample workspace template
+Bundle-Name: Liferay Project Templates Workspace Sample
+Bundle-SymbolicName: com.liferay.project.templates.workspace.sample
+Bundle-Version: 1.0.0
+Liferay-Versions: [7,8)
+-removeheaders:\
+	Import-Package,\
+	Private-Package,\
+	Require-Capability
