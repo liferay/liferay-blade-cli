@@ -25,6 +25,10 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandDescription = "Initializes a new Liferay workspace", commandNames = "init")
 public class InitArgs extends BaseArgs {
 
+	/**
+	 * @deprecated use {@link #getProfileName()} method instead.
+	 */
+	@Deprecated
 	public String getBuild() {
 		return _build;
 	}
@@ -53,6 +57,10 @@ public class InitArgs extends BaseArgs {
 		return _upgrade;
 	}
 
+	/**
+	 * @deprecated use {@link #setProfileName(String)} method instead.
+	 */
+	@Deprecated
 	public void setBuild(String build) {
 		_build = build;
 	}
@@ -83,7 +91,7 @@ public class InitArgs extends BaseArgs {
 
 	@Parameter(
 		description = "Specify the build type of liferay workspace. Available options are gradle, maven. (default gradle)",
-		names = {"-b", "--build"}
+		hidden = true, names = {"-b", "--build"}
 	)
 	private String _build = "gradle";
 

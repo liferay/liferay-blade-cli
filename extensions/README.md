@@ -1,8 +1,9 @@
 # Blade Extensions
 
 There are several ways that you can extend `blade` CLI.  Most simply you can add custom `commands` and `templates`.
-But likely if you want to customize a developer's experience with `blade` to do enable some new developer workflow, you
-want to create custom commands and templates that all are associated with a `blade` _profile_.
+But likely if you want to customize a developer's experience with `blade`  to enable a fully-customized liferay workspace
+workflow, tailored for your requirements, you want to create custom commands and templates that all are associated
+with a `blade` _profile_.
 
 When blade cli starts it will look in the user's home directory ${user.home}/.blade/extensions folder for any jar files.
 All jar files will be searched to see if they contain valid blade extensions detailed below.
@@ -68,6 +69,7 @@ the file to ${user.home}/.blade/extensions
 $ blade help
 ```
 Now you should see your new custom command listed!.  If not, contact us on our #blade forum on the Liferay community slack channel.  https://community.liferay.com/it/chat
+blade channel is here: https://liferay-community.slack.com/messages/C5US8D29Y
 
 
 ### Custom project templates
@@ -125,13 +127,13 @@ of your Liferay workspace
 
 `${workspaceDir}/.blade/settings.properties`  and in there, there is a property for the profile name that set.
 
-The name of a profile that is "set" on a workspace has to do with the option that you specific in the `blade init` command.
+The name of a profile that is set on a workspace has to do with the option that you specify in the `blade init -p <profile-name>` command.
 
 ```
 $ blade init -p myprofile my-new-custom-workspace
 ```
 
-After that you will see there is a `my-new-custom-workspace/.blade/settings.properties` file and in there is this:
+After that you will see there is a `my-new-custom-workspace/.blade/settings.properties` file containing the following:
 ```
 liferay.version.default=7.1
 profile.name=myprofile ```
@@ -139,14 +141,18 @@ profile.name=myprofile ```
 
 ## Roadmap
 
-We have some existing plans for blade extensions but are looking for feedback from community of developers.
+We have some existing plans for blade extensions but are looking for feedback from our community.  Please let
+use hear from you over on the blade channel in Liferay Community Slack
 
-Firstly, we do have plans for a centralized list of extensions that can be installable from commandline
+https://community.liferay.com/it/chat
+https://liferay-community.slack.com/messages/C5US8D29Y
+
+Firstly, we do have plans for a centralized list of extensions that can be installable from blade cli.
 ```
 $ blade extension list
 (would print out current list of known extensions)
 ```
-But first we need developers like you to help build extensions! :)
+But first we need developers like you to help build their own extensions! :)
 
 Also we will be pulling out some of the features that are inside of blade that some developers don't want or use into
 their own extensions thereby reducing the footprint of blade cli for default installs.

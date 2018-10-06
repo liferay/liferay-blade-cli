@@ -55,6 +55,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void execute() throws Exception {
 		InitArgs initArgs = getArgs();
 		BladeCLI bladeCLI = getBladeCLI();
@@ -62,8 +63,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		BaseArgs args = bladeCLI.getBladeArgs();
 
 		String name = initArgs.getName();
-
-		String build = initArgs.getBuild();
 
 		File baseDir = new File(args.getBase());
 
@@ -91,7 +90,13 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			return;
 		}
 
-		boolean mavenBuild = "maven".equals(build);
+		String profileName = initArgs.getProfileName();
+
+		if (profileName == null) {
+			profileName = initArgs.getBuild();
+		}
+
+		boolean mavenBuild = "maven".equals(profileName);
 
 		if (destDir.exists()) {
 			if (pluginsSDK) {
@@ -185,8 +190,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		Map<String, String> initTemplates = BladeUtil.getInitTemplates(bladeCLI);
 
-		String profileName = initArgs.getProfileName();
-
 		if (profileName != null) {
 			Set<String> templateNames = initTemplates.keySet();
 			String customInitTemplateName = "workspace-" + profileName;
@@ -233,7 +236,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		BladeSettings settings = bladeCLI.getBladeSettings();
 
 		if (profileName == null) {
-			profileName = build;
+			profileName = "gradle";
 		}
 
 		settings.setProfileName(profileName);

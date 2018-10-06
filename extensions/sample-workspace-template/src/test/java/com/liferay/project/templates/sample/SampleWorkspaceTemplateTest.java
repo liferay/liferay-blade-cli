@@ -51,7 +51,7 @@ public class SampleWorkspaceTemplateTest {
 
 		File tempDir = temporaryFolder.newFolder();
 
-		String basePath = new File(tempDir.getPath(), ".").getAbsolutePath();
+		String basePath = new File(tempDir.getPath()).getAbsolutePath();
 
 		String[] args = {"--base", basePath, "init", "-p", "sample"};
 
