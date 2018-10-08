@@ -1,5 +1,24 @@
 # Liferay Blade CLI Change Log
 
+## 3.2.0 - 2018-10-08 - 46b7d0a258376c9dccd5fecaae6156ed5a797d89
+
+- [BLADE-214]: Create a `blade-extension` blade sample project, demonstrating how blade may be extended with custom commands
+- [BLADE-286]: blade should be able to create module ext project
+- [BLADE-294]: `blade open .` does not work
+- [BLADE-296]: deploy for wars is swallowing output
+- [BLADE-300]: the setter methods for InitArgs
+- [BLADE-301]: Add set methods for Server related args
+- [BLADE-302]: Investigate blade gw deploy
+- [BLADE-304]: As a developer I want blade to remember what liferay version is set so I don't have to
+- [BLADE-307]: Refactor extension tests into the extensions themselves
+- [BLADE-308]: improve blade classloader for both embedding and custom commands
+- [BLADE-309]: Commands with @BladeProfile are global
+- [BLADE-310]: Open command fails when running with argument
+- [BLADE-311]: Use a combined classloader for loading classes in blade
+- [BLADE-314]: As a developer, I would like to get version specific samples
+- [BLADE-315]: `blade server init` command for tooling-agnostic way to initialize the liferay-workspace
+- [BLADE-323]: Create documentation for building blade profiles
+
 ## 3.1.2 - 2018-08-30 - ba8e7d64a866b4fbef383be37522d0eaf3bc8b4f
 
 - [BLADE-256]: As a developer, i'd like tests to run in parallel
@@ -141,6 +160,21 @@ Updated to use Project Templates 4.1.0
 [BLADE-280]: https://issues.liferay.com/browse/BLADE-280
 [BLADE-281]: https://issues.liferay.com/browse/BLADE-281
 [BLADE-284]: https://issues.liferay.com/browse/BLADE-284
+[BLADE-286]: https://issues.liferay.com/browse/BLADE-286
+[BLADE-294]: https://issues.liferay.com/browse/BLADE-294
+[BLADE-296]: https://issues.liferay.com/browse/BLADE-296
+[BLADE-300]: https://issues.liferay.com/browse/BLADE-300
+[BLADE-301]: https://issues.liferay.com/browse/BLADE-301
+[BLADE-302]: https://issues.liferay.com/browse/BLADE-302
+[BLADE-304]: https://issues.liferay.com/browse/BLADE-304
+[BLADE-307]: https://issues.liferay.com/browse/BLADE-307
+[BLADE-308]: https://issues.liferay.com/browse/BLADE-308
+[BLADE-309]: https://issues.liferay.com/browse/BLADE-309
+[BLADE-310]: https://issues.liferay.com/browse/BLADE-310
+[BLADE-311]: https://issues.liferay.com/browse/BLADE-311
+[BLADE-314]: https://issues.liferay.com/browse/BLADE-314
+[BLADE-315]: https://issues.liferay.com/browse/BLADE-315
+[BLADE-323]: https://issues.liferay.com/browse/BLADE-323
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
