@@ -50,7 +50,7 @@ import com.liferay.blade.cli.util.WorkspaceUtil;
  */
 public class MavenBladeUtil {
 
-	public static Properties getMavenProperties(File file) {
+	public static Properties getMavenProperties(File baseDir) {
 		try {
 			Properties properties = new Properties();
 
@@ -58,7 +58,9 @@ public class MavenBladeUtil {
 
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
-			Document document = documentBuilder.parse(file);
+			File pomXmlFile = getPomXMLFile(baseDir);
+
+			Document document = documentBuilder.parse(pomXmlFile);
 
 			Element documentElement = document.getDocumentElement();
 
