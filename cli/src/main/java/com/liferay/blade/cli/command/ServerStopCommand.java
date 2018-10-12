@@ -31,7 +31,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -51,24 +50,10 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 		File baseDir = new File(args.getBase());
 
-		File gradleWrapperFile = BladeUtil.getGradleWrapper(baseDir);
-
-		if (gradleWrapperFile == null) {
-			throw new NoSuchElementException("Unable to locate Gradle Wrapper, cannot process command");
-		}
-
-		Path gradleWrapperPath = gradleWrapperFile.toPath();
-
-		Path parent = gradleWrapperPath.getParent();
-
-		File rootDir = parent.toFile();
-
 		String serverType = null;
 
-		Path rootDirPath = rootDir.toPath();
-
-		if (WorkspaceUtil.isWorkspace(rootDir)) {
-			Properties properties = WorkspaceUtil.getGradleProperties(rootDir);
+		if (WorkspaceUtil.isWorkspace(baseDir)) {
+			Properties properties = getProperties();
 
 			String liferayHomePath = properties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR_PROPERTY);
 
@@ -99,7 +84,11 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 				liferayHomeDir = tempLiferayHome.normalize();
 			}
 			else {
-				Path tempFile = rootDirPath.resolve(tempLiferayHome);
+				File workspaceRootDir = WorkspaceUtil.getWorkspaceDir(baseDir);
+
+				Path workspaceRootDirPath = workspaceRootDir.toPath();
+
+				Path tempFile = workspaceRootDirPath.resolve(liferayHomePath);
 
 				liferayHomeDir = tempFile.normalize();
 			}
@@ -108,7 +97,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 		}
 		else {
 			try {
-				List<Properties> propertiesList = BladeUtil.getAppServerProperties(rootDir);
+				List<Properties> propertiesList = BladeUtil.getAppServerProperties(baseDir);
 
 				String appServerParentDir = "";
 
@@ -118,7 +107,9 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 							BladeUtil.APP_SERVER_PARENT_DIR_PROPERTY);
 
 						if ((appServerParentDirTemp != null) && !appServerParentDirTemp.equals("")) {
-							Path rootDirRealPath = rootDirPath.toRealPath();
+							Path rootDirRealPath = baseDir.toPath();
+
+							rootDirRealPath = rootDirRealPath.toRealPath();
 
 							appServerParentDirTemp = appServerParentDirTemp.replace(
 								"${project.dir}", rootDirRealPath.toString());
@@ -140,7 +131,11 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 					_commandServer(Paths.get(appServerParentDir), serverType);
 				}
 				else {
-					_commandServer(rootDirPath.resolve(appServerParentDir), serverType);
+					Path rootDirRealPath = baseDir.toPath();
+
+					rootDirRealPath = rootDirRealPath.toRealPath();
+
+					_commandServer(rootDirRealPath.resolve(appServerParentDir), serverType);
 				}
 			}
 			catch (Exception e) {
@@ -152,6 +147,16 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 	@Override
 	public Class<ServerStopArgs> getArgsClass() {
 		return ServerStopArgs.class;
+	}
+
+	protected Properties getProperties() {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		return WorkspaceUtil.getGradleProperties(baseDir);
 	}
 
 	private void _commandServer(Path dir, String serverType) throws Exception {
