@@ -31,6 +31,7 @@ public class InitCommandMaven extends InitCommand {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void execute() throws Exception {
 		InitArgs initArgs = getArgs();
 

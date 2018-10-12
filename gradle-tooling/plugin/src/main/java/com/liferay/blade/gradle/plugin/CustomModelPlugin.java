@@ -46,16 +46,16 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
 public class CustomModelPlugin implements Plugin<Project> {
 
 	@Inject
-	public CustomModelPlugin(ToolingModelBuilderRegistry registry) {
-		this.registry = registry;
+	public CustomModelPlugin(ToolingModelBuilderRegistry toolingModelBuilderRegistry) {
+		_toolingModelBuilderRegistry = toolingModelBuilderRegistry;
 	}
 
 	@Override
 	public void apply(Project project) {
-		registry.register(new CustomModelBuilder());
+		_toolingModelBuilderRegistry.register(new CustomModelBuilder());
 	}
 
-	private final ToolingModelBuilderRegistry registry;
+	private final ToolingModelBuilderRegistry _toolingModelBuilderRegistry;
 
 	private static class CustomModelBuilder implements ToolingModelBuilder {
 
@@ -91,7 +91,7 @@ public class CustomModelPlugin implements Plugin<Project> {
 
 				Set<File> files = fileCollection.getFiles();
 
-				Set<File> outputFiles = projectOutputFiles.computeIfAbsent(projectPath, (p) -> new HashSet<>());
+				Set<File> outputFiles = projectOutputFiles.computeIfAbsent(projectPath, p -> new HashSet<>());
 
 				outputFiles.addAll(files);
 			}
@@ -107,7 +107,7 @@ public class CustomModelPlugin implements Plugin<Project> {
 
 				Set<File> files = fileCollection.getFiles();
 
-				Set<File> outputFiles = projectOutputFiles.computeIfAbsent(project.getPath(), (p) -> new HashSet<>());
+				Set<File> outputFiles = projectOutputFiles.computeIfAbsent(project.getPath(), p -> new HashSet<>());
 
 				outputFiles.addAll(files);
 			}

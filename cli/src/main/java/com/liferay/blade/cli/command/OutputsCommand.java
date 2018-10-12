@@ -20,10 +20,11 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.gradle.GradleTooling;
 
 import java.io.File;
-import java.io.PrintStream;
 
 import java.nio.file.Path;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -40,33 +41,26 @@ public class OutputsCommand extends BaseCommand<OutputsArgs> {
 
 		BaseArgs args = bladeCLI.getBladeArgs();
 
-		final File base = new File(args.getBase());
-
-		final Path basePath = base.toPath();
-
-		final Path basePathRoot = basePath.getRoot();
+		File base = new File(args.getBase());
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		final Set<File> outputs = GradleTooling.getOutputFiles(cachePath.toFile(), base);
+		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(cachePath.toFile(), base);
 
-		for (File output : outputs) {
-			Path outputPath = output.toPath();
+		for (Entry<String, Set<File>> entry : projectOutputFiles.entrySet()) {
+			String projectPath = entry.getKey();
 
-			Path outputPathRoot = outputPath.getRoot();
+			bladeCLI.out(projectPath);
 
-			Object print = null;
+			Set<File> outputFiles = entry.getValue();
 
-			PrintStream out = bladeCLI.out();
+			for (File output : outputFiles) {
+				Path outputPath = output.toPath();
 
-			if ((basePathRoot != null) && (outputPathRoot != null)) {
-				print = basePath.relativize(outputPath);
-			}
-			else {
-				out.println(outputPath);
+				bladeCLI.out("\t" + outputPath);
 			}
 
-			out.println(print);
+			bladeCLI.out("\n");
 		}
 	}
 

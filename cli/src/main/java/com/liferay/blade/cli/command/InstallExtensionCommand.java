@@ -37,7 +37,9 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,6 +57,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	@Override
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
+
 		InstallExtensionArgs args = getArgs();
 
 		String pathArg = args.getPath();
@@ -158,10 +161,14 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		return InstallExtensionArgs.class;
 	}
 
-	private static Set<Path> _getExistingPaths(Set<File> outputFiles) {
-		Stream<File> stream = outputFiles.stream();
+	private static Set<Path> _getExistingPaths(Map<String, Set<File>> projectOutputFiles) {
+		Collection<Set<File>> values = projectOutputFiles.values();
 
-		return stream.map(
+		Stream<Set<File>> stream = values.stream();
+
+		return stream.flatMap(
+			files -> files.stream()
+		).map(
 			File::toPath
 		).filter(
 			Files::exists
@@ -225,7 +232,8 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		Path cachePath = bladeCLI.getCachePath();
 
-		Set<File> outputFiles = GradleTooling.getOutputFiles(cachePath.toFile(), projectPath.toFile());
+		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(
+			cachePath.toFile(), projectPath.toFile());
 
 		ProcessResult processResult = gradleExec.executeTask("assemble -x check", projectPath.toFile());
 
@@ -237,7 +245,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 			throw new Exception("Gradle command returned error code " + resultCode + System.lineSeparator() + output);
 		}
 
-		return _getExistingPaths(outputFiles);
+		return _getExistingPaths(projectOutputFiles);
 	}
 
 	private void _installExtension(Path extensionPath) throws IOException {

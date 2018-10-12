@@ -74,6 +74,7 @@ public class AetherClient {
 	public Artifact findLatestAvailableArtifact(String groupIdArtifactId) throws ArtifactResolutionException {
 		final RepositorySystem system = _newRepositorySystem();
 		final List<RemoteRepository> repos = _repos();
+
 		final String range = "[0,)";
 
 		final Artifact artifactRange = new DefaultArtifact(groupIdArtifactId + ":" + range);

@@ -55,16 +55,21 @@ public class OpenCommand extends BaseCommand<OpenArgs> {
 
 		bladeCLI.trace("Trying to open directory : " + file);
 
-		IDEConnector connector = new IDEConnector(trace -> bladeCLI.trace(trace));
+		try {
+			IDEConnector connector = new IDEConnector(trace -> bladeCLI.trace(trace));
 
-		if (file.isDirectory()) {
-			Object retval = connector.openDir(file);
+			if (file.isDirectory()) {
+				Object retval = connector.openDir(file);
 
-			if (retval != null) {
-				_addError("open", retval.toString());
+				if (retval != null) {
+					_addError("open", retval.toString());
 
-				return;
+					return;
+				}
 			}
+		}
+		catch (Exception e) {
+			bladeCLI.error("Unable to connect to IDE to open directory.");
 		}
 	}
 

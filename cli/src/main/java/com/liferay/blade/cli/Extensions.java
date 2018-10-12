@@ -131,8 +131,9 @@ public class Extensions implements AutoCloseable {
 			spaceCommandSplitCollection::add
 		);
 
-		Collection<String> flagsWithoutArgs = _getFlags(BaseArgs.class, false);
 		Collection<String> flagsWithArgs = _getFlags(BaseArgs.class, true);
+
+		Collection<String> flagsWithoutArgs = _getFlags(BaseArgs.class, false);
 
 		for (int x = 0; x < argsList.size(); x++) {
 			String s = argsList.get(x);

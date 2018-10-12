@@ -463,6 +463,7 @@ public class BladeUtil {
 
 				if (!foundStartEntry) {
 					foundStartEntry = entryToStart.equals(entryName);
+
 					continue;
 				}
 

@@ -103,6 +103,7 @@ public class BndProperties extends Properties {
 
 	public String getReader(Reader a) throws IOException {
 		StringWriter sw = new StringWriter();
+
 		char[] buffer = new char[_PAGE_SIZE];
 
 		int size = a.read(buffer);
@@ -136,6 +137,7 @@ public class BndProperties extends Properties {
 
 			BndPropertiesValue bnd = new BndPropertiesValue();
 			char c = 0;
+
 			int pos = 0;
 
 			// Leading whitespaces must be deleted first.
@@ -260,6 +262,7 @@ public class BndProperties extends Properties {
 				bnd.setFormatedValue(line.substring(pos));
 				addKeyList(keyString);
 				put(keyString, bnd);
+
 				continue;
 			}
 

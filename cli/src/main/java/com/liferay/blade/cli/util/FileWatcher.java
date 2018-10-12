@@ -118,6 +118,7 @@ public class FileWatcher {
 
 			if (dir == null) {
 				System.err.println("WatchKey not recognized!!");
+
 				continue;
 			}
 

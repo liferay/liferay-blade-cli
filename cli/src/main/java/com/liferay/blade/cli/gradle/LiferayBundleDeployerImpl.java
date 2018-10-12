@@ -272,6 +272,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 		String requestWithoutBreaks = request.replace(System.lineSeparator(), "");
 		String responseWithoutBreaks = response.replace(System.lineSeparator(), "");
+
 		int requestLineBreakCount = request.length() - requestWithoutBreaks.length();
 		int responseLineBreakCount = response.length() - responseWithoutBreaks.length();
 
