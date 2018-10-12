@@ -1,0 +1,25 @@
+subprojects {
+	apply plugin: "java"
+	apply plugin: "maven-publish"
+
+	group = "com.liferay.tools"
+	version = "1.2.0"
+
+	dependencies {
+		compile gradleApi()
+	}
+
+	publishing {
+		repositories {
+			maven {
+				url "$rootProject.projectDir/mavenRepo"
+			}
+		}
+
+		publications {
+			maven(MavenPublication) {
+				from components.java
+			}
+		}
+	}
+}

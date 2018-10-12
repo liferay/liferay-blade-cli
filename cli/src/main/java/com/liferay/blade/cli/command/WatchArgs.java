@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.maven.profile;
+package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.InitArgs;
-import com.liferay.blade.cli.command.InitCommand;
+import com.beust.jcommander.Parameters;
 
 /**
  * @author Gregory Amerson
- * @author Terry Jia
  */
-@BladeProfile("maven")
-public class InitCommandMaven extends InitCommand {
-
-	public InitCommandMaven() {
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public void execute() throws Exception {
-		InitArgs initArgs = getArgs();
-
-		initArgs.setBuild("maven");
-	}
-
+@Parameters(
+	commandDescription = "Watch for changes to workspace projects and automatically build, deploy, or update them into running Liferay instance.",
+	commandNames = "watch"
+)
+public class WatchArgs extends BaseArgs {
 }

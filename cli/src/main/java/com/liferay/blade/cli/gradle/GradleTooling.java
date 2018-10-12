@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.gradle.tooling.GradleConnector;
@@ -38,16 +39,16 @@ import org.gradle.tooling.ProjectConnection;
  */
 public class GradleTooling {
 
-	public static Set<File> getOutputFiles(File cacheDir, File buildDir) throws Exception {
-		final CustomModel model = _getModel(CustomModel.class, cacheDir, buildDir);
-
-		return model.getOutputFiles();
-	}
-
 	public static Set<String> getPluginClassNames(File cacheDir, File buildDir) throws Exception {
 		final CustomModel model = _getModel(CustomModel.class, cacheDir, buildDir);
 
 		return model.getPluginClassNames();
+	}
+
+	public static Map<String, Set<File>> getProjectOutputFiles(File cacheDir, File buildDir) throws Exception {
+		final CustomModel model = _getModel(CustomModel.class, cacheDir, buildDir);
+
+		return model.getProjectOutputFiles();
 	}
 
 	public static boolean isLiferayModule(File cacheDir, File buildDir) throws Exception {

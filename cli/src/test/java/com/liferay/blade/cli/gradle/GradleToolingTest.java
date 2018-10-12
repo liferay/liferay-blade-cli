@@ -20,6 +20,7 @@ import aQute.lib.io.IO;
 
 import java.io.File;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.AfterClass;
@@ -52,10 +53,16 @@ public class GradleToolingTest {
 
 	@Test
 	public void testGetOutputFiles() throws Exception {
-		Set<File> files = GradleTooling.getOutputFiles(
+		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(
 			new File(temporaryFolder.getRoot(), "build"), new File(temporaryFolder.getRoot(), "build/testws1"));
 
-		Assert.assertNotNull(files);
+		Assert.assertNotNull(projectOutputFiles);
+
+		Assert.assertEquals(
+			projectOutputFiles.toString(), true, projectOutputFiles.containsKey(":modules:testportlet"));
+
+		Set<File> files = projectOutputFiles.get(":modules:testportlet");
+
 		Assert.assertEquals(files.toString(), 1, files.size());
 	}
 

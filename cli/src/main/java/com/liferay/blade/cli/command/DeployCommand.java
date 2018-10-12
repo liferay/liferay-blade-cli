@@ -38,6 +38,7 @@ import java.nio.file.Path;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
@@ -58,6 +59,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 	@Override
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
+
 		String host = "localhost";
 		int port = 11311;
 
@@ -88,13 +90,13 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		File baseDir = new File(deployArgs.getBase());
 
-		Set<File> outputFiles = GradleTooling.getOutputFiles(cachePath.toFile(), baseDir);
+		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(cachePath.toFile(), baseDir);
 
 		if (deployArgs.isWatch()) {
-			_deployWatch(gradleExec, outputFiles, host, port);
+			_deployWatch(gradleExec, projectOutputFiles, host, port);
 		}
 		else {
-			_deploy(gradleExec, outputFiles, host, port);
+			_deploy(gradleExec, projectOutputFiles, host, port);
 		}
 	}
 
@@ -111,7 +113,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private void _deploy(GradleExec gradle, Set<File> outputFiles, String host, int port) throws Exception {
+	private void _deploy(GradleExec gradle, Map<String, Set<File>> projectOutputFiles, String host, int port)
+		throws Exception {
+
 		ProcessResult processResult = gradle.executeTask("assemble -x check");
 
 		int resultCode = processResult.getResultCode();
@@ -132,9 +136,13 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			return;
 		}
 
-		Stream<File> stream = outputFiles.stream();
+		Collection<Set<File>> values = projectOutputFiles.values();
 
-		stream.filter(
+		Stream<Set<File>> stream = values.stream();
+
+		stream.flatMap(
+			files -> files.stream()
+		).filter(
 			File::exists
 		).forEach(
 			outputFile -> {
@@ -217,14 +225,19 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		}
 	}
 
-	private void _deployWatch(final GradleExec gradleExec, final Set<File> outputFiles, String host, int port)
+	private void _deployWatch(
+			final GradleExec gradleExec, final Map<String, Set<File>> projectOutputFiles, String host, int port)
 		throws Exception {
 
-		_deploy(gradleExec, outputFiles, host, port);
+		_deploy(gradleExec, projectOutputFiles, host, port);
 
-		Stream<File> stream = outputFiles.stream();
+		Collection<Set<File>> values = projectOutputFiles.values();
 
-		Collection<Path> outputPaths = stream.map(
+		Stream<Set<File>> stream = values.stream();
+
+		Collection<Path> outputPaths = stream.flatMap(
+			files -> files.stream()
+		).map(
 			File::toPath
 		).collect(
 			Collectors.toSet()

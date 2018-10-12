@@ -1,7 +1,18 @@
+task copyDep(type: Copy)
+
 configurations {
 	download {
 		transitive = false
 	}
+}
+
+copyDep {
+	from configurations.download
+	into "$buildDir"
+}
+
+dependencies {
+	download %dep%
 }
 
 repositories {
@@ -9,13 +20,4 @@ repositories {
 	maven {
 		url '%repo%'
 	}
-}
-
-dependencies {
-	download %dep%
-}
-
-task copyDep(type: Copy) {
-	into "$buildDir"
-	from configurations.download
 }

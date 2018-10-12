@@ -92,6 +92,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 	private void _copySample(String sampleName, String bladeRepoName) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
+
 		SamplesArgs samplesArgs = getArgs();
 
 		File workDir = samplesArgs.getDir();

@@ -72,15 +72,16 @@ public class GradleExec {
 		return executeTask(task, baseDir, true);
 	}
 
-	public ProcessResult executeTask(String task, File dir, boolean captureOutput) throws Exception {
-		String executable = _getGradleExecutable(dir);
+	public ProcessResult executeTask(String task, File baseDir, boolean captureOutput) throws Exception {
+		String executable = _getGradleExecutable(baseDir);
 
 		if (captureOutput) {
 			StringPrintStream outputStream = StringPrintStream.newInstance();
 
 			StringPrintStream errorStream = StringPrintStream.newInstance();
 
-			Process process = BladeUtil.startProcess("\"" + executable + "\" " + task, dir, outputStream, errorStream);
+			Process process = BladeUtil.startProcess(
+				"\"" + executable + "\" " + task, baseDir, outputStream, errorStream);
 
 			int returnCode = process.waitFor();
 
@@ -91,7 +92,7 @@ public class GradleExec {
 			return new ProcessResult(returnCode, output, error);
 		}
 		else {
-			Process process = BladeUtil.startProcess("\"" + executable + "\" " + task, dir);
+			Process process = BladeUtil.startProcess("\"" + executable + "\" " + task, baseDir);
 
 			int returnCode = process.waitFor();
 

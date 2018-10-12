@@ -1,11 +1,16 @@
 buildscript {
 	dependencies {
-		classpath "com.gradle:build-scan-plugin:1.16"
+		classpath group: "com.gradle", name: "build-scan-plugin", version: "1.16"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
 	}
 
 	repositories {
 		maven {
 			url "https://plugins.gradle.org/m2/"
+		}
+
+		maven {
+			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 		}
 	}
 }
@@ -30,6 +35,22 @@ clean {
 }
 
 subprojects {
+	repositories {
+		maven {
+			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+		}
+	}
+
+	apply plugin: "com.liferay.source.formatter"
+
+	checkSourceFormatting {
+		maxLineLength = 120
+	}
+
+	formatSource {
+		maxLineLength = 120
+	}
+
 	plugins.withId("java") {
 		repositories {
 			flatDir {

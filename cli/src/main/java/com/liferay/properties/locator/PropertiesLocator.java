@@ -643,6 +643,7 @@ public class PropertiesLocator {
 
 		for (Map.Entry<String, ConfigurationClassData> configClass : configClassesMap.entrySet()) {
 			String className = configClass.getKey();
+
 			ConfigurationClassData configClassData = configClass.getValue();
 
 			String[] allConfigFields = _addConfigurationPropertiesByHeritance(

@@ -4,7 +4,6 @@ buildscript {
 	dependencies {
 		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.change.log.builder", version: "1.1.0"
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
 		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
 	}
 
@@ -17,13 +16,16 @@ buildscript {
 
 apply plugin: "biz.aQute.bnd.builder"
 apply plugin: "com.liferay.change.log.builder"
-apply plugin: "com.liferay.source.formatter"
 apply plugin: "java"
 apply plugin: "maven-publish"
 
 task cliTestJar(type: Jar)
 task createDepsZip(type:Zip)
 task createWrapperZip(type:Zip)
+task downloadPortal(type: Download)
+task testExecutableJar
+task testVersionCommand
+task unzipPortal(type: Copy)
 
 configurations {
 	testApi
@@ -38,10 +40,6 @@ buildChangeLog {
 	ticketIdPrefixes = ["BLADE", "IDE", "LPS"]
 }
 
-checkSourceFormatting {
-	maxLineLength = 120
-}
-
 clean.doFirst {
 	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
 }
@@ -51,11 +49,18 @@ cliTestJar {
 	from sourceSets.test.output
 }
 
+project(":gradle-tooling:model").afterEvaluate { model ->
+	createDepsZip.from model.jar.archivePath
+}
+
+project(":gradle-tooling:plugin").afterEvaluate { plugin ->
+	createDepsZip.from plugin.jar.archivePath
+}
+
 createDepsZip {
-	from "${rootProject.projectDir}/libs/"
+	dependsOn ":gradle-tooling:model:jar", ":gradle-tooling:plugin:jar"
 	archiveName = "deps.zip"
 	destinationDir = new File("${projectDir}")
-	include "com.liferay.blade.gradle.*.jar"
 }
 
 createWrapperZip {
@@ -88,14 +93,13 @@ dependencies {
 	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "3.0"
 	compile group: "org.gradle", name: "gradle-core", version: "3.0"
 	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"
-	compile name: "com.liferay.blade.gradle.model"
-	compile name: "com.liferay.blade.gradle.plugin"
 	compile name: "gradle-native-3.0"
 	compile name: "org.objectweb.asm-6.0.0"
 	compile name: "org.objectweb.asm.analysis-6.0.0"
 	compile name: "org.objectweb.asm.commons-6.0.0"
 	compile name: "org.objectweb.asm.tree-6.0.0"
 	compile name: "org.objectweb.asm.util-6.0.0"
+	compile project(":gradle-tooling:model")
 
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 
@@ -156,13 +160,15 @@ sourceSets {
 	}
 }
 
-task downloadPortal(type: Download) {
+downloadPortal {
 	src 'https://releases-cdn.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip'
 	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip')
 	onlyIfNewer true
 }
 
-task testExecutableJar(dependsOn: jar) {
+testExecutableJar {
+	dependsOn jar
+
 	doLast {
 		javaexec {
 			args = [jar.archivePath, "create", "-l"]
@@ -171,7 +177,9 @@ task testExecutableJar(dependsOn: jar) {
 	}
 }
 
-task testVersionCommand(dependsOn: jar) {
+testVersionCommand {
+	dependsOn jar
+
 	doLast {
 		javaexec {
 			args = [jar.archivePath, "version"]
@@ -182,7 +190,8 @@ task testVersionCommand(dependsOn: jar) {
 
 check.dependsOn testExecutableJar, testVersionCommand
 
-task unzipPortal(dependsOn: downloadPortal, type: Copy) {
+unzipPortal {
+	dependsOn downloadPortal
 	from zipTree(downloadPortal.dest)
 	into buildDir
 }
@@ -226,4 +235,4 @@ test {
 	maxParallelForks = forks
 }
 
-version = "3.2.0"
+version = "3.3.0"

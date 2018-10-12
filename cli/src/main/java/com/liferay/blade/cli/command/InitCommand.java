@@ -57,10 +57,11 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	@Override
 	@SuppressWarnings("deprecation")
 	public void execute() throws Exception {
-		InitArgs initArgs = getArgs();
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs args = bladeCLI.getBladeArgs();
+
+		InitArgs initArgs = getArgs();
 
 		String name = initArgs.getName();
 

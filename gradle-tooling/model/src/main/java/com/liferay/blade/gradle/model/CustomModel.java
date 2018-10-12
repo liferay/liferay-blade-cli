@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.maven.profile;
+package com.liferay.blade.gradle.model;
 
-import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.InitArgs;
-import com.liferay.blade.cli.command.InitCommand;
+import java.io.File;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Gregory Amerson
- * @author Terry Jia
  */
-@BladeProfile("maven")
-public class InitCommandMaven extends InitCommand {
+public interface CustomModel {
 
-	public InitCommandMaven() {
-	}
+	public Set<String> getPluginClassNames();
 
-	@Override
-	@SuppressWarnings("deprecation")
-	public void execute() throws Exception {
-		InitArgs initArgs = getArgs();
+	public Map<String, Set<File>> getProjectOutputFiles();
 
-		initArgs.setBuild("maven");
-	}
+	public boolean hasPlugin(String className);
+
+	public boolean isLiferayModule();
 
 }

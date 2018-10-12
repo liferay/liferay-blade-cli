@@ -1,7 +1,6 @@
 buildscript {
 	dependencies {
 		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
 		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
 	}
 
@@ -13,12 +12,7 @@ buildscript {
 }
 
 apply plugin: 'biz.aQute.bnd.builder'
-apply plugin: 'com.liferay.source.formatter'
 apply plugin: 'java'
-
-checkSourceFormatting {
-	maxLineLength = 120
-}
 
 dependencies {
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
@@ -28,10 +22,6 @@ dependencies {
 	testCompile group: "junit", name: "junit", version: "4.12"
 	testCompile project(":cli")
 	testCompile project(path: ":cli", configuration: "testApi")
-}
-
-formatSource {
-	maxLineLength = 120
 }
 
 repositories {

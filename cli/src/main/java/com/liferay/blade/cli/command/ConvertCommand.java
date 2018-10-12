@@ -167,6 +167,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 
 		List<File> serviceBuilderPlugins = Arrays.asList(serviceBuilderList);
+
 		List<File> portlets = Arrays.asList((portletList != null) ? portletList : new File[0]);
 
 		Stream<File> portletStream = portlets.stream();

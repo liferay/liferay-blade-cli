@@ -31,9 +31,8 @@ import java.io.File;
 import java.io.IOException;
 
 import java.util.AbstractMap;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -145,10 +144,14 @@ public class MockUtil {
 	public static void stubGradleTooling(File returnFile) throws Exception {
 		PowerMock.mockStatic(GradleTooling.class);
 
-		IExpectationSetters<Set<File>> outputFiles = EasyMock.expect(
-			GradleTooling.getOutputFiles(EasyMock.isA(File.class), EasyMock.isA(File.class)));
+		IExpectationSetters<Map<String, Set<File>>> projectOutputFiles = EasyMock.expect(
+			GradleTooling.getProjectOutputFiles(EasyMock.isA(File.class), EasyMock.isA(File.class)));
 
-		outputFiles.andStubReturn(new HashSet<>(Arrays.asList(returnFile)));
+		Map<String, Set<File>> map = new HashMap<>();
+
+		map.put("", Collections.singleton(returnFile));
+
+		projectOutputFiles.andStubReturn(map);
 
 		PowerMock.replay(GradleTooling.class);
 	}

@@ -35,6 +35,7 @@ public class UpgradePropsCommand extends BaseCommand<UpgradePropsArgs> {
 	@Override
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
+
 		UpgradePropsArgs upgradePropsArgs = getArgs();
 
 		File bundleDir = upgradePropsArgs.getBundleDir();
@@ -43,7 +44,6 @@ public class UpgradePropsCommand extends BaseCommand<UpgradePropsArgs> {
 		if ((bundleDir == null) || (propertiesFile == null)) {
 			bladeCLI.addErrors(
 				"upgradeProps", Collections.singleton("bundleDir and propertiesFile options both required."));
-			//options._command().help(new Justif().formatter(), blade);
 
 			return;
 		}

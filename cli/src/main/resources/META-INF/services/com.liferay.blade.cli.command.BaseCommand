@@ -16,3 +16,4 @@ com.liferay.blade.cli.command.ShellCommand
 com.liferay.blade.cli.command.UpdateCommand
 com.liferay.blade.cli.command.UpgradePropsCommand
 com.liferay.blade.cli.command.VersionCommand
+com.liferay.blade.cli.command.WatchCommand
