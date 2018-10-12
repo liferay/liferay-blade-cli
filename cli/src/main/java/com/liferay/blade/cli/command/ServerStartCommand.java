@@ -53,20 +53,10 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		File baseDir = new File(baseArgs.getBase());
 
-		File gradleWrapperFile = BladeUtil.getGradleWrapper(baseDir);
-
-		Path gradleWrapperPath = gradleWrapperFile.toPath();
-
-		Path parent = gradleWrapperPath.getParent();
-
-		File rootDir = parent.toFile();
-
 		String serverType = null;
 
-		Path rootDirPath = rootDir.toPath();
-
-		if (WorkspaceUtil.isWorkspace(rootDir)) {
-			Properties properties = WorkspaceUtil.getGradleProperties(rootDir);
+		if (WorkspaceUtil.isWorkspace(baseDir)) {
+			Properties properties = getProperties();
 
 			String liferayHomePath = properties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR_PROPERTY);
 
@@ -97,7 +87,11 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 				liferayHomeDir = tempLiferayHome.normalize();
 			}
 			else {
-				Path tempFile = rootDirPath.resolve(liferayHomePath);
+				File workspaceRootDir = WorkspaceUtil.getWorkspaceDir(baseDir);
+
+				Path workspaceRootDirPath = workspaceRootDir.toPath();
+
+				Path tempFile = workspaceRootDirPath.resolve(liferayHomePath);
 
 				liferayHomeDir = tempFile.normalize();
 			}
@@ -106,7 +100,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		}
 		else {
 			try {
-				List<Properties> propertiesList = BladeUtil.getAppServerProperties(rootDir);
+				List<Properties> propertiesList = BladeUtil.getAppServerProperties(baseDir);
 
 				String appServerParentDir = "";
 
@@ -116,7 +110,9 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 							BladeUtil.APP_SERVER_PARENT_DIR_PROPERTY);
 
 						if ((appServerParentDirTemp != null) && !appServerParentDirTemp.equals("")) {
-							Path rootDirRealPath = rootDirPath.toRealPath();
+							Path rootDirRealPath = baseDir.toPath();
+
+							rootDirRealPath = rootDirRealPath.toRealPath();
 
 							appServerParentDirTemp = appServerParentDirTemp.replace(
 								"${project.dir}", rootDirRealPath.toString());
@@ -138,7 +134,11 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 					_commandServer(Paths.get(appServerParentDir), serverType);
 				}
 				else {
-					_commandServer(rootDirPath.resolve(appServerParentDir), serverType);
+					Path rootDirRealPath = baseDir.toPath();
+
+					rootDirRealPath = rootDirRealPath.toRealPath();
+
+					_commandServer(rootDirRealPath.resolve(appServerParentDir), serverType);
 				}
 			}
 			catch (Exception e) {
@@ -154,6 +154,16 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 	public Collection<Process> getProcesses() {
 		return _processes;
+	}
+
+	protected Properties getProperties() {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		return WorkspaceUtil.getGradleProperties(baseDir);
 	}
 
 	private void _commandServer(Path dir, String serverType) throws Exception {
