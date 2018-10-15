@@ -313,6 +313,22 @@ public class BladeUtil {
 		return !isEmpty(array);
 	}
 
+	public static boolean isSafelyRelative(File file, File destDir) {
+		Path destPath = destDir.toPath();
+
+		destPath = destPath.toAbsolutePath();
+
+		destPath = destPath.normalize();
+
+		Path path = file.toPath();
+
+		path = path.toAbsolutePath();
+
+		path = path.normalize();
+
+		return path.startsWith(destPath);
+	}
+
 	public static boolean isWindows() {
 		String osName = System.getProperty("os.name");
 
@@ -477,7 +493,7 @@ public class BladeUtil {
 
 				final File f = new File(destDir, entryName);
 
-				if (!_isSafelyRelative(f, destDir)) {
+				if (!isSafelyRelative(f, destDir)) {
 					throw new ZipException(
 						"Entry " + f.getName() + " is outside of the target destination: " + destDir);
 				}
@@ -558,22 +574,6 @@ public class BladeUtil {
 		}
 
 		return false;
-	}
-
-	private static boolean _isSafelyRelative(File file, File destDir) {
-		Path destPath = destDir.toPath();
-
-		destPath = destPath.toAbsolutePath();
-
-		destPath = destPath.normalize();
-
-		Path path = file.toPath();
-
-		path = path.toAbsolutePath();
-
-		path = path.normalize();
-
-		return path.startsWith(destPath);
 	}
 
 	private static boolean _isURLAvailable(String urlString) throws IOException {

@@ -1,8 +1,6 @@
 initscript {
-	File deps = file('%deps%')
-
 	dependencies {
-		classpath files { deps.listFiles() }
+		classpath files("%libsPath%/model-1.2.0.jar", "%libsPath%/plugin-1.2.0.jar")
 	}
 }
 

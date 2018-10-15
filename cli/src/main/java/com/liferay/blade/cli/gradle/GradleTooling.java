@@ -18,7 +18,7 @@ package com.liferay.blade.cli.gradle;
 
 import aQute.lib.io.IO;
 
-import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.gradle.model.CustomModel;
 
 import java.io.File;
@@ -60,7 +60,7 @@ public class GradleTooling {
 	private static <T> T _getModel(Class<T> modelClass, File cacheDir, File projectDir) throws Exception {
 		T retval = null;
 
-		final GradleConnector connector = GradleConnector.newConnector();
+		GradleConnector connector = GradleConnector.newConnector();
 
 		connector.forProjectDirectory(projectDir);
 
@@ -71,21 +71,21 @@ public class GradleTooling {
 
 			ModelBuilder<T> modelBuilder = connection.model(modelClass);
 
-			final File depsDir = new File(cacheDir, "deps");
+			File libsDir = new File(cacheDir, "libs");
 
-			depsDir.mkdirs();
+			libsDir.mkdirs();
 
 			InputStream in = GradleTooling.class.getResourceAsStream("/deps.zip");
 
-			BladeUtil.copy(in, depsDir);
+			FileUtil.unzip(in, libsDir);
 
-			final String initScriptTemplate = IO.collect(GradleTooling.class.getResourceAsStream("init.gradle"));
+			String initScriptTemplate = IO.collect(GradleTooling.class.getResourceAsStream("init.gradle"));
 
-			String path = depsDir.getAbsolutePath();
+			String libsPath = libsDir.getAbsolutePath();
 
-			path = path.replaceAll("\\\\", "/");
+			libsPath = libsPath.replaceAll("\\\\", "/");
 
-			final String initScriptContents = initScriptTemplate.replaceFirst("%deps%", path);
+			String initScriptContents = initScriptTemplate.replaceAll("%libsPath%", libsPath);
 
 			Path tempPath = Files.createTempFile("blade", "init.gradle");
 
@@ -93,7 +93,7 @@ public class GradleTooling {
 
 			IO.write(initScriptContents.getBytes(), tempFile);
 
-			modelBuilder.withArguments("--init-script", tempFile.getAbsolutePath());
+			modelBuilder.withArguments("--init-script", tempFile.getAbsolutePath(), "--stacktrace");
 
 			retval = modelBuilder.get();
 		}
