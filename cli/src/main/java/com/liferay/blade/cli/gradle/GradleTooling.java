@@ -77,7 +77,11 @@ public class GradleTooling {
 
 			String initScriptTemplate = FileUtil.collect(GradleTooling.class.getResourceAsStream("init.gradle"));
 
-			String initScriptContents = initScriptTemplate.replaceAll("%libsPath%", tempPath.toString());
+			String libsPath = tempPath.toString();
+
+			libsPath = libsPath.replaceAll("\\\\", "/");
+
+			String initScriptContents = initScriptTemplate.replaceAll("%libsPath%", libsPath);
 
 			Path initPath = tempPath.resolve("init.gradle");
 
