@@ -16,10 +16,8 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
@@ -41,11 +39,17 @@ public class ConvertServiceBuilderCommandTest {
 	public void testConvertServiceBuilder() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/testMigrateServiceBuilder");
 
-		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
 		Assert.assertTrue(testdir.exists());
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		if (pluginsSdkDir.exists()) {
+			FileUtil.deleteDir(pluginsSdkDir.toPath());
+		}
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -103,7 +107,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(bndBnd.exists());
 
-		String bndContent = new String(IO.read(bndBnd));
+		String bndContent = FileUtil.read(bndBnd);
 
 		Assert.assertTrue(bndContent, bndContent.contains("com.liferay.sampleservicebuilder.exception"));
 	}
@@ -120,7 +124,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		File pluginsSdkDir = new File(testdir, "plugins-sdk");
 
-		IO.copy(new File("test-resources/projects/tasks-plugins-sdk"), pluginsSdkDir);
+		FileUtil.copyDir(new File("test-resources/projects/tasks-plugins-sdk").toPath(), pluginsSdkDir.toPath());
 
 		Assert.assertTrue(new File(testdir, "plugins-sdk/portlets/tasks-portlet").exists());
 
@@ -145,7 +149,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		File pluginsSdkDir = new File(testdir, "plugins-sdk");
 
-		IO.copy(new File("test-resources/projects/tasks-plugins-sdk"), pluginsSdkDir);
+		FileUtil.copyDir(new File("test-resources/projects/tasks-plugins-sdk").toPath(), pluginsSdkDir.toPath());
 
 		Assert.assertTrue(new File(testdir, "plugins-sdk/portlets/tasks-portlet").exists());
 

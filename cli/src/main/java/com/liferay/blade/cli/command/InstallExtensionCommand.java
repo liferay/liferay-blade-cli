@@ -83,7 +83,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 					bladeCLI.out("Unzipping github repository to " + path);
 
-					BladeUtil.unzip(zip.toFile(), dir, null);
+					FileUtil.unzip(zip.toFile(), dir, null);
 
 					File[] directories = dir.listFiles(File::isDirectory);
 
@@ -230,10 +230,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		Path cachePath = bladeCLI.getCachePath();
-
-		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(
-			cachePath.toFile(), projectPath.toFile());
+		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(projectPath.toFile());
 
 		ProcessResult processResult = gradleExec.executeTask("assemble -x check", projectPath.toFile());
 

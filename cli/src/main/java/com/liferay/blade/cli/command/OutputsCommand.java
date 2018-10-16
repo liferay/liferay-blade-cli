@@ -43,9 +43,7 @@ public class OutputsCommand extends BaseCommand<OutputsArgs> {
 
 		File base = new File(args.getBase());
 
-		Path cachePath = bladeCLI.getCachePath();
-
-		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(cachePath.toFile(), base);
+		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(base);
 
 		for (Entry<String, Set<File>> entry : projectOutputFiles.entrySet()) {
 			String projectPath = entry.getKey();

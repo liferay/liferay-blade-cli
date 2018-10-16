@@ -62,11 +62,9 @@ public class GradlePrintErrorTest {
 
 		String error = errorPrintStream.toString();
 
-		boolean buildFailedBoolean = error.contains("BUILD FAILED");
+		Assert.assertTrue(error, error.contains("BUILD FAILED"));
 
-		boolean foobarBoolean = error.contains("foobar");
-
-		Assert.assertTrue(buildFailedBoolean && foobarBoolean);
+		Assert.assertTrue(error, error.contains("foobar"));
 
 		PowerMock.verifyAll();
 	}

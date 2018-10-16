@@ -16,7 +16,7 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
@@ -71,7 +71,7 @@ public class ZipSlipTest {
 
 		Files.copy(getClass().getResourceAsStream(fileName), zipPath);
 
-		BladeUtil.unzip(zipPath.toFile(), tempDir);
+		FileUtil.unzip(zipPath.toFile(), tempDir);
 	}
 
 }

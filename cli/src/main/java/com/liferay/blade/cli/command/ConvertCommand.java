@@ -16,11 +16,10 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.CopyDirVisitor;
+import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
@@ -324,11 +323,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
 
-			IO.delete(docroot);
-			IO.delete(new File(warDir, "build.xml"));
-			IO.delete(new File(warDir, ".classpath"));
-			IO.delete(new File(warDir, ".project"));
-			IO.delete(new File(warDir, ".settings"));
+			FileUtil.deleteDir(docroot.toPath());
+			Files.deleteIfExists(new File(warDir, "build.xml").toPath());
+			Files.deleteIfExists(new File(warDir, ".classpath").toPath());
+			Files.deleteIfExists(new File(warDir, ".project").toPath());
+			Files.deleteIfExists(new File(warDir, ".settings").toPath());
 		}
 		catch (Exception e) {
 			getBladeCLI().error("Error upgrading project %s\n%s", layoutPluginDir.getName(), e.getMessage());
@@ -436,7 +435,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				}
 			}
 
-			IO.delete(themePlugin);
+			FileUtil.deleteDir(themePlugin.toPath());
 		}
 		catch (Exception e) {
 			getBladeCLI().error("Error upgrading project %s\n%s", themePlugin.getName(), e.getMessage());
@@ -490,12 +489,12 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
 
-			IO.delete(docroot);
-			IO.delete(new File(warDir, "build.xml"));
-			IO.delete(new File(warDir, ".classpath"));
-			IO.delete(new File(warDir, ".project"));
-			IO.delete(new File(warDir, ".settings"));
-			IO.delete(new File(warDir, "ivy.xml.MD5"));
+			FileUtil.deleteDir(docroot.toPath());
+			Files.deleteIfExists(new File(warDir, "build.xml").toPath());
+			Files.deleteIfExists(new File(warDir, ".classpath").toPath());
+			Files.deleteIfExists(new File(warDir, ".project").toPath());
+			Files.deleteIfExists(new File(warDir, ".settings").toPath());
+			Files.deleteIfExists(new File(warDir, "ivy.xml.MD5").toPath());
 
 			List<String> dependencies = new ArrayList<>();
 

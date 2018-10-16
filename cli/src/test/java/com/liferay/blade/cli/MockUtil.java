@@ -145,7 +145,7 @@ public class MockUtil {
 		PowerMock.mockStatic(GradleTooling.class);
 
 		IExpectationSetters<Map<String, Set<File>>> projectOutputFiles = EasyMock.expect(
-			GradleTooling.getProjectOutputFiles(EasyMock.isA(File.class), EasyMock.isA(File.class)));
+			GradleTooling.getProjectOutputFiles(EasyMock.isA(File.class)));
 
 		Map<String, Set<File>> map = new HashMap<>();
 

@@ -16,8 +16,7 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
-
+import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.FileWatcher;
 import com.liferay.blade.cli.util.FileWatcher.Consumer;
 
@@ -45,22 +44,22 @@ public class FileWatcherTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		if (_testdir.exists()) {
-			IO.delete(_testdir);
+		if (_testDir.exists()) {
+			FileUtil.deleteDir(_testDir.toPath());
 
-			Assert.assertFalse(_testdir.exists());
+			Assert.assertFalse(_testDir.exists());
 		}
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		_testdir = temporaryFolder.newFolder("build", "watch");
+		_testDir = temporaryFolder.newFolder("build", "watch");
 
-		_testfile = new File(_testdir, "file.txt");
+		_testfile = new File(_testDir, "file.txt");
 
 		_testfile.createNewFile();
 
-		_testsecondfile = new File(_testdir, "second.txt");
+		_testsecondfile = new File(_testDir, "second.txt");
 
 		_testsecondfile.createNewFile();
 	}
@@ -68,7 +67,7 @@ public class FileWatcherTest {
 	@Ignore
 	@Test
 	public void testFileWatcherMultipleFiles() throws Exception {
-		IO.write("foobar".getBytes(), _testfile);
+		FileUtil.write("foobar".getBytes(), _testfile);
 
 		final Map<Path, Boolean> changed = new HashMap<>();
 
@@ -92,7 +91,7 @@ public class FileWatcherTest {
 			@Override
 			public void run() {
 				try {
-					new FileWatcher(_testdir.toPath(), false, consumer);
+					new FileWatcher(_testDir.toPath(), false, consumer);
 				}
 				catch (IOException ioe) {
 				}
@@ -107,8 +106,8 @@ public class FileWatcherTest {
 
 		Thread.sleep(2000);
 
-		IO.write("touch".getBytes(), _testfile);
-		IO.write("second file content".getBytes(), _testsecondfile);
+		FileUtil.write("touch".getBytes(), _testfile);
+		FileUtil.write("second file content".getBytes(), _testsecondfile);
 
 		latch.await();
 
@@ -140,7 +139,7 @@ public class FileWatcherTest {
 			@Override
 			public void run() {
 				try {
-					new FileWatcher(_testdir.toPath(), _testfile.toPath(), false, consumer);
+					new FileWatcher(_testDir.toPath(), _testfile.toPath(), false, consumer);
 				}
 				catch (IOException ioe) {
 				}
@@ -155,7 +154,7 @@ public class FileWatcherTest {
 
 		Thread.sleep(1000);
 
-		IO.write("touch".getBytes(), _testfile);
+		FileUtil.write("touch".getBytes(), _testfile);
 
 		latch.await();
 
@@ -165,7 +164,7 @@ public class FileWatcherTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private File _testdir = null;
+	private File _testDir = null;
 	private File _testfile = null;
 	private File _testsecondfile = null;
 

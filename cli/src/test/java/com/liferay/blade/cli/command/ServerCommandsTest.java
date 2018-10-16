@@ -25,6 +25,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -157,6 +158,8 @@ public class ServerCommandsTest {
 		PidProcess pidProcess = Processes.newPidProcess(pid);
 
 		pidProcess.destroyForcefully();
+
+		pidProcess.waitFor(5, TimeUnit.SECONDS);
 
 		Assert.assertFalse("Expected server start process to be destroyed.", pidProcess.isAlive());
 	}

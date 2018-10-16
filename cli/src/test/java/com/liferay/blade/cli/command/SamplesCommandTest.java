@@ -16,13 +16,15 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
+
+import java.nio.file.Files;
 
 import org.gradle.testkit.runner.BuildTask;
 
@@ -40,7 +42,9 @@ public class SamplesCommandTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		IO.copy(new File("wrapper.zip"), new File("build/classes/java/test/wrapper.zip"));
+		File wrapperZipFile = new File("wrapper.zip");
+
+		Files.copy(wrapperZipFile.toPath(), new FileOutputStream(new File("build/classes/java/test/wrapper.zip")));
 	}
 
 	@Test
@@ -53,7 +57,7 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(projectDir.exists());
 
-		File buildFile = IO.getFile(projectDir, "build.gradle");
+		File buildFile = new File(projectDir, "build.gradle");
 
 		Assert.assertTrue(buildFile.exists());
 
@@ -74,13 +78,13 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(projectDir.exists());
 
-		File gradleBuildFile = IO.getFile(projectDir, "build.gradle");
-		File mavenBuildFile = IO.getFile(projectDir, "pom.xml");
+		File gradleBuildFile = new File(projectDir, "build.gradle");
+		File mavenBuildFile = new File(projectDir, "pom.xml");
 
 		Assert.assertFalse(gradleBuildFile.exists());
 		Assert.assertTrue(mavenBuildFile.exists());
 
-		String content = new String(IO.read(mavenBuildFile));
+		String content = FileUtil.read(mavenBuildFile);
 
 		Assert.assertTrue(
 			content,
@@ -99,13 +103,13 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(projectDir.exists());
 
-		File gradleBuildFile = IO.getFile(projectDir, "build.gradle");
-		File mavenBuildFile = IO.getFile(projectDir, "pom.xml");
+		File gradleBuildFile = new File(projectDir, "build.gradle");
+		File mavenBuildFile = new File(projectDir, "pom.xml");
 
 		Assert.assertFalse(gradleBuildFile.exists());
 		Assert.assertTrue(mavenBuildFile.exists());
 
-		String content = new String(IO.read(mavenBuildFile));
+		String content = FileUtil.read(mavenBuildFile);
 
 		Assert.assertTrue(
 			content,
@@ -122,7 +126,7 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(projectDir.exists());
 
-		File buildFile = IO.getFile(projectDir, "build.gradle");
+		File buildFile = new File(projectDir, "build.gradle");
 
 		Assert.assertTrue(buildFile.exists());
 
@@ -141,13 +145,13 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(projectDir.exists());
 
-		File buildFile = IO.getFile(projectDir, "build.gradle");
+		File buildFile = new File(projectDir, "build.gradle");
 
-		File gradleWrapperJar = IO.getFile(projectDir, "gradle/wrapper/gradle-wrapper.jar");
+		File gradleWrapperJar = new File(projectDir, "gradle/wrapper/gradle-wrapper.jar");
 
-		File gradleWrapperProperties = IO.getFile(projectDir, "gradle/wrapper/gradle-wrapper.properties");
+		File gradleWrapperProperties = new File(projectDir, "gradle/wrapper/gradle-wrapper.properties");
 
-		File gradleWrapperShell = IO.getFile(projectDir, "gradlew");
+		File gradleWrapperShell = new File(projectDir, "gradlew");
 
 		Assert.assertTrue(buildFile.exists());
 		Assert.assertTrue(gradleWrapperJar.exists());
@@ -182,13 +186,13 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(projectDir.exists());
 
-		File buildFile = IO.getFile(projectDir, "build.gradle");
+		File buildFile = new File(projectDir, "build.gradle");
 
-		File gradleWrapperJar = IO.getFile(projectDir, "gradle/wrapper/gradle-wrapper.jar");
+		File gradleWrapperJar = new File(projectDir, "gradle/wrapper/gradle-wrapper.jar");
 
-		File gradleWrapperProperties = IO.getFile(projectDir, "gradle/wrapper/gradle-wrapper.properties");
+		File gradleWrapperProperties = new File(projectDir, "gradle/wrapper/gradle-wrapper.properties");
 
-		File gradleWrapperShell = IO.getFile(projectDir, "gradlew");
+		File gradleWrapperShell = new File(projectDir, "gradlew");
 
 		Assert.assertTrue(buildFile.exists());
 		Assert.assertFalse(gradleWrapperJar.exists());
@@ -216,9 +220,9 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(projectDir.exists());
 
-		File buildFile = IO.getFile(projectDir, "build.gradle");
+		File buildFile = new File(projectDir, "build.gradle");
 
-		String content = new String(IO.read(buildFile));
+		String content = FileUtil.read(buildFile);
 
 		Assert.assertTrue(buildFile.exists());
 
@@ -241,9 +245,9 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(projectDir.exists());
 
-		File buildFile = IO.getFile(projectDir, "build.gradle");
+		File buildFile = new File(projectDir, "build.gradle");
 
-		String content = new String(IO.read(buildFile));
+		String content = FileUtil.read(buildFile);
 
 		Assert.assertTrue(buildFile.exists());
 

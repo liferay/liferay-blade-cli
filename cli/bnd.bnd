@@ -3,41 +3,9 @@ Bundle-Version: ${project.version}.${tstamp}
 JPM-Command: blade
 Main-Class: com.liferay.blade.cli.BladeCLI
 Private-Package:\
-	aQute.bnd.deployer.http,\
-	aQute.bnd.deployer.repository,\
-	aQute.bnd.deployer.repository.api,\
-	aQute.bnd.deployer.repository.providers,\
 	aQute.bnd.header,\
-	aQute.bnd.maven,\
 	aQute.bnd.osgi,\
-	aQute.bnd.osgi.resource;-split-package:=merge-first,\
-	aQute.bnd.service,\
-	aQute.bnd.service.url,\
 	aQute.bnd.version,\
-	\
-	aQute.configurable;-split-package:=merge-first,\
-	\
-	aQute.lib.collections;-split-package:=merge-first,\
-	aQute.lib.consoleapp;-split-package:=merge-first,\
-	aQute.lib.env;-split-package:=merge-first,\
-	aQute.lib.getopt;-split-package:=merge-first,\
-	aQute.lib.hex;-split-package:=merge-first,\
-	aQute.lib.io;-split-package:=merge-first,\
-	aQute.lib.json;-split-package:=merge-first,\
-	aQute.lib.justif;-split-package:=merge-first,\
-	aQute.lib.strings;-split-package:=merge-first,\
-	aQute.lib.utf8properties;-split-package:=merge-first,\
-	aQute.lib.zip;-split-package:=merge-first,\
-	\
-	aQute.libg.cryptography;-split-package:=merge-first,\
-	aQute.libg.filters;-split-package:=merge-first,\
-	aQute.libg.generics;-split-package:=merge-first,\
-	aQute.libg.gzip;-split-package:=merge-first,\
-	aQute.libg.qtokens;-split-package:=merge-first,\
-	aQute.libg.reporter;-split-package:=merge-first,\
-	aQute.libg.sed;-split-package:=merge-first,\
-	\
-	aQute.service.reporter;-split-package:=merge-first,\
 	\
 	com.liferay.blade.cli.*,\
 	com.liferay.blade.gradle.model,\
@@ -51,7 +19,75 @@ Private-Package:\
 	org.apache.commons.lang3.exception,\
 	org.apache.commons.lang3.text,\
 	\
-	org.gradle.*,\
+	org.gradle,\
+	org.gradle.api,\
+	org.gradle.api.logging,\
+	org.gradle.api.resources,\
+	org.gradle.api.specs,\
+	org.gradle.groovy.scripts,\
+	org.gradle.initialization,\
+	org.gradle.initialization.layout,\
+	org.gradle.internal,\
+	org.gradle.internal.classloader,\
+	org.gradle.internal.classpath,\
+	org.gradle.internal.concurrent,\
+	org.gradle.internal.dispatch,\
+	org.gradle.internal.event,\
+	org.gradle.internal.exceptions,\
+	org.gradle.internal.impldep.com.google.common.base,\
+	org.gradle.internal.impldep.com.google.common.collect,\
+	org.gradle.internal.io,\
+	org.gradle.internal.jvm,\
+	org.gradle.internal.logging,\
+	org.gradle.internal.logging.config,\
+	org.gradle.internal.logging.console,\
+	org.gradle.internal.logging.events,\
+	org.gradle.internal.logging.events.operations,\
+	org.gradle.internal.logging.format,\
+	org.gradle.internal.logging.progress,\
+	org.gradle.internal.logging.sink,\
+	org.gradle.internal.logging.slf4j,\
+	org.gradle.internal.logging.text,\
+	org.gradle.internal.nativeintegration,\
+	org.gradle.internal.nativeintegration.console,\
+	org.gradle.internal.reflect,\
+	org.gradle.internal.resource,\
+	org.gradle.internal.service,\
+	org.gradle.internal.time,\
+	org.gradle.internal.typeconversion,\
+	org.gradle.internal.util,\
+	org.gradle.tooling,\
+	org.gradle.tooling.connection,\
+	org.gradle.tooling.events,\
+	org.gradle.tooling.events.task,\
+	org.gradle.tooling.events.test,\
+	org.gradle.tooling.exceptions,\
+	org.gradle.tooling.internal.adapter,\
+	org.gradle.tooling.internal.connection,\
+	org.gradle.tooling.internal.consumer,\
+	org.gradle.tooling.internal.consumer.async,\
+	org.gradle.tooling.internal.consumer.connection,\
+	org.gradle.tooling.internal.consumer.converters,\
+	org.gradle.tooling.internal.consumer.loader,\
+	org.gradle.tooling.internal.consumer.parameters,\
+	org.gradle.tooling.internal.consumer.versioning,\
+	org.gradle.tooling.internal.gradle,\
+	org.gradle.tooling.internal.protocol,\
+	org.gradle.tooling.internal.protocol.eclipse,\
+	org.gradle.tooling.internal.protocol.events,\
+	org.gradle.tooling.internal.protocol.exceptions,\
+	org.gradle.tooling.internal.protocol.test,\
+	org.gradle.tooling.internal.provider,\
+	org.gradle.tooling.model,\
+	org.gradle.tooling.model.build,\
+	org.gradle.tooling.model.eclipse,\
+	org.gradle.tooling.model.gradle,\
+	org.gradle.tooling.model.idea,\
+	org.gradle.tooling.model.internal,\
+	org.gradle.tooling.model.internal.outcomes,\
+	org.gradle.tooling.provider,\
+	org.gradle.util,\
+	org.gradle.wrapper,\
 	\
 	org.objectweb.asm.*,\
 	\

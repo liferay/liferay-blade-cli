@@ -16,7 +16,6 @@ dependencies {
 }
 
 repositories {
-	mavenLocal()
 	maven {
 		url '%repo%'
 	}

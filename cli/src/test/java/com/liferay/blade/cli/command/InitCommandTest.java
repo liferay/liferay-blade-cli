@@ -16,12 +16,10 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
@@ -56,11 +54,17 @@ public class InitCommandTest {
 
 		testdir.mkdirs();
 
-		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
 		Assert.assertTrue(testdir.exists());
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		if (pluginsSdkDir.exists()) {
+			FileUtil.deleteDir(pluginsSdkDir.toPath());
+		};
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -68,11 +72,11 @@ public class InitCommandTest {
 
 		bladeTest.run(args);
 
-		File gitdir = IO.getFile(projectDir, ".git");
+		File gitdir = new File(projectDir, ".git");
 
 		Assert.assertTrue(gitdir.exists());
 
-		File oldGitIgnore = IO.getFile(projectDir, "plugins-sdk/.gitignore");
+		File oldGitIgnore = new File(projectDir, "plugins-sdk/.gitignore");
 
 		Assert.assertTrue(oldGitIgnore.exists());
 	}
@@ -126,11 +130,17 @@ public class InitCommandTest {
 
 		testdir.mkdirs();
 
-		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
 		Assert.assertTrue(testdir.exists());
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		if (pluginsSdkDir.exists()) {
+			FileUtil.deleteDir(pluginsSdkDir.toPath());
+		};
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -384,8 +394,8 @@ public class InitCommandTest {
 
 		bladeTest.run(args);
 
-		File file = IO.getFile(projectPath + "/foo");
-		File bndFile = IO.getFile(projectPath + "/foo/bnd.bnd");
+		File file = new File(projectPath, "/foo");
+		File bndFile = new File(projectPath, "/foo/bnd.bnd");
 
 		Assert.assertTrue(file.exists());
 

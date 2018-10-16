@@ -60,7 +60,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			return;
 		}
 
-		Map<String, Set<File>> projectOutputFiles = _getProjectOutputFiles(watchPath);
+		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(watchPath.toFile());
 
 		_watch(watchPath, projectOutputFiles);
 	}
@@ -90,12 +90,6 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 				watchOutputFile.delete();
 			}
 		}
-	}
-
-	private Map<String, Set<File>> _getProjectOutputFiles(Path watchPath) throws Exception {
-		Path cachePath = getBladeCLI().getCachePath();
-
-		return GradleTooling.getProjectOutputFiles(cachePath.toFile(), watchPath.toFile());
 	}
 
 	private void _uninstallBundles(Map<String, Set<File>> projectOutputFiles) {

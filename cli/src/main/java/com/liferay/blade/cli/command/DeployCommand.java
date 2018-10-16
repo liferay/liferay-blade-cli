@@ -84,13 +84,11 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		Path cachePath = bladeCLI.getCachePath();
-
 		DeployArgs deployArgs = getArgs();
 
 		File baseDir = new File(deployArgs.getBase());
 
-		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(cachePath.toFile(), baseDir);
+		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(baseDir);
 
 		if (deployArgs.isWatch()) {
 			_deployWatch(gradleExec, projectOutputFiles, host, port);

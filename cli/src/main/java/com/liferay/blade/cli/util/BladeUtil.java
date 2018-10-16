@@ -16,20 +16,12 @@
 
 package com.liferay.blade.cli.util;
 
-import aQute.bnd.osgi.Jar;
-import aQute.bnd.osgi.Processor;
-import aQute.bnd.osgi.Resource;
-
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.project.templates.ProjectTemplates;
-import com.liferay.project.templates.internal.util.FileUtil;
 import com.liferay.project.templates.internal.util.ProjectTemplatesUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,13 +38,11 @@ import java.nio.file.Path;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -62,7 +52,6 @@ import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 /**
@@ -80,30 +69,6 @@ public class BladeUtil {
 		InetSocketAddress remoteAddress = new InetSocketAddress(host, Integer.valueOf(port));
 
 		return _canConnect(localAddress, remoteAddress);
-	}
-
-	public static void copy(InputStream in, File outputDir) throws Exception {
-		try (Jar jar = new Jar("dot", in)) {
-			Map<String, Resource> resources = jar.getResources();
-
-			for (Entry<String, Resource> e : resources.entrySet()) {
-				String path = e.getKey();
-
-				Resource r = e.getValue();
-
-				File dest = Processor.getFile(outputDir, path);
-
-				if ((dest.lastModified() < r.lastModified()) || (r.lastModified() <= 0)) {
-					File dp = dest.getParentFile();
-
-					if (!dp.exists() && !dp.mkdirs()) {
-						throw new Exception("Could not create directory " + dp);
-					}
-
-					IO.copy(r.openInputStream(), dest);
-				}
-			}
-		}
 	}
 
 	public static void downloadGithubProject(String url, Path target) throws IOException {
@@ -313,6 +278,22 @@ public class BladeUtil {
 		return !isEmpty(array);
 	}
 
+	public static boolean isSafelyRelative(File file, File destDir) {
+		Path destPath = destDir.toPath();
+
+		destPath = destPath.toAbsolutePath();
+
+		destPath = destPath.normalize();
+
+		Path path = file.toPath();
+
+		path = path.toAbsolutePath();
+
+		path = path.normalize();
+
+		return path.startsWith(destPath);
+	}
+
 	public static boolean isWindows() {
 		String osName = System.getProperty("os.name");
 
@@ -442,80 +423,6 @@ public class BladeUtil {
 		return startProcess(command, dir, null, out, err);
 	}
 
-	public static void unzip(File srcFile, File destDir) throws IOException {
-		unzip(srcFile, destDir, null);
-	}
-
-	public static void unzip(File srcFile, File destDir, String entryToStart) throws IOException {
-		try (final ZipFile zip = new ZipFile(srcFile)) {
-			final Enumeration<? extends ZipEntry> entries = zip.entries();
-
-			boolean foundStartEntry = false;
-
-			if (entryToStart == null) {
-				foundStartEntry = true;
-			}
-
-			while (entries.hasMoreElements()) {
-				final ZipEntry entry = entries.nextElement();
-
-				String entryName = entry.getName();
-
-				if (!foundStartEntry) {
-					foundStartEntry = entryToStart.equals(entryName);
-
-					continue;
-				}
-
-				if (entry.isDirectory() || ((entryToStart != null) && !entryName.startsWith(entryToStart))) {
-					continue;
-				}
-
-				if (entryToStart != null) {
-					entryName = entryName.replaceFirst(entryToStart, "");
-				}
-
-				final File f = new File(destDir, entryName);
-
-				if (!_isSafelyRelative(f, destDir)) {
-					throw new ZipException(
-						"Entry " + f.getName() + " is outside of the target destination: " + destDir);
-				}
-
-				if (f.exists()) {
-					IO.delete(f);
-
-					if (f.exists()) {
-						throw new IOException("Could not delete " + f.getAbsolutePath());
-					}
-				}
-
-				final File dir = f.getParentFile();
-
-				if (!dir.exists() && !dir.mkdirs()) {
-					final String msg = "Could not create dir: " + dir.getPath();
-
-					throw new IOException(msg);
-				}
-
-				try (final InputStream in = zip.getInputStream(entry);
-					final FileOutputStream out = new FileOutputStream(f)) {
-
-					final byte[] bytes = new byte[1024];
-
-					int count = in.read(bytes);
-
-					while (count != -1) {
-						out.write(bytes, 0, count);
-						count = in.read(bytes);
-					}
-
-					out.flush();
-				}
-			}
-		}
-	}
-
 	private static ProcessBuilder _buildProcessBuilder(
 		String command, File dir, Map<String, String> environment, boolean inheritIO) {
 
@@ -558,22 +465,6 @@ public class BladeUtil {
 		}
 
 		return false;
-	}
-
-	private static boolean _isSafelyRelative(File file, File destDir) {
-		Path destPath = destDir.toPath();
-
-		destPath = destPath.toAbsolutePath();
-
-		destPath = destPath.normalize();
-
-		Path path = file.toPath();
-
-		path = path.toAbsolutePath();
-
-		path = path.normalize();
-
-		return path.startsWith(destPath);
 	}
 
 	private static boolean _isURLAvailable(String urlString) throws IOException {
