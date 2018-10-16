@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.gradle.GradleExec;
@@ -222,14 +220,14 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 				_moveContentsToDirectory(gitFile, destGitFile);
 
-				IO.deleteWithException(gitFile);
+				FileUtil.deleteDir(gitFile.toPath());
 			}
 
 			File pluginsSdkDir = new File(destDir, "plugins-sdk");
 
 			_moveContentsToDirectory(temp, pluginsSdkDir);
 
-			IO.deleteWithException(temp);
+			FileUtil.deleteDir(temp.toPath());
 		}
 
 		args.setBase(destDir);

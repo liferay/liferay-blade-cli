@@ -82,12 +82,12 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return SamplesArgs.class;
 	}
 
-	private void _addGradleWrapper(File dest) throws Exception {
-		InputStream in = SamplesCommand.class.getResourceAsStream("/wrapper.zip");
+	private void _addGradleWrapper(File destinationDir) throws Exception {
+		InputStream inputStream = SamplesCommand.class.getResourceAsStream("/wrapper.zip");
 
-		BladeUtil.copy(in, dest);
+		FileUtil.unzip(inputStream, destinationDir);
 
-		new File(dest, "gradlew").setExecutable(true);
+		new File(destinationDir, "gradlew").setExecutable(true);
 	}
 
 	private void _copySample(String sampleName, String bladeRepoName) throws Exception {
@@ -183,7 +183,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
 
-		BladeUtil.unzip(bladeRepoArchive, cachePath.toFile(), null);
+		FileUtil.unzip(bladeRepoArchive, cachePath.toFile(), null);
 	}
 
 	private String _getLiferayVersion(BladeCLI bladeCLI, SamplesArgs samplesArgs) throws IOException {

@@ -20,8 +20,6 @@ import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Jar;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
@@ -1290,7 +1288,7 @@ public class CreateCommandTest {
 
 		File buildGradle = new File(modulesDir, "seven-zero/build.gradle");
 
-		String content = new String(IO.read(buildGradle));
+		String content = FileUtil.read(buildGradle);
 
 		Assert.assertFalse(content, content.contains("js.loader.modules.extender.api"));
 	}
@@ -1312,7 +1310,7 @@ public class CreateCommandTest {
 
 		File buildGradle = new File(modulesDir, "seven-one/build.gradle");
 
-		String content = new String(IO.read(buildGradle));
+		String content = FileUtil.read(buildGradle);
 
 		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
 	}
@@ -1479,7 +1477,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(buildGradle.getAbsolutePath());
 
-		String content = new String(IO.read(buildGradle));
+		String content = FileUtil.read(buildGradle);
 
 		Assert.assertEquals(1, StringUtils.countMatches(content, '{'));
 
@@ -1497,7 +1495,7 @@ public class CreateCommandTest {
 
 		File buildGradle = new File(tempRoot, "seven-zero/build.gradle");
 
-		String content = new String(IO.read(buildGradle));
+		String content = FileUtil.read(buildGradle);
 
 		Assert.assertFalse(content.contains("js.loader.modules.extender.api"));
 	}
@@ -1513,7 +1511,7 @@ public class CreateCommandTest {
 
 		File buildGradle = new File(tempRoot, "seven-one/build.gradle");
 
-		String content = new String(IO.read(buildGradle));
+		String content = FileUtil.read(buildGradle);
 
 		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
 	}
@@ -1552,7 +1550,7 @@ public class CreateCommandTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private File _checkFileDoesNotExists(String path) {
-		File file = IO.getFile(path);
+		File file = new File(path);
 
 		Assert.assertFalse(file.exists());
 
@@ -1560,7 +1558,7 @@ public class CreateCommandTest {
 	}
 
 	private File _checkFileExists(String path) {
-		File file = IO.getFile(path);
+		File file = new File(path);
 
 		Assert.assertTrue(file.exists());
 
@@ -1576,13 +1574,13 @@ public class CreateCommandTest {
 	}
 
 	private void _contains(File file, String pattern) throws Exception {
-		String content = new String(IO.read(file));
+		String content = FileUtil.read(file);
 
 		_contains(content, pattern);
 	}
 
 	private void _contains(File file, String[] patterns) throws Exception {
-		String content = new String(IO.read(file));
+		String content = FileUtil.read(file);
 
 		for (String pattern : patterns) {
 			_contains(content, pattern);
@@ -1596,7 +1594,7 @@ public class CreateCommandTest {
 	}
 
 	private void _lacks(File file, String regex) throws Exception {
-		String content = new String(IO.read(file));
+		String content = FileUtil.read(file);
 
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
 

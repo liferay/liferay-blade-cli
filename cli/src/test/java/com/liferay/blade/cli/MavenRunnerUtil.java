@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -88,7 +86,7 @@ public class MavenRunnerUtil {
 	}
 
 	public static void verifyBuildOutput(String projectPath, String fileName) {
-		File file = IO.getFile(projectPath + "/target/" + fileName);
+		File file = new File(projectPath, "/target/" + fileName);
 
 		Assert.assertTrue(file.exists());
 	}

@@ -3,41 +3,9 @@ Bundle-Version: ${project.version}.${tstamp}
 JPM-Command: blade
 Main-Class: com.liferay.blade.cli.BladeCLI
 Private-Package:\
-	aQute.bnd.deployer.http,\
-	aQute.bnd.deployer.repository,\
-	aQute.bnd.deployer.repository.api,\
-	aQute.bnd.deployer.repository.providers,\
 	aQute.bnd.header,\
-	aQute.bnd.maven,\
 	aQute.bnd.osgi,\
-	aQute.bnd.osgi.resource;-split-package:=merge-first,\
-	aQute.bnd.service,\
-	aQute.bnd.service.url,\
 	aQute.bnd.version,\
-	\
-	aQute.configurable;-split-package:=merge-first,\
-	\
-	aQute.lib.collections;-split-package:=merge-first,\
-	aQute.lib.consoleapp;-split-package:=merge-first,\
-	aQute.lib.env;-split-package:=merge-first,\
-	aQute.lib.getopt;-split-package:=merge-first,\
-	aQute.lib.hex;-split-package:=merge-first,\
-	aQute.lib.io;-split-package:=merge-first,\
-	aQute.lib.json;-split-package:=merge-first,\
-	aQute.lib.justif;-split-package:=merge-first,\
-	aQute.lib.strings;-split-package:=merge-first,\
-	aQute.lib.utf8properties;-split-package:=merge-first,\
-	aQute.lib.zip;-split-package:=merge-first,\
-	\
-	aQute.libg.cryptography;-split-package:=merge-first,\
-	aQute.libg.filters;-split-package:=merge-first,\
-	aQute.libg.generics;-split-package:=merge-first,\
-	aQute.libg.gzip;-split-package:=merge-first,\
-	aQute.libg.qtokens;-split-package:=merge-first,\
-	aQute.libg.reporter;-split-package:=merge-first,\
-	aQute.libg.sed;-split-package:=merge-first,\
-	\
-	aQute.service.reporter;-split-package:=merge-first,\
 	\
 	com.liferay.blade.cli.*,\
 	com.liferay.blade.gradle.model,\

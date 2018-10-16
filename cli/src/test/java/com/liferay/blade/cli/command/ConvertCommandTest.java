@@ -16,10 +16,8 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
@@ -41,11 +39,17 @@ public class ConvertCommandTest {
 
 		testdir.mkdirs();
 
-		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
 		Assert.assertTrue(testdir.exists());
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		if (pluginsSdkDir.exists()) {
+			FileUtil.deleteDir(pluginsSdkDir.toPath());
+		}
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -69,13 +73,19 @@ public class ConvertCommandTest {
 
 	@Test
 	public void testMoveLayouttplToWars() throws Exception {
-		File testdir = IO.getFile("build/testMoveLayouttplToWars");
+		File testdir = new File("build/testMoveLayouttplToWars");
 
-		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
 		Assert.assertTrue(testdir.exists());
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		if (pluginsSdkDir.exists()) {
+			FileUtil.deleteDir(pluginsSdkDir.toPath());
+		}
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -100,11 +110,17 @@ public class ConvertCommandTest {
 	public void testMovePluginsToWars() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/testMovePluginsToWars");
 
-		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
 		Assert.assertTrue(testdir.exists());
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		if (pluginsSdkDir.exists()) {
+			FileUtil.deleteDir(pluginsSdkDir.toPath());
+		}
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -135,11 +151,17 @@ public class ConvertCommandTest {
 	public void testMoveThemesToWars() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/testMoveThemesToWar");
 
-		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
 		Assert.assertTrue(testdir.exists());
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		if (pluginsSdkDir.exists()) {
+			FileUtil.deleteDir(pluginsSdkDir.toPath());
+		}
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -229,7 +251,7 @@ public class ConvertCommandTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _contains(File file, String... patterns) throws Exception {
-		String content = new String(IO.read(file));
+		String content = FileUtil.read(file);
 
 		for (String pattern : patterns) {
 			_contains(content, pattern);
@@ -245,17 +267,23 @@ public class ConvertCommandTest {
 	private File _setupWorkspace(String name) throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/" + name);
 
-		BladeUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
 		Assert.assertTrue(testdir.exists());
 
 		File projectDir = new File(testdir, "plugins-sdk-with-git");
 
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		if (pluginsSdkDir.exists()) {
+			FileUtil.deleteDir(pluginsSdkDir.toPath());
+		}
+
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		new BladeTest().run(args);
 
-		Assert.assertTrue(new File(projectDir, "plugins-sdk").exists());
+		Assert.assertTrue(pluginsSdkDir.exists());
 
 		return projectDir;
 	}

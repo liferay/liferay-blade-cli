@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import aQute.lib.io.IO;
-
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
@@ -102,7 +100,7 @@ public class UtilTest {
 		}
 		finally {
 			if (tempTestFile != null) {
-				IO.delete(tempTestFile);
+				Files.delete(tempTestFile.toPath());
 			}
 		}
 	}

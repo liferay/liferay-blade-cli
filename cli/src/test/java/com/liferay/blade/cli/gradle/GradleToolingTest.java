@@ -16,9 +16,12 @@
 
 package com.liferay.blade.cli.gradle;
 
-import aQute.lib.io.IO;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
+
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import java.util.Map;
 import java.util.Set;
@@ -42,19 +45,20 @@ public class GradleToolingTest {
 	public static void setUpClass() throws Exception {
 		File wsDir = temporaryFolder.newFolder("build", "testws1");
 
-		IO.copy(new File("deps.zip"), _DEPS_ZIP);
-		IO.copy(new File("test-resources/projects/testws1"), wsDir);
+		Files.copy(new File("deps.zip").toPath(), _DEPS_ZIP.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+		FileUtil.copyDir(new File("test-resources/projects/testws1").toPath(), wsDir.toPath());
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		IO.delete(_DEPS_ZIP);
+		Files.delete(_DEPS_ZIP.toPath());
 	}
 
 	@Test
 	public void testGetOutputFiles() throws Exception {
 		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(
-			new File(temporaryFolder.getRoot(), "build"), new File(temporaryFolder.getRoot(), "build/testws1"));
+			new File(temporaryFolder.getRoot(), "build/testws1"));
 
 		Assert.assertNotNull(projectOutputFiles);
 
@@ -69,7 +73,6 @@ public class GradleToolingTest {
 	@Test
 	public void testGetPluginClassNames() throws Exception {
 		Set<String> pluginClassNames = GradleTooling.getPluginClassNames(
-			new File(temporaryFolder.getRoot(), "build"),
 			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet"));
 
 		Assert.assertNotNull(pluginClassNames);
@@ -79,7 +82,6 @@ public class GradleToolingTest {
 	@Test
 	public void testIsLiferayModule() throws Exception {
 		boolean liferayModule = GradleTooling.isLiferayModule(
-			new File(temporaryFolder.getRoot(), "build"),
 			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet"));
 
 		Assert.assertTrue(liferayModule);
@@ -88,7 +90,7 @@ public class GradleToolingTest {
 	@Test
 	public void testIsNotLiferayModule() throws Exception {
 		boolean liferayModule = GradleTooling.isLiferayModule(
-			new File(temporaryFolder.getRoot(), "build"), new File(temporaryFolder.getRoot(), "build/testws1/modules"));
+			new File(temporaryFolder.getRoot(), "build/testws1/modules"));
 
 		Assert.assertFalse(liferayModule);
 	}
