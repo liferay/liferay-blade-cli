@@ -47,9 +47,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
 
-		if (pluginsSdkDir.exists()) {
-			FileUtil.deleteDir(pluginsSdkDir.toPath());
-		}
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 

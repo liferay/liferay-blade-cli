@@ -327,7 +327,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			Files.deleteIfExists(new File(warDir, "build.xml").toPath());
 			Files.deleteIfExists(new File(warDir, ".classpath").toPath());
 			Files.deleteIfExists(new File(warDir, ".project").toPath());
-			FileUtil.deleteDir(new File(warDir, ".settings").toPath());
+			FileUtil.deleteDirIfExists(new File(warDir, ".settings").toPath());
 		}
 		catch (Exception e) {
 			getBladeCLI().error("Error upgrading project %s\n%s", layoutPluginDir.getName(), e.getMessage());
@@ -493,7 +493,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			Files.deleteIfExists(new File(warDir, "build.xml").toPath());
 			Files.deleteIfExists(new File(warDir, ".classpath").toPath());
 			Files.deleteIfExists(new File(warDir, ".project").toPath());
-			FileUtil.deleteDir(new File(warDir, ".settings").toPath());
+			FileUtil.deleteDirIfExists(new File(warDir, ".settings").toPath());
 			Files.deleteIfExists(new File(warDir, "ivy.xml.MD5").toPath());
 
 			List<String> dependencies = new ArrayList<>();

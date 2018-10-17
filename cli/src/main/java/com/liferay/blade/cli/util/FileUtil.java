@@ -97,6 +97,12 @@ public class FileUtil {
 			});
 	}
 
+	public static void deleteDirIfExists(Path dirPath) throws IOException {
+		if (Files.exists(dirPath)) {
+			deleteDir(dirPath);
+		}
+	}
+
 	public static String getManifestProperty(File file, String name) throws IOException {
 		try (JarFile jarFile = new JarFile(file)) {
 			Manifest manifest = jarFile.getManifest();
