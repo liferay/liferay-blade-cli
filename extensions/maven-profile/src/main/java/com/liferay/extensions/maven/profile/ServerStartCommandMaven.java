@@ -20,7 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.ServerStartCommand;
-import com.liferay.extensions.maven.profile.internal.MavenBladeUtil;
+import com.liferay.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 
@@ -41,7 +41,7 @@ public class ServerStartCommandMaven extends ServerStartCommand {
 
 		File baseDir = new File(baseArgs.getBase());
 
-		return MavenBladeUtil.getMavenProperties(baseDir);
+		return MavenUtil.getMavenProperties(baseDir);
 	}
 
 }

@@ -20,8 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.ServerInitCommand;
 import com.liferay.blade.cli.util.WorkspaceUtil;
-import com.liferay.extensions.maven.profile.internal.MavenBladeUtil;
-import com.liferay.extensions.maven.profile.internal.MavenRunnerUtil;
+import com.liferay.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 
@@ -39,12 +38,12 @@ public class ServerInitCommandMaven extends ServerInitCommand {
 		File baseDir = new File(baseArgs.getBase());
 
 		if (WorkspaceUtil.isWorkspace(baseDir)) {
-			File pomXmlFile = MavenBladeUtil.getPomXMLFile(baseDir);
+			File pomXmlFile = MavenUtil.getPomXMLFile(baseDir);
 
 			if (pomXmlFile.exists()) {
 				bladeCLI.out("Executing maven task bundle-support:init...\n");
 
-				MavenRunnerUtil.executeGoals(baseDir.getAbsolutePath(), new String[] {"bundle-support:init"});
+				MavenUtil.executeGoals(baseDir.getAbsolutePath(), new String[] {"bundle-support:init"});
 			}
 		}
 		else {

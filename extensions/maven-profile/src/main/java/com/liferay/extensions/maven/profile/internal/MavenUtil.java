@@ -16,8 +16,13 @@
 
 package com.liferay.extensions.maven.profile.internal;
 
-import java.io.File;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -43,12 +48,93 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.liferay.blade.cli.util.WorkspaceUtil;
-
 /**
  * @author Christopher Bryan Boyd
  */
-public class MavenBladeUtil {
+public class MavenUtil {
+
+	public static void executeGoals(String projectPath, String[] goals) {
+		Objects.requireNonNull(goals, "Goals must be specified");
+
+		if (!(goals.length > 0)) {
+			throw new RuntimeException("Goals must be specified");
+		}
+
+		String os = System.getProperty("os.name");
+
+		boolean windows = false;
+
+		os = os.toLowerCase();
+
+		if (os.startsWith("win")) {
+			windows = true;
+		}
+
+		boolean buildSuccess = false;
+
+		int exitValue = 1;
+
+		StringBuilder stringBuilder = new StringBuilder();
+
+		for (String goal : goals) {
+			stringBuilder.append(goal + " ");
+		}
+
+		StringBuilder output = new StringBuilder();
+
+		try {
+			Runtime runtime = Runtime.getRuntime();
+
+			Process process = runtime.exec(
+				(windows ? "cmd.exe /c .\\mvnw.cmd" : "./mvnw") + " " + stringBuilder.toString(), null,
+				new File(projectPath));
+
+			BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+			String line = null;
+
+			while ((line = processOutput.readLine()) != null) {
+				output.append(line);
+				output.append(System.lineSeparator());
+
+				if (line.contains("BUILD SUCCESS")) {
+					buildSuccess = true;
+				}
+			}
+
+			while ((line = processError.readLine()) != null) {
+				output.append(line);
+				output.append(System.lineSeparator());
+			}
+
+			exitValue = process.waitFor();
+		}
+		catch (Exception e) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("Maven goals " + goals + " encountered an error in project path: ");
+			sb.append(projectPath + "\n");
+			sb.append(e.getMessage());
+
+			throw new RuntimeException(sb.toString(), e);
+		}
+
+		boolean exitValueCorrect = false;
+
+		if (exitValue == 0) {
+			exitValueCorrect = true;
+		}
+
+		if (!exitValueCorrect) {
+			throw new RuntimeException(
+				"Maven goals " + goals + " returned incorrect exit value in project path " + projectPath);
+		}
+
+		if (!buildSuccess) {
+			throw new RuntimeException("Maven goals " + goals + " failed in project path " + projectPath);
+		}
+	}
 
 	public static Properties getMavenProperties(File baseDir) {
 		try {
