@@ -17,17 +17,13 @@
 package com.liferay.blade.cli;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.Scanner;
 
@@ -51,30 +47,6 @@ import org.w3c.dom.Text;
  * @author Gregory Amerson
  */
 public class TestUtil {
-
-	public static void deleteDir(Path dirPath) throws IOException {
-		Files.walkFileTree(
-			dirPath,
-			new SimpleFileVisitor<Path>() {
-
-				@Override
-				public FileVisitResult postVisitDirectory(Path dirPath, IOException ioe) throws IOException {
-					Files.delete(dirPath);
-
-					return FileVisitResult.CONTINUE;
-				}
-
-				@Override
-				public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes)
-					throws IOException {
-
-					Files.delete(path);
-
-					return FileVisitResult.CONTINUE;
-				}
-
-			});
-	}
 
 	public static BladeTestResults runBlade(
 			BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, boolean assertErrors,
