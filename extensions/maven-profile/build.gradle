@@ -1,7 +1,6 @@
 buildscript {
 	dependencies {
 		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
-		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
 	}
 
 	repositories {

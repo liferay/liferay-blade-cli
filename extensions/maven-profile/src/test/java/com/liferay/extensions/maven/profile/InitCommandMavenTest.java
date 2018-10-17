@@ -20,8 +20,8 @@ import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.MavenRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 
@@ -188,9 +188,9 @@ public class InitCommandMavenTest {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 	}
 
 	private File _workspaceDir = null;

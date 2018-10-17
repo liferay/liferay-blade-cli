@@ -18,30 +18,37 @@ package com.liferay.extensions.maven.profile;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BaseArgs;
-import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.ServerStartCommand;
+import com.liferay.blade.cli.command.ServerInitCommand;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 
-import java.util.Properties;
-
 /**
- * @author David Truong
- * @author Simon Jiang
+ * @author Christopher Bryan Boyd
  */
-@BladeProfile("maven")
-public class ServerStartCommandMaven extends ServerStartCommand {
+public class ServerInitCommandMaven extends ServerInitCommand {
 
 	@Override
-	protected Properties getProperties() {
+	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs baseArgs = bladeCLI.getBladeArgs();
 
 		File baseDir = new File(baseArgs.getBase());
 
-		return MavenUtil.getMavenProperties(baseDir);
+		if (WorkspaceUtil.isWorkspace(baseDir)) {
+			File pomXmlFile = MavenUtil.getPomXMLFile(baseDir);
+
+			if (pomXmlFile.exists()) {
+				bladeCLI.out("Executing maven task bundle-support:init...\n");
+
+				MavenUtil.executeGoals(baseDir.getAbsolutePath(), new String[] {"bundle-support:init"});
+			}
+		}
+		else {
+			bladeCLI.error("'server init' command is only supported inside a Liferay workspace.");
+		}
 	}
 
 }

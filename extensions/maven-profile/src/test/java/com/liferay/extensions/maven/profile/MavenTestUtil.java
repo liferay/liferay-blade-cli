@@ -16,32 +16,19 @@
 
 package com.liferay.extensions.maven.profile;
 
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.command.BaseArgs;
-import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.ServerStartCommand;
-import com.liferay.extensions.maven.profile.internal.MavenUtil;
-
 import java.io.File;
 
-import java.util.Properties;
-
 /**
- * @author David Truong
- * @author Simon Jiang
+ * @author Gregory Amerson
  */
-@BladeProfile("maven")
-public class ServerStartCommandMaven extends ServerStartCommand {
+public class MavenTestUtil {
 
-	@Override
-	protected Properties getProperties() {
-		BladeCLI bladeCLI = getBladeCLI();
+	public static void verifyBuildOutput(String projectPath, String fileName) {
+		File file = new File(projectPath, "/target/" + fileName);
 
-		BaseArgs baseArgs = bladeCLI.getBladeArgs();
-
-		File baseDir = new File(baseArgs.getBase());
-
-		return MavenUtil.getMavenProperties(baseDir);
+		if (!file.exists()) {
+			throw new RuntimeException("Maven file " + fileName + " doses not exist in project path " + projectPath);
+		}
 	}
 
 }

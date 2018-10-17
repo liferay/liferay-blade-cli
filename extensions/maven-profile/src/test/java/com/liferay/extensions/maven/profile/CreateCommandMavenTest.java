@@ -23,8 +23,8 @@ import aQute.bnd.osgi.Jar;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.MavenRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 
@@ -65,9 +65,9 @@ public class CreateCommandMavenTest {
 			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
 			".*^public class BarActivator implements BundleActivator.*$");
 
-		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "target/bar-activator-1.0.0.jar"));
 	}
@@ -88,9 +88,9 @@ public class CreateCommandMavenTest {
 
 		_contains(_checkFileExists(projectPath + "/src/main/resources/foo/api/packageinfo"), "version 1.0.0");
 
-		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 
@@ -127,9 +127,9 @@ public class CreateCommandMavenTest {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "target/loginHook-1.0.0.jar"));
 	}
@@ -156,9 +156,9 @@ public class CreateCommandMavenTest {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 	}

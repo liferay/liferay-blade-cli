@@ -49,14 +49,6 @@ cliTestJar {
 	from sourceSets.test.output
 }
 
-project(":gradle-tooling:model").afterEvaluate { model ->
-	createDepsZip.from model.jar.archivePath
-}
-
-project(":gradle-tooling:plugin").afterEvaluate { plugin ->
-	createDepsZip.from plugin.jar.archivePath
-}
-
 createDepsZip {
 	dependsOn ":gradle-tooling:model:jar", ":gradle-tooling:plugin:jar"
 	archiveName = "deps.zip"
@@ -115,8 +107,10 @@ dependencies {
 	testCompile group: "org.zeroturnaround", name: "zt-process-killer", version: "1.8"
 }
 
-formatSource {
-	maxLineLength = 120
+downloadPortal {
+	src 'https://releases-cdn.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip'
+	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip')
+	onlyIfNewer true
 }
 
 jar {
@@ -128,6 +122,14 @@ repositories {
 	maven {
 		url "https://repo.gradle.org/gradle/libs-releases"
 	}
+}
+
+project(":gradle-tooling:model").afterEvaluate { model ->
+	createDepsZip.from model.jar.archivePath
+}
+
+project(":gradle-tooling:plugin").afterEvaluate { plugin ->
+	createDepsZip.from plugin.jar.archivePath
 }
 
 publishing {
@@ -159,12 +161,6 @@ sourceSets {
 	}
 }
 
-downloadPortal {
-	src 'https://releases-cdn.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip'
-	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip')
-	onlyIfNewer true
-}
-
 testExecutableJar {
 	dependsOn jar
 
@@ -187,16 +183,8 @@ testVersionCommand {
 	}
 }
 
-check.dependsOn testExecutableJar, testVersionCommand
-
-unzipPortal {
-	dependsOn downloadPortal
-	from zipTree(downloadPortal.dest)
-	into buildDir
-}
-
 test {
-	dependsOn createDepsZip, createWrapperZip, unzipPortal
+	dependsOn createDepsZip, createWrapperZip, testExecutableJar, testVersionCommand, unzipPortal
 
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
@@ -232,6 +220,12 @@ test {
 	}
 
 	maxParallelForks = forks
+}
+
+unzipPortal {
+	dependsOn downloadPortal
+	from zipTree(downloadPortal.dest)
+	into buildDir
 }
 
 version = "3.3.0"
