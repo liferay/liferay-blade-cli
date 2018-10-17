@@ -53,7 +53,11 @@ public class TestUtil {
 			String... args)
 		throws Exception {
 
-		bladeTest.run(args);
+		try {
+			bladeTest.run(args);
+		}
+		catch (Exception e) {
+		}
 
 		String error = errorStream.toString();
 
@@ -100,7 +104,7 @@ public class TestUtil {
 
 		StringPrintStream errorPrintStream = StringPrintStream.newInstance();
 
-		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir);
+		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir, assertErrors);
 
 		return runBlade(bladeTest, outputPrintStream, errorPrintStream, assertErrors, args);
 	}

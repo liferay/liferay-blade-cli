@@ -651,7 +651,11 @@ public class CreateCommandTest {
 			Assert.assertTrue(existFile.createNewFile());
 		}
 
-		_bladeTest.run(args);
+		try {
+			_bladeTest.run(args);
+		}
+		catch (Exception e) {
+		}
 
 		String projectPath = new File(tempRoot, "exist").getAbsolutePath();
 
@@ -790,11 +794,13 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "service", "foo"};
 
+		BladeTestResults bladeTestResults = null;
+
 		String errors = null;
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(false, args);
-
 		try {
+			bladeTestResults = TestUtil.runBlade(false, args);
+
 			errors = bladeTestResults.getErrors();
 		}
 		catch (Throwable t) {
@@ -1539,7 +1545,11 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "activatorXXX", "wrong-activator"};
 
-		_bladeTest.run(args);
+		try {
+			_bladeTest.run(args);
+		}
+		catch (Exception e) {
+		}
 
 		String projectPath = new File(tempRoot, "wrong-activator").getAbsolutePath();
 

@@ -142,7 +142,9 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 				}
 			}
 			catch (Exception e) {
-				bladeCLI.error("Please execute this command from a Liferay project");
+				bladeCLI.error("Please execute this command from a Liferay Workspace project.");
+
+				e.printStackTrace(bladeCLI.err());
 			}
 		}
 	}

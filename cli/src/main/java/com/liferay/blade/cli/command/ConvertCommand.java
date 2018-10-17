@@ -330,12 +330,18 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			FileUtil.deleteDirIfExists(new File(warDir, ".settings").toPath());
 		}
 		catch (Exception e) {
-			getBladeCLI().error("Error upgrading project %s\n%s", layoutPluginDir.getName(), e.getMessage());
+			BladeCLI bladeCLI = getBladeCLI();
+
+			bladeCLI.error("Error upgrading project " + layoutPluginDir.getName() + "\n");
+
+			e.printStackTrace(bladeCLI.err());
 		}
 	}
 
 	private void _convertToServiceBuilderWarProject(File warsDir, File pluginDir) {
 		ConvertArgs convertArgs = getArgs();
+
+		BladeCLI bladeCLI = getBladeCLI();
 
 		try {
 			_convertToWarProject(warsDir, pluginDir);
@@ -360,18 +366,22 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			ConvertArgs convertServiceBuilderArgs = new ConvertArgs(
 				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), arguments);
 
-			new ConvertServiceBuilderCommand(getBladeCLI(), convertServiceBuilderArgs).execute();
+			new ConvertServiceBuilderCommand(bladeCLI, convertServiceBuilderArgs).execute();
 		}
 		catch (Exception e) {
-			getBladeCLI().error("Error upgrading project %s\n%s", pluginDir.getName(), e.getMessage());
+			bladeCLI.error("Error upgrading project " + pluginDir.getName() + "\n");
+
+			e.printStackTrace(bladeCLI.err());
 		}
 	}
 
 	private void _convertToThemeBuilderWarProject(File warsDir, File themePlugin) {
+		BladeCLI bladeCLI = getBladeCLI();
+
 		try {
 			warsDir.mkdirs();
 
-			CreateCommand createCommand = new CreateCommand(getBladeCLI());
+			CreateCommand createCommand = new CreateCommand(bladeCLI);
 
 			ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
@@ -438,16 +448,22 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			FileUtil.deleteDir(themePlugin.toPath());
 		}
 		catch (Exception e) {
-			getBladeCLI().error("Error upgrading project %s\n%s", themePlugin.getName(), e.getMessage());
+			bladeCLI.error("Error upgrading project " + themePlugin.getName() + "\n");
+
+			e.printStackTrace(bladeCLI.err());
 		}
 	}
 
 	private void _convertToThemeProject(File themePlugin) {
+		BladeCLI bladeCLI = getBladeCLI();
+
 		try {
-			new ConvertThemeCommand(getBladeCLI(), getArgs()).execute();
+			new ConvertThemeCommand(bladeCLI, getArgs()).execute();
 		}
 		catch (Exception e) {
-			getBladeCLI().error("Error upgrading project %s\n%s", themePlugin.getName(), e.getMessage());
+			bladeCLI.error("Error upgrading project " + themePlugin.getName() + "\n");
+
+			e.printStackTrace(bladeCLI.err());
 		}
 	}
 

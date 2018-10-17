@@ -55,7 +55,11 @@ public class ConvertCommandTest {
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-a"};
 
-		new BladeTest().run(args);
+		try {
+			new BladeTest().run(args);
+		}
+		catch (Exception e) {
+		}
 
 		Assert.assertTrue(
 			new File(

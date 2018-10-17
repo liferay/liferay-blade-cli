@@ -207,7 +207,11 @@ public class InitCommandTest {
 
 		BladeTest bladeTest = new BladeTest();
 
-		bladeTest.run(args);
+		try {
+			bladeTest.run(args);
+		}
+		catch (Exception e) {
+		}
 
 		Assert.assertFalse(new File(_workspaceDir, "build.gradle").exists());
 	}
@@ -360,7 +364,11 @@ public class InitCommandTest {
 
 		BladeTest bladeTest = new BladeTest();
 
-		bladeTest.run(args);
+		try {
+			bladeTest.run(args);
+		}
+		catch (Exception e) {
+		}
 
 		Assert.assertFalse(new File(_workspaceDir, "newproject/build.gradle").exists());
 	}

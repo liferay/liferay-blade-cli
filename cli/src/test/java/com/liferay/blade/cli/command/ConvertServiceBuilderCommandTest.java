@@ -71,12 +71,6 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertFalse(new File(sbWar, "docroot").exists());
 
-		args = new String[] {"--base", projectDir.getPath(), "convert", SB_PROJECT_NAME};
-
-		bladeTest = new BladeTest(temporaryFolder.getRoot());
-
-		bladeTest.run(args);
-
 		File moduleDir = new File(projectDir, "modules");
 
 		File newSbDir = new File(moduleDir, "sample-service-builder");

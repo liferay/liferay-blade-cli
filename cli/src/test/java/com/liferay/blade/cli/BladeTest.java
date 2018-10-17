@@ -32,7 +32,7 @@ import java.nio.file.Path;
 public class BladeTest extends BladeCLI {
 
 	public BladeTest() throws Exception {
-		super(System.out, System.out, System.in);
+		super(StringPrintStream.newInstance(), StringPrintStream.newInstance(), System.in);
 
 		_userHomeDir = new File(System.getProperty("user.home"));
 	}
@@ -56,13 +56,18 @@ public class BladeTest extends BladeCLI {
 	}
 
 	public BladeTest(PrintStream outputStream, PrintStream errorStream, InputStream in) {
-		this(outputStream, errorStream, in, new File(System.getProperty("user.home")));
+		this(outputStream, errorStream, in, new File(System.getProperty("user.home")), true);
 	}
 
 	public BladeTest(PrintStream out, PrintStream err, InputStream in, File userHomeDir) {
+		this(out, err, in, userHomeDir, true);
+	}
+
+	public BladeTest(PrintStream out, PrintStream err, InputStream in, File userHomeDir, boolean assertErrors) {
 		super(out, err, in);
 
 		_userHomeDir = userHomeDir;
+		_assertErrors = assertErrors;
 	}
 
 	@Override
@@ -111,6 +116,26 @@ public class BladeTest extends BladeCLI {
 		return extensionsPath;
 	}
 
+	@Override
+	public void run(String[] args) throws Exception {
+		super.run(args);
+
+		if (_assertErrors) {
+			PrintStream err = err();
+
+			if (err instanceof StringPrintStream) {
+				StringPrintStream stringPrintStream = (StringPrintStream)err;
+
+				String errors = stringPrintStream.get();
+
+				if (!errors.isEmpty()) {
+					throw new Exception("Errors not empty:\n" + errors);
+				}
+			}
+		}
+	}
+
+	private boolean _assertErrors = true;
 	private File _userHomeDir;
 
 }

@@ -57,7 +57,7 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 			}
 		}
 		else {
-			bladeCLI.error("'server init' command is only supported inside a Liferay workspace.");
+			bladeCLI.error("'server init' command is only supported inside a Liferay workspace project.");
 		}
 	}
 
