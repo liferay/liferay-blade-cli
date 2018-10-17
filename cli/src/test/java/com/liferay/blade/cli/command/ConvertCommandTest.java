@@ -47,9 +47,7 @@ public class ConvertCommandTest {
 
 		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
 
-		if (pluginsSdkDir.exists()) {
-			FileUtil.deleteDir(pluginsSdkDir.toPath());
-		}
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -57,7 +55,7 @@ public class ConvertCommandTest {
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-a"};
 
-		new BladeTest().run(args);
+		new BladeTest(false).run(args);
 
 		Assert.assertTrue(
 			new File(
@@ -83,9 +81,7 @@ public class ConvertCommandTest {
 
 		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
 
-		if (pluginsSdkDir.exists()) {
-			FileUtil.deleteDir(pluginsSdkDir.toPath());
-		}
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -118,9 +114,7 @@ public class ConvertCommandTest {
 
 		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
 
-		if (pluginsSdkDir.exists()) {
-			FileUtil.deleteDir(pluginsSdkDir.toPath());
-		}
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -159,9 +153,7 @@ public class ConvertCommandTest {
 
 		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
 
-		if (pluginsSdkDir.exists()) {
-			FileUtil.deleteDir(pluginsSdkDir.toPath());
-		}
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -275,9 +267,7 @@ public class ConvertCommandTest {
 
 		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
 
-		if (pluginsSdkDir.exists()) {
-			FileUtil.deleteDir(pluginsSdkDir.toPath());
-		}
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 

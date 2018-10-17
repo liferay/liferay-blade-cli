@@ -40,6 +40,10 @@ buildChangeLog {
 	ticketIdPrefixes = ["BLADE", "IDE", "LPS"]
 }
 
+check {
+	dependsOn testExecutableJar, testVersionCommand
+}
+
 clean.doFirst {
 	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
 }
@@ -161,30 +165,8 @@ sourceSets {
 	}
 }
 
-testExecutableJar {
-	dependsOn jar
-
-	doLast {
-		javaexec {
-			args = [jar.archivePath, "create", "-l"]
-			main = "-jar"
-		}
-	}
-}
-
-testVersionCommand {
-	dependsOn jar
-
-	doLast {
-		javaexec {
-			args = [jar.archivePath, "version"]
-			main = "-jar"
-		}
-	}
-}
-
 test {
-	dependsOn createDepsZip, createWrapperZip, testExecutableJar, testVersionCommand, unzipPortal
+	dependsOn createDepsZip, createWrapperZip, unzipPortal
 
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
@@ -220,6 +202,28 @@ test {
 	}
 
 	maxParallelForks = forks
+}
+
+testExecutableJar {
+	dependsOn jar
+
+	doLast {
+		javaexec {
+			args = [jar.archivePath, "create", "-l"]
+			main = "-jar"
+		}
+	}
+}
+
+testVersionCommand {
+	dependsOn jar
+
+	doLast {
+		javaexec {
+			args = [jar.archivePath, "version"]
+			main = "-jar"
+		}
+	}
 }
 
 unzipPortal {

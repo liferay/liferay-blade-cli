@@ -79,7 +79,7 @@ public class ConvertThemeCommand {
 		final String themeName = !args.isEmpty() ? args.get(0) : null;
 
 		if (!WorkspaceUtil.isWorkspace(_blade)) {
-			_blade.error("Please execute this in a Liferay Workspace Project");
+			_blade.error("Please execute this in a Liferay Workspace project.");
 
 			return;
 		}

@@ -62,9 +62,7 @@ public class InitCommandTest {
 
 		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
 
-		if (pluginsSdkDir.exists()) {
-			FileUtil.deleteDir(pluginsSdkDir.toPath());
-		};
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -138,9 +136,7 @@ public class InitCommandTest {
 
 		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
 
-		if (pluginsSdkDir.exists()) {
-			FileUtil.deleteDir(pluginsSdkDir.toPath());
-		};
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -209,7 +205,7 @@ public class InitCommandTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(false);
 
 		bladeTest.run(args);
 
@@ -362,7 +358,7 @@ public class InitCommandTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(false);
 
 		bladeTest.run(args);
 

@@ -139,7 +139,9 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 				}
 			}
 			catch (Exception e) {
-				bladeCLI.error("Please execute this command from a Liferay project");
+				bladeCLI.error("Please execute this command from a Liferay workspace project");
+
+				e.printStackTrace(bladeCLI.err());
 			}
 		}
 	}

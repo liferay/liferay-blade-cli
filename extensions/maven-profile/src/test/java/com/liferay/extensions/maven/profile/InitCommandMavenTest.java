@@ -80,7 +80,7 @@ public class InitCommandMavenTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(false);
 
 		bladeTest.run(args);
 
@@ -129,7 +129,7 @@ public class InitCommandMavenTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(false);
 
 		bladeTest.run(args);
 

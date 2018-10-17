@@ -47,9 +47,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
 
-		if (pluginsSdkDir.exists()) {
-			FileUtil.deleteDir(pluginsSdkDir.toPath());
-		}
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
@@ -72,12 +70,6 @@ public class ConvertServiceBuilderCommandTest {
 		Assert.assertTrue(new File(sbWar, "build.gradle").exists());
 
 		Assert.assertFalse(new File(sbWar, "docroot").exists());
-
-		args = new String[] {"--base", projectDir.getPath(), "convert", SB_PROJECT_NAME};
-
-		bladeTest = new BladeTest(temporaryFolder.getRoot());
-
-		bladeTest.run(args);
 
 		File moduleDir = new File(projectDir, "modules");
 

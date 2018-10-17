@@ -62,7 +62,7 @@ public class VersionCommand extends BaseCommand<VersionArgs> {
 			}
 		}
 
-		bladeCLI.error("Could not locate version");
+		bladeCLI.error("Could not locate version.");
 	}
 
 	@Override
