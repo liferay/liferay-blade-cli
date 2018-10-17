@@ -37,6 +37,12 @@ public class BladeTest extends BladeCLI {
 		_userHomeDir = new File(System.getProperty("user.home"));
 	}
 
+	public BladeTest(boolean assertErrors) throws Exception {
+		this();
+
+		_assertErrors = assertErrors;
+	}
+
 	public BladeTest(File userHomeDir) throws Exception {
 		this();
 

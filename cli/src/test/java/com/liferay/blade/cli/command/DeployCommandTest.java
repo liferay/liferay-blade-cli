@@ -239,11 +239,7 @@ public class DeployCommandTest {
 
 		String[] args = {"--base", war.getParentFile().getAbsolutePath(), "deploy"};
 
-		try {
-			new BladeTest().run(args);
-		}
-		catch (Exception e) {
-		}
+		new BladeTest(false).run(args);
 
 		PowerMock.verifyAll();
 	}

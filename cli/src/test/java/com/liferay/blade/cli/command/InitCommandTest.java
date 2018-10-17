@@ -205,13 +205,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(false);
 
-		try {
-			bladeTest.run(args);
-		}
-		catch (Exception e) {
-		}
+		bladeTest.run(args);
 
 		Assert.assertFalse(new File(_workspaceDir, "build.gradle").exists());
 	}
@@ -362,13 +358,9 @@ public class InitCommandTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(false);
 
-		try {
-			bladeTest.run(args);
-		}
-		catch (Exception e) {
-		}
+		bladeTest.run(args);
 
 		Assert.assertFalse(new File(_workspaceDir, "newproject/build.gradle").exists());
 	}
