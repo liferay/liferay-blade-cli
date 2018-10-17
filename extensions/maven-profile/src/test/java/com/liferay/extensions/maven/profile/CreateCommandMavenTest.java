@@ -67,7 +67,7 @@ public class CreateCommandMavenTest {
 
 		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "target/bar-activator-1.0.0.jar"));
 	}
@@ -90,7 +90,7 @@ public class CreateCommandMavenTest {
 
 		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 
@@ -129,7 +129,7 @@ public class CreateCommandMavenTest {
 
 		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "target/loginHook-1.0.0.jar"));
 	}
@@ -158,7 +158,7 @@ public class CreateCommandMavenTest {
 
 		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 	}

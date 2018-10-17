@@ -106,12 +106,4 @@ public class MavenRunnerUtil {
 		}
 	}
 
-	public static void verifyBuildOutput(String projectPath, String fileName) {
-		File file = new File(projectPath, "/target/" + fileName);
-
-		if (!file.exists()) {
-			throw new RuntimeException("Maven file " + fileName + " doses not exist in project path " + projectPath);
-		}
-	}
-
 }

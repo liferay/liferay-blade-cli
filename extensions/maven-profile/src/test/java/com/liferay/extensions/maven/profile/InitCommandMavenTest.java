@@ -190,7 +190,7 @@ public class InitCommandMavenTest {
 
 		MavenRunnerUtil.executeGoals(projectPath, new String[] {"clean", "package"});
 
-		MavenRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 	}
 
 	private File _workspaceDir = null;
