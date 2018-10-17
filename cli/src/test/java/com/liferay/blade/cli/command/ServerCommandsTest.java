@@ -22,8 +22,10 @@ import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -49,9 +51,13 @@ public class ServerCommandsTest {
 
 	@Test
 	public void testServerCommands() throws Exception {
-		TestUtil.runBlade(new String[] {"--base", _workspaceDir.getPath(), "init", "-v", "7.1"});
+		String[] initArgs = {"--base", _workspaceDir.getPath(), "init", "-v", "7.1"};
 
-		TestUtil.runBlade(new String[] {"--base", _workspaceDir.getPath(), "gw", "initBundle"});
+		new BladeTest().run(initArgs);
+
+		String[] gwArgs = {"--base", _workspaceDir.getPath(), "gw", "initBundle"};
+
+		new BladeTest().run(gwArgs);
 
 		_testServerStart();
 	}
@@ -60,7 +66,7 @@ public class ServerCommandsTest {
 	public void testServerInit() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 
-		TestUtil.runBlade(args);
+		new BladeTest().run(args);
 
 		args = new String[] {"--base", _workspaceDir.getPath(), "server", "init"};
 
@@ -122,6 +128,8 @@ public class ServerCommandsTest {
 
 		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream);
 
+		final List<Exception> exceptions = new ArrayList<>();
+
 		Thread thread = new Thread() {
 
 			@Override
@@ -130,6 +138,7 @@ public class ServerCommandsTest {
 					bladeTest.run(args);
 				}
 				catch (Exception e) {
+					exceptions.add(e);
 				}
 			}
 
@@ -139,7 +148,11 @@ public class ServerCommandsTest {
 
 		thread.run();
 
-		Thread.sleep(1);
+		Thread.sleep(5);
+
+		if (!exceptions.isEmpty()) {
+			Assert.fail("Unexpected exception: " + exceptions.get(0));
+		}
 
 		ServerStartCommand serverStartCommand = (ServerStartCommand)bladeTest.getCommand();
 
