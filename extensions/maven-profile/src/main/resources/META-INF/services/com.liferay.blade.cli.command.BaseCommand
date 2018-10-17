@@ -1,4 +1,5 @@
 com.liferay.extensions.maven.profile.CreateCommandMaven
 com.liferay.extensions.maven.profile.InitCommandMaven
+com.liferay.extensions.maven.profile.ServerInitCommandMaven
 com.liferay.extensions.maven.profile.ServerStartCommandMaven
 com.liferay.extensions.maven.profile.ServerStopCommandMaven

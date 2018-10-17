@@ -14,28 +14,34 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.extensions.maven.profile.internal;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
-import org.junit.Assert;
+import java.util.Objects;
 
 /**
  * @author Andy Wu
+ * @author Christopher Bryan Boyd
  */
 public class MavenRunnerUtil {
 
 	public static void executeGoals(String projectPath, String[] goals) {
-		Assert.assertNotNull(goals);
-		Assert.assertTrue(goals.length > 0);
+		Objects.requireNonNull(goals, "Goals must be specified");
+
+		if (!(goals.length > 0)) {
+			throw new RuntimeException("Goals must be specified");
+		}
 
 		String os = System.getProperty("os.name");
 
 		boolean windows = false;
 
-		if (os.toLowerCase().startsWith("win")) {
+		os = os.toLowerCase();
+
+		if (os.startsWith("win")) {
 			windows = true;
 		}
 
@@ -79,16 +85,33 @@ public class MavenRunnerUtil {
 			exitValue = process.waitFor();
 		}
 		catch (Exception e) {
+			throw new RuntimeException(
+				"Maven goals " + goals + " encountered an error in project path " + projectPath + ", " + e.getMessage(),
+				e);
 		}
 
-		Assert.assertEquals("Maven process returned:\n" + output.toString(), 0, exitValue);
-		Assert.assertTrue(buildSuccess);
+		boolean exitValueCorrect = false;
+
+		if (exitValue == 0) {
+			exitValueCorrect = true;
+		}
+
+		if (!exitValueCorrect) {
+			throw new RuntimeException(
+				"Maven goals " + goals + " returned incorrect exit value in project path " + projectPath);
+		}
+
+		if (!buildSuccess) {
+			throw new RuntimeException("Maven goals " + goals + " failed in project path " + projectPath);
+		}
 	}
 
 	public static void verifyBuildOutput(String projectPath, String fileName) {
 		File file = new File(projectPath, "/target/" + fileName);
 
-		Assert.assertTrue(file.exists());
+		if (!file.exists()) {
+			throw new RuntimeException("Maven file " + fileName + " doses not exist in project path " + projectPath);
+		}
 	}
 
 }

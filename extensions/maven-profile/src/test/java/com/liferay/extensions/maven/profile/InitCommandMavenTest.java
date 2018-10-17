@@ -20,8 +20,8 @@ import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.MavenRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.extensions.maven.profile.internal.MavenRunnerUtil;
 
 import java.io.File;
 
