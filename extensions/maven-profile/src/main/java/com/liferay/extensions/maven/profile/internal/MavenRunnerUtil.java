@@ -48,10 +48,10 @@ public class MavenRunnerUtil {
 		boolean buildSuccess = false;
 		int exitValue = 1;
 
-		StringBuilder commandBuilder = new StringBuilder();
+		StringBuilder stringBuilder = new StringBuilder();
 
 		for (String goal : goals) {
-			commandBuilder.append(goal + " ");
+			stringBuilder.append(goal + " ");
 		}
 
 		StringBuilder output = new StringBuilder();
@@ -60,7 +60,7 @@ public class MavenRunnerUtil {
 			Runtime runtime = Runtime.getRuntime();
 
 			Process process = runtime.exec(
-				(windows ? "cmd.exe /c .\\mvnw.cmd" : "./mvnw") + " " + commandBuilder.toString(), null,
+				(windows ? "cmd.exe /c .\\mvnw.cmd" : "./mvnw") + " " + stringBuilder.toString(), null,
 				new File(projectPath));
 
 			BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));

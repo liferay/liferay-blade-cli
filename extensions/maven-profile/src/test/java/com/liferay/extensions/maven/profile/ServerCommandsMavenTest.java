@@ -21,7 +21,6 @@ import com.liferay.blade.cli.TestUtil;
 import java.io.File;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -31,31 +30,26 @@ import org.junit.rules.TemporaryFolder;
  */
 public class ServerCommandsMavenTest {
 
-	@Before
-	public void setUp() throws Exception {
-		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
-	}
-
 	@Test
 	public void testServerInit() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-p", "maven"};
+		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
+
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-p", "maven"};
 
 		TestUtil.runBlade(args);
 
-		args = new String[] {"--base", _workspaceDir.getPath(), "server", "init"};
+		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		File bundlesDirectory = new File(_workspaceDir.getPath(), "bundles");
+		File bundlesDir = new File(workspaceDir.getPath(), "bundles");
 
-		Assert.assertFalse(bundlesDirectory.exists());
+		Assert.assertFalse(bundlesDir.exists());
 
 		TestUtil.runBlade(args);
 
-		Assert.assertTrue(bundlesDirectory.exists());
+		Assert.assertTrue(bundlesDir.exists());
 	}
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-	private File _workspaceDir = null;
 
 }
