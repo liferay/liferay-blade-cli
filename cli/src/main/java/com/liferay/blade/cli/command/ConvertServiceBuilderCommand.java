@@ -24,6 +24,7 @@ import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,6 +39,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 
 /**
  * @author Terry Jia
@@ -329,11 +333,21 @@ public class ConvertServiceBuilderCommand {
 
 		private void _parse() throws Exception {
 			if ((_rootElement == null) && (_serviceXml != null) && _serviceXml.exists()) {
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
-				Document doc = dBuilder.parse(_serviceXml);
+				documentBuilder.setEntityResolver(
+					new EntityResolver() {
+
+						@Override
+						public InputSource resolveEntity(String publicId, String systemId) {
+							return new InputSource(new StringReader(""));
+						}
+
+					});
+
+				Document doc = documentBuilder.parse(_serviceXml);
 
 				_rootElement = doc.getDocumentElement();
 			}

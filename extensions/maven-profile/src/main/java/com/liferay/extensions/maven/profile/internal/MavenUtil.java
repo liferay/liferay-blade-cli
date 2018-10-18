@@ -82,12 +82,14 @@ public class MavenUtil {
 
 		StringBuilder output = new StringBuilder();
 
+		String command = null;
+
 		try {
 			Runtime runtime = Runtime.getRuntime();
 
-			Process process = runtime.exec(
-				(windows ? "cmd.exe /c .\\mvnw.cmd" : "./mvnw") + " " + stringBuilder.toString(), null,
-				new File(projectPath));
+			command = (windows ? "cmd.exe /c .\\mvnw.cmd" : "./mvnw") + " " + stringBuilder.toString();
+
+			Process process = runtime.exec(command, null, new File(projectPath));
 
 			BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -113,8 +115,8 @@ public class MavenUtil {
 		catch (Exception e) {
 			StringBuilder sb = new StringBuilder();
 
-			sb.append("Maven goals " + goals + " encountered an error in project path: ");
-			sb.append(projectPath + "\n");
+			sb.append("Project path: " + projectPath + "\n");
+			sb.append("maven command failed: " + command);
 			sb.append(e.getMessage());
 
 			throw new RuntimeException(sb.toString(), e);

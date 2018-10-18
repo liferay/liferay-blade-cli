@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
@@ -49,11 +50,15 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSample() throws Exception {
-		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "friendly-url"};
+		File root = temporaryFolder.getRoot();
 
-		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String[] args = {"samples", "-d", root.getPath() + "/test", "friendly-url"};
 
-		File projectDir = new File(temporaryFolder.getRoot(), "test/friendly-url");
+		BladeTest bladeTest = new BladeTest(root);
+
+		bladeTest.run(args);
+
+		File projectDir = new File(root, "test/friendly-url");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -72,7 +77,9 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test", "-b", "maven", "-v", "7.0", "friendly-url"};
 
-		TestUtil.runBlade(root, args);
+		BladeTest bladeTest = new BladeTest(root);
+
+		bladeTest.run(args);
 
 		File projectDir = new File(root, "test/friendly-url");
 
@@ -97,7 +104,9 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test", "-b", "maven", "-v", "7.1", "friendly-url"};
 
-		TestUtil.runBlade(root, args);
+		BladeTest bladeTest = new BladeTest(root);
+
+		bladeTest.run(args);
 
 		File projectDir = new File(root, "test/friendly-url");
 
@@ -118,11 +127,15 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithDependencies() throws Exception {
-		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "rest"};
+		File root = temporaryFolder.getRoot();
 
-		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String[] args = {"samples", "-d", root.getPath() + "/test", "rest"};
 
-		File projectDir = new File(temporaryFolder.getRoot(), "test/rest");
+		BladeTest bladeTest = new BladeTest(root);
+
+		bladeTest.run(args);
+
+		File projectDir = new File(root, "test/rest");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -137,11 +150,15 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithGradleWrapper() throws Exception {
-		String[] args = {"samples", "-d", temporaryFolder.getRoot().getPath() + "/test", "authenticator-shiro"};
+		File root = temporaryFolder.getRoot();
 
-		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		String[] args = {"samples", "-d", root.getPath() + "/test", "authenticator-shiro"};
 
-		File projectDir = new File(temporaryFolder.getRoot(), "test/authenticator-shiro");
+		BladeTest bladeTest = new BladeTest(root);
+
+		bladeTest.run(args);
+
+		File projectDir = new File(root, "test/authenticator-shiro");
 
 		Assert.assertTrue(projectDir.exists());
 
@@ -214,7 +231,9 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test", "-v", "7.0", "jsp-portlet"};
 
-		TestUtil.runBlade(root, args);
+		BladeTest bladeTest = new BladeTest(root);
+
+		bladeTest.run(args);
 
 		File projectDir = new File(root, "test/jsp-portlet");
 
@@ -239,7 +258,9 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test71", "-v", "7.1", "jsp-portlet"};
 
-		TestUtil.runBlade(root, args);
+		BladeTest bladeTest = new BladeTest(root);
+
+		bladeTest.run(args);
 
 		File projectDir = new File(root, "test71/jsp-portlet");
 
