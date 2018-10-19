@@ -161,7 +161,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		Path customTemplatesPath = bladeCLI.getExtensionsPath();
 
-		archetypesDirs.add(FileUtil.getJarFile(ProjectTemplates.class));
 		archetypesDirs.add(customTemplatesPath.toFile());
 
 		if ((name == null) || Objects.equals(name, ".")) {

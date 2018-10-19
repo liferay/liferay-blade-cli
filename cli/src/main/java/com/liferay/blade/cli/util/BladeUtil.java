@@ -321,7 +321,6 @@ public class BladeUtil {
 
 				@Override
 				public void run() {
-
 					try (Scanner scanner = new Scanner(inputStream)) {
 						while (scanner.hasNextLine()) {
 							String line = scanner.nextLine();
