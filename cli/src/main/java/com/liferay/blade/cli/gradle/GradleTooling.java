@@ -17,7 +17,7 @@
 package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.gradle.model.CustomModel;
+import com.liferay.blade.gradle.tooling.CustomModel;
 
 import java.io.File;
 import java.io.InputStream;
@@ -27,6 +27,8 @@ import java.nio.file.Path;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ModelBuilder;
@@ -69,27 +71,35 @@ public class GradleTooling {
 
 			ModelBuilder<T> modelBuilder = connection.model(modelClass);
 
-			Path tempPath = Files.createTempDirectory("blade-tooling-model");
+			Path tempPath = Files.createTempDirectory("tooling");
 
-			InputStream in = GradleTooling.class.getResourceAsStream("/deps.zip");
+			InputStream in = GradleTooling.class.getResourceAsStream("/tooling.zip");
 
 			FileUtil.unzip(in, tempPath.toFile());
 
-			String initScriptTemplate = FileUtil.collect(GradleTooling.class.getResourceAsStream("init.gradle"));
+			try (Stream<Path> toolingFiles = Files.list(tempPath)) {
+				String files = toolingFiles.map(
+					Path::toAbsolutePath
+				).map(
+					Path::toString
+				).map(
+					path -> "\"" + path + "\""
+				).collect(
+					Collectors.joining(", ")
+				);
 
-			String libsPath = tempPath.toString();
+				String initScriptTemplate = FileUtil.collect(GradleTooling.class.getResourceAsStream("init.gradle"));
 
-			libsPath = libsPath.replaceAll("\\\\", "/");
+				String initScriptContents = initScriptTemplate.replaceAll("%files%", files);
 
-			String initScriptContents = initScriptTemplate.replaceAll("%libsPath%", libsPath);
+				Path initPath = tempPath.resolve("init.gradle");
 
-			Path initPath = tempPath.resolve("init.gradle");
+				FileUtil.write(initScriptContents.getBytes(), initPath.toFile());
 
-			FileUtil.write(initScriptContents.getBytes(), initPath.toFile());
+				modelBuilder.withArguments("--init-script", initPath.toString(), "--stacktrace");
 
-			modelBuilder.withArguments("--init-script", initPath.toString(), "--stacktrace");
-
-			retval = modelBuilder.get();
+				retval = modelBuilder.get();
+			}
 		}
 		finally {
 			if (connection != null) {

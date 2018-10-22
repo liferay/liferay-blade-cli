@@ -1,9 +1,9 @@
 initscript {
 	dependencies {
-		classpath files("%libsPath%/model-1.2.0.jar", "%libsPath%/plugin-1.2.0.jar")
+		classpath files(%files%)
 	}
 }
 
 allprojects {
-	apply plugin: com.liferay.blade.gradle.plugin.CustomModelPlugin
+	apply plugin: com.liferay.blade.gradle.tooling.CustomModelPlugin
 }

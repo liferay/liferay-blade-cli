@@ -45,14 +45,14 @@ public class GradleToolingTest {
 	public static void setUpClass() throws Exception {
 		File wsDir = temporaryFolder.newFolder("build", "testws1");
 
-		Files.copy(new File("deps.zip").toPath(), _DEPS_ZIP.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(new File("tooling.zip").toPath(), _TOOLING_ZIP.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
 		FileUtil.copyDir(new File("test-resources/projects/testws1").toPath(), wsDir.toPath());
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		Files.delete(_DEPS_ZIP.toPath());
+		Files.delete(_TOOLING_ZIP.toPath());
 	}
 
 	@Test
@@ -95,6 +95,6 @@ public class GradleToolingTest {
 		Assert.assertFalse(liferayModule);
 	}
 
-	private static final File _DEPS_ZIP = new File("build/classes/java/test/deps.zip");
+	private static final File _TOOLING_ZIP = new File("build/classes/java/test/tooling.zip");
 
 }

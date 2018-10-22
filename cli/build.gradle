@@ -19,8 +19,9 @@ apply plugin: "com.liferay.change.log.builder"
 apply plugin: "java"
 apply plugin: "maven-publish"
 
+task cliSourcesJar(type: Jar)
 task cliTestJar(type: Jar)
-task createDepsZip(type:Zip)
+task createToolingZip(type:Zip)
 task createWrapperZip(type:Zip)
 task downloadPortal(type: Download)
 task testExecutableJar
@@ -45,7 +46,12 @@ check {
 }
 
 clean.doFirst {
-	delete "${projectDir}/deps.zip", "${projectDir}/wrapper.zip"
+	delete "${projectDir}/tooling.zip", "${projectDir}/wrapper.zip"
+}
+
+cliSourcesJar {
+	classifier = 'sources'
+	from sourceSets.main.allJava
 }
 
 cliTestJar {
@@ -53,9 +59,9 @@ cliTestJar {
 	from sourceSets.test.output
 }
 
-createDepsZip {
-	dependsOn ":gradle-tooling:model:jar", ":gradle-tooling:plugin:jar"
-	archiveName = "deps.zip"
+createToolingZip {
+	dependsOn ":gradle-tooling:jar"
+	archiveName = "tooling.zip"
 	destinationDir = new File("${projectDir}")
 }
 
@@ -94,7 +100,7 @@ dependencies {
 	compile name: "org.objectweb.asm.commons-6.0.0"
 	compile name: "org.objectweb.asm.tree-6.0.0"
 	compile name: "org.objectweb.asm.util-6.0.0"
-	compile project(":gradle-tooling:model")
+	compile project(":gradle-tooling")
 
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 
@@ -119,7 +125,7 @@ downloadPortal {
 
 jar {
 	archiveName = 'blade.jar'
-	from createDepsZip, createWrapperZip
+	from createToolingZip, createWrapperZip
 }
 
 repositories {
@@ -128,18 +134,15 @@ repositories {
 	}
 }
 
-project(":gradle-tooling:model").afterEvaluate { model ->
-	createDepsZip.from model.jar.archivePath
+project(":gradle-tooling").afterEvaluate { tooling ->
+	createToolingZip.from tooling.jar.archivePath
 }
 
-project(":gradle-tooling:plugin").afterEvaluate { plugin ->
-	createDepsZip.from plugin.jar.archivePath
-}
+version = "3.3.0-SNAPSHOT"
 
 publishing {
 	publications {
-		bladeJar(MavenPublication) {
-			groupId = "com.liferay.blade"
+		cliJar(MavenPublication) {
 			artifactId = "com.liferay.blade.cli"
 
 			pom.withXml {
@@ -148,6 +151,8 @@ publishing {
 			}
 
 			from components.java
+
+			artifact cliSourcesJar
 		}
 	}
 }
@@ -156,7 +161,7 @@ sourceSets {
 	zips {
 		resources {
 			srcDir "${projectDir}"
-			include "deps.zip"
+			include "tooling.zip"
 			include "wrapper.zip"
 		}
 	}
@@ -166,7 +171,7 @@ sourceSets {
 }
 
 test {
-	dependsOn createDepsZip, createWrapperZip, unzipPortal
+	dependsOn createToolingZip, createWrapperZip, unzipPortal
 
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
@@ -231,5 +236,3 @@ unzipPortal {
 	from zipTree(downloadPortal.dest)
 	into buildDir
 }
-
-version = "3.3.0"

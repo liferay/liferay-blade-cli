@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.gradle.plugin;
-
-import com.liferay.blade.gradle.model.CustomModel;
-import com.liferay.blade.gradle.model.DefaultModel;
+package com.liferay.blade.gradle.tooling;
 
 import java.io.File;
 

@@ -1,25 +1,18 @@
-subprojects {
-	apply plugin: "java"
-	apply plugin: "maven-publish"
+apply plugin: "java"
+apply plugin: "maven-publish"
 
-	group = "com.liferay.tools"
-	version = "1.2.0"
+dependencies {
+	compile gradleApi()
+}
 
-	dependencies {
-		compile gradleApi()
-	}
+publishing {
+	publications {
+		toolingJar(MavenPublication) {
+			artifactId = "com.liferay.blade.gradle.tooling"
 
-	publishing {
-		repositories {
-			maven {
-				url "$rootProject.projectDir/mavenRepo"
-			}
-		}
-
-		publications {
-			maven(MavenPublication) {
-				from components.java
-			}
+			from components.java
 		}
 	}
 }
+
+version = "1.0.0-SNAPSHOT"

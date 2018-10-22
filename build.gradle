@@ -2,9 +2,12 @@ buildscript {
 	dependencies {
 		classpath group: "com.gradle", name: "build-scan-plugin", version: "1.16"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
+		classpath group: "nu.studer", name: "gradle-credentials-plugin", version: "1.0.4"
 	}
 
 	repositories {
+		jcenter()
+
 		maven {
 			url "https://plugins.gradle.org/m2/"
 		}
@@ -42,6 +45,7 @@ subprojects {
 	}
 
 	apply plugin: "com.liferay.source.formatter"
+	apply plugin: "nu.studer.credentials"
 
 	checkSourceFormatting {
 		maxLineLength = 120
@@ -50,6 +54,8 @@ subprojects {
 	formatSource {
 		maxLineLength = 120
 	}
+
+	group = "com.liferay.blade"
 
 	plugins.withId("java") {
 		repositories {
@@ -64,5 +70,28 @@ subprojects {
 
 		sourceCompatibility = "1.8"
 		targetCompatibility = "1.8"
+	}
+
+	plugins.withId("maven-publish") {
+		publishing {
+			String liferayNexusUsername = credentials.liferayNexusUsername
+			String liferayNexusPassword = credentials.liferayNexusPassword
+			String repoName = project.hasProperty("release") ? "liferay-public-releases" : "liferay-public-snapshots"
+
+			repositories {
+				maven {
+					url "$rootProject.projectDir/mavenRepo"
+				}
+
+				maven {
+					credentials {
+						username liferayNexusUsername
+						password liferayNexusPassword
+					}
+
+					url "https://repository.liferay.com/nexus/content/repositories/" + repoName
+				}
+			}
+		}
 	}
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.gradle.model;
+package com.liferay.blade.gradle.tooling;
 
 import java.io.File;
 

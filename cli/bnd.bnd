@@ -214,7 +214,7 @@ Private-Package:\
 -includeresource:\
 	@com.liferay.project.templates-*.jar,\
 	@jansi-*.jar,\
-	deps.zip,\
+	tooling.zip,\
 	wrapper.zip,\
 	mvnw.cmd
 -sources: false
