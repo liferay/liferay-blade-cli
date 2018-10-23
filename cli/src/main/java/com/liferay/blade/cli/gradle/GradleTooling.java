@@ -62,7 +62,7 @@ public class GradleTooling {
 				).map(
 					Path::toString
 				).map(
-					path -> "\"" + path + "\""
+					path -> "\"" + path.replaceAll("\\\\", "/") + "\""
 				).collect(
 					Collectors.joining(", ")
 				);
