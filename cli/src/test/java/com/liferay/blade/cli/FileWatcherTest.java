@@ -23,6 +23,7 @@ import com.liferay.blade.cli.util.FileWatcher.Consumer;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.util.HashMap;
@@ -67,7 +68,7 @@ public class FileWatcherTest {
 	@Ignore
 	@Test
 	public void testFileWatcherMultipleFiles() throws Exception {
-		FileUtil.write("foobar".getBytes(), _testfile);
+		Files.write(_testfile.toPath(), "foobar".getBytes());
 
 		final Map<Path, Boolean> changed = new HashMap<>();
 
@@ -106,8 +107,8 @@ public class FileWatcherTest {
 
 		Thread.sleep(2000);
 
-		FileUtil.write("touch".getBytes(), _testfile);
-		FileUtil.write("second file content".getBytes(), _testsecondfile);
+		Files.write(_testfile.toPath(), "touch".getBytes());
+		Files.write(_testsecondfile.toPath(), "second file content".getBytes());
 
 		latch.await();
 
@@ -154,7 +155,7 @@ public class FileWatcherTest {
 
 		Thread.sleep(1000);
 
-		FileUtil.write("touch".getBytes(), _testfile);
+		Files.write(_testfile.toPath(), "touch".getBytes());
 
 		latch.await();
 

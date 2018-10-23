@@ -25,8 +25,7 @@ import java.util.Set;
 /**
  * @author Gregory Amerson
  */
-@SuppressWarnings("serial")
-public class DefaultModel implements CustomModel, Serializable {
+public class DefaultModel implements ProjectInfo, Serializable {
 
 	public DefaultModel(Set<String> pluginClassNames, Map<String, Set<File>> projectOutputFiles) {
 		_pluginClassNames = pluginClassNames;
@@ -44,20 +43,19 @@ public class DefaultModel implements CustomModel, Serializable {
 	}
 
 	@Override
-	public boolean hasPlugin(String pluginClassName) {
-		return _pluginClassNames.contains(pluginClassName);
-	}
-
-	@Override
-	public boolean isLiferayModule() {
-		if (hasPlugin("aQute.bnd.gradle.BndBuilderPlugin") || hasPlugin("com.liferay.gradle.plugins.LiferayPlugin") ||
-			hasPlugin("com.liferay.gradle.plugins.LiferayOSGiPlugin") ||
-			hasPlugin("com.liferay.gradle.plugins.gulp.GulpPlugin")) {
+	public boolean isLiferayProject() {
+		if (_hasPlugin("aQute.bnd.gradle.BndBuilderPlugin") || _hasPlugin("com.liferay.gradle.plugins.LiferayPlugin") ||
+			_hasPlugin("com.liferay.gradle.plugins.LiferayOSGiPlugin") ||
+			_hasPlugin("com.liferay.gradle.plugins.gulp.GulpPlugin")) {
 
 			return true;
 		}
 
 		return false;
+	}
+
+	private boolean _hasPlugin(String pluginClassName) {
+		return _pluginClassNames.contains(pluginClassName);
 	}
 
 	private final Set<String> _pluginClassNames;

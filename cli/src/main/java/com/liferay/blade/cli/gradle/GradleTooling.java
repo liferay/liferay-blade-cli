@@ -17,16 +17,13 @@
 package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.gradle.tooling.CustomModel;
+import com.liferay.blade.gradle.tooling.ProjectInfo;
 
-import java.io.File;
 import java.io.InputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,37 +36,19 @@ import org.gradle.tooling.ProjectConnection;
  */
 public class GradleTooling {
 
-	public static Set<String> getPluginClassNames(File buildDir) throws Exception {
-		final CustomModel model = _getModel(CustomModel.class, buildDir);
-
-		return model.getPluginClassNames();
-	}
-
-	public static Map<String, Set<File>> getProjectOutputFiles(File buildDir) throws Exception {
-		final CustomModel model = _getModel(CustomModel.class, buildDir);
-
-		return model.getProjectOutputFiles();
-	}
-
-	public static boolean isLiferayModule(File buildDir) throws Exception {
-		final CustomModel model = _getModel(CustomModel.class, buildDir);
-
-		return model.isLiferayModule();
-	}
-
-	private static <T> T _getModel(Class<T> modelClass, File projectDir) throws Exception {
-		T retval = null;
+	public static ProjectInfo loadProjectInfo(Path projectPath) throws Exception {
+		ProjectInfo projectInfo = null;
 
 		GradleConnector connector = GradleConnector.newConnector();
 
-		connector.forProjectDirectory(projectDir);
+		connector.forProjectDirectory(projectPath.toFile());
 
 		ProjectConnection connection = null;
 
 		try {
 			connection = connector.connect();
 
-			ModelBuilder<T> modelBuilder = connection.model(modelClass);
+			ModelBuilder<ProjectInfo> modelBuilder = connection.model(ProjectInfo.class);
 
 			Path tempPath = Files.createTempDirectory("tooling");
 
@@ -94,11 +73,11 @@ public class GradleTooling {
 
 				Path initPath = tempPath.resolve("init.gradle");
 
-				FileUtil.write(initScriptContents.getBytes(), initPath.toFile());
+				Files.write(initPath, initScriptContents.getBytes());
 
 				modelBuilder.withArguments("--init-script", initPath.toString(), "--stacktrace");
 
-				retval = modelBuilder.get();
+				projectInfo = modelBuilder.get();
 			}
 		}
 		finally {
@@ -107,7 +86,7 @@ public class GradleTooling {
 			}
 		}
 
-		return retval;
+		return projectInfo;
 	}
 
 }

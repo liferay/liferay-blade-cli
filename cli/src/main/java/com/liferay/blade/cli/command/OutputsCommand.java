@@ -18,6 +18,7 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.gradle.GradleTooling;
+import com.liferay.blade.gradle.tooling.ProjectInfo;
 
 import java.io.File;
 
@@ -43,7 +44,9 @@ public class OutputsCommand extends BaseCommand<OutputsArgs> {
 
 		File base = new File(args.getBase());
 
-		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(base);
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(base.toPath());
+
+		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
 		for (Entry<String, Set<File>> entry : projectOutputFiles.entrySet()) {
 			String projectPath = entry.getKey();

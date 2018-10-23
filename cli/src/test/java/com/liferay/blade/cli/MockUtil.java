@@ -26,9 +26,12 @@ import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.gradle.ProcessResult;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.gradle.tooling.ProjectInfo;
 
 import java.io.File;
 import java.io.IOException;
+
+import java.nio.file.Path;
 
 import java.util.AbstractMap;
 import java.util.Collections;
@@ -144,14 +147,32 @@ public class MockUtil {
 	public static void stubGradleTooling(File returnFile) throws Exception {
 		PowerMock.mockStatic(GradleTooling.class);
 
-		IExpectationSetters<Map<String, Set<File>>> projectOutputFiles = EasyMock.expect(
-			GradleTooling.getProjectOutputFiles(EasyMock.isA(File.class)));
+		IExpectationSetters<ProjectInfo> projectInfo = EasyMock.expect(
+			GradleTooling.loadProjectInfo(EasyMock.isA(Path.class)));
 
-		Map<String, Set<File>> map = new HashMap<>();
+		projectInfo.andStubReturn(
+			new ProjectInfo() {
 
-		map.put("", Collections.singleton(returnFile));
+				@Override
+				public Set<String> getPluginClassNames() {
+					return null;
+				}
 
-		projectOutputFiles.andStubReturn(map);
+				@Override
+				public Map<String, Set<File>> getProjectOutputFiles() {
+					Map<String, Set<File>> map = new HashMap<>();
+
+					map.put("", Collections.singleton(returnFile));
+
+					return map;
+				}
+
+				@Override
+				public boolean isLiferayProject() {
+					return false;
+				}
+
+			});
 
 		PowerMock.replay(GradleTooling.class);
 	}

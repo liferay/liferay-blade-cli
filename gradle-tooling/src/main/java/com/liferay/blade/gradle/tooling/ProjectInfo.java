@@ -24,14 +24,12 @@ import java.util.Set;
 /**
  * @author Gregory Amerson
  */
-public interface CustomModel {
+public interface ProjectInfo {
 
 	public Set<String> getPluginClassNames();
 
 	public Map<String, Set<File>> getProjectOutputFiles();
 
-	public boolean hasPlugin(String className);
-
-	public boolean isLiferayModule();
+	public boolean isLiferayProject();
 
 }

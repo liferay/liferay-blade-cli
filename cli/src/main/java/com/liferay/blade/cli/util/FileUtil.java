@@ -243,10 +243,6 @@ public class FileUtil {
 		}
 	}
 
-	public static void write(byte[] bytes, File file) throws IOException {
-		_copy(bytes, file);
-	}
-
 	private static String _collect(Path path, Charset encoding) throws IOException {
 		return _collect(_reader(path, encoding));
 	}
@@ -257,24 +253,6 @@ public class FileUtil {
 		_copy(reader, stringWriter);
 
 		return stringWriter.toString();
-	}
-
-	private static File _copy(byte[] data, File file) throws IOException {
-		_copy(data, file.toPath());
-
-		return file;
-	}
-
-	private static Path _copy(byte[] bytes, Path path) throws IOException {
-		try (FileChannel fileChannel = _writeChannel(path)) {
-			ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
-
-			while (byteBuffer.hasRemaining()) {
-				fileChannel.write(byteBuffer);
-			}
-		}
-
-		return path;
 	}
 
 	private static Path _copy(InputStream in, Path path) throws IOException {
