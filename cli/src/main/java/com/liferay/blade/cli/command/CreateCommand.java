@@ -44,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @author Gregory Amerson
  * @author David Truong
- * @author Christopher Boyd
+ * @author Christopher Bryan Boyd
  * @author Charles Wu
  */
 public class CreateCommand extends BaseCommand<CreateArgs> {
@@ -224,7 +224,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		execute(projectTemplatesArgs);
 
-		bladeCLI.out("Successfully created project " + projectTemplatesArgs.getName() + " in " + dir.getAbsolutePath());
+		Path absolutePath = dir.toPath();
+
+		absolutePath = absolutePath.toAbsolutePath();
+
+		absolutePath = absolutePath.normalize();
+
+		bladeCLI.out("Successfully created project " + projectTemplatesArgs.getName() + " in " + absolutePath);
 	}
 
 	@Override
