@@ -20,6 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.util.WorkspaceUtil;
+import com.liferay.blade.gradle.tooling.ProjectInfo;
 import com.liferay.gogo.shell.client.GogoShellClient;
 
 import java.io.File;
@@ -60,7 +61,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			return;
 		}
 
-		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(watchPath.toFile());
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(watchPath);
+
+		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
 		_watch(watchPath, projectOutputFiles);
 	}

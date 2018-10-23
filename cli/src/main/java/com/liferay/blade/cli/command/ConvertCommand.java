@@ -553,19 +553,19 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				ivyFile.delete();
 			}
 
-			StringBuilder depsContent = new StringBuilder();
+			StringBuilder depsBlock = new StringBuilder();
 
-			depsContent.append("dependencies {\n");
+			depsBlock.append("dependencies {" + System.lineSeparator());
 
-			for (String dep : dependencies) {
-				depsContent.append("\t" + dep + "\n");
+			for (String dependency : dependencies) {
+				depsBlock.append("\t" + dependency + System.lineSeparator());
 			}
 
-			depsContent.append("}");
+			depsBlock.append("}");
 
 			File gradleFile = new File(warDir, "build.gradle");
 
-			String content = depsContent.toString();
+			String content = depsBlock.toString();
 
 			Files.write(gradleFile.toPath(), content.getBytes());
 		}

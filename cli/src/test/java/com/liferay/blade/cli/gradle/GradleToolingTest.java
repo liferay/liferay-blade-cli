@@ -17,10 +17,12 @@
 package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.gradle.tooling.ProjectInfo;
 
 import java.io.File;
 
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import java.util.Map;
@@ -45,20 +47,22 @@ public class GradleToolingTest {
 	public static void setUpClass() throws Exception {
 		File wsDir = temporaryFolder.newFolder("build", "testws1");
 
-		Files.copy(new File("deps.zip").toPath(), _DEPS_ZIP.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(Paths.get("tooling.zip"), _TOOLING_ZIP.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-		FileUtil.copyDir(new File("test-resources/projects/testws1").toPath(), wsDir.toPath());
+		FileUtil.copyDir(Paths.get("test-resources/projects/testws1"), wsDir.toPath());
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
-		Files.delete(_DEPS_ZIP.toPath());
+		Files.delete(_TOOLING_ZIP.toPath());
 	}
 
 	@Test
 	public void testGetOutputFiles() throws Exception {
-		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(
-			new File(temporaryFolder.getRoot(), "build/testws1"));
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
+			new File(temporaryFolder.getRoot(), "build/testws1").toPath());
+
+		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
 		Assert.assertNotNull(projectOutputFiles);
 
@@ -72,8 +76,10 @@ public class GradleToolingTest {
 
 	@Test
 	public void testGetPluginClassNames() throws Exception {
-		Set<String> pluginClassNames = GradleTooling.getPluginClassNames(
-			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet"));
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
+			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet").toPath());
+
+		Set<String> pluginClassNames = projectInfo.getPluginClassNames();
 
 		Assert.assertNotNull(pluginClassNames);
 		Assert.assertTrue(pluginClassNames.contains("com.liferay.gradle.plugins.LiferayOSGiPlugin"));
@@ -81,20 +87,20 @@ public class GradleToolingTest {
 
 	@Test
 	public void testIsLiferayModule() throws Exception {
-		boolean liferayModule = GradleTooling.isLiferayModule(
-			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet"));
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
+			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet").toPath());
 
-		Assert.assertTrue(liferayModule);
+		Assert.assertTrue(projectInfo.isLiferayProject());
 	}
 
 	@Test
 	public void testIsNotLiferayModule() throws Exception {
-		boolean liferayModule = GradleTooling.isLiferayModule(
-			new File(temporaryFolder.getRoot(), "build/testws1/modules"));
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
+			new File(temporaryFolder.getRoot(), "build/testws1/modules").toPath());
 
-		Assert.assertFalse(liferayModule);
+		Assert.assertFalse(projectInfo.isLiferayProject());
 	}
 
-	private static final File _DEPS_ZIP = new File("build/classes/java/test/deps.zip");
+	private static final File _TOOLING_ZIP = new File("build/classes/java/test/tooling.zip");
 
 }

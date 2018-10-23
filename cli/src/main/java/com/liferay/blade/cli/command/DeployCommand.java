@@ -27,6 +27,7 @@ import com.liferay.blade.cli.gradle.ProcessResult;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileWatcher;
 import com.liferay.blade.cli.util.FileWatcher.Consumer;
+import com.liferay.blade.gradle.tooling.ProjectInfo;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -88,7 +89,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		File baseDir = new File(deployArgs.getBase());
 
-		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(baseDir);
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(baseDir.toPath());
+
+		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
 		if (deployArgs.isWatch()) {
 			_deployWatch(gradleExec, projectOutputFiles, host, port);

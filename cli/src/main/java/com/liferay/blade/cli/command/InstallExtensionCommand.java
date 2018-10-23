@@ -24,6 +24,7 @@ import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.Prompter;
 import com.liferay.blade.cli.util.StringUtil;
+import com.liferay.blade.gradle.tooling.ProjectInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -230,7 +231,9 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		Map<String, Set<File>> projectOutputFiles = GradleTooling.getProjectOutputFiles(projectPath.toFile());
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(projectPath);
+
+		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
 		ProcessResult processResult = gradleExec.executeTask("assemble -x check", projectPath.toFile());
 

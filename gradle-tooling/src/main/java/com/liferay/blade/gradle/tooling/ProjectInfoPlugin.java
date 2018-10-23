@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.gradle.plugin;
-
-import com.liferay.blade.gradle.model.CustomModel;
-import com.liferay.blade.gradle.model.DefaultModel;
+package com.liferay.blade.gradle.tooling;
 
 import java.io.File;
 
@@ -43,21 +40,21 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
 /**
  * @author Gregory Amerson
  */
-public class CustomModelPlugin implements Plugin<Project> {
+public class ProjectInfoPlugin implements Plugin<Project> {
 
 	@Inject
-	public CustomModelPlugin(ToolingModelBuilderRegistry toolingModelBuilderRegistry) {
+	public ProjectInfoPlugin(ToolingModelBuilderRegistry toolingModelBuilderRegistry) {
 		_toolingModelBuilderRegistry = toolingModelBuilderRegistry;
 	}
 
 	@Override
 	public void apply(Project project) {
-		_toolingModelBuilderRegistry.register(new CustomModelBuilder());
+		_toolingModelBuilderRegistry.register(new ProjectInfoBuilder());
 	}
 
 	private final ToolingModelBuilderRegistry _toolingModelBuilderRegistry;
 
-	private static class CustomModelBuilder implements ToolingModelBuilder {
+	private static class ProjectInfoBuilder implements ToolingModelBuilder {
 
 		@Override
 		public Object buildAll(String modelName, Project project) {
@@ -119,7 +116,7 @@ public class CustomModelPlugin implements Plugin<Project> {
 
 		@Override
 		public boolean canBuild(String modelName) {
-			return modelName.equals(CustomModel.class.getName());
+			return modelName.equals(ProjectInfo.class.getName());
 		}
 
 	}
