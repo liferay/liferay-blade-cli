@@ -224,9 +224,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		execute(projectTemplatesArgs);
 
-		Path absolutePath = dir.toPath();
+		Path path = dir.toPath();
 
-		absolutePath = absolutePath.toAbsolutePath();
+		Path absolutePath = path.toAbsolutePath();
 
 		absolutePath = absolutePath.normalize();
 
