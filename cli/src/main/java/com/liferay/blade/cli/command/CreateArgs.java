@@ -24,6 +24,7 @@ import java.io.File;
 /**
  * @author Gregory Amerson
  * @author Charles Wu
+ * @author Simon Jiang
  */
 @Parameters(
 	commandDescription = "Creates a new Liferay module project from several available templates.",
@@ -91,8 +92,40 @@ public class CreateArgs extends BaseArgs {
 		_build = build;
 	}
 
+	public void setClassName(String className) {
+		_classname = className;
+	}
+
+	public void setDir(File dir) {
+		_dir = dir;
+	}
+
+	public void setHostBundleBSN(String hostBundleBSN) {
+		_hostBundleBSN = hostBundleBSN;
+	}
+
+	public void setHostBundleVersion(String hostBundleVersion) {
+		_hostBundleVersion = hostBundleVersion;
+	}
+
+	public void setListTemplates(boolean listTemplates) {
+		_listTemplates = listTemplates;
+	}
+
 	public void setName(String name) {
 		_name = name;
+	}
+
+	public void setPackageName(String packageName) {
+		_packageName = packageName;
+	}
+
+	public void setService(String service) {
+		_service = service;
+	}
+
+	public void setTemplate(String template) {
+		_template = template;
 	}
 
 	@Parameter(
