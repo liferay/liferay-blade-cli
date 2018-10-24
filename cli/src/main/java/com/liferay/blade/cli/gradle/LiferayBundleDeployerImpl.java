@@ -227,10 +227,10 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 		String fileNameString = fileName.toString();
 
-		int periodIndex = fileNameString.indexOf('.');
+		Matcher matcher = _versionPattern.matcher(fileNameString);
 
-		if (periodIndex > -1) {
-			fileNameString = fileNameString.substring(0, periodIndex);
+		if (matcher.find()) {
+			fileNameString = matcher.replaceFirst(".war");
 		}
 
 		URI uri = path.toUri();
@@ -320,6 +320,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 	private static final Pattern _installResponse = Pattern.compile(
 		".*Bundle ID: (.*$).*", Pattern.DOTALL | Pattern.MULTILINE);
+	private static final Pattern _versionPattern = Pattern.compile("-[\\d]+((\\.[\\d]+)+(-.+)*)\\.war$");
 
 	private GogoShellClient _client;
 
