@@ -89,6 +89,13 @@ Private-Package:\
 	org.gradle.util,\
 	org.gradle.wrapper,\
 	\
+	org.jsoup,\
+	org.jsoup.helper,\
+	org.jsoup.internal,\
+	org.jsoup.nodes,\
+	org.jsoup.parser,\
+	org.jsoup.select,\
+	\
 	org.objectweb.asm.*,\
 	\
 	org.osgi.dto,\

@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 /**
@@ -23,4 +24,16 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(commandDescription = "Update blade to latest version", commandNames = "update")
 public class UpdateArgs extends BaseArgs {
+
+	public boolean isSnapshots() {
+		return _snapshots;
+	}
+
+	public void setSnapshots(boolean snapshots) {
+		_snapshots = snapshots;
+	}
+
+	@Parameter(description = "Switch to use the snapshot repository.", names = {"-s", "--snapshots"})
+	private boolean _snapshots;
+
 }
