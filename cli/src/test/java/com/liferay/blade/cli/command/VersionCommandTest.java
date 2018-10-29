@@ -17,7 +17,6 @@
 package com.liferay.blade.cli.command;
 
 import java.io.InputStream;
-import java.io.PrintWriter;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,32 +28,21 @@ public class VersionCommandTest {
 
 	@Test
 	public void testVersionCommandFromJar() throws Exception {
-		boolean ok;
+		Runtime runtime = Runtime.getRuntime();
 
-		Process ps = Runtime.getRuntime().exec(new String[] {"java", "-jar", _BLADE_JAR_PATH});
+		Process process = runtime.exec(new String[] {"java", "-jar", _BLADE_JAR_PATH});
 
-		ps.waitFor();
+		process.waitFor();
 
-		InputStream is = ps.getInputStream();
+		InputStream inputStream = process.getInputStream();
 
-		byte[] b = new byte[is.available()];
+		byte[] bytes = new byte[inputStream.available()];
 
-		is.read(b, 0, b.length);
+		inputStream.read(bytes, 0, bytes.length);
 
-		String version = new String(b);
+		String version = new String(bytes);
 
-		try (PrintWriter out = new PrintWriter("out0.txt")) {
-			out.println("testBladeVersionWithManifest: version = " + version);
-		}
-
-		if (version.length() > 1) {
-			ok = true;
-		}
-		else {
-			ok = false;
-		}
-
-		Assert.assertTrue("version = " + version + " ... this does not look right.", ok);
+		Assert.assertFalse(version.isEmpty());
 	}
 
 	private static final String _BLADE_JAR_PATH = System.getProperty("bladeJarPath");
