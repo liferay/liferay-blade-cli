@@ -37,13 +37,17 @@ public class VersionCommand extends BaseCommand<VersionArgs> {
 	public VersionCommand() {
 	}
 
+	public VersionCommand(BladeCLI bladeCLI) {
+		setBlade(bladeCLI);
+	}
+
 	@Override
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 		String bladeCLIVersion = getBladeCLIVersion();
 
 		if (bladeCLIVersion == null) {
-			bladeCLI.error("Cloud not determine version.");
+			bladeCLI.error("Could not determine version.");
 		}
 		else {
 			bladeCLI.out(bladeCLIVersion);

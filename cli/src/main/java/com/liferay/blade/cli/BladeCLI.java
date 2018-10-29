@@ -23,7 +23,8 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.command.UpdateCommand;
+import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 
@@ -357,18 +358,20 @@ public class BladeCLI implements Runnable {
 	public boolean updateAvailable() throws IOException {
 		boolean available = false;
 
-		String bladeVersion = BladeUtil.getBladeVersion(this);
+		VersionCommand versionCommand = new VersionCommand(this);
 
-		out("The current version of blade is " + bladeVersion + System.lineSeparator());
+		String bladeCLIVersion = versionCommand.getBladeCLIVersion();
 
-		boolean fromSnapshots = bladeVersion.contains("SNAPSHOT");
+		out("The current version of blade is " + bladeCLIVersion + System.lineSeparator());
+
+		boolean fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
 
 		String updateVersion = "";
 
 		try {
-			updateVersion = BladeUtil.getUpdateVersion(fromSnapshots);
+			updateVersion = UpdateCommand.getUpdateVersion(fromSnapshots);
 
-			available = BladeUtil.shouldUpdate(bladeVersion, updateVersion);
+			available = UpdateCommand.shouldUpdate(bladeCLIVersion, updateVersion);
 
 			if (available) {
 				out(

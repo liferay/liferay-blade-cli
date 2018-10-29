@@ -22,12 +22,270 @@ import com.liferay.blade.cli.util.BladeUtil;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 /**
  * @author Gregory Amerson
  */
 public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
+	public static final String CDN_NEXUS_CONTEXT = "https://repository-cdn.liferay.com/nexus/content/repositories/";
+
+	public static final String GROUP_ID = "com.liferay.blade.cli";
+
+	public static final String RELEASE_CONTEXT =
+		CDN_NEXUS_CONTEXT + "liferay-public-releases/com/liferay/blade/" + GROUP_ID + "/";
+
+	public static final String SNAPSHOT_CONTEXT =
+		CDN_NEXUS_CONTEXT + "liferay-public-snapshots/com/liferay/blade/" + GROUP_ID + "/";
+
+	public static String getUpdateJarUrl(boolean snapshots) throws IOException {
+		String url = _nexusContext;
+
+		if (snapshots) {
+			url = SNAPSHOT_CONTEXT;
+		}
+
+		if (hasUpdateUrlFromBladeDir()) {
+			url = getUpdateUrlFromBladeDir();
+		}
+
+		String version = "";
+
+		String nextUrl = "";
+
+		String jarUrl = "";
+
+		Document versionsDocument;
+
+		Connection connection = Jsoup.connect(url);
+
+		versionsDocument = connection.get();
+
+		Elements tdOrPreElements = versionsDocument.select("td,pre");
+
+		for (Element potentialVersion : tdOrPreElements.select("a")) {
+			String bladeDir;
+
+			boolean prependUrl = false;
+
+			String href = potentialVersion.attr("href");
+
+			if (href.contains(url)) {
+				String hrefSubstring = href.substring(url .length());
+
+				bladeDir = hrefSubstring.replaceAll("/", "");
+			}
+			else {
+				bladeDir = href.replaceAll("/", "");
+
+				prependUrl = true;
+			}
+
+			if (bladeDir.matches("\\d+\\..*")) {
+				if (prependUrl) {
+					nextUrl = url + potentialVersion.attr("href");
+				}
+				else {
+					nextUrl = potentialVersion.attr("href");
+				}
+			}
+		}
+
+		if ("".equals(nextUrl)) {
+			throw new IOException("No directory found at url = " + url);
+		}
+
+		version = "nextUrl = " + nextUrl + "\n";
+
+		connection = Jsoup.connect(nextUrl);
+
+		Document jarsDocument = connection.get();
+
+		tdOrPreElements = jarsDocument.select("td,pre");
+
+		for (Element potentialJar : tdOrPreElements.select("a")) {
+			String bladeJar;
+
+			boolean prependUrl = false;
+
+			String href = potentialJar.attr("href");
+
+			if (href.contains(nextUrl)) {
+				String hrefSubstring = href.substring(nextUrl .length());
+
+				bladeJar = hrefSubstring.replaceAll("/", "");
+			}
+			else {
+				bladeJar = href.replaceAll("/", "");
+
+				prependUrl = true;
+			}
+
+			version = version + "\na jar = " + potentialJar.attr("href");
+
+			if (bladeJar.matches(".*\\.jar")) {
+				if (prependUrl) {
+					jarUrl = nextUrl + potentialJar.attr("href");
+				}
+				else {
+					jarUrl = potentialJar.attr("href");
+				}
+			}
+		}
+
+		if ("".equals(jarUrl)) {
+			throw new IOException("No jar found at nextUrl = " + nextUrl);
+		}
+
+		return jarUrl;
+	}
+
+	public static String getUpdateUrlFromBladeDir() {
+		String url = "no url";
+
+		final File updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
+
+		if (hasUpdateUrlFromBladeDir()) {
+			List<String> lines;
+
+			try {
+				lines = Files.readAllLines(Paths.get(updateUrlFile.getPath()), StandardCharsets.UTF_8);
+
+				url = lines.get(0);
+			}
+			catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
+
+		return url;
+	}
+
+	public static String getUpdateVersion(boolean snapshots) throws IOException {
+		String url = _nexusContext;
+
+		if (snapshots) {
+			url = SNAPSHOT_CONTEXT;
+		}
+
+		if (hasUpdateUrlFromBladeDir()) {
+			url = getUpdateUrlFromBladeDir();
+		}
+
+		String version = "";
+
+		Document versionsDocument;
+
+		Connection connection = Jsoup.connect(url);
+
+		versionsDocument = connection.get();
+
+		Elements tdOrPreElements = versionsDocument.select("td,pre");
+
+		for (Element potentialVersion : tdOrPreElements.select("a")) {
+			String bladeDir;
+
+			String href = potentialVersion.attr("href");
+
+			if (href.contains(url)) {
+				String hrefSubstring = href.substring(url.length());
+
+				bladeDir = hrefSubstring.replaceAll("/", "");
+			}
+			else {
+				bladeDir = href.replaceAll("/", "");
+			}
+
+			if (bladeDir.matches("\\d+\\..*")) {
+				version = bladeDir;
+			}
+		}
+
+		return version;
+	}
+
+	public static boolean hasUpdateUrlFromBladeDir() {
+		boolean has = false;
+
+		final File updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
+
+		if (updateUrlFile.exists() && !updateUrlFile.isDirectory()) {
+			if (updateUrlFile.length() > 0) {
+				has = true;
+			}
+		}
+
+		return has;
+	}
+
+	public static boolean shouldUpdate(String bladeVersion, String updateVersion) {
+		boolean should = false;
+
+		Matcher matcher = _pattern.matcher(bladeVersion);
+
+		matcher.find();
+
+		String bladeMajor = matcher.group(1);
+		String bladeMinor = matcher.group(2);
+		String bladePatch = matcher.group(3);
+
+		matcher = _pattern.matcher(updateVersion);
+
+		matcher.find();
+
+		String updateMajor = matcher.group(1);
+		String updateMinor = matcher.group(2);
+		String updatePatch = matcher.group(3);
+
+		if (Integer.parseInt(updateMajor) > Integer.parseInt(bladeMajor)) {
+			should = true;
+		}
+		else {
+			if (Integer.parseInt(updateMajor) < Integer.parseInt(bladeMajor)) {
+				should = false;
+			}
+			else {
+				if (Integer.parseInt(updateMinor) > Integer.parseInt(bladeMinor)) {
+					should = true;
+				}
+				else {
+					if (Integer.parseInt(updateMinor) < Integer.parseInt(bladeMinor)) {
+						should = false;
+					}
+					else {
+						if (Integer.parseInt(updatePatch) > Integer.parseInt(bladePatch)) {
+							should = true;
+						}
+					}
+				}
+			}
+		}
+
+		if (bladeVersion.contains("SNAPSHOT")) {
+			should = true;
+		}
+
+		return should;
+	}
+
 	public UpdateCommand() {
+	}
+
+	public UpdateCommand(BladeCLI bladeCLI) {
+		setBlade(bladeCLI);
 	}
 
 	@Override
@@ -44,7 +302,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		boolean available = false;
 
-		available = BladeUtil.updateAvailable(bladeCLI);
+		available = isUpdateAvailable();
 
 		if (available) {
 
@@ -52,14 +310,14 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			// a url to a released blade.jar yet, or maybe the snapshot repo is empty.
 
 			try {
-				url = BladeUtil.getUpdateJarUrl(snapshots);
+				url = getUpdateJarUrl(snapshots);
 			}
 			catch (IOException ioe) {
 				if (snapshots) {
-					bladeCLI.out("No jar is available from " + BladeUtil.SNAPSHOT_CONTEXT);
+					bladeCLI.out("No jar is available from " + SNAPSHOT_CONTEXT);
 				}
 				else {
-					bladeCLI.out("No jar is available from " + BladeUtil.RELEASE_CONTEXT);
+					bladeCLI.out("No jar is available from " + RELEASE_CONTEXT);
 				}
 
 				url = oldUrl;
@@ -99,5 +357,37 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	public Class<UpdateArgs> getArgsClass() {
 		return UpdateArgs.class;
 	}
+
+	public boolean isUpdateAvailable() throws IOException {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		boolean available = false;
+
+		VersionCommand versionCommand = new VersionCommand(bladeCLI);
+
+		String bladeVersion = versionCommand.getBladeCLIVersion();
+
+		boolean fromSnapshots = bladeVersion.contains("SNAPSHOT");
+
+		String updateVersion = getUpdateVersion(fromSnapshots);
+
+		boolean shouldUpdate = shouldUpdate(bladeVersion, updateVersion);
+
+		if (shouldUpdate) {
+			String updateJarUrl = getUpdateJarUrl(fromSnapshots);
+
+			if ("".equals(updateJarUrl)) {
+				bladeCLI.out("No update url available.");
+			}
+			else {
+				available = true;
+			}
+		}
+
+		return available;
+	}
+
+	private static String _nexusContext = RELEASE_CONTEXT;
+	private static final Pattern _pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 
 }
