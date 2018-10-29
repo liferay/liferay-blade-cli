@@ -41,21 +41,11 @@ import org.jsoup.select.Elements;
  */
 public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
-	public static final String CDN_NEXUS_CONTEXT = "https://repository-cdn.liferay.com/nexus/content/repositories/";
-
-	public static final String GROUP_ID = "com.liferay.blade.cli";
-
-	public static final String RELEASE_CONTEXT =
-		CDN_NEXUS_CONTEXT + "liferay-public-releases/com/liferay/blade/" + GROUP_ID + "/";
-
-	public static final String SNAPSHOT_CONTEXT =
-		CDN_NEXUS_CONTEXT + "liferay-public-snapshots/com/liferay/blade/" + GROUP_ID + "/";
-
 	public static String getUpdateJarUrl(boolean snapshots) throws IOException {
-		String url = _nexusContext;
+		String url = _RELEASES_REPO_URL;
 
 		if (snapshots) {
-			url = SNAPSHOT_CONTEXT;
+			url = _SNAPSHOTS_REPO_URL;
 		}
 
 		if (hasUpdateUrlFromBladeDir()) {
@@ -175,10 +165,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	public static String getUpdateVersion(boolean snapshots) throws IOException {
-		String url = _nexusContext;
+		String url = _RELEASES_REPO_URL;
 
 		if (snapshots) {
-			url = SNAPSHOT_CONTEXT;
+			url = _SNAPSHOTS_REPO_URL;
 		}
 
 		if (hasUpdateUrlFromBladeDir()) {
@@ -314,10 +304,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			}
 			catch (IOException ioe) {
 				if (snapshots) {
-					bladeCLI.out("No jar is available from " + SNAPSHOT_CONTEXT);
+					bladeCLI.out("No jar is available from " + _SNAPSHOTS_REPO_URL);
 				}
 				else {
-					bladeCLI.out("No jar is available from " + RELEASE_CONTEXT);
+					bladeCLI.out("No jar is available from " + _RELEASES_REPO_URL);
 				}
 
 				url = oldUrl;
@@ -387,7 +377,16 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return available;
 	}
 
-	private static String _nexusContext = RELEASE_CONTEXT;
+	private static final String _BASE_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/repositories/";
+
+	private static final String _BLADE_CLI_CONTEXT = "'com/liferay/blade/com.liferay.blade.cli/";
+
+	private static final String _RELEASES_REPO_URL =
+		_BASE_CDN_URL + "liferay-public-releases/" + _BLADE_CLI_CONTEXT;
+
+	private static final String _SNAPSHOTS_REPO_URL =
+		_BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
+
 	private static final Pattern _pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 
 }
