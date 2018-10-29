@@ -129,24 +129,11 @@ public class UpdateCommandTest {
 
 	@Test
 	public void testGetUpdateJarUrlFromSnapshots() throws IOException {
-		boolean ok;
+		String updateJarUrl = UpdateCommand.getUpdateJarUrl(true);
 
-		// use liferay-public-snapshots context
+		Assert.assertNotNull(updateJarUrl);
 
-		String jarUrl = UpdateCommand.getUpdateJarUrl(true);
-
-		try (PrintWriter out = new PrintWriter("out1.txt")) {
-			out.println("testGetUpdateSnapshotVersion: jarUrl = " + jarUrl);
-		}
-
-		if (jarUrl.length() > 1) {
-			ok = true;
-		}
-		else {
-			ok = false;
-		}
-
-		Assert.assertTrue("jarUrl = " + jarUrl + " ... this does not look right.", ok);
+		Assert.assertFalse("updateJarUrl(with snaphots) is empty.", updateJarUrl.isEmpty());
 	}
 
 	@Test
@@ -171,29 +158,14 @@ public class UpdateCommandTest {
 		}
 	}
 
-	// This test should pass once blade is in the liferay-public-releases context of nexus
-
 	@Ignore
 	@Test
-	public void testGetUpdateVersion() throws IOException {
-		boolean ok;
+	public void testGetUpdateVersionReleases() throws IOException {
+		String updateVersion = UpdateCommand.getUpdateVersion(false);
 
-		// use liferay-public-releases context
+		Assert.assertNotNull(updateVersion);
 
-		String version = UpdateCommand.getUpdateVersion(false);
-
-		try (PrintWriter out = new PrintWriter("out3.txt")) {
-			out.println("testGetUpdateVersion: version = " + version);
-		}
-
-		if (version.length() > 1) {
-			ok = true;
-		}
-		else {
-			ok = false;
-		}
-
-		Assert.assertTrue("version = " + version + " ... this does not look right.", ok);
+		Assert.assertFalse("updateVersion does not look right.", updateVersion.isEmpty());
 	}
 
 	@Test
@@ -215,8 +187,6 @@ public class UpdateCommandTest {
 			"currentVersion = " + currentVersion + " should NOT be updated to " + updatedVersion,
 			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
 	}
-
-	// This test should pass once blade is in the liferay-public-releases context of nexus
 
 	@Test
 	public void testUpdateVersionMinorLessThanUpdateMinor() {
