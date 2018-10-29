@@ -105,28 +105,6 @@ public class UpdateCommandTest {
 		Assert.assertFalse("updateJarUrl(with snaphots) is empty.", updateJarUrl.isEmpty());
 	}
 
-	@Test
-	public void testGetUpdateJarUrlFromUrlInBladeDir() throws IOException {
-		boolean ok;
-
-		if (UpdateCommand.hasUpdateUrlFromBladeDir()) {
-			String jarUrl = UpdateCommand.getUpdateJarUrl(false);
-
-			try (PrintWriter out = new PrintWriter("out2.txt")) {
-				out.println("testGetUpdateUsingUrlFromBladeDirVersion: jarUrl = " + jarUrl);
-			}
-
-			if (jarUrl.length() > 1) {
-				ok = true;
-			}
-			else {
-				ok = false;
-			}
-
-			Assert.assertTrue("jarUrl = " + jarUrl + " ... this does not look right.", ok);
-		}
-	}
-
 	@Ignore
 	@Test
 	public void testGetUpdateVersionReleases() throws IOException {
