@@ -237,10 +237,13 @@ public class BladeCLI implements Runnable {
 			throw pe;
 		}
 		catch (Exception e) {
-			error(e.getMessage());
+			error("error: " + e.getMessage() + System.lineSeparator());
 
 			if (getBladeArgs().isTrace()) {
 				e.printStackTrace(err());
+			}
+			else {
+				error("For more information run `blade " + _command + " --trace");
 			}
 		}
 	}
