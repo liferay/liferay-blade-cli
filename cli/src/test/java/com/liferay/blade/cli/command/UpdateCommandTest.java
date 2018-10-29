@@ -20,7 +20,6 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 
 import org.junit.Assert;
@@ -61,36 +60,6 @@ public class UpdateCommandTest {
 		Assert.assertFalse(
 			"currentVersion = " + currentVersion + " should NOT be updated to " + updatedVersion,
 			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
-	}
-
-	@Test
-	public void testBladeVersionWithManifest() throws InterruptedException, IOException {
-		boolean ok;
-
-		Process ps = Runtime.getRuntime().exec(new String[] {"java", "-jar", _BLADE_JAR_PATH});
-
-		ps.waitFor();
-
-		InputStream is = ps.getInputStream();
-
-		byte[] b = new byte[is.available()];
-
-		is.read(b, 0, b.length);
-
-		String version = new String(b);
-
-		try (PrintWriter out = new PrintWriter("out0.txt")) {
-			out.println("testBladeVersionWithManifest: version = " + version);
-		}
-
-		if (version.length() > 1) {
-			ok = true;
-		}
-		else {
-			ok = false;
-		}
-
-		Assert.assertTrue("version = " + version + " ... this does not look right.", ok);
 	}
 
 	@Test
@@ -197,7 +166,5 @@ public class UpdateCommandTest {
 			"currentVersion = " + currentVersion + " should be updated to " + updatedVersion,
 			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
 	}
-
-	private static final String _BLADE_JAR_PATH = System.getProperty("bladeJarPath");
 
 }
