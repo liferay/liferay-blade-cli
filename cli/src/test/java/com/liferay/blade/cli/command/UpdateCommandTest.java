@@ -67,7 +67,7 @@ public class UpdateCommandTest {
 	public void testBladeVersionWithManifest() throws InterruptedException, IOException {
 		boolean ok;
 
-		Process ps = Runtime.getRuntime().exec(new String[] {"java", "-jar", "build/libs/blade.jar"});
+		Process ps = Runtime.getRuntime().exec(new String[] {"java", "-jar", _BLADE_JAR_PATH});
 
 		ps.waitFor();
 
@@ -227,5 +227,7 @@ public class UpdateCommandTest {
 			"currentVersion = " + currentVersion + " should be updated to " + updatedVersion,
 			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
 	}
+
+	private static final String _BLADE_JAR_PATH = System.getProperty("bladeJarPath");
 
 }
