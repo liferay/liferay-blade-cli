@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.StringTestUtil;
 import com.liferay.blade.cli.TestUtil;
@@ -206,6 +207,27 @@ public class InstallExtensionCommandTest {
 		boolean pathExists = Files.exists(extensionJarPath);
 
 		Assert.assertTrue(extensionJarPath.toAbsolutePath() + " does not exist", pathExists);
+	}
+
+	@Test
+	public void testInstallExtensionPathRequired() throws Exception {
+		String[] args = {"extension install"};
+
+		BladeTest bladeTest = new BladeTest();
+
+		String error = null;
+
+		try {
+			bladeTest.run(args);
+		}
+		catch (Exception e) {
+			error = e.getMessage();
+		}
+
+		Assert.assertTrue(
+			error,
+			error.contains(
+				"extension install: Main parameters are required (\"The path of the extension to install.\")"));
 	}
 
 	@Test
