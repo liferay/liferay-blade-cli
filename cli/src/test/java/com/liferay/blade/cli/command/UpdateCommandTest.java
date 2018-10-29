@@ -18,7 +18,6 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,92 +29,45 @@ import org.junit.Test;
 
 /**
  * @author Vernon Singleton
+ * @author Gregory Amerson
  */
-public class VersionCommandTest {
-
-	@Test
-	public void testBladeMajorLessThanUpdateMajor() {
-		boolean ok;
-
-		String bladeVersion = "1.5.9.1.2.3.4.5.6.7.8.9";
-		String updateVersion = "2.1.1.4.5.6-snapshot";
-
-		ok = BladeUtil.shouldUpdate(bladeVersion, updateVersion);
-
-		Assert.assertTrue(
-			"bladeVersion = " + bladeVersion + " should be updated to " + updateVersion + " but ok = " + ok, ok);
-	}
-
-	@Test
-	public void testBladeMajorMoreThanUpdateMajor() {
-		boolean ok;
-
-		String bladeVersion = "3.0.0.2018.10.23.1234";
-		String updateVersion = "2.5.9-SNAPSHOT";
-
-		ok = BladeUtil.shouldUpdate(bladeVersion, updateVersion);
-
-		Assert.assertFalse(
-			"bladeVersion = " + bladeVersion + " should NOT be updated to " + updateVersion + " but ok = " + ok, ok);
-	}
-
-	@Test
-	public void testBladeMinorLessThanUpdateMinor() {
-		boolean ok;
-
-		String bladeVersion = "12.1.9.SCHWIBBY";
-		String updateVersion = "12.2.1-snapshot";
-
-		ok = BladeUtil.shouldUpdate(bladeVersion, updateVersion);
-
-		Assert.assertTrue(
-			"bladeVersion = " + bladeVersion + " should be updated to " + updateVersion + " but ok = " + ok, ok);
-	}
+public class UpdateCommandTest {
 
 	@Test
 	public void testBladeMinorMoreThanUpdateMinor() {
-		boolean ok;
-
-		String bladeVersion = "3.6.0.001810231234";
-		String updateVersion = "3.5.9-SCHNAPS";
-
-		ok = BladeUtil.shouldUpdate(bladeVersion, updateVersion);
+		String currentVersion = "3.6.0.001810231234";
+		String updatedVersion = "3.5.9-SCHNAPS";
 
 		Assert.assertFalse(
-			"bladeVersion = " + bladeVersion + " should NOT be updated to " + updateVersion + " but ok = " + ok, ok);
+			"currentVersion = " + currentVersion + " should NOT be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
 	}
 
 	@Test
 	public void testBladePatchLessThanUpdatePatch() {
-		boolean ok;
-
-		String bladeVersion = "123.10.10.SCHOOBY";
-		String updateVersion = "123.10.20-whiff";
-
-		ok = BladeUtil.shouldUpdate(bladeVersion, updateVersion);
+		String currentVersion = "123.10.10.SCHOOBY";
+		String updatedVersion = "123.10.20-whiff";
 
 		Assert.assertTrue(
-			"bladeVersion = " + bladeVersion + " should be updated to " + updateVersion + " but ok = " + ok, ok);
+			"currentVersion = " + currentVersion + " should be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
 	}
 
 	@Test
 	public void testBladePatchMoreThanUpdatePatch() {
-		boolean ok;
-
-		String bladeVersion = "3.5.9.001810231234";
-		String updateVersion = "3.5.8.999999";
-
-		ok = BladeUtil.shouldUpdate(bladeVersion, updateVersion);
+		String currentVersion = "3.5.9.001810231234";
+		String updatedVersion = "3.5.8.999999";
 
 		Assert.assertFalse(
-			"bladeVersion = " + bladeVersion + " should NOT be updated to " + updateVersion + " but ok = " + ok, ok);
+			"currentVersion = " + currentVersion + " should NOT be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
 	}
 
 	@Test
 	public void testBladeVersionWithManifest() throws InterruptedException, IOException {
 		boolean ok;
 
-		Process ps = Runtime.getRuntime().exec(new String[] {"java", "-jar", "build/libs/blade.jar", "version"});
+		Process ps = Runtime.getRuntime().exec(new String[] {"java", "-jar", "build/libs/blade.jar"});
 
 		ps.waitFor();
 
@@ -147,14 +99,10 @@ public class VersionCommandTest {
 
 		String errors = bladeTestResults.getErrors();
 
-		String expectedErrorMessage = "Could not locate version.";
+		String expectedErrorMessage = "Could not determine version.";
 
-		Assert.assertTrue(
-			"Expected error message '" + expectedErrorMessage + "' was not returned",
-			errors.contains(expectedErrorMessage));
+		Assert.assertEquals(expectedErrorMessage, errors.trim());
 	}
-
-	// This test should pass once blade is in the liferay-public-releases context of nexus
 
 	@Ignore
 	@Test
@@ -163,7 +111,7 @@ public class VersionCommandTest {
 
 		// use liferay-public-releases context
 
-		String jarUrl = BladeUtil.getUpdateJarUrl(false);
+		String jarUrl = UpdateCommand.getUpdateJarUrl(false);
 
 		try (PrintWriter out = new PrintWriter("out3.txt")) {
 			out.println("testGetUpdateJarUrl: jarUrl = " + jarUrl);
@@ -185,7 +133,7 @@ public class VersionCommandTest {
 
 		// use liferay-public-snapshots context
 
-		String jarUrl = BladeUtil.getUpdateJarUrl(true);
+		String jarUrl = UpdateCommand.getUpdateJarUrl(true);
 
 		try (PrintWriter out = new PrintWriter("out1.txt")) {
 			out.println("testGetUpdateSnapshotVersion: jarUrl = " + jarUrl);
@@ -205,8 +153,8 @@ public class VersionCommandTest {
 	public void testGetUpdateJarUrlFromUrlInBladeDir() throws IOException {
 		boolean ok;
 
-		if (BladeUtil.hasUpdateUrlFromBladeDir()) {
-			String jarUrl = BladeUtil.getUpdateJarUrl(false);
+		if (UpdateCommand.hasUpdateUrlFromBladeDir()) {
+			String jarUrl = UpdateCommand.getUpdateJarUrl(false);
 
 			try (PrintWriter out = new PrintWriter("out2.txt")) {
 				out.println("testGetUpdateUsingUrlFromBladeDirVersion: jarUrl = " + jarUrl);
@@ -232,7 +180,7 @@ public class VersionCommandTest {
 
 		// use liferay-public-releases context
 
-		String version = BladeUtil.getUpdateVersion(false);
+		String version = UpdateCommand.getUpdateVersion(false);
 
 		try (PrintWriter out = new PrintWriter("out3.txt")) {
 			out.println("testGetUpdateVersion: version = " + version);
@@ -246,6 +194,38 @@ public class VersionCommandTest {
 		}
 
 		Assert.assertTrue("version = " + version + " ... this does not look right.", ok);
+	}
+
+	@Test
+	public void testUpdateVersioneMajorLessThanUpdateMajor() {
+		String currentVersion = "1.5.9.1.2.3.4.5.6.7.8.9";
+		String updatedVersion = "2.1.1.4.5.6-snapshot";
+
+		Assert.assertTrue(
+			"currentVersion = " + currentVersion + " should be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
+	}
+
+	@Test
+	public void testUpdateVersionMajorMoreThanUpdateMajor() {
+		String currentVersion = "3.0.0.2018.10.23.1234";
+		String updatedVersion = "2.5.9-SNAPSHOT";
+
+		Assert.assertFalse(
+			"currentVersion = " + currentVersion + " should NOT be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
+	}
+
+	// This test should pass once blade is in the liferay-public-releases context of nexus
+
+	@Test
+	public void testUpdateVersionMinorLessThanUpdateMinor() {
+		String currentVersion = "12.1.9.SCHWIBBY";
+		String updatedVersion = "12.2.1-snapshot";
+
+		Assert.assertTrue(
+			"currentVersion = " + currentVersion + " should be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
 	}
 
 }
