@@ -22,6 +22,7 @@ import com.liferay.blade.gradle.tooling.ProjectInfo;
 import java.io.File;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
@@ -47,7 +48,11 @@ public class GradleToolingTest {
 	public static void setUpClass() throws Exception {
 		File wsDir = temporaryFolder.newFolder("build", "testws1");
 
-		Files.copy(Paths.get("tooling.zip"), _TOOLING_ZIP.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		Path toolingZipPath = Paths.get("tooling.zip");
+
+		Assert.assertTrue(Files.exists(toolingZipPath));
+
+		Files.copy(toolingZipPath, _TOOLING_ZIP.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
 		FileUtil.copyDir(Paths.get("test-resources/projects/testws1"), wsDir.toPath());
 	}
@@ -101,6 +106,8 @@ public class GradleToolingTest {
 		Assert.assertFalse(projectInfo.isLiferayProject());
 	}
 
-	private static final File _TOOLING_ZIP = new File("build/classes/java/test/tooling.zip");
+	private static final String _TEST_OUTPUT_PATH = System.getProperty("testOutputPath");
+
+	private static final File _TOOLING_ZIP = new File(_TEST_OUTPUT_PATH + "/tooling.zip");
 
 }

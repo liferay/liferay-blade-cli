@@ -175,6 +175,7 @@ test {
 
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
+	systemProperty "testOutputPath", sourceSets.test.output.classesDirs.singleFile.absolutePath
 
 	project(':extensions:sample-command').afterEvaluate { project ->
 		dependsOn project.jar
