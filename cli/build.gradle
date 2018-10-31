@@ -76,7 +76,7 @@ createWrapperZip {
 dependencies {
 	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
 	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
-	compile group: "com.liferay", name: "com.liferay.project.templates", version: "4.1.9"
+	compile group: "com.liferay", name: "com.liferay.project.templates", version: "4.1.10"
 	compile group: "org.apache.commons", name: "commons-lang3", version: "3.4"
 	compile group: "org.apache.maven", name: "maven-aether-provider", version: "3.3.9"
 	compile group: "org.apache.maven", name: "maven-settings", version: "3.3.9"
