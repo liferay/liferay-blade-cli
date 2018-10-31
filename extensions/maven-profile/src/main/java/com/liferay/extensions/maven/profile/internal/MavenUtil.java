@@ -130,7 +130,7 @@ public class MavenUtil {
 
 		if (!exitValueCorrect) {
 			throw new RuntimeException(
-				"Maven goals " + goals + " returned incorrect exit value in project path " + projectPath);
+				"Maven goals " + goals[0] + " failed for project " + projectPath + System.lineSeparator() + output);
 		}
 
 		if (!buildSuccess) {

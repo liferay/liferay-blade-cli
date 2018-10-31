@@ -25,6 +25,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
 /**
  * @author Christopher Bryan Boyd
  */
@@ -37,6 +41,17 @@ public class ServerCommandsMavenTest {
 		String[] args = {"--base", workspaceDir.getPath(), "init", "-p", "maven"};
 
 		TestUtil.runBlade(args);
+
+		File pomXmlFile = new File(workspaceDir, "pom.xml");
+
+		Assert.assertTrue(pomXmlFile.getAbsolutePath() + " does not exist.", pomXmlFile.exists());
+
+		XMLTestUtil.editXml(
+			pomXmlFile,
+			document -> {
+				_addNexusRepositoriesElement(document, "repositories", "repository");
+				_addNexusRepositoriesElement(document, "pluginRepositories", "pluginRepository");
+			});
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
@@ -51,5 +66,36 @@ public class ServerCommandsMavenTest {
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private static void _addNexusRepositoriesElement(Document document, String parentElementName, String elementName) {
+		Element projectElement = document.getDocumentElement();
+
+		Element repositoriesElement = XMLTestUtil.getChildElement(projectElement, parentElementName);
+
+		if (repositoriesElement == null) {
+			repositoriesElement = document.createElement(parentElementName);
+
+			projectElement.appendChild(repositoriesElement);
+		}
+
+		Element repositoryElement = document.createElement(elementName);
+
+		Element idElement = document.createElement("id");
+
+		idElement.appendChild(document.createTextNode(System.currentTimeMillis() + ""));
+
+		Element urlElement = document.createElement("url");
+
+		Text urlText = document.createTextNode(_REPOSITORY_CDN_URL);
+
+		urlElement.appendChild(urlText);
+
+		repositoryElement.appendChild(idElement);
+		repositoryElement.appendChild(urlElement);
+
+		repositoriesElement.appendChild(repositoryElement);
+	}
+
+	private static final String _REPOSITORY_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/groups/public";
 
 }

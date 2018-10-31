@@ -61,7 +61,7 @@ public class InitCommandMavenTest {
 
 		String contents = new String(Files.readAllBytes(new File(newproject, "pom.xml").toPath()));
 
-		Assert.assertTrue(contents, contents.contains("3.2.1"));
+		Assert.assertTrue(contents, contents.contains("com.liferay.portal.tools.bundle.support"));
 
 		File metadataFile = new File(_workspaceDir, "newproject/.blade/settings.properties");
 
