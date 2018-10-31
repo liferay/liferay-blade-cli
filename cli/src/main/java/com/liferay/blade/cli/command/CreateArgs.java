@@ -108,6 +108,10 @@ public class CreateArgs extends BaseArgs {
 		_hostBundleVersion = hostBundleVersion;
 	}
 
+	public void setLiferayVersion(String liferayVersion) {
+		_liferayVersion = liferayVersion;
+	}
+
 	public void setListTemplates(boolean listTemplates) {
 		_listTemplates = listTemplates;
 	}
