@@ -20,7 +20,6 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -33,7 +32,37 @@ import org.junit.Test;
 public class UpdateCommandTest {
 
 	@Test
-	public void testBladeMinorMoreThanUpdateMinor() {
+	public void testCurrentMajorLessThanUpdatedMajor() {
+		String currentVersion = "1.5.9.1.2.3.4.5.6.7.8.9";
+		String updatedVersion = "2.1.1.4.5.6-snapshot";
+
+		Assert.assertTrue(
+			"currentVersion = " + currentVersion + " should be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
+	}
+
+	@Test
+	public void testCurrentMajorMoreThanUpdatedMajor() {
+		String currentVersion = "3.0.0.2018.10.23.1234";
+		String updatedVersion = "2.5.9-SNAPSHOT";
+
+		Assert.assertFalse(
+			"currentVersion = " + currentVersion + " should NOT be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
+	}
+
+	@Test
+	public void testCurrentMinorLessThanUpdatedMinor() {
+		String currentVersion = "12.1.9.SCHWIBBY";
+		String updatedVersion = "12.2.1-snapshot";
+
+		Assert.assertTrue(
+			"currentVersion = " + currentVersion + " should be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
+	}
+
+	@Test
+	public void testCurrentMinorMoreThanUpdatedMinor() {
 		String currentVersion = "3.6.0.001810231234";
 		String updatedVersion = "3.5.9-SCHNAPS";
 
@@ -43,7 +72,7 @@ public class UpdateCommandTest {
 	}
 
 	@Test
-	public void testBladePatchLessThanUpdatePatch() {
+	public void testCurrentPatchLessThanUpdatedPatch() {
 		String currentVersion = "123.10.10.SCHOOBY";
 		String updatedVersion = "123.10.20-whiff";
 
@@ -53,7 +82,7 @@ public class UpdateCommandTest {
 	}
 
 	@Test
-	public void testBladePatchMoreThanUpdatePatch() {
+	public void testCurrentPatchMoreThanUpdatedPatch() {
 		String currentVersion = "3.5.9.001810231234";
 		String updatedVersion = "3.5.8.999999";
 
@@ -63,7 +92,7 @@ public class UpdateCommandTest {
 	}
 
 	@Test
-	public void testBladeVersionWithNoManifest() throws Exception {
+	public void testCurrentVersionWithNoManifest() throws Exception {
 		BladeTestResults bladeTestResults = TestUtil.runBlade(false, "version");
 
 		String errors = bladeTestResults.getErrors();
@@ -71,38 +100,6 @@ public class UpdateCommandTest {
 		String expectedErrorMessage = "Could not determine version.";
 
 		Assert.assertEquals(expectedErrorMessage, errors.trim());
-	}
-
-	@Ignore
-	@Test
-	public void testGetUpdateJarUrl() throws IOException {
-		boolean ok;
-
-		// use liferay-public-releases context
-
-		String jarUrl = UpdateCommand.getUpdateJarUrl(false);
-
-		try (PrintWriter out = new PrintWriter("out3.txt")) {
-			out.println("testGetUpdateJarUrl: jarUrl = " + jarUrl);
-		}
-
-		if (jarUrl.length() > 1) {
-			ok = true;
-		}
-		else {
-			ok = false;
-		}
-
-		Assert.assertTrue("jarUrl = " + jarUrl + " ... this does not look right.", ok);
-	}
-
-	@Test
-	public void testGetUpdateJarUrlFromSnapshots() throws IOException {
-		String updateJarUrl = UpdateCommand.getUpdateJarUrl(true);
-
-		Assert.assertNotNull(updateJarUrl);
-
-		Assert.assertFalse("updateJarUrl(with snaphots) is empty.", updateJarUrl.isEmpty());
 	}
 
 	@Ignore
@@ -115,34 +112,49 @@ public class UpdateCommandTest {
 		Assert.assertFalse("updateVersion does not look right.", updateVersion.isEmpty());
 	}
 
+	@Ignore
 	@Test
-	public void testUpdateVersioneMajorLessThanUpdateMajor() {
-		String currentVersion = "1.5.9.1.2.3.4.5.6.7.8.9";
-		String updatedVersion = "2.1.1.4.5.6-snapshot";
+	public void testTargetReleases() throws IOException {
+		boolean ok;
 
+		// assuming target is in releases and available
+
+		String url = UpdateCommand.getUpdateJarUrl(false);
+
+		// expect: valid update url from the releases repo
+
+		if (url.length() > 1) {
+			ok = true;
+		}
+		else {
+			ok = false;
+		}
+
+		Assert.assertTrue("url = " + url + " ... this does not look right.", ok);
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + updatedVersion,
-			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
+			"url is not from releases repo.  url = " + url, url.contains(UpdateCommand.RELEASES_REPO_URL));
 	}
 
 	@Test
-	public void testUpdateVersionMajorMoreThanUpdateMajor() {
-		String currentVersion = "3.0.0.2018.10.23.1234";
-		String updatedVersion = "2.5.9-SNAPSHOT";
+	public void testTargetSnapshots() throws IOException {
+		boolean ok;
 
-		Assert.assertFalse(
-			"currentVersion = " + currentVersion + " should NOT be updated to " + updatedVersion,
-			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
-	}
+		// assuming target is in snapshots and available
 
-	@Test
-	public void testUpdateVersionMinorLessThanUpdateMinor() {
-		String currentVersion = "12.1.9.SCHWIBBY";
-		String updatedVersion = "12.2.1-snapshot";
+		String url = UpdateCommand.getUpdateJarUrl(true);
 
+		// expect: valid update url from the snapshots repo
+
+		if (url.length() > 1) {
+			ok = true;
+		}
+		else {
+			ok = false;
+		}
+
+		Assert.assertTrue("url = " + url + " ... this does not look right.", ok);
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + updatedVersion,
-			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
+			"url is not from snapshots repo.  url = " + url, url.contains(UpdateCommand.SNAPSHOTS_REPO_URL));
 	}
 
 }
