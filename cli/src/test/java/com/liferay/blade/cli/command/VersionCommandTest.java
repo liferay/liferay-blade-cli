@@ -45,6 +45,6 @@ public class VersionCommandTest {
 		Assert.assertFalse(version.isEmpty());
 	}
 
-	private static final String _BLADE_JAR_PATH = System.getProperty("bladeJarPath");
+	private static final String _BLADE_JAR_PATH = System.getProperty("bladeJarPath", "build/libs/blade.jar");
 
 }

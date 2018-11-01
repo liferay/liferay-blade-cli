@@ -381,11 +381,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	private static final String _BLADE_CLI_CONTEXT = "'com/liferay/blade/com.liferay.blade.cli/";
 
-	private static final String _RELEASES_REPO_URL =
-		_BASE_CDN_URL + "liferay-public-releases/" + _BLADE_CLI_CONTEXT;
+	private static final String _RELEASES_REPO_URL = _BASE_CDN_URL + "liferay-public-releases/" + _BLADE_CLI_CONTEXT;
 
-	private static final String _SNAPSHOTS_REPO_URL =
-		_BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
+	private static final String _SNAPSHOTS_REPO_URL = _BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
 
 	private static final Pattern _pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 
