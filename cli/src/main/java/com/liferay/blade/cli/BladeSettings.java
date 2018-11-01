@@ -16,6 +16,9 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.util.Prompter;
+import com.liferay.blade.cli.util.WorkspaceUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -34,6 +37,28 @@ public class BladeSettings {
 
 		if (_settingsFile.exists()) {
 			load();
+		}
+		else {
+			if (WorkspaceUtil.isWorkspace(settingsFile)) {
+				File workspaceDirectory = WorkspaceUtil.getWorkspaceDir(settingsFile);
+
+				File pomFile = new File(workspaceDirectory, "pom.xml");
+
+				if (pomFile.exists()) {
+					String canonicalPath = settingsFile.getCanonicalPath();
+
+					String questionString =
+						"Blade has detected that " + canonicalPath + " does not exist. Should blade create this file?" +
+							System.lineSeparator() +
+								"(WARNING: Blade will not function properly in a Maven workspace without this file)" +
+									System.lineSeparator();
+
+					if (Prompter.confirm(questionString)) {
+						setProfileName("maven");
+						save();
+					}
+				}
+			}
 		}
 	}
 
