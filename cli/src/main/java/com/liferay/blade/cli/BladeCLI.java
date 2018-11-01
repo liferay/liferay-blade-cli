@@ -208,7 +208,7 @@ public class BladeCLI implements Runnable {
 				updateAvailable();
 			}
 			catch (IOException ioe) {
-				ioe.printStackTrace();
+				error(ioe);
 			}
 
 		}
@@ -356,7 +356,7 @@ public class BladeCLI implements Runnable {
 	}
 
 	public boolean updateAvailable() throws IOException {
-		boolean available = false;
+		boolean available;
 
 		VersionCommand versionCommand = new VersionCommand(this);
 
@@ -364,7 +364,13 @@ public class BladeCLI implements Runnable {
 
 		out("The current version of blade is " + bladeCLIVersion + System.lineSeparator());
 
-		boolean fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
+		boolean fromSnapshots = false;
+
+		if (bladeCLIVersion == null) {
+			bladeCLIVersion = "0.0.0";
+		}
+
+		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
 
 		String updateVersion = "";
 

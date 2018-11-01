@@ -115,7 +115,6 @@ public class UpdateCommandTest {
 	@Ignore
 	@Test
 	public void testTargetReleases() throws IOException {
-		boolean ok;
 
 		// assuming target is in releases and available
 
@@ -123,11 +122,10 @@ public class UpdateCommandTest {
 
 		// expect: valid update url from the releases repo
 
+		boolean ok = false;
+
 		if (url.length() > 1) {
 			ok = true;
-		}
-		else {
-			ok = false;
 		}
 
 		Assert.assertTrue("url = " + url + " ... this does not look right.", ok);
@@ -137,7 +135,6 @@ public class UpdateCommandTest {
 
 	@Test
 	public void testTargetSnapshots() throws IOException {
-		boolean ok;
 
 		// assuming target is in snapshots and available
 
@@ -145,11 +142,10 @@ public class UpdateCommandTest {
 
 		// expect: valid update url from the snapshots repo
 
+		boolean ok = false;
+
 		if (url.length() > 1) {
 			ok = true;
-		}
-		else {
-			ok = false;
 		}
 
 		Assert.assertTrue("url = " + url + " ... this does not look right.", ok);

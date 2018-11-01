@@ -41,11 +41,49 @@ import org.jsoup.select.Elements;
  */
 public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
+	public static final String BASE_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/repositories/";
+
+	public static final String BLADE_CLI_CONTEXT = "com/liferay/blade/com.liferay.blade.cli/";
+
+	public static final String RELEASES_REPO_URL = BASE_CDN_URL + "liferay-public-releases/" + BLADE_CLI_CONTEXT;
+
+	public static final String SNAPSHOTS_REPO_URL = BASE_CDN_URL + "liferay-public-snapshots/" + BLADE_CLI_CONTEXT;
+
+	public static boolean equal(String currentVersion, String updateVersion) {
+		boolean equal = false;
+
+		Matcher matcher = _pattern.matcher(currentVersion);
+
+		matcher.find();
+
+		String currentMajor = matcher.group(1);
+		String currentMinor = matcher.group(2);
+		String currentPatch = matcher.group(3);
+
+		matcher = _pattern.matcher(updateVersion);
+
+		matcher.find();
+
+		String updateMajor = matcher.group(1);
+		String updateMinor = matcher.group(2);
+		String updatePatch = matcher.group(3);
+
+		if (Integer.parseInt(updateMajor) == Integer.parseInt(currentMajor)) {
+			if (Integer.parseInt(updateMinor) == Integer.parseInt(currentMinor)) {
+				if (Integer.parseInt(updatePatch) == Integer.parseInt(currentPatch)) {
+					equal = true;
+				}
+			}
+		}
+
+		return equal;
+	}
+
 	public static String getUpdateJarUrl(boolean snapshots) throws IOException {
-		String url = _RELEASES_REPO_URL;
+		String url = RELEASES_REPO_URL;
 
 		if (snapshots) {
-			url = _SNAPSHOTS_REPO_URL;
+			url = SNAPSHOTS_REPO_URL;
 		}
 
 		if (hasUpdateUrlFromBladeDir()) {
@@ -165,10 +203,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	public static String getUpdateVersion(boolean snapshots) throws IOException {
-		String url = _RELEASES_REPO_URL;
+		String url = RELEASES_REPO_URL;
 
 		if (snapshots) {
-			url = _SNAPSHOTS_REPO_URL;
+			url = SNAPSHOTS_REPO_URL;
 		}
 
 		if (hasUpdateUrlFromBladeDir()) {
@@ -221,16 +259,16 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return has;
 	}
 
-	public static boolean shouldUpdate(String bladeVersion, String updateVersion) {
+	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
 		boolean should = false;
 
-		Matcher matcher = _pattern.matcher(bladeVersion);
+		Matcher matcher = _pattern.matcher(currentVersion);
 
 		matcher.find();
 
-		String bladeMajor = matcher.group(1);
-		String bladeMinor = matcher.group(2);
-		String bladePatch = matcher.group(3);
+		String currentMajor = matcher.group(1);
+		String currentMinor = matcher.group(2);
+		String currentPatch = matcher.group(3);
 
 		matcher = _pattern.matcher(updateVersion);
 
@@ -240,32 +278,28 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		String updateMinor = matcher.group(2);
 		String updatePatch = matcher.group(3);
 
-		if (Integer.parseInt(updateMajor) > Integer.parseInt(bladeMajor)) {
+		if (Integer.parseInt(updateMajor) > Integer.parseInt(currentMajor)) {
 			should = true;
 		}
 		else {
-			if (Integer.parseInt(updateMajor) < Integer.parseInt(bladeMajor)) {
+			if (Integer.parseInt(updateMajor) < Integer.parseInt(currentMajor)) {
 				should = false;
 			}
 			else {
-				if (Integer.parseInt(updateMinor) > Integer.parseInt(bladeMinor)) {
+				if (Integer.parseInt(updateMinor) > Integer.parseInt(currentMinor)) {
 					should = true;
 				}
 				else {
-					if (Integer.parseInt(updateMinor) < Integer.parseInt(bladeMinor)) {
+					if (Integer.parseInt(updateMinor) < Integer.parseInt(currentMinor)) {
 						should = false;
 					}
 					else {
-						if (Integer.parseInt(updatePatch) > Integer.parseInt(bladePatch)) {
+						if (Integer.parseInt(updatePatch) > Integer.parseInt(currentPatch)) {
 							should = true;
 						}
 					}
 				}
 			}
-		}
-
-		if (bladeVersion.contains("SNAPSHOT")) {
-			should = true;
 		}
 
 		return should;
@@ -279,67 +313,129 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	@Override
-	public void execute() throws Exception {
+	public void execute() {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		UpdateArgs updateArgs = getArgs();
 
-		boolean snapshots = updateArgs.isSnapshots();
-
-		String oldUrl = "https://releases.liferay.com/tools/blade-cli/latest/blade.jar";
+		// String oldUrl = "https://releases.liferay.com/tools/blade-cli/latest/blade.jar";
 
 		String url = "";
 
-		boolean available = false;
+		String currentVersion = "0.0.0.0";
 
-		available = isUpdateAvailable();
+		boolean snapshots = updateArgs.isSnapshots();
 
-		if (available) {
+		String updateVersion = "";
 
-			// Just because there is an update available does not mean that there is
-			// a url to a released blade.jar yet, or maybe the snapshot repo is empty.
+		try {
+			updateVersion = getUpdateVersion(snapshots);
 
 			try {
-				url = getUpdateJarUrl(snapshots);
+				currentVersion = VersionCommand.getBladeCLIVersion();
+
+				bladeCLI.out("Current version is " + currentVersion);
 			}
 			catch (IOException ioe) {
+				bladeCLI.out("Current blade.jar contains no manifest.");
+				bladeCLI.out("Assuming blade.jar should be updated.");
+			}
+
+			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion);
+
+			if (currentVersion.contains("SNAPSHOT")) {
 				if (snapshots) {
-					bladeCLI.out("No jar is available from " + _SNAPSHOTS_REPO_URL);
+					shouldUpdate = true;
+					bladeCLI.out("Updating from the snapshots repository.");
 				}
 				else {
-					bladeCLI.out("No jar is available from " + _RELEASES_REPO_URL);
+					if (equal(currentVersion, updateVersion)) {
+						shouldUpdate = true;
+					}
 				}
-
-				url = oldUrl;
 			}
-		}
-		else {
-			url = oldUrl;
-		}
 
-		bladeCLI.out("Updating to " + url);
+			if (currentVersion.contains("SNAPSHOT")) {
+				if (!snapshots) {
+					if (shouldUpdate) {
+						bladeCLI.out("Updating from a snapshot to the newest released version.");
+					}
+				}
+			}
 
-		if (BladeUtil.isWindows()) {
-			bladeCLI.out(
-				"blade update cannot execute successfully because of Windows file locking. Please use following " +
-					"command:");
-			bladeCLI.out("\tjpm install -f " + url);
-		}
-		else {
-			BaseArgs baseArgs = bladeCLI.getBladeArgs();
+			url = getUpdateJarUrl(snapshots);
 
-			File baseDir = new File(baseArgs.getBase());
+			if (shouldUpdate) {
+				bladeCLI.out("Updating to: " + url);
 
-			Process process = BladeUtil.startProcess("jpm install -f " + url, baseDir);
+				if (BladeUtil.isWindows()) {
+					bladeCLI.out(
+						"blade update cannot execute successfully because of Windows file locking.  Please use the " +
+							"following command:");
+					bladeCLI.out("\tjpm install -f " + url);
+				}
+				else {
+					BaseArgs baseArgs = bladeCLI.getBladeArgs();
 
-			int errCode = process.waitFor();
+					File baseDir = new File(baseArgs.getBase());
 
-			if (errCode == 0) {
-				bladeCLI.out("Update completed successfully");
+					try {
+
+						// bladeCLI.out(
+						// 	"Updating blade from " + currentVersion + " to the latest version, " + updateVersion +
+						// 		", using " + url);
+
+						Process process = BladeUtil.startProcess("jpm install -f " + url, baseDir);
+
+						int errCode = process.waitFor();
+
+						if (errCode == 0) {
+							bladeCLI.out("Update completed successfully");
+						}
+						else {
+							bladeCLI.error("blade exited with code: " + errCode);
+						}
+					}
+					catch (Exception e) {
+						bladeCLI.error("Problem running jpm install.");
+						bladeCLI.error(e);
+					}
+				}
 			}
 			else {
-				bladeCLI.error("blade exited with code: " + errCode);
+				if (snapshots) {
+					bladeCLI.out(
+						"The current version of blade, " + currentVersion + ", is higher than the latest version, " +
+							updateVersion + ", at " + SNAPSHOTS_REPO_URL);
+				}
+				else {
+					if (equal(currentVersion, updateVersion)) {
+						bladeCLI.out("Current version, " + currentVersion + ", is the latest released version.");
+					}
+					else {
+
+						// This should never happen, but in case it does.
+
+						bladeCLI.out(
+							"The current version of blade, " + currentVersion +
+								", is higher than the latest version, " + updateVersion + ", at " + RELEASES_REPO_URL);
+						bladeCLI.out("Not updating since downgrades are not supported at this time.");
+
+						bladeCLI.out("If you want to force a downgrade, you could use the following command:");
+						bladeCLI.out("\tjpm install -f " + url);
+					}
+				}
 			}
+		}
+		catch (IOException ioe) {
+			if (snapshots) {
+				bladeCLI.out("No jar is available from " + SNAPSHOTS_REPO_URL);
+			}
+			else {
+				bladeCLI.out("No jar is available from " + RELEASES_REPO_URL);
+			}
+
+			bladeCLI.out("Not updating since no jar is available.");
 		}
 	}
 
@@ -347,43 +443,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	public Class<UpdateArgs> getArgsClass() {
 		return UpdateArgs.class;
 	}
-
-	public boolean isUpdateAvailable() throws IOException {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		boolean available = false;
-
-		VersionCommand versionCommand = new VersionCommand(bladeCLI);
-
-		String bladeVersion = versionCommand.getBladeCLIVersion();
-
-		boolean fromSnapshots = bladeVersion.contains("SNAPSHOT");
-
-		String updateVersion = getUpdateVersion(fromSnapshots);
-
-		boolean shouldUpdate = shouldUpdate(bladeVersion, updateVersion);
-
-		if (shouldUpdate) {
-			String updateJarUrl = getUpdateJarUrl(fromSnapshots);
-
-			if ("".equals(updateJarUrl)) {
-				bladeCLI.out("No update url available.");
-			}
-			else {
-				available = true;
-			}
-		}
-
-		return available;
-	}
-
-	private static final String _BASE_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/repositories/";
-
-	private static final String _BLADE_CLI_CONTEXT = "'com/liferay/blade/com.liferay.blade.cli/";
-
-	private static final String _RELEASES_REPO_URL = _BASE_CDN_URL + "liferay-public-releases/" + _BLADE_CLI_CONTEXT;
-
-	private static final String _SNAPSHOTS_REPO_URL = _BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
 
 	private static final Pattern _pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 
