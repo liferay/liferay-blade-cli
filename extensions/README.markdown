@@ -67,7 +67,7 @@ Pay close attention to a few things in this project:
    officially published, but you can use the provisional repo as shown here):
    https://github.com/gamerson/blade-sample-command/blob/master/build.gradle#L18.
 3. Authoring your tests for your custom commands:
-   https://github.com/liferay/liferay-blade-cli/blob/master/extensions/sample-command/src/test/java/com/liferay/extensions/sample/command/CommandsTest.java.
+   https://github.com/liferay/liferay-blade-cli/blob/master/extensions/sample-command/src/test/java/com/liferay/extensions/sample/command/SampleCommandsTest.java.
 
 Once you have your command, build it with Gradle (`gradle build`) to generate
 your JAR file. Now you can test it in Blade CLI by running `blade extension
@@ -82,7 +82,7 @@ Now you should see your new custom command listed! If not, contact us in the
 Liferay Community
 [`#blade`](https://liferay-community.slack.com/messages/C5US8D29Y) Slack
 channel. Register here:
-[https://community.liferay.com/it/chat](https://community.liferay.com/it/chat).
+[https://community.liferay.com/en/chat](https://community.liferay.com/en/chat).
 
 ### Custom Project Templates
 
@@ -118,7 +118,7 @@ Now you should see your new custom project template listed! If not, contact us
 in the Liferay Community
 [`#blade`](https://liferay-community.slack.com/messages/C5US8D29Y) Slack
 channel. Register here:
-[https://community.liferay.com/it/chat](https://community.liferay.com/it/chat).
+[https://community.liferay.com/en/chat](https://community.liferay.com/en/chat).
 
 ### Blade Profiles
 
@@ -179,7 +179,7 @@ Your `my-new-custom-workspace` will have the following properties set in its
 
 We have some existing plans for Blade extensions but are looking for feedback
 from our community. Please let use hear from you on the `#blade` channel in
-Liferay Community Slack (register [here](https://community.liferay.com/it/chat)):
+Liferay Community Slack (register [here](https://community.liferay.com/en/chat)):
 
 https://liferay-community.slack.com/messages/C5US8D29Y
 
