@@ -34,14 +34,14 @@ You can customize the above commands to fit your specific scenario.
 There are a few use cases to consider when extending Blade CLI. If you only want
 to add a new command that adds to Blade CLI's standard set of commands and also
 applies globally to all types of workspaces, you can add a new custom command.
-See the [#custom-commands] section for details.
+See the [Custom Commands](#custom-commands) section for details.
 
 In most cases, you'll want a set of custom commands that only apply to a
 specific workspace environment. For example, suppose you want to build some
 custom commands that only work when the Liferay workspace is configured to use
 `docker`, `wedeploy`, or `openshift`. Then you should create a profile that
-supports the development workflow in that environment. See the section on
-[#blade-profiles] for more details.
+supports the development workflow in that environment. See the
+[Blade Profiles](#blade-profiles) section for more details.
 
 ### Custom Commands
 
@@ -100,8 +100,8 @@ Here are a few things to notice from the sample:
 
 2. The `BundleSymbolic` name of your template JAR (see
    [here](https://github.com/liferay/liferay-blade-cli/blob/master/extensions/sample-template/bnd.bnd#L3))
-   must have the pattern `*.project.templates.<name>.*` For example, suppose you
-   have a custom template called *mywebapp*. Then the BSN should be
+   must have the pattern `*.project.templates.<name>.*`. For example, suppose
+   you have a custom template called *mywebapp*. Then the BSN should be
    `org.myorg.project.templates.mywebapp-1.0.0.JAR`.
 3. Testing your custom template can be accomplished by following the example
    [here](https://github.com/liferay/liferay-blade-cli/blob/master/extensions/sample-template/src/test/java/com/liferay/project/templates/sample/TemplatesTest.java).
