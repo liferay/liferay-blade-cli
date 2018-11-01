@@ -34,6 +34,30 @@ import org.osgi.framework.Constants;
  */
 public class VersionCommand extends BaseCommand<VersionArgs> {
 
+	public static String getBladeCLIVersion() throws IOException {
+		ClassLoader classLoader = BladeCLI.class.getClassLoader();
+
+		Enumeration<URL> resources = classLoader.getResources("META-INF/MANIFEST.MF");
+
+		while (resources.hasMoreElements()) {
+			URL url = resources.nextElement();
+
+			try (InputStream inputStream = url.openStream()) {
+				Manifest manifest = new Manifest(inputStream);
+
+				Attributes attributes = manifest.getMainAttributes();
+
+				String bundleSymbolicName = attributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
+
+				if ("com.liferay.blade.cli".equals(bundleSymbolicName)) {
+					return attributes.getValue(Constants.BUNDLE_VERSION);
+				}
+			}
+		}
+
+		return null;
+	}
+
 	public VersionCommand() {
 	}
 
@@ -57,30 +81,6 @@ public class VersionCommand extends BaseCommand<VersionArgs> {
 	@Override
 	public Class<VersionArgs> getArgsClass() {
 		return VersionArgs.class;
-	}
-
-	public String getBladeCLIVersion() throws IOException {
-		ClassLoader classLoader = BladeCLI.class.getClassLoader();
-
-		Enumeration<URL> resources = classLoader.getResources("META-INF/MANIFEST.MF");
-
-		while (resources.hasMoreElements()) {
-			URL url = resources.nextElement();
-
-			try (InputStream inputStream = url.openStream()) {
-				Manifest manifest = new Manifest(inputStream);
-
-				Attributes attributes = manifest.getMainAttributes();
-
-				String bundleSymbolicName = attributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
-
-				if ("com.liferay.blade.cli".equals(bundleSymbolicName)) {
-					return attributes.getValue(Constants.BUNDLE_VERSION);
-				}
-			}
-		}
-
-		return null;
 	}
 
 }
