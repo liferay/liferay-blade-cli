@@ -134,6 +134,11 @@ public class BladeTest extends BladeCLI {
 
 				String errors = stringPrintStream.get();
 
+				errors = errors.replaceAll(
+					"sh: warning: setlocale: LC_ALL: cannot change locale \\(en_US.UTF-8\\)", "");
+
+				errors = errors.trim();
+
 				if (!errors.isEmpty()) {
 					throw new Exception("Errors not empty:\n" + errors);
 				}

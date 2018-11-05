@@ -251,6 +251,16 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 	}
 
+	protected Properties getWorkspaceProperties() {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		return WorkspaceUtil.getGradleProperties(baseDir);
+	}
+
 	private static boolean _checkDir(File file) {
 		if (file.exists()) {
 			if (!file.isDirectory()) {
@@ -293,7 +303,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return baseDir;
 		}
 
-		Properties properties = WorkspaceUtil.getGradleProperties(baseDir);
+		Properties properties = getWorkspaceProperties();
 
 		String extDirProperty = (String)properties.get(WorkspaceConstants.DEFAULT_EXT_DIR_PROPERTY);
 
@@ -325,7 +335,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return baseDir;
 		}
 
-		Properties properties = WorkspaceUtil.getGradleProperties(baseDir);
+		Properties properties = getWorkspaceProperties();
 
 		String modulesDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
 
@@ -357,7 +367,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return baseDir;
 		}
 
-		Properties properties = WorkspaceUtil.getGradleProperties(baseDir);
+		Properties properties = getWorkspaceProperties();
 
 		String warsDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 
