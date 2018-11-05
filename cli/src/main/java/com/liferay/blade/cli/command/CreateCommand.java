@@ -251,7 +251,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 	}
 
-	protected Properties getProperties() {
+	protected Properties getWorkspaceProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs baseArgs = bladeCLI.getBladeArgs();
@@ -303,7 +303,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return baseDir;
 		}
 
-		Properties properties = getProperties();
+		Properties properties = getWorkspaceProperties();
 
 		String extDirProperty = (String)properties.get(WorkspaceConstants.DEFAULT_EXT_DIR_PROPERTY);
 
@@ -335,7 +335,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return baseDir;
 		}
 
-		Properties properties = getProperties();
+		Properties properties = getWorkspaceProperties();
 
 		String modulesDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
 
@@ -367,7 +367,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return baseDir;
 		}
 
-		Properties properties = getProperties();
+		Properties properties = getWorkspaceProperties();
 
 		String warsDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 
