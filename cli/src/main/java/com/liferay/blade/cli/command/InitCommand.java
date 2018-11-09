@@ -140,16 +140,18 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				String[] files = destDir.list();
 
 				if ((files != null) && (files.length > 0)) {
-					if (initArgs.isForce()) {
-						_trace("Files found, continuing init.");
-					}
-					else {
-						_addError(
-							destDir.getAbsolutePath() +
-								" contains files, please move them before continuing or use -f (--force) option to " +
-									"init workspace.");
+					if ((files.length > 1) && !(files[0]).equals(".blade")) {
+						if (initArgs.isForce()) {
+							_trace("Files found, continuing init.");
+						}
+						else {
+							_addError(
+								destDir.getAbsolutePath() +
+									" contains files, please move them before continuing or use -f (--force) option " +
+										"to init workspace.");
 
-						return;
+							return;
+						}
 					}
 				}
 			}

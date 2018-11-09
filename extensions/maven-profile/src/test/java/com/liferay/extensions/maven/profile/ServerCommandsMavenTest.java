@@ -16,6 +16,7 @@
 
 package com.liferay.extensions.maven.profile;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -38,9 +39,11 @@ public class ServerCommandsMavenTest {
 	public void testServerInit() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-p", "maven"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-f", "-p", "maven"};
 
-		TestUtil.runBlade(args);
+		BladeTest bladeTest = new BladeTest(workspaceDir);
+
+		bladeTest.run(args);
 
 		File pomXmlFile = new File(workspaceDir, "pom.xml");
 

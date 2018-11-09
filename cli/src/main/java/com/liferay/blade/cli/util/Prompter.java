@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -73,33 +74,43 @@ public class Prompter {
 			try (InputStreamReader isr = new InputStreamReader(in);
 				BufferedReader reader = new BufferedReader(isr)) {
 
-				String decision = reader.readLine();
+				String decision = null;
 
-				decision = decision.toLowerCase();
-
-				switch (decision.trim()) {
-					case "y":
-					case "yes":
-						answer = Optional.of(true);
-
-						break;
-					case "n":
-					case "no":
-						answer = Optional.of(false);
-
-						break;
-					default:
-						if (defaultAnswer.isPresent()) {
-							answer = defaultAnswer;
-						}
-						else {
-							out.println("Unrecognized input: " + decision);
-
-							continue;
-						}
-
-						break;
+				while (decision == null) {
+					decision = reader.readLine();
 				}
+
+				if (decision != null) {
+					decision = decision.toLowerCase();
+
+					switch (decision.trim()) {
+						case "y":
+						case "yes":
+							answer = Optional.of(true);
+
+							break;
+						case "n":
+						case "no":
+							answer = Optional.of(false);
+
+							break;
+						default:
+							if (defaultAnswer.isPresent()) {
+								answer = defaultAnswer;
+							}
+							else {
+								out.println("Unrecognized input: " + decision);
+
+								continue;
+							}
+
+							break;
+					}
+				}
+
+			}
+			catch (IOException ioe) {
+				throw new RuntimeException(ioe);
 			}
 			catch (Exception exception) {
 				if (defaultAnswer.isPresent()) {

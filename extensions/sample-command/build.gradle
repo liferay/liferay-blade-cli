@@ -37,6 +37,6 @@ test {
 	dependsOn jar
 
 	doFirst {
-		systemProperty 'sampleTemplateJarFile', jar.archivePath
+		systemProperty 'sampleCommandJarFile', jar.archivePath
 	}
 }

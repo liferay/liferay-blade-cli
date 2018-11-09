@@ -38,28 +38,6 @@ public class BladeSettings {
 		if (_settingsFile.exists()) {
 			load();
 		}
-		else {
-			if (WorkspaceUtil.isWorkspace(settingsFile)) {
-				File workspaceDirectory = WorkspaceUtil.getWorkspaceDir(settingsFile);
-
-				File pomFile = new File(workspaceDirectory, "pom.xml");
-
-				if (pomFile.exists()) {
-					String canonicalPath = settingsFile.getCanonicalPath();
-
-					String questionString =
-						"Blade has detected that " + canonicalPath + " does not exist. Should blade create this file?" +
-							System.lineSeparator() +
-								"(WARNING: Blade will not function properly in a Maven workspace without this file)" +
-									System.lineSeparator();
-
-					if (Prompter.confirm(questionString)) {
-						setProfileName("maven");
-						save();
-					}
-				}
-			}
-		}
 	}
 
 	public String getLiferayVersionDefault() {
@@ -78,6 +56,26 @@ public class BladeSettings {
 	public void load() throws IOException {
 		try (FileInputStream fileInputStream = new FileInputStream(_settingsFile)) {
 			_properties.load(fileInputStream);
+		}
+	}
+
+	public void promptIfSettingsMissing() throws IOException {
+		if (WorkspaceUtil.isWorkspace(_settingsFile)) {
+			File workspaceDirectory = WorkspaceUtil.getWorkspaceDir(_settingsFile);
+
+			File pomFile = new File(workspaceDirectory, "pom.xml");
+
+			if (pomFile.exists() && !_settingsFile.exists()) {
+				String questionString =
+					"WARNING: blade commands will not function properly in a Maven workspace unless the blade " +
+						"profile is set to \"maven\". Should the settings for this " + "workspace be updated?" +
+							System.lineSeparator();
+
+				if (Prompter.confirm(questionString)) {
+					setProfileName("maven");
+					save();
+				}
+			}
 		}
 	}
 

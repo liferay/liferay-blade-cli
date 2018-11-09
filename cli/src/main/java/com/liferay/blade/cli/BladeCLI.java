@@ -264,7 +264,11 @@ public class BladeCLI implements Runnable {
 
 		System.setErr(err());
 
-		Extensions extensions = new Extensions(getBladeSettings(), getExtensionsPath());
+		BladeSettings bladeSettings = getBladeSettings();
+
+		bladeSettings.promptIfSettingsMissing();
+
+		Extensions extensions = new Extensions(bladeSettings, getExtensionsPath());
 
 		_commands = extensions.getCommands();
 
