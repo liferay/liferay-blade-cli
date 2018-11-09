@@ -18,6 +18,7 @@ package com.liferay.extensions.maven.profile;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.ServerInitCommand;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.extensions.maven.profile.internal.MavenUtil;
@@ -27,6 +28,7 @@ import java.io.File;
 /**
  * @author Christopher Bryan Boyd
  */
+@BladeProfile("maven")
 public class ServerInitCommandMaven extends ServerInitCommand {
 
 	@Override

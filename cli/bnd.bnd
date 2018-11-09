@@ -214,6 +214,7 @@ Private-Package:\
 -includeresource:\
 	@com.liferay.project.templates-*.jar,\
 	@jansi-*.jar,\
+	maven-profile.jar,\
 	tooling.zip,\
 	wrapper.zip,\
 	mvnw.cmd

@@ -20,7 +20,8 @@ apply plugin: "java"
 apply plugin: "maven-publish"
 
 task cliSourcesJar(type: Jar)
-task cliTestJar(type: Jar)
+task cliTestJar(type: Jar, dependsOn: testClasses)
+task createMavenProfileJar(type: Zip)
 task createToolingZip(type:Zip)
 task createWrapperZip(type:Zip)
 task downloadPortal(type: Download)
@@ -46,7 +47,7 @@ check {
 }
 
 clean.doFirst {
-	delete "${projectDir}/tooling.zip", "${projectDir}/wrapper.zip"
+	delete "${projectDir}/maven-profile.jar", "${projectDir}/tooling.zip", "${projectDir}/wrapper.zip"
 }
 
 cliSourcesJar {
@@ -57,6 +58,12 @@ cliSourcesJar {
 cliTestJar {
 	classifier = 'tests'
 	from sourceSets.test.output
+}
+
+createMavenProfileJar {
+	dependsOn ":extensions:maven-profile:jar"
+	archiveName = "maven-profile.jar"
+	destinationDir = new File("${projectDir}")
 }
 
 createToolingZip {
@@ -100,6 +107,7 @@ dependencies {
 	compile name: "org.objectweb.asm.commons-6.0.0"
 	compile name: "org.objectweb.asm.tree-6.0.0"
 	compile name: "org.objectweb.asm.util-6.0.0"
+	compile project(":extensions:maven-profile")
 	compile project(":gradle-tooling")
 
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
@@ -124,14 +132,14 @@ downloadPortal {
 }
 
 jar {
+
 	archiveName = 'blade.jar'
-	from createToolingZip, createWrapperZip
+	from createMavenProfileJar, createToolingZip, createWrapperZip
+
 }
 
-repositories {
-	maven {
-		url "https://repo.gradle.org/gradle/libs-releases"
-	}
+project(":extensions:maven-profile").afterEvaluate { project ->
+	createMavenProfileJar.from project.jar.archivePath
 }
 
 project(":gradle-tooling").afterEvaluate { tooling ->
@@ -153,7 +161,14 @@ publishing {
 			from components.java
 
 			artifact cliSourcesJar
+			artifact cliTestJar
 		}
+	}
+}
+
+repositories {
+	maven {
+		url "https://repo.gradle.org/gradle/libs-releases"
 	}
 }
 
@@ -161,6 +176,7 @@ sourceSets {
 	zips {
 		resources {
 			srcDir "${projectDir}"
+			include "maven-profile.jar"
 			include "tooling.zip"
 			include "wrapper.zip"
 		}
@@ -171,7 +187,7 @@ sourceSets {
 }
 
 test {
-	dependsOn createToolingZip, createWrapperZip, unzipPortal
+	dependsOn createMavenProfileJar, createToolingZip, createWrapperZip, unzipPortal
 
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"

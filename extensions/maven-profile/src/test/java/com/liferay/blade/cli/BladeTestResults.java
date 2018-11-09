@@ -14,30 +14,33 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.maven.profile;
-
-import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.InitArgs;
-import com.liferay.blade.cli.command.InitCommand;
+package com.liferay.blade.cli;
 
 /**
- * @author Gregory Amerson
- * @author Terry Jia
+ * @author Christopher Bryan Boyd
  */
-@BladeProfile("maven")
-public class InitCommandMaven extends InitCommand {
+public class BladeTestResults {
 
-	public InitCommandMaven() {
+	public BladeTestResults(BladeCLI bladeCLI, String output, String errors) {
+		_bladeCLI = bladeCLI;
+		_output = output;
+		_errors = errors;
 	}
 
-	@Override
-	@SuppressWarnings("deprecation")
-	public void execute() throws Exception {
-		InitArgs initArgs = getArgs();
-
-		initArgs.setProfileName("maven");
-
-		super.execute();
+	public BladeCLI getBladeCLI() {
+		return _bladeCLI;
 	}
+
+	public String getErrors() {
+		return _errors;
+	}
+
+	public String getOutput() {
+		return _output;
+	}
+
+	private final BladeCLI _bladeCLI;
+	private final String _errors;
+	private final String _output;
 
 }

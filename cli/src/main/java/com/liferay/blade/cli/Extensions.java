@@ -25,15 +25,18 @@ import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.lang.reflect.Field;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -226,6 +229,10 @@ public class Extensions implements AutoCloseable {
 		if (_serviceLoaderClassLoader != null) {
 			_getServiceClassLoader().close();
 		}
+
+		if (_tempExtensionsDirectory != null) {
+			FileUtil.deleteDirIfExists(_tempExtensionsDirectory);
+		}
 	}
 
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
@@ -236,6 +243,16 @@ public class Extensions implements AutoCloseable {
 
 	public Path getPath() throws IOException {
 		return _extensionsPath;
+	}
+
+	private static URL _convertUriToUrl(URI uri) {
+		try {
+			return uri.toURL();
+		}
+		catch (MalformedURLException murle) {
+		}
+
+		return null;
 	}
 
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
@@ -267,23 +284,15 @@ public class Extensions implements AutoCloseable {
 	private static URL[] _getJarUrls(Path jarsPath) throws IOException {
 		try (Stream<Path> files = Files.list(jarsPath)) {
 			return files.filter(
-				path -> {
-					String pathString = path.toString();
-
-					return pathString.endsWith(".jar");
-				}
+				path -> String.valueOf(
+					path
+				).endsWith(
+					".jar"
+				)
 			).map(
 				Path::toUri
 			).map(
-				uri -> {
-					try {
-						return uri.toURL();
-					}
-					catch (MalformedURLException murle) {
-					}
-
-					return null;
-				}
+				Extensions::_convertUriToUrl
 			).filter(
 				url -> url != null
 			).collect(
@@ -376,11 +385,17 @@ public class Extensions implements AutoCloseable {
 
 	private URLClassLoader _getServiceClassLoader() throws IOException {
 		if (_serviceLoaderClassLoader == null) {
-			Path tempExtensionsDirectory = Files.createTempDirectory("extensions");
+			_tempExtensionsDirectory = Files.createTempDirectory("extensions");
 
-			FileUtil.copyDir(getPath(), tempExtensionsDirectory);
+			FileUtil.copyDir(getPath(), _tempExtensionsDirectory);
 
-			URL[] jarUrls = _getJarUrls(tempExtensionsDirectory);
+			InputStream inputStream = Extensions.class.getResourceAsStream("/maven-profile.jar");
+
+			Path mavenProfilePath = _tempExtensionsDirectory.resolve("maven-profile.jar");
+
+			Files.copy(inputStream, mavenProfilePath, StandardCopyOption.REPLACE_EXISTING);
+
+			URL[] jarUrls = _getJarUrls(_tempExtensionsDirectory);
 
 			_serviceLoaderClassLoader = new URLClassLoader(jarUrls, getClass().getClassLoader());
 		}
@@ -392,5 +407,6 @@ public class Extensions implements AutoCloseable {
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final Path _extensionsPath;
 	private URLClassLoader _serviceLoaderClassLoader = null;
+	private Path _tempExtensionsDirectory;
 
 }
