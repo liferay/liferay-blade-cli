@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -31,6 +32,10 @@ public class Prompter {
 
 	public static boolean confirm(String question) {
 		return confirm(question, System.in, System.out, Optional.empty());
+	}
+
+	public static boolean confirm(String question, boolean defaultAnswer) {
+		return confirm(question, System.in, System.out, Optional.of(defaultAnswer));
 	}
 
 	public static boolean confirm(String question, InputStream in, PrintStream out, Optional<Boolean> defaultAnswer) {

@@ -66,12 +66,11 @@ public class BladeSettings {
 			File pomFile = new File(workspaceDirectory, "pom.xml");
 
 			if (pomFile.exists() && !_settingsFile.exists()) {
-				String questionString =
+				String question =
 					"WARNING: blade commands will not function properly in a Maven workspace unless the blade " +
-						"profile is set to \"maven\". Should the settings for this workspace be updated?" +
-							System.lineSeparator();
+						"profile is set to \"maven\". Should the settings for this workspace be updated?";
 
-				if (Prompter.confirm(questionString)) {
+				if (Prompter.confirm(question, true)) {
 					setProfileName("maven");
 					save();
 				}

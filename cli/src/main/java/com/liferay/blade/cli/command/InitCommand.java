@@ -146,8 +146,8 @@ public class InitCommand extends BaseCommand<InitArgs> {
 					else {
 						_addError(
 							destDir.getAbsolutePath() +
-								" contains files, please move them before continuing or use -f (--force) option " +
-									"to init workspace.");
+								" contains files, please move them before continuing or use -f (--force) option to " +
+									"init workspace.");
 
 						return;
 					}
