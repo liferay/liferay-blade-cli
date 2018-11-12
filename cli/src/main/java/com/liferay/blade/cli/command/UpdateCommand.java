@@ -36,6 +36,7 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 /**
@@ -78,95 +79,34 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			url = getUpdateUrlFromBladeDir();
 		}
 
-		String version = "";
+		Connection connection = Jsoup.connect(url + "/maven-metadata.xml");
 
-		String nextUrl = "";
+		connection = connection.parser(Parser.xmlParser());
 
-		String jarUrl = "";
+		Document document = connection.get();
 
-		Document versionsDocument;
+		Elements versionElements = document.select("version");
 
-		Connection connection = Jsoup.connect(url);
+		Element lastVersionElement = versionElements.last();
 
-		versionsDocument = connection.get();
+		String version = lastVersionElement.text();
 
-		Elements tdOrPreElements = versionsDocument.select("td,pre");
+		if (snapshots) {
+			connection.url(url + "/" + version + "/maven-metadata.xml");
 
-		for (Element potentialVersion : tdOrPreElements.select("a")) {
-			String bladeDir;
+			document = connection.get();
 
-			boolean prependUrl = false;
+			Elements valueElements = document.select("snapshotVersion > value");
 
-			String href = potentialVersion.attr("href");
+			Element valueElement = valueElements.get(0);
 
-			if (href.contains(url)) {
-				String hrefSubstring = href.substring(url .length());
+			String snapshotVersion = valueElement.text();
 
-				bladeDir = hrefSubstring.replaceAll("/", "");
-			}
-			else {
-				bladeDir = href.replaceAll("/", "");
-
-				prependUrl = true;
-			}
-
-			if (bladeDir.matches("\\d+\\..*")) {
-				if (prependUrl) {
-					nextUrl = url + potentialVersion.attr("href");
-				}
-				else {
-					nextUrl = potentialVersion.attr("href");
-				}
-			}
+			return url + "/" + version + "/com.liferay.blade.cli-" + snapshotVersion + ".jar";
 		}
-
-		if ("".equals(nextUrl)) {
-			throw new IOException("No directory found at url = " + url);
+		else {
+			return url + "/" + version + "/com.liferay.blade.cli-" + version + ".jar";
 		}
-
-		version = "nextUrl = " + nextUrl + "\n";
-
-		connection = Jsoup.connect(nextUrl);
-
-		Document jarsDocument = connection.get();
-
-		tdOrPreElements = jarsDocument.select("td,pre");
-
-		for (Element potentialJar : tdOrPreElements.select("a")) {
-			String bladeJar;
-
-			boolean prependUrl = false;
-
-			String href = potentialJar.attr("href");
-
-			if (href.contains(nextUrl)) {
-				String hrefSubstring = href.substring(nextUrl .length());
-
-				bladeJar = hrefSubstring.replaceAll("/", "");
-			}
-			else {
-				bladeJar = href.replaceAll("/", "");
-
-				prependUrl = true;
-			}
-
-			version = version + "\na jar = " + potentialJar.attr("href");
-
-			if (bladeJar.matches(".*\\.jar")) {
-				if (prependUrl) {
-					jarUrl = nextUrl + potentialJar.attr("href");
-				}
-				else {
-					jarUrl = potentialJar.attr("href");
-				}
-			}
-		}
-
-		if ("".equals(jarUrl)) {
-			throw new IOException("No jar found at nextUrl = " + nextUrl);
-		}
-
-		return jarUrl;
 	}
 
 	public static String getUpdateUrlFromBladeDir() {
@@ -199,36 +139,17 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			url = getUpdateUrlFromBladeDir();
 		}
 
-		String version = "";
+		Connection connection = Jsoup.connect(url + "/maven-metadata.xml");
 
-		Document versionsDocument;
+		connection = connection.parser(Parser.xmlParser());
 
-		Connection connection = Jsoup.connect(url);
+		Document document = connection.get();
 
-		versionsDocument = connection.get();
+		Elements versionElements = document.select("version");
 
-		Elements tdOrPreElements = versionsDocument.select("td,pre");
+		Element lastVersion = versionElements.last();
 
-		for (Element potentialVersion : tdOrPreElements.select("a")) {
-			String bladeDir;
-
-			String href = potentialVersion.attr("href");
-
-			if (href.contains(url)) {
-				String hrefSubstring = href.substring(url.length());
-
-				bladeDir = hrefSubstring.replaceAll("/", "");
-			}
-			else {
-				bladeDir = href.replaceAll("/", "");
-			}
-
-			if (bladeDir.matches("\\d+\\..*")) {
-				version = bladeDir;
-			}
-		}
-
-		return version;
+		return lastVersion.text();
 	}
 
 	public static boolean hasUpdateUrlFromBladeDir() {
@@ -310,7 +231,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				if (snapshots) {
 					shouldUpdate = true;
 
-					bladeCLI.out("Updating from the snapshots repository.");
+					bladeCLI.out("Current version is a SNAPSHOT version. Updating from the snapshots repository.");
 				}
 				else {
 					if (equal(currentVersion, updateVersion)) {
