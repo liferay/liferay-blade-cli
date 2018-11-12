@@ -95,7 +95,6 @@ dependencies {
 	compile name: "org.objectweb.asm.commons-6.0.0"
 	compile name: "org.objectweb.asm.tree-6.0.0"
 	compile name: "org.objectweb.asm.util-6.0.0"
-	compile project(":extensions:maven-profile")
 	compile project(":gradle-tooling")
 
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
