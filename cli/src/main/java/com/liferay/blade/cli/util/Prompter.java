@@ -16,14 +16,12 @@
 
 package com.liferay.blade.cli.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Scanner;
 
 /**
  * @author Christopher Bryan Boyd
@@ -68,17 +66,19 @@ public class Prompter {
 	}
 
 	private static Optional<Boolean> _getBooleanAnswer(
-		String questionWithPrompt, InputStream in, PrintStream out, Optional<Boolean> defaultAnswer) {
+		String questionWithPrompt, InputStream inputStream, PrintStream printStream, Optional<Boolean> defaultAnswer) {
 
 		Optional<Boolean> answer = Optional.empty();
 
-		while (!answer.isPresent()) {
-			out.println(questionWithPrompt);
+		try (Scanner scanner = new Scanner(inputStream)) {
+			while (!answer.isPresent()) {
+				printStream.println(questionWithPrompt);
 
-			try (InputStreamReader inputStreamReader = new InputStreamReader(in);
-				BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+				String readLine = null;
 
-				String readLine = bufferedReader.readLine();
+				while (scanner.hasNextLine()) {
+					readLine = scanner.nextLine();
+				}
 
 				if (readLine != null) {
 					readLine = readLine.toLowerCase();
@@ -99,7 +99,7 @@ public class Prompter {
 								answer = defaultAnswer;
 							}
 							else {
-								out.println("Unrecognized input: " + readLine);
+								printStream.println("Unrecognized input: " + readLine);
 
 								continue;
 							}
@@ -107,18 +107,14 @@ public class Prompter {
 							break;
 					}
 				}
-
 			}
-			catch (IOException ioe) {
-				throw new RuntimeException(ioe);
-			}
-			catch (Exception exception) {
-				if (defaultAnswer.isPresent()) {
-					answer = defaultAnswer;
-				}
-				else {
-					continue;
-				}
+		}
+		catch (IllegalStateException ise) {
+			throw new RuntimeException(ise);
+		}
+		catch (Exception exception) {
+			if (defaultAnswer.isPresent()) {
+				answer = defaultAnswer;
 			}
 		}
 
