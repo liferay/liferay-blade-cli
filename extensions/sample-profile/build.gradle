@@ -26,7 +26,7 @@ dependencies {
 
 repositories {
 	maven {
-		url "https://liferay-test-01.ci.cloudbees.com/job/liferay-blade-cli/lastSuccessfulBuild/artifact/mavenRepo/"
+		url "https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-snapshots/com/liferay/blade/com.liferay.blade.cli/"
 	}
 	maven {
 		url "https://repository-cdn.liferay.com/nexus/content/groups/public"

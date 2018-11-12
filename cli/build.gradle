@@ -20,7 +20,8 @@ apply plugin: "java"
 apply plugin: "maven-publish"
 
 task cliSourcesJar(type: Jar)
-task cliTestJar(type: Jar)
+task cliTestJar(type: Jar, dependsOn: testClasses)
+task createMavenProfileJar(type: Zip)
 task createToolingZip(type:Zip)
 task createWrapperZip(type:Zip)
 task downloadPortal(type: Download)
@@ -46,7 +47,7 @@ check {
 }
 
 clean.doFirst {
-	delete "${projectDir}/tooling.zip", "${projectDir}/wrapper.zip"
+	delete "${buildDir}/maven-profile.jar", "${buildDir}/tooling.zip", "${buildDir}/wrapper.zip"
 }
 
 cliSourcesJar {
@@ -59,16 +60,10 @@ cliTestJar {
 	from sourceSets.test.output
 }
 
-createToolingZip {
-	dependsOn ":gradle-tooling:jar"
-	archiveName = "tooling.zip"
-	destinationDir = new File("${projectDir}")
-}
-
 createWrapperZip {
 	from "${rootProject.projectDir}"
 	archiveName = "wrapper.zip"
-	destinationDir = new File("${projectDir}")
+	destinationDir = new File("${buildDir}")
 	include "gradle/**"
 	include "gradlew*"
 }
@@ -125,17 +120,25 @@ downloadPortal {
 
 jar {
 	archiveName = 'blade.jar'
-	from createToolingZip, createWrapperZip
+	from createMavenProfileJar, createToolingZip, createWrapperZip
 }
 
-repositories {
-	maven {
-		url "https://repo.gradle.org/gradle/libs-releases"
+project(":extensions:maven-profile").afterEvaluate { project ->
+	createMavenProfileJar {
+		archiveName = "maven-profile.jar"
+		dependsOn ":extensions:maven-profile:jar"
+		destinationDir = new File("${buildDir}")
+		from project.jar.archivePath
 	}
 }
 
 project(":gradle-tooling").afterEvaluate { tooling ->
-	createToolingZip.from tooling.jar.archivePath
+	createToolingZip {
+		archiveName = "tooling.zip"
+		dependsOn ":gradle-tooling:jar"
+		destinationDir = new File("${buildDir}")
+		from tooling.jar.archivePath
+	}
 }
 
 version = "3.3.0-SNAPSHOT"
@@ -153,14 +156,22 @@ publishing {
 			from components.java
 
 			artifact cliSourcesJar
+			artifact cliTestJar
 		}
+	}
+}
+
+repositories {
+	maven {
+		url "https://repo.gradle.org/gradle/libs-releases"
 	}
 }
 
 sourceSets {
 	zips {
 		resources {
-			srcDir "${projectDir}"
+			srcDir "${buildDir}"
+			include "maven-profile.jar"
 			include "tooling.zip"
 			include "wrapper.zip"
 		}
@@ -171,7 +182,7 @@ sourceSets {
 }
 
 test {
-	dependsOn createToolingZip, createWrapperZip, unzipPortal
+	dependsOn createMavenProfileJar, createToolingZip, createWrapperZip, unzipPortal
 
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"

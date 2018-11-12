@@ -43,7 +43,7 @@ public class SamplesCommandTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		File wrapperZipFile = new File("wrapper.zip");
+		File wrapperZipFile = new File("build/wrapper.zip");
 
 		Files.copy(wrapperZipFile.toPath(), new FileOutputStream(new File("build/classes/java/test/wrapper.zip")));
 	}
