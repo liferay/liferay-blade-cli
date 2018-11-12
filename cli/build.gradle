@@ -47,7 +47,7 @@ check {
 }
 
 clean.doFirst {
-	delete "${projectDir}/maven-profile.jar", "${projectDir}/tooling.zip", "${projectDir}/wrapper.zip"
+	delete "${buildDir}/maven-profile.jar", "${buildDirprojectDir}/tooling.zip", "${buildDirprojectDir}/wrapper.zip"
 }
 
 cliSourcesJar {
@@ -63,19 +63,19 @@ cliTestJar {
 createMavenProfileJar {
 	dependsOn ":extensions:maven-profile:jar"
 	archiveName = "maven-profile.jar"
-	destinationDir = new File("${projectDir}")
+	destinationDir = new File("${buildDir}")
 }
 
 createToolingZip {
 	dependsOn ":gradle-tooling:jar"
 	archiveName = "tooling.zip"
-	destinationDir = new File("${projectDir}")
+	destinationDir = new File("${buildDir}")
 }
 
 createWrapperZip {
 	from "${rootProject.projectDir}"
 	archiveName = "wrapper.zip"
-	destinationDir = new File("${projectDir}")
+	destinationDir = new File("${buildDir}")
 	include "gradle/**"
 	include "gradlew*"
 }
@@ -101,18 +101,21 @@ dependencies {
 	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "3.0"
 	compile group: "org.gradle", name: "gradle-core", version: "3.0"
 	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"
+
 	compile name: "gradle-native-3.0"
 	compile name: "org.objectweb.asm-6.0.0"
 	compile name: "org.objectweb.asm.analysis-6.0.0"
 	compile name: "org.objectweb.asm.commons-6.0.0"
 	compile name: "org.objectweb.asm.tree-6.0.0"
 	compile name: "org.objectweb.asm.util-6.0.0"
+
 	compile project(":extensions:maven-profile")
 	compile project(":gradle-tooling")
 
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 
 	testCompile gradleTestKit()
+
 	testCompile group: "com.googlecode.java-diff-utils", name: "diffutils", version: "1.3.0"
 	testCompile group: "junit", name: "junit", version: "4.12"
 	testCompile group: "net.diibadaaba.zipdiff", name: "zipdiff", version: "1.0"
@@ -175,7 +178,7 @@ repositories {
 sourceSets {
 	zips {
 		resources {
-			srcDir "${projectDir}"
+			srcDir "${buildDir}"
 			include "maven-profile.jar"
 			include "tooling.zip"
 			include "wrapper.zip"
