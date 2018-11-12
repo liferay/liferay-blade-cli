@@ -66,13 +66,13 @@ public class Prompter {
 	}
 
 	private static Optional<Boolean> _getBooleanAnswer(
-		String questionWithPrompt, InputStream in, PrintStream out, Optional<Boolean> defaultAnswer) {
+		String questionWithPrompt, InputStream inputStream, PrintStream printStream, Optional<Boolean> defaultAnswer) {
 
 		Optional<Boolean> answer = Optional.empty();
 
-		try (Scanner scanner = new Scanner(in)) {
+		try (Scanner scanner = new Scanner(inputStream)) {
 			while (!answer.isPresent()) {
-				out.println(questionWithPrompt);
+				printStream.println(questionWithPrompt);
 
 				String readLine = null;
 
@@ -99,7 +99,7 @@ public class Prompter {
 								answer = defaultAnswer;
 							}
 							else {
-								out.println("Unrecognized input: " + readLine);
+								printStream.println("Unrecognized input: " + readLine);
 
 								continue;
 							}
