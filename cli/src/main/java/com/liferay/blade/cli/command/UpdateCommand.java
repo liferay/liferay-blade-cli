@@ -42,14 +42,6 @@ import org.jsoup.select.Elements;
  */
 public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
-	public static final String BASE_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/repositories/";
-
-	public static final String BLADE_CLI_CONTEXT = "com/liferay/blade/com.liferay.blade.cli/";
-
-	public static final String RELEASES_REPO_URL = BASE_CDN_URL + "liferay-public-releases/" + BLADE_CLI_CONTEXT;
-
-	public static final String SNAPSHOTS_REPO_URL = BASE_CDN_URL + "liferay-public-snapshots/" + BLADE_CLI_CONTEXT;
-
 	public static boolean equal(String currentVersion, String updateVersion) {
 		Matcher matcher = _versionPattern.matcher(currentVersion);
 
@@ -75,10 +67,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	public static String getUpdateJarUrl(boolean snapshots) throws IOException {
-		String url = RELEASES_REPO_URL;
+		String url = _RELEASES_REPO_URL;
 
 		if (snapshots) {
-			url = SNAPSHOTS_REPO_URL;
+			url = _SNAPSHOTS_REPO_URL;
 		}
 
 		if (hasUpdateUrlFromBladeDir()) {
@@ -196,10 +188,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	public static String getUpdateVersion(boolean snapshots) throws IOException {
-		String url = RELEASES_REPO_URL;
+		String url = _RELEASES_REPO_URL;
 
 		if (snapshots) {
-			url = SNAPSHOTS_REPO_URL;
+			url = _SNAPSHOTS_REPO_URL;
 		}
 
 		if (hasUpdateUrlFromBladeDir()) {
@@ -379,7 +371,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				if (snapshots) {
 					bladeCLI.out(
 						"The current version of blade, " + currentVersion + ", is higher than the latest version, " +
-							updateVersion + ", at " + SNAPSHOTS_REPO_URL);
+							updateVersion + ", at " + _SNAPSHOTS_REPO_URL);
 				}
 				else {
 					if (equal(currentVersion, updateVersion)) {
@@ -391,7 +383,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 						bladeCLI.out(
 							"The current version of blade, " + currentVersion +
-								", is higher than the latest version, " + updateVersion + ", at " + RELEASES_REPO_URL);
+								", is higher than the latest version, " + updateVersion + ", at " + _RELEASES_REPO_URL);
 						bladeCLI.out("Not updating since downgrades are not supported at this time.");
 
 						bladeCLI.out("If you want to force a downgrade, you could use the following command:");
@@ -402,10 +394,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 		catch (IOException ioe) {
 			if (snapshots) {
-				bladeCLI.out("No jar is available from " + SNAPSHOTS_REPO_URL);
+				bladeCLI.out("No jar is available from " + _SNAPSHOTS_REPO_URL);
 			}
 			else {
-				bladeCLI.out("No jar is available from " + RELEASES_REPO_URL);
+				bladeCLI.out("No jar is available from " + _RELEASES_REPO_URL);
 			}
 
 			bladeCLI.out("Not updating since no jar is available.");
@@ -416,6 +408,14 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	public Class<UpdateArgs> getArgsClass() {
 		return UpdateArgs.class;
 	}
+
+	private static final String _BASE_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/repositories/";
+
+	private static final String _BLADE_CLI_CONTEXT = "com/liferay/blade/com.liferay.blade.cli/";
+
+	private static final String _RELEASES_REPO_URL = _BASE_CDN_URL + "liferay-public-releases/" + _BLADE_CLI_CONTEXT;
+
+	private static final String _SNAPSHOTS_REPO_URL = _BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
 
 	private static final File _updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
 	private static final Pattern _versionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");

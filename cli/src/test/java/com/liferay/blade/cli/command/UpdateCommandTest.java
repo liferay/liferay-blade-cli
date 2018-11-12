@@ -129,8 +129,7 @@ public class UpdateCommandTest {
 		}
 
 		Assert.assertTrue("url = " + url + " ... this does not look right.", ok);
-		Assert.assertTrue(
-			"url is not from releases repo.  url = " + url, url.contains(UpdateCommand.RELEASES_REPO_URL));
+		Assert.assertTrue("url is not from releases repo.  url = " + url, url.contains("liferay-public-releases/"));
 	}
 
 	@Test
@@ -149,8 +148,7 @@ public class UpdateCommandTest {
 		}
 
 		Assert.assertTrue("url = " + url + " ... this does not look right.", ok);
-		Assert.assertTrue(
-			"url is not from snapshots repo.  url = " + url, url.contains(UpdateCommand.SNAPSHOTS_REPO_URL));
+		Assert.assertTrue("url is not from snapshots repo.  url = " + url, url.contains("liferay-public-snapshots/"));
 	}
 
 }
