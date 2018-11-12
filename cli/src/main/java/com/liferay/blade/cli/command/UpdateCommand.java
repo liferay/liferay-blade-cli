@@ -16,6 +16,8 @@
 
 package com.liferay.blade.cli.command;
 
+import aQute.bnd.version.Version;
+
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
 
@@ -49,33 +51,27 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	public static final String SNAPSHOTS_REPO_URL = BASE_CDN_URL + "liferay-public-snapshots/" + BLADE_CLI_CONTEXT;
 
 	public static boolean equal(String currentVersion, String updateVersion) {
-		boolean equal = false;
-
 		Matcher matcher = _versionPattern.matcher(currentVersion);
 
 		matcher.find();
 
-		String currentMajor = matcher.group(1);
-		String currentMinor = matcher.group(2);
-		String currentPatch = matcher.group(3);
+		int currentMajor = Integer.parseInt(matcher.group(1));
+		int currentMinor = Integer.parseInt(matcher.group(2));
+		int currentPatch = Integer.parseInt(matcher.group(3));
+
+		Version currentSemver = new Version(currentMajor, currentMinor, currentPatch);
 
 		matcher = _versionPattern.matcher(updateVersion);
 
 		matcher.find();
 
-		String updateMajor = matcher.group(1);
-		String updateMinor = matcher.group(2);
-		String updatePatch = matcher.group(3);
+		int updateMajor = Integer.parseInt(matcher.group(1));
+		int updateMinor = Integer.parseInt(matcher.group(2));
+		int updatePatch = Integer.parseInt(matcher.group(3));
 
-		if (Integer.parseInt(updateMajor) == Integer.parseInt(currentMajor)) {
-			if (Integer.parseInt(updateMinor) == Integer.parseInt(currentMinor)) {
-				if (Integer.parseInt(updatePatch) == Integer.parseInt(currentPatch)) {
-					equal = true;
-				}
-			}
-		}
+		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
-		return equal;
+		return currentSemver.equals(updateSemver);
 	}
 
 	public static String getUpdateJarUrl(boolean snapshots) throws IOException {
@@ -255,49 +251,31 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
-		boolean should = false;
-
 		Matcher matcher = _versionPattern.matcher(currentVersion);
 
 		matcher.find();
 
-		String currentMajor = matcher.group(1);
-		String currentMinor = matcher.group(2);
-		String currentPatch = matcher.group(3);
+		int currentMajor = Integer.parseInt(matcher.group(1));
+		int currentMinor = Integer.parseInt(matcher.group(2));
+		int currentPatch = Integer.parseInt(matcher.group(3));
+
+		Version currentSemver = new Version(currentMajor, currentMinor, currentPatch);
 
 		matcher = _versionPattern.matcher(updateVersion);
 
 		matcher.find();
 
-		String updateMajor = matcher.group(1);
-		String updateMinor = matcher.group(2);
-		String updatePatch = matcher.group(3);
+		int updateMajor = Integer.parseInt(matcher.group(1));
+		int updateMinor = Integer.parseInt(matcher.group(2));
+		int updatePatch = Integer.parseInt(matcher.group(3));
 
-		if (Integer.parseInt(updateMajor) > Integer.parseInt(currentMajor)) {
-			should = true;
-		}
-		else {
-			if (Integer.parseInt(updateMajor) < Integer.parseInt(currentMajor)) {
-				should = false;
-			}
-			else {
-				if (Integer.parseInt(updateMinor) > Integer.parseInt(currentMinor)) {
-					should = true;
-				}
-				else {
-					if (Integer.parseInt(updateMinor) < Integer.parseInt(currentMinor)) {
-						should = false;
-					}
-					else {
-						if (Integer.parseInt(updatePatch) > Integer.parseInt(currentPatch)) {
-							should = true;
-						}
-					}
-				}
-			}
+		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
+
+		if (updateSemver.compareTo(currentSemver) > 0) {
+			return true;
 		}
 
-		return should;
+		return false;
 	}
 
 	public UpdateCommand() {
@@ -439,7 +417,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return UpdateArgs.class;
 	}
 
-	private static final Pattern _versionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 	private static final File _updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
+	private static final Pattern _versionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 
 }
