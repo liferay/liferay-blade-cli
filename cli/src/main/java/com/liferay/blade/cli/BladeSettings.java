@@ -16,6 +16,9 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.util.Prompter;
+import com.liferay.blade.cli.util.WorkspaceUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -53,6 +56,25 @@ public class BladeSettings {
 	public void load() throws IOException {
 		try (FileInputStream fileInputStream = new FileInputStream(_settingsFile)) {
 			_properties.load(fileInputStream);
+		}
+	}
+
+	public void migrateWorkspaceIfNecessary() throws IOException {
+		if (WorkspaceUtil.isWorkspace(_settingsFile)) {
+			File workspaceDirectory = WorkspaceUtil.getWorkspaceDir(_settingsFile);
+
+			File pomFile = new File(workspaceDirectory, "pom.xml");
+
+			if (pomFile.exists() && !_settingsFile.exists()) {
+				String question =
+					"WARNING: blade commands will not function properly in a Maven workspace unless the blade " +
+						"profile is set to \"maven\". Should the settings for this workspace be updated?";
+
+				if (Prompter.confirm(question, true)) {
+					setProfileName("maven");
+					save();
+				}
+			}
 		}
 	}
 

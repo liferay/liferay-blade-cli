@@ -16,6 +16,7 @@
 
 package com.liferay.extensions.sample.command;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
@@ -59,7 +60,9 @@ public class SampleCommandsTest {
 
 		args = new String[] {"--base", workspaceDir.getPath(), "init", "-b", "maven"};
 
-		results = TestUtil.runBlade(tempDir, args);
+		BladeTest bladeTest = new BladeTest(tempDir);
+
+		bladeTest.run(args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "hello", "--name", "foobar"};
 
@@ -96,7 +99,7 @@ public class SampleCommandsTest {
 
 		Path extensionsPath = extensionsDir.toPath();
 
-		_setupTestExtension(extensionsPath, System.getProperty("sampleTemplateJarFile"));
+		_setupTestExtension(extensionsPath, System.getProperty("sampleCommandJarFile"));
 	}
 
 }

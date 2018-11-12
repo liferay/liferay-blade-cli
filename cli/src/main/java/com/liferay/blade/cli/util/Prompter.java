@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -31,6 +32,10 @@ public class Prompter {
 
 	public static boolean confirm(String question) {
 		return confirm(question, System.in, System.out, Optional.empty());
+	}
+
+	public static boolean confirm(String question, boolean defaultAnswer) {
+		return confirm(question, System.in, System.out, Optional.of(defaultAnswer));
 	}
 
 	public static boolean confirm(String question, InputStream in, PrintStream out, Optional<Boolean> defaultAnswer) {
@@ -70,36 +75,42 @@ public class Prompter {
 		while (!answer.isPresent()) {
 			out.println(questionWithPrompt);
 
-			try (InputStreamReader isr = new InputStreamReader(in);
-				BufferedReader reader = new BufferedReader(isr)) {
+			try (InputStreamReader inputStreamReader = new InputStreamReader(in);
+				BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 
-				String decision = reader.readLine();
+				String readLine = bufferedReader.readLine();
 
-				decision = decision.toLowerCase();
+				if (readLine != null) {
+					readLine = readLine.toLowerCase();
 
-				switch (decision.trim()) {
-					case "y":
-					case "yes":
-						answer = Optional.of(true);
+					switch (readLine.trim()) {
+						case "y":
+						case "yes":
+							answer = Optional.of(true);
 
-						break;
-					case "n":
-					case "no":
-						answer = Optional.of(false);
+							break;
+						case "n":
+						case "no":
+							answer = Optional.of(false);
 
-						break;
-					default:
-						if (defaultAnswer.isPresent()) {
-							answer = defaultAnswer;
-						}
-						else {
-							out.println("Unrecognized input: " + decision);
+							break;
+						default:
+							if (defaultAnswer.isPresent()) {
+								answer = defaultAnswer;
+							}
+							else {
+								out.println("Unrecognized input: " + readLine);
 
-							continue;
-						}
+								continue;
+							}
 
-						break;
+							break;
+					}
 				}
+
+			}
+			catch (IOException ioe) {
+				throw new RuntimeException(ioe);
 			}
 			catch (Exception exception) {
 				if (defaultAnswer.isPresent()) {
