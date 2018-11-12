@@ -23,6 +23,7 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -299,11 +300,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			try {
 				currentVersion = VersionCommand.getBladeCLIVersion();
 
-				bladeCLI.out("Current version is " + currentVersion);
+				bladeCLI.out("Current blade version " + currentVersion);
 			}
 			catch (IOException ioe) {
-				bladeCLI.out("Current blade.jar contains no manifest.");
-				bladeCLI.out("Assuming blade.jar should be updated.");
+				bladeCLI.err("Could not determine current blade version, continuing with update.");
 			}
 
 			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion);
@@ -393,14 +393,16 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			}
 		}
 		catch (IOException ioe) {
-			if (snapshots) {
-				bladeCLI.out("No jar is available from " + _SNAPSHOTS_REPO_URL);
+			bladeCLI.error("Could not determine if blade update is available.");
+
+			if (updateArgs.isTrace()) {
+				PrintStream err = bladeCLI.err();
+
+				ioe.printStackTrace(err);
 			}
 			else {
-				bladeCLI.out("No jar is available from " + _RELEASES_REPO_URL);
+				bladeCLI.error("For more information run update with '--trace' option.");
 			}
-
-			bladeCLI.out("Not updating since no jar is available.");
 		}
 	}
 
