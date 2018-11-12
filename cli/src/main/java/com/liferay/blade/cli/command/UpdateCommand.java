@@ -246,17 +246,17 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	public static boolean hasUpdateUrlFromBladeDir() {
-		boolean has = false;
+		boolean hasUpdate = false;
 
 		final File updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
 
-		if (updateUrlFile.exists() && !updateUrlFile.isDirectory()) {
+		if (updateUrlFile.exists() && updateUrlFile.isFile()) {
 			if (updateUrlFile.length() > 0) {
-				has = true;
+				hasUpdate = true;
 			}
 		}
 
-		return has;
+		return hasUpdate;
 	}
 
 	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
