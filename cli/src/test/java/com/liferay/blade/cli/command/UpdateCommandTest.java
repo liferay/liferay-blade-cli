@@ -151,4 +151,14 @@ public class UpdateCommandTest {
 		Assert.assertTrue("url is not from snapshots repo.  url = " + url, url.contains("liferay-public-snapshots/"));
 	}
 
+	@Test
+	public void testTwoSnapshotVersions() {
+		String currentVersion = "3.3.0.SNAPSHOT201811122044";
+		String updatedVersion = "3.3.0.SNAPSHOT201811122043";
+
+		Assert.assertFalse(
+			"currentVersion = " + currentVersion + " should NOT be updated to " + updatedVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
+	}
+
 }

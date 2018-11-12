@@ -330,7 +330,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			String url = getUpdateJarUrl(snapshots);
 
 			if (shouldUpdate) {
-				bladeCLI.out("Updating to: " + url);
+				bladeCLI.out("Updating from: " + url);
 
 				if (BladeUtil.isWindows()) {
 					bladeCLI.out(
