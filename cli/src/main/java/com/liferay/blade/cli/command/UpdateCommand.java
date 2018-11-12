@@ -51,7 +51,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	public static boolean equal(String currentVersion, String updateVersion) {
 		boolean equal = false;
 
-		Matcher matcher = _pattern.matcher(currentVersion);
+		Matcher matcher = _versionPattern.matcher(currentVersion);
 
 		matcher.find();
 
@@ -59,7 +59,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		String currentMinor = matcher.group(2);
 		String currentPatch = matcher.group(3);
 
-		matcher = _pattern.matcher(updateVersion);
+		matcher = _versionPattern.matcher(updateVersion);
 
 		matcher.find();
 
@@ -257,7 +257,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
 		boolean should = false;
 
-		Matcher matcher = _pattern.matcher(currentVersion);
+		Matcher matcher = _versionPattern.matcher(currentVersion);
 
 		matcher.find();
 
@@ -265,7 +265,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		String currentMinor = matcher.group(2);
 		String currentPatch = matcher.group(3);
 
-		matcher = _pattern.matcher(updateVersion);
+		matcher = _versionPattern.matcher(updateVersion);
 
 		matcher.find();
 
@@ -439,7 +439,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return UpdateArgs.class;
 	}
 
-	private static final Pattern _pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
+	private static final Pattern _versionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 	private static final File _updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
 
 }
