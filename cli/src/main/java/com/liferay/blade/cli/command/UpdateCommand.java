@@ -286,8 +286,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		// String oldUrl = "https://releases.liferay.com/tools/blade-cli/latest/blade.jar";
 
-		String url = "";
-
 		String currentVersion = "0.0.0.0";
 
 		boolean snapshots = updateArgs.isSnapshots();
@@ -328,7 +326,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 			}
 
-			url = getUpdateJarUrl(snapshots);
+			String url = getUpdateJarUrl(snapshots);
 
 			if (shouldUpdate) {
 				bladeCLI.out("Updating to: " + url);
