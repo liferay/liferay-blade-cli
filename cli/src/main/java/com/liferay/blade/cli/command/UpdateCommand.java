@@ -22,7 +22,6 @@ import com.liferay.blade.cli.util.BladeUtil;
 import java.io.File;
 import java.io.IOException;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -184,13 +183,11 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	public static String getUpdateUrlFromBladeDir() {
 		String url = "no url";
 
-		final File updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
-
 		if (hasUpdateUrlFromBladeDir()) {
 			List<String> lines;
 
 			try {
-				lines = Files.readAllLines(Paths.get(updateUrlFile.getPath()), StandardCharsets.UTF_8);
+				lines = Files.readAllLines(Paths.get(_updateUrlFile.getPath()));
 
 				url = lines.get(0);
 			}
@@ -248,10 +245,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	public static boolean hasUpdateUrlFromBladeDir() {
 		boolean hasUpdate = false;
 
-		final File updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
-
-		if (updateUrlFile.exists() && updateUrlFile.isFile()) {
-			if (updateUrlFile.length() > 0) {
+		if (_updateUrlFile.exists() && _updateUrlFile.isFile()) {
+			if (_updateUrlFile.length() > 0) {
 				hasUpdate = true;
 			}
 		}
@@ -445,5 +440,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	private static final Pattern _pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
+	private static final File _updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
 
 }
