@@ -360,7 +360,7 @@ public class BladeCLI implements Runnable {
 
 		String bladeCLIVersion = VersionCommand.getBladeCLIVersion();
 
-		out("The current version of blade is " + bladeCLIVersion + System.lineSeparator());
+		out("blade version " + bladeCLIVersion + System.lineSeparator());
 
 		boolean fromSnapshots = false;
 

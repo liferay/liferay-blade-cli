@@ -74,7 +74,7 @@ public class VersionCommand extends BaseCommand<VersionArgs> {
 			bladeCLI.error("Could not determine version.");
 		}
 		else {
-			bladeCLI.out(bladeCLIVersion);
+			bladeCLI.out("blade version " + bladeCLIVersion);
 		}
 	}
 
