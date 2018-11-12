@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -71,19 +70,15 @@ public class Prompter {
 		while (!answer.isPresent()) {
 			out.println(questionWithPrompt);
 
-			try (InputStreamReader isr = new InputStreamReader(in);
-				BufferedReader reader = new BufferedReader(isr)) {
+			try (InputStreamReader inputStreamReader = new InputStreamReader(in);
+				BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 
-				String decision = null;
+				String readLine = bufferedReader.readLine();
 
-				while (decision == null) {
-					decision = reader.readLine();
-				}
+				if (readLine != null) {
+					readLine = readLine.toLowerCase();
 
-				if (decision != null) {
-					decision = decision.toLowerCase();
-
-					switch (decision.trim()) {
+					switch (readLine.trim()) {
 						case "y":
 						case "yes":
 							answer = Optional.of(true);
@@ -99,7 +94,7 @@ public class Prompter {
 								answer = defaultAnswer;
 							}
 							else {
-								out.println("Unrecognized input: " + decision);
+								out.println("Unrecognized input: " + readLine);
 
 								continue;
 							}
