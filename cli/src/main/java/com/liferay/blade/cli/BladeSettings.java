@@ -59,7 +59,7 @@ public class BladeSettings {
 		}
 	}
 
-	public void promptIfSettingsMissing() throws IOException {
+	public void migrateWorkspaceIfNecessary() throws IOException {
 		if (WorkspaceUtil.isWorkspace(_settingsFile)) {
 			File workspaceDirectory = WorkspaceUtil.getWorkspaceDir(_settingsFile);
 
@@ -68,7 +68,7 @@ public class BladeSettings {
 			if (pomFile.exists() && !_settingsFile.exists()) {
 				String questionString =
 					"WARNING: blade commands will not function properly in a Maven workspace unless the blade " +
-						"profile is set to \"maven\". Should the settings for this " + "workspace be updated?" +
+						"profile is set to \"maven\". Should the settings for this workspace be updated?" +
 							System.lineSeparator();
 
 				if (Prompter.confirm(questionString)) {

@@ -266,7 +266,7 @@ public class BladeCLI implements Runnable {
 
 		BladeSettings bladeSettings = getBladeSettings();
 
-		bladeSettings.promptIfSettingsMissing();
+		bladeSettings.migrateWorkspaceIfNecessary();
 
 		Extensions extensions = new Extensions(bladeSettings, getExtensionsPath());
 
