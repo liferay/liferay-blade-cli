@@ -18,6 +18,9 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import java.net.URL;
 
 import java.util.Enumeration;
@@ -31,38 +34,48 @@ import org.osgi.framework.Constants;
  */
 public class VersionCommand extends BaseCommand<VersionArgs> {
 
+	public static String getBladeCLIVersion() throws IOException {
+		ClassLoader classLoader = BladeCLI.class.getClassLoader();
+
+		Enumeration<URL> resources = classLoader.getResources("META-INF/MANIFEST.MF");
+
+		while (resources.hasMoreElements()) {
+			URL url = resources.nextElement();
+
+			try (InputStream inputStream = url.openStream()) {
+				Manifest manifest = new Manifest(inputStream);
+
+				Attributes attributes = manifest.getMainAttributes();
+
+				String bundleSymbolicName = attributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
+
+				if ("com.liferay.blade.cli".equals(bundleSymbolicName)) {
+					return attributes.getValue(Constants.BUNDLE_VERSION);
+				}
+			}
+		}
+
+		return null;
+	}
+
 	public VersionCommand() {
+	}
+
+	public VersionCommand(BladeCLI bladeCLI) {
+		setBlade(bladeCLI);
 	}
 
 	@Override
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
+		String bladeCLIVersion = getBladeCLIVersion();
 
-		Class<? extends BladeCLI> clazz = bladeCLI.getClass();
-
-		ClassLoader cl = clazz.getClassLoader();
-
-		Enumeration<URL> e = cl.getResources("META-INF/MANIFEST.MF");
-
-		while (e.hasMoreElements()) {
-			URL u = e.nextElement();
-
-			Manifest m = new Manifest(u.openStream());
-
-			Attributes mainAttributes = m.getMainAttributes();
-
-			String bsn = mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
-
-			if ((bsn != null) && bsn.equals("com.liferay.blade.cli")) {
-				Attributes attrs = mainAttributes;
-
-				bladeCLI.out(attrs.getValue(Constants.BUNDLE_VERSION));
-
-				return;
-			}
+		if (bladeCLIVersion == null) {
+			bladeCLI.error("Could not determine version.");
 		}
-
-		bladeCLI.error("Could not locate version.");
+		else {
+			bladeCLI.out("blade version " + bladeCLIVersion);
+		}
 	}
 
 	@Override

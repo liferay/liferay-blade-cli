@@ -127,10 +127,10 @@ public class BladeTest extends BladeCLI {
 		super.run(args);
 
 		if (_assertErrors) {
-			PrintStream err = err();
+			PrintStream error = error();
 
-			if (err instanceof StringPrintStream) {
-				StringPrintStream stringPrintStream = (StringPrintStream)err;
+			if (error instanceof StringPrintStream) {
+				StringPrintStream stringPrintStream = (StringPrintStream)error;
 
 				String errors = stringPrintStream.get();
 

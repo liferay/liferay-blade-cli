@@ -144,7 +144,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 			catch (Exception e) {
 				bladeCLI.error("Please execute this command from a Liferay Workspace project.");
 
-				e.printStackTrace(bladeCLI.err());
+				e.printStackTrace(bladeCLI.error());
 			}
 		}
 	}
@@ -220,7 +220,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		Path binPath = dir.resolve("bin");
 
 		Process process = BladeUtil.startProcess(
-			executable + debug, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.err());
+			executable + debug, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.error());
 
 		_processes.add(process);
 
@@ -262,7 +262,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		Path binPath = dir.resolve("bin");
 
 		final Process process = BladeUtil.startProcess(
-			executable + startCommand, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.err());
+			executable + startCommand, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.error());
 
 		_processes.add(process);
 

@@ -52,7 +52,7 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 					bladeCLI.out("\nserver init completed successfully.");
 				}
 				else {
-					bladeCLI.err("\nerror: server init failed.  See error output above.");
+					bladeCLI.error("\nerror: server init failed.  See error output above.");
 				}
 			}
 		}

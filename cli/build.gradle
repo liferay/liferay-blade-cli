@@ -89,6 +89,7 @@ dependencies {
 	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "3.0"
 	compile group: "org.gradle", name: "gradle-core", version: "3.0"
 	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"
+	compile group: "org.jsoup", name: "jsoup", version: "1.11.3"
 	compile name: "gradle-native-3.0"
 	compile name: "org.objectweb.asm-6.0.0"
 	compile name: "org.objectweb.asm.analysis-6.0.0"
@@ -182,8 +183,9 @@ sourceSets {
 }
 
 test {
-	dependsOn createMavenProfileJar, createToolingZip, createWrapperZip, unzipPortal
+	dependsOn createMavenProfileJar, createToolingZip, createWrapperZip, jar, unzipPortal
 
+	systemProperty "bladeJarPath", jar.archivePath
 	systemProperty 'buildDir', "${buildDir}"
 	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
 	systemProperty "testOutputPath", sourceSets.test.output.classesDirs.singleFile.absolutePath
@@ -227,17 +229,6 @@ testExecutableJar {
 	doLast {
 		javaexec {
 			args = [jar.archivePath, "create", "-l"]
-			main = "-jar"
-		}
-	}
-}
-
-testVersionCommand {
-	dependsOn jar
-
-	doLast {
-		javaexec {
-			args = [jar.archivePath, "version"]
 			main = "-jar"
 		}
 	}

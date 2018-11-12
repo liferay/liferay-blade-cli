@@ -23,6 +23,8 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.command.UpdateCommand;
+import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.WorkspaceUtil;
 
@@ -60,7 +62,7 @@ public class BladeCLI implements Runnable {
 		catch (Exception e) {
 			bladeCLI.error("Unexpected error occured.");
 
-			e.printStackTrace(bladeCLI._err);
+			e.printStackTrace(bladeCLI._error);
 		}
 	}
 
@@ -72,36 +74,32 @@ public class BladeCLI implements Runnable {
 		AnsiConsole.systemInstall();
 
 		_out = out;
-		_err = err;
+		_error = err;
 		_in = in;
 	}
 
 	public void addErrors(String prefix, Collection<String> data) {
-		err().println("Error: " + prefix);
+		error().println("Error: " + prefix);
 
-		data.forEach(err()::println);
+		data.forEach(error()::println);
 	}
 
-	public PrintStream err() {
-		return _err;
+	public PrintStream error() {
+		return _error;
 	}
 
-	public void err(String msg) {
-		_err.println(msg);
-	}
-
-	public void error(String error) {
-		err(error);
+	public void error(String msg) {
+		_error.println(msg);
 	}
 
 	public void error(String string, String name, String message) {
-		err(string + " [" + name + "]");
-		err(message);
+		error(string + " [" + name + "]");
+		error(message);
 	}
 
 	public void error(Throwable error) {
-		err(error.getMessage());
-		error.printStackTrace(err());
+		error(error.getMessage());
+		error.printStackTrace(error());
 	}
 
 	public BaseArgs getBladeArgs() {
@@ -201,6 +199,14 @@ public class BladeCLI implements Runnable {
 			String output = simplifiedUsageString.toString();
 
 			out(output);
+
+			try {
+				updateAvailable();
+			}
+			catch (IOException ioe) {
+				error(ioe);
+			}
+
 		}
 	}
 
@@ -244,7 +250,7 @@ public class BladeCLI implements Runnable {
 			error("error: " + exceptionClassName + " :: " + e.getMessage() + System.lineSeparator());
 
 			if (getBladeArgs().isTrace()) {
-				e.printStackTrace(err());
+				e.printStackTrace(error());
 			}
 			else {
 				error("\tat " + e.getStackTrace()[0] + System.lineSeparator());
@@ -262,7 +268,7 @@ public class BladeCLI implements Runnable {
 
 		System.setOut(out());
 
-		System.setErr(err());
+		System.setErr(error());
 
 		BladeSettings bladeSettings = getBladeSettings();
 
@@ -345,6 +351,42 @@ public class BladeCLI implements Runnable {
 		}
 	}
 
+	public boolean updateAvailable() throws IOException {
+		boolean available;
+
+		String bladeCLIVersion = VersionCommand.getBladeCLIVersion();
+
+		out("blade version " + bladeCLIVersion + System.lineSeparator());
+
+		boolean fromSnapshots = false;
+
+		if (bladeCLIVersion == null) {
+			bladeCLIVersion = "0.0.0";
+		}
+
+		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
+
+		String updateVersion = "";
+
+		try {
+			updateVersion = UpdateCommand.getUpdateVersion(fromSnapshots);
+
+			available = UpdateCommand.shouldUpdate(bladeCLIVersion, updateVersion);
+
+			if (available) {
+				out(
+					"Run \'blade update" + (fromSnapshots ? " --snapshots" : "") + "\' to start using " +
+						(fromSnapshots ? "the latest snapshot " : " ") + "version " + updateVersion +
+							System.lineSeparator());
+			}
+		}
+		catch (IOException ioe) {
+			available = false;
+		}
+
+		return available;
+	}
+
 	private static String _extractBasePath(String[] args) {
 		String defaultBasePath = ".";
 
@@ -411,7 +453,7 @@ public class BladeCLI implements Runnable {
 	private String _command;
 	private BaseArgs _commandArgs = new BaseArgs();
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
-	private final PrintStream _err;
+	private final PrintStream _error;
 	private final InputStream _in;
 	private JCommander _jCommander;
 	private final PrintStream _out;

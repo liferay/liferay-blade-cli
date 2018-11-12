@@ -70,8 +70,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		String template = createArgs.getTemplate();
 
 		if (template == null) {
-			bladeCLI.err("The following option is required: [-t | --template]\n\n");
-			bladeCLI.err("Availble project templates:\n\n");
+			bladeCLI.error("The following option is required: [-t | --template]\n\n");
+			bladeCLI.error("Availble project templates:\n\n");
 
 			_printTemplates();
 
@@ -86,7 +86,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 				sb.append("Usage: blade create -t service -s <FQCN> <project name>");
 				sb.append(System.lineSeparator());
 
-				bladeCLI.err(sb.toString());
+				bladeCLI.error(sb.toString());
 
 				return;
 			}
@@ -124,7 +124,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 		else if (template.equals("modules-ext")) {
 			if ("maven".equals(createArgs.getBuild())) {
-				bladeCLI.err(
+				bladeCLI.error(
 					"Modules Ext projects are not supported with Maven build. Please use Gradle build instead.");
 
 				return;

@@ -16,24 +16,35 @@
 
 package com.liferay.blade.cli.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import java.io.InputStream;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandDescription = "Update blade to latest version", commandNames = "update")
-public class UpdateArgs extends BaseArgs {
+public class VersionCommandTest {
 
-	public boolean isSnapshots() {
-		return _snapshots;
+	@Test
+	public void testVersionCommandFromJar() throws Exception {
+		Runtime runtime = Runtime.getRuntime();
+
+		Process process = runtime.exec(new String[] {"java", "-jar", _BLADE_JAR_PATH});
+
+		process.waitFor();
+
+		InputStream inputStream = process.getInputStream();
+
+		byte[] bytes = new byte[inputStream.available()];
+
+		inputStream.read(bytes, 0, bytes.length);
+
+		String version = new String(bytes);
+
+		Assert.assertFalse(version.isEmpty());
 	}
 
-	public void setSnapshots(boolean snapshots) {
-		_snapshots = snapshots;
-	}
-
-	@Parameter(description = "Switch to use the snapshot repository.", names = {"-s", "--snapshots"})
-	private boolean _snapshots;
+	private static final String _BLADE_JAR_PATH = System.getProperty("bladeJarPath", "build/libs/blade.jar");
 
 }
