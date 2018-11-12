@@ -54,7 +54,7 @@ public class GradlePrintErrorTest {
 
 		bladeTest.run(args);
 
-		StringPrintStream errPrintStream = (StringPrintStream)bladeTest.err();
+		StringPrintStream errPrintStream = (StringPrintStream)bladeTest.error();
 
 		String error = errPrintStream.toString();
 

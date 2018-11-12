@@ -130,7 +130,7 @@ public class ConvertThemeCommand {
 		Process process = BladeUtil.startProcess(
 			"yo liferay-theme:import -p \"" + themePath + "\" -c " + _compassSupport(themePath) +
 				" --skip-install",
-			_themesDir, _blade.out(), _blade.err());
+			_themesDir, _blade.out(), _blade.error());
 
 		int errCode = process.waitFor();
 

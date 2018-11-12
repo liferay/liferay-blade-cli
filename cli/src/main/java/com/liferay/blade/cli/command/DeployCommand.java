@@ -76,9 +76,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 			_addError(sb.toString());
 
-			PrintStream err = bladeCLI.err();
+			PrintStream error = bladeCLI.error();
 
-			new ConnectException(sb.toString()).printStackTrace(err);
+			new ConnectException(sb.toString()).printStackTrace(error);
 
 			return;
 		}
@@ -128,7 +128,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 			_addError(errorMessage);
 
-			PrintStream err = bladeCLI.err();
+			PrintStream err = bladeCLI.error();
 
 			_addError(processResult.getError());
 
@@ -161,9 +161,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 					_addError(message);
 
-					PrintStream err = bladeCLI.err();
+					PrintStream error = bladeCLI.error();
 
-					e.printStackTrace(err);
+					e.printStackTrace(error);
 				}
 			}
 		);
@@ -262,9 +262,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 					_addError("deploy watch", message);
 
-					PrintStream err = bladeCLI.err();
+					PrintStream error = bladeCLI.error();
 
-					e.printStackTrace(err);
+					e.printStackTrace(error);
 				}
 			}
 
@@ -292,9 +292,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 					_addError(message);
 
-					PrintStream err = bladeCLI.err();
+					PrintStream error = bladeCLI.error();
 
-					e.printStackTrace(err);
+					e.printStackTrace(error);
 				}
 			}
 
@@ -350,9 +350,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 				_addError("deploy watch", message);
 
-				PrintStream err = bladeCLI.err();
+				PrintStream error = bladeCLI.error();
 
-				e.printStackTrace(err);
+				e.printStackTrace(error);
 			}
 		}
 	}
@@ -377,7 +377,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 					_deployBundle(file, client, bundle, bsn);
 				}
 				else {
-					getBladeCLI().err("Unable to install or update " + file.getName() + "as it is not a bundle.");
+					getBladeCLI().error("Unable to install or update " + file.getName() + "as it is not a bundle.");
 				}
 			}
 		}

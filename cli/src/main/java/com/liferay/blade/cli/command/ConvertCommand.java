@@ -334,7 +334,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			bladeCLI.error("Error upgrading project " + layoutPluginDir.getName() + "\n");
 
-			e.printStackTrace(bladeCLI.err());
+			e.printStackTrace(bladeCLI.error());
 		}
 	}
 
@@ -371,7 +371,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + pluginDir.getName() + "\n");
 
-			e.printStackTrace(bladeCLI.err());
+			e.printStackTrace(bladeCLI.error());
 		}
 	}
 
@@ -450,7 +450,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + themePlugin.getName() + "\n");
 
-			e.printStackTrace(bladeCLI.err());
+			e.printStackTrace(bladeCLI.error());
 		}
 	}
 
@@ -463,7 +463,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + themePlugin.getName() + "\n");
 
-			e.printStackTrace(bladeCLI.err());
+			e.printStackTrace(bladeCLI.error());
 		}
 	}
 

@@ -56,7 +56,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 		Path watchPath = Paths.get(base.getAbsolutePath());
 
 		if (!Files.isDirectory(watchPath)) {
-			bladeCLI.err("Error: base dir is not a directory: " + watchPath);
+			bladeCLI.error("Error: base dir is not a directory: " + watchPath);
 
 			return;
 		}
@@ -154,9 +154,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 					_addError("deploy watch", message);
 
-					PrintStream err = bladeCLI.err();
+					PrintStream error = bladeCLI.error();
 
-					e.printStackTrace(err);
+					e.printStackTrace(error);
 				}
 			}
 

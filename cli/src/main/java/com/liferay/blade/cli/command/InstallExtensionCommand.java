@@ -102,11 +102,11 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 								}
 							}
 							else {
-								bladeCLI.err("Unable to get output of gradle build " + directory);
+								bladeCLI.error("Unable to get output of gradle build " + directory);
 							}
 						}
 						else {
-							bladeCLI.err("Path not a gradle build " + directory);
+							bladeCLI.error("Path not a gradle build " + directory);
 						}
 					}
 				}
