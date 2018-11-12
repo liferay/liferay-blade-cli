@@ -25,7 +25,7 @@ dependencies {
 
 repositories {
 	maven {
-		url	"https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-snapshots/com/liferay/blade/com.liferay.blade.cli/"
+		url	"https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-snapshots/"
 	}
 
 	maven {
