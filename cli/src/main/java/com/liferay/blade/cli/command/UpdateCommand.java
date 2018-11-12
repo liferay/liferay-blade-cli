@@ -301,7 +301,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				bladeCLI.out("Current blade version " + currentVersion);
 			}
 			catch (IOException ioe) {
-				bladeCLI.err("Could not determine current blade version, continuing with update.");
+				bladeCLI.error("Could not determine current blade version, continuing with update.");
 			}
 
 			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion);
@@ -309,6 +309,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			if (currentVersion.contains("SNAPSHOT")) {
 				if (snapshots) {
 					shouldUpdate = true;
+
 					bladeCLI.out("Updating from the snapshots repository.");
 				}
 				else {
@@ -343,17 +344,12 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					File baseDir = new File(baseArgs.getBase());
 
 					try {
-
-						// bladeCLI.out(
-						// 	"Updating blade from " + currentVersion + " to the latest version, " + updateVersion +
-						// 		", using " + url);
-
 						Process process = BladeUtil.startProcess("jpm install -f " + url, baseDir);
 
 						int errCode = process.waitFor();
 
 						if (errCode == 0) {
-							bladeCLI.out("Update completed successfully");
+							bladeCLI.out("Update completed successfully.");
 						}
 						else {
 							bladeCLI.error("blade exited with code: " + errCode);
@@ -368,23 +364,19 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			else {
 				if (snapshots) {
 					bladeCLI.out(
-						"The current version of blade, " + currentVersion + ", is higher than the latest version, " +
-							updateVersion + ", at " + _SNAPSHOTS_REPO_URL);
+						"Current blade version " + currentVersion + " is greater than the latest version " +
+							updateVersion);
 				}
 				else {
 					if (equal(currentVersion, updateVersion)) {
-						bladeCLI.out("Current version, " + currentVersion + ", is the latest released version.");
+						bladeCLI.out("Current blade version " + currentVersion + " is the latest released version.");
 					}
 					else {
-
-						// This should never happen, but in case it does.
-
 						bladeCLI.out(
-							"The current version of blade, " + currentVersion +
-								", is higher than the latest version, " + updateVersion + ", at " + _RELEASES_REPO_URL);
-						bladeCLI.out("Not updating since downgrades are not supported at this time.");
-
-						bladeCLI.out("If you want to force a downgrade, you could use the following command:");
+							"Current blade version " + currentVersion + " is higher than the latest version " +
+								updateVersion);
+						bladeCLI.out("Not updating, since downgrades are not supported at this time.");
+						bladeCLI.out("If you want to force a downgrade, use the following command:");
 						bladeCLI.out("\tjpm install -f " + url);
 					}
 				}
@@ -394,9 +386,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			bladeCLI.error("Could not determine if blade update is available.");
 
 			if (updateArgs.isTrace()) {
-				PrintStream err = bladeCLI.err();
+				PrintStream error = bladeCLI.error();
 
-				ioe.printStackTrace(err);
+				ioe.printStackTrace(error);
 			}
 			else {
 				bladeCLI.error("For more information run update with '--trace' option.");
