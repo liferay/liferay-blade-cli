@@ -230,8 +230,12 @@ public class Extensions implements AutoCloseable {
 			_getServiceClassLoader().close();
 		}
 
-		if (_tempExtensionsDirectory != null) {
-			FileUtil.deleteDirIfExists(_tempExtensionsDirectory);
+		if ((_tempExtensionsDirectory != null) && Files.exists(_tempExtensionsDirectory)) {
+			try {
+				FileUtil.deleteDirIfExists(_tempExtensionsDirectory);
+			}
+			catch (IOException ioe) {
+			}
 		}
 	}
 
@@ -389,11 +393,11 @@ public class Extensions implements AutoCloseable {
 
 			FileUtil.copyDir(getPath(), _tempExtensionsDirectory);
 
-			InputStream inputStream = Extensions.class.getResourceAsStream("/maven-profile.jar");
+			try (InputStream inputStream = Extensions.class.getResourceAsStream("/maven-profile.jar")) {
+				Path mavenProfilePath = _tempExtensionsDirectory.resolve("maven-profile.jar");
 
-			Path mavenProfilePath = _tempExtensionsDirectory.resolve("maven-profile.jar");
-
-			Files.copy(inputStream, mavenProfilePath, StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(inputStream, mavenProfilePath, StandardCopyOption.REPLACE_EXISTING);
+			}
 
 			URL[] jarUrls = _getJarUrls(_tempExtensionsDirectory);
 
