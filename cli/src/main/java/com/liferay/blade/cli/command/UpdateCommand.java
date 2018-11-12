@@ -187,7 +187,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			List<String> lines;
 
 			try {
-				lines = Files.readAllLines(Paths.get(_updateUrlFile.getPath()));
+				lines = Files.readAllLines(Paths.get(_updateUrlFile.toURI()));
 
 				url = lines.get(0);
 			}
