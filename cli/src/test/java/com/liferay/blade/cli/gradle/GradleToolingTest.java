@@ -48,7 +48,7 @@ public class GradleToolingTest {
 	public static void setUpClass() throws Exception {
 		File wsDir = temporaryFolder.newFolder("build", "testws1");
 
-		Path toolingZipPath = Paths.get("tooling.zip");
+		Path toolingZipPath = Paths.get("build/tooling.zip");
 
 		Assert.assertTrue(Files.exists(toolingZipPath));
 
