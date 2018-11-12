@@ -358,9 +358,7 @@ public class BladeCLI implements Runnable {
 	public boolean updateAvailable() throws IOException {
 		boolean available;
 
-		VersionCommand versionCommand = new VersionCommand(this);
-
-		String bladeCLIVersion = versionCommand.getBladeCLIVersion();
+		String bladeCLIVersion = VersionCommand.getBladeCLIVersion();
 
 		out("The current version of blade is " + bladeCLIVersion + System.lineSeparator());
 
