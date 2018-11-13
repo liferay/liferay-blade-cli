@@ -139,20 +139,28 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 					Stream<String> stream = projectPaths.stream();
 
+					String assembleTasks = stream.collect(Collectors.joining(":assemble "));
+
+					String assembleTaskPath = assembleTasks + ":assemble";
+
+					gradleExec.executeTask(assembleTaskPath, watchPath.toFile(), false);
+
+					stream = projectPaths.stream();
+
 					String watchTasks = stream.collect(Collectors.joining(":watch "));
 
-					String taskPath = watchTasks + ":watch --continuous --stacktrace";
+					String watchTaskPath = watchTasks + ":watch --continuous --no-rebuild --stacktrace";
 
-					gradleExec.executeTask(taskPath, watchPath.toFile(), false);
+					gradleExec.executeTask(watchTaskPath, watchPath.toFile(), false);
 				}
 				catch (Exception e) {
 					String message = e.getMessage();
 
 					if (message == null) {
-						message = "Gradle build task failed.";
+						message = "Gradle task failed.";
 					}
 
-					_addError("deploy watch", message);
+					_addError("watch", message);
 
 					PrintStream error = bladeCLI.error();
 
