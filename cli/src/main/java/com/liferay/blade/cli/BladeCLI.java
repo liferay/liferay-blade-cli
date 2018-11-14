@@ -248,45 +248,6 @@ public class BladeCLI {
 		_jCommander.usage(command);
 	}
 
-	public void run() {
-		try {
-			if (_commandArgs.isHelp()) {
-				if (Objects.isNull(_command) || (_command.length() == 0)) {
-					printUsage();
-				}
-				else {
-					printUsage(_command);
-				}
-			}
-			else {
-				if (_commandArgs != null) {
-					_runCommand();
-				}
-				else {
-					_jCommander.usage();
-				}
-			}
-		}
-		catch (ParameterException pe) {
-			throw pe;
-		}
-		catch (Exception e) {
-			Class<?> exceptionClass = e.getClass();
-
-			String exceptionClassName = exceptionClass.getName();
-
-			error("error: " + exceptionClassName + " :: " + e.getMessage() + System.lineSeparator());
-
-			if (getBladeArgs().isTrace()) {
-				e.printStackTrace(error());
-			}
-			else {
-				error("\tat " + e.getStackTrace()[0] + System.lineSeparator());
-				error("For more information run `blade " + _command + " --trace");
-			}
-		}
-	}
-
 	public void run(String[] args) throws Exception {
 		String basePath = _extractBasePath(args);
 
@@ -349,7 +310,7 @@ public class BladeCLI {
 
 				_commandArgs.setBase(baseDir);
 
-				run();
+				runCommand();
 
 				postRunCommand();
 			}
@@ -372,6 +333,45 @@ public class BladeCLI {
 		}
 
 		extensions.close();
+	}
+
+	public void runCommand() {
+		try {
+			if (_commandArgs.isHelp()) {
+				if (Objects.isNull(_command) || (_command.length() == 0)) {
+					printUsage();
+				}
+				else {
+					printUsage(_command);
+				}
+			}
+			else {
+				if (_commandArgs != null) {
+					_runCommand();
+				}
+				else {
+					_jCommander.usage();
+				}
+			}
+		}
+		catch (ParameterException pe) {
+			throw pe;
+		}
+		catch (Exception e) {
+			Class<?> exceptionClass = e.getClass();
+
+			String exceptionClassName = exceptionClass.getName();
+
+			error("error: " + exceptionClassName + " :: " + e.getMessage() + System.lineSeparator());
+
+			if (getBladeArgs().isTrace()) {
+				e.printStackTrace(error());
+			}
+			else {
+				error("\tat " + e.getStackTrace()[0] + System.lineSeparator());
+				error("For more information run `blade " + _command + " --trace");
+			}
+		}
 	}
 
 	public void trace(String s, Object... args) {
