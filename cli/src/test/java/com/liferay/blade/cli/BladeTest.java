@@ -123,6 +123,10 @@ public class BladeTest extends BladeCLI {
 	}
 
 	@Override
+	public void postRunCommand() {
+	}
+
+	@Override
 	public void run(String[] args) throws Exception {
 		super.run(args);
 

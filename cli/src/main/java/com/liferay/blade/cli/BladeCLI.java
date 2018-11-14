@@ -31,10 +31,14 @@ import com.liferay.blade.cli.util.WorkspaceUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import java.util.Collection;
 import java.util.Formatter;
@@ -42,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -51,7 +56,7 @@ import org.fusesource.jansi.AnsiConsole;
  * @author Gregory Amerson
  * @author David Truong
  */
-public class BladeCLI implements Runnable {
+public class BladeCLI {
 
 	public static void main(String[] args) {
 		BladeCLI bladeCLI = new BladeCLI();
@@ -137,35 +142,19 @@ public class BladeCLI implements Runnable {
 		return _baseCommand;
 	}
 
-	public Path getExtensionsPath() {
-		try {
-			Path userHomePath = _USER_HOME_DIR.toPath();
+	public Path getExtensionsPath() throws IOException {
+		Path userBladePath = _getUserBladePath();
 
-			Path dotBladePath = userHomePath.resolve(".blade");
+		Path extensions = userBladePath.resolve("extensions");
 
-			if (Files.notExists(dotBladePath)) {
-				Files.createDirectories(dotBladePath);
-			}
-			else if (!Files.isDirectory(dotBladePath)) {
-				throw new Exception(".blade is not a directory!");
-			}
-
-			Path extensions = dotBladePath.resolve("extensions");
-
-			if (Files.notExists(extensions)) {
-				Files.createDirectories(extensions);
-			}
-			else if (!Files.isDirectory(extensions)) {
-				throw new Exception(".blade/extensions is not a directory!");
-			}
-
-			return extensions;
+		if (Files.notExists(extensions)) {
+			Files.createDirectories(extensions);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-
-			throw new RuntimeException(e);
+		else if (!Files.isDirectory(extensions)) {
+			throw new IOException(".blade/extensions is not a directory!");
 		}
+
+		return extensions;
 	}
 
 	public InputStream in() {
@@ -178,6 +167,54 @@ public class BladeCLI implements Runnable {
 
 	public void out(String msg) {
 		out().println(msg);
+	}
+
+	public void postRunCommand() {
+		if (_shouldCheckForUpdates()) {
+			try {
+				printUpdateIfAvailable();
+
+				_writeLastUpdateCheck();
+			}
+			catch (IOException ioe) {
+				error(ioe);
+			}
+		}
+	}
+
+	public boolean printUpdateIfAvailable() throws IOException {
+		boolean available;
+
+		String bladeCLIVersion = VersionCommand.getBladeCLIVersion();
+
+		boolean fromSnapshots = false;
+
+		if (bladeCLIVersion == null) {
+			bladeCLIVersion = "0.0.0";
+		}
+
+		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
+
+		String updateVersion = "";
+
+		try {
+			updateVersion = UpdateCommand.getUpdateVersion(fromSnapshots);
+
+			available = UpdateCommand.shouldUpdate(bladeCLIVersion, updateVersion);
+
+			if (available) {
+				out(System.lineSeparator() + "blade version " + bladeCLIVersion + System.lineSeparator());
+				out(
+					"Run \'blade update" + (fromSnapshots ? " --snapshots" : "") + "\' to update to " +
+						(fromSnapshots ? "the latest snapshot " : " ") + "version " + updateVersion +
+							System.lineSeparator());
+			}
+		}
+		catch (IOException ioe) {
+			available = false;
+		}
+
+		return available;
 	}
 
 	public void printUsage() {
@@ -199,14 +236,6 @@ public class BladeCLI implements Runnable {
 			String output = simplifiedUsageString.toString();
 
 			out(output);
-
-			try {
-				updateAvailable();
-			}
-			catch (IOException ioe) {
-				error(ioe);
-			}
-
 		}
 	}
 
@@ -217,46 +246,6 @@ public class BladeCLI implements Runnable {
 	public void printUsage(String command, String message) {
 		out(message);
 		_jCommander.usage(command);
-	}
-
-	@Override
-	public void run() {
-		try {
-			if (_commandArgs.isHelp()) {
-				if (Objects.isNull(_command) || (_command.length() == 0)) {
-					printUsage();
-				}
-				else {
-					printUsage(_command);
-				}
-			}
-			else {
-				if (_commandArgs != null) {
-					_runCommand();
-				}
-				else {
-					_jCommander.usage();
-				}
-			}
-		}
-		catch (ParameterException pe) {
-			throw pe;
-		}
-		catch (Exception e) {
-			Class<?> exceptionClass = e.getClass();
-
-			String exceptionClassName = exceptionClass.getName();
-
-			error("error: " + exceptionClassName + " :: " + e.getMessage() + System.lineSeparator());
-
-			if (getBladeArgs().isTrace()) {
-				e.printStackTrace(error());
-			}
-			else {
-				error("\tat " + e.getStackTrace()[0] + System.lineSeparator());
-				error("For more information run `blade " + _command + " --trace");
-			}
-		}
 	}
 
 	public void run(String[] args) throws Exception {
@@ -321,7 +310,9 @@ public class BladeCLI implements Runnable {
 
 				_commandArgs.setBase(baseDir);
 
-				run();
+				runCommand();
+
+				postRunCommand();
 			}
 			catch (MissingCommandException mce) {
 				error("Error");
@@ -344,47 +335,50 @@ public class BladeCLI implements Runnable {
 		extensions.close();
 	}
 
+	public void runCommand() {
+		try {
+			if (_commandArgs.isHelp()) {
+				if (Objects.isNull(_command) || (_command.length() == 0)) {
+					printUsage();
+				}
+				else {
+					printUsage(_command);
+				}
+			}
+			else {
+				if (_commandArgs != null) {
+					_runCommand();
+				}
+				else {
+					_jCommander.usage();
+				}
+			}
+		}
+		catch (ParameterException pe) {
+			throw pe;
+		}
+		catch (Exception e) {
+			Class<?> exceptionClass = e.getClass();
+
+			String exceptionClassName = exceptionClass.getName();
+
+			error("error: " + exceptionClassName + " :: " + e.getMessage() + System.lineSeparator());
+
+			if (getBladeArgs().isTrace()) {
+				e.printStackTrace(error());
+			}
+			else {
+				error("\tat " + e.getStackTrace()[0] + System.lineSeparator());
+				error("For more information run `blade " + _command + " --trace");
+			}
+		}
+	}
+
 	public void trace(String s, Object... args) {
 		if (_commandArgs.isTrace() && (_tracer != null)) {
 			_tracer.format("# " + s + "%n", args);
 			_tracer.flush();
 		}
-	}
-
-	public boolean updateAvailable() throws IOException {
-		boolean available;
-
-		String bladeCLIVersion = VersionCommand.getBladeCLIVersion();
-
-		out("blade version " + bladeCLIVersion + System.lineSeparator());
-
-		boolean fromSnapshots = false;
-
-		if (bladeCLIVersion == null) {
-			bladeCLIVersion = "0.0.0";
-		}
-
-		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
-
-		String updateVersion = "";
-
-		try {
-			updateVersion = UpdateCommand.getUpdateVersion(fromSnapshots);
-
-			available = UpdateCommand.shouldUpdate(bladeCLIVersion, updateVersion);
-
-			if (available) {
-				out(
-					"Run \'blade update" + (fromSnapshots ? " --snapshots" : "") + "\' to start using " +
-						(fromSnapshots ? "the latest snapshot " : " ") + "version " + updateVersion +
-							System.lineSeparator());
-			}
-		}
-		catch (IOException ioe) {
-			available = false;
-		}
-
-		return available;
 	}
 
 	private static String _extractBasePath(String[] args) {
@@ -404,6 +398,27 @@ public class BladeCLI implements Runnable {
 		}
 
 		return defaultBasePath;
+	}
+
+	private Path _getUpdateCheckPath() throws IOException {
+		Path userBladePath = _getUserBladePath();
+
+		return userBladePath.resolve("updateCheck.properties");
+	}
+
+	private Path _getUserBladePath() throws IOException {
+		Path userHomePath = _USER_HOME_DIR.toPath();
+
+		Path userBladePath = userHomePath.resolve(".blade");
+
+		if (Files.notExists(userBladePath)) {
+			Files.createDirectories(userBladePath);
+		}
+		else if (!Files.isDirectory(userBladePath)) {
+			throw new IOException(userBladePath + " is not a directory.");
+		}
+
+		return userBladePath;
 	}
 
 	private void _runCommand() throws Exception {
@@ -444,6 +459,55 @@ public class BladeCLI implements Runnable {
 			printUsage();
 		}
 	}
+
+	private boolean _shouldCheckForUpdates() {
+		try {
+			Path updateCheckPath = _getUpdateCheckPath();
+
+			if (!Files.exists(updateCheckPath)) {
+				return true;
+			}
+
+			Properties properties = new Properties();
+
+			InputStream inputStream = Files.newInputStream(updateCheckPath);
+
+			properties.load(inputStream);
+
+			inputStream.close();
+
+			Instant lastUpdateCheck = Instant.ofEpochMilli(
+				Long.parseLong(properties.getProperty(_LAST_UPDATE_CHECK_KEY)));
+
+			Instant now = Instant.now();
+
+			Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+
+			if (yesterday.isAfter(lastUpdateCheck)) {
+				return true;
+			}
+		}
+		catch (Exception ioe) {
+		}
+
+		return false;
+	}
+
+	private void _writeLastUpdateCheck() throws IOException {
+		Path updateCheckPath = _getUpdateCheckPath();
+
+		Properties properties = new Properties();
+
+		Instant now = Instant.now();
+
+		properties.put(_LAST_UPDATE_CHECK_KEY, String.valueOf(now.toEpochMilli()));
+
+		try (OutputStream outputStream = Files.newOutputStream(updateCheckPath)) {
+			properties.store(outputStream, null);
+		}
+	}
+
+	private static final String _LAST_UPDATE_CHECK_KEY = "lastUpdateCheck";
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
