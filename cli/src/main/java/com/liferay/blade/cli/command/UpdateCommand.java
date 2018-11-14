@@ -79,7 +79,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			url = getUpdateUrlFromBladeDir();
 		}
 
-		Connection connection = Jsoup.connect(url + "/maven-metadata.xml");
+		Connection connection = Jsoup.connect(url + "maven-metadata.xml");
 
 		connection = connection.parser(Parser.xmlParser());
 
@@ -139,7 +139,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			url = getUpdateUrlFromBladeDir();
 		}
 
-		Connection connection = Jsoup.connect(url + "/maven-metadata.xml");
+		Connection connection = Jsoup.connect(url + "maven-metadata.xml");
 
 		connection = connection.parser(Parser.xmlParser());
 
