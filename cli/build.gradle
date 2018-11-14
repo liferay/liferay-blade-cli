@@ -142,8 +142,6 @@ project(":gradle-tooling").afterEvaluate { tooling ->
 	}
 }
 
-version = "3.3.0-SNAPSHOT"
-
 publishing {
 	publications {
 		cliJar(MavenPublication) {
@@ -239,3 +237,5 @@ unzipPortal {
 	from zipTree(downloadPortal.dest)
 	into buildDir
 }
+
+version = "3.3.0-SNAPSHOT"
