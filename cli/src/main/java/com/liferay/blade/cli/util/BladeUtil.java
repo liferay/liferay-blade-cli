@@ -151,7 +151,7 @@ public class BladeUtil {
 		return null;
 	}
 
-	public static Map<String, String> getInitTemplates(BladeCLI bladeCLI) {
+	public static Map<String, String> getInitTemplates(BladeCLI bladeCLI) throws IOException {
 		Map<String, String> initTemplates = new HashMap<>();
 
 		initTemplates.put("workspace", "Liferay Workspace built with Gradle or Maven.");
