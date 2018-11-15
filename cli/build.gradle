@@ -83,7 +83,6 @@ dependencies {
 	compile group: "org.gradle", name: "gradle-core", version: "3.0"
 	compile group: "org.gradle", name: "gradle-tooling-api", version: "3.0"
 	compile group: "org.jsoup", name: "jsoup", version: "1.11.3"
-	compile name: "gradle-native-3.0"
 	compile name: "org.objectweb.asm-6.0.0"
 	compile name: "org.objectweb.asm.analysis-6.0.0"
 	compile name: "org.objectweb.asm.commons-6.0.0"
