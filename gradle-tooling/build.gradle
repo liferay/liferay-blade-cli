@@ -5,6 +5,7 @@ dependencies {
 	compile gradleApi()
 }
 
+/*
 publishing {
 	publications {
 		toolingJar(MavenPublication) {
@@ -14,5 +15,6 @@ publishing {
 		}
 	}
 }
+*/
 
 version = "1.0.0"
