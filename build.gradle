@@ -26,6 +26,7 @@ task clean(type:Delete)
 
 buildChangeLog {
 	changeLogHeader = "BLADE Version ${project.version}"
+	dirs = ["cli", "extensions", "gradle", "gradle-tooling", "libs"]
 	ticketIdPrefixes = ["BLADE", "IDE", "LPS", "LRDOCS"]
 }
 
