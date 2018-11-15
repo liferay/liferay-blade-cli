@@ -1,5 +1,27 @@
 # Liferay Blade CLI Change Log
 
+## 3.3.0 - 2018-11-15 - 9939c44d9a1d981adfcae13ad168b6c63c2851d5
+
+- [BLADE-214](https://issues.liferay.com/browse/BLADE-214)
+- [BLADE-313](https://issues.liferay.com/browse/BLADE-313)
+- [BLADE-320](https://issues.liferay.com/browse/BLADE-320)
+- [BLADE-321](https://issues.liferay.com/browse/BLADE-321)
+- [BLADE-327](https://issues.liferay.com/browse/BLADE-327)
+- [BLADE-331](https://issues.liferay.com/browse/BLADE-331)
+- [BLADE-332](https://issues.liferay.com/browse/BLADE-332)
+- [BLADE-333](https://issues.liferay.com/browse/BLADE-333)
+- [BLADE-334](https://issues.liferay.com/browse/BLADE-334)
+- [BLADE-335](https://issues.liferay.com/browse/BLADE-335)
+- [BLADE-342](https://issues.liferay.com/browse/BLADE-342)
+- [BLADE-344](https://issues.liferay.com/browse/BLADE-344)
+- [BLADE-345](https://issues.liferay.com/browse/BLADE-345)
+- [BLADE-346](https://issues.liferay.com/browse/BLADE-346)
+- [BLADE-347](https://issues.liferay.com/browse/BLADE-347)
+- [BLADE-349](https://issues.liferay.com/browse/BLADE-349)
+- [BLADE-350](https://issues.liferay.com/browse/BLADE-350)
+- [BLADE-355](https://issues.liferay.com/browse/BLADE-355)
+- [LRDOCS-5843](https://issues.liferay.com/browse/LRDOCS-5843)
+
 ## 3.2.0 - 2018-10-08 - 46b7d0a258376c9dccd5fecaae6156ed5a797d89
 
 - [BLADE-214]: Create a `blade-extension` blade sample project, demonstrating how blade may be extended with custom commands
