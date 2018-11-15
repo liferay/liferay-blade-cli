@@ -16,14 +16,22 @@
 
 package com.liferay.blade.cli.command;
 
+import com.jezhumble.javasysmon.JavaSysMon;
+import com.jezhumble.javasysmon.ProcessInfo;
+
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.StringPrintStream;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -175,6 +183,37 @@ public class ServerCommandsTest {
 		pidProcess.waitFor(5, TimeUnit.SECONDS);
 
 		Assert.assertFalse("Expected server start process to be destroyed.", pidProcess.isAlive());
+
+		JavaSysMon monitor = new JavaSysMon();
+
+		ProcessInfo[] processTable = monitor.processTable();
+
+		List<ProcessInfo> processInfoCollection = Arrays.asList(processTable);
+
+		Collections.reverse(processInfoCollection);
+
+		for (ProcessInfo pi : processInfoCollection) {
+			if (pi.getPid() > pid) {
+				String command = pi.getCommand();
+
+				Path workspacePath = Paths.get("build", "test", "workspace");
+
+				if (command.contains(workspacePath.toString()) && command.contains("java") &&
+					command.contains("Bootstrap")) {
+
+					PidProcess serverPidProcess = Processes.newPidProcess(pi.getPid());
+
+					serverPidProcess.destroyForcefully();
+
+					Assert.assertFalse("Expected server start subprocess to be destroyed.", serverPidProcess.isAlive());
+
+					break;
+				}
+			}
+			else {
+				break;
+			}
+		}
 	}
 
 	private File _workspaceDir = null;
