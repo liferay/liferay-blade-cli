@@ -1,6 +1,7 @@
 buildscript {
 	dependencies {
 		classpath group: "com.gradle", name: "build-scan-plugin", version: "1.16"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.change.log.builder", version: "1.1.1"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "latest.release"
 		classpath group: "nu.studer", name: "gradle-credentials-plugin", version: "1.0.4"
 	}
@@ -19,8 +20,14 @@ buildscript {
 }
 
 apply plugin: "com.gradle.build-scan"
+apply plugin: "com.liferay.change.log.builder"
 
 task clean(type:Delete)
+
+buildChangeLog {
+	changeLogHeader = "BLADE Version ${project.version}"
+	ticketIdPrefixes = ["BLADE", "IDE", "LPS", "LRDOCS"]
+}
 
 buildScan {
 	termsOfServiceUrl = "https://gradle.com/terms-of-service"
