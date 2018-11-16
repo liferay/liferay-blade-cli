@@ -291,10 +291,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				bladeCLI.out("Updating from: " + url);
 
 				if (BladeUtil.isWindows()) {
-					bladeCLI.out(
-						"blade update cannot execute successfully because of Windows file locking.  Please use the " +
-							"following command:");
-					bladeCLI.out("\tjpm install -f " + url);
+					Runtime runtime = Runtime.getRuntime();
+
+					runtime.exec("cmd /c start \"\" jpm install -f " + url + " && exit");
 				}
 				else {
 					BaseArgs baseArgs = bladeCLI.getBladeArgs();
