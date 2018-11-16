@@ -172,9 +172,9 @@ public class BladeCLI {
 	public void postRunCommand() {
 		if (_shouldCheckForUpdates()) {
 			try {
-				printUpdateIfAvailable();
-
 				_writeLastUpdateCheck();
+
+				printUpdateIfAvailable();
 			}
 			catch (IOException ioe) {
 				error(ioe);
