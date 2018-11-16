@@ -149,7 +149,24 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Element lastVersion = versionElements.last();
 
-		return lastVersion.text();
+		String updateVersion = null;
+
+		if (snapshots) {
+			connection.url(url + lastVersion.text() + "/maven-metadata.xml");
+
+			document = connection.get();
+
+			Elements valueElements = document.select("snapshotVersion > value");
+
+			Element valueElement = valueElements.get(0);
+
+			updateVersion = valueElement.text();
+		}
+		else {
+			updateVersion = lastVersion.text();
+		}
+
+		return updateVersion;
 	}
 
 	public static boolean hasUpdateUrlFromBladeDir() {
@@ -187,6 +204,26 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		if (updateSemver.compareTo(currentSemver) > 0) {
 			return true;
+		}
+
+		if (currentVersion.contains("SNAPSHOT")) {
+			if (updateVersion.contains("-")) {
+				matcher = _bladeSnapshotPattern.matcher(currentVersion);
+
+				matcher.find();
+
+				Long currentSnapshot = Long.parseLong(matcher.group(4));
+
+				matcher = _nexusSnapshotPattern.matcher(updateVersion);
+
+				matcher.find();
+
+				Long updateSnapshot = Long.parseLong(matcher.group(5));
+
+				if (updateSnapshot > currentSnapshot) {
+					return true;
+				}
+			}
 		}
 
 		return false;
@@ -330,6 +367,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	private static final String _SNAPSHOTS_REPO_URL = _BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
 
+	private static final Pattern _bladeSnapshotPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+).SNAPSHOT(\\d+)");
+	private static final Pattern _nexusSnapshotPattern = Pattern.compile(
+		"(\\d+)\\.(\\d+)\\.(\\d+)-(\\d+)\\.(\\d\\d\\d\\d)\\d\\d-\\d+");
 	private static final File _updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
 	private static final Pattern _versionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 

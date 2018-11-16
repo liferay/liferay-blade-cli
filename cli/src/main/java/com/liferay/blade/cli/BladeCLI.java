@@ -172,9 +172,9 @@ public class BladeCLI {
 	public void postRunCommand() {
 		if (_shouldCheckForUpdates()) {
 			try {
-				printUpdateIfAvailable();
-
 				_writeLastUpdateCheck();
+
+				printUpdateIfAvailable();
 			}
 			catch (IOException ioe) {
 				error(ioe);
@@ -190,7 +190,7 @@ public class BladeCLI {
 		boolean fromSnapshots = false;
 
 		if (bladeCLIVersion == null) {
-			bladeCLIVersion = "0.0.0";
+			throw new IOException("Could not determine blade version");
 		}
 
 		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
@@ -208,6 +208,11 @@ public class BladeCLI {
 					"Run \'blade update" + (fromSnapshots ? " --snapshots" : "") + "\' to update to " +
 						(fromSnapshots ? "the latest snapshot " : " ") + "version " + updateVersion +
 							System.lineSeparator());
+			}
+			else {
+				if (fromSnapshots) {
+					out("Your blade is newer than the latest snapshot " + updateVersion + System.lineSeparator());
+				}
 			}
 		}
 		catch (IOException ioe) {
