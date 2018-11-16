@@ -129,8 +129,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	public static String getUpdateVersion(boolean snapshots) throws IOException {
-		String updateVersion;
-
 		String url = _RELEASES_REPO_URL;
 
 		if (snapshots) {
@@ -150,6 +148,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		Elements versionElements = document.select("version");
 
 		Element lastVersion = versionElements.last();
+
+		String updateVersion = null;
 
 		if (snapshots) {
 			connection.url(url + lastVersion.text() + "/maven-metadata.xml");
