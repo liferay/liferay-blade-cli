@@ -2,25 +2,25 @@
 
 ## 3.3.0 - 2018-11-15 - 9939c44d9a1d981adfcae13ad168b6c63c2851d5
 
-- [BLADE-214](https://issues.liferay.com/browse/BLADE-214)
-- [BLADE-313](https://issues.liferay.com/browse/BLADE-313)
-- [BLADE-320](https://issues.liferay.com/browse/BLADE-320)
-- [BLADE-321](https://issues.liferay.com/browse/BLADE-321)
-- [BLADE-327](https://issues.liferay.com/browse/BLADE-327)
-- [BLADE-331](https://issues.liferay.com/browse/BLADE-331)
-- [BLADE-332](https://issues.liferay.com/browse/BLADE-332)
-- [BLADE-333](https://issues.liferay.com/browse/BLADE-333)
-- [BLADE-334](https://issues.liferay.com/browse/BLADE-334)
-- [BLADE-335](https://issues.liferay.com/browse/BLADE-335)
-- [BLADE-342](https://issues.liferay.com/browse/BLADE-342)
-- [BLADE-344](https://issues.liferay.com/browse/BLADE-344)
-- [BLADE-345](https://issues.liferay.com/browse/BLADE-345)
-- [BLADE-346](https://issues.liferay.com/browse/BLADE-346)
-- [BLADE-347](https://issues.liferay.com/browse/BLADE-347)
-- [BLADE-349](https://issues.liferay.com/browse/BLADE-349)
-- [BLADE-350](https://issues.liferay.com/browse/BLADE-350)
-- [BLADE-355](https://issues.liferay.com/browse/BLADE-355)
-- [LRDOCS-5843](https://issues.liferay.com/browse/LRDOCS-5843)
+- [BLADE-214]: Create a `blade-extension` blade sample project, demonstrating how blade may be extended with custom commands
+- [BLADE-313]: Add Maven support for `blade server`
+- [BLADE-320]: Notify Blade users of updates via the CLI so they don't have to manually check
+- [BLADE-321]: Strip version suffix of WAR artifact when it's deployed to Liferay Portal
+- [BLADE-327]: Add `watch` command
+- [BLADE-331]: Add Maven support for `blade server init`
+- [BLADE-332]: Update to project templates 4.1.8
+- [BLADE-333]: Publish Blade CLI JAR to Nexus
+- [BLADE-334]: Add set method for `create` command argument
+- [BLADE-335]: Modify `blade update` to install latest release from Nexus repo
+- [BLADE-342]: Prompt Maven users to create a `.blade/settings.properties` file if it does not exist
+- [BLADE-344]: Improve Blade errors to be more informative
+- [BLADE-345]: Make extension path required for `blade extension install` command
+- [BLADE-346]: Update to project templates 4.1.10
+- [BLADE-347]: Include Maven profile classes in Blade CLI JAR
+- [BLADE-349]: Skip project rebuilding when `blade watch` is executed
+- [BLADE-350]: Update test projects to use same Gradle wrapper as Blade CLI's root project
+- [BLADE-355]: Create release branch for Blade CLI
+- [LRDOCS-5843]: Wordsmith README for building Blade profiles and extensions
 
 ## 3.2.0 - 2018-10-08 - 46b7d0a258376c9dccd5fecaae6156ed5a797d89
 
@@ -194,9 +194,26 @@ Updated to use Project Templates 4.1.0
 [BLADE-309]: https://issues.liferay.com/browse/BLADE-309
 [BLADE-310]: https://issues.liferay.com/browse/BLADE-310
 [BLADE-311]: https://issues.liferay.com/browse/BLADE-311
+[BLADE-313]: https://issues.liferay.com/browse/BLADE-313
 [BLADE-314]: https://issues.liferay.com/browse/BLADE-314
 [BLADE-315]: https://issues.liferay.com/browse/BLADE-315
+[BLADE-320]: https://issues.liferay.com/browse/BLADE-320
+[BLADE-321]: https://issues.liferay.com/browse/BLADE-321
 [BLADE-323]: https://issues.liferay.com/browse/BLADE-323
+[BLADE-327]: https://issues.liferay.com/browse/BLADE-327
+[BLADE-331]: https://issues.liferay.com/browse/BLADE-331
+[BLADE-332]: https://issues.liferay.com/browse/BLADE-332
+[BLADE-333]: https://issues.liferay.com/browse/BLADE-333
+[BLADE-334]: https://issues.liferay.com/browse/BLADE-334
+[BLADE-335]: https://issues.liferay.com/browse/BLADE-335
+[BLADE-342]: https://issues.liferay.com/browse/BLADE-342
+[BLADE-344]: https://issues.liferay.com/browse/BLADE-344
+[BLADE-345]: https://issues.liferay.com/browse/BLADE-345
+[BLADE-346]: https://issues.liferay.com/browse/BLADE-346
+[BLADE-347]: https://issues.liferay.com/browse/BLADE-347
+[BLADE-349]: https://issues.liferay.com/browse/BLADE-349
+[BLADE-350]: https://issues.liferay.com/browse/BLADE-350
+[BLADE-355]: https://issues.liferay.com/browse/BLADE-355
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
@@ -216,4 +233,5 @@ Updated to use Project Templates 4.1.0
 [LPS-80404]: https://issues.liferay.com/browse/LPS-80404
 [LPS-80472]: https://issues.liferay.com/browse/LPS-80472
 [LPS-82590]: https://issues.liferay.com/browse/LPS-82590
+[LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [Updated Liferay Gradle Plugin]: https://github.com/liferay/liferay-portal/blob/master/modules/sdk/gradle-plugins/CHANGELOG.markdown#3523---2017-10-26
