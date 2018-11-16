@@ -32,9 +32,7 @@ public class BladeCliTest {
 	public void testBladePrintUpdateIfAvailable() throws Exception {
 		BladeTest bladeTest = new BladeTest();
 
-		boolean available = bladeTest.printUpdateIfAvailable();
-
-		Assert.assertTrue("New update should be available from snapshots" + System.lineSeparator(), available);
+		Assert.assertTrue("New update should be available from snapshots.", bladeTest.printUpdateIfAvailable());
 	}
 
 	@Rule

@@ -190,7 +190,7 @@ public class BladeCLI {
 		boolean fromSnapshots = false;
 
 		if (bladeCLIVersion == null) {
-			throw new IOException("Could not determine blade version.");
+			throw new IOException("Could not determine blade version");
 		}
 
 		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
