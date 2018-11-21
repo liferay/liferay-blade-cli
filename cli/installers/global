@@ -1,4 +1,4 @@
-curl -sL https://github.com/jpm4j/jpm4j.installers/raw/master/dist/biz.aQute.jpm.run.jar > tmp.jar && \
+curl -sL https://oss.sonatype.org/service/local/repositories/snapshots/content/biz/aQute/bnd/biz.aQute.jpm.run/4.0.0-SNAPSHOT/biz.aQute.jpm.run-4.0.0-20180905.093243-11.jar > tmp.jar && \
 JPM_BIN_DIR=`java -jar tmp.jar -g init | grep -e "Bin[ \t]*dir" | awk '{print $3}'` && \
 rm -f tmp.jar && \
 ${JPM_BIN_DIR}/jpm install -f https://releases.liferay.com/tools/blade-cli/latest/blade.jar && \
