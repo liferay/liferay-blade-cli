@@ -23,12 +23,15 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -291,9 +294,35 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				bladeCLI.out("Updating from: " + url);
 
 				if (BladeUtil.isWindows()) {
+					Path batchPath = Files.createTempFile("blade_update_win", ".bat");
+
+					StringBuilder stringBuilder = new StringBuilder();
+
+					ClassLoader classLoader = UpdateCommand.class.getClassLoader();
+
+					try (InputStream inputStream = classLoader.getResourceAsStream("blade_update_win.bat");
+						Scanner scanner = new Scanner(inputStream)) {
+
+						while (scanner.hasNextLine()) {
+							String line = scanner.nextLine();
+
+							if (line.contains("%s")) {
+								line = String.format(line, url);
+							}
+
+							stringBuilder.append(line);
+
+							stringBuilder.append(System.lineSeparator());
+						}
+					}
+
+					String batchString = stringBuilder.toString();
+
+					Files.write(batchPath, batchString.getBytes());
+
 					Runtime runtime = Runtime.getRuntime();
 
-					runtime.exec("cmd /c start \"\" jpm install -f " + url + " && exit");
+					runtime.exec("cmd /c start " + batchPath);
 				}
 				else {
 					BaseArgs baseArgs = bladeCLI.getBladeArgs();
