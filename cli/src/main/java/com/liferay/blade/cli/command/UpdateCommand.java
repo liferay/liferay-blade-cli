@@ -23,12 +23,15 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -291,10 +294,35 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				bladeCLI.out("Updating from: " + url);
 
 				if (BladeUtil.isWindows()) {
-					bladeCLI.out(
-						"blade update cannot execute successfully because of Windows file locking.  Please use the " +
-							"following command:");
-					bladeCLI.out("\tjpm install -f " + url);
+					Path batPath = Files.createTempFile("jpm_install", ".bat");
+
+					StringBuilder sb = new StringBuilder();
+
+					ClassLoader classLoader = UpdateCommand.class.getClassLoader();
+
+					try (InputStream inputStream = classLoader.getResourceAsStream("jpm_install.bat");
+						Scanner scanner = new Scanner(inputStream)) {
+
+						while (scanner.hasNextLine()) {
+							String line = scanner.nextLine();
+
+							if (line.contains("%s")) {
+								line = String.format(line, url);
+							}
+
+							sb.append(line);
+
+							sb.append(System.lineSeparator());
+						}
+					}
+
+					String batContents = sb.toString();
+
+					Files.write(batPath, batContents.getBytes());
+
+					Runtime runtime = Runtime.getRuntime();
+
+					runtime.exec("cmd /c start \"" + batPath + "\"");
 				}
 				else {
 					BaseArgs baseArgs = bladeCLI.getBladeArgs();
