@@ -294,13 +294,13 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				bladeCLI.out("Updating from: " + url);
 
 				if (BladeUtil.isWindows()) {
-					Path batchPath = Files.createTempFile("blade_update_win", ".bat");
+					Path batPath = Files.createTempFile("blade_update_win", ".bat");
 
-					StringBuilder stringBuilder = new StringBuilder();
+					StringBuilder sb = new StringBuilder();
 
 					ClassLoader classLoader = UpdateCommand.class.getClassLoader();
 
-					try (InputStream inputStream = classLoader.getResourceAsStream("blade_update_win.bat");
+					try (InputStream inputStream = classLoader.getResourceAsStream("jpm_install.bat");
 						Scanner scanner = new Scanner(inputStream)) {
 
 						while (scanner.hasNextLine()) {
@@ -310,19 +310,19 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 								line = String.format(line, url);
 							}
 
-							stringBuilder.append(line);
+							sb.append(line);
 
-							stringBuilder.append(System.lineSeparator());
+							sb.append(System.lineSeparator());
 						}
 					}
 
-					String batchString = stringBuilder.toString();
+					String batContents = sb.toString();
 
-					Files.write(batchPath, batchString.getBytes());
+					Files.write(batPath, batContents.getBytes());
 
 					Runtime runtime = Runtime.getRuntime();
 
-					runtime.exec("cmd /c start " + batchPath);
+					runtime.exec("cmd /c start " + batPath);
 				}
 				else {
 					BaseArgs baseArgs = bladeCLI.getBladeArgs();
