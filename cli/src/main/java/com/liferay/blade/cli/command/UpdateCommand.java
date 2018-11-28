@@ -294,7 +294,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				bladeCLI.out("Updating from: " + url);
 
 				if (BladeUtil.isWindows()) {
-					Path batPath = Files.createTempFile("blade_update_win", ".bat");
+					Path batPath = Files.createTempFile("jpm_install", ".bat");
 
 					StringBuilder sb = new StringBuilder();
 
