@@ -44,12 +44,12 @@ clean.doFirst {
 }
 
 cliSourcesJar {
-	classifier = 'sources'
+	classifier = "sources"
 	from sourceSets.main.allJava
 }
 
 cliTestJar {
-	classifier = 'tests'
+	classifier = "tests"
 	from sourceSets.test.output
 }
 
@@ -107,13 +107,13 @@ dependencies {
 }
 
 downloadPortal {
-	src 'https://releases-cdn.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip'
+	src "https://releases-cdn.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip"
 	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip')
 	onlyIfNewer true
 }
 
 jar {
-	archiveName = 'blade.jar'
+	archiveName = "blade.jar"
 	from createMavenProfileJar, createToolingZip, createWrapperZip
 }
 
@@ -142,7 +142,7 @@ publishing {
 
 			pom.withXml {
 				Node pom = asNode()
-				pom.remove(pom.get('dependencies'))
+				pom.remove(pom.get("dependencies"))
 			}
 
 			from components.java
@@ -177,23 +177,24 @@ test {
 	dependsOn createMavenProfileJar, createToolingZip, createWrapperZip, jar, unzipPortal
 
 	systemProperty "bladeJarPath", jar.archivePath
-	systemProperty 'buildDir', "${buildDir}"
-	systemProperty 'liferay.home', "${buildDir}/liferay-ce-portal-7.0-ga4"
+	systemProperty "buildDir", "${buildDir}"
+	systemProperty "liferay.home", "${buildDir}/liferay-ce-portal-7.0-ga4"
+	systemProperty "jna.nosys", "true"
 	systemProperty "testOutputPath", sourceSets.test.output.classesDirs.singleFile.absolutePath
 
-	project(':extensions:sample-command').afterEvaluate { project ->
+	project(":extensions:sample-command").afterEvaluate { project ->
 		dependsOn project.jar
-		systemProperty 'sampleCommandJarFile', project.jar.archivePath
+		systemProperty "sampleCommandJarFile", project.jar.archivePath
 	}
 
-	project(':extensions:sample-profile').afterEvaluate { project ->
+	project(":extensions:sample-profile").afterEvaluate { project ->
 		dependsOn project.jar
-		systemProperty 'sampleProfileJarFile', project.jar.archivePath
+		systemProperty "sampleProfileJarFile", project.jar.archivePath
 	}
 
-	project(':extensions:sample-template').afterEvaluate { project ->
+	project(":extensions:sample-template").afterEvaluate { project ->
 		dependsOn project.jar
-		systemProperty 'sampleTemplateJarFile', project.jar.archivePath
+		systemProperty "sampleTemplateJarFile", project.jar.archivePath
 	}
 
 	int availableProcessors = Runtime.runtime.availableProcessors()
