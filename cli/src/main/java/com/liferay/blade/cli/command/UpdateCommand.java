@@ -322,7 +322,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 					Runtime runtime = Runtime.getRuntime();
 
-					runtime.exec("cmd /c start \"" + batPath + "\"");
+					runtime.exec("cmd /c start \"\" \"" + batPath + "\"");
 				}
 				else {
 					BaseArgs baseArgs = bladeCLI.getBladeArgs();
