@@ -153,12 +153,12 @@ public class UpdateCommandTest {
 
 	@Test
 	public void testTwoSnapshotVersions() {
-		String currentVersion = "3.3.0.SNAPSHOT201811122044";
-		String updatedVersion = "3.3.0.SNAPSHOT201811122043";
+		String currentVersion = "3.3.1.SNAPSHOT201811211846";
+		String updateVersion = "3.3.1-20181128.214621-308";
 
-		Assert.assertFalse(
-			"currentVersion = " + currentVersion + " should NOT be updated to " + updatedVersion,
-			UpdateCommand.shouldUpdate(currentVersion, updatedVersion));
+		Assert.assertTrue(
+			"currentVersion = " + currentVersion + " should be updated to " + updateVersion,
+			UpdateCommand.shouldUpdate(currentVersion, updateVersion));
 	}
 
 }
