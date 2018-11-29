@@ -221,7 +221,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 				matcher.find();
 
-				Long updateSnapshot = Long.parseLong(matcher.group(5));
+				Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
 
 				if (updateSnapshot > currentSnapshot) {
 					return true;
