@@ -19,7 +19,7 @@ apply plugin: "maven-publish"
 
 task cliSourcesJar(type: Jar)
 task cliTestJar(type: Jar, dependsOn: testClasses)
-task createMavenProfileJar(type: Zip)
+task copyMavenProfileJar(type: Copy)
 task createToolingZip(type:Zip)
 task createWrapperZip(type:Zip)
 task downloadPortal(type: Download)
@@ -113,16 +113,16 @@ downloadPortal {
 }
 
 jar {
+	dependsOn copyMavenProfileJar
 	archiveName = "blade.jar"
-	from createMavenProfileJar, createToolingZip, createWrapperZip
+	from createToolingZip, createWrapperZip
 }
 
 project(":extensions:maven-profile").afterEvaluate { project ->
-	createMavenProfileJar {
-		archiveName = "maven-profile.jar"
+	copyMavenProfileJar {
 		dependsOn ":extensions:maven-profile:jar"
-		destinationDir = new File("${buildDir}")
 		from project.jar.archivePath
+		into "${buildDir}"
 	}
 }
 
@@ -174,7 +174,7 @@ sourceSets {
 }
 
 test {
-	dependsOn createMavenProfileJar, createToolingZip, createWrapperZip, jar, unzipPortal
+	dependsOn jar, unzipPortal
 
 	systemProperty "bladeJarPath", jar.archivePath
 	systemProperty "buildDir", "${buildDir}"
