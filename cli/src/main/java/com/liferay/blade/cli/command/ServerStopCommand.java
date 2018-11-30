@@ -46,7 +46,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
 		File baseDir = new File(args.getBase());
 
@@ -154,9 +154,9 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 	protected Properties getProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = new File(args.getBase());
 
 		return WorkspaceUtil.getGradleProperties(baseDir);
 	}

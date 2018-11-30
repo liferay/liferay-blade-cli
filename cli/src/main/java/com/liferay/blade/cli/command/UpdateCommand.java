@@ -325,9 +325,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					runtime.exec("cmd /c start \"\" \"" + batPath + "\"");
 				}
 				else {
-					BaseArgs baseArgs = bladeCLI.getBladeArgs();
+					BaseArgs args = bladeCLI.getArgs();
 
-					File baseDir = new File(baseArgs.getBase());
+					File baseDir = new File(args.getBase());
 
 					try {
 						Process process = BladeUtil.startProcess("jpm install -f " + url, baseDir);

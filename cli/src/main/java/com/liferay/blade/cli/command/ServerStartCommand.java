@@ -49,9 +49,9 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = new File(args.getBase());
 
 		String serverType = null;
 
@@ -161,9 +161,9 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 	protected Properties getProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = new File(args.getBase());
 
 		return WorkspaceUtil.getGradleProperties(baseDir);
 	}

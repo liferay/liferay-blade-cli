@@ -59,7 +59,7 @@ public class WorkspaceUtil {
 	}
 
 	public static File getWorkspaceDir(BladeCLI blade) {
-		BaseArgs args = blade.getBladeArgs();
+		BaseArgs args = blade.getArgs();
 
 		return getWorkspaceDir(new File(args.getBase()));
 	}
@@ -140,7 +140,7 @@ public class WorkspaceUtil {
 			dirToCheck = new File(".").getAbsoluteFile();
 		}
 		else {
-			BaseArgs args = blade.getBladeArgs();
+			BaseArgs args = blade.getArgs();
 
 			dirToCheck = new File(args.getBase());
 		}

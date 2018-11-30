@@ -300,11 +300,11 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		};
 
-		BaseArgs args = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
-		File base = new File(args.getBase());
+		File baseDir = new File(args.getBase());
 
-		new FileWatcher(base.toPath(), true, consumer);
+		new FileWatcher(baseDir.toPath(), true, consumer);
 	}
 
 	private void _installNewBundle(

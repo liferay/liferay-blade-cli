@@ -107,8 +107,8 @@ public class BladeCLI {
 		error.printStackTrace(error());
 	}
 
-	public BaseArgs getBladeArgs() {
-		return _commandArgs;
+	public BaseArgs getArgs() {
+		return _args;
 	}
 
 	public BladeSettings getBladeSettings() throws IOException {
@@ -258,7 +258,7 @@ public class BladeCLI {
 
 		File baseDir = new File(basePath).getAbsoluteFile();
 
-		_commandArgs.setBase(baseDir);
+		_args.setBase(baseDir);
 
 		System.setOut(out());
 
@@ -311,9 +311,9 @@ public class BladeCLI {
 
 				_command = command;
 
-				_commandArgs = (BaseArgs)commandArgs;
+				_args = (BaseArgs)commandArgs;
 
-				_commandArgs.setBase(baseDir);
+				_args.setBase(baseDir);
 
 				runCommand();
 
@@ -342,7 +342,7 @@ public class BladeCLI {
 
 	public void runCommand() {
 		try {
-			if (_commandArgs.isHelp()) {
+			if (_args.isHelp()) {
 				if (Objects.isNull(_command) || (_command.length() == 0)) {
 					printUsage();
 				}
@@ -351,7 +351,7 @@ public class BladeCLI {
 				}
 			}
 			else {
-				if (_commandArgs != null) {
+				if (_args != null) {
 					_runCommand();
 				}
 				else {
@@ -369,7 +369,7 @@ public class BladeCLI {
 
 			error("error: " + exceptionClassName + " :: " + e.getMessage() + System.lineSeparator());
 
-			if (getBladeArgs().isTrace()) {
+			if (_args.isTrace()) {
 				e.printStackTrace(error());
 			}
 			else {
@@ -380,7 +380,7 @@ public class BladeCLI {
 	}
 
 	public void trace(String s, Object... args) {
-		if (_commandArgs.isTrace() && (_tracer != null)) {
+		if (_args.isTrace() && (_tracer != null)) {
 			_tracer.format("# " + s + "%n", args);
 			_tracer.flush();
 		}
@@ -435,7 +435,7 @@ public class BladeCLI {
 
 		if (command != null) {
 			_baseCommand = command;
-			command.setArgs(_commandArgs);
+			command.setArgs(_args);
 			command.setBlade(this);
 
 			Thread thread = Thread.currentThread();
@@ -518,9 +518,9 @@ public class BladeCLI {
 
 	private static final Formatter _tracer = new Formatter(System.out);
 
+	private BaseArgs _args = new BaseArgs();
 	private BaseCommand<?> _baseCommand;
 	private String _command;
-	private BaseArgs _commandArgs = new BaseArgs();
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final PrintStream _error;
 	private final InputStream _in;
