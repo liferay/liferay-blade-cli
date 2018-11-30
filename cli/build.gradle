@@ -121,8 +121,7 @@ jar {
 project(":extensions:maven-profile").afterEvaluate { project ->
 	copyMavenProfileJar {
 		dependsOn ":extensions:maven-profile:jar"
-		from project.jar.archivePath.getParent()
-		include '*.jar'
+		from project.jar.archivePath
 		into "${buildDir}"
 	}
 }
@@ -175,7 +174,7 @@ sourceSets {
 }
 
 test {
-	dependsOn createMavenProfileJar, createToolingZip, createWrapperZip, jar, unzipPortal
+	dependsOn jar, unzipPortal
 
 	systemProperty "bladeJarPath", jar.archivePath
 	systemProperty "buildDir", "${buildDir}"
