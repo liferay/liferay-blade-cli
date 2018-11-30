@@ -630,11 +630,11 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/build.gradle");
 
-		File packageJsonFile = _checkFileExists(projectPath + "package.json");
+		File packageJsonFile = _checkFileExists(projectPath + "/package.json");
 
 		_contains(packageJsonFile, ".*\"build\": \"tsc && liferay-npm-bundler\".*");
 
-		File tsConfigJsonFile = _checkFileExists(projectPath + "tsconfig.json");
+		File tsConfigJsonFile = _checkFileExists(projectPath + "/tsconfig.json");
 
 		_contains(tsConfigJsonFile, ".*META-INF/resources/lib.*");
 	}
