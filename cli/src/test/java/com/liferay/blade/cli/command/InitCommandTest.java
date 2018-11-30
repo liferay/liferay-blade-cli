@@ -303,7 +303,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
-		Assert.assertTrue(contents, contents.contains("7.1.0-ga1"));
+		Assert.assertTrue(contents, contents.contains("7.1.1-ga2"));
 
 		String properties = new String(
 			Files.readAllBytes(new File(_workspaceDir, ".blade/settings.properties").toPath()));
@@ -321,7 +321,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
 
-		Assert.assertTrue(contents, contents.contains("7.1.0-ga1"));
+		Assert.assertTrue(contents, contents.contains("7.1.1-ga2"));
 
 		String properties = new String(
 			Files.readAllBytes(new File(_workspaceDir, ".blade/settings.properties").toPath()));
