@@ -17,28 +17,26 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ServerUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * @author David Truong
  * @author Simon Jiang
+ * @author Gregory Amerson
  */
 public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
@@ -53,98 +51,63 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		File baseDir = new File(args.getBase());
 
-		String serverType = null;
+		LocalServer localServer = new LocalServer(baseDir);
 
-		if (WorkspaceUtil.isWorkspace(baseDir)) {
-			Properties properties = getProperties();
+		Path liferayHomePath = localServer.getLiferayHomePath();
 
-			String liferayHomePath = properties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR_PROPERTY);
+		if (Files.notExists(liferayHomePath) || BladeUtil.isDirEmpty(liferayHomePath)) {
+			bladeCLI.error("Liferay home directory does not exist. Execute 'blade server init' to create it.");
 
-			if ((liferayHomePath == null) || liferayHomePath.equals("")) {
-				liferayHomePath = WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR;
-			}
+			return;
+		}
 
-			serverType = properties.getProperty(WorkspaceConstants.DEFAULT_BUNDLE_ARTIFACT_NAME_PROPERTY);
+		String serverType = localServer.getServerType();
 
-			if (serverType == null) {
-				serverType = WorkspaceConstants.DEFAULT_BUNDLE_ARTIFACT_NAME;
-			}
+		if (!localServer.isSupported()) {
+			bladeCLI.error(serverType + " not supported");
 
-			if (serverType.contains("jboss")) {
-				serverType = "jboss";
-			}
-			else if (serverType.contains("wildfly")) {
-				serverType = "wildfly";
-			}
-			else if (serverType.contains("tomcat")) {
-				serverType = "tomcat";
-			}
+			return;
+		}
 
-			Path liferayHomeDir = null;
-			Path tempLiferayHome = Paths.get(liferayHomePath);
+		ProcessBuilder processBuilder = localServer.newLocalServerProcess();
 
-			if (tempLiferayHome.isAbsolute()) {
-				liferayHomeDir = tempLiferayHome.normalize();
+		List<String> commands = processBuilder.command();
+
+		ServerStartArgs serverStartArgs = getArgs();
+
+		if (serverType.equals("tomcat")) {
+			if (serverStartArgs.isDebug()) {
+				commands.add("jpda");
+				commands.add("start");
 			}
 			else {
-				File workspaceRootDir = WorkspaceUtil.getWorkspaceDir(baseDir);
-
-				Path workspaceRootDirPath = workspaceRootDir.toPath();
-
-				Path tempFile = workspaceRootDirPath.resolve(liferayHomePath);
-
-				liferayHomeDir = tempFile.normalize();
+				commands.add("start");
 			}
-
-			_commandServer(liferayHomeDir, serverType);
 		}
-		else {
-			try {
-				List<Properties> propertiesList = BladeUtil.getAppServerProperties(baseDir);
-
-				String appServerParentDir = "";
-
-				for (Properties properties : propertiesList) {
-					if (appServerParentDir.equals("")) {
-						String appServerParentDirTemp = properties.getProperty(
-							BladeUtil.APP_SERVER_PARENT_DIR_PROPERTY);
-
-						if ((appServerParentDirTemp != null) && !appServerParentDirTemp.equals("")) {
-							Path rootDirRealPath = baseDir.toPath();
-
-							rootDirRealPath = rootDirRealPath.toRealPath();
-
-							appServerParentDirTemp = appServerParentDirTemp.replace(
-								"${project.dir}", rootDirRealPath.toString());
-
-							appServerParentDir = appServerParentDirTemp;
-						}
-					}
-
-					if ((serverType == null) || serverType.equals("")) {
-						String serverTypeTemp = properties.getProperty(BladeUtil.APP_SERVER_TYPE_PROPERTY);
-
-						if ((serverTypeTemp != null) && !serverTypeTemp.equals("")) {
-							serverType = serverTypeTemp;
-						}
-					}
-				}
-
-				if (appServerParentDir.startsWith("/") || appServerParentDir.contains(":")) {
-					_commandServer(Paths.get(appServerParentDir), serverType);
-				}
-				else {
-					Path rootDirRealPath = baseDir.toPath();
-
-					rootDirRealPath = rootDirRealPath.toRealPath();
-
-					_commandServer(rootDirRealPath.resolve(appServerParentDir), serverType);
-				}
+		else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
+			if (serverStartArgs.isDebug()) {
+				commands.add("--debug");
 			}
-			catch (Exception e) {
-				bladeCLI.error("Please execute this command from a Liferay Workspace project.");
 
-				e.printStackTrace(bladeCLI.error());
+			Map<String, String> environment = processBuilder.environment();
+
+			environment.put("LAUNCH_JBOSS_IN_BACKGROUND", "1");
+		}
+
+		Process process = processBuilder.start();
+
+		BladeUtil.readProcessStream(process.getInputStream(), bladeCLI.out());
+		BladeUtil.readProcessStream(process.getErrorStream(), bladeCLI.error());
+
+		OutputStream outputStream = process.getOutputStream();
+
+		outputStream.close();
+
+		if (serverStartArgs.isTail()) {
+			Optional<Path> log = localServer.getLogPath();
+
+			if (log.isPresent()) {
+				_tail(log.get(), bladeCLI.out());
 			}
 		}
 	}
@@ -154,140 +117,29 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		return ServerStartArgs.class;
 	}
 
-	public Collection<Process> getProcesses() {
-		return _processes;
-	}
+	private void _tail(Path path, PrintStream printStream) throws IOException {
+		try (BufferedReader input = new BufferedReader(new FileReader(path.toFile()))) {
+			String currentLine = null;
 
-	protected Properties getProperties() {
-		BladeCLI bladeCLI = getBladeCLI();
+			while (true) {
+				if ((currentLine = input.readLine()) != null) {
+					printStream.println(currentLine);
 
-		BaseArgs args = bladeCLI.getArgs();
-
-		File baseDir = new File(args.getBase());
-
-		return WorkspaceUtil.getGradleProperties(baseDir);
-	}
-
-	private void _commandServer(Path dir, String serverType) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		if (Files.notExists(dir) || BladeUtil.isDirEmpty(dir)) {
-			bladeCLI.error(
-				" bundles folder does not exist in Liferay Workspace, execute 'gradlew initBundle' in order to " +
-					"create it.");
-
-			return;
-		}
-
-		Optional<Path> serverFolder = ServerUtil.findServerFolder(dir, serverType);
-
-		boolean success = false;
-
-		if (serverFolder.isPresent()) {
-			Path file = serverFolder.get();
-
-			if (serverType.equals("tomcat")) {
-				_commmandTomcat(file);
-
-				success = true;
-			}
-			else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
-				_commmandJBossWildfly(file);
-
-				success = true;
-			}
-		}
-
-		if (!success) {
-			bladeCLI.error(serverType + " not supported");
-		}
-	}
-
-	private void _commmandJBossWildfly(Path dir) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-		ServerStartArgs serverStartArgs = getArgs();
-
-		Map<String, String> enviroment = new HashMap<>();
-
-		String executable = ServerUtil.getJBossWildflyExecutable();
-
-		String debug = "";
-
-		if (serverStartArgs.isDebug()) {
-			debug = " --debug";
-		}
-
-		Path binPath = dir.resolve("bin");
-
-		Process process = BladeUtil.startProcess(
-			executable + debug, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.error());
-
-		_processes.add(process);
-
-		process.waitFor();
-	}
-
-	private void _commmandTomcat(Path dir) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-		ServerStartArgs serverStartArgs = getArgs();
-
-		Map<String, String> enviroment = new HashMap<>();
-
-		enviroment.put("CATALINA_PID", "catalina.pid");
-
-		String executable = ServerUtil.getTomcatExecutable();
-
-		String startCommand = " start";
-
-		if (serverStartArgs.isDebug()) {
-			startCommand = " jpda " + startCommand;
-		}
-
-		Path logsPath = dir.resolve("logs");
-
-		if (!Files.exists(logsPath)) {
-			Files.createDirectory(logsPath);
-		}
-
-		Path catalinaOutPath = logsPath.resolve("catalina.out");
-
-		if (!Files.exists(catalinaOutPath)) {
-			Files.createFile(catalinaOutPath);
-		}
-
-		Path binPath = dir.resolve("bin");
-
-		final Process process = BladeUtil.startProcess(
-			executable + startCommand, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.error());
-
-		_processes.add(process);
-
-		Runtime runtime = Runtime.getRuntime();
-
-		runtime.addShutdownHook(
-			new Thread() {
-
-				@Override
-				public void run() {
-					try {
-						process.waitFor();
-					}
-					catch (InterruptedException ie) {
-						bladeCLI.error("Could not wait for process to end before shutting down");
-					}
+					continue;
 				}
 
-			});
+				try {
+					Thread.sleep(1000);
+				}
+				catch (InterruptedException ie) {
+					Thread currentThread = Thread.currentThread();
 
-		if (serverStartArgs.isTail()) {
-			Process tailProcess = BladeUtil.startProcess("tail -f catalina.out", logsPath.toFile(), enviroment);
+					currentThread.interrupt();
 
-			_processes.add(tailProcess);
-
-			tailProcess.waitFor();
+					break;
+				}
+			}
 		}
 	}
-
-	private Collection<Process> _processes = new HashSet<>();
 
 }

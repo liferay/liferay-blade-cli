@@ -162,9 +162,7 @@ public class ServerCommandsTest {
 			Assert.fail("Unexpected exception: " + exceptions.get(0));
 		}
 
-		ServerStartCommand serverStartCommand = (ServerStartCommand)bladeTest.getCommand();
-
-		Collection<Process> processes = serverStartCommand.getProcesses();
+		Collection<Process> processes = Collections.emptyList();
 
 		Assert.assertFalse("Expected server start process to have started.", processes.isEmpty());
 

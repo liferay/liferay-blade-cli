@@ -61,7 +61,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 				liferayHomePath = WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR;
 			}
 
-			serverType = properties.getProperty(WorkspaceConstants.DEFAULT_BUNDLE_ARTIFACT_NAME_PROPERTY);
+			serverType = properties.getProperty(WorkspaceConstants.BUNDLE_ARTIFACT_NAME);
 
 			if (serverType == null) {
 				serverType = WorkspaceConstants.DEFAULT_BUNDLE_ARTIFACT_NAME;
@@ -172,7 +172,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 			return;
 		}
 
-		Optional<Path> server = ServerUtil.findServerFolder(dir, serverType);
+		Optional<Path> server = ServerUtil.findAppServerPath(dir, serverType);
 
 		boolean success = false;
 

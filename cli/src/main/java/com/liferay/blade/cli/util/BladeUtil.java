@@ -316,7 +316,7 @@ public class BladeUtil {
 	}
 
 	public static void readProcessStream(final InputStream inputStream, final PrintStream printStream) {
-		Thread t = new Thread(
+		Thread thread = new Thread(
 			new Runnable() {
 
 				@Override
@@ -334,7 +334,8 @@ public class BladeUtil {
 
 			});
 
-		t.start();
+		thread.setDaemon(true);
+		thread.start();
 	}
 
 	public static boolean searchZip(Path path, Predicate<String> test) {
