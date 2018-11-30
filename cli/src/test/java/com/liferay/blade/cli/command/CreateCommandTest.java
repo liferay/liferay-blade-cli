@@ -630,11 +630,13 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/build.gradle");
 
-		File jsp = _checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+		File packageJson = _checkFileExists(projectPath + "package.json");
 
-		_contains(jsp, ".*<aui:script require=\"<%= bootstrapRequire %>\">.*");
+		_contains(packageJson, ".*\"build\": \"tsc && liferay-npm-bundler\".*");
 
-		_contains(jsp, ".*bootstrapRequire.default.*");
+		File tsConfigJson = _checkFileExists(projectPath + "tsconfig.json");
+
+		_contains(tsConfigJson, ".*META-INF/resources/lib.*");
 	}
 
 	@Test
@@ -1296,7 +1298,8 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertFalse(content, content.contains("js.loader.modules.extender.api"));
+		Assert.assertTrue(content, content.contains("js.loader.modules.extender.api"));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"2.0.0\""));
 	}
 
 	@Test
@@ -1319,6 +1322,7 @@ public class CreateCommandTest {
 		String content = FileUtil.read(buildGradle);
 
 		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"3.0.0\""));
 	}
 
 	@Test
@@ -1503,7 +1507,8 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertFalse(content.contains("js.loader.modules.extender.api"));
+		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"2.0.0\""));
 	}
 
 	@Test
@@ -1520,6 +1525,7 @@ public class CreateCommandTest {
 		String content = FileUtil.read(buildGradle);
 
 		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"3.0.0\""));
 	}
 
 	@Test
