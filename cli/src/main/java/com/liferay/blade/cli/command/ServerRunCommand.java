@@ -39,10 +39,11 @@ import java.util.Properties;
 /**
  * @author David Truong
  * @author Simon Jiang
+ * @author Gregory Amerson
  */
-public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
+public class ServerRunCommand extends BaseCommand<ServerRunArgs> {
 
-	public ServerStartCommand() {
+	public ServerRunCommand() {
 	}
 
 	@Override
@@ -150,8 +151,8 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 	}
 
 	@Override
-	public Class<ServerStartArgs> getArgsClass() {
-		return ServerStartArgs.class;
+	public Class<ServerRunArgs> getArgsClass() {
+		return ServerRunArgs.class;
 	}
 
 	public Collection<Process> getProcesses() {
@@ -205,7 +206,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 	private void _commmandJBossWildfly(Path dir) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
-		ServerStartArgs serverStartArgs = getArgs();
+		ServerRunArgs serverRunArgs = getArgs();
 
 		Map<String, String> enviroment = new HashMap<>();
 
@@ -213,7 +214,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		String debug = "";
 
-		if (serverStartArgs.isDebug()) {
+		if (serverRunArgs.isDebug()) {
 			debug = " --debug";
 		}
 
@@ -229,7 +230,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 	private void _commmandTomcat(Path dir) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
-		ServerStartArgs serverStartArgs = getArgs();
+		ServerRunArgs serverRunArgs = getArgs();
 
 		Map<String, String> enviroment = new HashMap<>();
 
@@ -237,10 +238,10 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		String executable = ServerUtil.getTomcatExecutable();
 
-		String startCommand = " start";
+		String command = " run";
 
-		if (serverStartArgs.isDebug()) {
-			startCommand = " jpda " + startCommand;
+		if (serverRunArgs.isDebug()) {
+			command = " jpda " + command;
 		}
 
 		Path logsPath = dir.resolve("logs");
@@ -258,7 +259,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		Path binPath = dir.resolve("bin");
 
 		final Process process = BladeUtil.startProcess(
-			executable + startCommand, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.error());
+			executable + command, binPath.toFile(), enviroment, bladeCLI.out(), bladeCLI.error());
 
 		_processes.add(process);
 
@@ -279,13 +280,11 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 			});
 
-		if (serverStartArgs.isTail()) {
-			Process tailProcess = BladeUtil.startProcess("tail -f catalina.out", logsPath.toFile(), enviroment);
+		Process tailProcess = BladeUtil.startProcess("tail -f catalina.out", logsPath.toFile(), enviroment);
 
-			_processes.add(tailProcess);
+		_processes.add(tailProcess);
 
-			tailProcess.waitFor();
-		}
+		tailProcess.waitFor();
 	}
 
 	private Collection<Process> _processes = new HashSet<>();
