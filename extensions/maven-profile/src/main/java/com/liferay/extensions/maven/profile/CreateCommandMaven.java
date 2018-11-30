@@ -52,7 +52,8 @@ public class CreateCommandMaven extends CreateCommand {
 		super.execute();
 	}
 
-	protected Properties getProperties() {
+	@Override
+	protected Properties getWorkspaceProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs baseArgs = bladeCLI.getBladeArgs();
