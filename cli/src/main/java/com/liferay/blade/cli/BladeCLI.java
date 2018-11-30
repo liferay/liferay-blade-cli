@@ -126,18 +126,6 @@ public class BladeCLI {
 		return new BladeSettings(settingsFile);
 	}
 
-	public Path getCachePath() throws IOException {
-		Path userHomePath = _USER_HOME_DIR.toPath();
-
-		Path cachePath = userHomePath.resolve(".blade/cache");
-
-		if (!Files.exists(cachePath)) {
-			Files.createDirectories(cachePath);
-		}
-
-		return cachePath;
-	}
-
 	public BaseCommand<?> getCommand() {
 		return _baseCommand;
 	}
