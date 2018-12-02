@@ -30,7 +30,7 @@ public class VersionCommandTest {
 	public void testVersionCommandFromJar() throws Exception {
 		Runtime runtime = Runtime.getRuntime();
 
-		Process process = runtime.exec(new String[] {"java", "-jar", _BLADE_JAR_PATH});
+		Process process = runtime.exec(new String[] {"java", "-jar", _BLADE_JAR_PATH, "version"});
 
 		process.waitFor();
 
