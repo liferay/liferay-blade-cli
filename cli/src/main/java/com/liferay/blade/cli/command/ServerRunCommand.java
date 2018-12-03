@@ -96,6 +96,8 @@ public class ServerRunCommand extends BaseCommand<ServerRunArgs> {
 
 		Optional<Path> log = localServer.getLogPath();
 
+		process.waitFor();
+
 		if (log.isPresent()) {
 			BladeUtil.tail(log.get(), bladeCLI.out());
 		}

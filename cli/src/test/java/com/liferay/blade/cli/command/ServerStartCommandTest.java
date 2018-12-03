@@ -129,6 +129,74 @@ public class ServerStartCommandTest {
 	}
 
 	@Test
+	public void testServerStartCommandWildfly() throws Exception {
+		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1"};
+
+		new BladeTest().run(initArgs);
+
+		File gradleProperties = new File(_testWorkspaceDir, "gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradleProperties.toPath()));
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("liferay.workspace.bundle.url=");
+		sb.append("https://releases-cdn.liferay.com/portal/7.1.1-ga2/");
+		sb.append("liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz");
+		sb.append(System.lineSeparator());
+
+		String bundleUrl = sb.toString();
+
+		contents = bundleUrl + contents;
+
+		Files.write(gradleProperties.toPath(), bundleUrl.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+
+		String[] gwArgs = {"--base", _testWorkspaceDir.getPath(), "gw", "initBundle"};
+
+		new BladeTest().run(gwArgs);
+
+		File bundlesFolder = new File(_testWorkspaceDir, "bundles/wildfly-11.0.0");
+
+		Assert.assertTrue(bundlesFolder.exists());
+
+		Predicate<JavaProcess> wildflyFilter = process -> {
+			String displayName = process.getDisplayName();
+
+			return displayName.contains("jboss-modules");
+		};
+
+		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
+
+		Optional<JavaProcess> wildflyProcess = _findProcess(javaProcesses, wildflyFilter);
+
+		Assert.assertFalse(wildflyProcess.isPresent());
+
+		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
+
+		new BladeTest().run(serverStartArgs);
+
+		Thread.sleep(1000);
+
+		javaProcesses = JavaProcesses.list();
+
+		wildflyProcess = _findProcess(javaProcesses, wildflyFilter);
+
+		Assert.assertTrue("Expected tomcat process to be started", wildflyProcess.isPresent());
+
+		JavaProcess javaProcess = wildflyProcess.get();
+
+		PidProcess wildflyPidProcess = Processes.newPidProcess(javaProcess.getId());
+
+		Assert.assertTrue("Expected wildfly process to be alive", wildflyPidProcess.isAlive());
+
+		wildflyPidProcess.destroyForcefully();
+
+		wildflyPidProcess.waitFor(1, TimeUnit.SECONDS);
+
+		Assert.assertFalse("Expected wildfly proces to be destroyed.", wildflyPidProcess.isAlive());
+	}
+
+	@Test
 	public void testServerStopCommandExists() throws Exception {
 		Assert.assertTrue(_commandExists("server", "stop"));
 		Assert.assertTrue(_commandExists("server stop"));

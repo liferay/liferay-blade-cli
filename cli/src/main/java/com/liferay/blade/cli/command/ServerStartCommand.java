@@ -107,13 +107,25 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		outputStream.close();
 
-		process.waitFor();
+		Optional<Path> log = localServer.getLogPath();
+
+		if (serverType.equals("tomcat")) {
+			process.waitFor();
+		}
+		else {
+			bladeCLI.out(serverType + " started.");
+		}
 
 		if (serverStartArgs.isTail()) {
-			Optional<Path> log = localServer.getLogPath();
-
 			if (log.isPresent()) {
 				BladeUtil.tail(log.get(), bladeCLI.out());
+			}
+		}
+		else {
+			if (log.isPresent()) {
+				Path logPath = log.get();
+
+				bladeCLI.out("To view the log execute 'tail -f " + logPath.toString() + "'");
 			}
 		}
 	}
