@@ -19,12 +19,8 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -103,11 +99,13 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		outputStream.close();
 
+		process.waitFor();
+
 		if (serverStartArgs.isTail()) {
 			Optional<Path> log = localServer.getLogPath();
 
 			if (log.isPresent()) {
-				_tail(log.get(), bladeCLI.out());
+				BladeUtil.tail(log.get(), bladeCLI.out());
 			}
 		}
 	}
@@ -115,31 +113,6 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 	@Override
 	public Class<ServerStartArgs> getArgsClass() {
 		return ServerStartArgs.class;
-	}
-
-	private void _tail(Path path, PrintStream printStream) throws IOException {
-		try (BufferedReader input = new BufferedReader(new FileReader(path.toFile()))) {
-			String currentLine = null;
-
-			while (true) {
-				if ((currentLine = input.readLine()) != null) {
-					printStream.println(currentLine);
-
-					continue;
-				}
-
-				try {
-					Thread.sleep(1000);
-				}
-				catch (InterruptedException ie) {
-					Thread currentThread = Thread.currentThread();
-
-					currentThread.interrupt();
-
-					break;
-				}
-			}
-		}
 	}
 
 }

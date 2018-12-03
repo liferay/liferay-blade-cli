@@ -20,8 +20,10 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.internal.util.ProjectTemplatesUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -421,6 +423,31 @@ public class BladeUtil {
 
 	public static Process startProcess(String command, File dir, PrintStream out, PrintStream err) throws Exception {
 		return startProcess(command, dir, null, out, err);
+	}
+
+	public static void tail(Path path, PrintStream printStream) throws IOException {
+		try (BufferedReader input = new BufferedReader(new FileReader(path.toFile()))) {
+			String currentLine = null;
+
+			while (true) {
+				if ((currentLine = input.readLine()) != null) {
+					printStream.println(currentLine);
+
+					continue;
+				}
+
+				try {
+					Thread.sleep(1000);
+				}
+				catch (InterruptedException ie) {
+					Thread currentThread = Thread.currentThread();
+
+					currentThread.interrupt();
+
+					break;
+				}
+			}
+		}
 	}
 
 	private static ProcessBuilder _buildProcessBuilder(

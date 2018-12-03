@@ -224,7 +224,7 @@ public class LocalServer {
 	}
 
 	private void _buildJbossWildflyProcess(ProcessBuilder processBuilder) {
-		processBuilder.command(_getJBossWildflyExecutable());
+		BladeUtil.setShell(processBuilder, _getJBossWildflyExecutable());
 
 		Path appServer = _appServerPath.get();
 
@@ -258,7 +258,7 @@ public class LocalServer {
 
 		environment.put("CATALINA_PID", "catalina.pid");
 
-		processBuilder.command(_getTomcatExecutable());
+		BladeUtil.setShell(processBuilder, _getTomcatExecutable());
 	}
 
 	private Optional<Path> _appServerPath;
