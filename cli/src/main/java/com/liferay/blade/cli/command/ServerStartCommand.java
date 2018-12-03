@@ -28,6 +28,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author David Truong
@@ -89,6 +91,12 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 			environment.put("LAUNCH_JBOSS_IN_BACKGROUND", "1");
 		}
+
+		Stream<String> stream = commands.stream();
+
+		String shellCommand = stream.collect(Collectors.joining(" "));
+
+		BladeUtil.setShell(processBuilder, shellCommand);
 
 		Process process = processBuilder.start();
 
