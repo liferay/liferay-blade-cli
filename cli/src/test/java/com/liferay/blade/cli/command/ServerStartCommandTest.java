@@ -101,7 +101,9 @@ public class ServerStartCommandTest {
 
 		Optional<JavaProcess> tomcatProcess = _findProcess(javaProcesses, tomcatFilter);
 
-		Assert.assertFalse(tomcatProcess.isPresent());
+		String processList = _printDisplaNames(javaProcesses);
+
+		Assert.assertFalse(processList, tomcatProcess.isPresent());
 
 		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
 
@@ -111,9 +113,12 @@ public class ServerStartCommandTest {
 
 		javaProcesses = JavaProcesses.list();
 
+		processList = _printDisplaNames(javaProcesses);
+
 		tomcatProcess = _findProcess(javaProcesses, tomcatFilter);
 
-		Assert.assertTrue("Expected tomcat process to be started", tomcatProcess.isPresent());
+		Assert.assertTrue(
+			"Expected tomcat process to be started.\n" + _printDisplaNames(javaProcesses), tomcatProcess.isPresent());
 
 		JavaProcess javaProcess = tomcatProcess.get();
 
@@ -234,6 +239,16 @@ public class ServerStartCommandTest {
 		return stream.filter(
 			processFilter
 		).findFirst();
+	}
+
+	private String _printDisplaNames(Collection<JavaProcess> javaProcesses) {
+		StringBuilder sb = new StringBuilder();
+
+		for (JavaProcess javaProcess : javaProcesses) {
+			sb.append(javaProcess.getDisplayName() + System.lineSeparator());
+		}
+
+		return sb.toString();
 	}
 
 	private File _testWorkspaceDir = null;
