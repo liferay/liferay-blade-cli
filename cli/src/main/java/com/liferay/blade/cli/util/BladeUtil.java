@@ -376,7 +376,7 @@ public class BladeUtil {
 			commands.add("/c");
 		}
 		else {
-			env.put("PATH", env.get("PATH") + ":/usr/local/bin");
+			env.put("PATH", env.get("PATH") + ":/bin:/usr/local/bin");
 
 			commands.add("sh");
 			commands.add("-c");
