@@ -26,19 +26,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author David Truong
  * @author Simon Jiang
  * @author Gregory Amerson
  */
-public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
+public class ServerRunCommand extends BaseCommand<ServerRunArgs> {
 
-	public ServerStartCommand() {
+	public ServerRunCommand() {
 	}
 
 	@Override
@@ -71,32 +68,22 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		List<String> commands = processBuilder.command();
 
-		ServerStartArgs serverStartArgs = getArgs();
+		ServerRunArgs serverRunArgs = getArgs();
 
 		if (serverType.equals("tomcat")) {
-			if (serverStartArgs.isDebug()) {
+			if (serverRunArgs.isDebug()) {
 				commands.add("jpda");
-				commands.add("start");
+				commands.add("run");
 			}
 			else {
-				commands.add("start");
+				commands.add("run");
 			}
 		}
 		else if (serverType.equals("jboss") || serverType.equals("wildfly")) {
-			if (serverStartArgs.isDebug()) {
+			if (serverRunArgs.isDebug()) {
 				commands.add("--debug");
 			}
-
-			Map<String, String> environment = processBuilder.environment();
-
-			environment.put("LAUNCH_JBOSS_IN_BACKGROUND", "1");
 		}
-
-		Stream<String> stream = commands.stream();
-
-		String shellCommand = stream.collect(Collectors.joining(" "));
-
-		BladeUtil.setShell(processBuilder, shellCommand);
 
 		Process process = processBuilder.start();
 
@@ -109,30 +96,16 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		Optional<Path> log = localServer.getLogPath();
 
-		if (serverType.equals("tomcat")) {
-			process.waitFor();
-		}
-		else {
-			bladeCLI.out(serverType + " started.");
-		}
+		process.waitFor();
 
-		if (serverStartArgs.isTail()) {
-			if (log.isPresent()) {
-				BladeUtil.tail(log.get(), bladeCLI.out());
-			}
-		}
-		else {
-			if (log.isPresent()) {
-				Path logPath = log.get();
-
-				bladeCLI.out("To view the log execute 'tail -f " + logPath.toString() + "'");
-			}
+		if (log.isPresent()) {
+			BladeUtil.tail(log.get(), bladeCLI.out());
 		}
 	}
 
 	@Override
-	public Class<ServerStartArgs> getArgsClass() {
-		return ServerStartArgs.class;
+	public Class<ServerRunArgs> getArgsClass() {
+		return ServerRunArgs.class;
 	}
 
 }

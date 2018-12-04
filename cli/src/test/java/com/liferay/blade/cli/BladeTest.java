@@ -93,21 +93,6 @@ public class BladeTest extends BladeCLI {
 	}
 
 	@Override
-	public Path getCachePath() {
-		Path userHomePath = _userHomeDir.toPath();
-
-		Path cachePath = userHomePath.resolve(".blade/cache");
-
-		try {
-			Files.createDirectories(cachePath);
-		}
-		catch (IOException ioe) {
-		}
-
-		return cachePath;
-	}
-
-	@Override
 	public Path getExtensionsPath() {
 		Path userHomePath = _userHomeDir.toPath();
 

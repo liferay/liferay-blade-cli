@@ -254,9 +254,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	protected Properties getWorkspaceProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = new File(args.getBase());
 
 		return WorkspaceUtil.getGradleProperties(baseDir);
 	}
@@ -293,7 +293,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	private File _getDefaultExtDir() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
 		File base = new File(args.getBase());
 
@@ -325,7 +325,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	private File _getDefaultModulesDir() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
 		File base = new File(args.getBase());
 
@@ -357,7 +357,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	private File _getDefaultWarsDir() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
 		File base = new File(args.getBase());
 

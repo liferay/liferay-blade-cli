@@ -57,7 +57,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
 		InitArgs initArgs = getArgs();
 

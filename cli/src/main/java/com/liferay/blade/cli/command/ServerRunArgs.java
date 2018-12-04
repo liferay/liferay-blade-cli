@@ -23,25 +23,14 @@ import com.beust.jcommander.Parameters;
  * @author Gregory Amerson
  * @author Simon Jiang
  */
-@Parameters(commandDescription = "Start server defined by your Liferay project", commandNames = "server start")
-public class ServerStartArgs extends BaseArgs {
+@Parameters(commandDescription = "Run server defined by your Liferay project", commandNames = "server run")
+public class ServerRunArgs extends BaseArgs {
 
 	public boolean isDebug() {
 		return _debug;
 	}
 
-	public boolean isTail() {
-		return _tail;
-	}
-
-	public void setDebug(boolean debug) {
-		_debug = debug;
-	}
-
-	@Parameter(description = "Start server in debug mode", names = {"-d", "--debug"})
+	@Parameter(description = "Run server in debug mode", names = {"-d", "--debug"})
 	private boolean _debug;
-
-	@Parameter(description = "Tail the started server", names = {"-t", "--tail"})
-	private boolean _tail;
 
 }

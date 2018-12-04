@@ -36,9 +36,9 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = new File(args.getBase());
 
 		if (WorkspaceUtil.isWorkspace(baseDir)) {
 			if (GradleExec.isGradleProject(baseDir)) {

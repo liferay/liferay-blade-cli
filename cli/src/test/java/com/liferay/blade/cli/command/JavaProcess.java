@@ -16,32 +16,25 @@
 
 package com.liferay.blade.cli.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 /**
  * @author Gregory Amerson
- * @author Simon Jiang
  */
-@Parameters(commandDescription = "Start server defined by your Liferay project", commandNames = "server start")
-public class ServerStartArgs extends BaseArgs {
+public class JavaProcess {
 
-	public boolean isDebug() {
-		return _debug;
+	public JavaProcess(int id, String displayName) {
+		_id = id;
+		_displayName = displayName;
 	}
 
-	public boolean isTail() {
-		return _tail;
+	public String getDisplayName() {
+		return _displayName;
 	}
 
-	public void setDebug(boolean debug) {
-		_debug = debug;
+	public int getId() {
+		return _id;
 	}
 
-	@Parameter(description = "Start server in debug mode", names = {"-d", "--debug"})
-	private boolean _debug;
-
-	@Parameter(description = "Tail the started server", names = {"-t", "--tail"})
-	private boolean _tail;
+	private String _displayName;
+	private int _id;
 
 }

@@ -91,8 +91,6 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	}
 
 	private void _copySample(String sampleName, String bladeRepoName) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
 		SamplesArgs samplesArgs = getArgs();
 
 		File workDir = samplesArgs.getDir();
@@ -101,7 +99,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 			workDir = new File(samplesArgs.getBase());
 		}
 
-		Path cachePath = bladeCLI.getCachePath();
+		Path cachePath = _getSamplesCachePath();
 
 		File bladeRepo = new File(cachePath.toFile(), bladeRepoName);
 
@@ -145,9 +143,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	}
 
 	private boolean _downloadBladeRepoIfNeeded(String bladeRepoArchiveName, String bladeRepoUrl) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		Path cachePath = bladeCLI.getCachePath();
+		Path cachePath = _getSamplesCachePath();
 
 		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
 
@@ -177,13 +173,11 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	}
 
 	private void _extractBladeRepo(String bladeRepoArchiveName) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
+		Path samplesCachePath = _getSamplesCachePath();
 
-		Path cachePath = bladeCLI.getCachePath();
+		File bladeRepoArchive = new File(samplesCachePath.toFile(), bladeRepoArchiveName);
 
-		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
-
-		FileUtil.unzip(bladeRepoArchive, cachePath.toFile(), null);
+		FileUtil.unzip(bladeRepoArchive, samplesCachePath.toFile(), null);
 	}
 
 	private String _getLiferayVersion(BladeCLI bladeCLI, SamplesArgs samplesArgs) throws IOException {
@@ -198,11 +192,23 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return liferayVersion;
 	}
 
+	private Path _getSamplesCachePath() throws IOException {
+		Path userHomePath = _USER_HOME_DIR.toPath();
+
+		Path samplesCachePath = userHomePath.resolve(".blade/cache/samples");
+
+		if (!Files.exists(samplesCachePath)) {
+			Files.createDirectories(samplesCachePath);
+		}
+
+		return samplesCachePath;
+	}
+
 	private void _listSamples(String bladeRepoName) throws IOException {
 		BladeCLI bladeCLI = getBladeCLI();
 		SamplesArgs samplesArgs = getArgs();
 
-		Path cachePath = bladeCLI.getCachePath();
+		Path cachePath = _getSamplesCachePath();
 
 		File bladeRepo = new File(cachePath.toFile(), bladeRepoName);
 
@@ -330,9 +336,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	}
 
 	private void _updateBuildGradle(File dir, String bladeRepoName) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		Path cachePath = bladeCLI.getCachePath();
+		Path cachePath = _getSamplesCachePath();
 
 		File bladeRepo = new File(cachePath.toFile(), bladeRepoName);
 
@@ -359,6 +363,8 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	}
 
 	private static final long _FILE_EXPIRATION_TIME = 604800000;
+
+	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
 	private static final Collection<String> _topLevelFolders = Arrays.asList(
 		"apps", "extensions", "overrides", "themes");

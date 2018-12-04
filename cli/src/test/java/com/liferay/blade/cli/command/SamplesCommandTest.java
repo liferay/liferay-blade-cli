@@ -24,8 +24,10 @@ import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.gradle.testkit.runner.BuildTask;
 
@@ -46,6 +48,8 @@ public class SamplesCommandTest {
 		File wrapperZipFile = new File("build/wrapper.zip");
 
 		Files.copy(wrapperZipFile.toPath(), new FileOutputStream(new File("build/classes/java/test/wrapper.zip")));
+
+		_deleteSamplesCache();
 	}
 
 	@Test
@@ -290,5 +294,15 @@ public class SamplesCommandTest {
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private static void _deleteSamplesCache() throws IOException {
+		Path userHomePath = _USER_HOME_DIR.toPath();
+
+		Path samplesCachePath = userHomePath.resolve(".blade/cache/samples");
+
+		FileUtil.deleteDirIfExists(samplesCachePath);
+	}
+
+	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
 }

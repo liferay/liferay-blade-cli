@@ -53,7 +53,7 @@ public class GradleExec {
 	}
 
 	public ProcessResult executeTask(String task) throws Exception {
-		BaseArgs args = _blade.getBladeArgs();
+		BaseArgs args = _blade.getArgs();
 
 		File baseDir = new File(args.getBase());
 
@@ -61,7 +61,7 @@ public class GradleExec {
 	}
 
 	public ProcessResult executeTask(String task, boolean captureOutput) throws Exception {
-		BaseArgs args = _blade.getBladeArgs();
+		BaseArgs args = _blade.getArgs();
 
 		File baseDir = new File(args.getBase());
 
@@ -149,7 +149,7 @@ public class GradleExec {
 		String executable = "gradle";
 
 		if (gradlew == null) {
-			BaseArgs args = _blade.getBladeArgs();
+			BaseArgs args = _blade.getArgs();
 
 			File baseDir = new File(args.getBase());
 

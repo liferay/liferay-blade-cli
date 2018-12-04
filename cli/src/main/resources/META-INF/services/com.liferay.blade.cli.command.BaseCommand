@@ -10,6 +10,7 @@ com.liferay.blade.cli.command.OutputsCommand
 com.liferay.blade.cli.command.UninstallExtensionCommand
 com.liferay.blade.cli.command.SamplesCommand
 com.liferay.blade.cli.command.ServerInitCommand
+com.liferay.blade.cli.command.ServerRunCommand
 com.liferay.blade.cli.command.ServerStartCommand
 com.liferay.blade.cli.command.ServerStopCommand
 com.liferay.blade.cli.command.ShellCommand

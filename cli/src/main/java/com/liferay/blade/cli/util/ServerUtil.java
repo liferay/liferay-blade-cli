@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  */
 public class ServerUtil {
 
-	public static Optional<Path> findServerFolder(Path dir, String serverType) throws IOException {
+	public static Optional<Path> findAppServerPath(Path dir, String serverType) throws IOException {
 		BiPredicate<Path, BasicFileAttributes> binFolderMatcher = (path, attrs) -> {
 			Path fileName = path.getFileName();
 

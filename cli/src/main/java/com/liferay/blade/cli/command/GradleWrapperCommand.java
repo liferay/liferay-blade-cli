@@ -40,7 +40,7 @@ public class GradleWrapperCommand extends BaseCommand<GradleWrapperArgs> {
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		BaseArgs args = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
 		File baseDir = new File(args.getBase());
 

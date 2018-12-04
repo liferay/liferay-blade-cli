@@ -40,7 +40,7 @@ public class OutputsCommand extends BaseCommand<OutputsArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getBladeArgs();
+		BaseArgs args = bladeCLI.getArgs();
 
 		File base = new File(args.getBase());
 

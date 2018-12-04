@@ -22,9 +22,11 @@ package com.liferay.blade.cli;
  */
 public class WorkspaceConstants {
 
-	public static final String DEFAULT_BUNDLE_ARTIFACT_NAME = "portal-tomcat-bundle";
+	public static final String BUNDLE_ARTIFACT_NAME = "liferay.workspace.bundle.artifact.name";
 
-	public static final String DEFAULT_BUNDLE_ARTIFACT_NAME_PROPERTY = "liferay.workspace.bundle.artifact.name";
+	public static final String BUNDLE_URL = "liferay.workspace.bundle.url";
+
+	public static final String DEFAULT_BUNDLE_ARTIFACT_NAME = "portal-tomcat-bundle";
 
 	public static final String DEFAULT_EXT_DIR = "ext";
 
