@@ -44,3 +44,5 @@ repositories {
 		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 	}
 }
+
+version = "1.0.0-SNAPSHOT"
