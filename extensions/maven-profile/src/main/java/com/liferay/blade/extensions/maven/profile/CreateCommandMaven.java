@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.maven.profile;
+package com.liferay.blade.extensions.maven.profile;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.CreateArgs;
 import com.liferay.blade.cli.command.CreateCommand;
-import com.liferay.extensions.maven.profile.internal.MavenUtil;
+import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 

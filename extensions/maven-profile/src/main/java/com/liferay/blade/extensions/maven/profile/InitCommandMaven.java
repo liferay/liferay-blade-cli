@@ -14,26 +14,30 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.maven.profile;
+package com.liferay.blade.extensions.maven.profile;
 
 import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.ServerStopCommand;
+import com.liferay.blade.cli.command.InitArgs;
+import com.liferay.blade.cli.command.InitCommand;
 
 /**
- * @author David Truong
+ * @author Gregory Amerson
+ * @author Terry Jia
  */
 @BladeProfile("maven")
-public class ServerStopCommandMaven extends ServerStopCommand {
+public class InitCommandMaven extends InitCommand {
 
-	/*@Override
-	protected Properties getProperties() {
-		BladeCLI bladeCLI = getBladeCLI();
+	public InitCommandMaven() {
+	}
 
-		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+	@Override
+	@SuppressWarnings("deprecation")
+	public void execute() throws Exception {
+		InitArgs initArgs = getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		initArgs.setProfileName("maven");
 
-		return MavenUtil.getMavenProperties(baseDir);
-	}*/
+		super.execute();
+	}
 
 }

@@ -10,8 +10,9 @@ buildscript {
 	}
 }
 
-apply plugin: 'biz.aQute.bnd.builder'
-apply plugin: 'java'
+apply plugin: "biz.aQute.bnd.builder"
+apply plugin: "java"
+apply plugin: "maven-publish"
 
 dependencies {
 	compile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "latest.integration"
@@ -20,8 +21,18 @@ dependencies {
 
 	testCompile gradleTestKit()
 	testCompile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
-	testCompile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "3.3+", classifier: "tests"
+	testCompile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "latest.integration", classifier: "tests"
 	testCompile group: "junit", name: "junit", version: "4.12"
+}
+
+publishing {
+	publications {
+		mavenProfileJar(MavenPublication) {
+			artifactId = "com.liferay.blade.extensions.maven.profile"
+
+			from components.java
+		}
+	}
 }
 
 repositories {

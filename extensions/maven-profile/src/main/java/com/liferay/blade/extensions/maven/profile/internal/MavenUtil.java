@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.maven.profile.internal;
+package com.liferay.blade.extensions.maven.profile.internal;
 
 import com.liferay.blade.cli.util.WorkspaceUtil;
 
