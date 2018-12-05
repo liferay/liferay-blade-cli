@@ -393,8 +393,8 @@ public class Extensions implements AutoCloseable {
 
 			FileUtil.copyDir(getPath(), _tempExtensionsDirectory);
 
-			try (InputStream inputStream = Extensions.class.getResourceAsStream("/maven-profile.jar")) {
-				Path mavenProfilePath = _tempExtensionsDirectory.resolve("maven-profile.jar");
+			try (InputStream inputStream = Extensions.class.getResourceAsStream("/maven-profile-1.0.0-SNAPSHOT.jar")) {
+				Path mavenProfilePath = _tempExtensionsDirectory.resolve("maven-profile-1.0.0-SNAPSHOT.jar");
 
 				Files.copy(inputStream, mavenProfilePath, StandardCopyOption.REPLACE_EXISTING);
 			}

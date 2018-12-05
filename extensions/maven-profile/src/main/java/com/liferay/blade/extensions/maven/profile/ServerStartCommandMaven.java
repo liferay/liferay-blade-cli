@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.maven.profile;
+package com.liferay.blade.extensions.maven.profile;
 
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.ServerStartCommand;

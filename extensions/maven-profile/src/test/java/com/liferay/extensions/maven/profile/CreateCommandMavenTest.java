@@ -24,7 +24,7 @@ import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.extensions.maven.profile.internal.MavenUtil;
+import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 
