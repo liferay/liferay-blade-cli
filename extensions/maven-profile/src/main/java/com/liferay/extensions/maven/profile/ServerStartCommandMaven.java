@@ -16,15 +16,8 @@
 
 package com.liferay.extensions.maven.profile;
 
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.ServerStartCommand;
-import com.liferay.extensions.maven.profile.internal.MavenUtil;
-
-import java.io.File;
-
-import java.util.Properties;
 
 /**
  * @author David Truong
@@ -33,7 +26,7 @@ import java.util.Properties;
 @BladeProfile("maven")
 public class ServerStartCommandMaven extends ServerStartCommand {
 
-	@Override
+	/*@Override
 	protected Properties getProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -42,6 +35,6 @@ public class ServerStartCommandMaven extends ServerStartCommand {
 		File baseDir = new File(baseArgs.getBase());
 
 		return MavenUtil.getMavenProperties(baseDir);
-	}
+	}*/
 
 }

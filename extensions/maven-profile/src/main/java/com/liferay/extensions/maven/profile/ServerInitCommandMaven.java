@@ -35,7 +35,7 @@ public class ServerInitCommandMaven extends ServerInitCommand {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs baseArgs = bladeCLI.getBladeArgs();
+		BaseArgs baseArgs = bladeCLI.getArgs();
 
 		File baseDir = new File(baseArgs.getBase());
 
