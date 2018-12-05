@@ -1,0 +1,107 @@
+apply plugin: "java"
+
+task testCreateCommand
+task testExecutableJar
+task testGwCommand
+task testHelpCommand
+task testInitCommand
+task testSamplesCommand
+task testShCommand
+task testVersionCommand
+
+jar {
+	dependsOn ":cli:copyMavenProfileJar"
+	archiveName = "blade.jar"
+	from ":cli:createToolingZip, :clicreateWrapperZip"
+}
+
+testCreateCommand {
+	dependsOn jar
+
+	String command = "create"
+	String testArgs = "-l"
+
+	String errors = _testJar(command, testArgs)
+
+	Assert.assertNull(errors)
+}
+
+testExecutableJar {
+	dependsOn testCreateCommand, testGwCommand, testHelpCommand, testInitCommand, testSamplesCommand, testShCommand, testVersionCommand
+}
+
+testGwCommand {
+	dependsOn jar
+
+	String command = "gw"
+
+	String errors = _testJar(command)
+
+	Assert.assertNull(errors)
+}
+
+testHelpCommand {
+	dependsOn jar
+
+	String command = "help"
+
+	String errors = _testJar(command)
+
+	Assert.assertNull(errors)
+}
+
+testInitCommand {
+	dependsOn jar
+
+	String command = "init"
+	String testArgs = "hello world"
+
+	String errors = _testJar(command, testArgs)
+
+	Assert.assertNull(errors)
+}
+
+testSamplesCommand {
+	dependsOn jar
+
+	String command = "samples"
+
+	String errors = _testJar(command)
+
+	Assert.assertNull(errors)
+}
+
+testShCommand {
+	dependsOn jar
+
+	String command = "sh"
+
+	String errors = _testJar(command)
+
+	assert errors.contains("Error: sh")
+}
+
+testVersionCommand {
+	dependsOn jar
+
+	String command = "version"
+
+	String errors = _testJar(command)
+
+	Assert.assertNull(errors)
+}
+
+private String _testJar(String command, String... args) {
+
+	def errorOutputStream = new ByteArrayOutputStream()
+
+	javaexec {
+		args = [jar.archivePath, command, args]
+		errorOutput = errorOutputStream
+		main = "-jar"
+	}
+
+	def errorOutputString = errorOutputStream.toString()
+
+	return errorOutputString
+}

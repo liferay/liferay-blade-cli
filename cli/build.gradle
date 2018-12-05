@@ -24,7 +24,6 @@ task copyMavenProfileJar(type: Copy)
 task createToolingZip(type:Zip)
 task createWrapperZip(type:Zip)
 task downloadPortal(type: Download)
-task testExecutableJar
 task testVersionCommand
 task unzipPortal(type: Copy)
 
@@ -41,7 +40,7 @@ artifacts {
 }
 
 check {
-	dependsOn testExecutableJar, testVersionCommand
+	dependsOn testVersionCommand
 }
 
 clean.doFirst {
@@ -241,17 +240,6 @@ test {
 	}
 
 	maxParallelForks = forks
-}
-
-testExecutableJar {
-	dependsOn jar
-
-	doLast {
-		javaexec {
-			args = [jar.archivePath, "create", "-l"]
-			main = "-jar"
-		}
-	}
 }
 
 unzipPortal {
