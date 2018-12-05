@@ -46,7 +46,7 @@ public class ServerRunCommand extends BaseCommand<ServerRunArgs> {
 
 		File baseDir = new File(args.getBase());
 
-		LocalServer localServer = getLocalServer(baseDir);
+		LocalServer localServer = newLocalServer(baseDir);
 
 		Path liferayHomePath = localServer.getLiferayHomePath();
 
@@ -108,7 +108,7 @@ public class ServerRunCommand extends BaseCommand<ServerRunArgs> {
 		return ServerRunArgs.class;
 	}
 
-	protected LocalServer getLocalServer(File baseDir) {
+	protected LocalServer newLocalServer(File baseDir) {
 		return new LocalServer(baseDir);
 	}
 

@@ -44,7 +44,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 
 		File baseDir = new File(args.getBase());
 
-		LocalServer localServer = getLocalServer(baseDir);
+		LocalServer localServer = newLocalServer(baseDir);
 
 		Path liferayHomePath = localServer.getLiferayHomePath();
 
@@ -95,7 +95,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 		return ServerStopArgs.class;
 	}
 
-	protected LocalServer getLocalServer(File baseDir) {
+	protected LocalServer newLocalServer(File baseDir) {
 		return new LocalServer(baseDir);
 	}
 

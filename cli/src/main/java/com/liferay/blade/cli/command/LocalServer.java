@@ -40,7 +40,7 @@ public class LocalServer {
 
 	public LocalServer(File baseDir) {
 		if (WorkspaceUtil.isWorkspace(baseDir)) {
-			Properties properties = getProperties(baseDir);
+			Properties properties = getWorkspaceProperties(baseDir);
 
 			String liferayHomePath = properties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR_PROPERTY);
 
@@ -203,7 +203,7 @@ public class LocalServer {
 		return processBuilder;
 	}
 
-	protected Properties getProperties(File baseDir) {
+	protected Properties getWorkspaceProperties(File baseDir) {
 		return WorkspaceUtil.getGradleProperties(baseDir);
 	}
 
