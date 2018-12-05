@@ -47,7 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -327,6 +329,26 @@ public class Extensions implements AutoCloseable {
 		map.putIfAbsent(commandNames[0], baseCommand);
 	}
 
+	private void _extractBladeExtensions(Path extensionsDirectory) throws IOException {
+		try (InputStream inputStream = Extensions.class.getResourceAsStream("/blade-extensions-versions.properties")) {
+			Properties properties = new Properties();
+
+			properties.load(inputStream);
+
+			Set<Object> keySet = properties.keySet();
+
+			for (Object key : keySet) {
+				String extension = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
+
+				try (InputStream extensionInputStream = Extensions.class.getResourceAsStream(extension)) {
+					Path extensionPath = extensionsDirectory.resolve(extension);
+
+					Files.copy(inputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
+				}
+			}
+		}
+	}
+
 	private Map<String, BaseCommand<? extends BaseArgs>> _getCommands(String profileName) throws Exception {
 		if (_commands == null) {
 			_commands = new HashMap<>();
@@ -393,11 +415,7 @@ public class Extensions implements AutoCloseable {
 
 			FileUtil.copyDir(getPath(), _tempExtensionsDirectory);
 
-			try (InputStream inputStream = Extensions.class.getResourceAsStream("/maven-profile-1.0.0-SNAPSHOT.jar")) {
-				Path mavenProfilePath = _tempExtensionsDirectory.resolve("maven-profile-1.0.0-SNAPSHOT.jar");
-
-				Files.copy(inputStream, mavenProfilePath, StandardCopyOption.REPLACE_EXISTING);
-			}
+			_extractBladeExtensions(_tempExtensionsDirectory);
 
 			URL[] jarUrls = _getJarUrls(_tempExtensionsDirectory);
 

@@ -17,6 +17,7 @@ apply plugin: "biz.aQute.bnd.builder"
 apply plugin: "java"
 apply plugin: "maven-publish"
 
+task bladeExtensionsVersions
 task cliSourcesJar(type: Jar)
 task cliTestJar(type: Jar, dependsOn: testClasses)
 task copyMavenProfileJar(type: Copy)
@@ -28,6 +29,10 @@ task testVersionCommand
 task unzipPortal(type: Copy)
 
 configurations {
+	bladeExtensions {
+		transitive = false
+	}
+
 	testApi
 }
 
@@ -40,7 +45,7 @@ check {
 }
 
 clean.doFirst {
-	delete "${buildDir}/maven-profile-1.0.0.jar", "${buildDir}/tooling.zip", "${buildDir}/wrapper.zip"
+	delete "${buildDir}/tooling.zip", "${buildDir}/wrapper.zip"
 }
 
 cliSourcesJar {
@@ -62,6 +67,8 @@ createWrapperZip {
 }
 
 dependencies {
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "latest.integration"
+
 	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
 	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
 	compile group: "com.liferay", name: "com.liferay.project.templates", version: "4.2.4"
@@ -112,16 +119,31 @@ downloadPortal {
 }
 
 jar {
-	dependsOn copyMavenProfileJar
 	archiveName = "blade.jar"
 	from createToolingZip, createWrapperZip
 }
 
-project(":extensions:maven-profile").afterEvaluate { project ->
-	copyMavenProfileJar {
-		dependsOn ":extensions:maven-profile:jar"
-		from project.jar.archivePath
-		into "${buildDir}"
+processResources {
+	from configurations.bladeExtensions
+	from bladeExtensionsVersions
+}
+
+bladeExtensionsVersions {
+	File bladeExtensionsVersionsFile = new File(buildDir, "blade-extensions-versions.properties")
+
+	outputs.file(bladeExtensionsVersionsFile)
+
+	Properties properties = new Properties()
+
+	doFirst {
+		configurations.bladeExtensions.resolvedConfiguration.resolvedArtifacts.each {
+			properties.setProperty(it.name, it.moduleVersion.id.version)
+		}
+
+	}
+
+	doLast {
+		properties.store(bladeExtensionsVersionsFile.newWriter(), null)
 	}
 }
 
@@ -156,13 +178,20 @@ repositories {
 	maven {
 		url "https://repo.gradle.org/gradle/libs-releases"
 	}
+
+	maven {
+		url "https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-releases/"
+	}
+
+	maven {
+		url "https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-snapshots/"
+	}
 }
 
 sourceSets {
 	zips {
 		resources {
 			srcDir "${buildDir}"
-			include "maven-profile-1.0.0-SNAPSHOT.jar"
 			include "tooling.zip"
 			include "wrapper.zip"
 		}
