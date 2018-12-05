@@ -14,7 +14,7 @@ apply plugin: 'biz.aQute.bnd.builder'
 apply plugin: 'java'
 
 dependencies {
-	compile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "3.3+"
+	compile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "latest.integration"
 
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
 
