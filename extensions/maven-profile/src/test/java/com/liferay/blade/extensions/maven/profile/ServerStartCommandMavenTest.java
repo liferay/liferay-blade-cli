@@ -63,7 +63,7 @@ public class ServerStartCommandMavenTest {
 
 		Assert.assertTrue(bladeSettings.exists());
 
-		ProcessBuilder processBuilder = new ProcessBuilder("./mvnw", "bundle-support:init");
+		ProcessBuilder processBuilder = new ProcessBuilder("mvnw", "bundle-support:init");
 
 		processBuilder.directory(_testWorkspaceDir);
 
