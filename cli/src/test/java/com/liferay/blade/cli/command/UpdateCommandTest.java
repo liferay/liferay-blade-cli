@@ -92,6 +92,17 @@ public class UpdateCommandTest {
 	}
 
 	@Test
+	public void testCurrentSnapshot() {
+		String currentVersion = "3.4.0.SNAPSHOT201812060746";
+		String updatedVersion = "3.4.0-20181206.074623-13";
+
+		Assert.assertTrue(
+			"currentVersion = " + currentVersion + " should be the latest snapshot " + updatedVersion +
+				" but it is not",
+			UpdateCommand.equal(currentVersion, updatedVersion));
+	}
+
+	@Test
 	public void testCurrentVersionWithNoManifest() throws Exception {
 		BladeTestResults bladeTestResults = TestUtil.runBlade(false, "version");
 

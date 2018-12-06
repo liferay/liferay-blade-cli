@@ -68,6 +68,34 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
+		if (currentVersion.contains("SNAPSHOT")) {
+			if (updateVersion.contains("-")) {
+				matcher = _bladeSnapshotPattern.matcher(currentVersion);
+
+				matcher.find();
+
+				Long currentSnapshot = Long.parseLong(matcher.group(4));
+
+				matcher = _nexusSnapshotPattern.matcher(updateVersion);
+
+				matcher.find();
+
+				Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
+
+				if (updateSnapshot > currentSnapshot) {
+					return false;
+				}
+
+				if (updateSnapshot < currentSnapshot) {
+					return false;
+				}
+
+				if (updateSnapshot == currentSnapshot) {
+					return true;
+				}
+			}
+		}
+
 		return currentSemver.equals(updateSemver);
 	}
 

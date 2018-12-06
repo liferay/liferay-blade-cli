@@ -199,7 +199,15 @@ public class BladeCLI {
 			}
 			else {
 				if (fromSnapshots) {
-					out("Your blade is newer than the latest snapshot " + updateVersion + System.lineSeparator());
+					if (UpdateCommand.equal(bladeCLIVersion, updateVersion)) {
+						out(String.format("Already using the latest snapshot version %s.\n", updateVersion));
+					}
+					else {
+						out(
+							String.format(
+								"blade version %s is newer than latest snapshot %s; skipping update.\n",
+								bladeCLIVersion, updateVersion));
+					}
 				}
 			}
 		}
