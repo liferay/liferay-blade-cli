@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.maven.profile;
+package com.liferay.blade.extensions.maven.profile;
 
 import java.io.File;
 import java.io.StringWriter;

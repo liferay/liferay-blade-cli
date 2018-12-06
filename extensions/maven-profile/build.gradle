@@ -23,6 +23,7 @@ dependencies {
 	testCompile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
 	testCompile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "latest.integration", classifier: "tests"
 	testCompile group: "junit", name: "junit", version: "4.12"
+	testCompile group: "org.zeroturnaround", name: "zt-process-killer", version: "1.9"
 }
 
 publishing {

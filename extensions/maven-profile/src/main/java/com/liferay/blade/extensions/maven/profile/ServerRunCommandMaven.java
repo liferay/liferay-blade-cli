@@ -18,7 +18,7 @@ package com.liferay.blade.extensions.maven.profile;
 
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.LocalServer;
-import com.liferay.blade.cli.command.ServerStartCommand;
+import com.liferay.blade.cli.command.ServerRunCommand;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
@@ -26,11 +26,10 @@ import java.io.File;
 import java.util.Properties;
 
 /**
- * @author David Truong
- * @author Simon Jiang
+ * @author Gregory Amerson
  */
 @BladeProfile("maven")
-public class ServerStartCommandMaven extends ServerStartCommand {
+public class ServerRunCommandMaven extends ServerRunCommand {
 
 	@Override
 	protected LocalServer newLocalServer(File baseDir) {
