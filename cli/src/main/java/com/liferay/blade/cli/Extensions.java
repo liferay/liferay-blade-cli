@@ -337,13 +337,15 @@ public class Extensions implements AutoCloseable {
 
 			Set<Object> keySet = properties.keySet();
 
+			ClassLoader classLoader = Extensions.class.getClassLoader();
+
 			for (Object key : keySet) {
 				String extension = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
 
-				try (InputStream extensionInputStream = Extensions.class.getResourceAsStream(extension)) {
+				try (InputStream extensionInputStream = classLoader.getResourceAsStream(extension)) {
 					Path extensionPath = extensionsDirectory.resolve(extension);
 
-					Files.copy(inputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
+					Files.copy(extensionInputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
 				}
 			}
 		}
