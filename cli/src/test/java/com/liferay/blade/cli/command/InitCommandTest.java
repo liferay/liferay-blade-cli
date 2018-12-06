@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
@@ -227,6 +228,42 @@ public class InitCommandTest {
 		Assert.assertTrue(new File(_workspaceDir, "modules").exists());
 
 		_verifyGradleBuild();
+	}
+
+	@Test
+	public void testDefaultInitWorkspaceDirectoryIsWorkspace() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "firstWorkspace"};
+
+		BladeTest bladeTest = new BladeTest();
+
+		bladeTest.run(args);
+
+		File firstWorkspace = new File(_workspaceDir, "firstWorkspace");
+
+		String[] moreArgs = {"--base", firstWorkspace.getPath(), "init", "nextWorkspace"};
+
+		bladeTest = new BladeTest(false);
+
+		bladeTest.run(moreArgs);
+
+		Assert.assertTrue(firstWorkspace.getName() + " should exist but does not.", firstWorkspace.exists());
+
+		File nextWorkspace = new File(_workspaceDir + File.separator + "firstWorkspace", "nextWorkspace");
+
+		Assert.assertFalse(nextWorkspace.getName() + " should not exist, but it does.", nextWorkspace.exists());
+
+		try {
+			BladeTestResults bladeTestResults = TestUtil.runBlade(firstWorkspace, moreArgs);
+
+			Assert.assertFalse(
+				"There should be no results from the command, but bladeTestResults != null)", bladeTestResults != null);
+		}
+		catch (AssertionError e) {
+			Assert.assertTrue(
+				"should say 'does not support initializing a workspace inside of another workspace', but says: " +
+					e.getMessage(),
+				e.getMessage().contains("does not support initializing a workspace inside of another workspace"));
+		}
 	}
 
 	@Test

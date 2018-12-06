@@ -20,6 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 import com.liferay.project.templates.internal.util.FileUtil;
@@ -152,6 +153,13 @@ public class InitCommand extends BaseCommand<InitArgs> {
 						return;
 					}
 				}
+			}
+		}
+		else {
+			if (WorkspaceUtil.isWorkspace(bladeCLI)) {
+				_addError("blade does not support initializing a workspace inside of another workspace.");
+
+				return;
 			}
 		}
 
