@@ -1,14 +1,16 @@
+task testCreateCommand(type: JavaExec)
+task testGwCommand(type: JavaExec)
+task testHelpCommand(type: JavaExec)
+task testInitCommand(type: JavaExec)
+task testSamplesCommand(type: JavaExec)
+task testShCommand(type: JavaExec)
+task testVersionCommand(type: JavaExec)
+
 apply plugin: "java"
 
-task testCreateCommand
-task testExecutableJar
-task testGwCommand
-task testHelpCommand
-task testInitCommand
-task testSamplesCommand
-task testShCommand
-task testVersionCommand
 
+check {
+	tasks.withType(JavaExec)
 jar {
 	dependsOn ":cli:copyMavenProfileJar"
 	archiveName = "blade.jar"
@@ -26,9 +28,6 @@ testCreateCommand {
 	Assert.assertNull(errors)
 }
 
-testExecutableJar {
-	dependsOn testCreateCommand, testGwCommand, testHelpCommand, testInitCommand, testSamplesCommand, testShCommand, testVersionCommand
-}
 
 testGwCommand {
 	dependsOn jar
