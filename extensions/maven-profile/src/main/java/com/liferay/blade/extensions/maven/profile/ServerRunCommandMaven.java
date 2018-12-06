@@ -16,27 +16,30 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
+import java.io.File;
+import java.util.Properties;
+
 import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.InitArgs;
-import com.liferay.blade.cli.command.InitCommand;
+import com.liferay.blade.cli.command.LocalServer;
+import com.liferay.blade.cli.command.ServerRunCommand;
+import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 /**
  * @author Gregory Amerson
- * @author Terry Jia
  */
 @BladeProfile("maven")
-public class InitCommandMaven extends InitCommand {
-
-	public InitCommandMaven() {
-	}
+public class ServerRunCommandMaven extends ServerRunCommand {
 
 	@Override
-	public void execute() throws Exception {
-		InitArgs initArgs = getArgs();
+	protected LocalServer newLocalServer(File baseDir) {
+		return new LocalServer(baseDir) {
 
-		initArgs.setProfileName("maven");
+			@Override
+			protected Properties getWorkspaceProperties(File baseDir) {
+				return MavenUtil.getMavenProperties(baseDir);
+			}
 
-		super.execute();
+		};
 	}
 
 }
