@@ -7,19 +7,17 @@ task testShCommand(type: JavaExec)
 task testVersionCommand(type: JavaExec)
 
 apply plugin: "java"
-
+allprojects {
+	tasks.withType(JavaExec) {
+		dependsOn ":cli:jar"
+	}
+}
 
 check {
 	tasks.withType(JavaExec)
-jar {
-	dependsOn ":cli:copyMavenProfileJar"
-	archiveName = "blade.jar"
-	from ":cli:createToolingZip, :clicreateWrapperZip"
 }
 
 testCreateCommand {
-	dependsOn jar
-
 	String command = "create"
 	String testArgs = "-l"
 
@@ -28,10 +26,7 @@ testCreateCommand {
 	Assert.assertNull(errors)
 }
 
-
 testGwCommand {
-	dependsOn jar
-
 	String command = "gw"
 
 	String errors = _testJar(command)
@@ -40,8 +35,6 @@ testGwCommand {
 }
 
 testHelpCommand {
-	dependsOn jar
-
 	String command = "help"
 
 	String errors = _testJar(command)
@@ -50,8 +43,6 @@ testHelpCommand {
 }
 
 testInitCommand {
-	dependsOn jar
-
 	String command = "init"
 	String testArgs = "hello world"
 
@@ -61,8 +52,6 @@ testInitCommand {
 }
 
 testSamplesCommand {
-	dependsOn jar
-
 	String command = "samples"
 
 	String errors = _testJar(command)
@@ -71,8 +60,6 @@ testSamplesCommand {
 }
 
 testShCommand {
-	dependsOn jar
-
 	String command = "sh"
 
 	String errors = _testJar(command)
@@ -81,8 +68,6 @@ testShCommand {
 }
 
 testVersionCommand {
-	dependsOn jar
-
 	String command = "version"
 
 	String jarVersion = _testJar(command, "true")
