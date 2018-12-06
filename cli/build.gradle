@@ -39,10 +39,6 @@ artifacts {
 	 testApi cliTestJar
 }
 
-check {
-	dependsOn testVersionCommand
-}
-
 clean.doFirst {
 	delete "${buildDir}/tooling.zip", "${buildDir}/wrapper.zip"
 }

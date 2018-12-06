@@ -85,22 +85,31 @@ testVersionCommand {
 
 	String command = "version"
 
-	String errors = _testJar(command)
+	String jarVersion = _testJar(command, "true")
 
-	Assert.assertNull(errors)
+	assert jarVersion.contains(project.Version)
 }
 
 private String _testJar(String command, String... args) {
 
 	def errorOutputStream = new ByteArrayOutputStream()
+	def standardOutputStream = new ByteArrayOutputStream()
 
 	javaexec {
-		args = [jar.archivePath, command, args]
+		args = [":jar.archivePath", command, args]
 		errorOutput = errorOutputStream
 		main = "-jar"
+		standardOutput = standardOutputStream
 	}
 
-	def errorOutputString = errorOutputStream.toString()
+	if (args.contains("true")) {
+		def outputString = standardOutputStream.toString()
 
-	return errorOutputString
+		return outputString
+	}
+	else {
+		def errorOutputString = errorOutputStream.toString()
+
+		return errorOutputString
+	}
 }
