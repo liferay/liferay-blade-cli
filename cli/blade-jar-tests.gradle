@@ -26,7 +26,7 @@ testCreateCommand {
 
 	doLast{
 		assert standardStream.toString().contains("service-builder")
-		assert true == errorStream.toString().empty
+		assert !errorStream.toString().toLowerCase().contains("error")
 	}
 }
 
@@ -38,7 +38,7 @@ testGwCommand {
 
 	doLast{
 		assert standardStream.toString().contains(gradle.gradleVersion)
-		assert true == errorStream.toString().empty
+		assert !errorStream.toString().toLowerCase().contains("error")
 	}
 }
 
@@ -50,7 +50,7 @@ testHelpCommand {
 
 	doLast{
 		assert standardStream.toString().contains("init")
-		assert true == errorStream.toString().empty
+		assert !errorStream.toString().toLowerCase().contains("error")
 	}
 }
 
@@ -69,7 +69,7 @@ testInitCommand {
 		File initProjectDir = new File(initDir, "hello world")
 
 		assert initProjectDir.exists()
-		assert true == errorStream.toString().empty
+		assert !errorStream.toString().toLowerCase().contains("error")
 
 		delete initDir
 	}
@@ -83,7 +83,7 @@ testSamplesCommand {
 
 	doLast{
 		assert standardStream.toString().contains("jsp-portlet")
-		assert true == errorStream.toString().empty
+		assert !errorStream.toString().toLowerCase().contains("error")
 	}
 }
 
@@ -95,7 +95,7 @@ testVersionCommand {
 
 	doLast{
 		String projectVersion = project.version.replaceFirst("-", ".")
-		assert true == errorStream.toString().empty
+		assert !errorStream.toString().toLowerCase().contains("error")
 		assert standardStream.toString().contains(projectVersion)
 	}
 }
