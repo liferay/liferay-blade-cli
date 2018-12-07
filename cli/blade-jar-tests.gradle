@@ -1,27 +1,27 @@
-allprojects {
-	tasks.withType(JavaExec) {
-		dependsOn jar
-	}
-}
+task testBladeCreateCommand(type: JavaExec)
+task testBladeGwCommand(type: JavaExec)
+task testBladeHelpCommand(type: JavaExec)
+task testBladeInitCommand(type: JavaExec)
+task testBladeSamplesCommand(type: JavaExec)
+task testBladeVersionCommand(type: JavaExec)
 
-task testCreateCommand(type: JavaExec)
-task testGwCommand(type: JavaExec)
-task testHelpCommand(type: JavaExec)
-task testInitCommand(type: JavaExec)
-task testSamplesCommand(type: JavaExec)
-task testVersionCommand(type: JavaExec)
+Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith('testBlade') }
+
+testBladeTasks.each { task ->
+	task.dependsOn jar
+	task.main = "-jar"
+}
 
 check {
-	dependsOn tasks.withType(JavaExec)
+	dependsOn testBladeTasks
 }
 
-def errorStream = new ByteArrayOutputStream()
-def standardStream = new ByteArrayOutputStream()
+ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
+ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
 
-testCreateCommand {
+testBladeCreateCommand {
 	args = [jar.archivePath, 'create', '-l']
 	errorOutput = errorStream
-	main = '-jar'
 	standardOutput = standardStream
 
 	doLast{
@@ -30,10 +30,9 @@ testCreateCommand {
 	}
 }
 
-testGwCommand {
+testBladeGwCommand {
 	args = [jar.archivePath, 'gw']
 	errorOutput = errorStream
-	main = '-jar'
 	standardOutput = standardStream
 
 	doLast{
@@ -42,10 +41,9 @@ testGwCommand {
 	}
 }
 
-testHelpCommand {
+testBladeHelpCommand {
 	args = [jar.archivePath, 'help']
 	errorOutput = errorStream
-	main = '-jar'
 	standardOutput = standardStream
 
 	doLast{
@@ -54,14 +52,13 @@ testHelpCommand {
 	}
 }
 
-testInitCommand {
+testBladeInitCommand {
 	File initDir = new File(buildDir, "initTest")
 
 	initDir.mkdirs()
 
 	args = [jar.archivePath, 'init', "hello world"]
 	errorOutput = errorStream
-	main = '-jar'
 	standardOutput = standardStream
 	workingDir = initDir
 
@@ -75,9 +72,8 @@ testInitCommand {
 	}
 }
 
-testSamplesCommand {
+testBladeSamplesCommand {
 	args = [jar.archivePath, 'samples']
-	main = '-jar'
 	standardOutput = standardStream
 	errorOutput = errorStream
 
@@ -87,9 +83,8 @@ testSamplesCommand {
 	}
 }
 
-testVersionCommand {
+testBladeVersionCommand {
 	args = [jar.archivePath, 'version']
-	main = '-jar'
 	standardOutput = standardStream
 	errorOutput = errorStream
 
