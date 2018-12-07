@@ -1,0 +1,96 @@
+task testBladeCreateCommand(type: JavaExec)
+task testBladeGwCommand(type: JavaExec)
+task testBladeHelpCommand(type: JavaExec)
+task testBladeInitCommand(type: JavaExec)
+task testBladeSamplesCommand(type: JavaExec)
+task testBladeVersionCommand(type: JavaExec)
+
+Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith('testBlade') }
+
+testBladeTasks.each { task ->
+	task.dependsOn jar
+	task.main = "-jar"
+}
+
+check {
+	dependsOn testBladeTasks
+}
+
+ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
+ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
+
+testBladeCreateCommand {
+	args = [jar.archivePath, 'create', '-l']
+	errorOutput = errorStream
+	standardOutput = standardStream
+
+	doLast{
+		assert standardStream.toString().contains("service-builder")
+		assert !errorStream.toString().toLowerCase().contains("error")
+	}
+}
+
+testBladeGwCommand {
+	args = [jar.archivePath, 'gw']
+	errorOutput = errorStream
+	standardOutput = standardStream
+
+	doLast{
+		assert standardStream.toString().contains(gradle.gradleVersion)
+		assert !errorStream.toString().toLowerCase().contains("error")
+	}
+}
+
+testBladeHelpCommand {
+	args = [jar.archivePath, 'help']
+	errorOutput = errorStream
+	standardOutput = standardStream
+
+	doLast{
+		assert standardStream.toString().contains("init")
+		assert !errorStream.toString().toLowerCase().contains("error")
+	}
+}
+
+testBladeInitCommand {
+	File initDir = new File(buildDir, "initTest")
+
+	initDir.mkdirs()
+
+	args = [jar.archivePath, 'init', "hello world"]
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = initDir
+
+	doLast{
+		File initProjectDir = new File(initDir, "hello world")
+
+		assert initProjectDir.exists()
+		assert !errorStream.toString().toLowerCase().contains("error")
+
+		delete initDir
+	}
+}
+
+testBladeSamplesCommand {
+	args = [jar.archivePath, 'samples']
+	standardOutput = standardStream
+	errorOutput = errorStream
+
+	doLast{
+		assert standardStream.toString().contains("jsp-portlet")
+		assert !errorStream.toString().toLowerCase().contains("error")
+	}
+}
+
+testBladeVersionCommand {
+	args = [jar.archivePath, 'version']
+	standardOutput = standardStream
+	errorOutput = errorStream
+
+	doLast{
+		String projectVersion = project.version.replaceFirst("-", ".")
+		assert !errorStream.toString().toLowerCase().contains("error")
+		assert standardStream.toString().contains(projectVersion)
+	}
+}

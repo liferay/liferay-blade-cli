@@ -24,8 +24,6 @@ task copyMavenProfileJar(type: Copy)
 task createToolingZip(type:Zip)
 task createWrapperZip(type:Zip)
 task downloadPortal(type: Download)
-task testExecutableJar
-task testVersionCommand
 task unzipPortal(type: Copy)
 
 configurations {
@@ -38,10 +36,6 @@ configurations {
 
 artifacts {
 	 testApi cliTestJar
-}
-
-check {
-	dependsOn testExecutableJar, testVersionCommand
 }
 
 clean.doFirst {
@@ -243,17 +237,6 @@ test {
 	maxParallelForks = forks
 }
 
-testExecutableJar {
-	dependsOn jar
-
-	doLast {
-		javaexec {
-			args = [jar.archivePath, "create", "-l"]
-			main = "-jar"
-		}
-	}
-}
-
 unzipPortal {
 	dependsOn downloadPortal
 	from zipTree(downloadPortal.dest)
@@ -261,3 +244,5 @@ unzipPortal {
 }
 
 version = "3.4.0-SNAPSHOT"
+
+apply from: "blade-jar-smoke-tests.gradle"
