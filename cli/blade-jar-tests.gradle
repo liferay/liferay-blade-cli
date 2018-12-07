@@ -1,100 +1,101 @@
+allprojects {
+	tasks.withType(JavaExec) {
+		dependsOn jar
+	}
+}
+
 task testCreateCommand(type: JavaExec)
 task testGwCommand(type: JavaExec)
 task testHelpCommand(type: JavaExec)
 task testInitCommand(type: JavaExec)
 task testSamplesCommand(type: JavaExec)
-task testShCommand(type: JavaExec)
 task testVersionCommand(type: JavaExec)
 
-apply plugin: "java"
-allprojects {
-	tasks.withType(JavaExec) {
-		dependsOn ":cli:jar"
-	}
+check {
+	dependsOn tasks.withType(JavaExec)
 }
 
-check {
-	tasks.withType(JavaExec)
-}
+def errorStream = new ByteArrayOutputStream()
+def standardStream = new ByteArrayOutputStream()
 
 testCreateCommand {
-	String command = "create"
-	String testArgs = "-l"
+	args = [jar.archivePath, 'create', '-l']
+	errorOutput = errorStream
+	main = '-jar'
+	standardOutput = standardStream
 
-	String errors = _testJar(command, testArgs)
-
-	Assert.assertNull(errors)
+	doLast{
+		assert standardStream.toString().contains("service-builder")
+		assert true == errorStream.toString().empty
+	}
 }
 
 testGwCommand {
-	String command = "gw"
+	args = [jar.archivePath, 'gw']
+	errorOutput = errorStream
+	main = '-jar'
+	standardOutput = standardStream
 
-	String errors = _testJar(command)
-
-	Assert.assertNull(errors)
+	doLast{
+		assert standardStream.toString().contains(gradle.gradleVersion)
+		assert true == errorStream.toString().empty
+	}
 }
 
 testHelpCommand {
-	String command = "help"
+	args = [jar.archivePath, 'help']
+	errorOutput = errorStream
+	main = '-jar'
+	standardOutput = standardStream
 
-	String errors = _testJar(command)
-
-	Assert.assertNull(errors)
+	doLast{
+		assert standardStream.toString().contains("init")
+		assert true == errorStream.toString().empty
+	}
 }
 
 testInitCommand {
-	String command = "init"
-	String testArgs = "hello world"
+	File initDir = new File(buildDir, "initTest")
 
-	String errors = _testJar(command, testArgs)
+	initDir.mkdirs()
 
-	Assert.assertNull(errors)
+	args = [jar.archivePath, 'init', "hello world"]
+	errorOutput = errorStream
+	main = '-jar'
+	standardOutput = standardStream
+	workingDir = initDir
+
+	doLast{
+		File initProjectDir = new File(initDir, "hello world")
+
+		assert initProjectDir.exists()
+		assert true == errorStream.toString().empty
+
+		delete initDir
+	}
 }
 
 testSamplesCommand {
-	String command = "samples"
+	args = [jar.archivePath, 'samples']
+	main = '-jar'
+	standardOutput = standardStream
+	errorOutput = errorStream
 
-	String errors = _testJar(command)
-
-	Assert.assertNull(errors)
-}
-
-testShCommand {
-	String command = "sh"
-
-	String errors = _testJar(command)
-
-	assert errors.contains("Error: sh")
+	doLast{
+		assert standardStream.toString().contains("jsp-portlet")
+		assert true == errorStream.toString().empty
+	}
 }
 
 testVersionCommand {
-	String command = "version"
+	args = [jar.archivePath, 'version']
+	main = '-jar'
+	standardOutput = standardStream
+	errorOutput = errorStream
 
-	String jarVersion = _testJar(command, "true")
-
-	assert jarVersion.contains(project.Version)
-}
-
-private String _testJar(String command, String... args) {
-
-	def errorOutputStream = new ByteArrayOutputStream()
-	def standardOutputStream = new ByteArrayOutputStream()
-
-	javaexec {
-		args = [":jar.archivePath", command, args]
-		errorOutput = errorOutputStream
-		main = "-jar"
-		standardOutput = standardOutputStream
-	}
-
-	if (args.contains("true")) {
-		def outputString = standardOutputStream.toString()
-
-		return outputString
-	}
-	else {
-		def errorOutputString = errorOutputStream.toString()
-
-		return errorOutputString
+	doLast{
+		String projectVersion = project.version.replaceFirst("-", ".")
+		assert true == errorStream.toString().empty
+		assert standardStream.toString().contains(projectVersion)
 	}
 }
