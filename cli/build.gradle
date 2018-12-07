@@ -245,4 +245,4 @@ unzipPortal {
 
 version = "3.4.0-SNAPSHOT"
 
-apply from: "blade-jar-tests.gradle"
+apply from: "blade-jar-smoke-tests.gradle"
