@@ -32,7 +32,9 @@ Private-Package:\
 	\
 	org.gradle,\
 	org.gradle.api,\
+	org.gradle.api.internal,\
 	org.gradle.api.logging,\
+	org.gradle.api.reflect,\
 	org.gradle.api.resources,\
 	org.gradle.api.specs,\
 	org.gradle.groovy.scripts,\
@@ -47,6 +49,7 @@ Private-Package:\
 	org.gradle.internal.exceptions,\
 	org.gradle.internal.impldep.com.google.common.base,\
 	org.gradle.internal.impldep.com.google.common.collect,\
+	org.gradle.internal.impldep.org.apache.commons.io,\
 	org.gradle.internal.io,\
 	org.gradle.internal.jvm,\
 	org.gradle.internal.logging,\
@@ -61,12 +64,15 @@ Private-Package:\
 	org.gradle.internal.logging.text,\
 	org.gradle.internal.nativeintegration,\
 	org.gradle.internal.nativeintegration.console,\
+	org.gradle.internal.operations,\
 	org.gradle.internal.reflect,\
 	org.gradle.internal.resource,\
+	org.gradle.internal.scripts,\
 	org.gradle.internal.service,\
 	org.gradle.internal.time,\
 	org.gradle.internal.typeconversion,\
 	org.gradle.internal.util,\
+	org.gradle.scripts,\
 	org.gradle.tooling,\
 	org.gradle.tooling.connection,\
 	org.gradle.tooling.events,\
@@ -91,6 +97,7 @@ Private-Package:\
 	org.gradle.tooling.internal.provider,\
 	org.gradle.tooling.model,\
 	org.gradle.tooling.model.build,\
+	org.gradle.tooling.model.cpp,\
 	org.gradle.tooling.model.eclipse,\
 	org.gradle.tooling.model.gradle,\
 	org.gradle.tooling.model.idea,\
