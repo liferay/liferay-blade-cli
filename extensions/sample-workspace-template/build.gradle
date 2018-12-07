@@ -31,6 +31,12 @@ eclipse {
 
 jar.baseName = "com.liferay.project.templates.workspace.sample-1.0.0"
 
+repositories {
+	maven {
+		url "https://repo.gradle.org/gradle/libs-releases/"
+	}
+}
+
 test {
 	dependsOn jar
 
