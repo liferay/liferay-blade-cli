@@ -333,6 +333,12 @@ public class Extensions implements AutoCloseable {
 		try (InputStream inputStream = Extensions.class.getResourceAsStream("/blade-extensions-versions.properties")) {
 			Properties properties = new Properties();
 
+			// prevent NPE when debugging
+
+			if (inputStream == null) {
+				return;
+			}
+
 			properties.load(inputStream);
 
 			Set<Object> keySet = properties.keySet();
