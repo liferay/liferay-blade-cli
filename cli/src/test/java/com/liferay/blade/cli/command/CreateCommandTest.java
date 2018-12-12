@@ -36,7 +36,9 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.Writer;
 
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -973,6 +975,34 @@ public class CreateCommandTest {
 		_makeWorkspace(workspace);
 
 		_testCreateWar(workspace, "war-mvc-portlet", "war-portlet-test");
+	}
+
+	@Test
+	public void testCreateWorkspaceCommaDelimitedModulesDirGradleProject() throws Exception {
+		File tempRoot = temporaryFolder.getRoot();
+
+		File workspace = new File(tempRoot, "workspace");
+
+		_makeWorkspace(workspace);
+
+		File gradleProperties = new File(workspace, "gradle.properties");
+
+		Assert.assertTrue(gradleProperties.exists());
+
+		String configLine = System.lineSeparator() + "liferay.workspace.modules.dir=modules,foo,bar";
+
+		Files.write(gradleProperties.toPath(), configLine.getBytes(), StandardOpenOption.APPEND);
+
+		String[] args = {"create", "-t", "rest", "--base", workspace.getAbsolutePath(), "resttest"};
+
+		_bladeTest.run(args);
+
+		String fooBar = workspace.getAbsolutePath() + "/modules,foo,bar";
+
+		File fooBarDir = new File(fooBar);
+
+		Assert.assertFalse(
+			"directory named '" + fooBarDir.getName() + "' should not exist, but it does.", fooBarDir.exists());
 	}
 
 	@Test

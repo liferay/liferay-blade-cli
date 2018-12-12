@@ -343,6 +343,15 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			modulesDirValue = WorkspaceConstants.DEFAULT_MODULES_DIR;
 		}
 
+		if (modulesDirValue.contains(",")) {
+			bladeCLI.out(
+				"WARNING: " + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY + " has multiple values: " +
+					modulesDirValue);
+			modulesDirValue = modulesDirValue.substring(0, modulesDirValue.indexOf(","));
+
+			bladeCLI.out("WARNING: using " + modulesDirValue);
+		}
+
 		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
 
 		File modulesDir = new File(projectDir, modulesDirValue);

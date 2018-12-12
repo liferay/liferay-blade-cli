@@ -331,6 +331,10 @@ public class Extensions implements AutoCloseable {
 
 	private void _extractBladeExtensions(Path extensionsDirectory) throws IOException {
 		try (InputStream inputStream = Extensions.class.getResourceAsStream("/blade-extensions-versions.properties")) {
+			if (inputStream == null) {
+				return;
+			}
+
 			Properties properties = new Properties();
 
 			properties.load(inputStream);
