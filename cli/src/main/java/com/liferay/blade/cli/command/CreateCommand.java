@@ -195,12 +195,24 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return;
 		}
 
+		boolean mavenBuild = "maven".equals(createArgs.getBuild());
+
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
+
+		projectTemplatesArgs.setGradle(!mavenBuild);
+		projectTemplatesArgs.setMaven(mavenBuild);
 
 		projectTemplatesArgs.setClassName(createArgs.getClassname());
 		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
-		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
+
+		if (mavenBuild) {
+			projectTemplatesArgs.setDependencyManagementEnabled(false);
+		}
+		else {
+			projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
+		}
+
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
 		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
 		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
@@ -216,11 +228,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		Path customTemplatesPath = bladeCLI.getExtensionsPath();
 
 		archetypesDirs.add(customTemplatesPath.toFile());
-
-		boolean mavenBuild = "maven".equals(createArgs.getBuild());
-
-		projectTemplatesArgs.setGradle(!mavenBuild);
-		projectTemplatesArgs.setMaven(mavenBuild);
 
 		execute(projectTemplatesArgs);
 

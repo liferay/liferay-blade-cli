@@ -26,6 +26,7 @@ import java.io.FilenameFilter;
 
 import java.util.Objects;
 import java.util.Properties;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +73,9 @@ public class WorkspaceUtil {
 			return gradleParent;
 		}
 
-		File mavenParent = BladeUtil.findParentFile(dir, new String[] {"pom.xml"}, true);
+		Predicate<File> isWorkspacePomFile = WorkspaceUtil::_isWorkspacePomFile;
+
+		File mavenParent = BladeUtil.findParentFile(dir, new String[] {"pom.xml"}, true, isWorkspacePomFile);
 
 		if (_isWorkspacePomFile(new File(mavenParent, "pom.xml"))) {
 			return mavenParent;

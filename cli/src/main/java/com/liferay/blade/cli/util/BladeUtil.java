@@ -90,7 +90,10 @@ public class BladeUtil {
 		}
 	}
 
-	public static File findParentFile(File dir, String[] fileNames, boolean checkParents) {
+	@SafeVarargs
+	public static File findParentFile(
+		File dir, String[] fileNames, boolean checkParents, Predicate<File>... predicates) {
+
 		if (dir == null) {
 			return null;
 		}
@@ -106,13 +109,30 @@ public class BladeUtil {
 		for (String fileName : fileNames) {
 			File file = new File(dir, fileName);
 
-			if (file.exists()) {
+			if ((predicates != null) && (predicates.length > 0)) {
+				if (file.exists()) {
+					boolean predicatesPass = true;
+
+					for (Predicate<File> predicate : predicates) {
+						if (!predicate.test(file)) {
+							predicatesPass = false;
+
+							break;
+						}
+					}
+
+					if (predicatesPass) {
+						return dir;
+					}
+				}
+			}
+			else if (file.exists()) {
 				return dir;
 			}
 		}
 
 		if (checkParents) {
-			return findParentFile(dir.getParentFile(), fileNames, checkParents);
+			return findParentFile(dir.getParentFile(), fileNames, checkParents, predicates);
 		}
 
 		return null;

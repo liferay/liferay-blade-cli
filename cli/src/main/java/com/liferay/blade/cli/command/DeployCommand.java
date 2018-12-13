@@ -16,38 +16,27 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.bnd.header.Attrs;
-import aQute.bnd.osgi.Domain;
-
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.LiferayBundleDeployer;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.gradle.ProcessResult;
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.FileWatcher;
-import com.liferay.blade.cli.util.FileWatcher.Consumer;
+import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.blade.gradle.tooling.ProjectInfo;
 
 import java.io.File;
 import java.io.PrintStream;
 
 import java.net.ConnectException;
-import java.net.URI;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.dto.BundleDTO;
 
 /**
  * @author Gregory Amerson
@@ -61,43 +50,19 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		String host = "localhost";
-		int port = 11311;
-
-		if (!BladeUtil.canConnect(host, port)) {
-			StringBuilder sb = new StringBuilder();
-
-			sb.append("Unable to connect to gogo shell on " + host + ":" + port);
-			sb.append(System.lineSeparator());
-			sb.append("Liferay may not be running, or the gogo shell may need to be enabled. ");
-			sb.append("Please see this link for more details: ");
-			sb.append("https://dev.liferay.com/en/develop/reference/-/knowledge_base/7-1/using-the-felix-gogo-shell");
-			sb.append(System.lineSeparator());
-
-			_addError(sb.toString());
-
-			PrintStream error = bladeCLI.error();
-
-			new ConnectException(sb.toString()).printStackTrace(error);
-
-			return;
-		}
-
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
 		DeployArgs deployArgs = getArgs();
 
 		File baseDir = new File(deployArgs.getBase());
 
-		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(baseDir.toPath());
-
-		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
-
-		if (deployArgs.isWatch()) {
-			_deployWatch(gradleExec, projectOutputFiles, host, port);
+		if (WorkspaceUtil.isWorkspace(baseDir)) {
+			_deploy(gradleExec, "deploy");
 		}
 		else {
-			_deploy(gradleExec, projectOutputFiles, host, port);
+			ProjectInfo projectInfo = GradleTooling.loadProjectInfo(baseDir.toPath());
+
+			_deployStandalone(gradleExec, projectInfo);
 		}
 	}
 
@@ -110,293 +75,113 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		getBladeCLI().addErrors("deploy", Collections.singleton(msg));
 	}
 
-	private void _addError(String prefix, String msg) {
-		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
-	}
+	private void _deploy(GradleExec gradle, String command) throws Exception {
+		DeployArgs deployArgs = getArgs();
 
-	private void _deploy(GradleExec gradle, Map<String, Set<File>> projectOutputFiles, String host, int port)
-		throws Exception {
+		File baseDir = new File(deployArgs.getBase());
 
-		ProcessResult processResult = gradle.executeTask("assemble -x check");
+		ProcessResult processResult = gradle.executeTask(command, baseDir, false);
 
 		int resultCode = processResult.getResultCode();
 
 		BladeCLI bladeCLI = getBladeCLI();
 
 		if (resultCode > 0) {
-			String errorMessage = "Gradle assemble task failed.";
+			String errorMessage = "Gradle " + command + " task failed.";
 
 			_addError(errorMessage);
 
 			PrintStream err = bladeCLI.error();
 
-			_addError(processResult.getError());
+			new ConnectException(errorMessage).printStackTrace(err);
+
+			return;
+		}
+		else {
+			String output = "Gradle " + command + " task succeeded.";
+
+			bladeCLI.out(output);
+		}
+	}
+
+	private void _deployStandalone(GradleExec gradle, ProjectInfo projectInfo) throws Exception {
+		DeployArgs deployArgs = getArgs();
+
+		File baseDir = new File(deployArgs.getBase());
+
+		ProcessResult processResult = gradle.executeTask("assemble -x check", baseDir, false);
+
+		int resultCode = processResult.getResultCode();
+
+		BladeCLI bladeCLI = getBladeCLI();
+
+		if (resultCode > 0) {
+			String errorMessage = "Gradle deploy task failed.";
+
+			_addError(errorMessage);
+
+			PrintStream err = bladeCLI.error();
 
 			new ConnectException(errorMessage).printStackTrace(err);
 
 			return;
 		}
-
-		Collection<Set<File>> values = projectOutputFiles.values();
-
-		Stream<Set<File>> stream = values.stream();
-
-		stream.flatMap(
-			files -> files.stream()
-		).filter(
-			File::exists
-		).forEach(
-			outputFile -> {
-				try {
-					_installOrUpdate(outputFile, host, port);
-				}
-				catch (Exception e) {
-					String message = e.getMessage();
-
-					Class<?> exceptionClass = e.getClass();
-
-					if (message == null) {
-						message = "DeployCommand._deploy threw " + exceptionClass.getSimpleName();
-					}
-
-					_addError(message);
-
-					PrintStream error = bladeCLI.error();
-
-					e.printStackTrace(error);
-				}
-			}
-		);
-	}
-
-	private void _deployBundle(File file, LiferayBundleDeployer client, Domain bundle, Entry<String, Attrs> bsn)
-		throws Exception {
-
-		Entry<String, Attrs> fragmentHost = bundle.getFragmentHost();
-
-		String hostBsn = null;
-
-		if (fragmentHost != null) {
-			hostBsn = fragmentHost.getKey();
-		}
-
-		Collection<BundleDTO> bundles = client.getBundles();
-
-		long existingId = client.getBundleId(bundles, bsn.getKey());
-
-		long hostId = client.getBundleId(bundles, hostBsn);
-
-		URI uri = file.toURI();
-
-		if (existingId > 0) {
-			_reloadExistingBundle(client, fragmentHost, existingId, hostId, uri);
-		}
 		else {
-			_installNewBundle(client, bsn, fragmentHost, hostId, uri);
-		}
-	}
+			String liferayHomeString = projectInfo.getLiferayHome();
 
-	private void _deployWar(File file, LiferayBundleDeployer liferayBundleDeployer) throws Exception {
-		URI uri = file.toURI();
+			if (Objects.nonNull(liferayHomeString)) {
+				File liferayHome = new File(liferayHomeString);
 
-		long bundleId = liferayBundleDeployer.install(uri);
+				File deployFolder = new File(liferayHome, "deploy");
 
-		if (bundleId > 0) {
-			BladeCLI bladeCLI = getBladeCLI();
+				if (deployFolder.exists()) {
+					String output = "Gradle deploy task succeeded.";
 
-			PrintStream out = bladeCLI.out();
+					bladeCLI.out(output);
 
-			out.println("Installed bundle " + bundleId);
+					Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
-			BundleDTO bundle = liferayBundleDeployer.getBundle(bundleId);
+					Collection<Set<File>> values = projectOutputFiles.values();
 
-			if (bundle.state == Bundle.INSTALLED) {
-				liferayBundleDeployer.start(bundleId);
+					Stream<Set<File>> stream = values.stream();
 
-				out.println("Started bundle " + bundleId);
-			}
-			else if (bundle.state == Bundle.ACTIVE) {
-				liferayBundleDeployer.update(bundleId, uri);
+					Path deployFolderPath = deployFolder.toPath();
 
-				out.println("Updated bundle " + bundleId);
-			}
-		}
-		else {
-			throw new Exception("Failed to deploy war: " + file.getAbsolutePath());
-		}
-	}
+					stream.flatMap(
+						files -> files.stream()
+					).filter(
+						File::exists
+					).forEach(
+						outputFile -> {
+							try {
+								Path outputPath = outputFile.toPath();
 
-	private void _deployWatch(
-			final GradleExec gradleExec, final Map<String, Set<File>> projectOutputFiles, String host, int port)
-		throws Exception {
+								Path outputFileName = outputPath.getFileName();
 
-		_deploy(gradleExec, projectOutputFiles, host, port);
+								Path destinationOutputPath = deployFolderPath.resolve(outputFileName);
 
-		Collection<Set<File>> values = projectOutputFiles.values();
+								Files.copy(outputPath, destinationOutputPath);
+							}
+							catch (Exception e) {
+								String message = e.getMessage();
 
-		Stream<Set<File>> stream = values.stream();
+								Class<?> exceptionClass = e.getClass();
 
-		Collection<Path> outputPaths = stream.flatMap(
-			files -> files.stream()
-		).map(
-			File::toPath
-		).collect(
-			Collectors.toSet()
-		);
+								if (message == null) {
+									message = "DeployCommand._deployStandalone threw " + exceptionClass.getSimpleName();
+								}
 
-		BladeCLI bladeCLI = getBladeCLI();
+								_addError(message);
 
-		new Thread() {
+								PrintStream error = bladeCLI.error();
 
-			@Override
-			public void run() {
-				try {
-					gradleExec.executeTask("assemble -x check -t");
-				}
-				catch (Exception e) {
-					String message = e.getMessage();
-
-					if (message == null) {
-						message = "Gradle build task failed.";
-					}
-
-					_addError("deploy watch", message);
-
-					PrintStream error = bladeCLI.error();
-
-					e.printStackTrace(error);
-				}
-			}
-
-		}.start();
-
-		Consumer<Path> consumer = new Consumer<Path>() {
-
-			@Override
-			public void consume(Path modified) {
-				try {
-					File file = modified.toFile();
-
-					File modifiedFile = file.getAbsoluteFile();
-
-					if (outputPaths.contains(modifiedFile.toPath())) {
-						bladeCLI.out("installOrUpdate " + modifiedFile);
-
-						_installOrUpdate(modifiedFile, host, port);
-					}
-				}
-				catch (Exception e) {
-					String exceptionMessage = e.getMessage() == null ? "" : (System.lineSeparator() + e.getMessage());
-
-					String message = "Error: Bundle Insatllation failed: " + modified + exceptionMessage;
-
-					_addError(message);
-
-					PrintStream error = bladeCLI.error();
-
-					e.printStackTrace(error);
-				}
-			}
-
-		};
-
-		BaseArgs args = bladeCLI.getArgs();
-
-		File baseDir = new File(args.getBase());
-
-		new FileWatcher(baseDir.toPath(), true, consumer);
-	}
-
-	private void _installNewBundle(
-			LiferayBundleDeployer client, Entry<String, Attrs> bsn, Entry<String, Attrs> fragmentHost, long hostId,
-			URI uri)
-		throws Exception {
-
-		BladeCLI bladeCLI = getBladeCLI();
-
-		PrintStream out = bladeCLI.out();
-
-		long installedId = client.install(uri);
-
-		out.println("Installed bundle " + installedId);
-
-		if ((fragmentHost != null) && (hostId > 0)) {
-			client.refresh(hostId);
-
-			out.println("Deployed fragment bundle " + installedId);
-		}
-		else {
-			long existingId = client.getBundleId(bsn.getKey());
-
-			try {
-				if (!Objects.equals(installedId, existingId)) {
-					out.println("Error: Bundle IDs do not match.");
-				}
-				else {
-					if (existingId > 1) {
-						client.start(existingId);
-
-						out.println("Started bundle " + installedId);
-					}
-					else {
-						out.println("Error: bundle failed to start: " + bsn);
-					}
-				}
-			}
-			catch (Exception e) {
-				String exceptionMessage = e.getMessage() == null ? "" : (System.lineSeparator() + e.getMessage());
-
-				String message = "Error: Bundle Deployment failed: " + bsn + exceptionMessage;
-
-				_addError("deploy watch", message);
-
-				PrintStream error = bladeCLI.error();
-
-				e.printStackTrace(error);
-			}
-		}
-	}
-
-	private void _installOrUpdate(File file, String host, int port) throws Exception {
-		file = file.getAbsoluteFile();
-
-		try (LiferayBundleDeployer client = LiferayBundleDeployer.newInstance(host, port)) {
-			String name = file.getName();
-
-			name = name.toLowerCase();
-
-			if (name.endsWith(".war")) {
-				_deployWar(file, client);
-			}
-			else {
-				Domain bundle = Domain.domain(file);
-
-				Entry<String, Attrs> bsn = bundle.getBundleSymbolicName();
-
-				if (bsn != null) {
-					_deployBundle(file, client, bundle, bsn);
-				}
-				else {
-					getBladeCLI().error("Unable to install or update " + file.getName() + "as it is not a bundle.");
+								e.printStackTrace(error);
+							}
+						}
+					);
 				}
 			}
 		}
-	}
-
-	private final void _reloadExistingBundle(
-			LiferayBundleDeployer client, Entry<String, Attrs> fragmentHost, long existingId, long hostId, URI uri)
-		throws Exception {
-
-		if ((fragmentHost != null) && (hostId > 0)) {
-			client.reloadFragment(existingId, hostId, uri);
-		}
-		else {
-			client.reloadBundle(existingId, uri);
-		}
-
-		PrintStream out = getBladeCLI().out();
-
-		out.println("Updated bundle " + existingId);
 	}
 
 }

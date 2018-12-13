@@ -26,6 +26,10 @@ import java.util.Set;
  */
 public interface ProjectInfo {
 
+	public default String getLiferayHome() {
+		return null;
+	}
+
 	public Set<String> getPluginClassNames();
 
 	public Map<String, Set<File>> getProjectOutputFiles();

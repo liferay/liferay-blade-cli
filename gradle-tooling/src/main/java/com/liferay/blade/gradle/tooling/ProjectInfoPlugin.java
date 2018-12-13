@@ -16,7 +16,13 @@
 
 package com.liferay.blade.gradle.tooling;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+
 import java.io.File;
+
+import java.lang.reflect.Method;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +39,7 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.PublishArtifactSet;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.tooling.provider.model.ToolingModelBuilder;
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
@@ -95,6 +102,8 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 			ConfigurationContainer configurations = project.getConfigurations();
 
+			String liferayHome = _getLiferayHome(project);
+
 			try {
 				Configuration archivesConfiguration = configurations.getByName(Dependency.ARCHIVES_CONFIGURATION);
 
@@ -111,12 +120,46 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			catch (Exception e) {
 			}
 
-			return new DefaultModel(pluginClassNames, projectOutputFiles);
+			return new DefaultModel(pluginClassNames, projectOutputFiles, liferayHome);
 		}
 
 		@Override
 		public boolean canBuild(String modelName) {
 			return modelName.equals(ProjectInfo.class.getName());
+		}
+
+		private String _getLiferayHome(Project project) {
+			ExtensionContainer extensionContainer = project.getExtensions();
+
+			Object liferayExtension = extensionContainer.findByName("liferay");
+
+			String liferayHome = null;
+
+			if (liferayExtension != null) {
+				Class<?> aclass = liferayExtension.getClass();
+
+				try {
+					BeanInfo beanInfo = Introspector.getBeanInfo(aclass);
+
+					for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+						String pdName = pd.getName();
+
+						Method method = pd.getReadMethod();
+
+						if ((method != null) && "liferayHome".equals(pdName)) {
+							Object value = method.invoke(liferayExtension);
+
+							liferayHome = String.valueOf(value);
+
+							break;
+						}
+					}
+				}
+				catch (Exception e) {
+				}
+			}
+
+			return liferayHome;
 		}
 
 	}
