@@ -48,6 +48,7 @@ import java.util.Set;
  * @author Gregory Amerson
  * @author Terry Jia
  */
+@BladeProfile("gradle")
 public class InitCommand extends BaseCommand<InitArgs> {
 
 	public InitCommand() {

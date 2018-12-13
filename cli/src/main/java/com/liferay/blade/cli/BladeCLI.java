@@ -23,6 +23,7 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.command.InitArgs;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.util.CombinedClassLoader;
@@ -249,6 +250,8 @@ public class BladeCLI {
 	public void run(String[] args) throws Exception {
 		String basePath = _extractBasePath(args);
 
+		String profileName = _extractProfileName(args);
+
 		File baseDir = new File(basePath).getAbsoluteFile();
 
 		_args.setBase(baseDir);
@@ -258,6 +261,10 @@ public class BladeCLI {
 		System.setErr(error());
 
 		BladeSettings bladeSettings = getBladeSettings();
+
+		if (profileName != null) {
+			bladeSettings.setProfileName(profileName);
+		}
 
 		bladeSettings.migrateWorkspaceIfNecessary();
 
@@ -396,6 +403,52 @@ public class BladeCLI {
 		}
 
 		return defaultBasePath;
+	}
+
+	private static String _extractProfileName(String[] args) {
+		String defaultProfile = null;
+
+		if (_isInitCommand(args) && (args.length > 2)) {
+			return IntStream.range(
+				0, args.length - 1
+			).filter(
+				i -> _isProfileFlag(args[i]) && args.length > (i + 1)
+			).mapToObj(
+				i -> args[i + 1]
+			).findFirst(
+			).orElse(
+				defaultProfile
+			);
+		}
+
+		return defaultProfile;
+	}
+
+	private static boolean _isInitCommand(String[] args) {
+		try {
+			Builder builder = JCommander.newBuilder();
+
+			builder.addCommand(new InitArgs());
+
+			JCommander jCommander = builder.build();
+
+			jCommander.parse(args);
+
+			String parsedCommand = jCommander.getParsedCommand();
+
+			return "init".equals(parsedCommand);
+		}
+		catch (MissingCommandException mce) {
+			return false;
+		}
+	}
+
+	private static boolean _isProfileFlag(String string) {
+		if ("-p".equals(string) || "--profile-name".equals(string) || "-b".equals(string) || "--build".equals(string)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private Path _getUpdateCheckPath() throws IOException {

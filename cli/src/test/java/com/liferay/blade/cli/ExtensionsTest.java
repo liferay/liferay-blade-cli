@@ -16,17 +16,12 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.command.BaseArgs;
-import com.liferay.blade.cli.command.BaseCommand;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -36,6 +31,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.command.BaseCommand;
 
 /**
  * @author Christopher Bryan Boyd
@@ -118,7 +116,7 @@ public class ExtensionsTest {
 
 			Assert.assertNotNull(commands);
 
-			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 2, commands.size());
+			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 1, commands.size());
 		}
 	}
 
