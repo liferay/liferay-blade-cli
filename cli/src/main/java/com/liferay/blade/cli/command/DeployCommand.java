@@ -56,7 +56,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		File baseDir = new File(deployArgs.getBase());
 
-		if (WorkspaceUtil.isWorkspace(baseDir)) {
+		if (isWorkspace(baseDir)) {
 			_deploy(gradleExec, "deploy");
 		}
 		else {
@@ -69,6 +69,10 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 	@Override
 	public Class<DeployArgs> getArgsClass() {
 		return DeployArgs.class;
+	}
+
+	protected boolean isWorkspace(File file) {
+		return WorkspaceUtil.isWorkspace(file);
 	}
 
 	private void _addError(String msg) {

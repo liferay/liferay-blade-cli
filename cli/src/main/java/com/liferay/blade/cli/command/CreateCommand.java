@@ -272,6 +272,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return projectTemplatesArgs;
 	}
 
+	protected File getWorkspaceDir(File file) {
+		return WorkspaceUtil.getWorkspaceDir(file);
+	}
+
 	protected Properties getWorkspaceProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -280,6 +284,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		File baseDir = new File(args.getBase());
 
 		return WorkspaceUtil.getGradleProperties(baseDir);
+	}
+
+	protected boolean isWorkspace(File file) {
+		return WorkspaceUtil.isWorkspace(file);
 	}
 
 	private static boolean _checkDir(File file) {
@@ -320,7 +328,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = base.getCanonicalFile();
 
-		if (!WorkspaceUtil.isWorkspace(baseDir)) {
+		if (!isWorkspace(baseDir)) {
 			return baseDir;
 		}
 
@@ -332,7 +340,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			extDirProperty = WorkspaceConstants.DEFAULT_EXT_DIR;
 		}
 
-		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+		File projectDir = getWorkspaceDir(baseDir);
 
 		File extDir = new File(projectDir, extDirProperty);
 
@@ -352,7 +360,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = base.getCanonicalFile();
 
-		if (!WorkspaceUtil.isWorkspace(baseDir)) {
+		if (!isWorkspace(baseDir)) {
 			return baseDir;
 		}
 
@@ -373,7 +381,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			bladeCLI.out("WARNING: using " + modulesDirValue);
 		}
 
-		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+		File projectDir = getWorkspaceDir(baseDir);
 
 		File modulesDir = new File(projectDir, modulesDirValue);
 
@@ -393,7 +401,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = base.getCanonicalFile();
 
-		if (!WorkspaceUtil.isWorkspace(baseDir)) {
+		if (!isWorkspace(baseDir)) {
 			return baseDir;
 		}
 
@@ -409,7 +417,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			warsDirValue = warsDirValue.split(",")[0];
 		}
 
-		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+		File projectDir = getWorkspaceDir(baseDir);
 
 		File warsDir = new File(projectDir, warsDirValue);
 
