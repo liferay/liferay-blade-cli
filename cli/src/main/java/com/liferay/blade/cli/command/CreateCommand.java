@@ -16,20 +16,10 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeSettings;
-import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
-import com.liferay.project.templates.ProjectTemplates;
-import com.liferay.project.templates.ProjectTemplatesArgs;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import java.nio.file.Path;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +30,14 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeSettings;
+import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
+import com.liferay.project.templates.ProjectTemplates;
+import com.liferay.project.templates.ProjectTemplatesArgs;
 
 /**
  * @author Gregory Amerson
@@ -248,7 +246,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
 
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
-		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
+		projectTemplatesArgs.setLiferayVersion(getLiferayVersion(bladeCLI, createArgs));
 		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
 		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
 		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
@@ -408,7 +406,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return warsDir;
 	}
 
-	private String _getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
+	protected String getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
 		String liferayVersion = createArgs.getLiferayVersion();
 
 		if (liferayVersion == null) {
