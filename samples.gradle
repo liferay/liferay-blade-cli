@@ -2,7 +2,7 @@ import com.liferay.project.templates.ProjectTemplates
 
 buildscript {
 	dependencies{
-		classpath group: "com.liferay", name: "com.liferay.project.templates", version: "4.1.6"
+		classpath group: "com.liferay", name: "com.liferay.project.templates", version: "4.2.4"
 	}
 	repositories {
 		maven {
@@ -16,7 +16,7 @@ configurations {
 }
 
 dependencies {
-	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.1.6"
+	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.2.4"
 }
 
 repositories {
@@ -42,6 +42,9 @@ task createSamples {
 
 		if (it.equals("fragment")) {
 			mainArgs += ["--host-bundle-symbolic-name", "com.liferay.login.web", "--host-bundle-version", "1.0.0"]
+		}
+		else if (it.equals("modules-ext")) {
+			mainArgs += ["--original-module-name", "com.liferay.login.web", "--original-module-version", "2.0.4"]
 		}
 		else if (it.equals("service")) {
 			mainArgs += ["--class-name", "FooAction", "--service", "com.liferay.portal.kernel.events.LifecycleAction"]
