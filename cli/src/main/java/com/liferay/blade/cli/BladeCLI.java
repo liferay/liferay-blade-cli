@@ -262,14 +262,6 @@ public class BladeCLI {
 
 		BladeSettings bladeSettings = getBladeSettings();
 
-		if (!WorkspaceUtil.isWorkspace(this)) {
-			File pomFile = new File(baseDir, "pom.xml");
-
-			if (pomFile.exists()) {
-				bladeSettings.setProfileName("maven");
-			}
-		}
-
 		bladeSettings.migrateWorkspaceIfNecessary();
 
 		Extensions extensions = new Extensions(bladeSettings, getExtensionsPath());

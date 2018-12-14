@@ -195,33 +195,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return;
 		}
 
-		boolean mavenBuild = "maven".equals(createArgs.getBuild());
-
-		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
-
-		projectTemplatesArgs.setGradle(!mavenBuild);
-		projectTemplatesArgs.setMaven(mavenBuild);
-
-		projectTemplatesArgs.setClassName(createArgs.getClassname());
-		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
-		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
-
-		if (mavenBuild) {
-			projectTemplatesArgs.setDependencyManagementEnabled(false);
-		}
-		else {
-			projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
-		}
-
-		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
-		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
-		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
-		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
-		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
-		projectTemplatesArgs.setName(name);
-		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
-		projectTemplatesArgs.setService(createArgs.getService());
-		projectTemplatesArgs.setTemplate(template);
+		ProjectTemplatesArgs projectTemplatesArgs = getProjectTemplateArgs(createArgs, bladeCLI, template, name, dir);
 
 		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
 
@@ -256,6 +230,34 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		if (gradlew.exists()) {
 			gradlew.setExecutable(true);
 		}
+	}
+
+	protected ProjectTemplatesArgs getProjectTemplateArgs(
+			CreateArgs createArgs, BladeCLI bladeCLI, String template, String name, File dir)
+		throws IOException {
+
+		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
+
+		projectTemplatesArgs.setGradle(true);
+		projectTemplatesArgs.setMaven(false);
+
+		projectTemplatesArgs.setClassName(createArgs.getClassname());
+		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
+		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
+
+		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
+
+		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
+		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
+		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
+		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
+		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
+		projectTemplatesArgs.setName(name);
+		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
+		projectTemplatesArgs.setService(createArgs.getService());
+		projectTemplatesArgs.setTemplate(template);
+
+		return projectTemplatesArgs;
 	}
 
 	protected Properties getWorkspaceProperties() {
