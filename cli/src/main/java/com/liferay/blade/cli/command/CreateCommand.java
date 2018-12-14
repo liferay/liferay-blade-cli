@@ -232,18 +232,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 	}
 
-	protected String getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
-		String liferayVersion = createArgs.getLiferayVersion();
-
-		if (liferayVersion == null) {
-			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
-
-			liferayVersion = bladeSettings.getLiferayVersionDefault();
-		}
-
-		return liferayVersion;
-	}
-
 	protected ProjectTemplatesArgs getProjectTemplateArgs(
 			CreateArgs createArgs, BladeCLI bladeCLI, String template, String name, File dir)
 		throws IOException {
@@ -260,7 +248,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
 
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
-		projectTemplatesArgs.setLiferayVersion(getLiferayVersion(bladeCLI, createArgs));
+		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
 		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
 		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
 		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
@@ -426,6 +414,18 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 
 		return warsDir;
+	}
+
+	private String _getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
+		String liferayVersion = createArgs.getLiferayVersion();
+
+		if (liferayVersion == null) {
+			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
+
+			liferayVersion = bladeSettings.getLiferayVersionDefault();
+		}
+
+		return liferayVersion;
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {

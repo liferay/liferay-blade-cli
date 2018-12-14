@@ -26,9 +26,7 @@ import java.util.Set;
  */
 public interface ProjectInfo {
 
-	public default String getLiferayHome() {
-		return null;
-	}
+	public String getLiferayHome();
 
 	public Set<String> getPluginClassNames();
 

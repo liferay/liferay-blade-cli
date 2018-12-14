@@ -136,17 +136,17 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			String liferayHome = null;
 
 			if (liferayExtension != null) {
-				Class<?> aclass = liferayExtension.getClass();
+				Class<?> clazz = liferayExtension.getClass();
 
 				try {
-					BeanInfo beanInfo = Introspector.getBeanInfo(aclass);
+					BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
 
-					for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-						String pdName = pd.getName();
+					for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+						String propertyDescriptorName = propertyDescriptor.getName();
 
-						Method method = pd.getReadMethod();
+						Method method = propertyDescriptor.getReadMethod();
 
-						if ((method != null) && "liferayHome".equals(pdName)) {
+						if ((method != null) && "liferayHome".equals(propertyDescriptorName)) {
 							Object value = method.invoke(liferayExtension);
 
 							liferayHome = String.valueOf(value);

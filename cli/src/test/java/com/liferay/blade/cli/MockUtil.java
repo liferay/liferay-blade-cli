@@ -154,6 +154,11 @@ public class MockUtil {
 			new ProjectInfo() {
 
 				@Override
+				public String getLiferayHome() {
+					return null;
+				}
+
+				@Override
 				public Set<String> getPluginClassNames() {
 					return null;
 				}
