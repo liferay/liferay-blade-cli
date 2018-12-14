@@ -2,7 +2,7 @@ import com.liferay.project.templates.ProjectTemplates
 
 buildscript {
 	dependencies{
-		classpath group: "com.liferay", name: "com.liferay.project.templates", version: "4.1.6"
+		classpath group: "com.liferay", name: "com.liferay.project.templates", version: "4.2.4"
 	}
 	repositories {
 		maven {
@@ -16,7 +16,7 @@ configurations {
 }
 
 dependencies {
-	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.1.6"
+	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.2.4"
 }
 
 repositories {
