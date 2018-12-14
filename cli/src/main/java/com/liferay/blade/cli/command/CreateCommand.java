@@ -16,10 +16,20 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.BladeSettings;
+import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.WorkspaceUtil;
+import com.liferay.project.templates.ProjectTemplates;
+import com.liferay.project.templates.ProjectTemplatesArgs;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+
 import java.nio.file.Path;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,14 +40,6 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeSettings;
-import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
-import com.liferay.project.templates.ProjectTemplates;
-import com.liferay.project.templates.ProjectTemplatesArgs;
 
 /**
  * @author Gregory Amerson
@@ -230,6 +232,18 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 	}
 
+	protected String getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
+		String liferayVersion = createArgs.getLiferayVersion();
+
+		if (liferayVersion == null) {
+			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
+
+			liferayVersion = bladeSettings.getLiferayVersionDefault();
+		}
+
+		return liferayVersion;
+	}
+
 	protected ProjectTemplatesArgs getProjectTemplateArgs(
 			CreateArgs createArgs, BladeCLI bladeCLI, String template, String name, File dir)
 		throws IOException {
@@ -404,18 +418,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 
 		return warsDir;
-	}
-
-	protected String getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
-		String liferayVersion = createArgs.getLiferayVersion();
-
-		if (liferayVersion == null) {
-			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
-
-			liferayVersion = bladeSettings.getLiferayVersionDefault();
-		}
-
-		return liferayVersion;
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
