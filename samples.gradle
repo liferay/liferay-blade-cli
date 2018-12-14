@@ -43,6 +43,9 @@ task createSamples {
 		if (it.equals("fragment")) {
 			mainArgs += ["--host-bundle-symbolic-name", "com.liferay.login.web", "--host-bundle-version", "1.0.0"]
 		}
+		else if (it.equals("modules-ext")) {
+			mainArgs += ["--original-module-name", "com.liferay.login.web", "--original-module-version", "2.0.4"]
+		}
 		else if (it.equals("service")) {
 			mainArgs += ["--class-name", "FooAction", "--service", "com.liferay.portal.kernel.events.LifecycleAction"]
 		}
