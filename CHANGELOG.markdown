@@ -1,5 +1,23 @@
 # Liferay Blade CLI Change Log
 
+## 3.4.1 - 2018-12-18 - 3cc0d3f734001578fc14ff0c51f3b38b6f7daff9
+
+- [BLADE-245]: As a developer, I would to simplify the server command
+- [BLADE-319]: blade create does not handle modules.dir property with multiple values
+- [BLADE-354]: blade init will create new workspaces even if it is inside of another workspace without throwing an error
+- [BLADE-356]: blade cli tests sometimes leave a leftover liferay server process running
+- [BLADE-357]: Remove duplicate test classes from `maven-profile`
+- [BLADE-358]: if I'm on a snapshot version, the automatic 'checkForUpdate' doesn't prompt if a new snapshot is available
+- [BLADE-359]: Enable `blade update` functionality on Windows
+- [BLADE-360]: Deploying modules created from project templates (OOB) fail using Blade
+- [BLADE-366]: update project.templates dependency to 4.2.3
+- [BLADE-367]: `maven-profile.jar` incorrectly being embedded inside itself
+- [BLADE-369]: Update blade cli to use project templates 4.2.4
+- [BLADE-370]: publish maven-profile snapshots
+- [BLADE-371]: Add blade jar smoke tests
+- [BLADE-372]: daily update check gives wrong message when using snapshots
+- [BLADE-375]: update gradle tooling api to 4.10.2
+
 ## 3.3.0 - 2018-11-15 - 9939c44d9a1d981adfcae13ad168b6c63c2851d5
 
 - [BLADE-214]: Create a `blade-extension` blade sample project, demonstrating how blade may be extended with custom commands
@@ -162,6 +180,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-231]: https://issues.liferay.com/browse/BLADE-231
 [BLADE-233]: https://issues.liferay.com/browse/BLADE-233
 [BLADE-244]: https://issues.liferay.com/browse/BLADE-244
+[BLADE-245]: https://issues.liferay.com/browse/BLADE-245
 [BLADE-246]: https://issues.liferay.com/browse/BLADE-246
 [BLADE-250]: https://issues.liferay.com/browse/BLADE-250
 [BLADE-251]: https://issues.liferay.com/browse/BLADE-251
@@ -197,6 +216,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-313]: https://issues.liferay.com/browse/BLADE-313
 [BLADE-314]: https://issues.liferay.com/browse/BLADE-314
 [BLADE-315]: https://issues.liferay.com/browse/BLADE-315
+[BLADE-319]: https://issues.liferay.com/browse/BLADE-319
 [BLADE-320]: https://issues.liferay.com/browse/BLADE-320
 [BLADE-321]: https://issues.liferay.com/browse/BLADE-321
 [BLADE-323]: https://issues.liferay.com/browse/BLADE-323
@@ -213,7 +233,20 @@ Updated to use Project Templates 4.1.0
 [BLADE-347]: https://issues.liferay.com/browse/BLADE-347
 [BLADE-349]: https://issues.liferay.com/browse/BLADE-349
 [BLADE-350]: https://issues.liferay.com/browse/BLADE-350
+[BLADE-354]: https://issues.liferay.com/browse/BLADE-354
 [BLADE-355]: https://issues.liferay.com/browse/BLADE-355
+[BLADE-356]: https://issues.liferay.com/browse/BLADE-356
+[BLADE-357]: https://issues.liferay.com/browse/BLADE-357
+[BLADE-358]: https://issues.liferay.com/browse/BLADE-358
+[BLADE-359]: https://issues.liferay.com/browse/BLADE-359
+[BLADE-360]: https://issues.liferay.com/browse/BLADE-360
+[BLADE-366]: https://issues.liferay.com/browse/BLADE-366
+[BLADE-367]: https://issues.liferay.com/browse/BLADE-367
+[BLADE-369]: https://issues.liferay.com/browse/BLADE-369
+[BLADE-370]: https://issues.liferay.com/browse/BLADE-370
+[BLADE-371]: https://issues.liferay.com/browse/BLADE-371
+[BLADE-372]: https://issues.liferay.com/browse/BLADE-372
+[BLADE-375]: https://issues.liferay.com/browse/BLADE-375
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
