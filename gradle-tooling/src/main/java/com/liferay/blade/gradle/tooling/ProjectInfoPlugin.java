@@ -104,6 +104,8 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 			String liferayHome = _getLiferayHome(project);
 
+			String deployDir = _getDeployDir(project);
+
 			try {
 				Configuration archivesConfiguration = configurations.getByName(Dependency.ARCHIVES_CONFIGURATION);
 
@@ -120,7 +122,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			catch (Exception e) {
 			}
 
-			return new DefaultModel(pluginClassNames, projectOutputFiles, liferayHome);
+			return new DefaultModel(pluginClassNames, projectOutputFiles, deployDir, liferayHome);
 		}
 
 		@Override
@@ -128,10 +130,14 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			return modelName.equals(ProjectInfo.class.getName());
 		}
 
-		private String _getLiferayHome(Project project) {
+		private String _getDeployDir(Project project) {
+			return _getExtensionProperty(project, "liferay", "deployDir");
+		}
+
+		private String _getExtensionProperty(Project project, String extension, String property) {
 			ExtensionContainer extensionContainer = project.getExtensions();
 
-			Object liferayExtension = extensionContainer.findByName("liferay");
+			Object liferayExtension = extensionContainer.findByName(extension);
 
 			String liferayHome = null;
 
@@ -146,12 +152,10 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 						Method method = propertyDescriptor.getReadMethod();
 
-						if ((method != null) && "liferayHome".equals(propertyDescriptorName)) {
+						if ((method != null) && property.equals(propertyDescriptorName)) {
 							Object value = method.invoke(liferayExtension);
 
 							liferayHome = String.valueOf(value);
-
-							break;
 						}
 					}
 				}
@@ -160,6 +164,10 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			}
 
 			return liferayHome;
+		}
+
+		private String _getLiferayHome(Project project) {
+			return _getExtensionProperty(project, "liferay", "liferayHome");
 		}
 
 	}

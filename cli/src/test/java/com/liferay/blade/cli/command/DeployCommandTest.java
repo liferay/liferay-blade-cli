@@ -20,6 +20,14 @@ import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -75,6 +83,54 @@ public class DeployCommandTest {
 		TestUtil.runBlade(args);
 
 		filesCount = osgiModulesDirectory.list().length;
+
+		Assert.assertEquals(1, filesCount);
+	}
+
+	@Test
+	public void testInstallJarStandalone() throws Exception {
+		File workspaceDir = temporaryFolder.newFolder();
+
+		File standaloneDir = temporaryFolder.newFolder();
+
+		String[] args = {"--base", workspaceDir.getPath(), "init"};
+
+		TestUtil.runBlade(args);
+
+		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
+
+		TestUtil.runBlade(args);
+
+		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
+
+		Assert.assertTrue(bundlesDirectory.exists());
+
+		args = new String[] {"--base", standaloneDir.getAbsolutePath(), "create", "-t", "soy-portlet", "foo"};
+
+		TestUtil.runBlade(args);
+
+		File projectDirectory = new File(standaloneDir, "foo");
+
+		Assert.assertTrue(projectDirectory.exists());
+
+		Path projectDirectoryPath = projectDirectory.toPath();
+
+		File deployDirectory = new File(bundlesDirectory, "deploy");
+
+		String deployDirectoryString = deployDirectory.getAbsolutePath();
+
+		String deployDirectoryGradleString = String.format("    deployDir = '%s'", deployDirectoryString);
+
+		List<String> lines = Arrays.asList("", "liferay {", deployDirectoryGradleString, "}");
+
+		Files.write(
+			projectDirectoryPath.resolve("build.gradle"), lines, Charset.forName("UTF-8"), StandardOpenOption.APPEND);
+
+		args = new String[] {"--base", projectDirectoryPath.toString(), "deploy"};
+
+		TestUtil.runBlade(args);
+
+		int filesCount = deployDirectory.list().length;
 
 		Assert.assertEquals(1, filesCount);
 	}

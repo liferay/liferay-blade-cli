@@ -154,6 +154,14 @@ public class MockUtil {
 			new ProjectInfo() {
 
 				@Override
+				public String getDeployDir() {
+
+					// TODO Auto-generated method stub
+
+					return null;
+				}
+
+				@Override
 				public String getLiferayHome() {
 					return null;
 				}

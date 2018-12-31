@@ -18,25 +18,15 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.gradle.GradleExec;
-import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.gradle.ProcessResult;
 import com.liferay.blade.cli.util.WorkspaceUtil;
-import com.liferay.blade.gradle.tooling.ProjectInfo;
 
 import java.io.File;
 import java.io.PrintStream;
 
 import java.net.ConnectException;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * @author Gregory Amerson
@@ -60,9 +50,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			_deploy(gradleExec, "deploy");
 		}
 		else {
-			ProjectInfo projectInfo = GradleTooling.loadProjectInfo(baseDir.toPath());
-
-			_deployStandalone(gradleExec, projectInfo);
+			_deploy(gradleExec, "clean deploy");
 		}
 	}
 
@@ -91,7 +79,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		if (resultCode > 0) {
-			String errorMessage = "Gradle " + command + " task failed.";
+			String errorMessage = "Gradle \"" + command + "\" task failed.";
 
 			_addError(errorMessage);
 
@@ -102,89 +90,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			return;
 		}
 		else {
-			String output = "Gradle " + command + " task succeeded.";
+			String output = "Gradle \"" + command + "\" task succeeded.";
 
 			bladeCLI.out(output);
-		}
-	}
-
-	private void _deployStandalone(GradleExec gradle, ProjectInfo projectInfo) throws Exception {
-		DeployArgs deployArgs = getArgs();
-
-		File baseDir = new File(deployArgs.getBase());
-
-		ProcessResult processResult = gradle.executeTask("assemble -x check", baseDir, false);
-
-		int resultCode = processResult.getResultCode();
-
-		BladeCLI bladeCLI = getBladeCLI();
-
-		if (resultCode > 0) {
-			String errorMessage = "Gradle deploy task failed.";
-
-			_addError(errorMessage);
-
-			PrintStream err = bladeCLI.error();
-
-			new ConnectException(errorMessage).printStackTrace(err);
-
-			return;
-		}
-		else {
-			String liferayHomeString = projectInfo.getLiferayHome();
-
-			if (Objects.nonNull(liferayHomeString)) {
-				File liferayHome = new File(liferayHomeString);
-
-				File deployFolder = new File(liferayHome, "deploy");
-
-				if (deployFolder.exists()) {
-					String output = "Gradle deploy task succeeded.";
-
-					bladeCLI.out(output);
-
-					Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
-
-					Collection<Set<File>> values = projectOutputFiles.values();
-
-					Stream<Set<File>> stream = values.stream();
-
-					Path deployFolderPath = deployFolder.toPath();
-
-					stream.flatMap(
-						files -> files.stream()
-					).filter(
-						File::exists
-					).forEach(
-						outputFile -> {
-							try {
-								Path outputPath = outputFile.toPath();
-
-								Path outputFileName = outputPath.getFileName();
-
-								Path destinationOutputPath = deployFolderPath.resolve(outputFileName);
-
-								Files.copy(outputPath, destinationOutputPath);
-							}
-							catch (Exception e) {
-								String message = e.getMessage();
-
-								Class<?> exceptionClass = e.getClass();
-
-								if (message == null) {
-									message = "DeployCommand._deployStandalone threw " + exceptionClass.getSimpleName();
-								}
-
-								_addError(message);
-
-								PrintStream error = bladeCLI.error();
-
-								e.printStackTrace(error);
-							}
-						}
-					);
-				}
-			}
 		}
 	}
 
