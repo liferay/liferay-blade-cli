@@ -119,6 +119,8 @@ public class DeployCommandTest {
 
 		String deployDirectoryString = deployDirectory.getAbsolutePath();
 
+		deployDirectoryString = deployDirectoryString.replace("\\", "\\\\");
+
 		String deployDirectoryGradleString = String.format("    deployDir = '%s'", deployDirectoryString);
 
 		List<String> lines = Arrays.asList("", "liferay {", deployDirectoryGradleString, "}");
