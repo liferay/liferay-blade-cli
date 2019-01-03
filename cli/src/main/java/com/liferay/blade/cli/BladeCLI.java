@@ -199,10 +199,7 @@ public class BladeCLI {
 			}
 			else {
 				if (fromSnapshots) {
-					if (UpdateCommand.equal(bladeCLIVersion, updateVersion)) {
-						out(String.format("Already using the latest snapshot version %s.\n", updateVersion));
-					}
-					else {
+					if (!UpdateCommand.equal(bladeCLIVersion, updateVersion)) {
 						out(
 							String.format(
 								"blade version %s is newer than latest snapshot %s; skipping update.\n",
