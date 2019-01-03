@@ -35,6 +35,12 @@ task createSamples {
 		liferayVersionArg = '7.1'
 	}
 
+	File samplesDir = new File("samples-${liferayVersionArg}")
+
+	if (!samplesDir.exists()) {
+		samplesDir.mkdir()
+	}
+
 	def templateNames = ProjectTemplates.getTemplates().keySet()
 
 	templateNames.each {
@@ -57,12 +63,6 @@ task createSamples {
 		}
 
 		mainArgs += ["--liferayVersion", liferayVersionArg]
-
-		File samplesDir = new File("samples-${liferayVersionArg}")
-
-		if (!samplesDir.exists()) {
-			samplesDir.mkdir()
-		}
 
 		javaexec {
 			args mainArgs
