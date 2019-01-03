@@ -72,12 +72,6 @@ public class WorkspaceUtil {
 			return gradleParent;
 		}
 
-		File mavenParent = BladeUtil.findParentFile(dir, new String[] {"pom.xml"}, true);
-
-		if (_isWorkspacePomFile(new File(mavenParent, "pom.xml"))) {
-			return mavenParent;
-		}
-
 		FilenameFilter gradleFilter =
 			(file, name) -> _SETTINGS_GRADLE_FILE_NAME.equals(name) ||
 			 _GRADLE_PROPERTIES_FILE_NAME.equals(name);
@@ -86,13 +80,6 @@ public class WorkspaceUtil {
 
 		if (Objects.nonNull(matches) && (matches.length > 0)) {
 			return dir;
-		}
-		else {
-			File mavenPom = new File(dir, "pom.xml");
-
-			if (mavenPom.exists() && _isWorkspacePomFile(mavenPom)) {
-				return dir;
-			}
 		}
 
 		return null;
@@ -158,12 +145,6 @@ public class WorkspaceUtil {
 		File gradleFile = new File(workspaceDir, _SETTINGS_GRADLE_FILE_NAME);
 
 		if (!gradleFile.exists()) {
-			File pomFile = new File(workspaceDir, "pom.xml");
-
-			if (_isWorkspacePomFile(pomFile)) {
-				return true;
-			}
-
 			return false;
 		}
 
@@ -190,28 +171,6 @@ public class WorkspaceUtil {
 		catch (Exception e) {
 			return false;
 		}
-	}
-
-	private static boolean _isWorkspacePomFile(File pomFile) {
-		boolean pom = false;
-
-		if ((pomFile != null) && "pom.xml".equals(pomFile.getName()) && pomFile.exists()) {
-			pom = true;
-		}
-
-		if (pom) {
-			try {
-				String content = BladeUtil.read(pomFile);
-
-				if (content.contains("portal.tools.bundle.support")) {
-					return true;
-				}
-			}
-			catch (Exception e) {
-			}
-		}
-
-		return false;
 	}
 
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";

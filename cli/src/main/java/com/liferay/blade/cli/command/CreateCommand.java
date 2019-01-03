@@ -195,32 +195,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return;
 		}
 
-		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
-
-		projectTemplatesArgs.setClassName(createArgs.getClassname());
-		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
-		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
-		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
-		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
-		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
-		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
-		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
-		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
-		projectTemplatesArgs.setName(name);
-		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
-		projectTemplatesArgs.setService(createArgs.getService());
-		projectTemplatesArgs.setTemplate(template);
+		ProjectTemplatesArgs projectTemplatesArgs = getProjectTemplateArgs(createArgs, bladeCLI, template, name, dir);
 
 		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
 
 		Path customTemplatesPath = bladeCLI.getExtensionsPath();
 
 		archetypesDirs.add(customTemplatesPath.toFile());
-
-		boolean mavenBuild = "maven".equals(createArgs.getBuild());
-
-		projectTemplatesArgs.setGradle(!mavenBuild);
-		projectTemplatesArgs.setMaven(mavenBuild);
 
 		execute(projectTemplatesArgs);
 
@@ -251,6 +232,38 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 	}
 
+	protected ProjectTemplatesArgs getProjectTemplateArgs(
+			CreateArgs createArgs, BladeCLI bladeCLI, String template, String name, File dir)
+		throws IOException {
+
+		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
+
+		projectTemplatesArgs.setGradle(true);
+		projectTemplatesArgs.setMaven(false);
+
+		projectTemplatesArgs.setClassName(createArgs.getClassname());
+		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
+		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
+
+		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
+
+		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
+		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
+		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
+		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
+		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
+		projectTemplatesArgs.setName(name);
+		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
+		projectTemplatesArgs.setService(createArgs.getService());
+		projectTemplatesArgs.setTemplate(template);
+
+		return projectTemplatesArgs;
+	}
+
+	protected File getWorkspaceDir(File file) {
+		return WorkspaceUtil.getWorkspaceDir(file);
+	}
+
 	protected Properties getWorkspaceProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -259,6 +272,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		File baseDir = new File(args.getBase());
 
 		return WorkspaceUtil.getGradleProperties(baseDir);
+	}
+
+	protected boolean isWorkspace(File file) {
+		return WorkspaceUtil.isWorkspace(file);
 	}
 
 	private static boolean _checkDir(File file) {
@@ -299,7 +316,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = base.getCanonicalFile();
 
-		if (!WorkspaceUtil.isWorkspace(baseDir)) {
+		if (!isWorkspace(baseDir)) {
 			return baseDir;
 		}
 
@@ -311,7 +328,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			extDirProperty = WorkspaceConstants.DEFAULT_EXT_DIR;
 		}
 
-		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+		File projectDir = getWorkspaceDir(baseDir);
 
 		File extDir = new File(projectDir, extDirProperty);
 
@@ -331,7 +348,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = base.getCanonicalFile();
 
-		if (!WorkspaceUtil.isWorkspace(baseDir)) {
+		if (!isWorkspace(baseDir)) {
 			return baseDir;
 		}
 
@@ -352,7 +369,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			bladeCLI.out("WARNING: using " + modulesDirValue);
 		}
 
-		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+		File projectDir = getWorkspaceDir(baseDir);
 
 		File modulesDir = new File(projectDir, modulesDirValue);
 
@@ -372,7 +389,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = base.getCanonicalFile();
 
-		if (!WorkspaceUtil.isWorkspace(baseDir)) {
+		if (!isWorkspace(baseDir)) {
 			return baseDir;
 		}
 
@@ -388,7 +405,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			warsDirValue = warsDirValue.split(",")[0];
 		}
 
-		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+		File projectDir = getWorkspaceDir(baseDir);
 
 		File warsDir = new File(projectDir, warsDirValue);
 

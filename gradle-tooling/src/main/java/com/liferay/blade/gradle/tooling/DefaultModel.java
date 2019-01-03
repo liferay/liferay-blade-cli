@@ -27,9 +27,23 @@ import java.util.Set;
  */
 public class DefaultModel implements ProjectInfo, Serializable {
 
-	public DefaultModel(Set<String> pluginClassNames, Map<String, Set<File>> projectOutputFiles) {
+	public DefaultModel(
+		Set<String> pluginClassNames, Map<String, Set<File>> projectOutputFiles, String deployDir, String liferayHome) {
+
 		_pluginClassNames = pluginClassNames;
 		_projectOutputFiles = projectOutputFiles;
+		_deployDir = deployDir;
+		_liferayHome = liferayHome;
+	}
+
+	@Override
+	public String getDeployDir() {
+		return _deployDir;
+	}
+
+	@Override
+	public String getLiferayHome() {
+		return _liferayHome;
 	}
 
 	@Override
@@ -58,6 +72,8 @@ public class DefaultModel implements ProjectInfo, Serializable {
 		return _pluginClassNames.contains(pluginClassName);
 	}
 
+	private final String _deployDir;
+	private final String _liferayHome;
 	private final Set<String> _pluginClassNames;
 	private final Map<String, Set<File>> _projectOutputFiles;
 

@@ -148,7 +148,7 @@ public class GradleExec {
 		File gradlew = BladeUtil.getGradleWrapper(dir);
 		String executable = "gradle";
 
-		if (gradlew == null) {
+		if ((gradlew == null) || !gradlew.exists()) {
 			BaseArgs args = _blade.getArgs();
 
 			File baseDir = new File(args.getBase());
@@ -156,7 +156,7 @@ public class GradleExec {
 			gradlew = BladeUtil.getGradleWrapper(baseDir);
 		}
 
-		if ((gradlew != null) && gradlew.exists()) {
+		if (gradlew != null) {
 			try {
 				if (!gradlew.canExecute()) {
 					gradlew.setExecutable(true);

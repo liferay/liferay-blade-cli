@@ -16,248 +16,173 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.bnd.osgi.Domain;
-
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.BladeTestResults;
-import com.liferay.blade.cli.LiferayBundleDeployer;
-import com.liferay.blade.cli.MockUtil;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.gradle.GradleExec;
-import com.liferay.blade.cli.gradle.GradleTooling;
-import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
-import java.io.IOException;
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.easymock.EasyMock;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import org.osgi.framework.dto.BundleDTO;
-
-import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-
 /**
  * @author Christopher Bryan Boyd
  */
-@PrepareForTest(
-	{
-		Domain.class, GradleTooling.class, LiferayBundleDeployer.class, GradleExec.class, BladeCLI.class,
-		BladeTest.class, BladeUtil.class, DeployCommand.class, TestUtil.class
-	}
-)
 public class DeployCommandTest {
 
 	@Test
-	public void testInstallExistingJar() throws Exception {
-		Collection<BundleDTO> bundles = Collections.emptyList();
+	public void testInstallJar() throws Exception {
+		File workspaceDir = temporaryFolder.newFolder();
 
-		final AtomicLong atomicLong = new AtomicLong(1);
+		String[] args = {"--base", workspaceDir.getPath(), "init"};
 
-		File jar = _createFile("test.jar");
+		TestUtil.runBlade(args);
 
-		MockUtil.stubGradleExec();
+		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		MockUtil.stubDomain(true, false);
+		TestUtil.runBlade(args);
 
-		MockUtil.stubDeployCommand();
+		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
 
-		MockUtil.stubGradleTooling(jar);
+		Assert.assertTrue(bundlesDirectory.exists());
 
-		LiferayBundleDeployer client = EasyMock.createNiceMock(LiferayBundleDeployer.class);
+		File osgiDirectory = new File(bundlesDirectory, "osgi");
 
-		EasyMock.expect(
-			client.getBundleId(EasyMock.eq(bundles), EasyMock.anyString())
-		).andAnswer(
-			() -> atomicLong.get()
-		).atLeastOnce();
+		Assert.assertTrue(osgiDirectory.exists());
 
-		EasyMock.expect(
-			client.getBundleId(EasyMock.anyString())
-		).andAnswer(
-			() -> atomicLong.get()
-		).atLeastOnce();
+		File osgiModulesDirectory = new File(osgiDirectory, "modules");
 
-		EasyMock.expect(
-			client.getBundles()
-		).andReturn(
-			bundles
-		).atLeastOnce();
+		Assert.assertTrue(osgiModulesDirectory.exists());
 
-		Path jarPath = jar.toPath();
+		int filesCount = osgiModulesDirectory.list().length;
 
-		EasyMock.expect(
-			client.install(EasyMock.eq(jarPath.toUri()))
-		).andAnswer(
-			() -> atomicLong.incrementAndGet()
-		).once();
+		Assert.assertEquals(0, filesCount);
 
-		client.reloadBundle(EasyMock.anyLong(), EasyMock.eq(jarPath.toUri()));
+		File modulesDirectory = new File(workspaceDir, "modules");
 
-		EasyMock.expectLastCall(
-		).andVoid(
-		).once();
+		Assert.assertTrue(modulesDirectory.exists());
 
-		EasyMock.replay(client);
+		args = new String[] {"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "soy-portlet", "foo"};
 
-		PowerMock.mockStatic(LiferayBundleDeployer.class);
+		TestUtil.runBlade(args);
 
-		EasyMock.expect(
-			LiferayBundleDeployer.newInstance(EasyMock.anyString(), EasyMock.anyInt())
-		).andReturn(
-			client
-		).once();
+		File projectDirectory = new File(modulesDirectory, "foo");
 
-		PowerMock.replay(LiferayBundleDeployer.class);
+		Assert.assertTrue(projectDirectory.exists());
 
-		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
+		args = new String[] {"--base", projectDirectory.getAbsolutePath(), "deploy"};
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
+		TestUtil.runBlade(args);
 
-		String output = bladeTestResults.getOutput();
+		filesCount = osgiModulesDirectory.list().length;
 
-		PowerMock.verifyAll();
-
-		Assert.assertTrue(output.contains(String.format("Updated bundle %s", atomicLong.get())));
+		Assert.assertEquals(1, filesCount);
 	}
 
 	@Test
-	public void testInstallJar() throws Exception {
-		Collection<BundleDTO> bundles = Collections.emptyList();
+	public void testInstallJarStandalone() throws Exception {
+		File workspaceDir = temporaryFolder.newFolder();
 
-		final AtomicLong atomicLong = new AtomicLong(1);
+		File standaloneDir = temporaryFolder.newFolder();
 
-		File jar = _createFile("test.jar");
+		String[] args = {"--base", workspaceDir.getPath(), "init"};
 
-		MockUtil.stubGradleExec();
+		TestUtil.runBlade(args);
 
-		MockUtil.stubDomain(true, false);
+		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		MockUtil.stubDeployCommand();
+		TestUtil.runBlade(args);
 
-		MockUtil.stubGradleTooling(jar);
+		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
 
-		LiferayBundleDeployer client = EasyMock.createNiceMock(LiferayBundleDeployer.class);
+		Assert.assertTrue(bundlesDirectory.exists());
 
-		EasyMock.expect(
-			client.getBundleId(EasyMock.anyString())
-		).andAnswer(
-			atomicLong::get
-		).atLeastOnce();
+		args = new String[] {"--base", standaloneDir.getAbsolutePath(), "create", "-t", "soy-portlet", "foo"};
 
-		EasyMock.expect(
-			client.getBundles()
-		).andReturn(
-			bundles
-		).atLeastOnce();
+		TestUtil.runBlade(args);
 
-		Path jarPath = jar.toPath();
+		File projectDirectory = new File(standaloneDir, "foo");
 
-		EasyMock.expect(
-			client.install(jarPath.toUri())
-		).andAnswer(
-			() -> atomicLong.incrementAndGet()
-		).once();
+		Assert.assertTrue(projectDirectory.exists());
 
-		client.start(EasyMock.eq(atomicLong.get()));
+		Path projectDirectoryPath = projectDirectory.toPath();
 
-		EasyMock.expectLastCall(
-		).andVoid(
-		).once();
+		File deployDirectory = new File(bundlesDirectory, "deploy");
 
-		EasyMock.replay(client);
+		String deployDirectoryString = deployDirectory.getAbsolutePath();
 
-		PowerMock.mockStatic(LiferayBundleDeployer.class);
+		deployDirectoryString = deployDirectoryString.replace("\\", "\\\\");
 
-		EasyMock.expect(
-			LiferayBundleDeployer.newInstance(EasyMock.anyString(), EasyMock.anyInt())
-		).andReturn(
-			client
-		).once();
+		String deployDirectoryGradleString = String.format("    deployDir = '%s'", deployDirectoryString);
 
-		PowerMock.replay(LiferayBundleDeployer.class);
+		List<String> lines = Arrays.asList("", "liferay {", deployDirectoryGradleString, "}");
 
-		String[] args = {"--base", jar.getParentFile().getAbsolutePath(), "deploy"};
+		Files.write(
+			projectDirectoryPath.resolve("build.gradle"), lines, Charset.forName("UTF-8"), StandardOpenOption.APPEND);
 
-		String content = TestUtil.runBlade(args).getOutput();
+		args = new String[] {"--base", projectDirectoryPath.toString(), "deploy"};
 
-		PowerMock.verifyAll();
+		TestUtil.runBlade(args);
 
-		Assert.assertTrue(content.contains(String.format("Installed bundle %s", atomicLong.get())));
+		int filesCount = deployDirectory.list().length;
+
+		Assert.assertEquals(1, filesCount);
 	}
 
 	@Test
 	public void testInstallWar() throws Exception {
-		File war = _createFile("test.war");
+		File workspaceDir = temporaryFolder.newFolder();
 
-		MockUtil.stubGradleExec();
+		String[] args = {"--base", workspaceDir.getPath(), "init"};
 
-		MockUtil.stubDomain(false, false);
+		TestUtil.runBlade(args);
 
-		MockUtil.stubDeployCommand();
+		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		MockUtil.stubGradleTooling(war);
+		TestUtil.runBlade(args);
 
-		LiferayBundleDeployer client = EasyMock.createNiceMock(LiferayBundleDeployer.class);
+		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
 
-		EasyMock.expect(
-			client.install(EasyMock.eq(war.toURI()))
-		).andReturn(
-			1L
-		).once();
+		Assert.assertTrue(bundlesDirectory.exists());
 
-		client.start(1);
+		File deployDirectory = new File(bundlesDirectory, "deploy");
 
-		EasyMock.expectLastCall(
-		).andVoid(
-		).once();
+		Assert.assertTrue(deployDirectory.exists());
 
-		EasyMock.replay(client);
+		int filesCount = deployDirectory.list().length;
 
-		PowerMock.mockStatic(LiferayBundleDeployer.class);
+		Assert.assertEquals(0, filesCount);
 
-		EasyMock.expect(
-			LiferayBundleDeployer.newInstance(EasyMock.anyString(), EasyMock.anyInt())
-		).andReturn(
-			client
-		).once();
+		File warsDirectory = new File(workspaceDir, "wars");
 
-		PowerMock.replay(LiferayBundleDeployer.class);
+		Assert.assertTrue(warsDirectory.exists());
 
-		String[] args = {"--base", war.getParentFile().getAbsolutePath(), "deploy"};
+		args = new String[] {"--base", warsDirectory.getAbsolutePath(), "create", "-t", "war-mvc-portlet", "foo"};
 
-		new BladeTest(false).run(args);
+		TestUtil.runBlade(args);
 
-		PowerMock.verifyAll();
+		File projectDirectory = new File(warsDirectory, "foo");
+
+		Assert.assertTrue(projectDirectory.exists());
+
+		args = new String[] {"--base", projectDirectory.getAbsolutePath(), "deploy"};
+
+		TestUtil.runBlade(args);
+
+		filesCount = deployDirectory.list().length;
+
+		Assert.assertEquals(1, filesCount);
 	}
-
-	@Rule
-	public final PowerMockRule rule = new PowerMockRule();
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-	private File _createFile(String fileName) throws IOException {
-		final File testDir = temporaryFolder.newFolder();
-
-		final File war = new File(testDir, fileName);
-
-		Assert.assertTrue(war.createNewFile());
-
-		return war;
-	}
 
 }
