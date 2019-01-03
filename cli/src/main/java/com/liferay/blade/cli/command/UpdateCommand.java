@@ -277,12 +277,12 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		String currentVersion = "0.0.0.0";
 
-		boolean snapshots = updateArgs.isSnapshots();
+		boolean toSnapshots = updateArgs.isSnapshots();
 
 		String updateVersion = "";
 
 		try {
-			updateVersion = getUpdateVersion(snapshots);
+			updateVersion = getUpdateVersion(toSnapshots);
 
 			try {
 				currentVersion = VersionCommand.getBladeCLIVersion();
@@ -296,7 +296,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion);
 
 			if (currentVersion.contains("SNAPSHOT")) {
-				if (snapshots) {
+				if (toSnapshots) {
 					shouldUpdate = true;
 
 					bladeCLI.out("Current version is a SNAPSHOT version. Updating from the snapshots repository.");
@@ -309,14 +309,14 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			}
 
 			if (currentVersion.contains("SNAPSHOT")) {
-				if (!snapshots) {
+				if (!toSnapshots) {
 					if (shouldUpdate) {
 						bladeCLI.out("Updating from a snapshot to the newest released version.");
 					}
 				}
 			}
 
-			String url = getUpdateJarUrl(snapshots);
+			String url = getUpdateJarUrl(toSnapshots);
 
 			if (shouldUpdate) {
 				bladeCLI.out("Updating from: " + url);
@@ -376,10 +376,17 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 			}
 			else {
-				if (snapshots) {
-					bladeCLI.out(
-						"Current blade version " + currentVersion + " is greater than the latest version " +
-							updateVersion);
+				if (toSnapshots) {
+					if (currentVersion.contains("SNAPSHOT")) {
+						bladeCLI.out(
+							"Current blade version " + currentVersion +
+								" is greater than the latest snapshot version " + updateVersion);
+					}
+					else {
+						bladeCLI.out(
+							"Current blade version " + currentVersion +
+								" (released) is greater than the latest snapshot version " + updateVersion);
+					}
 				}
 				else {
 					if (equal(currentVersion, updateVersion)) {
