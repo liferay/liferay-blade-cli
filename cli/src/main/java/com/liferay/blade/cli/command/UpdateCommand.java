@@ -159,10 +159,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return url;
 	}
 
-	public static String getUpdateVersion(boolean snapshots) throws IOException {
+	public static String getUpdateVersion(boolean snapshotsArg) throws IOException {
 		String url = _RELEASES_REPO_URL;
 
-		if (snapshots) {
+		if (snapshotsArg) {
 			url = _SNAPSHOTS_REPO_URL;
 		}
 
@@ -182,7 +182,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		String updateVersion = null;
 
-		if (snapshots) {
+		if (snapshotsArg) {
 			connection.url(url + lastVersion.text() + "/maven-metadata.xml");
 
 			document = connection.get();
@@ -277,12 +277,12 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		String currentVersion = "0.0.0.0";
 
-		boolean toSnapshots = updateArgs.isSnapshots();
+		boolean snapshotsArg = updateArgs.isSnapshots();
 
 		String updateVersion = "";
 
 		try {
-			updateVersion = getUpdateVersion(toSnapshots);
+			updateVersion = getUpdateVersion(snapshotsArg);
 
 			try {
 				currentVersion = VersionCommand.getBladeCLIVersion();
@@ -296,7 +296,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion);
 
 			if (currentVersion.contains("SNAPSHOT")) {
-				if (toSnapshots) {
+				if (snapshotsArg) {
 					shouldUpdate = true;
 
 					bladeCLI.out("Current version is a SNAPSHOT version. Updating from the snapshots repository.");
@@ -309,14 +309,14 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			}
 
 			if (currentVersion.contains("SNAPSHOT")) {
-				if (!toSnapshots) {
+				if (!snapshotsArg) {
 					if (shouldUpdate) {
 						bladeCLI.out("Updating from a snapshot to the newest released version.");
 					}
 				}
 			}
 
-			String url = getUpdateJarUrl(toSnapshots);
+			String url = getUpdateJarUrl(snapshotsArg);
 
 			if (shouldUpdate) {
 				bladeCLI.out("Updating from: " + url);
@@ -376,7 +376,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 			}
 			else {
-				if (toSnapshots) {
+				if (snapshotsArg) {
 					if (currentVersion.contains("SNAPSHOT")) {
 						bladeCLI.out(
 							"Current blade version " + currentVersion +
