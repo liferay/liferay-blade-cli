@@ -16,17 +16,15 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
 
 import java.nio.file.Files;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,13 +35,20 @@ import org.junit.rules.TemporaryFolder;
  */
 public class ConvertThemeCommandTest {
 
+	@Before
+	public void setUpTestExtensions() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testListThemes() throws Exception {
 		File workspace = _createWorkspace();
 
 		String[] args = {"--base", workspace.getAbsolutePath(), "convert", "-l"};
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = bladeTestResults.getOutput();
 
@@ -57,13 +62,7 @@ public class ConvertThemeCommandTest {
 
 		String[] args = {"--base", workspace.getAbsolutePath(), "convert", "-a"};
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		PrintStream out = new PrintStream(baos);
-
-		BladeTest bladeTest = new BladeTest(out, null, System.in, temporaryFolder.getRoot());
-
-		bladeTest.run(args);
+		TestUtil.runBlade(workspace, _extensionsDir, System.out, null, System.in, false, args);
 
 		File oldCompassTheme = new File(workspace, "plugins-sdk/themes/compass-theme");
 
@@ -128,7 +127,7 @@ public class ConvertThemeCommandTest {
 	}
 
 	private File _createWorkspace() throws Exception {
-		File workspace = new File(temporaryFolder.getRoot(), "build/test/workspace");
+		File workspace = new File(_rootDir, "build/test/workspace");
 
 		File themesDir = new File(workspace, "themes");
 
@@ -146,5 +145,8 @@ public class ConvertThemeCommandTest {
 
 		return workspace;
 	}
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

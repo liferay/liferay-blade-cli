@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 
@@ -45,7 +46,17 @@ public class ExtensionsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_bladeTest = new BladeTest(temporaryFolder.getRoot());
+		BladeTestBuilder builder = BladeTest.builder();
+
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+
+		builder.setExtensionsDir(_extensionsDir.toPath());
+
+		builder.setSettingsDir(_rootDir.toPath());
+
+		_bladeTest = builder.build();
 	}
 
 	@Test
@@ -86,9 +97,7 @@ public class ExtensionsTest {
 	public void testLoadCommandsWithCustomExtension() throws Exception {
 		_setupTestExtensions();
 
-		BladeTest bladeTest = new BladeTest(temporaryFolder.getRoot());
-
-		try (Extensions extensions = new Extensions(bladeTest.getBladeSettings(), bladeTest.getExtensionsPath())) {
+		try (Extensions extensions = new Extensions(_bladeTest.getBladeSettings(), _bladeTest.getExtensionsPath())) {
 			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
 			Assert.assertNotNull(commands);
@@ -105,15 +114,13 @@ public class ExtensionsTest {
 
 		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "foo"};
 
-		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		BladeTest bladeTest = new BladeTest(temporaryFolder.getRoot());
-
-		BladeSettings settings = bladeTest.getBladeSettings();
+		BladeSettings settings = _bladeTest.getBladeSettings();
 
 		settings.setProfileName("foo");
 
-		try (Extensions extensions = new Extensions(settings, bladeTest.getExtensionsPath())) {
+		try (Extensions extensions = new Extensions(settings, _bladeTest.getExtensionsPath())) {
 			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
 			Assert.assertNotNull(commands);
@@ -172,5 +179,7 @@ public class ExtensionsTest {
 	private static final int _BUILT_IN_COMMANDS_COUNT = _getBuiltInCommandsCount();
 
 	private BladeTest _bladeTest;
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

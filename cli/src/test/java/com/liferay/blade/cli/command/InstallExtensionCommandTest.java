@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.StringTestUtil;
 import com.liferay.blade.cli.TestUtil;
@@ -47,6 +48,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -57,13 +59,20 @@ import org.junit.rules.TemporaryFolder;
  */
 public class InstallExtensionCommandTest {
 
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testInstallCustomExtension() throws Exception {
 		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
 
 		File root = temporaryFolder.getRoot();
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(root, args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = bladeTestResults.getOutput();
 
@@ -80,15 +89,13 @@ public class InstallExtensionCommandTest {
 	public void testInstallCustomExtensionTwiceDontOverwrite() throws Exception {
 		String jarName = _sampleCommandJarFile.getName();
 
-		File extensionsFolder = temporaryFolder.newFolder(".blade", "extensions");
-
-		File extensionJar = new File(extensionsFolder, jarName);
+		File extensionJar = new File(_extensionsDir, jarName);
 
 		String[] args = {"extension", "install", _sampleCommandJarFile.getAbsolutePath()};
 
 		Path extensionPath = extensionJar.toPath();
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = bladeTestResults.getOutput();
 
@@ -113,7 +120,7 @@ public class InstallExtensionCommandTest {
 
 		args = new String[] {"extension", "install", sampleCommandFile.getAbsolutePath()};
 
-		output = _testBladeWithInteractive(temporaryFolder.getRoot(), args, "n");
+		output = _testBladeWithInteractive(_rootDir, _extensionsDir, args, "n");
 
 		Assert.assertTrue(
 			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
@@ -124,7 +131,7 @@ public class InstallExtensionCommandTest {
 		Assert.assertTrue(sampleCommandFile.lastModified() == 0);
 		Assert.assertFalse(extensionPath.toFile().lastModified() == 0);
 
-		output = _testBladeWithInteractive(temporaryFolder.getRoot(), args, "defaultShouldBeNo");
+		output = _testBladeWithInteractive(_rootDir, _extensionsDir, args, "defaultShouldBeNo");
 
 		Assert.assertFalse(extensionPath.toFile().lastModified() == 0);
 		Assert.assertTrue(
@@ -139,15 +146,13 @@ public class InstallExtensionCommandTest {
 	public void testInstallCustomExtensionTwiceOverwrite() throws Exception {
 		String jarName = _sampleCommandJarFile.getName();
 
-		File extensionsFolder = temporaryFolder.newFolder(".blade", "extensions");
-
-		File extensionJar = new File(extensionsFolder, jarName);
+		File extensionJar = new File(_extensionsDir, jarName);
 
 		String[] args = {"extension", "install", _sampleCommandJarFile.getAbsolutePath()};
 
 		Path extensionPath = extensionJar.toPath();
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = bladeTestResults.getOutput();
 
@@ -172,7 +177,7 @@ public class InstallExtensionCommandTest {
 
 		args = new String[] {"extension", "install", sampleCommandFile.getAbsolutePath()};
 
-		output = _testBladeWithInteractive(temporaryFolder.getRoot(), args, "y");
+		output = _testBladeWithInteractive(_rootDir, _extensionsDir, args, "y");
 
 		_testJarsDiff(sampleCommandFile, extensionJar);
 
@@ -192,15 +197,13 @@ public class InstallExtensionCommandTest {
 
 		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
 
-		File root = temporaryFolder.getRoot();
-
-		BladeTestResults bladeTestResults = TestUtil.runBlade(root, args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = bladeTestResults.getOutput();
 
 		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
 
-		Path rootPath = root.toPath();
+		Path rootPath = _rootDir.toPath();
 
 		Path extensionJarPath = rootPath.resolve(Paths.get(".blade", "extensions", "blade-sample-command-master.jar"));
 
@@ -213,7 +216,9 @@ public class InstallExtensionCommandTest {
 	public void testInstallExtensionPathRequired() throws Exception {
 		String[] args = {"extension install"};
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTestBuilder builder = BladeTest.builder();
+
+		BladeTest bladeTest = builder.build();
 
 		String error = null;
 
@@ -234,7 +239,7 @@ public class InstallExtensionCommandTest {
 	public void testInstallUninstallCustomExtension() throws Exception {
 		String[] args = {"extension install", _sampleCommandJarFile.getAbsolutePath()};
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = bladeTestResults.getOutput();
 
@@ -244,7 +249,7 @@ public class InstallExtensionCommandTest {
 
 		args = new String[] {"extension uninstall", _sampleCommandJarFile.getName()};
 
-		bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		output = bladeTestResults.getOutput();
 
@@ -365,11 +370,13 @@ public class InstallExtensionCommandTest {
 		return osName.contains("win");
 	}
 
-	private String _testBladeWithInteractive(File userHomeDir, String[] args, String data) throws Exception {
+	private String _testBladeWithInteractive(File userHomeDir, File extensionsDir, String[] args, String data)
+		throws Exception {
+
 		InputStream in = new ByteArrayInputStream(data.getBytes("UTF-8"));
 
 		try {
-			BladeTestResults bladeTestResults = TestUtil.runBlade(userHomeDir, in, args);
+			BladeTestResults bladeTestResults = TestUtil.runBlade(userHomeDir, extensionsDir, in, args);
 
 			return bladeTestResults.getOutput();
 		}
@@ -379,5 +386,8 @@ public class InstallExtensionCommandTest {
 	}
 
 	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

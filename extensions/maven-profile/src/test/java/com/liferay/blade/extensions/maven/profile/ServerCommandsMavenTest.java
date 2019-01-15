@@ -16,7 +16,6 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
-import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -37,13 +36,13 @@ public class ServerCommandsMavenTest {
 
 	@Test
 	public void testServerInit() throws Exception {
+		File extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
 		String[] args = {"--base", workspaceDir.getPath(), "init", "-f", "-P", "maven"};
 
-		BladeTest bladeTest = new BladeTest(workspaceDir);
-
-		bladeTest.run(args);
+		TestUtil.runBlade(workspaceDir, extensionsDir, args);
 
 		File pomXmlFile = new File(workspaceDir, "pom.xml");
 
@@ -62,7 +61,11 @@ public class ServerCommandsMavenTest {
 
 		Assert.assertFalse(bundlesDir.exists());
 
+<<<<<<< HEAD
 		TestUtil.runBlade(workspaceDir, args);
+=======
+		TestUtil.runBlade(workspaceDir, extensionsDir, args);
+>>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 
 		Assert.assertTrue(bundlesDir.exists());
 	}

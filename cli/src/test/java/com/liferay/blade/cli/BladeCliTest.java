@@ -16,6 +16,8 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -30,7 +32,9 @@ public class BladeCliTest {
 	@Ignore
 	@Test
 	public void testBladePrintUpdateIfAvailable() throws Exception {
-		BladeTest bladeTest = new BladeTest();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+
+		BladeTest bladeTest = bladeTestBuilder.build();
 
 		Assert.assertTrue("New update should be available from snapshots.", bladeTest.printUpdateIfAvailable());
 	}

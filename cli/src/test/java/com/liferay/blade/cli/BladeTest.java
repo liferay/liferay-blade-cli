@@ -25,61 +25,21 @@ import java.io.PrintStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author Gregory Amerson
  */
 public class BladeTest extends BladeCLI {
 
-	public BladeTest() throws Exception {
-		super(StringPrintStream.newInstance(), StringPrintStream.newInstance(), System.in);
-
-		_userHomeDir = new File(System.getProperty("user.home"));
-	}
-
-	public BladeTest(boolean assertErrors) throws Exception {
-		this();
-
-		_assertErrors = assertErrors;
-	}
-
-	public BladeTest(File userHomeDir) throws Exception {
-		this();
-
-		_userHomeDir = userHomeDir;
-	}
-
+	public static BladeTestBuilder builder() {
+		return new BladeTestBuilder();
 	public BladeTest(File userHomeDir, boolean assertErrors) throws Exception {
 		this(assertErrors);
 
 		_userHomeDir = userHomeDir;
 	}
 
-	public BladeTest(PrintStream ps) {
-		this(ps, ps, null);
-	}
-
-	public BladeTest(PrintStream ps, InputStream in) {
-		this(ps, ps, in);
-	}
-
-	public BladeTest(PrintStream outputStream, PrintStream errorStream) {
-		this(outputStream, errorStream, System.in);
-	}
-
-	public BladeTest(PrintStream outputStream, PrintStream errorStream, InputStream in) {
-		this(outputStream, errorStream, in, new File(System.getProperty("user.home")), true);
-	}
-
-	public BladeTest(PrintStream out, PrintStream err, InputStream in, File userHomeDir) {
-		this(out, err, in, userHomeDir, true);
-	}
-
-	public BladeTest(PrintStream out, PrintStream err, InputStream in, File userHomeDir, boolean assertErrors) {
-		super(out, err, in);
-
-		_userHomeDir = userHomeDir;
-		_assertErrors = assertErrors;
 	}
 
 	@Override
@@ -92,7 +52,7 @@ public class BladeTest extends BladeCLI {
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
 		else {
-			settingsFile = new File(_userHomeDir, ".blade/settings.properties");
+			settingsFile = _settingsDir.resolve("settings.properties").toFile();
 		}
 
 		return new BladeSettings(settingsFile);
@@ -100,17 +60,13 @@ public class BladeTest extends BladeCLI {
 
 	@Override
 	public Path getExtensionsPath() {
-		Path userHomePath = _userHomeDir.toPath();
-
-		Path extensionsPath = userHomePath.resolve(".blade/extensions");
-
 		try {
-			Files.createDirectories(extensionsPath);
+			Files.createDirectories(_extensionsDir);
 		}
 		catch (IOException ioe) {
 		}
 
-		return extensionsPath;
+		return _extensionsDir;
 	}
 
 	@Override
@@ -143,7 +99,78 @@ public class BladeTest extends BladeCLI {
 		}
 	}
 
+	public static class BladeTestBuilder {
+
+		public BladeTest build() {
+			if (_extensionsDir == null) {
+				_extensionsDir = _userHomePath.resolve(".blade/extensions");
+			}
+
+			if (_settingsDir == null) {
+				_settingsDir = _userHomePath.resolve(".blade");
+			}
+
+			if (_stdIn == null) {
+				_stdIn = System.in;
+			}
+
+			if (_stdOut == null) {
+				_stdOut = StringPrintStream.newInstance();
+			}
+
+			if (_stdError == null) {
+				_stdError = StringPrintStream.newInstance();
+			}
+
+			BladeTest bladeTest = new BladeTest(_stdOut, _stdError, _stdIn);
+
+			bladeTest._assertErrors = _assertErrors;
+			bladeTest._extensionsDir = _extensionsDir;
+			bladeTest._settingsDir = _settingsDir;
+
+			return bladeTest;
+		}
+
+		public void setAssertErrors(boolean assertErrors) {
+			_assertErrors = assertErrors;
+		}
+
+		public void setExtensionsDir(Path extensionsDir) {
+			_extensionsDir = extensionsDir;
+		}
+
+		public void setSettingsDir(Path settingsDir) {
+			_settingsDir = settingsDir;
+		}
+
+		public void setStdError(PrintStream printStream) {
+			_stdError = printStream;
+		}
+
+		public void setStdIn(InputStream inputStream) {
+			_stdIn = inputStream;
+		}
+
+		public void setStdOut(PrintStream printStream) {
+			_stdOut = printStream;
+		}
+
+		private boolean _assertErrors = true;
+		private Path _extensionsDir = null;
+		private Path _settingsDir = null;
+		private PrintStream _stdError = null;
+		private InputStream _stdIn = null;
+		private PrintStream _stdOut = null;
+		private Path _userHomePath = Paths.get(System.getProperty("user.home"));
+
+	}
+
+	protected BladeTest(PrintStream out, PrintStream err, InputStream in) {
+		super(out, err, in);
+	}
+
 	private boolean _assertErrors = true;
-	private File _userHomeDir;
+	private Path _extensionsDir;
+	private Path _settingsDir;
 
 }

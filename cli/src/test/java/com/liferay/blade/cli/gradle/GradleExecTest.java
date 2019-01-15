@@ -18,12 +18,14 @@ package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -33,19 +35,32 @@ import org.junit.rules.TemporaryFolder;
  */
 public class GradleExecTest {
 
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testGradleWrapper() throws Exception {
 		File temporaryDir = temporaryFolder.getRoot();
 
 		String[] args = {"--base", temporaryDir.getAbsolutePath(), "create", "-t", "api", "foo"};
 
-		new BladeTest().run(args);
+		_getBladeTest().run(args);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		PrintStream ps = new PrintStream(baos);
 
-		BladeCLI blade = new BladeTest(ps);
+		BladeTestBuilder builder = BladeTest.builder();
+
+		builder.setExtensionsDir(_extensionsDir.toPath());
+		builder.setSettingsDir(_rootDir.toPath());
+		builder.setStdOut(ps);
+
+		BladeCLI blade = builder.build();
 
 		GradleExec gradleExec = new GradleExec(blade);
 
@@ -67,5 +82,17 @@ public class GradleExecTest {
 
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private BladeTest _getBladeTest() {
+		BladeTestBuilder builder = BladeTest.builder();
+
+		builder.setExtensionsDir(_extensionsDir.toPath());
+		builder.setSettingsDir(_rootDir.toPath());
+
+		return builder.build();
+	}
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

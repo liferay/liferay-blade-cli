@@ -22,6 +22,7 @@ import com.liferay.blade.cli.TestUtil;
 import java.io.File;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -32,17 +33,24 @@ import org.junit.rules.TemporaryFolder;
  */
 public class ProfilesTest {
 
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testProfileExtension() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
 		String[] args = {"--base", workspaceDir.getPath(), "init", "-b", "foo"};
 
-		BladeTestResults results = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "foo", "bar"};
 
-		results = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = results.getOutput();
 
@@ -50,7 +58,7 @@ public class ProfilesTest {
 
 		args = new String[] {"--base", workspaceDir.getPath(), "deploy", "--watch"};
 
-		results = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		output = results.getOutput();
 
@@ -59,5 +67,8 @@ public class ProfilesTest {
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

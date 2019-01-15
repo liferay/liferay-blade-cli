@@ -16,39 +16,45 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.TestUtil;
-
 import java.io.File;
-
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.liferay.blade.cli.TestUtil;
 
 /**
  * @author Christopher Bryan Boyd
  */
 public class DeployCommandTest {
+	
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
 
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+	
 	@Test
 	public void testInstallJar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-f"};
+		String[] args = {"--base", workspaceDir.getPath(), "init"};
 
-		TestUtil.runBlade(workspaceDir, args);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		TestUtil.runBlade(workspaceDir, args);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
 
@@ -72,7 +78,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "soy-portlet", "foo"};
 
-		TestUtil.runBlade(workspaceDir, args);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		File projectDirectory = new File(modulesDirectory, "foo");
 
@@ -80,7 +86,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", projectDirectory.getAbsolutePath(), "deploy"};
 
-		TestUtil.runBlade(workspaceDir, args);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		filesCount = osgiModulesDirectory.list().length;
 
@@ -93,13 +99,13 @@ public class DeployCommandTest {
 
 		File standaloneDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-f"};
+		String[] args = {"--base", workspaceDir.getPath(), "init"};
 
-		TestUtil.runBlade(workspaceDir, args);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		TestUtil.runBlade(workspaceDir, args);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
 
@@ -107,7 +113,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", standaloneDir.getAbsolutePath(), "create", "-t", "soy-portlet", "foo"};
 
-		TestUtil.runBlade(standaloneDir, args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		File projectDirectory = new File(standaloneDir, "foo");
 
@@ -130,7 +136,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", projectDirectoryPath.toString(), "deploy"};
 
-		TestUtil.runBlade(standaloneDir, args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		int filesCount = deployDirectory.list().length;
 
@@ -141,13 +147,13 @@ public class DeployCommandTest {
 	public void testInstallWar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-f"};
+		String[] args = {"--base", workspaceDir.getPath(), "init"};
 
-		TestUtil.runBlade(workspaceDir, args);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		TestUtil.runBlade(workspaceDir, args);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
 
@@ -167,21 +173,24 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", warsDirectory.getAbsolutePath(), "create", "-t", "war-mvc-portlet", "foo"};
 
-		TestUtil.runBlade(workspaceDir, args);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		File projectDirectory = new File(warsDirectory, "foo");
 
 		Assert.assertTrue(projectDirectory.exists());
 
 		args = new String[] {"--base", projectDirectory.getAbsolutePath(), "deploy"};
-
-		TestUtil.runBlade(workspaceDir, args);
+		
+		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		filesCount = deployDirectory.list().length;
 
 		Assert.assertEquals(1, filesCount);
 	}
 
+	private File _extensionsDir = null;
+	private File _rootDir = null;
+	
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 

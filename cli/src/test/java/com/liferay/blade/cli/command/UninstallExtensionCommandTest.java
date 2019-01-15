@@ -40,13 +40,11 @@ public class UninstallExtensionCommandTest {
 
 	@Before
 	public void setUpTestExtensions() throws Exception {
-		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
+		_rootDir = temporaryFolder.getRoot();
 
-		extensionsDir.mkdirs();
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 
-		Assert.assertTrue("Unable to create test extensions dir.", extensionsDir.exists());
-
-		Path extensionsPath = extensionsDir.toPath();
+		Path extensionsPath = _extensionsDir.toPath();
 
 		_setupTestExtension(extensionsPath, System.getProperty("sampleCommandJarFile"));
 	}
@@ -65,7 +63,7 @@ public class UninstallExtensionCommandTest {
 
 		File testJar = new File(extensionsDir, jarName);
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = bladeTestResults.getOutput();
 
@@ -88,5 +86,8 @@ public class UninstallExtensionCommandTest {
 
 		Assert.assertTrue(Files.exists(sampleJarPath));
 	}
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

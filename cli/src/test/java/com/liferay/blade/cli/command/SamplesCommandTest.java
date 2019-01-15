@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
@@ -32,6 +33,7 @@ import java.nio.file.Path;
 import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,13 +54,20 @@ public class SamplesCommandTest {
 		_deleteSamplesCache();
 	}
 
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testGetSample() throws Exception {
-		File root = temporaryFolder.getRoot();
+		File root = temporaryFolder.newFolder("samplesroot");
 
 		String[] args = {"samples", "-d", root.getPath() + "/test", "friendly-url"};
 
-		BladeTest bladeTest = new BladeTest(root);
+		BladeTest bladeTest = _getBladeTest();
 
 		bladeTest.run(args);
 
@@ -81,7 +90,7 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test", "-b", "maven", "-v", "7.0", "friendly-url"};
 
-		BladeTest bladeTest = new BladeTest(root);
+		BladeTest bladeTest = _getBladeTest();
 
 		bladeTest.run(args);
 
@@ -108,7 +117,7 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test", "-b", "maven", "-v", "7.1", "friendly-url"};
 
-		BladeTest bladeTest = new BladeTest(root);
+		BladeTest bladeTest = _getBladeTest();
 
 		bladeTest.run(args);
 
@@ -135,7 +144,7 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test", "rest"};
 
-		BladeTest bladeTest = new BladeTest(root);
+		BladeTest bladeTest = _getBladeTest();
 
 		bladeTest.run(args);
 
@@ -158,7 +167,7 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test", "authenticator-shiro"};
 
-		BladeTest bladeTest = new BladeTest(root);
+		BladeTest bladeTest = _getBladeTest();
 
 		bladeTest.run(args);
 
@@ -186,19 +195,18 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithGradleWrapperExisting() throws Exception {
-		File workspaceDir = new File(temporaryFolder.getRoot(), "/test/workspace");
+		String[] initArgs = {"--base", _rootDir.getPath() + "/test/workspace", "init"};
 
-		String[] initArgs = {"--base", workspaceDir.getPath(), "init", "-f"};
-
-		BladeTestResults bladeTestResults = TestUtil.runBlade(workspaceDir, initArgs);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, initArgs);
 
 		String output = bladeTestResults.getOutput();
 
 		Assert.assertTrue(output, (output == null) || output.isEmpty());
 
-		String[] samplesArgs = {"samples", "-d", workspaceDir.getPath() + "/modules", "auth-failure"};
+		String[] samplesArgs =
+			{"samples", "-d", _rootDir.getPath() + "/test/workspace/modules", "auth-failure"};
 
-		bladeTestResults = TestUtil.runBlade(workspaceDir, samplesArgs);
+		bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, samplesArgs);
 
 		output = bladeTestResults.getOutput();
 
@@ -221,6 +229,8 @@ public class SamplesCommandTest {
 		Assert.assertFalse(gradleWrapperProperties.exists());
 		Assert.assertFalse(gradleWrapperShell.exists());
 
+		File workspaceDir = new File(temporaryFolder.getRoot(), "test/workspace");
+
 		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "jar");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
@@ -234,7 +244,7 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test", "-v", "7.0", "jsp-portlet"};
 
-		BladeTest bladeTest = new BladeTest(root);
+		BladeTest bladeTest = _getBladeTest();
 
 		bladeTest.run(args);
 
@@ -261,7 +271,7 @@ public class SamplesCommandTest {
 
 		String[] args = {"samples", "-d", root.getPath() + "/test71", "-v", "7.1", "jsp-portlet"};
 
-		BladeTest bladeTest = new BladeTest(root);
+		BladeTest bladeTest = _getBladeTest();
 
 		bladeTest.run(args);
 
@@ -284,7 +294,7 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testListSamples() throws Exception {
-		BladeTestResults bladeTestResults = TestUtil.runBlade("samples");
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, "samples");
 
 		String output = bladeTestResults.getOutput();
 
@@ -302,6 +312,19 @@ public class SamplesCommandTest {
 		FileUtil.deleteDirIfExists(samplesCachePath);
 	}
 
+	private BladeTest _getBladeTest() {
+		BladeTestBuilder builder = BladeTest.builder();
+
+		builder.setExtensionsDir(_extensionsDir.toPath());
+
+		builder.setSettingsDir(_rootDir.toPath());
+
+		return builder.build();
+	}
+
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

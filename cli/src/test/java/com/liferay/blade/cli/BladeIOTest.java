@@ -122,7 +122,7 @@ public class BladeIOTest extends BladeTest {
 	}
 
 	private BladeIOTest(StringPrintStream out, StringPrintStream err) throws Exception {
-		super(out, err);
+		super(out, err, System.in);
 
 		_outputStream = out;
 		_errorStream = err;

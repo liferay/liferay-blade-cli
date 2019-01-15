@@ -16,7 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -33,9 +34,16 @@ import org.junit.rules.TemporaryFolder;
  */
 public class ConvertCommandTest {
 
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testAll() throws Exception {
-		File testdir = new File(temporaryFolder.getRoot(), "build/testUpgradePluginsSDKTo70");
+		File testdir = new File(_rootDir, "build/testUpgradePluginsSDKTo70");
 
 		testdir.mkdirs();
 
@@ -51,11 +59,11 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-a"};
 
-		new BladeTest(temporaryFolder.getRoot(), false).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
 
 		Assert.assertTrue(
 			new File(
@@ -85,11 +93,11 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		File layoutWar = new File(projectDir, "wars/1-2-1-columns-layouttpl");
 
@@ -118,11 +126,11 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-application-adapter-hook"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		File sampleExpandoHook = new File(projectDir, "wars/sample-application-adapter-hook");
 
@@ -132,7 +140,7 @@ public class ConvertCommandTest {
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-servlet-filter-hook"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		File sampleServletFilterHook = new File(projectDir, "wars/sample-servlet-filter-hook");
 
@@ -157,13 +165,13 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		Assert.assertTrue(theme.exists());
 
@@ -181,7 +189,7 @@ public class ConvertCommandTest {
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		File advancedTheme = new File(projectDir, "wars/sample-styled-advanced-theme");
 
@@ -206,7 +214,7 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "convert", "sample-dao-portlet"};
 
-		new BladeTest().run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		_contains(
 			new File(projectDir, "wars/sample-dao-portlet/build.gradle"),
@@ -215,7 +223,7 @@ public class ConvertCommandTest {
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-tapestry-portlet"};
 
-		new BladeTest().run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		_contains(
 			new File(projectDir, "wars/sample-tapestry-portlet/build.gradle"),
@@ -234,7 +242,7 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "convert", "-t", "sample-html4-theme"};
 
-		new BladeTest().run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		Assert.assertTrue(new File(projectDir, "wars/sample-html4-theme/docroot_backup/other/afile").exists());
 	}
@@ -271,11 +279,14 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest(projectDir).run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		Assert.assertTrue(pluginsSdkDir.exists());
 
 		return projectDir;
 	}
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

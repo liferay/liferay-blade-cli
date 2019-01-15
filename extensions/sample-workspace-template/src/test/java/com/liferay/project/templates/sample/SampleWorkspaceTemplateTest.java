@@ -16,7 +16,7 @@
 
 package com.liferay.project.templates.sample;
 
-import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +42,9 @@ public class SampleWorkspaceTemplateTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_bladeTest = new BladeTest(temporaryFolder.getRoot());
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 	}
 
 	@Test
@@ -55,7 +57,7 @@ public class SampleWorkspaceTemplateTest {
 
 		String[] args = {"--base", basePath, "init", "-P", "sample"};
 
-		_bladeTest.run(args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		Assert.assertTrue(new File(tempDir, "settings.gradle").exists());
 
@@ -113,6 +115,7 @@ public class SampleWorkspaceTemplateTest {
 		_setupTestExtension(extensionsPath, System.getProperty("sampleTemplateJarFile"));
 	}
 
-	private BladeTest _bladeTest;
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

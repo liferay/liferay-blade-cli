@@ -41,13 +41,17 @@ public class TargetPlatformTest {
 
 	@Before
 	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+
 		_gradleWorkspaceDir = temporaryFolder.newFolder("gradle-workspace");
 
 		_nonGradleWorkspaceDir = temporaryFolder.newFolder("non-gradle-workspace");
 
 		String[] args = {"init", "--base", _gradleWorkspaceDir.getAbsolutePath()};
 
-		TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
 
 		_gradlePropertiesFile = WorkspaceUtil.getGradlePropertiesFile(_gradleWorkspaceDir);
 		_settingsGradleFile = WorkspaceUtil.getSettingGradleFile(_gradleWorkspaceDir);
@@ -58,7 +62,7 @@ public class TargetPlatformTest {
 		String[] args =
 			{"--base", _nonGradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(_nonGradleWorkspaceDir, _extensionsDir, args);
 
 		File projectDir = new File(_nonGradleWorkspaceDir, "test-project");
 
@@ -80,7 +84,7 @@ public class TargetPlatformTest {
 		String[] args =
 			{"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-activator"};
 
-		TestUtil.runBlade(_gradleWorkspaceDir, args);
+		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
 
 		File modulesDir = new File(_gradleWorkspaceDir, "modules");
 
@@ -103,7 +107,7 @@ public class TargetPlatformTest {
 
 		String[] args = {"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"};
 
-		new BladeTest(temporaryFolder.getRoot()).run(args);
+		TestUtil.runBlade(_gradlePropertiesFile, _extensionsDir, args);
 
 		File modulesDir = new File(_gradleWorkspaceDir, "modules");
 
@@ -125,7 +129,7 @@ public class TargetPlatformTest {
 
 		String[] args = {"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
 
 		File modulesDir = new File(_gradleWorkspaceDir, "modules");
 
@@ -172,9 +176,11 @@ public class TargetPlatformTest {
 		}
 	}
 
+	private File _extensionsDir = null;
 	private File _gradlePropertiesFile = null;
 	private File _gradleWorkspaceDir = null;
 	private File _nonGradleWorkspaceDir = null;
+	private File _rootDir = null;
 	private File _settingsGradleFile = null;
 
 }

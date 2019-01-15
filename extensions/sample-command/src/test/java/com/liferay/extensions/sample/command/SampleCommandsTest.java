@@ -17,8 +17,8 @@
 package com.liferay.extensions.sample.command;
 
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.BladeTestResults;
-import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
+import com.liferay.blade.cli.StringPrintStream;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -38,19 +39,32 @@ import org.junit.rules.TemporaryFolder;
  */
 public class SampleCommandsTest {
 
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testCommandExtension() throws Exception {
-		File tempDir = temporaryFolder.getRoot();
-
 		_setupTestExtensions();
 
-		String rootPathString = tempDir.getAbsolutePath();
+		String rootPathString = _rootDir.getAbsolutePath();
 
 		String[] args = {"--base", rootPathString, "hello", "--name", "foobar"};
 
-		BladeTestResults results = TestUtil.runBlade(tempDir, args);
+		StringPrintStream outputStream = StringPrintStream.newInstance();
+		BladeTestBuilder builder = BladeTest.builder();
 
-		String output = results.getOutput();
+		builder.setExtensionsDir(_extensionsDir.toPath());
+		builder.setSettingsDir(_rootDir.toPath());
+		builder.setStdOut(outputStream);
+
+		BladeTest bladeTest = builder.build();
+
+		bladeTest.run(args);
+
+		String output = outputStream.get();
 
 		Assert.assertTrue(output, output.contains("foobar"));
 
@@ -60,15 +74,25 @@ public class SampleCommandsTest {
 
 		args = new String[] {"--base", workspaceDir.getPath(), "init", "-P", "maven"};
 
-		BladeTest bladeTest = new BladeTest(tempDir);
+		outputStream = StringPrintStream.newInstance();
+
+		builder.setStdOut(outputStream);
+
+		bladeTest = builder.build();
 
 		bladeTest.run(args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "hello", "--name", "foobar"};
 
-		results = TestUtil.runBlade(tempDir, args);
+		outputStream = StringPrintStream.newInstance();
 
-		output = results.getOutput();
+		builder.setStdOut(outputStream);
+
+		bladeTest = builder.build();
+
+		bladeTest.run(args);
+
+		output = outputStream.get();
 
 		Assert.assertTrue(output, output.contains("foobar"));
 
@@ -91,15 +115,12 @@ public class SampleCommandsTest {
 	}
 
 	private void _setupTestExtensions() throws Exception {
-		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
-
-		extensionsDir.mkdirs();
-
-		Assert.assertTrue("Unable to create test extensions dir.", extensionsDir.exists());
-
-		Path extensionsPath = extensionsDir.toPath();
+		Path extensionsPath = _extensionsDir.toPath();
 
 		_setupTestExtension(extensionsPath, System.getProperty("sampleCommandJarFile"));
 	}
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }
