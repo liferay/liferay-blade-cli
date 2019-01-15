@@ -187,11 +187,11 @@ public class DeployCommandTest {
 
 		Assert.assertEquals(1, filesCount);
 	}
-
-	private File _extensionsDir = null;
-	private File _rootDir = null;
 	
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }
