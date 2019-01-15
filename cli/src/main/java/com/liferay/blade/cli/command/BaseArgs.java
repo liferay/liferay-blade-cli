@@ -31,6 +31,10 @@ public class BaseArgs {
 		return _base;
 	}
 
+	public String getProfileName() {
+		return _profileName;
+	}
+
 	public boolean isHelp() {
 		return _help;
 	}
@@ -43,11 +47,18 @@ public class BaseArgs {
 		_base = baseDir.getAbsolutePath();
 	}
 
+	public void setProfileName(String profileName) {
+		_profileName = profileName;
+	}
+
 	@Parameter(description = "Specify a new base directory (default working directory).", names = "--base")
 	private String _base = new File("").getAbsolutePath();
 
 	@Parameter(description = "Get help on a specific command.", help = true, names = "--help")
 	private boolean _help;
+
+	@Parameter(description = "Specify the profile to use when invoking the command.", names = {"-P", "--profile-name"})
+	private String _profileName;
 
 	@Parameter(description = "Print exception stack traces when they occur.", names = "--trace")
 	private boolean _trace;

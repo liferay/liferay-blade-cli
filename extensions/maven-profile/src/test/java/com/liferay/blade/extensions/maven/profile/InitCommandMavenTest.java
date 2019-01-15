@@ -45,7 +45,7 @@ public class InitCommandMavenTest {
 
 	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-b", "maven", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven", "newproject"};
 
 		File newproject = new File(_workspaceDir, "newproject");
 
@@ -74,7 +74,7 @@ public class InitCommandMavenTest {
 
 	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject"};
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject").mkdirs());
 
@@ -89,7 +89,7 @@ public class InitCommandMavenTest {
 
 	@Test
 	public void testMavenInitWithNameWorkspaceNotExists() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject"};
 
 		BladeTest bladeTest = new BladeTest();
 
@@ -102,7 +102,7 @@ public class InitCommandMavenTest {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven"};
 
 		BladeTest bladeTest = new BladeTest();
 
@@ -125,7 +125,7 @@ public class InitCommandMavenTest {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "maven"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven"};
 
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
@@ -138,7 +138,7 @@ public class InitCommandMavenTest {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFilesForce() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-b", "maven"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven"};
 
 		BladeTest bladeTest = new BladeTest();
 
@@ -167,7 +167,7 @@ public class InitCommandMavenTest {
 	private void _createMavenBundle() throws Exception {
 		String projectPath = new File(_workspaceDir, "modules").getAbsolutePath();
 
-		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "-b", "maven", "foo"};
+		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "-P", "maven", "foo"};
 
 		BladeTest bladeTest = new BladeTest();
 

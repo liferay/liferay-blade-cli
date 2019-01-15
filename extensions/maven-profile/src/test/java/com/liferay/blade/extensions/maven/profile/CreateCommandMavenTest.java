@@ -108,7 +108,7 @@ public class CreateCommandMavenTest {
 		File tempRoot = temporaryFolder.getRoot();
 
 		String[] mavenArgs = {
-			"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "fragment", "-h", "com.liferay.login.web",
+			"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "fragment", "-h", "com.liferay.login.web",
 			"-H", "1.0.0", "loginHook"
 		};
 

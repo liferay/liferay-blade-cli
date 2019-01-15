@@ -53,7 +53,7 @@ public class SampleWorkspaceTemplateTest {
 
 		String basePath = new File(tempDir.getPath()).getAbsolutePath();
 
-		String[] args = {"--base", basePath, "init", "-p", "sample"};
+		String[] args = {"--base", basePath, "init", "-P", "sample"};
 
 		_bladeTest.run(args);
 

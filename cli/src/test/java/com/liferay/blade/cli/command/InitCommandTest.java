@@ -162,7 +162,7 @@ public class InitCommandTest {
 
 		String basePath = new File(tempDir.getPath()).getAbsolutePath();
 
-		String[] args = {"--base", basePath, "init", "-p", "myprofile"};
+		String[] args = {"--base", basePath, "init", "-P", "myprofile"};
 
 		TestUtil.runBlade(args);
 

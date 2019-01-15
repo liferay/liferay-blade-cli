@@ -103,7 +103,7 @@ public class ExtensionsTest {
 
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-b", "foo"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "foo"};
 
 		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
@@ -118,7 +118,7 @@ public class ExtensionsTest {
 
 			Assert.assertNotNull(commands);
 
-			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 1, commands.size());
+			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 2, commands.size());
 		}
 	}
 

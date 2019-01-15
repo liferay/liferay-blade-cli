@@ -17,13 +17,11 @@
 package com.liferay.blade.cli;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.command.InitArgs;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.util.CombinedClassLoader;
@@ -41,11 +39,12 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
@@ -274,15 +273,7 @@ public class BladeCLI {
 
 		args = Extensions.sortArgs(_commands, args);
 
-		Builder builder = JCommander.newBuilder();
-
-		for (Entry<String, BaseCommand<? extends BaseArgs>> e : _commands.entrySet()) {
-			BaseCommand<? extends BaseArgs> value = e.getValue();
-
-			builder.addCommand(e.getKey(), value.getArgs());
-		}
-
-		_jCommander = builder.build();
+		_jCommander = Extensions.buildJCommanderWithCommandMap(_commands);
 
 		if ((args.length == 1) && args[0].equals("--help")) {
 			printUsage();
@@ -312,6 +303,8 @@ public class BladeCLI {
 				_command = command;
 
 				_args = (BaseArgs)commandArgs;
+
+				_args.setProfileName(profileName);
 
 				_args.setBase(baseDir);
 
@@ -405,50 +398,68 @@ public class BladeCLI {
 		return defaultBasePath;
 	}
 
-	private static String _extractProfileName(String[] args) {
-		String defaultProfile = null;
+	private static String _getCommandProfile(String[] args) throws MissingCommandException {
+		String profile = null;
 
-		if (_isInitCommand(args) && (args.length > 2)) {
-			return IntStream.range(
-				0, args.length - 1
-			).filter(
-				i -> _isProfileFlag(args[i]) && args.length > (i + 1)
-			).mapToObj(
-				i -> args[i + 1]
-			).findFirst(
-			).orElse(
-				defaultProfile
-			);
-		}
-
-		return defaultProfile;
-	}
-
-	private static boolean _isInitCommand(String[] args) {
 		try {
-			Builder builder = JCommander.newBuilder();
-
-			builder.addCommand(new InitArgs());
-
-			JCommander jCommander = builder.build();
+			JCommander jCommander = Extensions.buildJCommander("gradle");
 
 			jCommander.parse(args);
 
-			String parsedCommand = jCommander.getParsedCommand();
+			String command = jCommander.getParsedCommand();
 
-			return "init".equals(parsedCommand);
+			Map<String, JCommander> jCommands = jCommander.getCommands();
+
+			jCommander = jCommands.get(command);
+
+			if (jCommander != null) {
+				List<Object> objects = jCommander.getObjects();
+
+				Object commandArgs = objects.get(0);
+
+				BaseArgs arg = BaseArgs.class.cast(commandArgs);
+
+				profile = arg.getProfileName();
+			}
 		}
 		catch (MissingCommandException mce) {
-			return false;
+			mce.printStackTrace();
+
+			throw mce;
 		}
+		catch (Throwable th) {
+			th.printStackTrace();
+		}
+
+		return profile;
 	}
 
-	private static boolean _isProfileFlag(String string) {
-		if ("-p".equals(string) || "--profile-name".equals(string) || "-b".equals(string) || "--build".equals(string)) {
-			return true;
+	private String _extractProfileName(String[] args) {
+		List<String> argsList = new ArrayList<>();
+		List<String> originalArgsList = Arrays.asList(args);
+
+		argsList.addAll(originalArgsList);
+
+		for (int x = 0; x < argsList.size(); x++) {
+			String arg = argsList.get(x);
+
+			if (Objects.equals(arg, "--base")) {
+				argsList.remove(x);
+				argsList.remove(x);
+
+				break;
+			}
 		}
 
-		return false;
+		try {
+			return _getCommandProfile(argsList.toArray(new String[0]));
+		}
+		catch (MissingCommandException mce) {
+			System.out.println(mce);
+			mce.printStackTrace();
+		}
+
+		return null;
 	}
 
 	private Path _getUpdateCheckPath() throws IOException {

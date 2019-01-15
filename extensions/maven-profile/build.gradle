@@ -15,15 +15,15 @@ apply plugin: "java"
 apply plugin: "maven-publish"
 
 dependencies {
-	compile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "latest.integration"
-
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
+	compileOnly project(":cli")
 
 	testCompile gradleTestKit()
 	testCompile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
-	testCompile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "latest.integration", classifier: "tests"
 	testCompile group: "junit", name: "junit", version: "4.12"
 	testCompile group: "org.zeroturnaround", name: "zt-process-killer", version: "1.9"
+	testCompile project(":cli")
+	testCompile project(path: ":cli", configuration: "testApi")
 }
 
 publishing {
@@ -37,6 +37,9 @@ publishing {
 }
 
 repositories {
+	maven {
+		url "https://repo.gradle.org/gradle/libs-releases/"
+	}
 	maven {
 		url	"https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-snapshots/"
 	}

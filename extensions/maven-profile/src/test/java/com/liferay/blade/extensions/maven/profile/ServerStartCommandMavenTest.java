@@ -54,7 +54,7 @@ public class ServerStartCommandMavenTest {
 
 	@Test
 	public void testServerStartCommandTomcat() throws Exception {
-		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1", "-p", "maven"};
+		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1", "-P", "maven"};
 
 		new BladeTest().run(initArgs);
 

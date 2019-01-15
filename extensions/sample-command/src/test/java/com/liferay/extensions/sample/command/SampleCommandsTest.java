@@ -58,7 +58,7 @@ public class SampleCommandsTest {
 
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
-		args = new String[] {"--base", workspaceDir.getPath(), "init", "-b", "maven"};
+		args = new String[] {"--base", workspaceDir.getPath(), "init", "-P", "maven"};
 
 		BladeTest bladeTest = new BladeTest(tempDir);
 
