@@ -26,6 +26,7 @@ import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 import java.io.File;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,6 +42,8 @@ public class InitCommandMavenTest {
 	@Before
 	public void setUp() throws Exception {
 		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 	}
 
 	@Test
@@ -51,7 +54,13 @@ public class InitCommandMavenTest {
 
 		Assert.assertTrue(newproject.mkdirs());
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(newproject) {
+
+			public Path getExtensionsPath() {
+				return _extensionsDir.toPath();
+			}
+
+		};
 
 		bladeTest.run(args);
 
@@ -76,11 +85,19 @@ public class InitCommandMavenTest {
 	public void testMavenInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject"};
 
-		Assert.assertTrue(new File(_workspaceDir, "newproject").mkdirs());
+		File projectDir = new File(_workspaceDir, "newproject");
+
+		Assert.assertTrue(projectDir.mkdirs());
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
 
-		BladeTest bladeTest = new BladeTest(false);
+		BladeTest bladeTest = new BladeTest(projectDir, false) {
+
+			public Path getExtensionsPath() {
+				return _extensionsDir.toPath();
+			}
+
+		};
 
 		bladeTest.run(args);
 
@@ -91,7 +108,15 @@ public class InitCommandMavenTest {
 	public void testMavenInitWithNameWorkspaceNotExists() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject"};
 
-		BladeTest bladeTest = new BladeTest();
+		File projectDir = new File(_workspaceDir, "newproject");
+
+		BladeTest bladeTest = new BladeTest(projectDir) {
+
+			public Path getExtensionsPath() {
+				return _extensionsDir.toPath();
+			}
+
+		};
 
 		bladeTest.run(args);
 
@@ -104,7 +129,13 @@ public class InitCommandMavenTest {
 	public void testMavenInitWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven"};
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(_workspaceDir) {
+
+			public Path getExtensionsPath() {
+				return _extensionsDir.toPath();
+			}
+
+		};
 
 		bladeTest.run(args);
 
@@ -129,7 +160,13 @@ public class InitCommandMavenTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
-		BladeTest bladeTest = new BladeTest(false);
+		BladeTest bladeTest = new BladeTest(_workspaceDir, false) {
+
+			public Path getExtensionsPath() {
+				return _extensionsDir.toPath();
+			}
+
+		};
 
 		bladeTest.run(args);
 
@@ -140,7 +177,13 @@ public class InitCommandMavenTest {
 	public void testMavenInitWorkspaceDirectoryHasFilesForce() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven"};
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(_workspaceDir) {
+
+			public Path getExtensionsPath() {
+				return _extensionsDir.toPath();
+			}
+
+		};
 
 		bladeTest.run(args);
 
@@ -169,7 +212,13 @@ public class InitCommandMavenTest {
 
 		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "-P", "maven", "foo"};
 
-		BladeTest bladeTest = new BladeTest();
+		BladeTest bladeTest = new BladeTest(_workspaceDir) {
+
+			public Path getExtensionsPath() {
+				return _extensionsDir.toPath();
+			}
+
+		};
 
 		bladeTest.run(args);
 
@@ -193,6 +242,7 @@ public class InitCommandMavenTest {
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 	}
 
+	private File _extensionsDir = null;
 	private File _workspaceDir = null;
 
 }

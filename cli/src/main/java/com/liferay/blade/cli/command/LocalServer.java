@@ -39,7 +39,7 @@ import java.util.Properties;
 public class LocalServer {
 
 	public LocalServer(File baseDir) {
-		if (WorkspaceUtil.isWorkspace(baseDir)) {
+		if (isWorkspace(baseDir)) {
 			Properties properties = getWorkspaceProperties(baseDir);
 
 			String liferayHomePath = properties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR_PROPERTY);
@@ -88,7 +88,7 @@ public class LocalServer {
 				_liferayHomePath = tempLiferayHome.normalize();
 			}
 			else {
-				File workspaceRootDir = WorkspaceUtil.getWorkspaceDir(baseDir);
+				File workspaceRootDir = getWorkspaceDir(baseDir);
 
 				Path workspaceRootDirPath = workspaceRootDir.toPath();
 
@@ -203,8 +203,16 @@ public class LocalServer {
 		return processBuilder;
 	}
 
+	protected File getWorkspaceDir(File dir) {
+		return WorkspaceUtil.getWorkspaceDir(dir);
+	}
+
 	protected Properties getWorkspaceProperties(File baseDir) {
 		return WorkspaceUtil.getGradleProperties(baseDir);
+	}
+
+	protected boolean isWorkspace(File dir) {
+		return WorkspaceUtil.isWorkspace(dir);
 	}
 
 	private static String _getJBossWildflyExecutable() {

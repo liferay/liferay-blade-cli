@@ -62,7 +62,7 @@ public class ServerCommandsMavenTest {
 
 		Assert.assertFalse(bundlesDir.exists());
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		Assert.assertTrue(bundlesDir.exists());
 	}

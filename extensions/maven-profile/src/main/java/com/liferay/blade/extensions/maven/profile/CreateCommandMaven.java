@@ -22,8 +22,10 @@ import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.CreateArgs;
 import com.liferay.blade.cli.command.CreateCommand;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
+import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.util.Properties;
 
@@ -50,6 +52,20 @@ public class CreateCommandMaven extends CreateCommand {
 		createArgs.setBuild("maven");
 
 		super.execute();
+	}
+
+	@Override
+	protected ProjectTemplatesArgs getProjectTemplateArgs(
+			CreateArgs createArgs, BladeCLI bladeCLI, String template, String name, File dir)
+		throws IOException {
+
+		ProjectTemplatesArgs projectTemplatesArgs = super.getProjectTemplateArgs(
+			createArgs, bladeCLI, template, name, dir);
+
+		projectTemplatesArgs.setGradle(false);
+		projectTemplatesArgs.setMaven(true);
+
+		return projectTemplatesArgs;
 	}
 
 	@Override

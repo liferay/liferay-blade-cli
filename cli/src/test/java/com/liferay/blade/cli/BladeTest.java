@@ -49,6 +49,12 @@ public class BladeTest extends BladeCLI {
 		_userHomeDir = userHomeDir;
 	}
 
+	public BladeTest(File userHomeDir, boolean assertErrors) throws Exception {
+		this(assertErrors);
+
+		_userHomeDir = userHomeDir;
+	}
+
 	public BladeTest(PrintStream ps) {
 		this(ps, ps, null);
 	}

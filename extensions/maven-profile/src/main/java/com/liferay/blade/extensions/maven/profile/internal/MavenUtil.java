@@ -16,8 +16,6 @@
 
 package com.liferay.blade.extensions.maven.profile.internal;
 
-import com.liferay.blade.cli.util.WorkspaceUtil;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -47,6 +45,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.liferay.blade.cli.util.BladeUtil;
 
 /**
  * @author Christopher Bryan Boyd
@@ -178,7 +178,83 @@ public class MavenUtil {
 	}
 
 	public static File getPomXMLFile(File dir) {
-		return new File(WorkspaceUtil.getWorkspaceDir(dir), _POM_XML_FILE_NAME);
+		return new File(getWorkspaceDir(dir), _POM_XML_FILE_NAME);
+	}
+
+	public static File getWorkspaceDir(File dir) {
+		File mavenParent = _findWorkspacePomFile(dir);
+
+		if (_isWorkspacePomFile(new File(mavenParent, "pom.xml"))) {
+			return mavenParent;
+		}
+
+		File mavenPom = new File(dir, "pom.xml");
+
+		if (mavenPom.exists() && _isWorkspacePomFile(mavenPom)) {
+			return dir;
+		}
+
+		return null;
+	}
+
+	public static boolean isWorkspace(File dir) {
+		File workspaceDir = getWorkspaceDir(dir);
+
+		if (Objects.isNull(dir) || Objects.isNull(workspaceDir)) {
+			return false;
+		}
+
+		File pomFile = new File(workspaceDir, "pom.xml");
+
+		if (_isWorkspacePomFile(pomFile)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static File _findWorkspacePomFile(File dir) {
+		if (dir == null) {
+			return null;
+		}
+		else if (".".equals(dir.toString()) || !dir.isAbsolute()) {
+			try {
+				dir = dir.getCanonicalFile();
+			}
+			catch (Exception e) {
+				dir = dir.getAbsoluteFile();
+			}
+		}
+
+		File file = new File(dir, "pom.xml");
+
+		if (file.exists() && _isWorkspacePomFile(file)) {
+			return dir;
+		}
+
+		return _findWorkspacePomFile(dir.getParentFile());
+	}
+
+	private static boolean _isWorkspacePomFile(File pomFile) {
+		boolean pom = false;
+
+		if ((pomFile != null) && "pom.xml".equals(pomFile.getName()) && pomFile.exists()) {
+			pom = true;
+		}
+
+		if (pom) {
+			try {
+				String content = BladeUtil.read(pomFile);
+
+				if (content.contains("portal.tools.bundle.support")) {
+					return true;
+				}
+			}
+			catch (Exception e) {
+			}
+		}
+
+		return false;
 	}
 
 	private static final String _POM_XML_FILE_NAME = "pom.xml";
