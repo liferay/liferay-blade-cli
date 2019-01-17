@@ -42,13 +42,13 @@ public class DeployCommandTest {
 	public void testInstallJar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-f"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
 
@@ -72,7 +72,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "soy-portlet", "foo"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		File projectDirectory = new File(modulesDirectory, "foo");
 
@@ -80,7 +80,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", projectDirectory.getAbsolutePath(), "deploy"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		filesCount = osgiModulesDirectory.list().length;
 
@@ -93,13 +93,13 @@ public class DeployCommandTest {
 
 		File standaloneDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-f"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
 
@@ -107,7 +107,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", standaloneDir.getAbsolutePath(), "create", "-t", "soy-portlet", "foo"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(standaloneDir, args);
 
 		File projectDirectory = new File(standaloneDir, "foo");
 
@@ -130,7 +130,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", projectDirectoryPath.toString(), "deploy"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(standaloneDir, args);
 
 		int filesCount = deployDirectory.list().length;
 
@@ -141,13 +141,13 @@ public class DeployCommandTest {
 	public void testInstallWar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-f"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
 
@@ -167,7 +167,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", warsDirectory.getAbsolutePath(), "create", "-t", "war-mvc-portlet", "foo"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		File projectDirectory = new File(warsDirectory, "foo");
 
@@ -175,7 +175,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"--base", projectDirectory.getAbsolutePath(), "deploy"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		filesCount = deployDirectory.list().length;
 

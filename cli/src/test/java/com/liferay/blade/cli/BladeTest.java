@@ -49,6 +49,12 @@ public class BladeTest extends BladeCLI {
 		_userHomeDir = userHomeDir;
 	}
 
+	public BladeTest(File userHomeDir, boolean assertErrors) throws Exception {
+		this(assertErrors);
+
+		_userHomeDir = userHomeDir;
+	}
+
 	public BladeTest(PrintStream ps) {
 		this(ps, ps, null);
 	}
@@ -127,6 +133,8 @@ public class BladeTest extends BladeCLI {
 					"sh: warning: setlocale: LC_ALL: cannot change locale \\(en_US.UTF-8\\)", "");
 
 				errors = errors.trim();
+
+				errors = errors.replaceAll("^\\/bin\\/$", "");
 
 				if (!errors.isEmpty()) {
 					throw new Exception("Errors not empty:\n" + errors);

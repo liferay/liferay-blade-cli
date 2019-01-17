@@ -186,18 +186,19 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithGradleWrapperExisting() throws Exception {
-		String[] initArgs = {"--base", temporaryFolder.getRoot().getPath() + "/test/workspace", "init"};
+		File workspaceDir = new File(temporaryFolder.getRoot(), "/test/workspace");
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(initArgs);
+		String[] initArgs = {"--base", workspaceDir.getPath(), "init", "-f"};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(workspaceDir, initArgs);
 
 		String output = bladeTestResults.getOutput();
 
 		Assert.assertTrue(output, output == null || output.isEmpty());
 
-		String[] samplesArgs =
-			{"samples", "-d", temporaryFolder.getRoot().getPath() + "/test/workspace/modules", "auth-failure"};
+		String[] samplesArgs = {"samples", "-d", workspaceDir.getPath() + "/modules", "auth-failure"};
 
-		bladeTestResults = TestUtil.runBlade(samplesArgs);
+		bladeTestResults = TestUtil.runBlade(workspaceDir, samplesArgs);
 
 		output = bladeTestResults.getOutput();
 
@@ -219,8 +220,6 @@ public class SamplesCommandTest {
 		Assert.assertFalse(gradleWrapperJar.exists());
 		Assert.assertFalse(gradleWrapperProperties.exists());
 		Assert.assertFalse(gradleWrapperShell.exists());
-
-		File workspaceDir = new File(temporaryFolder.getRoot(), "test/workspace");
 
 		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspaceDir.getPath(), "jar");
 

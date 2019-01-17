@@ -152,7 +152,7 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "-d", tempRoot.getAbsolutePath(), "-t", "modules-ext", "loginExt"};
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(tempRoot, args);
 
 		String output = bladeTestResults.getOutput();
 

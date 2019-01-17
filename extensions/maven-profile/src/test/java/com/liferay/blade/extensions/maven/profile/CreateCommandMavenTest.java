@@ -53,7 +53,7 @@ public class CreateCommandMavenTest {
 		File tempRoot = temporaryFolder.getRoot();
 
 		String[] mavenArgs =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "activator", "bar-activator"};
+			{"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "activator", "bar-activator"};
 
 		String projectPath = new File(tempRoot, "bar-activator").getAbsolutePath();
 
@@ -76,7 +76,7 @@ public class CreateCommandMavenTest {
 	public void testCreateApi() throws Exception {
 		File tempRoot = temporaryFolder.getRoot();
 
-		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "api", "foo"};
+		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "api", "foo"};
 
 		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
 
@@ -108,7 +108,7 @@ public class CreateCommandMavenTest {
 		File tempRoot = temporaryFolder.getRoot();
 
 		String[] mavenArgs = {
-			"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "fragment", "-h", "com.liferay.login.web",
+			"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "fragment", "-h", "com.liferay.login.web",
 			"-H", "1.0.0", "loginHook"
 		};
 
@@ -138,7 +138,7 @@ public class CreateCommandMavenTest {
 	public void testCreateMVCPortlet() throws Exception {
 		File tempRoot = temporaryFolder.getRoot();
 
-		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "mvc-portlet", "foo"};
+		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo"};
 
 		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
 

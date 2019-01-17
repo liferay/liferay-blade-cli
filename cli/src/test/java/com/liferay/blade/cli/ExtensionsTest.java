@@ -103,7 +103,7 @@ public class ExtensionsTest {
 
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-b", "foo"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "foo"};
 
 		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 

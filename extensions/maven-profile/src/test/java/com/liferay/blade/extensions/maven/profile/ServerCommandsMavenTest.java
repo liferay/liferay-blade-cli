@@ -39,7 +39,7 @@ public class ServerCommandsMavenTest {
 	public void testServerInit() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-f", "-p", "maven"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-f", "-P", "maven"};
 
 		BladeTest bladeTest = new BladeTest(workspaceDir);
 
@@ -62,7 +62,7 @@ public class ServerCommandsMavenTest {
 
 		Assert.assertFalse(bundlesDir.exists());
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(workspaceDir, args);
 
 		Assert.assertTrue(bundlesDir.exists());
 	}

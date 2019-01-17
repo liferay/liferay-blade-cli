@@ -21,7 +21,6 @@ import com.beust.jcommander.Parameters;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.IOException;
@@ -41,14 +40,11 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,18 +54,6 @@ import java.util.stream.Stream;
  * @author Gregory Amerson
  */
 public class Extensions implements AutoCloseable {
-
-	public static Collection<String> getBladeProfiles(Class<?> commandClass) {
-		return Stream.of(
-			commandClass.getAnnotationsByType(BladeProfile.class)
-		).filter(
-			Objects::nonNull
-		).map(
-			BladeProfile::value
-		).collect(
-			Collectors.toList()
-		);
-	}
 
 	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
 		Stream<Class<? extends BaseArgs>> stream = argsClass.stream();
@@ -244,6 +228,10 @@ public class Extensions implements AutoCloseable {
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
 		String profileName = _bladeSettings.getProfileName();
 
+		if (profileName == null) {
+			profileName = "gradle";
+		}
+
 		return _getCommands(profileName);
 	}
 
@@ -309,26 +297,6 @@ public class Extensions implements AutoCloseable {
 		}
 	}
 
-	private void _addCommand(
-			Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand, Class<? extends BaseArgs> argsClass)
-		throws IllegalAccessException, InstantiationException {
-
-		BaseArgs baseArgs = argsClass.newInstance();
-
-		baseCommand.setArgs(baseArgs);
-
-		Parameters parameters = argsClass.getAnnotation(Parameters.class);
-
-		if (parameters == null) {
-			throw new IllegalArgumentException(
-				"Loaded base command class that does not have a Parameters annotation " + argsClass.getName());
-		}
-
-		String[] commandNames = parameters.commandNames();
-
-		map.putIfAbsent(commandNames[0], baseCommand);
-	}
-
 	private void _extractBladeExtensions(Path extensionsDirectory) throws IOException {
 		try (InputStream inputStream = Extensions.class.getResourceAsStream("/blade-extensions-versions.properties")) {
 			if (inputStream == null) {
@@ -357,59 +325,9 @@ public class Extensions implements AutoCloseable {
 
 	private Map<String, BaseCommand<? extends BaseArgs>> _getCommands(String profileName) throws Exception {
 		if (_commands == null) {
-			_commands = new HashMap<>();
-
 			ClassLoader serviceLoaderClassLoader = _getServiceClassLoader();
 
-			@SuppressWarnings("rawtypes")
-			ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, serviceLoaderClassLoader);
-
-			Collection<BaseCommand<?>> allCommands = new ArrayList<>();
-
-			for (BaseCommand<?> baseCommand : serviceLoader) {
-				baseCommand.setClassLoader(serviceLoaderClassLoader);
-
-				allCommands.add(baseCommand);
-			}
-
-			Map<String, BaseCommand<?>> map = new HashMap<>();
-
-			Collection<BaseCommand<?>> commandsToRemove = new ArrayList<>();
-
-			if ((profileName != null) && (profileName.length() > 0)) {
-				for (BaseCommand<?> baseCommand : allCommands) {
-					Collection<String> profileNames = getBladeProfiles(baseCommand.getClass());
-
-					Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
-
-					if (profileNames.contains(profileName)) {
-						_addCommand(map, baseCommand, argsClass);
-
-						commandsToRemove.add(baseCommand);
-					}
-				}
-			}
-			else {
-				for (BaseCommand<?> baseCommand : allCommands) {
-					Collection<String> profileNames = getBladeProfiles(baseCommand.getClass());
-
-					if ((profileNames != null) && !profileNames.isEmpty()) {
-						commandsToRemove.add(baseCommand);
-					}
-				}
-			}
-
-			allCommands.removeAll(commandsToRemove);
-
-			for (BaseCommand<?> baseCommand : allCommands) {
-				Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
-
-				_addCommand(map, baseCommand, argsClass);
-			}
-
-			for (Entry<String, BaseCommand<?>> entry : map.entrySet()) {
-				_commands.put(entry.getKey(), entry.getValue());
-			}
+			_commands = BladeCLI.getCommandMapByClassLoader(profileName, serviceLoaderClassLoader);
 		}
 
 		return _commands;
