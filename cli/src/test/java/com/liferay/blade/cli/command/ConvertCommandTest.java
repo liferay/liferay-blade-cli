@@ -51,11 +51,11 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-a"};
 
-		new BladeTest(false).run(args);
+		new BladeTest(temporaryFolder.getRoot(), false).run(args);
 
 		Assert.assertTrue(
 			new File(
@@ -85,11 +85,11 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		File layoutWar = new File(projectDir, "wars/1-2-1-columns-layouttpl");
 
@@ -118,11 +118,11 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-application-adapter-hook"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		File sampleExpandoHook = new File(projectDir, "wars/sample-application-adapter-hook");
 
@@ -132,7 +132,7 @@ public class ConvertCommandTest {
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-servlet-filter-hook"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		File sampleServletFilterHook = new File(projectDir, "wars/sample-servlet-filter-hook");
 
@@ -157,13 +157,13 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		Assert.assertTrue(theme.exists());
 
@@ -181,7 +181,7 @@ public class ConvertCommandTest {
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		File advancedTheme = new File(projectDir, "wars/sample-styled-advanced-theme");
 
@@ -271,7 +271,7 @@ public class ConvertCommandTest {
 
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
-		new BladeTest().run(args);
+		new BladeTest(projectDir).run(args);
 
 		Assert.assertTrue(pluginsSdkDir.exists());
 

@@ -22,6 +22,7 @@ import com.liferay.blade.cli.TestUtil;
 import java.io.File;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 import java.util.Collection;
@@ -49,6 +50,7 @@ public class ServerStartCommandTest {
 	public void setUp() throws Exception {
 		_testWorkspaceDir = temporaryFolder.newFolder("testWorkspaceDir");
 
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 		_killTomcat();
 
 		_killWildfly();
@@ -68,7 +70,9 @@ public class ServerStartCommandTest {
 	public void testServerStartCommandTomcat() throws Exception {
 		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1"};
 
-		new BladeTest().run(initArgs);
+		BladeTest bladeTest = _getBladeTest(_testWorkspaceDir);
+
+		bladeTest.run(initArgs);
 
 		File gradleProperties = new File(_testWorkspaceDir, "gradle.properties");
 
@@ -89,7 +93,9 @@ public class ServerStartCommandTest {
 
 		String[] gwArgs = {"--base", _testWorkspaceDir.getPath(), "gw", "initBundle"};
 
-		new BladeTest().run(gwArgs);
+		bladeTest = _getBladeTest(_testWorkspaceDir);
+
+		bladeTest.run(gwArgs);
 
 		File bundlesFolder = new File(_testWorkspaceDir, "bundles/tomcat-9.0.10");
 
@@ -97,11 +103,9 @@ public class ServerStartCommandTest {
 
 		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
 
-		try {
-			new BladeTest().run(serverStartArgs);
-		}
-		catch (Exception e) {
-		}
+		bladeTest = _getBladeTest(_testWorkspaceDir);
+
+		bladeTest.run(serverStartArgs);
 
 		Thread.sleep(1000);
 
@@ -129,7 +133,9 @@ public class ServerStartCommandTest {
 	public void testServerStartCommandWildfly() throws Exception {
 		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1"};
 
-		new BladeTest().run(initArgs);
+		BladeTest bladeTest = _getBladeTest(_testWorkspaceDir);
+
+		bladeTest.run(initArgs);
 
 		File gradleProperties = new File(_testWorkspaceDir, "gradle.properties");
 
@@ -150,7 +156,9 @@ public class ServerStartCommandTest {
 
 		String[] gwArgs = {"--base", _testWorkspaceDir.getPath(), "gw", "initBundle"};
 
-		new BladeTest().run(gwArgs);
+		bladeTest = _getBladeTest(_testWorkspaceDir);
+
+		bladeTest.run(gwArgs);
 
 		File bundlesFolder = new File(_testWorkspaceDir, "bundles/wildfly-11.0.0");
 
@@ -158,7 +166,9 @@ public class ServerStartCommandTest {
 
 		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
 
-		new BladeTest().run(serverStartArgs);
+		bladeTest = _getBladeTest(_testWorkspaceDir);
+
+		bladeTest.run(serverStartArgs);
 
 		Thread.sleep(1000);
 
@@ -194,9 +204,9 @@ public class ServerStartCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static boolean _commandExists(String... args) {
+	private boolean _commandExists(String... args) {
 		try {
-			TestUtil.runBlade(args);
+			TestUtil.runBlade(temporaryFolder.getRoot(), args);
 		}
 		catch (Throwable throwable) {
 			String message = throwable.getMessage();
@@ -219,6 +229,18 @@ public class ServerStartCommandTest {
 		return stream.filter(
 			processFilter
 		).findFirst();
+	}
+
+	private BladeTest _getBladeTest(File userHomeDir) throws Exception {
+		BladeTest bladeTest = new BladeTest(userHomeDir) {
+
+			public Path getExtensionsPath() {
+				return _extensionsDir.toPath();
+			}
+
+		};
+
+		return bladeTest;
 	}
 
 	private void _killTomcat() throws Exception {
@@ -271,6 +293,7 @@ public class ServerStartCommandTest {
 		return sb.toString();
 	}
 
+	private File _extensionsDir = null;
 	private File _testWorkspaceDir = null;
 
 	private Predicate<JavaProcess> _tomcatFilter = process -> {

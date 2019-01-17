@@ -47,7 +47,7 @@ public class TargetPlatformTest {
 
 		String[] args = {"init", "--base", _gradleWorkspaceDir.getAbsolutePath()};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(temporaryFolder.getRoot(), args);
 
 		_gradlePropertiesFile = WorkspaceUtil.getGradlePropertiesFile(_gradleWorkspaceDir);
 		_settingsGradleFile = WorkspaceUtil.getSettingGradleFile(_gradleWorkspaceDir);
@@ -80,7 +80,7 @@ public class TargetPlatformTest {
 		String[] args =
 			{"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-activator"};
 
-		TestUtil.runBlade(args);
+		TestUtil.runBlade(_gradleWorkspaceDir, args);
 
 		File modulesDir = new File(_gradleWorkspaceDir, "modules");
 
@@ -103,7 +103,7 @@ public class TargetPlatformTest {
 
 		String[] args = {"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"};
 
-		new BladeTest().run(args);
+		new BladeTest(temporaryFolder.getRoot()).run(args);
 
 		File modulesDir = new File(_gradleWorkspaceDir, "modules");
 
