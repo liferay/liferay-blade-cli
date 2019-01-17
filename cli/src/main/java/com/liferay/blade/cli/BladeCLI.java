@@ -72,7 +72,7 @@ public class BladeCLI {
 
 		Collection<BaseCommand<?>> allCommands = _getCommandsByClassLoader(classLoader);
 
-		Map<String, BaseCommand<?>> map = new HashMap<>();
+		Map<String, BaseCommand<?>> commandMap = new HashMap<>();
 
 		Collection<BaseCommand<?>> commandsToRemove = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class BladeCLI {
 			Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
 
 			if (profileNameIsPresent && profileNames.contains(profileName)) {
-				_addCommand(map, baseCommand, argsClass);
+				_addCommand(commandMap, baseCommand, argsClass);
 
 				commandsToRemove.add(baseCommand);
 			}
@@ -102,10 +102,10 @@ public class BladeCLI {
 		for (BaseCommand<?> baseCommand : allCommands) {
 			Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
 
-			_addCommand(map, baseCommand, argsClass);
+			_addCommand(commandMap, baseCommand, argsClass);
 		}
 
-		return map;
+		return commandMap;
 	}
 
 	public static void main(String[] args) {
@@ -464,11 +464,11 @@ public class BladeCLI {
 	private static JCommander _buildJCommanderWithCommandMap(Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
 		Builder builder = JCommander.newBuilder();
 
-		for (Entry<String, BaseCommand<? extends BaseArgs>> e : commandMap.entrySet()) {
-			BaseCommand<? extends BaseArgs> value = e.getValue();
+		for (Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
+			BaseCommand<? extends BaseArgs> value = entry.getValue();
 
 			try {
-				builder.addCommand(e.getKey(), value.getArgs());
+				builder.addCommand(entry.getKey(), value.getArgs());
 			}
 			catch (ParameterException pe) {
 				System.err.println(pe.getMessage());
@@ -528,9 +528,9 @@ public class BladeCLI {
 
 				Object commandArgs = objects.get(0);
 
-				BaseArgs arg = BaseArgs.class.cast(commandArgs);
+				BaseArgs baseArgs = BaseArgs.class.cast(commandArgs);
 
-				profile = arg.getProfileName();
+				profile = baseArgs.getProfileName();
 			}
 		}
 		catch (MissingCommandException mce) {
@@ -538,8 +538,8 @@ public class BladeCLI {
 
 			throw mce;
 		}
-		catch (Throwable th) {
-			th.printStackTrace();
+		catch (Throwable throwable) {
+			throw new MissingCommandException(throwable.getMessage());
 		}
 
 		return profile;
