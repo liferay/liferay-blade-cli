@@ -134,6 +134,8 @@ public class BladeTest extends BladeCLI {
 
 				errors = errors.trim();
 
+				errors = errors.replaceAll("^\\/bin\\/$", "");
+
 				if (!errors.isEmpty()) {
 					throw new Exception("Errors not empty:\n" + errors);
 				}
