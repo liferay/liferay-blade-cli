@@ -17,11 +17,14 @@
 package com.liferay.blade.cli;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.Parameters;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.util.CombinedClassLoader;
@@ -43,12 +46,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.fusesource.jansi.AnsiConsole;
 
@@ -57,6 +65,48 @@ import org.fusesource.jansi.AnsiConsole;
  * @author David Truong
  */
 public class BladeCLI {
+
+	public static Map<String, BaseCommand<? extends BaseArgs>> getCommandMapByClassLoader(
+			String profileName, ClassLoader classLoader)
+		throws IllegalAccessException, InstantiationException {
+
+		Collection<BaseCommand<?>> allCommands = _getCommandsByClassLoader(classLoader);
+
+		Map<String, BaseCommand<?>> map = new HashMap<>();
+
+		Collection<BaseCommand<?>> commandsToRemove = new ArrayList<>();
+
+		boolean profileNameIsPresent = false;
+
+		if ((profileName != null) && (profileName.length() > 0)) {
+			profileNameIsPresent = true;
+		}
+
+		for (BaseCommand<?> baseCommand : allCommands) {
+			Collection<String> profileNames = _getBladeProfiles(baseCommand.getClass());
+
+			Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+
+			if (profileNameIsPresent && profileNames.contains(profileName)) {
+				_addCommand(map, baseCommand, argsClass);
+
+				commandsToRemove.add(baseCommand);
+			}
+			else if ((profileNames != null) && !profileNames.isEmpty()) {
+				commandsToRemove.add(baseCommand);
+			}
+		}
+
+		allCommands.removeAll(commandsToRemove);
+
+		for (BaseCommand<?> baseCommand : allCommands) {
+			Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
+
+			_addCommand(map, baseCommand, argsClass);
+		}
+
+		return map;
+	}
 
 	public static void main(String[] args) {
 		BladeCLI bladeCLI = new BladeCLI();
@@ -273,7 +323,7 @@ public class BladeCLI {
 
 		args = Extensions.sortArgs(_commands, args);
 
-		_jCommander = Extensions.buildJCommanderWithCommandMap(_commands);
+		_jCommander = _buildJCommanderWithCommandMap(_commands);
 
 		if ((args.length == 1) && args[0].equals("--help")) {
 			printUsage();
@@ -379,6 +429,55 @@ public class BladeCLI {
 		}
 	}
 
+	private static void _addCommand(
+			Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand, Class<? extends BaseArgs> argsClass)
+		throws IllegalAccessException, InstantiationException {
+
+		BaseArgs baseArgs = argsClass.newInstance();
+
+		baseCommand.setArgs(baseArgs);
+
+		Parameters parameters = argsClass.getAnnotation(Parameters.class);
+
+		if (parameters == null) {
+			throw new IllegalArgumentException(
+				"Loaded base command class that does not have a Parameters annotation " + argsClass.getName());
+		}
+
+		String[] commandNames = parameters.commandNames();
+
+		map.putIfAbsent(commandNames[0], baseCommand);
+	}
+
+	private static JCommander _buildJCommander(String profileName) throws Exception {
+		Thread currentThread = Thread.currentThread();
+
+		ClassLoader classLoader = currentThread.getContextClassLoader();
+
+		Map<String, BaseCommand<? extends BaseArgs>> commandMap = getCommandMapByClassLoader(profileName, classLoader);
+
+		JCommander jCommander = _buildJCommanderWithCommandMap(commandMap);
+
+		return jCommander;
+	}
+
+	private static JCommander _buildJCommanderWithCommandMap(Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
+		Builder builder = JCommander.newBuilder();
+
+		for (Entry<String, BaseCommand<? extends BaseArgs>> e : commandMap.entrySet()) {
+			BaseCommand<? extends BaseArgs> value = e.getValue();
+
+			try {
+				builder.addCommand(e.getKey(), value.getArgs());
+			}
+			catch (ParameterException pe) {
+				System.err.println(pe.getMessage());
+			}
+		}
+
+		return builder.build();
+	}
+
 	private static String _extractBasePath(String[] args) {
 		String defaultBasePath = ".";
 
@@ -398,11 +497,23 @@ public class BladeCLI {
 		return defaultBasePath;
 	}
 
+	private static Collection<String> _getBladeProfiles(Class<?> commandClass) {
+		return Stream.of(
+			commandClass.getAnnotationsByType(BladeProfile.class)
+		).filter(
+			Objects::nonNull
+		).map(
+			BladeProfile::value
+		).collect(
+			Collectors.toList()
+		);
+	}
+
 	private static String _getCommandProfile(String[] args) throws MissingCommandException {
 		String profile = null;
 
 		try {
-			JCommander jCommander = Extensions.buildJCommander("gradle");
+			JCommander jCommander = _buildJCommander("gradle");
 
 			jCommander.parse(args);
 
@@ -432,6 +543,20 @@ public class BladeCLI {
 		}
 
 		return profile;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Collection<BaseCommand<?>> _getCommandsByClassLoader(ClassLoader classLoader) {
+		Collection<BaseCommand<?>> allCommands = new ArrayList<>();
+		ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, classLoader);
+
+		for (BaseCommand<?> baseCommand : serviceLoader) {
+			baseCommand.setClassLoader(classLoader);
+
+			allCommands.add(baseCommand);
+		}
+
+		return allCommands;
 	}
 
 	private String _extractProfileName(String[] args) {
