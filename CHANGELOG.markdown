@@ -1,5 +1,12 @@
 # Liferay Blade CLI Change Log
 
+## 3.4.2 - 2019-1-18 - 981940b943cc198836483b35569de8e3e3721f38
+
+- [BLADE-346]: Update to project templates
+- [BLADE-361]: blade 'deploy' should behave more like traditional "deploy" tasks, i.e. its behavior should be obvious
+- [BLADE-377]: init command should honor the -p, --profile-name flag over any defaults
+- [BLADE-378]: update gives confusing message when switching to released version
+
 ## 3.4.1 - 2018-12-18 - 3cc0d3f734001578fc14ff0c51f3b38b6f7daff9
 
 - [BLADE-245]: As a developer, I would to simplify the server command
@@ -240,6 +247,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-358]: https://issues.liferay.com/browse/BLADE-358
 [BLADE-359]: https://issues.liferay.com/browse/BLADE-359
 [BLADE-360]: https://issues.liferay.com/browse/BLADE-360
+[BLADE-361]: https://issues.liferay.com/browse/BLADE-361
 [BLADE-366]: https://issues.liferay.com/browse/BLADE-366
 [BLADE-367]: https://issues.liferay.com/browse/BLADE-367
 [BLADE-369]: https://issues.liferay.com/browse/BLADE-369
@@ -247,6 +255,8 @@ Updated to use Project Templates 4.1.0
 [BLADE-371]: https://issues.liferay.com/browse/BLADE-371
 [BLADE-372]: https://issues.liferay.com/browse/BLADE-372
 [BLADE-375]: https://issues.liferay.com/browse/BLADE-375
+[BLADE-377]: https://issues.liferay.com/browse/BLADE-377
+[BLADE-378]: https://issues.liferay.com/browse/BLADE-378
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
