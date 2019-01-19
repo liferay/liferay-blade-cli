@@ -194,7 +194,7 @@ public class SamplesCommandTest {
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output == null || output.isEmpty());
+		Assert.assertTrue(output, (output == null) || output.isEmpty());
 
 		String[] samplesArgs = {"samples", "-d", workspaceDir.getPath() + "/modules", "auth-failure"};
 
@@ -202,7 +202,7 @@ public class SamplesCommandTest {
 
 		output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output == null || output.isEmpty());
+		Assert.assertTrue(output, (output == null) || output.isEmpty());
 
 		File projectDir = new File(temporaryFolder.getRoot(), "test/workspace/modules/auth-failure");
 

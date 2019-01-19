@@ -118,7 +118,7 @@ public class ConvertServiceBuilderCommand {
 
 		List<String> args = name;
 
-		String sbProjectName = !args.isEmpty() && args.size() >= 2 ? args.get(1) : null;
+		String sbProjectName = !args.isEmpty() && (args.size() >= 2) ? args.get(1) : null;
 
 		if (sbProjectName == null) {
 			if (projectName.endsWith("-portlet")) {

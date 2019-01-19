@@ -485,7 +485,7 @@ public class BladeCLI {
 			return IntStream.range(
 				0, args.length - 1
 			).filter(
-				i -> args[i].equals("--base") && args.length > (i + 1)
+				i -> args[i].equals("--base") && (args.length > (i + 1))
 			).mapToObj(
 				i -> args[i + 1]
 			).findFirst(
