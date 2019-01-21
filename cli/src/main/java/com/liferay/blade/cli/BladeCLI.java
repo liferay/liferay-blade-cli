@@ -162,7 +162,21 @@ public class BladeCLI {
 	}
 
 	public BladeSettings getBladeSettings() throws IOException {
-		final File settingsFile;
+		File settingsFile;
+
+		BaseCommand<?> command = getCommand();
+
+		if (command instanceof WorkspaceLocator) {
+			WorkspaceLocator workspaceLocator = (WorkspaceLocator)command;
+
+			BaseArgs baseArgs = getArgs();
+
+			File baseDir = new File(baseArgs.getBase());
+
+			if (workspaceLocator.isWorkspace(baseDir)) {
+				settingsFile = new File(baseDir, ".blade/settings.properties");
+			}
+		}
 
 		if (WorkspaceUtil.isWorkspace(this)) {
 			File workspaceDir = WorkspaceUtil.getWorkspaceDir(this);
