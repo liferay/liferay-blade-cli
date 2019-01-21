@@ -100,7 +100,7 @@ public class InitCommandMavenTest {
 
 		File projectDir = new File(_workspaceDir, "newproject");
 
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+		TestUtil.runBlade(projectDir, _extensionsDir, args);
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/pom.xml").exists());
 
@@ -111,12 +111,7 @@ public class InitCommandMavenTest {
 	public void testMavenInitWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven"};
 
-		try {
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-		}
-		catch (Throwable e) {
-			e.printStackTrace();
-		}
 
 		Assert.assertTrue(new File(_workspaceDir, "pom.xml").exists());
 
