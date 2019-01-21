@@ -60,9 +60,9 @@ public class GradleExecTest {
 		builder.setSettingsDir(_rootDir.toPath());
 		builder.setStdOut(ps);
 
-		BladeCLI bladeCli = builder.build();
+		BladeCLI bladeCLI = builder.build();
 
-		GradleExec gradleExec = new GradleExec(bladeCli);
+		GradleExec gradleExec = new GradleExec(bladeCLI);
 
 		ProcessResult result = gradleExec.executeTask("tasks");
 
