@@ -312,13 +312,13 @@ public class SamplesCommandTest {
 	}
 
 	private BladeTest _getBladeTest() {
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		builder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
 
-		builder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
 
-		return builder.build();
+		return bladeTestBuilder.build();
 	}
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));

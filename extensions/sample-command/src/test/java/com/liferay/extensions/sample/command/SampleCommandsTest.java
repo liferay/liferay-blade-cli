@@ -54,13 +54,13 @@ public class SampleCommandsTest {
 		String[] args = {"--base", rootPathString, "hello", "--name", "foobar"};
 
 		StringPrintStream outputStream = StringPrintStream.newInstance();
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		builder.setExtensionsDir(_extensionsDir.toPath());
-		builder.setSettingsDir(_rootDir.toPath());
-		builder.setStdOut(outputStream);
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setStdOut(outputStream);
 
-		BladeTest bladeTest = builder.build();
+		BladeTest bladeTest = bladeTestBuilder.build();
 
 		bladeTest.run(args);
 
@@ -76,9 +76,9 @@ public class SampleCommandsTest {
 
 		outputStream = StringPrintStream.newInstance();
 
-		builder.setStdOut(outputStream);
+		bladeTestBuilder.setStdOut(outputStream);
 
-		bladeTest = builder.build();
+		bladeTest = bladeTestBuilder.build();
 
 		bladeTest.run(args);
 
@@ -86,9 +86,9 @@ public class SampleCommandsTest {
 
 		outputStream = StringPrintStream.newInstance();
 
-		builder.setStdOut(outputStream);
+		bladeTestBuilder.setStdOut(outputStream);
 
-		bladeTest = builder.build();
+		bladeTest = bladeTestBuilder.build();
 
 		bladeTest.run(args);
 

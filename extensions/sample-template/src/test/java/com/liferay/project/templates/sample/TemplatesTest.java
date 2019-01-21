@@ -51,13 +51,13 @@ public class TemplatesTest {
 
 		Path settingsDirPath = settingsDir.toPath();
 
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		builder.setSettingsDir(settingsDirPath);
+		bladeTestBuilder.setSettingsDir(settingsDirPath);
 
-		builder.setExtensionsDir(extensionsDirPath);
+		bladeTestBuilder.setExtensionsDir(extensionsDirPath);
 
-		_bladeTest = builder.build();
+		_bladeTest = bladeTestBuilder.build();
 	}
 
 	@Test

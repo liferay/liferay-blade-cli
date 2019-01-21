@@ -46,17 +46,17 @@ public class ExtensionsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		_rootDir = temporaryFolder.getRoot();
 
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 
-		builder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
 
-		builder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
 
-		_bladeTest = builder.build();
+		_bladeTest = bladeTestBuilder.build();
 	}
 
 	@Test

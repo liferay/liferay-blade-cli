@@ -60,9 +60,9 @@ public class GradleExecTest {
 		builder.setSettingsDir(_rootDir.toPath());
 		builder.setStdOut(ps);
 
-		BladeCLI blade = builder.build();
+		BladeCLI bladeCli = builder.build();
 
-		GradleExec gradleExec = new GradleExec(blade);
+		GradleExec gradleExec = new GradleExec(bladeCli);
 
 		ProcessResult result = gradleExec.executeTask("tasks");
 
@@ -84,12 +84,12 @@ public class GradleExecTest {
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private BladeTest _getBladeTest() {
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		builder.setExtensionsDir(_extensionsDir.toPath());
-		builder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
 
-		return builder.build();
+		return bladeTestBuilder.build();
 	}
 
 	private File _extensionsDir = null;

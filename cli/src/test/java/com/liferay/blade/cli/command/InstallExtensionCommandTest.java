@@ -216,9 +216,9 @@ public class InstallExtensionCommandTest {
 	public void testInstallExtensionPathRequired() throws Exception {
 		String[] args = {"extension install"};
 
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		BladeTest bladeTest = builder.build();
+		BladeTest bladeTest = bladeTestBuilder.build();
 
 		String error = null;
 
