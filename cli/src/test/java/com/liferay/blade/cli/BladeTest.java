@@ -46,7 +46,9 @@ public class BladeTest extends BladeCLI {
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
 		else {
-			settingsFile = _settingsDir.resolve("settings.properties").toFile();
+			Path settingsPath = _settingsDir.resolve("settings.properties");
+
+			settingsFile = settingsPath.toFile();
 		}
 
 		return new BladeSettings(settingsFile);
