@@ -129,9 +129,9 @@ public class TestUtil {
 			boolean assertErrors, String... args)
 		throws Exception {
 
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		builder.setExtensionsDir(extensionsDir.toPath());
+		bladeTestBuilder.setExtensionsDir(extensionsDir.toPath());
 
 		String settingsDirName = settingsDir.getName();
 
@@ -139,13 +139,13 @@ public class TestUtil {
 			settingsDir = new File(settingsDir, ".blade");
 		}
 
-		builder.setSettingsDir(settingsDir.toPath());
-		builder.setStdOut(out);
-		builder.setStdError(err);
-		builder.setStdIn(in);
-		builder.setAssertErrors(assertErrors);
+		bladeTestBuilder.setAssertErrors(assertErrors);
+		bladeTestBuilder.setSettingsDir(settingsDir.toPath());
+		bladeTestBuilder.setStdError(err);
+		bladeTestBuilder.setStdIn(in);
+		bladeTestBuilder.setStdOut(out);
 
-		BladeTest bladeTest = builder.build();
+		BladeTest bladeTest = bladeTestBuilder.build();
 
 		return runBlade(bladeTest, out, err, assertErrors, args);
 	}

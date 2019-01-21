@@ -415,12 +415,12 @@ public class InitCommandTest {
 	}
 
 	private BladeTest _getBladeTestCustomWorkspace(File workspaceDir) {
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		builder.setExtensionsDir(_extensionsDir.toPath());
-		builder.setSettingsDir(workspaceDir.toPath());
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setSettingsDir(workspaceDir.toPath());
 
-		return builder.build();
+		return bladeTestBuilder.build();
 	}
 
 	private void _makeSDK(File dir) throws IOException {

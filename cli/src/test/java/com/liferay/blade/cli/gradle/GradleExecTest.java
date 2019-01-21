@@ -54,13 +54,13 @@ public class GradleExecTest {
 
 		PrintStream ps = new PrintStream(baos);
 
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		builder.setExtensionsDir(_extensionsDir.toPath());
-		builder.setSettingsDir(_rootDir.toPath());
-		builder.setStdOut(ps);
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setStdOut(ps);
 
-		BladeCLI bladeCLI = builder.build();
+		BladeCLI bladeCLI = bladeTestBuilder.build();
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 

@@ -53,13 +53,13 @@ public class GradlePrintErrorTest {
 	public void testGradleError() throws Exception {
 		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
 
-		BladeTestBuilder builder = BladeTest.builder();
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		builder.setExtensionsDir(_extensionsDir.toPath());
-		builder.setSettingsDir(_rootDir.toPath());
-		builder.setAssertErrors(false);
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setAssertErrors(false);
 
-		BladeTest bladeTest = builder.build();
+		BladeTest bladeTest = bladeTestBuilder.build();
 
 		PowerMock.expectNew(
 			GradleExec.class, EasyMock.isA(BladeTest.class)).andReturn(new GradleExecSpecial(bladeTest));
