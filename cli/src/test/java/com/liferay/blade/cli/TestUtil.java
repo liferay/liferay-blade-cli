@@ -132,6 +132,13 @@ public class TestUtil {
 		BladeTestBuilder builder = BladeTest.builder();
 
 		builder.setExtensionsDir(extensionsDir.toPath());
+
+		String settingsDirName = settingsDir.getName();
+
+		if (!".blade".equals(settingsDirName)) {
+			settingsDir = new File(settingsDir, ".blade");
+		}
+
 		builder.setSettingsDir(settingsDir.toPath());
 		builder.setStdOut(out);
 		builder.setStdError(err);

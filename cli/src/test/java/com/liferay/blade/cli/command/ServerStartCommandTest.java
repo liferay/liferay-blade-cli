@@ -21,7 +21,6 @@ import com.liferay.blade.cli.TestUtil;
 import java.io.File;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 import java.util.Collection;
@@ -153,7 +152,7 @@ public class ServerStartCommandTest {
 		Files.write(gradleProperties.toPath(), bundleUrl.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
 
 		String[] gwArgs = {"--base", _testWorkspaceDir.getPath(), "gw", "initBundle"};
-		
+
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, gwArgs);
 
 		File bundlesFolder = new File(_testWorkspaceDir, "bundles/wildfly-11.0.0");

@@ -16,19 +16,6 @@
 
 package com.liferay.blade.cli.command;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Properties;
-
-import org.gradle.testkit.runner.BuildTask;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.BladeTestResults;
@@ -36,6 +23,22 @@ import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.WorkspaceUtil;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import java.nio.file.Files;
+
+import java.util.Properties;
+
+import org.gradle.testkit.runner.BuildTask;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Gregory Amerson
@@ -68,7 +71,7 @@ public class InitCommandTest {
 		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-		
+
 		File gitdir = new File(projectDir, ".git");
 
 		Assert.assertTrue(gitdir.exists());
@@ -190,7 +193,7 @@ public class InitCommandTest {
 		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-		
+
 		Assert.assertTrue(_workspaceDir.exists());
 
 		Assert.assertTrue(new File(_workspaceDir, "build.gradle").exists());
@@ -218,7 +221,7 @@ public class InitCommandTest {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-		
+
 		Assert.assertTrue(_workspaceDir.exists());
 
 		Assert.assertTrue(new File(_workspaceDir, "build.gradle").exists());
@@ -357,7 +360,7 @@ public class InitCommandTest {
 		File newproject = new File(_workspaceDir, "newproject");
 
 		Assert.assertTrue(newproject.mkdirs());
-		
+
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
 		Assert.assertTrue(new File(newproject, "build.gradle").exists());
@@ -410,7 +413,7 @@ public class InitCommandTest {
 
 		Assert.assertTrue(bndFile.exists());
 	}
-	
+
 	private BladeTest _getBladeTestCustomWorkspace(File workspaceDir) {
 		BladeTestBuilder builder = BladeTest.builder();
 

@@ -58,11 +58,7 @@ public class ServerStartCommandMavenTest {
 	public void testServerStartCommandTomcat() throws Exception {
 		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-f", "-v", "7.1", "-P", "maven"};
 
-<<<<<<< HEAD
-		new BladeTest(_testWorkspaceDir).run(initArgs);
-=======
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 
 		File pomXml = new File(_testWorkspaceDir, "pom.xml");
 
@@ -100,11 +96,7 @@ public class ServerStartCommandMavenTest {
 		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
 
 		try {
-<<<<<<< HEAD
-			new BladeTest(_testWorkspaceDir).run(serverStartArgs);
-=======
 			TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgs);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 		}
 		catch (Exception e) {
 		}

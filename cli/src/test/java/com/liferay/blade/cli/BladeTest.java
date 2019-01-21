@@ -34,12 +34,6 @@ public class BladeTest extends BladeCLI {
 
 	public static BladeTestBuilder builder() {
 		return new BladeTestBuilder();
-	public BladeTest(File userHomeDir, boolean assertErrors) throws Exception {
-		this(assertErrors);
-
-		_userHomeDir = userHomeDir;
-	}
-
 	}
 
 	@Override

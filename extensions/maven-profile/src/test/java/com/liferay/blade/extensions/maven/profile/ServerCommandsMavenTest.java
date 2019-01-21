@@ -61,11 +61,7 @@ public class ServerCommandsMavenTest {
 
 		Assert.assertFalse(bundlesDir.exists());
 
-<<<<<<< HEAD
-		TestUtil.runBlade(workspaceDir, args);
-=======
 		TestUtil.runBlade(workspaceDir, extensionsDir, args);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 
 		Assert.assertTrue(bundlesDir.exists());
 	}

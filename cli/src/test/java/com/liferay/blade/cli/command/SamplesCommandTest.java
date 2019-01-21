@@ -203,8 +203,7 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(output, (output == null) || output.isEmpty());
 
-		String[] samplesArgs =
-			{"samples", "-d", _rootDir.getPath() + "/test/workspace/modules", "auth-failure"};
+		String[] samplesArgs = {"samples", "-d", _rootDir.getPath() + "/test/workspace/modules", "auth-failure"};
 
 		bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, samplesArgs);
 

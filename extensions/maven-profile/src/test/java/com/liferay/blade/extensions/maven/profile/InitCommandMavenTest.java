@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 import java.util.Properties;
 
@@ -43,10 +42,7 @@ public class InitCommandMavenTest {
 	@Before
 	public void setUp() throws Exception {
 		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
-<<<<<<< HEAD
 
-=======
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 	}
 
@@ -58,19 +54,7 @@ public class InitCommandMavenTest {
 
 		Assert.assertTrue(newproject.mkdirs());
 
-<<<<<<< HEAD
-		BladeTest bladeTest = new BladeTest(newproject) {
-
-			public Path getExtensionsPath() {
-				return _extensionsDir.toPath();
-			}
-
-		};
-
-		bladeTest.run(args);
-=======
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
+		TestUtil.runBlade(newproject, _extensionsDir, args);
 
 		Assert.assertTrue(new File(newproject, "pom.xml").exists());
 
@@ -105,19 +89,7 @@ public class InitCommandMavenTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
 
-<<<<<<< HEAD
-		BladeTest bladeTest = new BladeTest(projectDir, false) {
-
-			public Path getExtensionsPath() {
-				return _extensionsDir.toPath();
-			}
-
-		};
-
-		bladeTest.run(args);
-=======
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 
 		Assert.assertFalse(new File(_workspaceDir, "newproject/pom.xml").exists());
 	}
@@ -128,19 +100,7 @@ public class InitCommandMavenTest {
 
 		File projectDir = new File(_workspaceDir, "newproject");
 
-		BladeTest bladeTest = new BladeTest(projectDir) {
-
-			public Path getExtensionsPath() {
-				return _extensionsDir.toPath();
-			}
-
-<<<<<<< HEAD
-		};
-
-		bladeTest.run(args);
-=======
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 
 		Assert.assertTrue(new File(_workspaceDir, "newproject/pom.xml").exists());
 
@@ -151,19 +111,12 @@ public class InitCommandMavenTest {
 	public void testMavenInitWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven"};
 
-<<<<<<< HEAD
-		BladeTest bladeTest = new BladeTest(_workspaceDir) {
-
-			public Path getExtensionsPath() {
-				return _extensionsDir.toPath();
-			}
-
-		};
-
-		bladeTest.run(args);
-=======
+		try {
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
+		}
+		catch (Throwable e) {
+			e.printStackTrace();
+		}
 
 		Assert.assertTrue(new File(_workspaceDir, "pom.xml").exists());
 
@@ -186,19 +139,7 @@ public class InitCommandMavenTest {
 
 		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
 
-<<<<<<< HEAD
-		BladeTest bladeTest = new BladeTest(_workspaceDir, false) {
-
-			public Path getExtensionsPath() {
-				return _extensionsDir.toPath();
-			}
-
-		};
-
-		bladeTest.run(args);
-=======
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 
 		Assert.assertFalse(new File(_workspaceDir, "pom.xml").exists());
 	}
@@ -207,19 +148,7 @@ public class InitCommandMavenTest {
 	public void testMavenInitWorkspaceDirectoryHasFilesForce() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven"};
 
-<<<<<<< HEAD
-		BladeTest bladeTest = new BladeTest(_workspaceDir) {
-
-			public Path getExtensionsPath() {
-				return _extensionsDir.toPath();
-			}
-
-		};
-
-		bladeTest.run(args);
-=======
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 
 		Assert.assertTrue(_workspaceDir.exists());
 
@@ -246,19 +175,7 @@ public class InitCommandMavenTest {
 
 		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "-P", "maven", "foo"};
 
-		BladeTest bladeTest = new BladeTest(_workspaceDir) {
-
-			public Path getExtensionsPath() {
-				return _extensionsDir.toPath();
-			}
-
-<<<<<<< HEAD
-		};
-
-		bladeTest.run(args);
-=======
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
->>>>>>> BLADE-380 Separate Settings and Extensions parent dirs
 
 		File file = IO.getFile(projectPath + "/foo");
 		File bndFile = IO.getFile(projectPath + "/foo/bnd.bnd");
