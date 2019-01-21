@@ -663,6 +663,10 @@ public class BladeCLI {
 
 	private boolean _shouldCheckForUpdates() {
 		try {
+			if (_command.contains("update")) {
+				return false;
+			}
+
 			Path updateCheckPath = _getUpdateCheckPath();
 
 			if (!Files.exists(updateCheckPath)) {
