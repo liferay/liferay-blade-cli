@@ -162,7 +162,7 @@ public class BladeCLI {
 	}
 
 	public BladeSettings getBladeSettings() throws IOException {
-		File settingsFile;
+		File settingsFile = null;
 
 		BaseCommand<?> command = getCommand();
 
@@ -177,13 +177,13 @@ public class BladeCLI {
 				settingsFile = new File(baseDir, ".blade/settings.properties");
 			}
 		}
-
-		if (WorkspaceUtil.isWorkspace(this)) {
+		else if (WorkspaceUtil.isWorkspace(this)) {
 			File workspaceDir = WorkspaceUtil.getWorkspaceDir(this);
 
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
-		else {
+
+		if (settingsFile == null) {
 			settingsFile = new File(_USER_HOME_DIR, ".blade/settings.properties");
 		}
 
