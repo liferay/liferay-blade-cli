@@ -32,10 +32,6 @@ import java.io.File;
 )
 public class CreateArgs extends BaseArgs {
 
-	public String getBuild() {
-		return _build;
-	}
-
 	public String getClassname() {
 		return _classname;
 	}
@@ -88,10 +84,6 @@ public class CreateArgs extends BaseArgs {
 		return _listTemplates;
 	}
 
-	public void setBuild(String build) {
-		_build = build;
-	}
-
 	public void setClassName(String className) {
 		_classname = className;
 	}
@@ -131,12 +123,6 @@ public class CreateArgs extends BaseArgs {
 	public void setTemplate(String template) {
 		_template = template;
 	}
-
-	@Parameter(
-		description = "Specify the build type of the project. Available options are gradle, maven. (gradle is default)",
-		names = {"-b", "--build"}
-	)
-	private String _build;
 
 	@Parameter(
 		description = "If a class is generated in the project, provide the name of the class to be generated. If not provided defaults to project name.",

@@ -169,6 +169,10 @@ publishing {
 }
 
 repositories {
+	if (project.hasProperty("integration") || project.hasProperty("release")) {
+		mavenLocal()
+	}
+
 	maven {
 		url "https://repo.gradle.org/gradle/libs-releases/"
 	}

@@ -49,7 +49,7 @@ public class CreateCommandMaven extends CreateCommand {
 	public void execute() throws Exception {
 		CreateArgs createArgs = getArgs();
 
-		createArgs.setBuild("maven");
+		createArgs.setProfileName("maven");
 
 		super.execute();
 	}

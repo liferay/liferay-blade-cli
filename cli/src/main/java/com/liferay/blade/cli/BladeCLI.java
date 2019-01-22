@@ -643,6 +643,10 @@ public class BladeCLI {
 			try {
 				thread.setContextClassLoader(combinedClassLoader);
 
+				if (_args.getProfileName() == null) {
+					_args.setProfileName("gradle");
+				}
+
 				command.execute();
 			}
 			catch (Throwable th) {
