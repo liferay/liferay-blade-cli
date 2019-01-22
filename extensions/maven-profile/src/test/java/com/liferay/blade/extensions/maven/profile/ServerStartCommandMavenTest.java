@@ -16,7 +16,7 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
-import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.command.JavaProcess;
 import com.liferay.blade.cli.command.JavaProcesses;
 import com.liferay.blade.cli.util.BladeUtil;
@@ -49,6 +49,8 @@ public class ServerStartCommandMavenTest {
 	public void setUp() throws Exception {
 		_testWorkspaceDir = temporaryFolder.newFolder("testWorkspaceDir");
 
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+
 		_killTomcat();
 	}
 
@@ -56,7 +58,7 @@ public class ServerStartCommandMavenTest {
 	public void testServerStartCommandTomcat() throws Exception {
 		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-f", "-v", "7.1", "-P", "maven"};
 
-		new BladeTest(_testWorkspaceDir).run(initArgs);
+		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
 
 		File pomXml = new File(_testWorkspaceDir, "pom.xml");
 
@@ -94,7 +96,7 @@ public class ServerStartCommandMavenTest {
 		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
 
 		try {
-			new BladeTest(_testWorkspaceDir).run(serverStartArgs);
+			TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgs);
 		}
 		catch (Exception e) {
 		}
@@ -164,6 +166,7 @@ public class ServerStartCommandMavenTest {
 		return sb.toString();
 	}
 
+	private File _extensionsDir = null;
 	private File _testWorkspaceDir = null;
 
 	private Predicate<JavaProcess> _tomcatFilter = process -> {

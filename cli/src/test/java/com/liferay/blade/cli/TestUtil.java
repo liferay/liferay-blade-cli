@@ -16,6 +16,8 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -94,31 +96,68 @@ public class TestUtil {
 	}
 
 	public static BladeTestResults runBlade(boolean assertErrors, String... args) throws Exception {
-		return runBlade(new File(System.getProperty("user.home")), System.in, assertErrors, args);
+		return runBlade(
+			new File(System.getProperty("user.home")), new File(System.getProperty("user.home")), System.in,
+			assertErrors, args);
 	}
 
-	public static BladeTestResults runBlade(File userHomeDir, InputStream in, boolean assertErrors, String... args)
+	public static BladeTestResults runBlade(File settingsDir, File extensionsDir, boolean assertErrors, String... args)
+		throws Exception {
+
+		return runBlade(settingsDir, extensionsDir, System.in, assertErrors, args);
+	}
+
+	public static BladeTestResults runBlade(
+			File settingsDir, File extensionsDir, InputStream in, boolean assertErrors, String... args)
 		throws Exception {
 
 		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
 
 		StringPrintStream errorPrintStream = StringPrintStream.newInstance();
 
-		BladeTest bladeTest = new BladeTest(outputPrintStream, errorPrintStream, in, userHomeDir, assertErrors);
-
-		return runBlade(bladeTest, outputPrintStream, errorPrintStream, assertErrors, args);
+		return runBlade(settingsDir, extensionsDir, outputPrintStream, errorPrintStream, in, assertErrors, args);
 	}
 
-	public static BladeTestResults runBlade(File userHomeDir, InputStream in, String... args) throws Exception {
-		return runBlade(userHomeDir, in, true, args);
+	public static BladeTestResults runBlade(File settingsDir, File extensionsDir, InputStream in, String... args)
+		throws Exception {
+
+		return runBlade(settingsDir, extensionsDir, in, true, args);
 	}
 
-	public static BladeTestResults runBlade(File userHomeDir, String... args) throws Exception {
-		return runBlade(userHomeDir, System.in, true, args);
+	public static BladeTestResults runBlade(
+			File settingsDir, File extensionsDir, PrintStream out, PrintStream err, InputStream in,
+			boolean assertErrors, String... args)
+		throws Exception {
+
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+
+		bladeTestBuilder.setExtensionsDir(extensionsDir.toPath());
+
+		String settingsDirName = settingsDir.getName();
+
+		if (!".blade".equals(settingsDirName)) {
+			settingsDir = new File(settingsDir, ".blade");
+		}
+
+		bladeTestBuilder.setAssertErrors(assertErrors);
+		bladeTestBuilder.setSettingsDir(settingsDir.toPath());
+		bladeTestBuilder.setStdError(err);
+		bladeTestBuilder.setStdIn(in);
+		bladeTestBuilder.setStdOut(out);
+
+		BladeTest bladeTest = bladeTestBuilder.build();
+
+		return runBlade(bladeTest, out, err, assertErrors, args);
+	}
+
+	public static BladeTestResults runBlade(File settingsDir, File extensionsDir, String... args) throws Exception {
+		return runBlade(settingsDir, extensionsDir, System.in, true, args);
 	}
 
 	public static BladeTestResults runBlade(String... args) throws Exception {
-		return runBlade(new File(System.getProperty("user.home")), System.in, true, args);
+		return runBlade(
+			new File(System.getProperty("user.home")), new File(System.getProperty("user.home")), System.in, true,
+			args);
 	}
 
 	public static void updateMavenRepositories(String projectPath) throws Exception {

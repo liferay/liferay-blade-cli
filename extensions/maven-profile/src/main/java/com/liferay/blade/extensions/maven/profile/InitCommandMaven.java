@@ -16,16 +16,20 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
+import com.liferay.blade.cli.WorkspaceLocator;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.InitArgs;
 import com.liferay.blade.cli.command.InitCommand;
+import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
+
+import java.io.File;
 
 /**
  * @author Gregory Amerson
  * @author Terry Jia
  */
 @BladeProfile("maven")
-public class InitCommandMaven extends InitCommand {
+public class InitCommandMaven extends InitCommand implements WorkspaceLocator {
 
 	public InitCommandMaven() {
 	}
@@ -37,6 +41,11 @@ public class InitCommandMaven extends InitCommand {
 		initArgs.setProfileName("maven");
 
 		super.execute();
+	}
+
+	@Override
+	public boolean isWorkspace(File dir) {
+		return MavenUtil.isWorkspace(dir);
 	}
 
 }

@@ -17,6 +17,7 @@
 package com.liferay.project.templates.sample;
 
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
@@ -42,7 +43,21 @@ public class TemplatesTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_bladeTest = new BladeTest(temporaryFolder.getRoot());
+		File extensionsDir = _getExtensionsDir();
+
+		Path extensionsDirPath = extensionsDir.toPath();
+
+		File settingsDir = temporaryFolder.getRoot();
+
+		Path settingsDirPath = settingsDir.toPath();
+
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+
+		bladeTestBuilder.setSettingsDir(settingsDirPath);
+
+		bladeTestBuilder.setExtensionsDir(extensionsDirPath);
+
+		_bladeTest = bladeTestBuilder.build();
 	}
 
 	@Test
@@ -80,8 +95,14 @@ public class TemplatesTest {
 		Assert.assertTrue(Files.exists(sampleJarPath));
 	}
 
-	private void _setupTestExtensions() throws Exception {
+	private File _getExtensionsDir() {
 		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
+
+		return extensionsDir;
+	}
+
+	private void _setupTestExtensions() throws Exception {
+		File extensionsDir = _getExtensionsDir();
 
 		extensionsDir.mkdirs();
 

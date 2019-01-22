@@ -19,7 +19,10 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
+import java.io.File;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -28,6 +31,13 @@ import org.junit.rules.TemporaryFolder;
  * @author Christopher Bryan Boyd
  */
 public class HelpCommandTest {
+
+	@Before
+	public void setUpTestExtensions() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
 
 	@Test
 	public void testHelpCommand() throws Exception {
@@ -58,7 +68,7 @@ public class HelpCommandTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private String _runBlade(String... args) throws Exception {
-		BladeTestResults bladeTestResults = TestUtil.runBlade(temporaryFolder.getRoot(), args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = bladeTestResults.getOutput();
 
@@ -66,5 +76,8 @@ public class HelpCommandTest {
 
 		return output;
 	}
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

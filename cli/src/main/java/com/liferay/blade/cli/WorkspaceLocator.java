@@ -16,30 +16,13 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import java.io.File;
 
 /**
- * @author Vernon Singleton
+ * @author Gregory Amerson
  */
-public class BladeCliTest {
+public interface WorkspaceLocator {
 
-	@Ignore
-	@Test
-	public void testBladePrintUpdateIfAvailable() throws Exception {
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
-
-		BladeTest bladeTest = bladeTestBuilder.build();
-
-		Assert.assertTrue("New update should be available from snapshots.", bladeTest.printUpdateIfAvailable());
-	}
-
-	@Rule
-	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+	public boolean isWorkspace(File dir);
 
 }

@@ -18,12 +18,14 @@ package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -33,21 +35,34 @@ import org.junit.rules.TemporaryFolder;
  */
 public class GradleExecTest {
 
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testGradleWrapper() throws Exception {
 		File temporaryDir = temporaryFolder.getRoot();
 
 		String[] args = {"--base", temporaryDir.getAbsolutePath(), "create", "-t", "api", "foo"};
 
-		new BladeTest().run(args);
+		_getBladeTest().run(args);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		PrintStream ps = new PrintStream(baos);
 
-		BladeCLI blade = new BladeTest(ps);
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		GradleExec gradleExec = new GradleExec(blade);
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setStdOut(ps);
+
+		BladeCLI bladeCLI = bladeTestBuilder.build();
+
+		GradleExec gradleExec = new GradleExec(bladeCLI);
 
 		ProcessResult result = gradleExec.executeTask("tasks");
 
@@ -67,5 +82,17 @@ public class GradleExecTest {
 
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private BladeTest _getBladeTest() {
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
+
+		return bladeTestBuilder.build();
+	}
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

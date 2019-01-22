@@ -22,7 +22,6 @@ import aQute.bnd.osgi.Jar;
 
 import aQute.lib.io.IO;
 
-import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
@@ -45,7 +44,9 @@ public class CreateCommandMavenTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_bladeTest = new BladeTest(temporaryFolder.getRoot());
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 	}
 
 	@Test
@@ -57,7 +58,7 @@ public class CreateCommandMavenTest {
 
 		String projectPath = new File(tempRoot, "bar-activator").getAbsolutePath();
 
-		_bladeTest.run(mavenArgs);
+		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
@@ -80,7 +81,7 @@ public class CreateCommandMavenTest {
 
 		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
 
-		_bladeTest.run(mavenArgs);
+		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
@@ -114,7 +115,7 @@ public class CreateCommandMavenTest {
 
 		String projectPath = new File(tempRoot, "loginHook").getAbsolutePath();
 
-		_bladeTest.run(mavenArgs);
+		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
@@ -142,7 +143,7 @@ public class CreateCommandMavenTest {
 
 		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
 
-		_bladeTest.run(mavenArgs);
+		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
@@ -216,6 +217,7 @@ public class CreateCommandMavenTest {
 		}
 	}
 
-	private BladeTest _bladeTest;
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

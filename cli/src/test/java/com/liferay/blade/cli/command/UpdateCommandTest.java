@@ -19,17 +19,28 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Vernon Singleton
  * @author Gregory Amerson
  */
 public class UpdateCommandTest {
+
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
 
 	@Test
 	public void testCurrentMajorLessThanUpdatedMajor() {
@@ -104,7 +115,7 @@ public class UpdateCommandTest {
 
 	@Test
 	public void testCurrentVersionWithNoManifest() throws Exception {
-		BladeTestResults bladeTestResults = TestUtil.runBlade(false, "version");
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, false, "version");
 
 		String errors = bladeTestResults.getErrors();
 
@@ -171,5 +182,11 @@ public class UpdateCommandTest {
 			"currentVersion = " + currentVersion + " should be updated to " + updateVersion,
 			UpdateCommand.shouldUpdate(currentVersion, updateVersion));
 	}
+
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }

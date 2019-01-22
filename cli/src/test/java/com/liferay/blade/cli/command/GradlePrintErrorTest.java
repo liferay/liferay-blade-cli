@@ -18,6 +18,7 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.StringPrintStream;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.ProcessResult;
@@ -27,6 +28,7 @@ import java.io.File;
 import org.easymock.EasyMock;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -41,11 +43,23 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 @PrepareForTest(InstallExtensionCommand.class)
 public class GradlePrintErrorTest {
 
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testGradleError() throws Exception {
 		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
 
-		BladeTest bladeTest = new BladeTest(false);
+		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+
+		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
+		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setAssertErrors(false);
+
+		BladeTest bladeTest = bladeTestBuilder.build();
 
 		PowerMock.expectNew(
 			GradleExec.class, EasyMock.isA(BladeTest.class)).andReturn(new GradleExecSpecial(bladeTest));
@@ -70,6 +84,9 @@ public class GradlePrintErrorTest {
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 	private static class GradleExecSpecial extends GradleExec {
 
