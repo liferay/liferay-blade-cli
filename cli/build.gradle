@@ -247,6 +247,6 @@ unzipPortal {
 	into buildDir
 }
 
-version = "3.4.3-SNAPSHOT"
+version = "3.4.3"
 
 apply from: "blade-jar-smoke-tests.gradle"
