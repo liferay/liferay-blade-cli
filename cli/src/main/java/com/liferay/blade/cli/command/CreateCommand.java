@@ -123,7 +123,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			}
 		}
 		else if (template.equals("modules-ext")) {
-			if ("maven".equals(createArgs.getBuild())) {
+			if ("maven".equals(createArgs.getProfileName())) {
 				bladeCLI.error(
 					"Modules Ext projects are not supported with Maven build. Please use Gradle build instead.");
 

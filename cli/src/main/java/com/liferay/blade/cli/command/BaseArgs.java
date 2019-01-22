@@ -57,7 +57,10 @@ public class BaseArgs {
 	@Parameter(description = "Get help on a specific command.", help = true, names = "--help")
 	private boolean _help;
 
-	@Parameter(description = "Specify the profile to use when invoking the command.", names = {"-P", "--profile-name"})
+	@Parameter(
+		description = "Specify the profile to use when invoking the command.",
+		names = {"-b", "--build", "-P", "--profile-name"}
+	)
 	private String _profileName;
 
 	@Parameter(description = "Print exception stack traces when they occur.", names = "--trace")

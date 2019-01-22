@@ -164,6 +164,35 @@ public class CreateCommandMavenTest {
 		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 	}
 
+	@Test
+	public void testCreateMVCPortletLegacyFlag() throws Exception {
+		File tempRoot = temporaryFolder.getRoot();
+
+		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "mvc-portlet", "foo"};
+
+		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
+
+		_checkMavenBuildFiles(projectPath);
+
+		_contains(
+			_checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
+			".*^public class FooPortlet extends MVCPortlet.*$");
+
+		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
+
+		TestUtil.updateMavenRepositories(projectPath);
+
+		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
+	}
+
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 

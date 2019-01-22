@@ -103,7 +103,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		File bladeRepo = new File(cachePath.toFile(), bladeRepoName);
 
-		String buildType = samplesArgs.getBuild();
+		String buildType = samplesArgs.getProfileName();
 
 		File samples = new File(bladeRepo, buildType);
 
@@ -212,7 +212,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		File bladeRepo = new File(cachePath.toFile(), bladeRepoName);
 
-		String buildType = samplesArgs.getBuild();
+		String buildType = samplesArgs.getProfileName();
 
 		File samples = new File(bladeRepo, buildType);
 
