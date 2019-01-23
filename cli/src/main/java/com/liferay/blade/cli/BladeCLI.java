@@ -19,6 +19,7 @@ package com.liferay.blade.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
+import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 
@@ -36,6 +37,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import java.lang.reflect.Field;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -45,8 +48,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -515,6 +520,18 @@ public class BladeCLI {
 	}
 
 	private static String _getCommandProfile(String[] args) throws MissingCommandException {
+		final Collection<String> profileFlags = new HashSet<>();
+
+		try {
+			Field field = BaseArgs.class.getDeclaredField("_profileName");
+
+			Parameter parameters = field.getAnnotation(Parameter.class);
+
+			Collections.addAll(profileFlags, parameters.names());
+		}
+		catch (Exception e) {
+		}
+
 		String profile = null;
 
 		Collection<String> argsCollection = new ArrayList<>();
@@ -532,7 +549,7 @@ public class BladeCLI {
 		for (int x = 0; x < argsArray.length; x++) {
 			String arg = argsArray[x];
 
-			if (_profileFlags.contains(arg)) {
+			if (profileFlags.contains(arg)) {
 				profile = argsArray[x + 1];
 
 				break;
@@ -702,7 +719,6 @@ public class BladeCLI {
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
-	private static final Collection<String> _profileFlags = Arrays.asList("-b", "--build", "-P", "--profile-name");
 	private static final Formatter _tracer = new Formatter(System.out);
 
 	private BaseArgs _args = new BaseArgs();
