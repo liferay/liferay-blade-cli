@@ -59,6 +59,7 @@ public class TestUtil {
 			bladeTest.run(args);
 		}
 		catch (Exception e) {
+			e.printStackTrace(errorStream);
 		}
 
 		String error = errorStream.toString();

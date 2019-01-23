@@ -85,10 +85,8 @@ public class BladeCLI {
 		for (BaseCommand<?> baseCommand : allCommands) {
 			Collection<String> profileNames = _getBladeProfiles(baseCommand.getClass());
 
-			Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
-
 			if (profileNameIsPresent && profileNames.contains(profileName)) {
-				_addCommand(commandMap, baseCommand, argsClass);
+				_addCommand(commandMap, baseCommand);
 
 				commandsToRemove.add(baseCommand);
 			}
@@ -100,9 +98,7 @@ public class BladeCLI {
 		allCommands.removeAll(commandsToRemove);
 
 		for (BaseCommand<?> baseCommand : allCommands) {
-			Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
-
-			_addCommand(commandMap, baseCommand, argsClass);
+			_addCommand(commandMap, baseCommand);
 		}
 
 		return commandMap;
@@ -443,9 +439,10 @@ public class BladeCLI {
 		}
 	}
 
-	private static void _addCommand(
-			Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand, Class<? extends BaseArgs> argsClass)
+	protected static String[] getCommandNames(BaseCommand<?> baseCommand)
 		throws IllegalAccessException, InstantiationException {
+
+		Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
 
 		BaseArgs baseArgs = argsClass.newInstance();
 
@@ -460,19 +457,15 @@ public class BladeCLI {
 
 		String[] commandNames = parameters.commandNames();
 
-		map.putIfAbsent(commandNames[0], baseCommand);
+		return commandNames;
 	}
 
-	private static JCommander _buildJCommander(String profileName) throws Exception {
-		Thread currentThread = Thread.currentThread();
+	private static void _addCommand(Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand)
+		throws IllegalAccessException, InstantiationException {
 
-		ClassLoader classLoader = currentThread.getContextClassLoader();
+		String[] commandNames = getCommandNames(baseCommand);
 
-		Map<String, BaseCommand<? extends BaseArgs>> commandMap = getCommandMapByClassLoader(profileName, classLoader);
-
-		JCommander jCommander = _buildJCommanderWithCommandMap(commandMap);
-
-		return jCommander;
+		map.putIfAbsent(commandNames[0], baseCommand);
 	}
 
 	private static JCommander _buildJCommanderWithCommandMap(Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
@@ -526,34 +519,26 @@ public class BladeCLI {
 	private static String _getCommandProfile(String[] args) throws MissingCommandException {
 		String profile = null;
 
-		try {
-			JCommander jCommander = _buildJCommander("gradle");
+		Collection<String> argsCollection = new ArrayList<>();
 
-			jCommander.parse(args);
+		for (String arg : args) {
+			String[] argSplit = arg.split(" ");
 
-			String command = jCommander.getParsedCommand();
-
-			Map<String, JCommander> jCommands = jCommander.getCommands();
-
-			jCommander = jCommands.get(command);
-
-			if (jCommander != null) {
-				List<Object> objects = jCommander.getObjects();
-
-				Object commandArgs = objects.get(0);
-
-				BaseArgs baseArgs = BaseArgs.class.cast(commandArgs);
-
-				profile = baseArgs.getProfileName();
+			for (String argEach : argSplit) {
+				argsCollection.add(argEach);
 			}
 		}
-		catch (MissingCommandException mce) {
-			mce.printStackTrace();
 
-			throw mce;
-		}
-		catch (Throwable throwable) {
-			throw new MissingCommandException(throwable.getMessage());
+		String[] argsArray = argsCollection.toArray(new String[0]);
+
+		for (int x = 0; x < argsArray.length; x++) {
+			String arg = argsArray[x];
+
+			if (_profileFlags.contains(arg)) {
+				profile = argsArray[x + 1];
+
+				break;
+			}
 		}
 
 		return profile;
@@ -594,8 +579,7 @@ public class BladeCLI {
 			return _getCommandProfile(argsList.toArray(new String[0]));
 		}
 		catch (MissingCommandException mce) {
-			System.out.println(mce);
-			mce.printStackTrace();
+			error(mce);
 		}
 
 		return null;
@@ -720,6 +704,7 @@ public class BladeCLI {
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
+	private static final Collection<String> _profileFlags = Arrays.asList("-b", "--build", "-P", "--profile-name");
 	private static final Formatter _tracer = new Formatter(System.out);
 
 	private BaseArgs _args = new BaseArgs();
