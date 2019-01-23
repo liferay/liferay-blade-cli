@@ -439,31 +439,10 @@ public class BladeCLI {
 		}
 	}
 
-	protected static String[] getCommandNames(BaseCommand<?> baseCommand)
-		throws IllegalAccessException, InstantiationException {
-
-		Class<? extends BaseArgs> argsClass = baseCommand.getArgsClass();
-
-		BaseArgs baseArgs = argsClass.newInstance();
-
-		baseCommand.setArgs(baseArgs);
-
-		Parameters parameters = argsClass.getAnnotation(Parameters.class);
-
-		if (parameters == null) {
-			throw new IllegalArgumentException(
-				"Loaded base command class that does not have a Parameters annotation " + argsClass.getName());
-		}
-
-		String[] commandNames = parameters.commandNames();
-
-		return commandNames;
-	}
-
 	private static void _addCommand(Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand)
 		throws IllegalAccessException, InstantiationException {
 
-		String[] commandNames = getCommandNames(baseCommand);
+		String[] commandNames = _getCommandNames(baseCommand);
 
 		map.putIfAbsent(commandNames[0], baseCommand);
 	}
@@ -514,6 +493,25 @@ public class BladeCLI {
 		).collect(
 			Collectors.toList()
 		);
+	}
+
+	private static String[] _getCommandNames(BaseCommand<?> baseCommand)
+		throws IllegalAccessException, InstantiationException {
+
+		Class<? extends BaseArgs> baseArgsClass = baseCommand.getArgsClass();
+
+		BaseArgs baseArgs = baseArgsClass.newInstance();
+
+		baseCommand.setArgs(baseArgs);
+
+		Parameters parameters = baseArgsClass.getAnnotation(Parameters.class);
+
+		if (parameters == null) {
+			throw new IllegalArgumentException(
+				"Loaded base command class that does not have a Parameters annotation " + baseArgsClass.getName());
+		}
+
+		return parameters.commandNames();
 	}
 
 	private static String _getCommandProfile(String[] args) throws MissingCommandException {
