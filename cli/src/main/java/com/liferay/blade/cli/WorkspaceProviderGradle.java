@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.extensions.maven.profile;
+package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.InitArgs;
-import com.liferay.blade.cli.command.InitCommand;
+import com.liferay.blade.cli.util.WorkspaceUtil;
+
+import java.io.File;
 
 /**
- * @author Gregory Amerson
- * @author Terry Jia
+ * @author Christopher Bryan Boyd
  */
-@BladeProfile("maven")
-public class InitCommandMaven extends InitCommand {
+public class WorkspaceProviderGradle implements WorkspaceProvider {
 
-	public InitCommandMaven() {
+	@Override
+	public File getWorkspaceDir(File dir) {
+		return WorkspaceUtil.getWorkspaceDir(dir);
 	}
 
 	@Override
-	public void execute() throws Exception {
-		InitArgs initArgs = getArgs();
-
-		initArgs.setProfileName("maven");
-
-		super.execute();
+	public boolean isWorkspace(File dir) {
+		return WorkspaceUtil.isWorkspace(dir);
 	}
 
 }

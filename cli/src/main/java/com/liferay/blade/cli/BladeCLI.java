@@ -29,7 +29,6 @@ import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.util.CombinedClassLoader;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -165,49 +164,84 @@ public class BladeCLI {
 	public BladeSettings getBladeSettings() throws IOException {
 		File settingsFile = null;
 
-		BaseCommand<?> command = getCommand();
+		WorkspaceProviders workspaceProviders = getWorkspaceProviders();
 
-		if (command instanceof WorkspaceLocator) {
-			WorkspaceLocator workspaceLocator = (WorkspaceLocator)command;
+		BaseArgs baseArgs = getArgs();
 
-			BaseArgs baseArgs = getArgs();
+		File baseDir = new File(baseArgs.getBase());
 
-			File baseDir = new File(baseArgs.getBase());
-
-			if (workspaceLocator.isWorkspace(baseDir)) {
-				settingsFile = new File(baseDir, ".blade/settings.properties");
-			}
-		}
-		else if (WorkspaceUtil.isWorkspace(this)) {
-			File workspaceDir = WorkspaceUtil.getWorkspaceDir(this);
+		if (workspaceProviders.isWorkspace(baseDir)) {
+			File workspaceDir = workspaceProviders.getWorkspaceDir(baseDir);
 
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
-
-		if (settingsFile == null) {
+		else {
 			settingsFile = new File(_USER_HOME_DIR, ".blade/settings.properties");
 		}
 
 		return new BladeSettings(settingsFile);
 	}
 
+	public ClassLoader getClassLoader() {
+		if (_classLoader == null) {
+			ExtensionClassLoaderSupplier classLoaderSupplier = getClassLoaderSupplier();
+
+			_classLoader = classLoaderSupplier.get();
+		}
+
+		return _classLoader;
+	}
+
+	public ExtensionClassLoaderSupplier getClassLoaderSupplier() {
+		if (_classLoaderSupplier == null) {
+			_classLoaderSupplier = new ExtensionClassLoaderSupplier(getExtensionsPath());
+		}
+
+		return _classLoaderSupplier;
+	}
+
 	public BaseCommand<?> getCommand() {
 		return _baseCommand;
 	}
 
-	public Path getExtensionsPath() throws IOException {
+	public Extensions getExtensions() {
+		if (_extensions == null) {
+			ClassLoader classLoader = getClassLoader();
+
+			_extensions = new Extensions(classLoader);
+		}
+
+		return _extensions;
+	}
+
+	public Path getExtensionsPath() {
 		Path userBladePath = _getUserBladePath();
 
 		Path extensions = userBladePath.resolve("extensions");
 
-		if (Files.notExists(extensions)) {
-			Files.createDirectories(extensions);
+		try {
+			if (Files.notExists(extensions)) {
+				Files.createDirectories(extensions);
+			}
+			else if (!Files.isDirectory(extensions)) {
+				throw new IOException(".blade/extensions is not a directory!");
+			}
 		}
-		else if (!Files.isDirectory(extensions)) {
-			throw new IOException(".blade/extensions is not a directory!");
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
 		}
 
 		return extensions;
+	}
+
+	public WorkspaceProviders getWorkspaceProviders() {
+		if (_workspaceProviders == null) {
+			ClassLoader classLoader = getClassLoader();
+
+			_workspaceProviders = new WorkspaceProviders(classLoader);
+		}
+
+		return _workspaceProviders;
 	}
 
 	public InputStream in() {
@@ -312,90 +346,92 @@ public class BladeCLI {
 	}
 
 	public void run(String[] args) throws Exception {
-		String basePath = _extractBasePath(args);
+		try {
+			Extensions extensions = getExtensions();
 
-		String profileName = _extractProfileName(args);
+			String basePath = _extractBasePath(args);
 
-		File baseDir = new File(basePath).getAbsoluteFile();
+			String profileName = _extractProfileName(args);
 
-		_args.setBase(baseDir);
+			File baseDir = new File(basePath).getAbsoluteFile();
 
-		System.setOut(out());
+			_args.setBase(baseDir);
 
-		System.setErr(error());
+			System.setOut(out());
 
-		BladeSettings bladeSettings = getBladeSettings();
+			System.setErr(error());
 
-		if (profileName != null) {
-			bladeSettings.setProfileName(profileName);
-		}
+			BladeSettings bladeSettings = getBladeSettings();
 
-		bladeSettings.migrateWorkspaceIfNecessary();
-
-		Extensions extensions = new Extensions(bladeSettings, getExtensionsPath());
-
-		_commands = extensions.getCommands();
-
-		args = Extensions.sortArgs(_commands, args);
-
-		_jCommander = _buildJCommanderWithCommandMap(_commands);
-
-		if ((args.length == 1) && args[0].equals("--help")) {
-			printUsage();
-		}
-		else {
-			try {
-				_jCommander.parse(args);
-
-				String command = _jCommander.getParsedCommand();
-
-				Map<String, JCommander> jCommands = _jCommander.getCommands();
-
-				JCommander jCommander = jCommands.get(command);
-
-				if (jCommander == null) {
-					printUsage();
-
-					extensions.close();
-
-					return;
-				}
-
-				List<Object> objects = jCommander.getObjects();
-
-				Object commandArgs = objects.get(0);
-
-				_command = command;
-
-				_args = (BaseArgs)commandArgs;
-
-				_args.setProfileName(profileName);
-
-				_args.setBase(baseDir);
-
-				runCommand();
-
-				postRunCommand();
+			if (profileName != null) {
+				bladeSettings.setProfileName(profileName);
 			}
-			catch (MissingCommandException mce) {
-				error("Error");
 
-				StringBuilder stringBuilder = new StringBuilder("0. No such command");
+			bladeSettings.migrateWorkspaceIfNecessary();
 
-				for (String arg : args) {
-					stringBuilder.append(" " + arg);
-				}
+			_commands = extensions.getCommands(bladeSettings.getProfileName());
 
-				error(stringBuilder.toString());
+			args = Extensions.sortArgs(_commands, args);
 
+			_jCommander = _buildJCommanderWithCommandMap(_commands);
+
+			if ((args.length == 1) && args[0].equals("--help")) {
 				printUsage();
 			}
-			catch (ParameterException pe) {
-				error(_jCommander.getParsedCommand() + ": " + pe.getMessage());
+			else {
+				try {
+					_jCommander.parse(args);
+
+					String command = _jCommander.getParsedCommand();
+
+					Map<String, JCommander> jCommands = _jCommander.getCommands();
+
+					JCommander jCommander = jCommands.get(command);
+
+					if (jCommander != null) {
+						List<Object> objects = jCommander.getObjects();
+
+						Object commandArgs = objects.get(0);
+
+						_command = command;
+
+						_args = (BaseArgs)commandArgs;
+
+						_args.setProfileName(profileName);
+
+						_args.setBase(baseDir);
+
+						runCommand();
+
+						postRunCommand();
+					}
+					else {
+						printUsage();
+					}
+				}
+				catch (MissingCommandException mce) {
+					error("Error");
+
+					StringBuilder stringBuilder = new StringBuilder("0. No such command");
+
+					for (String arg : args) {
+						stringBuilder.append(" " + arg);
+					}
+
+					error(stringBuilder.toString());
+
+					printUsage();
+				}
+				catch (ParameterException pe) {
+					error(_jCommander.getParsedCommand() + ": " + pe.getMessage());
+				}
 			}
 		}
+		finally {
+			AutoCloseable closeable = getClassLoaderSupplier();
 
-		extensions.close();
+			closeable.close();
+		}
 	}
 
 	public void runCommand() {
@@ -606,16 +642,21 @@ public class BladeCLI {
 		return userBladePath.resolve("updateCheck.properties");
 	}
 
-	private Path _getUserBladePath() throws IOException {
+	private Path _getUserBladePath() {
 		Path userHomePath = _USER_HOME_DIR.toPath();
 
 		Path userBladePath = userHomePath.resolve(".blade");
 
-		if (Files.notExists(userBladePath)) {
-			Files.createDirectories(userBladePath);
+		try {
+			if (Files.notExists(userBladePath)) {
+				Files.createDirectories(userBladePath);
+			}
+			else if (!Files.isDirectory(userBladePath)) {
+				throw new IOException(userBladePath + " is not a directory.");
+			}
 		}
-		else if (!Files.isDirectory(userBladePath)) {
-			throw new IOException(userBladePath + " is not a directory.");
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
 		}
 
 		return userBladePath;
@@ -723,11 +764,15 @@ public class BladeCLI {
 
 	private BaseArgs _args = new BaseArgs();
 	private BaseCommand<?> _baseCommand;
+	private ClassLoader _classLoader;
+	private ExtensionClassLoaderSupplier _classLoaderSupplier;
 	private String _command;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final PrintStream _error;
+	private Extensions _extensions;
 	private final InputStream _in;
 	private JCommander _jCommander;
 	private final PrintStream _out;
+	private WorkspaceProviders _workspaceProviders;
 
 }

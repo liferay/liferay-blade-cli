@@ -18,6 +18,7 @@ package com.liferay.blade.extensions.maven.profile;
 
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
@@ -47,8 +48,57 @@ public class InitCommandMavenTest {
 	}
 
 	@Test
+	public void testMavenInitProjectCorrectLocation() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace"};
+
+		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
+
+		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
+
+		Assert.assertTrue(mavenworkspace.exists());
+
+		args = new String[] {"--base", mavenworkspace.getPath(), "create", "-t", "portlet", "project1"};
+
+		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
+
+		File projectDirectory = new File(mavenworkspace, "modules/project1");
+
+		Assert.assertTrue(projectDirectory.exists());
+
+		File projectPomFile = new File(projectDirectory, "pom.xml");
+
+		Assert.assertTrue(projectPomFile.exists());
+	}
+
+	@Test
+	public void testMavenInitProjectIncorrectProfile() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "gradleworkspace"};
+
+		File gradleworkspace = new File(_workspaceDir, "gradleworkspace");
+
+		TestUtil.runBlade(gradleworkspace, _extensionsDir, args);
+
+		Assert.assertTrue(gradleworkspace.exists());
+
+		File gradleSettingsFile = new File(gradleworkspace, "settings.gradle");
+
+		Assert.assertTrue(gradleSettingsFile.exists());
+
+		args = new String[] {"--base", gradleworkspace.getPath(), "create", "-t", "portlet", "-b", "maven", "project1"};
+
+		BladeTestResults results = TestUtil.runBlade(gradleworkspace, _extensionsDir, false, args);
+
+		String errorOutput = results.getErrors();
+
+		boolean containsError = errorOutput.contains(
+			"Cannot create maven project here, incompatible workspace profile type.");
+
+		Assert.assertTrue(containsError);
+	}
+
+	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject"};
 
 		File newproject = new File(_workspaceDir, "newproject");
 

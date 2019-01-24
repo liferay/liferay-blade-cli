@@ -104,6 +104,7 @@ dependencies {
 	testCompile group: "org.powermock", name: "powermock-module-junit4", version: "1.7.3"
 	testCompile group: "org.powermock", name: "powermock-module-junit4-rule", version: "1.7.3"
 	testCompile group: "org.zeroturnaround", name: "zt-process-killer", version: "1.9"
+	testCompile project(":extensions:maven-profile")
 }
 
 downloadPortal {

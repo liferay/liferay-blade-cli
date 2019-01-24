@@ -16,35 +16,13 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
-import com.liferay.blade.cli.command.BaseArgs;
-import com.liferay.blade.cli.command.BaseCommand;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
 public class ExtensionsTest {
 
-	@Before
+	/*@Before
 	public void setUp() throws Exception {
 		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
@@ -180,6 +158,6 @@ public class ExtensionsTest {
 
 	private BladeTest _bladeTest;
 	private File _extensionsDir = null;
-	private File _rootDir = null;
+	private File _rootDir = null;*/
 
 }

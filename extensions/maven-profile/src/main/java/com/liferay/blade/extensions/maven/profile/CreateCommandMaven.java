@@ -17,6 +17,7 @@
 package com.liferay.blade.extensions.maven.profile;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.WorkspaceProviders;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.CreateArgs;
@@ -47,11 +48,27 @@ public class CreateCommandMaven extends CreateCommand {
 
 	@Override
 	public void execute() throws Exception {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		WorkspaceProviders workspaceProviders = bladeCLI.getWorkspaceProviders();
+
 		CreateArgs createArgs = getArgs();
 
-		createArgs.setProfileName("maven");
+		File baseDir = new File(createArgs.getBase());
 
-		super.execute();
+		if (workspaceProviders.isWorkspace(baseDir) && !MavenUtil.isWorkspace(baseDir)) {
+			bladeCLI.error("Cannot create maven project here, incompatible workspace profile type.");
+		}
+		else {
+			createArgs.setProfileName("maven");
+
+			super.execute();
+		}
+	}
+
+	@Override
+	public boolean isWorkspace(File dir) {
+		return MavenUtil.isWorkspace(dir);
 	}
 
 	@Override

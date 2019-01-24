@@ -16,12 +16,37 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.command.BaseArgs;
+
 import java.io.File;
 
 /**
  * @author Gregory Amerson
  */
-public interface WorkspaceLocator {
+public interface WorkspaceProvider {
+
+	public default File getWorkspaceDir(BladeCLI blade) {
+		BaseArgs args = blade.getArgs();
+
+		return getWorkspaceDir(new File(args.getBase()));
+	}
+
+	public File getWorkspaceDir(File dir);
+
+	public default boolean isWorkspace(BladeCLI blade) {
+		File dirToCheck;
+
+		if (blade == null) {
+			dirToCheck = new File(".").getAbsoluteFile();
+		}
+		else {
+			BaseArgs args = blade.getArgs();
+
+			dirToCheck = new File(args.getBase());
+		}
+
+		return isWorkspace(dirToCheck);
+	}
 
 	public boolean isWorkspace(File dir);
 

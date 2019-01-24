@@ -25,7 +25,11 @@ import com.liferay.blade.cli.gradle.ProcessResult;
 
 import java.io.File;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.easymock.EasyMock;
+import org.easymock.IExpectationSetters;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,7 +44,7 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 /**
  * @author Christopher Bryan Boyd
  */
-@PrepareForTest(InstallExtensionCommand.class)
+@PrepareForTest({InstallExtensionCommand.class, BladeCLI.class, BladeTest.class})
 public class GradlePrintErrorTest {
 
 	@Before
@@ -61,12 +65,32 @@ public class GradlePrintErrorTest {
 
 		BladeTest bladeTest = bladeTestBuilder.build();
 
+		PowerMock.mockStaticPartialNice(BladeCLI.class, "getCommandMapByClassLoader");
+
+		InstallExtensionCommand command = new InstallExtensionCommand();
+
+		command.setArgs(new InstallExtensionArgs());
+
+		Map<String, BaseCommand<? extends BaseArgs>> commandMap = new HashMap<>();
+
+		commandMap.put("extension install", command);
+
+		IExpectationSetters<Map<String, BaseCommand<? extends BaseArgs>>> expect = EasyMock.expect(
+			BladeCLI.getCommandMapByClassLoader(EasyMock.anyString(), EasyMock.isA(ClassLoader.class)));
+
+		expect.andReturn(commandMap).atLeastOnce();
+
 		PowerMock.expectNew(
 			GradleExec.class, EasyMock.isA(BladeTest.class)).andReturn(new GradleExecSpecial(bladeTest));
 
-		PowerMock.replay(GradleExec.class);
+		PowerMock.replay(BladeCLI.class, GradleExec.class);
 
-		bladeTest.run(args);
+		try {
+			bladeTest.run(args);
+		}
+		catch (Throwable th) {
+			th.printStackTrace();
+		}
 
 		StringPrintStream errPrintStream = (StringPrintStream)bladeTest.error();
 
