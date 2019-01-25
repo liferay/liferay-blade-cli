@@ -169,7 +169,7 @@ publishing {
 }
 
 repositories {
-	if (project.hasProperty("integration") || project.hasProperty("release")) {
+	if (project.hasProperty("snapshots") || project.hasProperty("release")) {
 		mavenLocal()
 	}
 

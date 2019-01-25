@@ -88,10 +88,6 @@ subprojects {
 
 			repositories {
 				maven {
-					url "$rootProject.projectDir/mavenRepo"
-				}
-
-				maven {
 					credentials {
 						username liferayNexusUsername
 						password liferayNexusPassword

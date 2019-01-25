@@ -185,10 +185,6 @@ public class TestUtil {
 	}
 
 	public static void verifyBuild(String projectPath, String outputFileName) throws Exception {
-		verifyBuild(projectPath, "build", outputFileName);
-	}
-
-	public static void verifyBuild(String projectPath, String taskPath, String outputFileName) throws Exception {
 		Path path = Paths.get(projectPath);
 
 		Path buildGradlePath = path.resolve("build.gradle");
@@ -205,7 +201,7 @@ public class TestUtil {
 			Files.write(settingsGradlePath, content.getBytes(), StandardOpenOption.APPEND);
 		}
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, taskPath);
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 

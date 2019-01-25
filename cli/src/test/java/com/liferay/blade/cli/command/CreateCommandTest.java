@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.io.Writer;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import java.util.ArrayList;
@@ -83,12 +82,6 @@ public class CreateCommandTest {
 		_contains(
 			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
 			".*^public class BarActivator implements BundleActivator.*$");
-
-		TestUtil.verifyBuild(projectPath, "bar.activator-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "build/libs/bar.activator-1.0.0.jar"));
-
-		FileUtil.deleteDir(Paths.get(projectPath));
 	}
 
 	@Test
@@ -104,16 +97,6 @@ public class CreateCommandTest {
 		_contains(_checkFileExists(projectPath + "/src/main/java/foo/api/Foo.java"), ".*^public interface Foo.*");
 
 		_contains(_checkFileExists(projectPath + "/src/main/resources/foo/api/packageinfo"), "version 1.0.0");
-
-		TestUtil.verifyBuild(projectPath, "foo-1.0.0.jar");
-
-		try (Jar jar = new Jar(new File(projectPath, "build/libs/foo-1.0.0.jar"))) {
-			Manifest manifest = jar.getManifest();
-
-			Attributes mainAttributes = manifest.getMainAttributes();
-
-			Assert.assertEquals("foo.api;version=\"1.0.0\"", mainAttributes.getValue("Export-Package"));
-		}
 	}
 
 	@Test
@@ -133,12 +116,6 @@ public class CreateCommandTest {
 				".*^apply plugin: \"com.liferay.osgi.ext.plugin\".*$",
 				"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\", version: \"1.0.0\".*$"
 			});
-
-		String buildJarName = "com.liferay.login.web-1.0.0.ext.jar";
-
-		TestUtil.verifyBuild(projectPath, buildJarName);
-
-		_verifyImportPackage(new File(projectPath, "build/libs/" + buildJarName));
 	}
 
 	@Test
@@ -180,10 +157,6 @@ public class CreateCommandTest {
 			});
 
 		_contains(_checkFileExists(projectPath + "/build.gradle"), ".*^apply plugin: \"com.liferay.plugin\".*");
-
-		TestUtil.verifyBuild(projectPath, "loginhook-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "build/libs/loginhook-1.0.0.jar"));
 	}
 
 	@Test
@@ -234,10 +207,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
-
-		TestUtil.verifyBuild(projectPath, "com.liferay.test-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "/build/libs/com.liferay.test-1.0.0.jar"));
 	}
 
 	@Test
@@ -261,10 +230,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
-
-		TestUtil.verifyBuild(projectPath, "portlet.portlet-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "/build/libs/portlet.portlet-1.0.0.jar"));
 	}
 
 	@Test
@@ -285,10 +250,6 @@ public class CreateCommandTest {
 				"^package gradle.test.portlet;.*", ".*javax.portlet.display-name=Foo.*",
 				".*^public class FooPortlet .*", ".*Hello from Foo!.*"
 			});
-
-		TestUtil.verifyBuild(projectPath, "gradle.test-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "/build/libs/gradle.test-1.0.0.jar"));
 	}
 
 	@Test
@@ -344,10 +305,6 @@ public class CreateCommandTest {
 				writer.write(string + "\n");
 			}
 		}
-
-		TestUtil.verifyBuild(projectPath, "servicepreaction-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "build/libs/servicepreaction-1.0.0.jar"));
 	}
 
 	@Test
@@ -517,10 +474,6 @@ public class CreateCommandTest {
 				".*^public class Serviceoverride extends UserLocalServiceWrapper \\{.*",
 				".*public Serviceoverride\\(\\) \\{.*"
 			});
-
-		TestUtil.verifyBuild(projectPath, "serviceoverride-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "build/libs/serviceoverride-1.0.0.jar"));
 	}
 
 	@Test
@@ -534,10 +487,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/build.gradle");
 
 		_contains(_checkFileExists(projectPath + "/bnd.bnd"), ".*Bundle-SymbolicName: foo.bar.*");
-
-		TestUtil.verifyBuild(projectPath, "foo.bar-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "build/libs/foo.bar-1.0.0.jar"));
 	}
 
 	@Test
@@ -583,10 +532,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
-
-		TestUtil.verifyBuild(projectPath, "foo-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "build/libs/foo-1.0.0.jar"));
 	}
 
 	@Test
@@ -655,8 +600,6 @@ public class CreateCommandTest {
 		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
 
 		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
-
-		TestUtil.verifyBuild(projectPath, "blade.test-1.0.0.jar");
 	}
 
 	@Test
@@ -685,8 +628,6 @@ public class CreateCommandTest {
 		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
 
 		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
-
-		TestUtil.verifyBuild(projectPath, "blade.test-1.0.0.jar");
 	}
 
 	@Test
@@ -713,10 +654,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
-
-		TestUtil.verifyBuild(projectPath, "hello.world.portlet-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath + "/build/libs/hello.world.portlet-1.0.0.jar"));
 	}
 
 	@Test
@@ -743,10 +680,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
-
-		TestUtil.verifyBuild(projectPath, "hello.world.refresh-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath + "/build/libs/hello.world.refresh-1.0.0.jar"));
 	}
 
 	@Test
@@ -807,8 +740,6 @@ public class CreateCommandTest {
 		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
 
 		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
-
-		TestUtil.verifyBuild(projectPath, "test.simulator-1.0.0.jar");
 	}
 
 	@Test
@@ -828,8 +759,6 @@ public class CreateCommandTest {
 			projectPath + "/src/main/java/test/spring/portlet/portlet/SpringTestPortletViewController.java");
 
 		_checkFileExists(projectPath + "/build.gradle");
-
-		TestUtil.verifyBuild(projectPath, "spring-test.war");
 	}
 
 	@Test
@@ -855,8 +784,6 @@ public class CreateCommandTest {
 		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
 
 		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
-
-		TestUtil.verifyBuild(projectPath, "blade.test-1.0.0.jar");
 	}
 
 	@Test
@@ -876,8 +803,6 @@ public class CreateCommandTest {
 		File properties = _checkFileExists(projectPath + "/src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
 		_contains(properties, ".*^name=theme-test.*");
-
-		TestUtil.verifyBuild(projectPath, "theme-test.war");
 	}
 
 	@Test
@@ -896,8 +821,6 @@ public class CreateCommandTest {
 		File bnd = _checkFileExists(projectPath + "/bnd.bnd");
 
 		_contains(bnd, ".*Liferay-Theme-Contributor-Type: foobar.*");
-
-		TestUtil.verifyBuild(projectPath, "theme.contributor.test-1.0.0.jar");
 	}
 
 	@Test
@@ -1050,10 +973,6 @@ public class CreateCommandTest {
 
 		_lacks(
 			_checkFileExists(projectPath + "/gradle.test/build.gradle"), ".*^apply plugin: \"com.liferay.plugin\".*");
-
-		TestUtil.verifyBuild(workspace.getPath(), "jar", "gradle.test-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "gradle.test/build/libs/gradle.test-1.0.0.jar"));
 	}
 
 	@Test
@@ -1596,12 +1515,6 @@ public class CreateCommandTest {
 		String projectPath = new File(workspace, "wars/" + projectName).getAbsolutePath();
 
 		_checkFileExists(projectPath);
-
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getAbsolutePath(), "war");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath, projectName + ".war");
 	}
 
 	private void _verifyImportPackage(File serviceJar) throws Exception {
