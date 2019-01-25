@@ -170,6 +170,10 @@ publishing {
 }
 
 repositories {
+	flatDir {
+		dirs "${rootProject.projectDir}/libs"
+	}
+
 	if (project.hasProperty("snapshots") || project.hasProperty("release")) {
 		mavenLocal()
 	}
