@@ -1,3 +1,4 @@
-gradlew.bat clean
-gradlew.bat -Psnapshots :extensions:maven-profile:publishToMavenLocal
-gradlew.bat -Psnapshots -continue check smokeTests --scan
+@ECHO OFF
+CALL gradlew.bat clean
+CALL gradlew.bat -Psnapshots :extensions:maven-profile:publishToMavenLocal
+CALL gradlew.bat -Psnapshots -continue check smokeTests --scan
