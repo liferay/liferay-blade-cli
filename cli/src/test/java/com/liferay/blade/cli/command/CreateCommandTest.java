@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.io.Writer;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import java.util.ArrayList;
@@ -83,12 +82,6 @@ public class CreateCommandTest {
 		_contains(
 			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
 			".*^public class BarActivator implements BundleActivator.*$");
-
-		TestUtil.verifyBuild(projectPath, "bar.activator-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "build/libs/bar.activator-1.0.0.jar"));
-
-		FileUtil.deleteDir(Paths.get(projectPath));
 	}
 
 	@Test
@@ -133,12 +126,6 @@ public class CreateCommandTest {
 				".*^apply plugin: \"com.liferay.osgi.ext.plugin\".*$",
 				"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\", version: \"1.0.0\".*$"
 			});
-
-		String buildJarName = "com.liferay.login.web-1.0.0.ext.jar";
-
-		TestUtil.verifyBuild(projectPath, buildJarName);
-
-		_verifyImportPackage(new File(projectPath, "build/libs/" + buildJarName));
 	}
 
 	@Test
@@ -180,10 +167,6 @@ public class CreateCommandTest {
 			});
 
 		_contains(_checkFileExists(projectPath + "/build.gradle"), ".*^apply plugin: \"com.liferay.plugin\".*");
-
-		TestUtil.verifyBuild(projectPath, "loginhook-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "build/libs/loginhook-1.0.0.jar"));
 	}
 
 	@Test
@@ -234,10 +217,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
-
-		TestUtil.verifyBuild(projectPath, "com.liferay.test-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "/build/libs/com.liferay.test-1.0.0.jar"));
 	}
 
 	@Test
@@ -261,10 +240,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
-
-		TestUtil.verifyBuild(projectPath, "portlet.portlet-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "/build/libs/portlet.portlet-1.0.0.jar"));
 	}
 
 	@Test
