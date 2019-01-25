@@ -25,6 +25,7 @@ import java.util.Set;
 /**
  * @author Gregory Amerson
  */
+@SuppressWarnings("serial")
 public class DefaultModel implements ProjectInfo, Serializable {
 
 	public DefaultModel(
