@@ -113,7 +113,7 @@ public class DeployCommandTest {
 
 		Assert.assertTrue(bundlesDirectory.exists());
 
-		args = new String[] {"--base", standaloneDir.getAbsolutePath(), "create", "-t", "soy-portlet", "foo"};
+		args = new String[] {"--base", standaloneDir.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
