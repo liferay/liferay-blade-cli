@@ -24,7 +24,7 @@ import java.io.File;
 /**
  * @author Christopher Bryan Boyd
  */
-public class WorkspaceProviderMaven implements WorkspaceProvider {
+public class MavenWorkspaceProvider implements WorkspaceProvider {
 
 	@Override
 	public File getWorkspaceDir(File dir) {

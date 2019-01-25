@@ -18,9 +18,10 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.WorkspaceProvider;
+import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
@@ -64,11 +65,17 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 	@Override
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
+
 		ConvertArgs convertArgs = getArgs();
 
-		File projectDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+		File baseDir = new File(convertArgs.getBase());
 
-		Properties gradleProperties = WorkspaceUtil.getGradleProperties(projectDir);
+		GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(
+			baseDir);
+
+		File projectDir = workspaceProviderGradle.getWorkspaceDir(bladeCLI);
+
+		Properties gradleProperties = workspaceProviderGradle.getGradleProperties(projectDir);
 
 		String pluginsSdkDirPath = null;
 
@@ -112,7 +119,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 		final String pluginName = name.isEmpty() ? null : name.get(0);
 
-		if (!WorkspaceUtil.isWorkspace(bladeCLI)) {
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider == null) {
 			bladeCLI.error("Please execute this in a Liferay Workspace project");
 
 			return;

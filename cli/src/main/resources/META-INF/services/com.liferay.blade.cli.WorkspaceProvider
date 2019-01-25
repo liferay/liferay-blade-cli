@@ -1,1 +1,1 @@
-com.liferay.blade.cli.WorkspaceProviderGradle
+com.liferay.blade.cli.gradle.GradleWorkspaceProvider

@@ -164,14 +164,14 @@ public class BladeCLI {
 	public BladeSettings getBladeSettings() throws IOException {
 		File settingsFile = null;
 
-		WorkspaceProviders workspaceProviders = getWorkspaceProviders();
-
 		BaseArgs baseArgs = getArgs();
 
 		File baseDir = new File(baseArgs.getBase());
 
-		if (workspaceProviders.isWorkspace(baseDir)) {
-			File workspaceDir = workspaceProviders.getWorkspaceDir(baseDir);
+		WorkspaceProvider workspaceProvider = getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider != null) {
+			File workspaceDir = workspaceProvider.getWorkspaceDir(baseDir);
 
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}
@@ -234,14 +234,28 @@ public class BladeCLI {
 		return extensions;
 	}
 
-	public WorkspaceProviders getWorkspaceProviders() {
-		if (_workspaceProviders == null) {
-			ClassLoader classLoader = getClassLoader();
+	public WorkspaceProvider getWorkspaceProvider(File dir) {
+		try {
+			Collection<WorkspaceProvider> providers = _getWorkspaceProviders();
 
-			_workspaceProviders = new WorkspaceProviders(classLoader);
+			for (WorkspaceProvider provider : providers) {
+				try {
+					boolean workspace = provider.isWorkspace(dir);
+
+					if (workspace) {
+						return provider;
+					}
+				}
+				catch (Throwable th) {
+					throw new RuntimeException("_getWorkspaceProvider error", th);
+				}
+			}
+		}
+		catch (Throwable th) {
+			throw new RuntimeException("_getWorkspaceProvider error", th);
 		}
 
-		return _workspaceProviders;
+		return null;
 	}
 
 	public InputStream in() {
@@ -367,7 +381,7 @@ public class BladeCLI {
 				bladeSettings.setProfileName(profileName);
 			}
 
-			bladeSettings.migrateWorkspaceIfNecessary();
+			bladeSettings.migrateWorkspaceIfNecessary(this);
 
 			_commands = extensions.getCommands(bladeSettings.getProfileName());
 
@@ -662,6 +676,22 @@ public class BladeCLI {
 		return userBladePath;
 	}
 
+	private Collection<WorkspaceProvider> _getWorkspaceProviders() throws Exception {
+		if (_workspaceProviders == null) {
+			_workspaceProviders = new ArrayList<>();
+
+			ServiceLoader<WorkspaceProvider> serviceLoader = ServiceLoader.load(WorkspaceProvider.class, _classLoader);
+
+			for (WorkspaceProvider baseCommand : serviceLoader) {
+				_workspaceProviders.add(baseCommand);
+			}
+
+			return _workspaceProviders;
+		}
+
+		return _workspaceProviders;
+	}
+
 	private void _runCommand() throws Exception {
 		BaseCommand<?> command = null;
 
@@ -773,6 +803,6 @@ public class BladeCLI {
 	private final InputStream _in;
 	private JCommander _jCommander;
 	private final PrintStream _out;
-	private WorkspaceProviders _workspaceProviders;
+	private Collection<WorkspaceProvider> _workspaceProviders = null;
 
 }

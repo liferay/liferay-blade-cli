@@ -18,8 +18,9 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.WorkspaceProvider;
+import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.Constants;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
@@ -50,13 +51,18 @@ public class ConvertServiceBuilderCommand {
 
 	public static final String DESCRIPTION = "Convert a service builder project to new Liferay Workspace projects";
 
-	public ConvertServiceBuilderCommand(BladeCLI blade, ConvertArgs options) throws Exception {
-		_blade = blade;
-		_args = options;
+	public ConvertServiceBuilderCommand(BladeCLI bladeCLI, ConvertArgs convertArgs) throws Exception {
+		_bladeCLI = bladeCLI;
+		_convertArgs = convertArgs;
 
-		File projectDir = WorkspaceUtil.getWorkspaceDir(_blade);
+		File baseDir = new File(_convertArgs.getBase());
 
-		Properties gradleProperties = WorkspaceUtil.getGradleProperties(projectDir);
+		GradleWorkspaceProvider gradleWorkspaceProvider = (GradleWorkspaceProvider)_bladeCLI.getWorkspaceProvider(
+			baseDir);
+
+		File projectDir = gradleWorkspaceProvider.getWorkspaceDir(_bladeCLI);
+
+		Properties gradleProperties = gradleWorkspaceProvider.getGradleProperties(projectDir);
 
 		String warsDirPath = null;
 
@@ -84,18 +90,22 @@ public class ConvertServiceBuilderCommand {
 	}
 
 	public void execute() throws Exception {
-		List<String> name = _args.getName();
+		List<String> name = _convertArgs.getName();
 
 		final String projectName = name.isEmpty() ? null : name.get(0);
 
-		if (!WorkspaceUtil.isWorkspace(_blade)) {
-			_blade.error("Please execute command in a Liferay Workspace project");
+		File baseDir = new File(_convertArgs.getBase());
+
+		WorkspaceProvider workspaceProvider = _bladeCLI.getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider == null) {
+			_bladeCLI.error("Please execute command in a Liferay Workspace project");
 
 			return;
 		}
 
 		if (projectName == null) {
-			_blade.error("Please specify a plugin name");
+			_bladeCLI.error("Please specify a plugin name");
 
 			return;
 		}
@@ -103,7 +113,7 @@ public class ConvertServiceBuilderCommand {
 		File project = new File(_warsDir, projectName);
 
 		if (!project.exists()) {
-			_blade.error("The project " + projectName + " does not exist in " + _warsDir.getPath());
+			_bladeCLI.error("The project " + projectName + " does not exist in " + _warsDir.getPath());
 
 			return;
 		}
@@ -111,7 +121,7 @@ public class ConvertServiceBuilderCommand {
 		File serviceFile = new File(project, "src/main/webapp/WEB-INF/service.xml");
 
 		if (!serviceFile.exists()) {
-			_blade.error("There is no service.xml file in " + projectName);
+			_bladeCLI.error("There is no service.xml file in " + projectName);
 
 			return;
 		}
@@ -132,7 +142,7 @@ public class ConvertServiceBuilderCommand {
 		File sbProject = new File(_moduleDir, sbProjectName);
 
 		if (sbProject.exists()) {
-			_blade.error(
+			_bladeCLI.error(
 				"The service builder module project " + sbProjectName + " exist now, please choose another name");
 
 			return;
@@ -140,7 +150,7 @@ public class ConvertServiceBuilderCommand {
 
 		ServiceBuilder oldServiceBuilderXml = new ServiceBuilder(serviceFile);
 
-		CreateCommand createCommand = new CreateCommand(_blade);
+		CreateCommand createCommand = new CreateCommand(_bladeCLI);
 
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
@@ -304,8 +314,8 @@ public class ConvertServiceBuilderCommand {
 		return false;
 	}
 
-	private ConvertArgs _args;
-	private BladeCLI _blade;
+	private BladeCLI _bladeCLI;
+	private ConvertArgs _convertArgs;
 	private final File _moduleDir;
 	private final File _warsDir;
 

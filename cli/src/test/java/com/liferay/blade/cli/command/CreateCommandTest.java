@@ -24,7 +24,6 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
@@ -1405,8 +1404,6 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
-
 		File bladeSettings = new File(workspace, ".blade/settings.properties");
 
 		try (InputStream inputStream = new FileInputStream(bladeSettings)) {
@@ -1422,8 +1419,6 @@ public class CreateCommandTest {
 		String[] args = {"--base", workspace.getParentFile().getPath(), "init", workspace.getName(), "-v", "7.0"};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
-
-		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
 
 		File bladeSettings = new File(workspace, ".blade/settings.properties");
 

@@ -1,1 +1,1 @@
-com.liferay.blade.extensions.maven.profile.WorkspaceProviderMaven
+com.liferay.blade.extensions.maven.profile.MavenWorkspaceProvider

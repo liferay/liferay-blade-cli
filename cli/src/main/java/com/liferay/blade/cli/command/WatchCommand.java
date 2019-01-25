@@ -17,9 +17,9 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.blade.gradle.tooling.ProjectInfo;
 import com.liferay.gogo.shell.client.GogoShellClient;
 
@@ -80,7 +80,13 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 	private void _deleteWatchOutputFiles(Map<String, Set<File>> projectOutputFiles) {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		File workspaceDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+		File workspaceDir = workspaceProvider.getWorkspaceDir(bladeCLI);
 
 		Set<String> projectPaths = projectOutputFiles.keySet();
 
@@ -98,7 +104,13 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 	private void _uninstallBundles(Map<String, Set<File>> projectOutputFiles) {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		File workspaceDir = WorkspaceUtil.getWorkspaceDir(bladeCLI);
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+		File workspaceDir = workspaceProvider.getWorkspaceDir(bladeCLI);
 
 		Set<String> projectPaths = projectOutputFiles.keySet();
 

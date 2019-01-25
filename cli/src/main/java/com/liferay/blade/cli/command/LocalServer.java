@@ -16,10 +16,12 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.WorkspaceProvider;
+import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ServerUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,9 +40,9 @@ import java.util.Properties;
  */
 public class LocalServer {
 
-	public LocalServer(File baseDir) {
-		if (isWorkspace(baseDir)) {
-			Properties properties = getWorkspaceProperties(baseDir);
+	public LocalServer(BladeCLI bladeCLI) {
+		if (isWorkspace(bladeCLI)) {
+			Properties properties = getWorkspaceProperties(bladeCLI);
 
 			String liferayHomePath = properties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR_PROPERTY);
 
@@ -88,7 +90,7 @@ public class LocalServer {
 				_liferayHomePath = tempLiferayHome.normalize();
 			}
 			else {
-				File workspaceRootDir = getWorkspaceDir(baseDir);
+				File workspaceRootDir = getWorkspaceDir(bladeCLI);
 
 				Path workspaceRootDirPath = workspaceRootDir.toPath();
 
@@ -98,6 +100,10 @@ public class LocalServer {
 			}
 		}
 		else {
+			BaseArgs baseArgs = bladeCLI.getArgs();
+
+			File baseDir = new File(baseArgs.getBase());
+
 			List<Properties> propertiesList = BladeUtil.getAppServerProperties(baseDir);
 
 			String appServerParentDir = "";
@@ -203,16 +209,37 @@ public class LocalServer {
 		return processBuilder;
 	}
 
-	protected File getWorkspaceDir(File dir) {
-		return WorkspaceUtil.getWorkspaceDir(dir);
+	protected File getWorkspaceDir(BladeCLI bladeCLI) {
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+		return workspaceProvider.getWorkspaceDir(baseDir);
 	}
 
-	protected Properties getWorkspaceProperties(File baseDir) {
-		return WorkspaceUtil.getGradleProperties(baseDir);
+	protected Properties getWorkspaceProperties(BladeCLI bladeCLI) {
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(
+			baseDir);
+
+		return workspaceProviderGradle.getGradleProperties(baseDir);
 	}
 
-	protected boolean isWorkspace(File dir) {
-		return WorkspaceUtil.isWorkspace(dir);
+	protected boolean isWorkspace(BladeCLI bladeCLI) {
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		if (bladeCLI.getWorkspaceProvider(baseDir) != null) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private static String _getJBossWildflyExecutable() {

@@ -17,9 +17,9 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.ProcessResult;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -46,7 +46,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		File baseDir = new File(deployArgs.getBase());
 
-		if (_isWorkspace(baseDir)) {
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider != null) {
 			_deploy(gradleExec, "deploy");
 		}
 		else {
@@ -57,10 +59,6 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 	@Override
 	public Class<DeployArgs> getArgsClass() {
 		return DeployArgs.class;
-	}
-
-	private static boolean _isWorkspace(File file) {
-		return WorkspaceUtil.isWorkspace(file);
 	}
 
 	private void _addError(String msg) {

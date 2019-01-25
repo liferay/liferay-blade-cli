@@ -16,11 +16,10 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
+import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.LocalServer;
 import com.liferay.blade.cli.command.ServerRunCommand;
-
-import java.io.File;
 
 /**
  * @author Gregory Amerson
@@ -29,8 +28,8 @@ import java.io.File;
 public class ServerRunCommandMaven extends ServerRunCommand {
 
 	@Override
-	protected LocalServer newLocalServer(File baseDir) {
-		return new LocalServerMaven(baseDir);
+	protected LocalServer newLocalServer(BladeCLI bladeCLI) {
+		return new LocalServerMaven(bladeCLI);
 	}
 
 }

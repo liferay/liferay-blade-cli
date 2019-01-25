@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli.util;
+package com.liferay.blade.cli.gradle;
 
 import aQute.bnd.version.Version;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -30,9 +32,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Gregory Amerson
+ * @author Christopher Bryan Boyd
  */
-public class WorkspaceUtil {
+public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
@@ -40,31 +42,31 @@ public class WorkspaceUtil {
 		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:\\s*\"([0-9\\.]+)\".*",
 		Pattern.MULTILINE | Pattern.DOTALL);
 
-	public static Properties getGradleProperties(File dir) {
+	public Properties getGradleProperties(File dir) {
 		File file = getGradlePropertiesFile(dir);
 
 		return BladeUtil.getProperties(file);
 	}
 
-	public static File getGradlePropertiesFile(File dir) {
+	public File getGradlePropertiesFile(File dir) {
 		File gradlePropertiesFile = new File(getWorkspaceDir(dir), _GRADLE_PROPERTIES_FILE_NAME);
 
 		return gradlePropertiesFile;
 	}
 
-	public static File getSettingGradleFile(File dir) {
+	public File getSettingGradleFile(File dir) {
 		File settingGradleFile = new File(getWorkspaceDir(dir), _SETTINGS_GRADLE_FILE_NAME);
 
 		return settingGradleFile;
 	}
 
-	public static File getWorkspaceDir(BladeCLI blade) {
+	public File getWorkspaceDir(BladeCLI blade) {
 		BaseArgs args = blade.getArgs();
 
 		return getWorkspaceDir(new File(args.getBase()));
 	}
 
-	public static File getWorkspaceDir(File dir) {
+	public File getWorkspaceDir(File dir) {
 		File gradleParent = BladeUtil.findParentFile(
 			dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
 
@@ -85,7 +87,7 @@ public class WorkspaceUtil {
 		return null;
 	}
 
-	public static boolean isDependencyManagementEnabled(File dir) {
+	public boolean isDependencyManagementEnabled(File dir) {
 		if (!isWorkspace(dir)) {
 			return false;
 		}
@@ -120,22 +122,7 @@ public class WorkspaceUtil {
 		return false;
 	}
 
-	public static boolean isWorkspace(BladeCLI blade) {
-		File dirToCheck;
-
-		if (blade == null) {
-			dirToCheck = new File(".").getAbsoluteFile();
-		}
-		else {
-			BaseArgs args = blade.getArgs();
-
-			dirToCheck = new File(args.getBase());
-		}
-
-		return isWorkspace(dirToCheck);
-	}
-
-	public static boolean isWorkspace(File dir) {
+	public boolean isWorkspace(File dir) {
 		File workspaceDir = getWorkspaceDir(dir);
 
 		if (Objects.isNull(dir) || Objects.isNull(workspaceDir)) {
