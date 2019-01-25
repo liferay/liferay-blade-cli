@@ -10,8 +10,7 @@ install:
   - gradlew.bat --version
 
 build_script:
-  - gradlew.bat -Psnapshots :extensions:maven-profile:publishToMavenLocal
-  - gradlew.bat -Psnapshots -continue check smokeTests --scan
+  - run-tests.bat
 
 cache:
   - C:\Users\appveyor\.gradle\caches -> .gradle-wrapper\gradle-wrapper.properties
