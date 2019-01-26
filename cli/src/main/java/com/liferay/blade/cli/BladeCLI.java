@@ -182,31 +182,13 @@ public class BladeCLI {
 		return new BladeSettings(settingsFile);
 	}
 
-	public ClassLoader getClassLoader() {
-		if (_classLoader == null) {
-			ExtensionClassLoaderSupplier classLoaderSupplier = getClassLoaderSupplier();
-
-			_classLoader = classLoaderSupplier.get();
-		}
-
-		return _classLoader;
-	}
-
-	public ExtensionClassLoaderSupplier getClassLoaderSupplier() {
-		if (_classLoaderSupplier == null) {
-			_classLoaderSupplier = new ExtensionClassLoaderSupplier(getExtensionsPath());
-		}
-
-		return _classLoaderSupplier;
-	}
-
 	public BaseCommand<?> getCommand() {
 		return _baseCommand;
 	}
 
 	public Extensions getExtensions() {
 		if (_extensions == null) {
-			ClassLoader classLoader = getClassLoader();
+			ClassLoader classLoader = _getClassLoader();
 
 			_extensions = new Extensions(classLoader);
 		}
@@ -442,9 +424,9 @@ public class BladeCLI {
 			}
 		}
 		finally {
-			AutoCloseable closeable = getClassLoaderSupplier();
-
-			closeable.close();
+			if (_classLoaderSupplier != null) {
+				_classLoaderSupplier.close();
+			}
 		}
 	}
 
@@ -648,6 +630,16 @@ public class BladeCLI {
 		}
 
 		return null;
+	}
+
+	private ClassLoader _getClassLoader() {
+		if (_classLoader == null) {
+			_classLoaderSupplier = new ExtensionClassLoaderSupplier(getExtensionsPath());
+
+			_classLoader = _classLoaderSupplier.get();
+		}
+
+		return _classLoader;
 	}
 
 	private Path _getUpdateCheckPath() throws IOException {
