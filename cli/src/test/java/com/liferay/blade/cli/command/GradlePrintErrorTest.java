@@ -33,6 +33,7 @@ import org.easymock.IExpectationSetters;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -44,6 +45,7 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 /**
  * @author Christopher Bryan Boyd
  */
+@Ignore
 @PrepareForTest({InstallExtensionCommand.class, BladeCLI.class, BladeTest.class})
 public class GradlePrintErrorTest {
 
