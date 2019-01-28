@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.extensions.sample.command;
+package com.liferay.extensions.bad.command;
 
 import com.beust.jcommander.Parameters;
 
