@@ -424,8 +424,8 @@ public class BladeCLI {
 			}
 		}
 		finally {
-			if (_classLoaderSupplier != null) {
-				_classLoaderSupplier.close();
+			if (_extensionClassLoaderSupplier != null) {
+				_extensionClassLoaderSupplier.close();
 			}
 		}
 	}
@@ -634,9 +634,9 @@ public class BladeCLI {
 
 	private ClassLoader _getClassLoader() {
 		if (_classLoader == null) {
-			_classLoaderSupplier = new ExtensionClassLoaderSupplier(getExtensionsPath());
+			_extensionClassLoaderSupplier = new ExtensionClassLoaderSupplier(getExtensionsPath());
 
-			_classLoader = _classLoaderSupplier.get();
+			_classLoader = _extensionClassLoaderSupplier.get();
 		}
 
 		return _classLoader;
@@ -789,10 +789,10 @@ public class BladeCLI {
 	private BaseArgs _args = new BaseArgs();
 	private BaseCommand<?> _baseCommand;
 	private ClassLoader _classLoader;
-	private ExtensionClassLoaderSupplier _classLoaderSupplier;
 	private String _command;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final PrintStream _error;
+	private ExtensionClassLoaderSupplier _extensionClassLoaderSupplier;
 	private Extensions _extensions;
 	private final InputStream _in;
 	private JCommander _jCommander;
