@@ -56,13 +56,13 @@ public class CreateCommandMaven extends CreateCommand {
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
-		if (workspaceProvider instanceof MavenWorkspaceProvider) {
-			bladeCLI.error("Cannot create maven project here, incompatible workspace profile type.");
-		}
-		else {
+		if ((workspaceProvider == null) || workspaceProvider instanceof MavenWorkspaceProvider) {
 			createArgs.setProfileName("maven");
 
 			super.execute();
+		}
+		else {
+			bladeCLI.error("Cannot create maven project here, incompatible workspace profile type.");
 		}
 	}
 
