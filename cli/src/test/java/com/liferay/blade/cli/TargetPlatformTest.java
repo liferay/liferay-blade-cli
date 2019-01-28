@@ -16,8 +16,8 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,13 +36,12 @@ import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Haoyi Sun
+ * @author Gregory Amerson
  */
 public class TargetPlatformTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_rootDir = temporaryFolder.getRoot();
-
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 
 		_gradleWorkspaceDir = temporaryFolder.newFolder("gradle-workspace");
@@ -53,8 +52,10 @@ public class TargetPlatformTest {
 
 		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
 
-		_gradlePropertiesFile = WorkspaceUtil.getGradlePropertiesFile(_gradleWorkspaceDir);
-		_settingsGradleFile = WorkspaceUtil.getSettingGradleFile(_gradleWorkspaceDir);
+		GradleWorkspaceProvider workspaceProviderGradle = new GradleWorkspaceProvider();
+
+		_gradlePropertiesFile = workspaceProviderGradle.getGradlePropertiesFile(_gradleWorkspaceDir);
+		_settingsGradleFile = workspaceProviderGradle.getSettingGradleFile(_gradleWorkspaceDir);
 	}
 
 	@Test
@@ -149,7 +150,9 @@ public class TargetPlatformTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _setTargetPlatformVersionProperty(String version) throws IOException {
-		Properties properties = WorkspaceUtil.getGradleProperties(_gradlePropertiesFile);
+		GradleWorkspaceProvider workspaceProviderGradle = new GradleWorkspaceProvider();
+
+		Properties properties = workspaceProviderGradle.getGradleProperties(_gradlePropertiesFile);
 
 		properties.setProperty("liferay.workspace.target.platform.version", version);
 
@@ -161,7 +164,7 @@ public class TargetPlatformTest {
 	private void _setWorkspacePluginVersion(String version) throws IOException {
 		String settingsScript = BladeUtil.read(_settingsGradleFile);
 
-		Matcher matcher = WorkspaceUtil.patternWorkspacePluginVersion.matcher(settingsScript);
+		Matcher matcher = GradleWorkspaceProvider.patternWorkspacePluginVersion.matcher(settingsScript);
 
 		Assert.assertTrue(settingsScript, matcher.matches());
 
@@ -180,7 +183,6 @@ public class TargetPlatformTest {
 	private File _gradlePropertiesFile = null;
 	private File _gradleWorkspaceDir = null;
 	private File _nonGradleWorkspaceDir = null;
-	private File _rootDir = null;
 	private File _settingsGradleFile = null;
 
 }

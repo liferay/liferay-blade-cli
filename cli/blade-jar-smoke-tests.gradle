@@ -1,3 +1,4 @@
+task smokeTests
 task testBladeCreateCommand(type: JavaExec)
 task testBladeGwCommand(type: JavaExec)
 task testBladeHelpCommand(type: JavaExec)
@@ -12,9 +13,7 @@ testBladeTasks.each { task ->
 	task.main = "-jar"
 }
 
-check {
-	dependsOn testBladeTasks
-}
+smokeTests.dependsOn testBladeTasks
 
 ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 ByteArrayOutputStream standardStream = new ByteArrayOutputStream()

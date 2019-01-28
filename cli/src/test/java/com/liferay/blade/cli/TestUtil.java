@@ -22,11 +22,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-
 import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -185,22 +180,6 @@ public class TestUtil {
 	}
 
 	public static void verifyBuild(String projectPath, String outputFileName) throws Exception {
-		Path path = Paths.get(projectPath);
-
-		Path buildGradlePath = path.resolve("build.gradle");
-
-		String content = "\nbuildscript { repositories { mavenLocal() } }";
-
-		if (Files.exists(buildGradlePath)) {
-			Files.write(buildGradlePath, content.getBytes(), StandardOpenOption.APPEND);
-		}
-
-		Path settingsGradlePath = path.resolve("settings.gradle");
-
-		if (Files.exists(settingsGradlePath)) {
-			Files.write(settingsGradlePath, content.getBytes(), StandardOpenOption.APPEND);
-		}
-
 		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);

@@ -21,8 +21,8 @@ import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,9 +91,9 @@ public class InitCommandTest {
 
 		bladeTest.run(args);
 
-		boolean workspace = WorkspaceUtil.isWorkspace(emptyDir);
+		WorkspaceProvider workspaceProvider = bladeTest.getWorkspaceProvider(emptyDir);
 
-		Assert.assertTrue(workspace);
+		Assert.assertNotNull(workspaceProvider);
 	}
 
 	@Test
@@ -108,9 +108,9 @@ public class InitCommandTest {
 
 		bladeTest.run(args);
 
-		boolean workspace = WorkspaceUtil.isWorkspace(emptyDir);
+		WorkspaceProvider workspaceProvider = bladeTest.getWorkspaceProvider(emptyDir);
 
-		Assert.assertTrue(workspace);
+		Assert.assertNotNull(workspaceProvider);
 	}
 
 	@Test
@@ -125,9 +125,9 @@ public class InitCommandTest {
 
 		bladeTest.run(args);
 
-		boolean workspace = WorkspaceUtil.isWorkspace(emptyDir);
+		WorkspaceProvider workspaceProvider = bladeTest.getWorkspaceProvider(emptyDir);
 
-		Assert.assertTrue(workspace);
+		Assert.assertNotNull(workspaceProvider);
 	}
 
 	@Test
@@ -172,8 +172,6 @@ public class InitCommandTest {
 		String[] args = {"--base", basePath, "init", "-P", "myprofile"};
 
 		TestUtil.runBlade(tempDir, _extensionsDir, args);
-
-		Assert.assertTrue(WorkspaceUtil.isWorkspace(tempDir));
 
 		File settingsFile = new File(basePath, ".blade/settings.properties");
 

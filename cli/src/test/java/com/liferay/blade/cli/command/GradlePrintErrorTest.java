@@ -25,7 +25,11 @@ import com.liferay.blade.cli.gradle.ProcessResult;
 
 import java.io.File;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.easymock.EasyMock;
+import org.easymock.IExpectationSetters;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,13 +38,20 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 
 /**
  * @author Christopher Bryan Boyd
  */
-@PrepareForTest(InstallExtensionCommand.class)
+@PowerMockIgnore(
+	{
+		"java.util.ServiceLoader", "com.liferay.blade.cli.WorkspaceProvider",
+		"com.liferay.blade.cli.gradle.GradleWorkspaceProvider"
+	}
+)
+@PrepareForTest({InstallExtensionCommand.class, BladeCLI.class, BladeTest.class})
 public class GradlePrintErrorTest {
 
 	@Before
@@ -61,10 +72,25 @@ public class GradlePrintErrorTest {
 
 		BladeTest bladeTest = bladeTestBuilder.build();
 
+		PowerMock.mockStaticPartialNice(BladeCLI.class, "getCommandMapByClassLoader");
+
+		InstallExtensionCommand command = new InstallExtensionCommand();
+
+		command.setArgs(new InstallExtensionArgs());
+
+		Map<String, BaseCommand<? extends BaseArgs>> commandMap = new HashMap<>();
+
+		commandMap.put("extension install", command);
+
+		IExpectationSetters<Map<String, BaseCommand<? extends BaseArgs>>> expect = EasyMock.expect(
+			BladeCLI.getCommandMapByClassLoader(EasyMock.anyString(), EasyMock.isA(ClassLoader.class)));
+
+		expect.andReturn(commandMap).atLeastOnce();
+
 		PowerMock.expectNew(
 			GradleExec.class, EasyMock.isA(BladeTest.class)).andReturn(new GradleExecSpecial(bladeTest));
 
-		PowerMock.replay(GradleExec.class);
+		PowerMock.replay(BladeCLI.class, GradleExec.class);
 
 		bladeTest.run(args);
 
@@ -72,7 +98,9 @@ public class GradlePrintErrorTest {
 
 		String error = errPrintStream.toString();
 
-		Assert.assertTrue(error, error.contains("BUILD FAILED"));
+		error = error.toLowerCase();
+
+		Assert.assertTrue(error, error.contains("build failed"));
 
 		Assert.assertTrue(error, error.contains("foobar"));
 

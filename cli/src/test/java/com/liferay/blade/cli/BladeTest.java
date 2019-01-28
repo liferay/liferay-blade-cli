@@ -16,7 +16,7 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.util.WorkspaceUtil;
+import com.liferay.blade.cli.command.BaseArgs;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +40,14 @@ public class BladeTest extends BladeCLI {
 	public BladeSettings getBladeSettings() throws IOException {
 		final File settingsFile;
 
-		if (WorkspaceUtil.isWorkspace(this)) {
-			File workspaceDir = WorkspaceUtil.getWorkspaceDir(this);
+		BaseArgs baseArgs = getArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		WorkspaceProvider workspaceProvider = getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider != null) {
+			File workspaceDir = workspaceProvider.getWorkspaceDir(this);
 
 			settingsFile = new File(workspaceDir, ".blade/settings.properties");
 		}

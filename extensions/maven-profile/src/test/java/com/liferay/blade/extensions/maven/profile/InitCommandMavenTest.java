@@ -47,8 +47,31 @@ public class InitCommandMavenTest {
 	}
 
 	@Test
+	public void testMavenInitProjectCorrectLocation() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace"};
+
+		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
+
+		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
+
+		Assert.assertTrue(mavenworkspace.exists());
+
+		args = new String[] {"--base", mavenworkspace.getPath(), "create", "-t", "portlet", "project1"};
+
+		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
+
+		File projectDirectory = new File(mavenworkspace, "modules/project1");
+
+		Assert.assertTrue(projectDirectory.exists());
+
+		File projectPomFile = new File(projectDirectory, "pom.xml");
+
+		Assert.assertTrue(projectPomFile.exists());
+	}
+
+	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject"};
 
 		File newproject = new File(_workspaceDir, "newproject");
 

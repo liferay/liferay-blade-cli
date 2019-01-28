@@ -21,6 +21,7 @@ buildscript {
 
 apply plugin: "com.gradle.build-scan"
 apply plugin: "com.liferay.change.log.builder"
+apply plugin: "com.liferay.source.formatter"
 
 task clean(type:Delete)
 
@@ -35,6 +36,10 @@ buildScan {
 	termsOfServiceAgree = "yes"
 }
 
+checkSourceFormatting {
+	maxLineLength = 120
+}
+
 clean {
 	doFirst {
 		String mavenLocalRepo = System.getProperty("maven.local.repo")
@@ -45,37 +50,30 @@ clean {
 	}
 }
 
+formatSource {
+	maxLineLength = 120
+}
+
+repositories {
+	maven {
+		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+	}
+}
+
 subprojects {
-	repositories {
-		maven {
-			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
-		}
-	}
-
-	apply plugin: "com.liferay.source.formatter"
-	apply plugin: "nu.studer.credentials"
-
-	checkSourceFormatting {
-		maxLineLength = 120
-	}
-
-	formatSource {
-		maxLineLength = 120
-	}
-
 	group = "com.liferay.blade"
 
 	plugins.withId("java") {
-		repositories {
-			flatDir {
-				dirs "${rootProject.projectDir}/libs"
-			}
+		apply plugin: "com.liferay.source.formatter"
+		apply plugin: "nu.studer.credentials"
 
-			maven {
-				url "https://repository-cdn.liferay.com/nexus/content/groups/public"
-			}
+		checkSourceFormatting {
+			maxLineLength = 120
 		}
 
+		formatSource {
+			maxLineLength = 120
+		}
 		sourceCompatibility = "1.8"
 		targetCompatibility = "1.8"
 	}
@@ -93,7 +91,7 @@ subprojects {
 						password liferayNexusPassword
 					}
 
-					url "https://repository.liferay.com/nexus/content/repositories/" + repoName
+					url "https://repository-cdn.liferay.com/nexus/content/repositories/" + repoName
 				}
 			}
 		}

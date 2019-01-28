@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli;
+package com.liferay.blade.extensions.maven.profile;
+
+import com.liferay.blade.cli.WorkspaceProvider;
+import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 
 /**
- * @author Gregory Amerson
+ * @author Christopher Bryan Boyd
  */
-public interface WorkspaceLocator {
+public class MavenWorkspaceProvider implements WorkspaceProvider {
 
-	public boolean isWorkspace(File dir);
+	@Override
+	public File getWorkspaceDir(File dir) {
+		return MavenUtil.getWorkspaceDir(dir);
+	}
+
+	@Override
+	public boolean isWorkspace(File dir) {
+		return MavenUtil.isWorkspace(dir);
+	}
 
 }

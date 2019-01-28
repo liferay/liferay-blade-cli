@@ -11,21 +11,13 @@ buildscript {
 	}
 }
 
+task createSamples
+
 configurations {
 	projectTemplates
 }
 
-dependencies {
-	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.2.4"
-}
-
-repositories {
-	maven {
-		url "https://repository.liferay.com/nexus/content/groups/public"
-	}
-}
-
-task createSamples {
+createSamples {
 	String liferayVersionArg
 
 	if (project.hasProperty('liferayVersion')) {
@@ -70,5 +62,15 @@ task createSamples {
 			main = "com.liferay.project.templates.ProjectTemplates"
 			workingDir = samplesDir
 		}
+	}
+}
+
+dependencies {
+	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.2.4"
+}
+
+repositories {
+	maven {
+		url "https://repository.liferay.com/nexus/content/groups/public"
 	}
 }

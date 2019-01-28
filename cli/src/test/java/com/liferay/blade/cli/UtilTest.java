@@ -18,7 +18,6 @@ package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 
@@ -35,6 +34,7 @@ import org.junit.rules.TemporaryFolder;
 
 /**
  * @author David Truong
+ * @author Gregory Amerson
  */
 public class UtilTest {
 
@@ -103,55 +103,6 @@ public class UtilTest {
 				Files.delete(tempTestFile.toPath());
 			}
 		}
-	}
-
-	@Test
-	public void testIsWorkspace1() throws Exception {
-		File workspace = new File(temporaryFolder.getRoot(), "workspace");
-
-		workspace.mkdirs();
-
-		File gradleFile = new File(workspace, "settings.gradle");
-
-		String plugin = "apply plugin: \"com.liferay.workspace\"";
-
-		Files.write(gradleFile.toPath(), plugin.getBytes());
-
-		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
-	}
-
-	@Test
-	public void testIsWorkspace2() throws Exception {
-		File workspace = new File(temporaryFolder.getRoot(), "workspace");
-
-		workspace.mkdirs();
-
-		File gradleFile = new File(workspace, "settings.gradle");
-
-		String plugin = "apply plugin: 'com.liferay.workspace'";
-
-		Files.write(gradleFile.toPath(), plugin.getBytes());
-
-		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
-	}
-
-	@Test
-	public void testIsWorkspace3() throws Exception {
-		File workspace = new File(temporaryFolder.getRoot(), "workspace");
-
-		workspace.mkdirs();
-
-		File buildFile = new File(workspace, "build.gradle");
-
-		File settingsFile = new File(workspace, "settings.gradle");
-
-		settingsFile.createNewFile();
-
-		String plugin = "\napply   plugin:   \n\"com.liferay.workspace\"";
-
-		Files.write(buildFile.toPath(), plugin.getBytes());
-
-		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
 	}
 
 	@Rule

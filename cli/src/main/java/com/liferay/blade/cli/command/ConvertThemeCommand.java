@@ -18,9 +18,10 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.WorkspaceProvider;
+import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 
@@ -37,16 +38,22 @@ import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * @author David Truong
+ * @author Gregory Amerson
  */
 public class ConvertThemeCommand {
 
-	public ConvertThemeCommand(BladeCLI blade, ConvertArgs args) throws Exception {
-		_blade = blade;
-		_args = args;
+	public ConvertThemeCommand(BladeCLI bladeCLI, ConvertArgs convertArgs) throws Exception {
+		_bladeCLI = bladeCLI;
+		_convertArgs = convertArgs;
 
-		File projectDir = WorkspaceUtil.getWorkspaceDir(_blade);
+		File baseDir = new File(_convertArgs.getBase());
 
-		Properties gradleProperties = WorkspaceUtil.getGradleProperties(projectDir);
+		GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)_bladeCLI.getWorkspaceProvider(
+			baseDir);
+
+		File projectDir = workspaceProviderGradle.getWorkspaceDir(_bladeCLI);
+
+		Properties gradleProperties = workspaceProviderGradle.getGradleProperties(projectDir);
 
 		String pluginsSDKDirPath = null;
 
@@ -74,12 +81,16 @@ public class ConvertThemeCommand {
 	}
 
 	public void execute() throws Exception {
-		final List<String> args = _args.getName();
+		final List<String> args = _convertArgs.getName();
 
 		final String themeName = !args.isEmpty() ? args.get(0) : null;
 
-		if (!WorkspaceUtil.isWorkspace(_blade)) {
-			_blade.error("Please execute this in a Liferay Workspace project.");
+		File baseDir = new File(_convertArgs.getBase());
+
+		WorkspaceProvider workspaceProvider = _bladeCLI.getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider == null) {
+			_bladeCLI.error("Please execute this in a Liferay Workspace project.");
 
 			return;
 		}
@@ -89,7 +100,7 @@ public class ConvertThemeCommand {
 
 			for (File file : _pluginsSDKThemesDir.listFiles()) {
 				if (file.isDirectory()) {
-					if (_args.isAll()) {
+					if (_convertArgs.isAll()) {
 						importTheme(file.getCanonicalPath());
 					}
 					else {
@@ -98,19 +109,19 @@ public class ConvertThemeCommand {
 				}
 			}
 
-			if (!_args.isAll()) {
+			if (!_convertArgs.isAll()) {
 				if (!themes.isEmpty()) {
 					String exampleTheme = themes.get(0);
 
-					_blade.out(
+					_bladeCLI.out(
 						"Please provide the theme project name to migrate, e.g. \"blade migrateTheme " + exampleTheme +
 							"\"\n");
 
-					_blade.out("Currently available themes:");
-					_blade.out(WordUtils.wrap(StringUtils.join(themes, ", "), 80));
+					_bladeCLI.out("Currently available themes:");
+					_bladeCLI.out(WordUtils.wrap(StringUtils.join(themes, ", "), 80));
 				}
 				else {
-					_blade.out("Good news! All your themes have already been migrated to " + _themesDir);
+					_bladeCLI.out("Good news! All your themes have already been migrated to " + _themesDir);
 				}
 			}
 		}
@@ -121,7 +132,7 @@ public class ConvertThemeCommand {
 				importTheme(themeDir.getCanonicalPath());
 			}
 			else {
-				_blade.error("Theme does not exist");
+				_bladeCLI.error("Theme does not exist");
 			}
 		}
 	}
@@ -130,19 +141,19 @@ public class ConvertThemeCommand {
 		Process process = BladeUtil.startProcess(
 			"yo liferay-theme:import -p \"" + themePath + "\" -c " + _compassSupport(themePath) +
 				" --skip-install",
-			_themesDir, _blade.out(), _blade.error());
+			_themesDir, _bladeCLI.out(), _bladeCLI.error());
 
 		int errCode = process.waitFor();
 
 		if (errCode == 0) {
-			_blade.out("Theme " + themePath + " migrated successfully");
+			_bladeCLI.out("Theme " + themePath + " migrated successfully");
 
 			File theme = new File(themePath);
 
 			FileUtil.deleteDir(theme.toPath());
 		}
 		else {
-			_blade.error("blade exited with code: " + errCode);
+			_bladeCLI.error("blade exited with code: " + errCode);
 		}
 	}
 
@@ -168,8 +179,8 @@ public class ConvertThemeCommand {
 
 	private static final Pattern _compassImport = Pattern.compile("@import\\s*['\"]compass['\"];");
 
-	private ConvertArgs _args;
-	private BladeCLI _blade;
+	private BladeCLI _bladeCLI;
+	private ConvertArgs _convertArgs;
 	private File _pluginsSDKThemesDir;
 	private File _themesDir;
 

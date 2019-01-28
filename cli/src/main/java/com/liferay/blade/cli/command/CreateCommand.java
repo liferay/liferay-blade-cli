@@ -19,8 +19,9 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.WorkspaceProvider;
+import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 
@@ -219,6 +220,16 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return CreateArgs.class;
 	}
 
+	public boolean isWorkspace(File file) {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		if (bladeCLI.getWorkspaceProvider(file) != null) {
+			return true;
+		}
+
+		return false;
+	}
+
 	protected void execute(ProjectTemplatesArgs projectTemplatesArgs) throws Exception {
 		File dir = projectTemplatesArgs.getDestinationDir();
 		String name = projectTemplatesArgs.getName();
@@ -245,7 +256,16 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 
-		projectTemplatesArgs.setDependencyManagementEnabled(WorkspaceUtil.isDependencyManagementEnabled(dir));
+		File baseDir = new File(createArgs.getBase());
+
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider instanceof GradleWorkspaceProvider) {
+			GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)workspaceProvider;
+
+			projectTemplatesArgs.setDependencyManagementEnabled(
+				workspaceProviderGradle.isDependencyManagementEnabled(baseDir));
+		}
 
 		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
 		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
@@ -260,10 +280,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return projectTemplatesArgs;
 	}
 
-	protected File getWorkspaceDir(File file) {
-		return WorkspaceUtil.getWorkspaceDir(file);
-	}
-
 	protected Properties getWorkspaceProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -271,11 +287,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = new File(args.getBase());
 
-		return WorkspaceUtil.getGradleProperties(baseDir);
-	}
+		GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(
+			baseDir);
 
-	protected boolean isWorkspace(File file) {
-		return WorkspaceUtil.isWorkspace(file);
+		return workspaceProviderGradle.getGradleProperties(baseDir);
 	}
 
 	private static boolean _checkDir(File file) {
@@ -328,7 +343,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			extDirProperty = WorkspaceConstants.DEFAULT_EXT_DIR;
 		}
 
-		File projectDir = getWorkspaceDir(baseDir);
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+		File projectDir = workspaceProvider.getWorkspaceDir(baseDir);
 
 		File extDir = new File(projectDir, extDirProperty);
 
@@ -369,7 +386,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			bladeCLI.out("WARNING: using " + modulesDirValue);
 		}
 
-		File projectDir = getWorkspaceDir(baseDir);
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+		File projectDir = workspaceProvider.getWorkspaceDir(baseDir);
 
 		File modulesDir = new File(projectDir, modulesDirValue);
 
@@ -405,7 +424,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			warsDirValue = warsDirValue.split(",")[0];
 		}
 
-		File projectDir = getWorkspaceDir(baseDir);
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+		File projectDir = workspaceProvider.getWorkspaceDir(baseDir);
 
 		File warsDir = new File(projectDir, warsDirValue);
 

@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,11 +36,24 @@ import java.util.stream.Stream;
 /**
  * @author Christopher Bryan Boyd
  */
-public class CombinedClassLoader extends ClassLoader {
+public class CombinedClassLoader extends ClassLoader implements AutoCloseable {
 
 	public CombinedClassLoader(ClassLoader... classLoaders) {
 		for (ClassLoader classLoader : classLoaders) {
 			_add(classLoader);
+		}
+	}
+
+	@Override
+	public void close() throws Exception {
+		for (ClassLoader classLoader : _classLoaders) {
+			try {
+				if (classLoader instanceof Closeable) {
+					((Closeable)classLoader).close();
+				}
+			}
+			catch (Throwable th) {
+			}
 		}
 	}
 

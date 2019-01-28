@@ -17,9 +17,9 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.ProcessResult;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 
 import java.io.File;
 
@@ -36,24 +36,24 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getArgs();
+		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = new File(args.getBase());
+		File baseDir = new File(baseArgs.getBase());
 
-		if (WorkspaceUtil.isWorkspace(baseDir)) {
-			if (GradleExec.isGradleProject(baseDir)) {
-				bladeCLI.out("Executing gradle task initBundle...\n");
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
-				GradleExec gradleExec = new GradleExec(bladeCLI);
+		if (workspaceProvider != null) {
+			bladeCLI.out("Executing gradle task initBundle...\n");
 
-				ProcessResult processResult = gradleExec.executeTask("initBundle", false);
+			GradleExec gradleExec = new GradleExec(bladeCLI);
 
-				if (processResult.getResultCode() == 0) {
-					bladeCLI.out("\nserver init completed successfully.");
-				}
-				else {
-					bladeCLI.error("\nerror: server init failed.  See error output above.");
-				}
+			ProcessResult processResult = gradleExec.executeTask("initBundle", false);
+
+			if (processResult.getResultCode() == 0) {
+				bladeCLI.out("\nserver init completed successfully.");
+			}
+			else {
+				bladeCLI.error("\nerror: server init failed.  See error output above.");
 			}
 		}
 		else {

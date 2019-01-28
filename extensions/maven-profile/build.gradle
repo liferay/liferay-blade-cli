@@ -37,6 +37,10 @@ publishing {
 }
 
 repositories {
+	flatDir {
+		dirs "${rootProject.projectDir}/libs"
+	}
+
 	maven {
 		url "https://repo.gradle.org/gradle/libs-releases/"
 	}

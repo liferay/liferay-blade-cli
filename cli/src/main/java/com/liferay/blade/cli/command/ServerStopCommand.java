@@ -19,7 +19,6 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
 
-import java.io.File;
 import java.io.OutputStream;
 
 import java.nio.file.Files;
@@ -40,11 +39,7 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getArgs();
-
-		File baseDir = new File(args.getBase());
-
-		LocalServer localServer = newLocalServer(baseDir);
+		LocalServer localServer = newLocalServer(bladeCLI);
 
 		Path liferayHomePath = localServer.getLiferayHomePath();
 
@@ -95,8 +90,8 @@ public class ServerStopCommand extends BaseCommand<ServerStopArgs> {
 		return ServerStopArgs.class;
 	}
 
-	protected LocalServer newLocalServer(File baseDir) {
-		return new LocalServer(baseDir);
+	protected LocalServer newLocalServer(BladeCLI bladeCLI) {
+		return new LocalServer(bladeCLI);
 	}
 
 }

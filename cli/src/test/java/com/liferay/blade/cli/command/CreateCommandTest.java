@@ -24,7 +24,6 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
@@ -349,62 +348,6 @@ public class CreateCommandTest {
 			new File(
 				projectPath,
 				"backend-integration-service/build/libs/com.liferay.backend.integration.service-1.0.0.jar"));
-	}
-
-	@Test
-	public void testCreateGradleServiceBuilderDefault() throws Exception {
-		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "service-builder", "-p", "com.liferay.docs.guestbook",
-			"guestbook"
-		};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		String projectPath = new File(_rootDir, "guestbook").getAbsolutePath();
-
-		_contains(
-			_checkFileExists(projectPath + "/settings.gradle"), "include \"guestbook-api\", \"guestbook-service\"");
-
-		_contains(
-			_checkFileExists(projectPath + "/guestbook-api/bnd.bnd"),
-			new String[] {
-				".*Export-Package:\\\\.*", ".*com.liferay.docs.guestbook.exception,\\\\.*",
-				".*com.liferay.docs.guestbook.model,\\\\.*", ".*com.liferay.docs.guestbook.service,\\\\.*",
-				".*com.liferay.docs.guestbook.service.persistence.*"
-			});
-
-		_contains(_checkFileExists(projectPath + "/guestbook-service/bnd.bnd"), ".*Liferay-Service: true.*");
-
-		File file = _checkFileExists(projectPath + "/guestbook-service/build.gradle");
-
-		_contains(file, ".*compileOnly project\\(\":guestbook-api\"\\).*");
-
-		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(projectPath, "buildService");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
-
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/guestbook-api", "com.liferay.docs.guestbook.api-1.0.0.jar");
-		GradleRunnerUtil.verifyBuildOutput(
-			projectPath + "/guestbook-service", "com.liferay.docs.guestbook.service-1.0.0.jar");
-
-		File serviceJar = new File(
-			projectPath, "guestbook-service/build/libs/com.liferay.docs.guestbook.service-1.0.0.jar");
-
-		_verifyImportPackage(serviceJar);
-
-		try (JarFile serviceJarFile = new JarFile(serviceJar)) {
-			Manifest manifest = serviceJarFile.getManifest();
-
-			Attributes mainAttributes = manifest.getMainAttributes();
-
-			String springContext = mainAttributes.getValue("Liferay-Spring-Context");
-
-			Assert.assertTrue(springContext.equals("META-INF/spring"));
-		}
 	}
 
 	@Test
@@ -1004,21 +947,6 @@ public class CreateCommandTest {
 		File file = _checkFileExists(projectPath + "/sample/sample-service/build.gradle");
 
 		_contains(file, ".*compileOnly project\\(\":modules:nested:path:sample:sample-api\"\\).*");
-
-		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
-
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/sample/sample-api", "com.liferay.sample.api-1.0.0.jar");
-		GradleRunnerUtil.verifyBuildOutput(
-			projectPath + "/sample/sample-service", "com.liferay.sample.service-1.0.0.jar");
-
-		_verifyImportPackage(
-			new File(projectPath, "sample/sample-service/build/libs/com.liferay.sample.service-1.0.0.jar"));
 	}
 
 	@Test
@@ -1476,8 +1404,6 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
-
 		File bladeSettings = new File(workspace, ".blade/settings.properties");
 
 		try (InputStream inputStream = new FileInputStream(bladeSettings)) {
@@ -1493,8 +1419,6 @@ public class CreateCommandTest {
 		String[] args = {"--base", workspace.getParentFile().getPath(), "init", workspace.getName(), "-v", "7.0"};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
-
-		Assert.assertTrue(WorkspaceUtil.isWorkspace(workspace));
 
 		File bladeSettings = new File(workspace, ".blade/settings.properties");
 

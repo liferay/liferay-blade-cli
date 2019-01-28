@@ -32,6 +32,10 @@ eclipse {
 jar.baseName = "com.liferay.project.templates.sample-1.0.0"
 
 repositories {
+	flatDir {
+		dirs "${rootProject.projectDir}/libs"
+	}
+
 	maven {
 		url "https://repo.gradle.org/gradle/libs-releases/"
 	}

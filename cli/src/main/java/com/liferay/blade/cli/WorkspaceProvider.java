@@ -14,22 +14,40 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.extensions.maven.profile;
+package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.LocalServer;
-import com.liferay.blade.cli.command.ServerRunCommand;
+import com.liferay.blade.cli.command.BaseArgs;
+
+import java.io.File;
 
 /**
  * @author Gregory Amerson
  */
-@BladeProfile("maven")
-public class ServerRunCommandMaven extends ServerRunCommand {
+public interface WorkspaceProvider {
 
-	@Override
-	protected LocalServer newLocalServer(BladeCLI bladeCLI) {
-		return new LocalServerMaven(bladeCLI);
+	public default File getWorkspaceDir(BladeCLI blade) {
+		BaseArgs args = blade.getArgs();
+
+		return getWorkspaceDir(new File(args.getBase()));
 	}
+
+	public File getWorkspaceDir(File dir);
+
+	public default boolean isWorkspace(BladeCLI blade) {
+		File dirToCheck;
+
+		if (blade == null) {
+			dirToCheck = new File(".").getAbsoluteFile();
+		}
+		else {
+			BaseArgs args = blade.getArgs();
+
+			dirToCheck = new File(args.getBase());
+		}
+
+		return isWorkspace(dirToCheck);
+	}
+
+	public boolean isWorkspace(File dir);
 
 }

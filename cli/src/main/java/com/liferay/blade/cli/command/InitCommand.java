@@ -18,9 +18,9 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
+import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.WorkspaceUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
 import com.liferay.project.templates.internal.util.FileUtil;
@@ -54,7 +54,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -152,7 +151,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			}
 		}
 		else {
-			if (WorkspaceUtil.isWorkspace(bladeCLI)) {
+			WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+
+			if (workspaceProvider != null) {
 				_addError("blade does not support initializing a workspace inside of another workspace.");
 
 				return;

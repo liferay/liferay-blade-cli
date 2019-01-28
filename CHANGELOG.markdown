@@ -128,7 +128,6 @@ Updated to use Project Templates 4.1.0
 - [BLADE-226]: Print warning and usage info when `blade create -t fragment` is invoked without -H and -h flags
 - [BLADE-230]: `blade create` `-t` argument should be mandatory
 
-
 ### Fixed
 - [BLADE-193]: Deploy Command does not properly handle bundle states
 - [BLADE-206]: `blade create` puts wars inside the modules folder, they should go in the wars folder
@@ -160,7 +159,6 @@ Updated to use Project Templates 4.1.0
   - Updated Service Builder to 1.0.173
 - [LPS-74994]: Added NPM Project Templates
 - [LPS-75587]: Use latest Project Template Archetypes
-
 
 [BLADE-190]: https://issues.liferay.com/browse/BLADE-190
 [BLADE-193]: https://issues.liferay.com/browse/BLADE-193

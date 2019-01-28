@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -52,6 +53,8 @@ public class ExtensionsTest {
 
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 
+		_extensionsClassLoaderSupplier = new ExtensionsClassLoaderSupplier(_extensionsDir.toPath());
+
 		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
 
 		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
@@ -59,15 +62,20 @@ public class ExtensionsTest {
 		_bladeTest = bladeTestBuilder.build();
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		_extensionsClassLoaderSupplier.close();
+	}
+
 	@Test
 	public void testArgsSort() throws Exception {
 		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2"};
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands;
+		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
-		try (Extensions extensions = new Extensions(_bladeTest.getBladeSettings(), _bladeTest.getExtensionsPath())) {
-			commands = extensions.getCommands();
-		}
+		Extensions extensions = new Extensions(classLoader);
+
+		Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
 		String[] sortedArgs = Extensions.sortArgs(commands, args);
 
@@ -84,26 +92,30 @@ public class ExtensionsTest {
 
 	@Test
 	public void testLoadCommandsBuiltIn() throws Exception {
-		try (Extensions extensions = new Extensions(_bladeTest.getBladeSettings(), _bladeTest.getExtensionsPath())) {
-			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
-			Assert.assertNotNull(commands);
+		Extensions extensions = new Extensions(classLoader);
 
-			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT, commands.size());
-		}
+		Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+
+		Assert.assertNotNull(commands);
+
+		Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT, commands.size());
 	}
 
 	@Test
 	public void testLoadCommandsWithCustomExtension() throws Exception {
 		_setupTestExtensions();
 
-		try (Extensions extensions = new Extensions(_bladeTest.getBladeSettings(), _bladeTest.getExtensionsPath())) {
-			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
-			Assert.assertNotNull(commands);
+		Extensions extensions = new Extensions(classLoader);
 
-			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 1, commands.size());
-		}
+		Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+
+		Assert.assertNotNull(commands);
+
+		Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 1, commands.size());
 	}
 
 	@Test
@@ -120,13 +132,15 @@ public class ExtensionsTest {
 
 		settings.setProfileName("foo");
 
-		try (Extensions extensions = new Extensions(settings, _bladeTest.getExtensionsPath())) {
-			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
-			Assert.assertNotNull(commands);
+		Extensions extensions = new Extensions(classLoader);
 
-			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 2, commands.size());
-		}
+		Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands("foo");
+
+		Assert.assertNotNull(commands);
+
+		Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 2, commands.size());
 	}
 
 	@Rule
@@ -179,6 +193,7 @@ public class ExtensionsTest {
 	private static final int _BUILT_IN_COMMANDS_COUNT = _getBuiltInCommandsCount();
 
 	private BladeTest _bladeTest;
+	private ExtensionsClassLoaderSupplier _extensionsClassLoaderSupplier = null;
 	private File _extensionsDir = null;
 	private File _rootDir = null;
 

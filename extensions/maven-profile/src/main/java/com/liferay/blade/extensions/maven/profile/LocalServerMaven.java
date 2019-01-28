@@ -16,6 +16,8 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.LocalServer;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
@@ -28,23 +30,35 @@ import java.util.Properties;
  */
 public class LocalServerMaven extends LocalServer {
 
-	public LocalServerMaven(File baseDir) {
-		super(baseDir);
+	public LocalServerMaven(BladeCLI bladeCLI) {
+		super(bladeCLI);
 	}
 
 	@Override
-	protected File getWorkspaceDir(File dir) {
-		return MavenUtil.getWorkspaceDir(dir);
+	protected File getWorkspaceDir(BladeCLI bladeCLI) {
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		return MavenUtil.getWorkspaceDir(baseDir);
 	}
 
 	@Override
-	protected Properties getWorkspaceProperties(File baseDir) {
+	protected Properties getWorkspaceProperties(BladeCLI bladeCLI) {
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
 		return MavenUtil.getMavenProperties(baseDir);
 	}
 
 	@Override
-	protected boolean isWorkspace(File dir) {
-		return MavenUtil.isWorkspace(dir);
+	protected boolean isWorkspace(BladeCLI bladeCLI) {
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = new File(baseArgs.getBase());
+
+		return MavenUtil.isWorkspace(baseDir);
 	}
 
 }
