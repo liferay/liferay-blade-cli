@@ -179,7 +179,12 @@ repositories {
 		dirs "${rootProject.projectDir}/libs"
 	}
 
-	if (project.hasProperty("mavenLocal")) {
+	if (project.hasProperty("localNexus")) {
+		maven {
+			url "http://localhost:8081/nexus/content/repositories/snapshots/"
+		}
+	}
+	else if (project.hasProperty("mavenLocal")) {
 		mavenLocal()
 	}
 
@@ -217,6 +222,11 @@ test {
 	systemProperty "liferay.home", "${buildDir}/liferay-ce-portal-7.0-ga4"
 	systemProperty "jna.nosys", "true"
 	systemProperty "testOutputPath", sourceSets.test.output.classesDirs.singleFile.absolutePath
+
+	project(":extensions:bad-command").afterEvaluate { project ->
+		dependsOn project.jar
+		systemProperty "badCommandJarFile", project.jar.archivePath
+	}
 
 	project(":extensions:sample-command").afterEvaluate { project ->
 		dependsOn project.jar

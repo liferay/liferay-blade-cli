@@ -95,7 +95,7 @@ public class BladeTest extends BladeCLI {
 				errors = errors.replaceAll("^\\/bin\\/$", "");
 
 				if (!errors.isEmpty()) {
-					throw new Exception("Errors not empty:\n" + errors);
+					throw new Exception("\nErrors not empty:\n" + errors);
 				}
 			}
 		}

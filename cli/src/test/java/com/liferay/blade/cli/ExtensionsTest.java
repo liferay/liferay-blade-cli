@@ -91,6 +91,29 @@ public class ExtensionsTest {
 	}
 
 	@Test
+	public void testBadJar() throws Exception {
+		_setupBadExtension();
+
+		String[] args = {"create", "-l"};
+
+		BladeTestResults results = null;
+
+		results = TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
+
+		String output = results.getOutput();
+
+		String errors = results.getErrors();
+
+		boolean commandSuccess = output.contains("Creates a Liferay");
+
+		Assert.assertTrue(commandSuccess);
+
+		boolean errorOccurred = errors.contains("java.lang.NoClassDefFoundError");
+
+		Assert.assertTrue(errorOccurred);
+	}
+
+	@Test
 	public void testLoadCommandsBuiltIn() throws Exception {
 		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
@@ -176,14 +199,14 @@ public class ExtensionsTest {
 		Assert.assertTrue(Files.exists(sampleJarPath));
 	}
 
+	private void _setupBadExtension() throws Exception {
+		Path extensionsPath = _extensionsDir.toPath();
+
+		_setupTestExtension(extensionsPath, System.getProperty("badCommandJarFile"));
+	}
+
 	private void _setupTestExtensions() throws Exception {
-		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
-
-		extensionsDir.mkdirs();
-
-		Assert.assertTrue("Unable to create test extensions dir.", extensionsDir.exists());
-
-		Path extensionsPath = extensionsDir.toPath();
+		Path extensionsPath = _extensionsDir.toPath();
 
 		_setupTestExtension(extensionsPath, System.getProperty("sampleCommandJarFile"));
 		_setupTestExtension(extensionsPath, System.getProperty("sampleProfileJarFile"));

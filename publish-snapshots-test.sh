@@ -11,4 +11,5 @@ done
 
 ./gradlew clean && \
 ./gradlew -PlocalNexus -Psnapshots :extensions:maven-profile:publish && \
-./gradlew -PlocalNexus -Psnapshots --refresh-dependencies :cli:publish
+./gradlew -PlocalNexus -Psnapshots --refresh-dependencies :cli:check :cli:smokeTests && \
+./gradlew -PlocalNexus -Psnapshots :cli:publish
