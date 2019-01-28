@@ -82,7 +82,15 @@ subprojects {
 		publishing {
 			String liferayNexusUsername = credentials.liferayNexusUsername
 			String liferayNexusPassword = credentials.liferayNexusPassword
+
 			String repoName = project.hasProperty("release") ? "liferay-public-releases" : "liferay-public-snapshots"
+			String repoUrl = "https://repository-cdn.liferay.com/nexus/content/repositories/" + repoName
+
+			if (project.hasProperty("localNexus")) {
+				liferayNexusUsername = "admin"
+				liferayNexusPassword = "admin123"
+				repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
+			}
 
 			repositories {
 				maven {
@@ -91,7 +99,7 @@ subprojects {
 						password liferayNexusPassword
 					}
 
-					url "https://repository-cdn.liferay.com/nexus/content/repositories/" + repoName
+					url repoUrl
 				}
 			}
 		}
