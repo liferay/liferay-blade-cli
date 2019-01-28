@@ -33,19 +33,24 @@ import org.easymock.IExpectationSetters;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 
 /**
  * @author Christopher Bryan Boyd
  */
-@Ignore
+@PowerMockIgnore(
+	{
+		"java.util.ServiceLoader", "com.liferay.blade.cli.WorkspaceProvider",
+		"com.liferay.blade.cli.gradle.GradleWorkspaceProvider"
+	}
+)
 @PrepareForTest({InstallExtensionCommand.class, BladeCLI.class, BladeTest.class})
 public class GradlePrintErrorTest {
 
@@ -87,18 +92,15 @@ public class GradlePrintErrorTest {
 
 		PowerMock.replay(BladeCLI.class, GradleExec.class);
 
-		try {
-			bladeTest.run(args);
-		}
-		catch (Throwable th) {
-			th.printStackTrace();
-		}
+		bladeTest.run(args);
 
 		StringPrintStream errPrintStream = (StringPrintStream)bladeTest.error();
 
 		String error = errPrintStream.toString();
 
-		Assert.assertTrue(error, error.contains("BUILD FAILED"));
+		error = error.toLowerCase();
+
+		Assert.assertTrue(error, error.contains("build failed"));
 
 		Assert.assertTrue(error, error.contains("foobar"));
 
