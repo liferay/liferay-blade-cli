@@ -41,9 +41,9 @@ import java.util.stream.Stream;
 /**
  * @author Christopher Bryan Boyd
  */
-public class ExtensionClassLoaderSupplier implements Supplier<ClassLoader>, AutoCloseable {
+public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<ClassLoader> {
 
-	public ExtensionClassLoaderSupplier(Path extensionsPath) {
+	public ExtensionsClassLoaderSupplier(Path extensionsPath) {
 		_extensionsPath = extensionsPath;
 	}
 
@@ -113,7 +113,7 @@ public class ExtensionClassLoaderSupplier implements Supplier<ClassLoader>, Auto
 			).map(
 				Path::toUri
 			).map(
-				ExtensionClassLoaderSupplier::_convertUriToUrl
+				ExtensionsClassLoaderSupplier::_convertUriToUrl
 			).filter(
 				url -> url != null
 			).collect(

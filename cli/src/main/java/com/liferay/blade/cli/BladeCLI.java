@@ -424,8 +424,8 @@ public class BladeCLI {
 			}
 		}
 		finally {
-			if (_extensionClassLoaderSupplier != null) {
-				_extensionClassLoaderSupplier.close();
+			if (_extensionsClassLoaderSupplier != null) {
+				_extensionsClassLoaderSupplier.close();
 			}
 		}
 	}
@@ -633,11 +633,11 @@ public class BladeCLI {
 	}
 
 	private ClassLoader _getClassLoader() {
-		if (_extensionClassLoaderSupplier == null) {
-			_extensionClassLoaderSupplier = new ExtensionClassLoaderSupplier(getExtensionsPath());
+		if (_extensionsClassLoaderSupplier == null) {
+			_extensionsClassLoaderSupplier = new ExtensionsClassLoaderSupplier(getExtensionsPath());
 		}
 
-		return _extensionClassLoaderSupplier.get();
+		return _extensionsClassLoaderSupplier.get();
 	}
 
 	private Path _getUpdateCheckPath() throws IOException {
@@ -789,8 +789,8 @@ public class BladeCLI {
 	private String _command;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final PrintStream _error;
-	private ExtensionClassLoaderSupplier _extensionClassLoaderSupplier;
 	private Extensions _extensions;
+	private ExtensionsClassLoaderSupplier _extensionsClassLoaderSupplier;
 	private final InputStream _in;
 	private JCommander _jCommander;
 	private final PrintStream _out;

@@ -53,7 +53,7 @@ public class ExtensionsTest {
 
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 
-		_extensionClassLoaderSupplier = new ExtensionClassLoaderSupplier(_extensionsDir.toPath());
+		_extensionsClassLoaderSupplier = new ExtensionsClassLoaderSupplier(_extensionsDir.toPath());
 
 		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
 
@@ -64,14 +64,14 @@ public class ExtensionsTest {
 
 	@After
 	public void tearDown() throws Exception {
-		_extensionClassLoaderSupplier.close();
+		_extensionsClassLoaderSupplier.close();
 	}
 
 	@Test
 	public void testArgsSort() throws Exception {
 		String[] args = {"--base", "/foo/bar/dir/", "--flag1", "extension", "install", "/path/to/jar.jar", "--flag2"};
 
-		ClassLoader classLoader = _extensionClassLoaderSupplier.get();
+		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
 		Extensions extensions = new Extensions(classLoader);
 
@@ -92,7 +92,7 @@ public class ExtensionsTest {
 
 	@Test
 	public void testLoadCommandsBuiltIn() throws Exception {
-		ClassLoader classLoader = _extensionClassLoaderSupplier.get();
+		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
 		Extensions extensions = new Extensions(classLoader);
 
@@ -107,7 +107,7 @@ public class ExtensionsTest {
 	public void testLoadCommandsWithCustomExtension() throws Exception {
 		_setupTestExtensions();
 
-		ClassLoader classLoader = _extensionClassLoaderSupplier.get();
+		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
 		Extensions extensions = new Extensions(classLoader);
 
@@ -132,7 +132,7 @@ public class ExtensionsTest {
 
 		settings.setProfileName("foo");
 
-		ClassLoader classLoader = _extensionClassLoaderSupplier.get();
+		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
 		Extensions extensions = new Extensions(classLoader);
 
@@ -193,7 +193,7 @@ public class ExtensionsTest {
 	private static final int _BUILT_IN_COMMANDS_COUNT = _getBuiltInCommandsCount();
 
 	private BladeTest _bladeTest;
-	private ExtensionClassLoaderSupplier _extensionClassLoaderSupplier = null;
+	private ExtensionsClassLoaderSupplier _extensionsClassLoaderSupplier = null;
 	private File _extensionsDir = null;
 	private File _rootDir = null;
 
