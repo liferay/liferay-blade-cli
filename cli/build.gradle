@@ -233,6 +233,11 @@ test {
 		systemProperty "sampleTemplateJarFile", project.jar.archivePath
 	}
 
+	project(":extensions:bad-command").afterEvaluate { project ->
+		dependsOn project.jar
+		systemProperty "badCommandJarFile", project.jar.archivePath
+	}
+
 	int availableProcessors = Runtime.runtime.availableProcessors()
 
 	int forks = 1

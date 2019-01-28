@@ -1,0 +1,3 @@
+Bundle-Name: bad-command
+Bundle-SymbolicName: com.liferay.extensions.bad.command
+Bundle-Version: 1.0.0

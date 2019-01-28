@@ -614,6 +614,14 @@ public class BladeCLI {
 				System.err.println(
 					"Exception thrown while loading extension." + System.lineSeparator() + "Exception: " +
 						throwableClass.getName() + ": " + e.getMessage());
+
+				Throwable cause = e.getCause();
+
+				if (cause != null) {
+					Class<?> throwableCauseClass = cause.getClass();
+
+					System.err.print(throwableCauseClass.getName() + ": " + cause.getMessage());
+				}
 			}
 		}
 
@@ -703,6 +711,14 @@ public class BladeCLI {
 					System.err.println(
 						"Exception thrown while loading WorkspaceProvider." + System.lineSeparator() + "Exception: " +
 							throwableClass.getName() + ": " + e.getMessage());
+
+					Throwable cause = e.getCause();
+
+					if (cause != null) {
+						Class<?> throwableCauseClass = cause.getClass();
+
+						System.err.print(throwableCauseClass.getName() + ": " + cause.getMessage());
+					}
 				}
 			}
 
