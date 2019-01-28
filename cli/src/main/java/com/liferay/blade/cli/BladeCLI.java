@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -594,12 +595,26 @@ public class BladeCLI {
 	@SuppressWarnings("rawtypes")
 	private static Collection<BaseCommand<?>> _getCommandsByClassLoader(ClassLoader classLoader) {
 		Collection<BaseCommand<?>> allCommands = new ArrayList<>();
+
 		ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, classLoader);
 
-		for (BaseCommand<?> baseCommand : serviceLoader) {
-			baseCommand.setClassLoader(classLoader);
+		Iterator<BaseCommand> baseCommandIterator = serviceLoader.iterator();
 
-			allCommands.add(baseCommand);
+		while (baseCommandIterator.hasNext()) {
+			try {
+				BaseCommand<?> baseCommand = baseCommandIterator.next();
+
+				baseCommand.setClassLoader(classLoader);
+
+				allCommands.add(baseCommand);
+			}
+			catch (Throwable e) {
+				Class<?> throwableClass = e.getClass();
+
+				System.err.println(
+					"Exception thrown while loading extension." + System.lineSeparator() + "Exception: " +
+						throwableClass.getName() + ": " + e.getMessage());
+			}
 		}
 
 		return allCommands;
@@ -674,8 +689,21 @@ public class BladeCLI {
 
 			ServiceLoader<WorkspaceProvider> serviceLoader = ServiceLoader.load(WorkspaceProvider.class, classLoader);
 
-			for (WorkspaceProvider baseCommand : serviceLoader) {
-				_workspaceProviders.add(baseCommand);
+			Iterator<WorkspaceProvider> workspaceProviderIterator = serviceLoader.iterator();
+
+			while (workspaceProviderIterator.hasNext()) {
+				try {
+					WorkspaceProvider workspaceProvider = workspaceProviderIterator.next();
+
+					_workspaceProviders.add(workspaceProvider);
+				}
+				catch (Throwable e) {
+					Class<?> throwableClass = e.getClass();
+
+					System.err.println(
+						"Exception thrown while loading WorkspaceProvider." + System.lineSeparator() + "Exception: " +
+							throwableClass.getName() + ": " + e.getMessage());
+				}
 			}
 
 			return _workspaceProviders;
