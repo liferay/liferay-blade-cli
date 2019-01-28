@@ -64,9 +64,7 @@ public class ExtensionsTest {
 
 	@After
 	public void tearDown() throws Exception {
-		if (_extensionClassLoaderSupplier != null) {
-			_extensionClassLoaderSupplier.close();
-		}
+		_extensionClassLoaderSupplier.close();
 	}
 
 	@Test

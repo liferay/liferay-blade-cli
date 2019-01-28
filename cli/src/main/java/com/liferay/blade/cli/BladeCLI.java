@@ -633,13 +633,11 @@ public class BladeCLI {
 	}
 
 	private ClassLoader _getClassLoader() {
-		if (_classLoader == null) {
+		if (_extensionClassLoaderSupplier == null) {
 			_extensionClassLoaderSupplier = new ExtensionClassLoaderSupplier(getExtensionsPath());
-
-			_classLoader = _extensionClassLoaderSupplier.get();
 		}
 
-		return _classLoader;
+		return _extensionClassLoaderSupplier.get();
 	}
 
 	private Path _getUpdateCheckPath() throws IOException {
@@ -788,7 +786,6 @@ public class BladeCLI {
 
 	private BaseArgs _args = new BaseArgs();
 	private BaseCommand<?> _baseCommand;
-	private ClassLoader _classLoader;
 	private String _command;
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
 	private final PrintStream _error;
