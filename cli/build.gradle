@@ -168,12 +168,18 @@ publishing {
 	}
 }
 
+String repoHost = "repository-cdn.liferay.com"
+
+if (project.hasProperty("release") || project.hasProperty("snapshots")) {
+	repoHost = "repository.liferay.com"
+}
+
 repositories {
 	flatDir {
 		dirs "${rootProject.projectDir}/libs"
 	}
 
-	if (project.hasProperty("snapshots") || project.hasProperty("release")) {
+	if (project.hasProperty("mavenLocal")) {
 		mavenLocal()
 	}
 
@@ -182,11 +188,11 @@ repositories {
 	}
 
 	maven {
-		url "https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-releases/"
+		url "https://${repoHost}/nexus/content/repositories/liferay-public-releases/"
 	}
 
 	maven {
-		url "https://repository-cdn.liferay.com/nexus/content/repositories/liferay-public-snapshots/"
+		url "https://${repoHost}/nexus/content/repositories/liferay-public-snapshots/"
 	}
 }
 

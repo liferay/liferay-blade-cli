@@ -1,4 +1,4 @@
-rm -rf mavenRepo
+rm -rf ~/.m2/repositories/com/liferay/blade/com.liferay.blade.extensions.maven.profile
 ./gradlew clean
-./gradlew -Psnapshots :extensions:maven-profile:publishToMavenLocal
-./gradlew -Psnapshots -continue check smokeTests --scan
+./gradlew :extensions:maven-profile:publishToMavenLocal
+./gradlew -PmavenLocal -continue check smokeTests --scan
