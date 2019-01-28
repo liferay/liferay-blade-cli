@@ -87,7 +87,7 @@ public class InitCommandMavenTest {
 
 		Assert.assertTrue(contents, contents.contains("com.liferay.portal.tools.bundle.support"));
 
-		File metadataFile = new File(_workspaceDir, "newproject/.blade/settings.properties");
+		File metadataFile = new File(_workspaceDir, "newproject/.blade.properties");
 
 		Assert.assertTrue(metadataFile.exists());
 

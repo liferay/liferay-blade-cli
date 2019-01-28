@@ -114,6 +114,9 @@ public class Prompter {
 						}
 					}
 				}
+				else {
+					answer = defaultAnswer;
+				}
 			}
 		}
 		catch (IllegalStateException ise) {

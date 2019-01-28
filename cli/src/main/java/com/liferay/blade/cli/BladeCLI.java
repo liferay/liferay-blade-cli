@@ -163,22 +163,19 @@ public class BladeCLI {
 	}
 
 	public BladeSettings getBladeSettings() throws IOException {
-		File settingsFile = null;
+		File settingsBaseDir = _getSettingsBaseDir();
 
-		BaseArgs baseArgs = getArgs();
+		File settingsFile = new File(settingsBaseDir, BladeSettings.BLADE_SETTINGS_OLD_STRING);
 
-		File baseDir = new File(baseArgs.getBase());
+		if (settingsFile.exists()) {
+			String name = settingsFile.getName();
 
-		WorkspaceProvider workspaceProvider = getWorkspaceProvider(baseDir);
-
-		if (workspaceProvider != null) {
-			File workspaceDir = workspaceProvider.getWorkspaceDir(baseDir);
-
-			settingsFile = new File(workspaceDir, ".blade/settings.properties");
+			if ("settings.properties".equals(name)) {
+				migrateBladeSettingsFile(settingsFile);
+			}
 		}
-		else {
-			settingsFile = new File(_USER_HOME_DIR, ".blade/settings.properties");
-		}
+
+		settingsFile = new File(settingsBaseDir, BladeSettings.BLADE_SETTINGS_NEW_STRING);
 
 		return new BladeSettings(settingsFile);
 	}
@@ -477,6 +474,26 @@ public class BladeCLI {
 		}
 	}
 
+	protected void migrateBladeSettingsFile(File settingsFile) throws IOException {
+		Path settingsPath = settingsFile.toPath();
+
+		Path settingsParentPath = settingsPath.getParent();
+
+		if (settingsParentPath.endsWith(".blade")) {
+			Path settingsParentParentPath = settingsParentPath.getParent();
+
+			Path newSettingsPath = settingsParentParentPath.resolve(BladeSettings.BLADE_SETTINGS_NEW_STRING);
+
+			Files.move(settingsPath, newSettingsPath);
+
+			try (Stream<?> filesStream = Files.list(settingsParentPath)) {
+				if (filesStream.count() == 0) {
+					Files.delete(settingsParentPath);
+				}
+			}
+		}
+	}
+
 	private static void _addCommand(Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand)
 		throws IllegalAccessException, InstantiationException {
 
@@ -662,6 +679,23 @@ public class BladeCLI {
 		}
 
 		return _extensionsClassLoaderSupplier.get();
+	}
+
+	private File _getSettingsBaseDir() {
+		File baseDir = new File(_args.getBase());
+
+		File settingsBaseDir;
+
+		WorkspaceProvider workspaceProvider = getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider != null) {
+			settingsBaseDir = workspaceProvider.getWorkspaceDir(baseDir);
+		}
+		else {
+			settingsBaseDir = _USER_HOME_DIR;
+		}
+
+		return settingsBaseDir;
 	}
 
 	private Path _getUpdateCheckPath() throws IOException {

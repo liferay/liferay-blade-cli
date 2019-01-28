@@ -36,26 +36,20 @@ public class BladeTest extends BladeCLI {
 		return new BladeTestBuilder();
 	}
 
-	@Override
 	public BladeSettings getBladeSettings() throws IOException {
-		final File settingsFile;
+		File settingsBaseDir = _getSettingsBaseDir();
 
-		BaseArgs baseArgs = getArgs();
+		File settingsFile = new File(settingsBaseDir, BladeSettings.BLADE_SETTINGS_OLD_STRING);
 
-		File baseDir = new File(baseArgs.getBase());
+		if (settingsFile.exists()) {
+			String name = settingsFile.getName();
 
-		WorkspaceProvider workspaceProvider = getWorkspaceProvider(baseDir);
-
-		if (workspaceProvider != null) {
-			File workspaceDir = workspaceProvider.getWorkspaceDir(this);
-
-			settingsFile = new File(workspaceDir, ".blade/settings.properties");
+			if ("settings.properties".equals(name)) {
+				migrateBladeSettingsFile(settingsFile);
+			}
 		}
-		else {
-			Path settingsPath = _settingsDir.resolve("settings.properties");
 
-			settingsFile = settingsPath.toFile();
-		}
+		settingsFile = new File(settingsBaseDir, BladeSettings.BLADE_SETTINGS_NEW_STRING);
 
 		return new BladeSettings(settingsFile);
 	}
@@ -169,6 +163,25 @@ public class BladeTest extends BladeCLI {
 
 	protected BladeTest(PrintStream out, PrintStream err, InputStream in) {
 		super(out, err, in);
+	}
+
+	private File _getSettingsBaseDir() {
+		BaseArgs args = getArgs();
+
+		File baseDir = new File(args.getBase());
+
+		File settingsBaseDir;
+
+		WorkspaceProvider workspaceProvider = getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider != null) {
+			settingsBaseDir = workspaceProvider.getWorkspaceDir(baseDir);
+		}
+		else {
+			settingsBaseDir = _settingsDir.toFile();
+		}
+
+		return settingsBaseDir;
 	}
 
 	private boolean _assertErrors = true;
