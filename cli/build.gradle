@@ -179,7 +179,12 @@ repositories {
 		dirs "${rootProject.projectDir}/libs"
 	}
 
-	if (project.hasProperty("mavenLocal")) {
+	if (project.hasProperty("localNexus")) {
+		maven {
+			url "http://localhost:8081/nexus/content/repositories/snapshots/"
+		}
+	}
+	else if (project.hasProperty("mavenLocal")) {
 		mavenLocal()
 	}
 
