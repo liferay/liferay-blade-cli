@@ -672,7 +672,9 @@ public class BladeCLI {
 		if (_workspaceProviders == null) {
 			_workspaceProviders = new ArrayList<>();
 
-			ServiceLoader<WorkspaceProvider> serviceLoader = ServiceLoader.load(WorkspaceProvider.class, _classLoader);
+			ClassLoader classLoader = _getClassLoader();
+
+			ServiceLoader<WorkspaceProvider> serviceLoader = ServiceLoader.load(WorkspaceProvider.class, classLoader);
 
 			for (WorkspaceProvider baseCommand : serviceLoader) {
 				_workspaceProviders.add(baseCommand);

@@ -375,6 +375,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			ConvertArgs convertServiceBuilderArgs = new ConvertArgs(
 				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), arguments);
 
+			convertServiceBuilderArgs.setBase(new File(convertArgs.getBase()));
+
 			new ConvertServiceBuilderCommand(bladeCLI, convertServiceBuilderArgs).execute();
 		}
 		catch (Exception e) {
