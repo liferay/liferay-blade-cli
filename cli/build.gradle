@@ -28,15 +28,12 @@ task unzipPortal(type: Copy)
 
 configurations {
 	bladeExtensions {
+		resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+		resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
 		transitive = false
 	}
 
 	testApi
-}
-
-configurations.bladeExtensions {
-	resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-	resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
 }
 
 artifacts {
