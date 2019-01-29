@@ -34,7 +34,7 @@ configurations {
 	testApi
 }
 
-configurations.all {
+configurations.bladeExtensions {
 	resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 	resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
 }
