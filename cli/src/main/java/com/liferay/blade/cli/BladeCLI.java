@@ -613,14 +613,15 @@ public class BladeCLI {
 
 				System.err.println(
 					"Exception thrown while loading extension." + System.lineSeparator() + "Exception: " +
-						throwableClass.getName() + ": " + e.getMessage());
+						throwableClass.getName() + ": " + e.getMessage() + System.lineSeparator());
 
 				Throwable cause = e.getCause();
 
 				if (cause != null) {
 					Class<?> throwableCauseClass = cause.getClass();
 
-					System.err.print(throwableCauseClass.getName() + ": " + cause.getMessage());
+					System.err.print(
+						throwableCauseClass.getName() + ": " + cause.getMessage() + System.lineSeparator());
 				}
 			}
 		}
