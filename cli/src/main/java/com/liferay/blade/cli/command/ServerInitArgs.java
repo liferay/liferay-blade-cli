@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 /**
@@ -26,4 +27,15 @@ import com.beust.jcommander.Parameters;
 	commandNames = "server init"
 )
 public class ServerInitArgs extends BaseArgs {
+
+	public String getLiferayWorkspaceEnvironment() {
+		return _liferayWorkspaceEnvironment;
+	}
+
+	@Parameter(
+		description = "Set the environment with the settings appropriate for current development.",
+		names = {"-e", "--environment"}
+	)
+	private String _liferayWorkspaceEnvironment;
+
 }
