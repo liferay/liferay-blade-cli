@@ -19,13 +19,17 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -48,13 +52,54 @@ public class ServerStartCommandTest {
 	public void setUp() throws Exception {
 		_testWorkspaceDir = temporaryFolder.newFolder("testWorkspaceDir");
 
-		_rootDir = temporaryFolder.getRoot();
-
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 
 		_killTomcat();
 
 		_killWildfly();
+	}
+
+	@Test
+	public void testServerInitCustomEnvironment() throws Exception {
+		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init"};
+
+		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
+
+		File prodConfigFile = new File(_testWorkspaceDir, "configs/prod/portal-ext.properties");
+
+		Properties portalExtProperties = new Properties();
+
+		portalExtProperties.load(new FileInputStream(prodConfigFile));
+
+		portalExtProperties.put("foo.bar", "foobar");
+
+		Path prodFilePath = prodConfigFile.toPath();
+
+		try (OutputStream stream = Files.newOutputStream(prodFilePath)) {
+			portalExtProperties.store(stream, "");
+		}
+
+		String[] serverInitArgs = {"--base", _testWorkspaceDir.getPath(), "server init", "--environment", "prod"};
+
+		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverInitArgs);
+
+		File bundlesFolder = new File(_testWorkspaceDir, "bundles");
+
+		boolean bundlesFolderExists = bundlesFolder.exists();
+
+		Assert.assertTrue(bundlesFolderExists);
+
+		File bundleConfigFile = new File(bundlesFolder, "portal-ext.properties");
+
+		boolean bundleConfigFileExists = bundleConfigFile.exists();
+
+		Assert.assertTrue(bundleConfigFileExists);
+
+		portalExtProperties.load(new FileInputStream(bundleConfigFile));
+
+		String fooBarProperty = portalExtProperties.getProperty("foo.bar");
+
+		Assert.assertEquals("foobar", fooBarProperty);
 	}
 
 	@Test
@@ -275,7 +320,6 @@ public class ServerStartCommandTest {
 	}
 
 	private File _extensionsDir = null;
-	private File _rootDir = null;
 	private File _testWorkspaceDir = null;
 
 	private Predicate<JavaProcess> _tomcatFilter = process -> {
