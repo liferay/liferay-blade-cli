@@ -61,12 +61,31 @@ public class BladeSettings {
 	public void migrateWorkspaceIfNecessary(BladeCLI bladeCLI) throws IOException {
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(_settingsFile);
 
-		if (workspaceProvider != null) {
+		if ((workspaceProvider != null) && workspaceProvider.isWorkspace(bladeCLI)) {
 			File workspaceDirectory = workspaceProvider.getWorkspaceDir(_settingsFile);
 
 			File pomFile = new File(workspaceDirectory, "pom.xml");
 
-			if (pomFile.exists() && !_settingsFile.exists()) {
+			boolean shouldPrompt = false;
+
+			if (pomFile.exists()) {
+				if (!_settingsFile.exists()) {
+					shouldPrompt = true;
+				}
+				else {
+					String profilePromptDisabled = _properties.getProperty("profile.prompt.disabled", "false");
+
+					if (!"true".equals(profilePromptDisabled)) {
+						String profileName = getProfileName();
+
+						if (!"maven".equals(profileName)) {
+							shouldPrompt = true;
+						}
+					}
+				}
+			}
+
+			if (shouldPrompt) {
 				String question =
 					"WARNING: blade commands will not function properly in a Maven workspace unless the blade " +
 						"profile is set to \"maven\". Should the settings for this workspace be updated?";
@@ -74,6 +93,14 @@ public class BladeSettings {
 				if (Prompter.confirm(question, true)) {
 					setProfileName("maven");
 					save();
+				}
+				else {
+					question = "Should blade remember this setting for this workspace?";
+
+					if (Prompter.confirm(question, true)) {
+						_properties.setProperty("profile.prompt.disabled", "true");
+						save();
+					}
 				}
 			}
 		}
