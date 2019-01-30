@@ -36,9 +36,9 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		ServerInitArgs args = getArgs();
+		ServerInitArgs serverInitArgs = getArgs();
 
-		File baseDir = new File(args.getBase());
+		File baseDir = new File(serverInitArgs.getBase());
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
@@ -49,11 +49,10 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 
 			StringBuilder commandStringBuilder = new StringBuilder("initBundle");
 
-			String liferayWorkspaceEnvironment = args.getLiferayWorkspaceEnvironment();
+			String liferayWorkspaceEnvironment = serverInitArgs.getEnvironment();
 
 			if ((liferayWorkspaceEnvironment != null) && (liferayWorkspaceEnvironment.length() > 0)) {
-				commandStringBuilder.append(
-					" -Pliferay.workspace.environment=" + args.getLiferayWorkspaceEnvironment());
+				commandStringBuilder.append(" -Pliferay.workspace.environment=" + serverInitArgs.getEnvironment());
 			}
 
 			String command = commandStringBuilder.toString();

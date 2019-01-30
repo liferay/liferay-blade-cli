@@ -28,14 +28,14 @@ import com.beust.jcommander.Parameters;
 )
 public class ServerInitArgs extends BaseArgs {
 
-	public String getLiferayWorkspaceEnvironment() {
-		return _liferayWorkspaceEnvironment;
+	public String getEnvironment() {
+		return _environment;
 	}
 
 	@Parameter(
 		description = "Set the environment with the settings appropriate for current development.",
 		names = {"-e", "--environment"}
 	)
-	private String _liferayWorkspaceEnvironment;
+	private String _environment;
 
 }
