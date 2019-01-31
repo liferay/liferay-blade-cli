@@ -249,7 +249,7 @@ test {
 
 	int forks = 1
 
-	if (!debug) {
+	if (!debug && project.hasProperty("parallel")) {
 		if (availableProcessors > 4) {
 
 			forks = availableProcessors - 2
