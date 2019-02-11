@@ -20,6 +20,7 @@ import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -61,53 +62,19 @@ public class ServerStartCommandTest {
 		_testWorkspaceDir = temporaryFolder.newFolder("testWorkspaceDir");
 
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
-
-		_killTomcat();
-
-		_killWildfly();
 	}
 
 	@Test
 	public void testServerInitCustomEnvironment() throws Exception {
-		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init"};
+		_initBladeWorkspace();
 
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
+		_customizeProdProperties();
 
-		File prodConfigFile = new File(_testWorkspaceDir, "configs/prod/portal-ext.properties");
+		_initServerBundle("--environment", "prod");
 
-		Properties portalExtProperties = new Properties();
+		File bundleConfigFile = _getBundleConfigFile();
 
-		portalExtProperties.load(new FileInputStream(prodConfigFile));
-
-		portalExtProperties.put("foo.bar", "foobar");
-
-		Path prodFilePath = prodConfigFile.toPath();
-
-		try (OutputStream stream = Files.newOutputStream(prodFilePath)) {
-			portalExtProperties.store(stream, "");
-		}
-
-		String[] serverInitArgs = {"--base", _testWorkspaceDir.getPath(), "server init", "--environment", "prod"};
-
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverInitArgs);
-
-		File bundlesFolder = new File(_testWorkspaceDir, "bundles");
-
-		boolean bundlesFolderExists = bundlesFolder.exists();
-
-		Assert.assertTrue(bundlesFolderExists);
-
-		File bundleConfigFile = new File(bundlesFolder, "portal-ext.properties");
-
-		boolean bundleConfigFileExists = bundleConfigFile.exists();
-
-		Assert.assertTrue(bundleConfigFileExists);
-
-		portalExtProperties.load(new FileInputStream(bundleConfigFile));
-
-		String fooBarProperty = portalExtProperties.getProperty("foo.bar");
-
-		Assert.assertEquals("foobar", fooBarProperty);
+		_validateBundleConfigFile(bundleConfigFile);
 	}
 
 	@Test
@@ -229,9 +196,9 @@ public class ServerStartCommandTest {
 
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(_liferayWorkspaceBundleKey);
+		sb.append(_LIFERAY_WORKSPACE_BUNDLE_KEY);
 		sb.append("=");
-		sb.append(_liferayWorkspaceBundleUrl);
+		sb.append(_LIFERAY_WORKSPACE_BUNDLE_URL);
 		sb.append(bundleFileName);
 		sb.append(System.lineSeparator());
 
@@ -243,11 +210,11 @@ public class ServerStartCommandTest {
 	}
 
 	private void _addTomcatBundleToGradle() throws Exception {
-		_addBundleToGradle(_liferayWorkspaceBundleTomcat);
+		_addBundleToGradle(_LIFERAY_WORKSPACE_BUNDLE_TOMCAT);
 	}
 
 	private void _addWildflyBundleToGradle() throws Exception {
-		_addBundleToGradle(_liferayWorkspaceBundleWildfly);
+		_addBundleToGradle(_LIFERAY_WORKSPACE_BUNDLE_WILDFLY);
 	}
 
 	private boolean _commandExists(String... args) {
@@ -265,6 +232,22 @@ public class ServerStartCommandTest {
 		}
 
 		return false;
+	}
+
+	private void _customizeProdProperties() throws FileNotFoundException, IOException {
+		File prodConfigFile = new File(_testWorkspaceDir, "configs/prod/portal-ext.properties");
+
+		Properties portalExtProperties = new Properties();
+
+		portalExtProperties.load(new FileInputStream(prodConfigFile));
+
+		portalExtProperties.put("foo.bar", "foobar");
+
+		Path prodFilePath = prodConfigFile.toPath();
+
+		try (OutputStream stream = Files.newOutputStream(prodFilePath)) {
+			portalExtProperties.store(stream, "");
+		}
 	}
 
 	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter, boolean debugFlag, int debugPort)
@@ -286,11 +269,11 @@ public class ServerStartCommandTest {
 	}
 
 	private void _findAndTerminateTomcat(boolean debugFlag) throws Exception {
-		_findAndTerminateServer(_tomcatFilter, debugFlag, _debugPortTomcat);
+		_findAndTerminateServer(_FILTER_TOMCAT, debugFlag, _DEBUG_PORT_TOMCAT);
 	}
 
 	private void _findAndTerminateWildfly(boolean debugFlag) throws Exception {
-		_findAndTerminateServer(_wildflyFilter, debugFlag, _debugPortWildfly);
+		_findAndTerminateServer(_FILTER_WILDFLY, debugFlag, _DEBUG_PORT_WILDFLY);
 	}
 
 	private Optional<JavaProcess> _findProcess(
@@ -324,56 +307,44 @@ public class ServerStartCommandTest {
 		return pidProcess;
 	}
 
+	private File _getBundleConfigFile() {
+		File bundlesFolder = new File(_testWorkspaceDir, "bundles");
+
+		boolean bundlesFolderExists = bundlesFolder.exists();
+
+		Assert.assertTrue(bundlesFolderExists);
+
+		File bundleConfigFile = new File(bundlesFolder, "portal-ext.properties");
+
+		boolean bundleConfigFileExists = bundleConfigFile.exists();
+
+		Assert.assertTrue(bundleConfigFileExists);
+
+		return bundleConfigFile;
+	}
+
 	private void _initBladeWorkspace() throws Exception {
 		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1"};
 
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
 	}
 
-	private void _initServerBundle() throws Exception {
-		String[] gwArgs = {"--base", _testWorkspaceDir.getPath(), "server", "init"};
+	private void _initServerBundle(String... additionalArgs) throws Exception {
+		String[] serverInitArgs = {"--base", _testWorkspaceDir.getPath(), "server", "init"};
 
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, gwArgs);
-	}
+		if ((additionalArgs != null) && (additionalArgs.length > 0)) {
+			Collection<String> serverInitArgsCollection = Arrays.asList(serverInitArgs);
 
-	private void _killTomcat() throws Exception {
-		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
+			Collection<String> additionalArgsCollection = Arrays.asList(additionalArgs);
 
-		Optional<JavaProcess> tomcatProcess = _findProcess(javaProcesses, _tomcatFilter);
+			serverInitArgsCollection = new ArrayList<>(serverInitArgsCollection);
 
-		if (tomcatProcess.isPresent()) {
-			JavaProcess javaProcess = tomcatProcess.get();
+			serverInitArgsCollection.addAll(additionalArgsCollection);
 
-			PidProcess tomcatPidProcess = Processes.newPidProcess(javaProcess.getId());
-
-			Assert.assertTrue("Expected tomcat process to be alive", tomcatPidProcess.isAlive());
-
-			tomcatPidProcess.destroyForcefully();
-
-			tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
-
-			Assert.assertFalse("Expected tomcat process to be destroyed.", tomcatPidProcess.isAlive());
+			serverInitArgs = serverInitArgsCollection.toArray(new String[0]);
 		}
-	}
 
-	private void _killWildfly() throws Exception {
-		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
-
-		Optional<JavaProcess> wildflyProcess = _findProcess(javaProcesses, _wildflyFilter);
-
-		if (wildflyProcess.isPresent()) {
-			JavaProcess javaProcess = wildflyProcess.get();
-
-			PidProcess wildflyPidProcess = Processes.newPidProcess(javaProcess.getId());
-
-			Assert.assertTrue("Expected wildfly process to be alive", wildflyPidProcess.isAlive());
-
-			wildflyPidProcess.destroyForcefully();
-
-			wildflyPidProcess.waitFor(1, TimeUnit.SECONDS);
-
-			Assert.assertFalse("Expected wildfly proces to be destroyed.", wildflyPidProcess.isAlive());
-		}
+		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverInitArgs);
 	}
 
 	private String _printDisplayNames(Collection<JavaProcess> javaProcesses) {
@@ -404,6 +375,16 @@ public class ServerStartCommandTest {
 		Thread.sleep(1000);
 	}
 
+	private void _validateBundleConfigFile(File bundleConfigFile) throws FileNotFoundException, IOException {
+		Properties runtimePortalExtProperties = new Properties();
+
+		runtimePortalExtProperties.load(new FileInputStream(bundleConfigFile));
+
+		String fooBarProperty = runtimePortalExtProperties.getProperty("foo.bar");
+
+		Assert.assertEquals("foobar", fooBarProperty);
+	}
+
 	private void _verifyBundlePath(String folderName) {
 		Path workspacePath = _testWorkspaceDir.toPath();
 
@@ -417,36 +398,44 @@ public class ServerStartCommandTest {
 	}
 
 	private void _verifyTomcatBundlePath() {
-		_verifyBundlePath(_bundleFolderNameTomcat);
+		_verifyBundlePath(_BUNDLE_FOLDER_NAME_TOMCAT);
 	}
 
 	private void _verifyWildflyBundlePath() {
-		_verifyBundlePath(_bundleFolderNameWildfly);
+		_verifyBundlePath(_BUNDLE_FOLDER_NAME_WILDFLY);
 	}
 
-	private static String _bundleFolderNameTomcat = "tomcat-9.0.10";
-	private static String _bundleFolderNameWildfly = "wildfly-11.0.0";
-	private static int _debugPortTomcat = 8000;
-	private static int _debugPortWildfly = 8787;
-	private static String _liferayWorkspaceBundleKey = "liferay.workspace.bundle.url";
-	private static String _liferayWorkspaceBundleTomcat = "liferay-ce-portal-tomcat-7.1.1-ga2-20181112144637000.tar.gz";
-	private static String _liferayWorkspaceBundleUrl = "https://releases-cdn.liferay.com/portal/7.1.1-ga2/";
-	private static String _liferayWorkspaceBundleWildfly =
-		"liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz";
+	private static final String _BUNDLE_FOLDER_NAME_TOMCAT = "tomcat-9.0.10";
 
-	private File _extensionsDir = null;
-	private File _testWorkspaceDir = null;
+	private static final String _BUNDLE_FOLDER_NAME_WILDFLY = "wildfly-11.0.0";
 
-	private Predicate<JavaProcess> _tomcatFilter = process -> {
+	private static final int _DEBUG_PORT_TOMCAT = 8000;
+
+	private static final int _DEBUG_PORT_WILDFLY = 8787;
+
+	private static final Predicate<JavaProcess> _FILTER_TOMCAT = process -> {
 		String displayName = process.getDisplayName();
 
 		return displayName.contains("org.apache.catalina.startup.Bootstrap");
 	};
 
-	private Predicate<JavaProcess> _wildflyFilter = process -> {
+	private static final Predicate<JavaProcess> _FILTER_WILDFLY = process -> {
 		String displayName = process.getDisplayName();
 
 		return displayName.contains("jboss-modules");
 	};
+
+	private static final String _LIFERAY_WORKSPACE_BUNDLE_KEY = "liferay.workspace.bundle.url";
+
+	private static final String _LIFERAY_WORKSPACE_BUNDLE_TOMCAT =
+		"liferay-ce-portal-tomcat-7.1.1-ga2-20181112144637000.tar.gz";
+
+	private static final String _LIFERAY_WORKSPACE_BUNDLE_URL = "https://releases-cdn.liferay.com/portal/7.1.1-ga2/";
+
+	private static final String _LIFERAY_WORKSPACE_BUNDLE_WILDFLY =
+		"liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz";
+
+	private File _extensionsDir = null;
+	private File _testWorkspaceDir = null;
 
 }
