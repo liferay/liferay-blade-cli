@@ -24,6 +24,7 @@ import java.io.OutputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import java.util.Collection;
@@ -114,34 +115,13 @@ public class ServerStartCommandTest {
 
 	@Test
 	public void testServerStartCommandTomcat() throws Exception {
-		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1"};
+		_initBladeWorkspace();
 
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
+		_addTomcatBundleToGradle();
 
-		File gradleProperties = new File(_testWorkspaceDir, "gradle.properties");
+		_initServerBundle();
 
-		String contents = new String(Files.readAllBytes(gradleProperties.toPath()));
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("liferay.workspace.bundle.url=");
-		sb.append("https://releases-cdn.liferay.com/portal/7.1.1-ga2/");
-		sb.append("liferay-ce-portal-tomcat-7.1.1-ga2-20181112144637000.tar.gz");
-		sb.append(System.lineSeparator());
-
-		String bundleUrl = sb.toString();
-
-		contents = bundleUrl + contents;
-
-		Files.write(gradleProperties.toPath(), bundleUrl.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
-
-		String[] gwArgs = {"--base", _testWorkspaceDir.getPath(), "gw", "initBundle"};
-
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, gwArgs);
-
-		File bundlesFolder = new File(_testWorkspaceDir, "bundles/tomcat-9.0.10");
-
-		Assert.assertTrue(bundlesFolder.exists());
+		_verifyTomcatBundlePath();
 
 		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
 
@@ -175,9 +155,7 @@ public class ServerStartCommandTest {
 
 	@Test
 	public void testServerStartCommandWildfly() throws Exception {
-		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1"};
-
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
+		_initBladeWorkspace();
 
 		File gradleProperties = new File(_testWorkspaceDir, "gradle.properties");
 
@@ -200,7 +178,7 @@ public class ServerStartCommandTest {
 
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, gwArgs);
 
-		File bundlesFolder = new File(_testWorkspaceDir, "bundles/wildfly-11.0.0");
+		File bundlesFolder = new File(_testWorkspaceDir, "bundles/" + _bundleFolderNameWildfly);
 
 		Assert.assertTrue(bundlesFolder.exists());
 
@@ -242,6 +220,33 @@ public class ServerStartCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private void _addBundleToGradle(String bundleFileName) throws Exception {
+		File gradleProperties = new File(_testWorkspaceDir, "gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradleProperties.toPath()));
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(_liferayWorkspaceBundleKey);
+		sb.append(_liferayWorkspaceBundleUrl);
+		sb.append(bundleFileName);
+		sb.append(System.lineSeparator());
+
+		String bundleUrl = sb.toString();
+
+		contents = bundleUrl + contents;
+
+		Files.write(gradleProperties.toPath(), bundleUrl.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+	}
+
+	private void _addTomcatBundleToGradle() throws Exception {
+		_addBundleToGradle(_liferayWorkspaceBundleTomcat);
+	}
+
+	private void _addWildflyBundleToGradle() throws Exception {
+		_addBundleToGradle(_liferayWorkspaceBundleWIldfly);
+	}
+
 	private boolean _commandExists(String... args) {
 		try {
 			TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, args);
@@ -267,6 +272,18 @@ public class ServerStartCommandTest {
 		return stream.filter(
 			processFilter
 		).findFirst();
+	}
+
+	private void _initBladeWorkspace() throws Exception {
+		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1"};
+
+		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
+	}
+
+	private void _initServerBundle() throws Exception {
+		String[] gwArgs = {"--base", _testWorkspaceDir.getPath(), "server", "init"};
+
+		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, gwArgs);
 	}
 
 	private void _killTomcat() throws Exception {
@@ -318,6 +335,30 @@ public class ServerStartCommandTest {
 
 		return sb.toString();
 	}
+
+	private void _verifyBundlePath(String folderName) {
+		Path workspacePath = _testWorkspaceDir.toPath();
+
+		Path bundlesPath = Paths.get("bundles", folderName);
+
+		bundlesPath = workspacePath.resolve(bundlesPath);
+
+		boolean bundlesPathExists = Files.exists(bundlesPath);
+
+		Assert.assertTrue("Bundles folder " + bundlesPath + " must exist", bundlesPathExists);
+	}
+
+	private void _verifyTomcatBundlePath() {
+		_verifyBundlePath(_bundleFolderNameTomcat);
+	}
+
+	private static String _bundleFolderNameTomcat = "tomcat-9.0.10";
+	private static String _bundleFolderNameWildfly = "wildfly-11.0.0";
+	private static String _liferayWorkspaceBundleKey = "liferay.workspace.bundle.url";
+	private static String _liferayWorkspaceBundleTomcat = "liferay-ce-portal-tomcat-7.1.1-ga2-20181112144637000.tar.gz";
+	private static String _liferayWorkspaceBundleUrl = "https://releases-cdn.liferay.com/portal/7.1.1-ga2/";
+	private static String _liferayWorkspaceBundleWIldfly =
+		"liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz";
 
 	private File _extensionsDir = null;
 	private File _testWorkspaceDir = null;
