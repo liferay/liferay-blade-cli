@@ -51,6 +51,7 @@ import org.zeroturnaround.process.PidProcess;
 import org.zeroturnaround.process.Processes;
 
 /**
+ * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
 public class ServerStartCommandTest {
@@ -153,54 +154,21 @@ public class ServerStartCommandTest {
 		_findAndTerminateTomcat(useDebugging);
 	}
 
-	//@Test
+	@Test
 	public void testServerStartCommandWildfly() throws Exception {
+		boolean useDebugging = false;
+
 		_initBladeWorkspace();
 
-		File gradleProperties = new File(_testWorkspaceDir, "gradle.properties");
+		_addWildflyBundleToGradle();
 
-		String contents = new String(Files.readAllBytes(gradleProperties.toPath()));
+		_initServerBundle();
 
-		StringBuilder sb = new StringBuilder();
+		_verifyWildflyBundlePath();
 
-		sb.append("liferay.workspace.bundle.url=");
-		sb.append("https://releases-cdn.liferay.com/portal/7.1.1-ga2/");
-		sb.append("liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz");
-		sb.append(System.lineSeparator());
+		_startServer(useDebugging);
 
-		String bundleUrl = sb.toString();
-
-		contents = bundleUrl + contents;
-
-		Files.write(gradleProperties.toPath(), bundleUrl.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
-
-		String[] gwArgs = {"--base", _testWorkspaceDir.getPath(), "gw", "initBundle"};
-
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, gwArgs);
-
-		File bundlesFolder = new File(_testWorkspaceDir, "bundles/" + _bundleFolderNameWildfly);
-
-		Assert.assertTrue(bundlesFolder.exists());
-
-		_startServer(false);
-
-		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
-
-		Optional<JavaProcess> wildflyProcess = _findProcess(javaProcesses, _wildflyFilter);
-
-		Assert.assertTrue("Expected tomcat process to be started", wildflyProcess.isPresent());
-
-		JavaProcess javaProcess = wildflyProcess.get();
-
-		PidProcess wildflyPidProcess = Processes.newPidProcess(javaProcess.getId());
-
-		Assert.assertTrue("Expected wildfly process to be alive", wildflyPidProcess.isAlive());
-
-		wildflyPidProcess.destroyForcefully();
-
-		wildflyPidProcess.waitFor(1, TimeUnit.SECONDS);
-
-		Assert.assertFalse("Expected wildfly proces to be destroyed.", wildflyPidProcess.isAlive());
+		_findAndTerminateWildfly(useDebugging);
 	}
 
 	@Test
@@ -245,6 +213,7 @@ public class ServerStartCommandTest {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(_liferayWorkspaceBundleKey);
+		sb.append("=");
 		sb.append(_liferayWorkspaceBundleUrl);
 		sb.append(bundleFileName);
 		sb.append(System.lineSeparator());
@@ -261,7 +230,7 @@ public class ServerStartCommandTest {
 	}
 
 	private void _addWildflyBundleToGradle() throws Exception {
-		_addBundleToGradle(_liferayWorkspaceBundleWIldfly);
+		_addBundleToGradle(_liferayWorkspaceBundleWildfly);
 	}
 
 	private boolean _commandExists(String... args) {
@@ -299,6 +268,10 @@ public class ServerStartCommandTest {
 
 	private void _findAndTerminateTomcat(boolean debugFlag) throws Exception {
 		_findAndTerminateServer(_tomcatFilter, debugFlag);
+	}
+
+	private void _findAndTerminateWildfly(boolean debugFlag) throws Exception {
+		_findAndTerminateServer(_wildflyFilter, debugFlag);
 	}
 
 	private Optional<JavaProcess> _findProcess(
@@ -428,13 +401,17 @@ public class ServerStartCommandTest {
 		_verifyBundlePath(_bundleFolderNameTomcat);
 	}
 
+	private void _verifyWildflyBundlePath() {
+		_verifyBundlePath(_bundleFolderNameWildfly);
+	}
+
 	private static String _bundleFolderNameTomcat = "tomcat-9.0.10";
 	private static String _bundleFolderNameWildfly = "wildfly-11.0.0";
 	private static int _debugPort = 8000;
 	private static String _liferayWorkspaceBundleKey = "liferay.workspace.bundle.url";
 	private static String _liferayWorkspaceBundleTomcat = "liferay-ce-portal-tomcat-7.1.1-ga2-20181112144637000.tar.gz";
 	private static String _liferayWorkspaceBundleUrl = "https://releases-cdn.liferay.com/portal/7.1.1-ga2/";
-	private static String _liferayWorkspaceBundleWIldfly =
+	private static String _liferayWorkspaceBundleWildfly =
 		"liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz";
 
 	private File _extensionsDir = null;
