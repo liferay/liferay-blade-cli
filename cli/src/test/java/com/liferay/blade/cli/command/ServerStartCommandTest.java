@@ -172,6 +172,23 @@ public class ServerStartCommandTest {
 	}
 
 	@Test
+	public void testServerStartCommandWildflyDebug() throws Exception {
+		boolean useDebugging = true;
+
+		_initBladeWorkspace();
+
+		_addWildflyBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyWildflyBundlePath();
+
+		_startServer(useDebugging);
+
+		_findAndTerminateWildfly(useDebugging);
+	}
+
+	@Test
 	public void testServerStopCommandExists() throws Exception {
 		Assert.assertTrue(_commandExists("server", "stop"));
 		Assert.assertTrue(_commandExists("server stop"));
@@ -184,10 +201,10 @@ public class ServerStartCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static boolean _isDebugPortListening() {
+	private static boolean _isDebugPortListening(int debugPort) {
 		InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
 
-		try (Socket socket = new Socket(loopbackAddress, _debugPort)) {
+		try (Socket socket = new Socket(loopbackAddress, debugPort)) {
 			return true;
 		}
 		catch (IOException ioe) {
@@ -250,28 +267,30 @@ public class ServerStartCommandTest {
 		return false;
 	}
 
-	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter, boolean debugFlag) throws Exception {
+	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter, boolean debugFlag, int debugPort)
+		throws Exception {
+
 		PidProcess serverProcess = _findServerProcess(processFilter);
 
-		boolean debugPortListening = _isDebugPortListening();
+		boolean debugPortListening = _isDebugPortListening(debugPort);
 
 		Assert.assertEquals("Debug port not in a correct state", debugFlag, debugPortListening);
 
 		_terminateProcess(serverProcess);
 
 		if (debugFlag) {
-			debugPortListening = _isDebugPortListening();
+			debugPortListening = _isDebugPortListening(debugPort);
 
 			Assert.assertFalse("Debug port should no longer be listening", debugPortListening);
 		}
 	}
 
 	private void _findAndTerminateTomcat(boolean debugFlag) throws Exception {
-		_findAndTerminateServer(_tomcatFilter, debugFlag);
+		_findAndTerminateServer(_tomcatFilter, debugFlag, _debugPortTomcat);
 	}
 
 	private void _findAndTerminateWildfly(boolean debugFlag) throws Exception {
-		_findAndTerminateServer(_wildflyFilter, debugFlag);
+		_findAndTerminateServer(_wildflyFilter, debugFlag, _debugPortWildfly);
 	}
 
 	private Optional<JavaProcess> _findProcess(
@@ -407,7 +426,8 @@ public class ServerStartCommandTest {
 
 	private static String _bundleFolderNameTomcat = "tomcat-9.0.10";
 	private static String _bundleFolderNameWildfly = "wildfly-11.0.0";
-	private static int _debugPort = 8000;
+	private static int _debugPortTomcat = 8000;
+	private static int _debugPortWildfly = 8787;
 	private static String _liferayWorkspaceBundleKey = "liferay.workspace.bundle.url";
 	private static String _liferayWorkspaceBundleTomcat = "liferay-ce-portal-tomcat-7.1.1-ga2-20181112144637000.tar.gz";
 	private static String _liferayWorkspaceBundleUrl = "https://releases-cdn.liferay.com/portal/7.1.1-ga2/";
