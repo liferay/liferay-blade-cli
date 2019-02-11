@@ -786,11 +786,9 @@ public class BladeCLI {
 
 			Properties properties = new Properties();
 
-			InputStream inputStream = Files.newInputStream(updateCheckPath);
-
-			properties.load(inputStream);
-
-			inputStream.close();
+			try (InputStream inputStream = Files.newInputStream(updateCheckPath)) {
+				properties.load(inputStream);
+			}
 
 			Instant lastUpdateCheck = Instant.ofEpochMilli(
 				Long.parseLong(properties.getProperty(_LAST_UPDATE_CHECK_KEY)));

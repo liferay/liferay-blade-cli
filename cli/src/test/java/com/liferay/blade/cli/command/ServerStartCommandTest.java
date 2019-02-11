@@ -19,9 +19,9 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.net.InetAddress;
@@ -59,9 +59,13 @@ public class ServerStartCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_testWorkspaceDir = temporaryFolder.newFolder("testWorkspaceDir");
+		File testWorkspaceFile = temporaryFolder.newFolder("testWorkspaceDir");
 
-		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+		_testWorkspacePath = testWorkspaceFile.toPath();
+
+		File extensionsFile = temporaryFolder.newFolder(".blade", "extensions");
+
+		_extensionsPath = extensionsFile.toPath();
 	}
 
 	@Test
@@ -72,9 +76,9 @@ public class ServerStartCommandTest {
 
 		_initServerBundle("--environment", "prod");
 
-		File bundleConfigFile = _getBundleConfigFile();
+		Path bundleConfigPath = _getBundleConfigPath();
 
-		_validateBundleConfigFile(bundleConfigFile);
+		_validateBundleConfigFile(bundleConfigPath);
 	}
 
 	@Test
@@ -190,9 +194,9 @@ public class ServerStartCommandTest {
 	}
 
 	private void _addBundleToGradle(String bundleFileName) throws Exception {
-		File gradleProperties = new File(_testWorkspaceDir, "gradle.properties");
+		Path gradlePropertiesPath = _testWorkspacePath.resolve("gradle.properties");
 
-		String contents = new String(Files.readAllBytes(gradleProperties.toPath()));
+		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
 		StringBuilder sb = new StringBuilder();
 
@@ -206,7 +210,7 @@ public class ServerStartCommandTest {
 
 		contents = bundleUrl + contents;
 
-		Files.write(gradleProperties.toPath(), bundleUrl.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+		Files.write(gradlePropertiesPath, bundleUrl.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
 	}
 
 	private void _addTomcatBundleToGradle() throws Exception {
@@ -219,7 +223,7 @@ public class ServerStartCommandTest {
 
 	private boolean _commandExists(String... args) {
 		try {
-			TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, args);
+			TestUtil.runBlade(_testWorkspacePath, _extensionsPath, args);
 		}
 		catch (Throwable throwable) {
 			String message = throwable.getMessage();
@@ -235,18 +239,18 @@ public class ServerStartCommandTest {
 	}
 
 	private void _customizeProdProperties() throws FileNotFoundException, IOException {
-		File prodConfigFile = new File(_testWorkspaceDir, "configs/prod/portal-ext.properties");
+		Path prodConfigPath = _testWorkspacePath.resolve(Paths.get("configs", "prod", "portal-ext.properties"));
 
 		Properties portalExtProperties = new Properties();
 
-		portalExtProperties.load(new FileInputStream(prodConfigFile));
+		try (InputStream inputStream = Files.newInputStream(prodConfigPath)) {
+			portalExtProperties.load(inputStream);
+		}
 
 		portalExtProperties.put("foo.bar", "foobar");
 
-		Path prodFilePath = prodConfigFile.toPath();
-
-		try (OutputStream stream = Files.newOutputStream(prodFilePath)) {
-			portalExtProperties.store(stream, "");
+		try (OutputStream outputStream = Files.newOutputStream(prodConfigPath)) {
+			portalExtProperties.store(outputStream, "");
 		}
 	}
 
@@ -307,30 +311,30 @@ public class ServerStartCommandTest {
 		return pidProcess;
 	}
 
-	private File _getBundleConfigFile() {
-		File bundlesFolder = new File(_testWorkspaceDir, "bundles");
+	private Path _getBundleConfigPath() {
+		Path bundlesFolderPath = _testWorkspacePath.resolve("bundles");
 
-		boolean bundlesFolderExists = bundlesFolder.exists();
+		boolean bundlesFolderExists = Files.exists(bundlesFolderPath);
 
 		Assert.assertTrue(bundlesFolderExists);
 
-		File bundleConfigFile = new File(bundlesFolder, "portal-ext.properties");
+		Path bundleConfigPath = bundlesFolderPath.resolve("portal-ext.properties");
 
-		boolean bundleConfigFileExists = bundleConfigFile.exists();
+		boolean bundleConfigFileExists = Files.exists(bundleConfigPath);
 
 		Assert.assertTrue(bundleConfigFileExists);
 
-		return bundleConfigFile;
+		return bundleConfigPath;
 	}
 
 	private void _initBladeWorkspace() throws Exception {
-		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-v", "7.1"};
+		String[] initArgs = {"--base", _testWorkspacePath.toString(), "init", "-v", "7.1"};
 
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
+		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, initArgs);
 	}
 
 	private void _initServerBundle(String... additionalArgs) throws Exception {
-		String[] serverInitArgs = {"--base", _testWorkspaceDir.getPath(), "server", "init"};
+		String[] serverInitArgs = {"--base", _testWorkspacePath.toString(), "server", "init"};
 
 		if ((additionalArgs != null) && (additionalArgs.length > 0)) {
 			Collection<String> serverInitArgsCollection = Arrays.asList(serverInitArgs);
@@ -344,7 +348,7 @@ public class ServerStartCommandTest {
 			serverInitArgs = serverInitArgsCollection.toArray(new String[0]);
 		}
 
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverInitArgs);
+		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverInitArgs);
 	}
 
 	private String _printDisplayNames(Collection<JavaProcess> javaProcesses) {
@@ -358,7 +362,7 @@ public class ServerStartCommandTest {
 	}
 
 	private void _startServer(boolean debugFlag) throws Exception, InterruptedException {
-		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
+		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
 		Collection<String> serverStartArgsCollection = Arrays.asList(serverStartArgs);
 
@@ -370,15 +374,17 @@ public class ServerStartCommandTest {
 
 		serverStartArgs = serverStartArgsCollection.toArray(new String[0]);
 
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgs);
+		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgs);
 
 		Thread.sleep(1000);
 	}
 
-	private void _validateBundleConfigFile(File bundleConfigFile) throws FileNotFoundException, IOException {
+	private void _validateBundleConfigFile(Path bundleConfigPath) throws FileNotFoundException, IOException {
 		Properties runtimePortalExtProperties = new Properties();
 
-		runtimePortalExtProperties.load(new FileInputStream(bundleConfigFile));
+		try (InputStream inputStream = Files.newInputStream(bundleConfigPath)) {
+			runtimePortalExtProperties.load(inputStream);
+		}
 
 		String fooBarProperty = runtimePortalExtProperties.getProperty("foo.bar");
 
@@ -386,11 +392,7 @@ public class ServerStartCommandTest {
 	}
 
 	private void _verifyBundlePath(String folderName) {
-		Path workspacePath = _testWorkspaceDir.toPath();
-
-		Path bundlesPath = Paths.get("bundles", folderName);
-
-		bundlesPath = workspacePath.resolve(bundlesPath);
+		Path bundlesPath = _testWorkspacePath.resolve(Paths.get("bundles", folderName));
 
 		boolean bundlesPathExists = Files.exists(bundlesPath);
 
@@ -435,7 +437,7 @@ public class ServerStartCommandTest {
 	private static final String _LIFERAY_WORKSPACE_BUNDLE_WILDFLY =
 		"liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz";
 
-	private File _extensionsDir = null;
-	private File _testWorkspaceDir = null;
+	private Path _extensionsPath = null;
+	private Path _testWorkspacePath = null;
 
 }
