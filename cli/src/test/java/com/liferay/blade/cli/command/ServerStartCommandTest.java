@@ -23,6 +23,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import java.net.InetAddress;
+import java.net.Socket;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -118,6 +121,8 @@ public class ServerStartCommandTest {
 
 	@Test
 	public void testServerStartCommandTomcat() throws Exception {
+		boolean useDebugging = false;
+
 		_initBladeWorkspace();
 
 		_addTomcatBundleToGradle();
@@ -126,12 +131,29 @@ public class ServerStartCommandTest {
 
 		_verifyTomcatBundlePath();
 
-		_startServer(false);
+		_startServer(useDebugging);
 
-		_findAndTerminateTomcat(false);
+		_findAndTerminateTomcat(useDebugging);
 	}
 
 	@Test
+	public void testServerStartCommandTomcatDebug() throws Exception {
+		boolean useDebugging = true;
+
+		_initBladeWorkspace();
+
+		_addTomcatBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_startServer(useDebugging);
+
+		_findAndTerminateTomcat(useDebugging);
+	}
+
+	//@Test
 	public void testServerStartCommandWildfly() throws Exception {
 		_initBladeWorkspace();
 
@@ -194,6 +216,27 @@ public class ServerStartCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static boolean _isDebugPortListening() {
+		InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
+
+		try (Socket socket = new Socket(loopbackAddress, _debugPort)) {
+			return true;
+		}
+		catch (IOException ioe) {
+			return false;
+		}
+	}
+
+	private static void _terminateProcess(PidProcess tomcatPidProcess) throws InterruptedException, IOException {
+		tomcatPidProcess.destroyForcefully();
+
+		tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
+
+		String processName = tomcatPidProcess.getDescription();
+
+		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
+	}
+
 	private void _addBundleToGradle(String bundleFileName) throws Exception {
 		File gradleProperties = new File(_testWorkspaceDir, "gradle.properties");
 
@@ -238,13 +281,24 @@ public class ServerStartCommandTest {
 		return false;
 	}
 
-	private void _findAndTerminateTomcat(boolean debugFlag) throws Exception {
-		PidProcess serverProcess = _findServerProcess(_tomcatFilter);
+	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter, boolean debugFlag) throws Exception {
+		PidProcess serverProcess = _findServerProcess(processFilter);
 
-		if (debugFlag) {
-		}
+		boolean debugPortListening = _isDebugPortListening();
+
+		Assert.assertEquals("Debug port not in a correct state", debugFlag, debugPortListening);
 
 		_terminateProcess(serverProcess);
+
+		if (debugFlag) {
+			debugPortListening = _isDebugPortListening();
+
+			Assert.assertFalse("Debug port should no longer be listening", debugPortListening);
+		}
+	}
+
+	private void _findAndTerminateTomcat(boolean debugFlag) throws Exception {
+		_findAndTerminateServer(_tomcatFilter, debugFlag);
 	}
 
 	private Optional<JavaProcess> _findProcess(
@@ -351,19 +405,11 @@ public class ServerStartCommandTest {
 			serverStartArgsCollection.add("--debug");
 		}
 
+		serverStartArgs = serverStartArgsCollection.toArray(new String[0]);
+
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgs);
 
 		Thread.sleep(1000);
-	}
-
-	private void _terminateProcess(PidProcess tomcatPidProcess) throws InterruptedException, IOException {
-		tomcatPidProcess.destroyForcefully();
-
-		tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
-
-		String processName = tomcatPidProcess.getDescription();
-
-		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
 	}
 
 	private void _verifyBundlePath(String folderName) {
@@ -384,6 +430,7 @@ public class ServerStartCommandTest {
 
 	private static String _bundleFolderNameTomcat = "tomcat-9.0.10";
 	private static String _bundleFolderNameWildfly = "wildfly-11.0.0";
+	private static int _debugPort = 8000;
 	private static String _liferayWorkspaceBundleKey = "liferay.workspace.bundle.url";
 	private static String _liferayWorkspaceBundleTomcat = "liferay-ce-portal-tomcat-7.1.1-ga2-20181112144637000.tar.gz";
 	private static String _liferayWorkspaceBundleUrl = "https://releases-cdn.liferay.com/portal/7.1.1-ga2/";
