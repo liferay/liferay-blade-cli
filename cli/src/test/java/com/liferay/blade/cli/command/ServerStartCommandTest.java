@@ -20,6 +20,7 @@ import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import java.nio.file.Files;
@@ -27,6 +28,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -123,34 +126,9 @@ public class ServerStartCommandTest {
 
 		_verifyTomcatBundlePath();
 
-		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
+		_startServer(false);
 
-		try {
-			TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgs);
-		}
-		catch (Exception e) {
-		}
-
-		Thread.sleep(1000);
-
-		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
-
-		Optional<JavaProcess> tomcatProcess = _findProcess(javaProcesses, _tomcatFilter);
-
-		Assert.assertTrue(
-			"Expected to find tomcat process:\n" + _printDisplayNames(javaProcesses), tomcatProcess.isPresent());
-
-		JavaProcess javaProcess = tomcatProcess.get();
-
-		PidProcess tomcatPidProcess = Processes.newPidProcess(javaProcess.getId());
-
-		Assert.assertTrue("Expected tomcat process to be alive", tomcatPidProcess.isAlive());
-
-		tomcatPidProcess.destroyForcefully();
-
-		tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
-
-		Assert.assertFalse("Expected tomcat proces to be destroyed.", tomcatPidProcess.isAlive());
+		_findAndTerminateTomcat(false);
 	}
 
 	@Test
@@ -182,11 +160,7 @@ public class ServerStartCommandTest {
 
 		Assert.assertTrue(bundlesFolder.exists());
 
-		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
-
-		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgs);
-
-		Thread.sleep(1000);
+		_startServer(false);
 
 		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
 
@@ -264,6 +238,15 @@ public class ServerStartCommandTest {
 		return false;
 	}
 
+	private void _findAndTerminateTomcat(boolean debugFlag) throws Exception {
+		PidProcess serverProcess = _findServerProcess(_tomcatFilter);
+
+		if (debugFlag) {
+		}
+
+		_terminateProcess(serverProcess);
+	}
+
 	private Optional<JavaProcess> _findProcess(
 		Collection<JavaProcess> javaProcesses, Predicate<JavaProcess> processFilter) {
 
@@ -272,6 +255,27 @@ public class ServerStartCommandTest {
 		return stream.filter(
 			processFilter
 		).findFirst();
+	}
+
+	private PidProcess _findServerProcess(Predicate<JavaProcess> processFilter)
+		throws InterruptedException, IOException {
+
+		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
+
+		Optional<JavaProcess> optionalProcess = _findProcess(javaProcesses, processFilter);
+
+		Assert.assertTrue(
+			"Expected to find server process:\n" + _printDisplayNames(javaProcesses), optionalProcess.isPresent());
+
+		JavaProcess javaProcess = optionalProcess.get();
+
+		String processName = javaProcess.getDisplayName();
+
+		PidProcess pidProcess = Processes.newPidProcess(javaProcess.getId());
+
+		Assert.assertTrue("Expected " + processName + " process to be alive", pidProcess.isAlive());
+
+		return pidProcess;
 	}
 
 	private void _initBladeWorkspace() throws Exception {
@@ -334,6 +338,32 @@ public class ServerStartCommandTest {
 		}
 
 		return sb.toString();
+	}
+
+	private void _startServer(boolean debugFlag) throws Exception, InterruptedException {
+		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
+
+		Collection<String> serverStartArgsCollection = Arrays.asList(serverStartArgs);
+
+		serverStartArgsCollection = new ArrayList<>(serverStartArgsCollection);
+
+		if (debugFlag) {
+			serverStartArgsCollection.add("--debug");
+		}
+
+		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgs);
+
+		Thread.sleep(1000);
+	}
+
+	private void _terminateProcess(PidProcess tomcatPidProcess) throws InterruptedException, IOException {
+		tomcatPidProcess.destroyForcefully();
+
+		tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
+
+		String processName = tomcatPidProcess.getDescription();
+
+		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
 	}
 
 	private void _verifyBundlePath(String folderName) {
