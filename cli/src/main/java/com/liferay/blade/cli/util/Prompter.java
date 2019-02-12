@@ -20,8 +20,11 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
+
+import org.apache.commons.io.input.CloseShieldInputStream;
 
 /**
  * @author Christopher Bryan Boyd
@@ -68,43 +71,47 @@ public class Prompter {
 	private static Optional<Boolean> _getBooleanAnswer(
 		String questionWithPrompt, InputStream inputStream, PrintStream printStream, Optional<Boolean> defaultAnswer) {
 
-		Optional<Boolean> answer = Optional.empty();
+		Optional<Boolean> answer = null;
 
-		try (Scanner scanner = new Scanner(inputStream)) {
-			while (!answer.isPresent()) {
+		try (CloseShieldInputStream closeShieldInputStream = new CloseShieldInputStream(inputStream);
+			Scanner scanner = new Scanner(closeShieldInputStream)) {
+
+			while ((answer == null) || !answer.isPresent()) {
 				printStream.println(questionWithPrompt);
 
 				String readLine = null;
 
-				while (scanner.hasNextLine()) {
+				while (((answer == null) || !answer.isPresent()) && !Objects.equals(answer, defaultAnswer) &&
+					   scanner.hasNextLine()) {
+
 					readLine = scanner.nextLine();
-				}
 
-				if (readLine != null) {
-					readLine = readLine.toLowerCase();
+					if (readLine != null) {
+						readLine = readLine.toLowerCase();
 
-					switch (readLine.trim()) {
-						case "y":
-						case "yes":
-							answer = Optional.of(true);
+						switch (readLine.trim()) {
+							case "y":
+							case "yes":
+								answer = Optional.of(true);
 
-							break;
-						case "n":
-						case "no":
-							answer = Optional.of(false);
+								break;
+							case "n":
+							case "no":
+								answer = Optional.of(false);
 
-							break;
-						default:
-							if (defaultAnswer.isPresent()) {
-								answer = defaultAnswer;
-							}
-							else {
-								printStream.println("Unrecognized input: " + readLine);
+								break;
+							default:
+								if (defaultAnswer.isPresent()) {
+									answer = defaultAnswer;
+								}
+								else {
+									printStream.println("Unrecognized input: " + readLine);
 
-								continue;
-							}
+									continue;
+								}
 
-							break;
+								break;
+						}
 					}
 				}
 			}
