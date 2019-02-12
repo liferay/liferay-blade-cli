@@ -15,3 +15,4 @@ build_script:
 cache:
   - C:\Users\appveyor\.gradle\caches -> .gradle-wrapper\gradle-wrapper.properties
   - C:\Users\appveyor\.gradle\wrapper -> .gradle-wrapper\gradle-wrapper.properties
+  - C:\Users\appveyor\.m2\wrapper
