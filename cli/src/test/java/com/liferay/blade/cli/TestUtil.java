@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import java.nio.file.Path;
+
 import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -148,6 +150,10 @@ public class TestUtil {
 
 	public static BladeTestResults runBlade(File settingsDir, File extensionsDir, String... args) throws Exception {
 		return runBlade(settingsDir, extensionsDir, System.in, true, args);
+	}
+
+	public static BladeTestResults runBlade(Path settingsDir, Path extensionsDir, String... args) throws Exception {
+		return runBlade(settingsDir.toFile(), extensionsDir.toFile(), System.in, true, args);
 	}
 
 	public static BladeTestResults runBlade(String... args) throws Exception {
