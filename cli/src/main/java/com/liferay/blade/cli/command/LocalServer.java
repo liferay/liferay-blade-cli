@@ -173,6 +173,9 @@ public class LocalServer {
 		if (_serverType.equals("tomcat")) {
 			return _appServerPath.map(path -> path.resolve("logs/catalina.out"));
 		}
+		else if (_serverType.equals("jboss") || _serverType.equals("wildfly")) {
+			return _appServerPath.map(path -> path.resolve("standalone/log/server.log"));
+		}
 		else {
 			return Optional.empty();
 		}
