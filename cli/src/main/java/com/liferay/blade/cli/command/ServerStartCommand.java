@@ -152,6 +152,14 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 			process.waitFor();
 		}
 		else {
+			if (log.isPresent()) {
+				Path logPath = log.get();
+
+				if (!Files.exists(logPath)) {
+					Files.createFile(logPath);
+				}
+			}
+
 			bladeCLI.out(serverType + " started.");
 		}
 
