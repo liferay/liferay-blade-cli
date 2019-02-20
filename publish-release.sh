@@ -1,3 +1,3 @@
 ./gradlew clean && \
-./gradlew -Prelease :extensions:maven-profile:publish && \
-./gradlew -Prelease --refresh-dependencies :cli:publish
+./gradlew -Prelease :extensions:maven-profile:publish --info --scan && \
+./gradlew -Prelease --refresh-dependencies :cli:publish --info --scan
