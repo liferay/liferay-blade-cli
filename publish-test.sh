@@ -23,7 +23,7 @@ mavenProfileUrl=`./gradlew -PlocalNexus -P${1} :extensions:maven-profile:publish
 
 mavenProfileUrl="http://localhost:8081/nexus/content/groups/public/"$mavenProfileUrl
 
-curl $mavenProfileUrl -o tmp/$timestamp/maven_profile.jar
+curl -s $mavenProfileUrl -o tmp/$timestamp/maven_profile.jar
 
 ./gradlew -PlocalNexus -P${1} --refresh-dependencies clean && \
 
@@ -31,7 +31,7 @@ bladeCliUrl=`./gradlew -PlocalNexus -P${1} :cli:publish --info | grep Uploading 
 
 bladeCliUrl="http://localhost:8081/nexus/content/groups/public/"$bladeCliUrl
 
-curl $bladeCliUrl -o tmp/$timestamp/cli/blade.jar
+curl -s $bladeCliUrl -o tmp/$timestamp/cli/blade.jar
 
 mavenProfileJar=`jar -tf tmp/$timestamp/cli/blade.jar | grep "maven.profile-"`
 
