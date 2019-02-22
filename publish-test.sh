@@ -14,7 +14,31 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:8081/nex
   sleep 5
 done
 
+timestamp=$(date +%s)
+mkdir -p tmp/$timestamp/cli
+
 ./gradlew clean && \
-./gradlew -PlocalNexus -P${1} :extensions:maven-profile:publish --info && \
-./gradlew -PlocalNexus -P${1} --refresh-dependencies clean check :cli:smokeTests && \
-./gradlew -PlocalNexus -P${1} --refresh-dependencies :cli:publish --info
+
+mavenProfileUrl=`./gradlew -PlocalNexus -P${1} :extensions:maven-profile:publish --info | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2` && \
+
+mavenProfileUrl="http://localhost:8081/nexus/content/groups/public/"$mavenProfileUrl
+
+curl $mavenProfileUrl -o tmp/$timestamp/maven_profile.jar
+
+./gradlew -PlocalNexus -P${1} --refresh-dependencies clean && \
+
+bladeCliUrl=`./gradlew -PlocalNexus -P${1} :cli:publish --info | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2` && \
+
+bladeCliUrl="http://localhost:8081/nexus/content/groups/public/"$bladeCliUrl
+
+curl $bladeCliUrl -o tmp/$timestamp/cli/blade.jar
+
+mavenProfileJar=`jar -tf tmp/$timestamp/cli/blade.jar | grep "maven.profile-"`
+
+unzip -p tmp/$timestamp/cli/blade.jar $mavenProfileJar > tmp/$timestamp/cli/myExtractedMavenProfile.jar
+
+echo $mavenProfileUrl
+echo $bladeCliUrl
+diff -s tmp/$timestamp/cli/myExtractedMavenProfile.jar tmp/$timestamp/maven_profile.jar
+
+rm -rf tmp/
