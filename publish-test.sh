@@ -25,7 +25,7 @@ mavenProfileUrl="http://localhost:8081/nexus/content/groups/public/"$mavenProfil
 
 curl -s $mavenProfileUrl -o tmp/$timestamp/maven_profile.jar
 
-./gradlew -PlocalNexus -P${1} --refresh-dependencies clean && \
+./gradlew -PlocalNexus -P${1} --refresh-dependencies clean check :cli:smokeTests && \
 
 bladeCliUrl=`./gradlew -PlocalNexus -P${1} :cli:publish --info | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2` && \
 
