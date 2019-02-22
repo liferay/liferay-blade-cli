@@ -89,7 +89,13 @@ subprojects {
 			if (project.hasProperty("localNexus")) {
 				liferayNexusUsername = "admin"
 				liferayNexusPassword = "admin123"
-				repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
+
+				if (project.hasProperty("release")) {
+					repoUrl = "http://localhost:8081/nexus/content/repositories/releases/"
+				}
+				else {
+					repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
+				}
 			}
 
 			repositories {
