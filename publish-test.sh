@@ -66,4 +66,10 @@ echo $bladeCliUrl
 
 diff -s /tmp/$timestamp/cli/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
 
+if [ "$?" != "0" ]; then
+	echo Failed diff
+	rm -rf /tmp/$timestamp
+	exit 1
+fi
+
 rm -rf /tmp/$timestamp
