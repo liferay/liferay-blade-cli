@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import java.nio.file.Files;
@@ -116,6 +117,23 @@ public class ServerStartCommandTest {
 	}
 
 	@Test
+	public void testServerRunCommandTomcatDebugCustomPort() throws Exception {
+		_debugPort = _getAvailablePort();
+
+		_initBladeWorkspace();
+
+		_addTomcatBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_runServerDebug();
+
+		_findAndTerminateTomcat();
+	}
+
+	@Test
 	public void testServerRunCommandWildfly() throws Exception {
 		_initBladeWorkspace();
 
@@ -133,6 +151,23 @@ public class ServerStartCommandTest {
 	@Test
 	public void testServerRunCommandWildflyDebug() throws Exception {
 		_debugPort = _DEFAULT_DEBUG_PORT_WILDFLY;
+
+		_initBladeWorkspace();
+
+		_addWildflyBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyWildflyBundlePath();
+
+		_runServerDebug();
+
+		_findAndTerminateWildfly();
+	}
+
+	@Test
+	public void testServerRunCommandWildflyDebugCustomPort() throws Exception {
+		_debugPort = _getAvailablePort();
 
 		_initBladeWorkspace();
 
@@ -190,6 +225,23 @@ public class ServerStartCommandTest {
 	}
 
 	@Test
+	public void testServerStartCommandTomcatDebugCustomPort() throws Exception {
+		_debugPort = _getAvailablePort();
+
+		_initBladeWorkspace();
+
+		_addTomcatBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_startServerDebug();
+
+		_findAndTerminateTomcat();
+	}
+
+	@Test
 	public void testServerStartCommandWildfly() throws Exception {
 		_initBladeWorkspace();
 
@@ -222,6 +274,23 @@ public class ServerStartCommandTest {
 	}
 
 	@Test
+	public void testServerStartCommandWildflyDebugCustomPort() throws Exception {
+		_debugPort = _getAvailablePort();
+
+		_initBladeWorkspace();
+
+		_addWildflyBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyWildflyBundlePath();
+
+		_startServerDebug();
+
+		_findAndTerminateWildfly();
+	}
+
+	@Test
 	public void testServerStopCommandExists() throws Exception {
 		Assert.assertTrue(_commandExists("server", "stop"));
 		Assert.assertTrue(_commandExists("server stop"));
@@ -233,6 +302,17 @@ public class ServerStartCommandTest {
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private static int _getAvailablePort() {
+		try (ServerSocket serverSocket = new ServerSocket(0)) {
+			serverSocket.setReuseAddress(true);
+
+			return serverSocket.getLocalPort();
+		}
+		catch (IOException ioe) {
+			throw new IllegalStateException("No available ports");
+		}
+	}
 
 	private static boolean _isDebugPortListening(int debugPort) {
 		InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
