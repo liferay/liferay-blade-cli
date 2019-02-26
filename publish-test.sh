@@ -17,7 +17,7 @@ done
 timestamp=$(date +%s)
 mkdir -p /tmp/$timestamp/cli
 
-./gradlew clean
+./gradlew --no-daemon clean
 
 if [ "$?" != "0" ]; then
 	echo Failed clean.
@@ -25,7 +25,7 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
-mavenProfileUrl=`./gradlew -PlocalNexus -P${1} :extensions:maven-profile:publish --info | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2`
+mavenProfileUrl=`./gradlew --no-daemon -PlocalNexus -P${1} :extensions:maven-profile:publish --info | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2`
 
 if [ "$?" != "0" ]; then
 	echo Failed :extensions:maven-profile:publish
@@ -37,7 +37,7 @@ mavenProfileUrl="http://localhost:8081/nexus/content/groups/public/"$mavenProfil
 
 curl -s $mavenProfileUrl -o /tmp/$timestamp/maven_profile.jar
 
-./gradlew -PlocalNexus -P${1} --refresh-dependencies --scan clean check :cli:smokeTests
+./gradlew --no-daemon -PlocalNexus -P${1} --refresh-dependencies --scan clean check :cli:smokeTests
 
 if [ "$?" != "0" ]; then
 	echo Failed check and smokeTests.
@@ -45,7 +45,7 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
-bladeCliUrl=`./gradlew -PlocalNexus -P${1} :cli:publish --info | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2`
+bladeCliUrl=`./gradlew --no-daemon -PlocalNexus -P${1} :cli:publish --info | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2`
 
 if [ "$?" != "0" ]; then
 	echo Failed :cli:publish
