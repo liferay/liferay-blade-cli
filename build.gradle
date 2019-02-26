@@ -84,7 +84,7 @@ subprojects {
 			String liferayNexusPassword = credentials.liferayNexusPassword
 
 			String repoName = project.hasProperty("release") ? "liferay-public-releases" : "liferay-public-snapshots"
-			String repoUrl = "https://repository-cdn.liferay.com/nexus/content/repositories/" + repoName
+			String repoUrl = "https://repository.liferay.com/nexus/content/repositories/" + repoName
 
 			if (project.hasProperty("localNexus")) {
 				liferayNexusUsername = "admin"
