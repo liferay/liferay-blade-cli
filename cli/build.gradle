@@ -184,11 +184,8 @@ repositories {
 
 	if (project.hasProperty("localNexus")) {
 		maven {
-			url "http://localhost:8081/nexus/content/repositories/snapshots/"
+			url "http://localhost:8081/nexus/content/groups/public/"
 		}
-	}
-	else if (project.hasProperty("mavenLocal")) {
-		mavenLocal()
 	}
 
 	maven {
