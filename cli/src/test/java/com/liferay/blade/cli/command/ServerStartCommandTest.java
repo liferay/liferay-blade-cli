@@ -417,11 +417,21 @@ public class ServerStartCommandTest {
 	}
 
 	private void _findAndTerminateTomcat() throws Exception {
-		_findAndTerminateServer(_FILTER_TOMCAT);
+		_findAndTerminateServer(
+			process -> {
+				String displayName = process.getDisplayName();
+
+				return displayName.contains("org.apache.catalina.startup.Bootstrap");
+			});
 	}
 
 	private void _findAndTerminateWildfly() throws Exception {
-		_findAndTerminateServer(_FILTER_WILDFLY);
+		_findAndTerminateServer(
+			process -> {
+				String displayName = process.getDisplayName();
+
+				return displayName.contains("jboss-modules");
+			});
 	}
 
 	private Optional<JavaProcess> _findProcess(
@@ -596,18 +606,6 @@ public class ServerStartCommandTest {
 	private static final int _DEFAULT_DEBUG_PORT_TOMCAT = 8000;
 
 	private static final int _DEFAULT_DEBUG_PORT_WILDFLY = 8787;
-
-	private static final Predicate<JavaProcess> _FILTER_TOMCAT = process -> {
-		String displayName = process.getDisplayName();
-
-		return displayName.contains("org.apache.catalina.startup.Bootstrap");
-	};
-
-	private static final Predicate<JavaProcess> _FILTER_WILDFLY = process -> {
-		String displayName = process.getDisplayName();
-
-		return displayName.contains("jboss-modules");
-	};
 
 	private static final String _LIFERAY_WORKSPACE_BUNDLE_KEY = "liferay.workspace.bundle.url";
 
