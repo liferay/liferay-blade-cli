@@ -266,7 +266,12 @@ public class LocalServer {
 	}
 
 	private void _buildJbossWildflyProcess(ProcessBuilder processBuilder) {
-		processBuilder.command(_getJBossWildflyExecutable());
+		if (BladeUtil.isWindows()) {
+			processBuilder.command("cmd.exe", "/C", _getJBossWildflyExecutable());
+		}
+		else {
+			processBuilder.command(_getJBossWildflyExecutable());
+		}
 
 		Path appServer = _appServerPath.get();
 
@@ -300,7 +305,12 @@ public class LocalServer {
 
 		environment.put("CATALINA_PID", "catalina.pid");
 
-		processBuilder.command(_getTomcatExecutable());
+		if (BladeUtil.isWindows()) {
+			processBuilder.command("cmd.exe", "/C", _getTomcatExecutable());
+		}
+		else {
+			processBuilder.command(_getTomcatExecutable());
+		}
 	}
 
 	private Optional<Path> _appServerPath;

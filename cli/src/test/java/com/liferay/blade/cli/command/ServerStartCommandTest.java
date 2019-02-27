@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import java.nio.file.Files;
@@ -38,6 +39,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -66,6 +68,7 @@ public class ServerStartCommandTest {
 		File extensionsFile = temporaryFolder.newFolder(".blade", "extensions");
 
 		_extensionsPath = extensionsFile.toPath();
+
 	}
 
 	@Test
@@ -82,6 +85,104 @@ public class ServerStartCommandTest {
 	}
 
 	@Test
+	public void testServerRunCommandTomcat() throws Exception {
+		_initBladeWorkspace();
+
+		_addTomcatBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_runServer();
+
+		_findAndTerminateTomcat();
+	}
+
+	@Test
+	public void testServerRunCommandTomcatDebug() throws Exception {
+		_debugPort = _DEFAULT_DEBUG_PORT_TOMCAT;
+
+		_initBladeWorkspace();
+
+		_addTomcatBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_runServerDebug();
+
+		_findAndTerminateTomcat();
+	}
+
+	@Test
+	public void testServerRunCommandTomcatDebugCustomPort() throws Exception {
+		_debugPort = _getAvailablePort();
+
+		_initBladeWorkspace();
+
+		_addTomcatBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_runServerDebug();
+
+		_findAndTerminateTomcat();
+	}
+
+	@Test
+	public void testServerRunCommandWildfly() throws Exception {
+		_initBladeWorkspace();
+
+		_addWildflyBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyWildflyBundlePath();
+
+		_runServer();
+
+		_findAndTerminateWildfly();
+	}
+
+	@Test
+	public void testServerRunCommandWildflyDebug() throws Exception {
+		_debugPort = _DEFAULT_DEBUG_PORT_WILDFLY;
+
+		_initBladeWorkspace();
+
+		_addWildflyBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyWildflyBundlePath();
+
+		_runServerDebug();
+
+		_findAndTerminateWildfly();
+	}
+
+	@Test
+	public void testServerRunCommandWildflyDebugCustomPort() throws Exception {
+		_debugPort = _getAvailablePort();
+
+		_initBladeWorkspace();
+
+		_addWildflyBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyWildflyBundlePath();
+
+		_runServerDebug();
+
+		_findAndTerminateWildfly();
+	}
+
+	@Test
 	public void testServerStartCommandExists() throws Exception {
 		Assert.assertTrue(_commandExists("server", "start"));
 		Assert.assertTrue(_commandExists("server start"));
@@ -93,8 +194,6 @@ public class ServerStartCommandTest {
 
 	@Test
 	public void testServerStartCommandTomcat() throws Exception {
-		boolean useDebugging = false;
-
 		_initBladeWorkspace();
 
 		_addTomcatBundleToGradle();
@@ -103,14 +202,14 @@ public class ServerStartCommandTest {
 
 		_verifyTomcatBundlePath();
 
-		_startServer(useDebugging);
+		_startServer();
 
-		_findAndTerminateTomcat(useDebugging);
+		_findAndTerminateTomcat();
 	}
 
 	@Test
 	public void testServerStartCommandTomcatDebug() throws Exception {
-		boolean useDebugging = true;
+		_debugPort = _DEFAULT_DEBUG_PORT_TOMCAT;
 
 		_initBladeWorkspace();
 
@@ -120,15 +219,30 @@ public class ServerStartCommandTest {
 
 		_verifyTomcatBundlePath();
 
-		_startServer(useDebugging);
+		_startServerDebug();
 
-		_findAndTerminateTomcat(useDebugging);
+		_findAndTerminateTomcat();
+	}
+
+	@Test
+	public void testServerStartCommandTomcatDebugCustomPort() throws Exception {
+		_debugPort = _getAvailablePort();
+
+		_initBladeWorkspace();
+
+		_addTomcatBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_startServerDebug();
+
+		_findAndTerminateTomcat();
 	}
 
 	@Test
 	public void testServerStartCommandWildfly() throws Exception {
-		boolean useDebugging = false;
-
 		_initBladeWorkspace();
 
 		_addWildflyBundleToGradle();
@@ -137,14 +251,14 @@ public class ServerStartCommandTest {
 
 		_verifyWildflyBundlePath();
 
-		_startServer(useDebugging);
+		_startServer();
 
-		_findAndTerminateWildfly(useDebugging);
+		_findAndTerminateWildfly();
 	}
 
 	@Test
 	public void testServerStartCommandWildflyDebug() throws Exception {
-		boolean useDebugging = true;
+		_debugPort = _DEFAULT_DEBUG_PORT_WILDFLY;
 
 		_initBladeWorkspace();
 
@@ -154,9 +268,26 @@ public class ServerStartCommandTest {
 
 		_verifyWildflyBundlePath();
 
-		_startServer(useDebugging);
+		_startServerDebug();
 
-		_findAndTerminateWildfly(useDebugging);
+		_findAndTerminateWildfly();
+	}
+
+	@Test
+	public void testServerStartCommandWildflyDebugCustomPort() throws Exception {
+		_debugPort = _getAvailablePort();
+
+		_initBladeWorkspace();
+
+		_addWildflyBundleToGradle();
+
+		_initServerBundle();
+
+		_verifyWildflyBundlePath();
+
+		_startServerDebug();
+
+		_findAndTerminateWildfly();
 	}
 
 	@Test
@@ -171,6 +302,17 @@ public class ServerStartCommandTest {
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private static int _getAvailablePort() {
+		try (ServerSocket serverSocket = new ServerSocket(0)) {
+			serverSocket.setReuseAddress(true);
+
+			return serverSocket.getLocalPort();
+		}
+		catch (IOException ioe) {
+			throw new IllegalStateException("No available ports");
+		}
+	}
 
 	private static boolean _isDebugPortListening(int debugPort) {
 		InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
@@ -254,30 +396,42 @@ public class ServerStartCommandTest {
 		}
 	}
 
-	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter, boolean debugFlag, int debugPort)
-		throws Exception {
-
+	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter) throws Exception {
 		PidProcess serverProcess = _findServerProcess(processFilter);
 
-		boolean debugPortListening = _isDebugPortListening(debugPort);
+		boolean debugPortListening = false;
 
-		Assert.assertEquals("Debug port not in a correct state", debugFlag, debugPortListening);
+		if (_useDebug) {
+			debugPortListening = _isDebugPortListening(_debugPort);
+
+			Assert.assertEquals("Debug port not in a correct state", _useDebug, debugPortListening);
+		}
 
 		_terminateProcess(serverProcess);
 
-		if (debugFlag) {
-			debugPortListening = _isDebugPortListening(debugPort);
+		if (_useDebug) {
+			debugPortListening = _isDebugPortListening(_debugPort);
 
 			Assert.assertFalse("Debug port should no longer be listening", debugPortListening);
 		}
 	}
 
-	private void _findAndTerminateTomcat(boolean debugFlag) throws Exception {
-		_findAndTerminateServer(_FILTER_TOMCAT, debugFlag, _DEBUG_PORT_TOMCAT);
+	private void _findAndTerminateTomcat() throws Exception {
+		_findAndTerminateServer(
+			process -> {
+				String displayName = process.getDisplayName();
+
+				return displayName.contains("org.apache.catalina.startup.Bootstrap");
+			});
 	}
 
-	private void _findAndTerminateWildfly(boolean debugFlag) throws Exception {
-		_findAndTerminateServer(_FILTER_WILDFLY, debugFlag, _DEBUG_PORT_WILDFLY);
+	private void _findAndTerminateWildfly() throws Exception {
+		_findAndTerminateServer(
+			process -> {
+				String displayName = process.getDisplayName();
+
+				return displayName.contains("jboss-modules");
+			});
 	}
 
 	private Optional<JavaProcess> _findProcess(
@@ -327,6 +481,22 @@ public class ServerStartCommandTest {
 		return bundleConfigPath;
 	}
 
+	private String[] _getDebugArgs(String[] serverStartArgs) {
+		Collection<String> serverStartArgsCollection = Arrays.asList(serverStartArgs);
+
+		serverStartArgsCollection = new ArrayList<>(serverStartArgsCollection);
+
+		serverStartArgsCollection.add("--debug");
+		serverStartArgsCollection.add("--port");
+		serverStartArgsCollection.add(String.valueOf(_debugPort));
+
+		serverStartArgs = serverStartArgsCollection.toArray(new String[0]);
+
+		final String[] serverStartArgsFinal = serverStartArgs;
+
+		return serverStartArgsFinal;
+	}
+
 	private void _initBladeWorkspace() throws Exception {
 		String[] initArgs = {"--base", _testWorkspacePath.toString(), "init", "-v", "7.1"};
 
@@ -361,20 +531,42 @@ public class ServerStartCommandTest {
 		return sb.toString();
 	}
 
-	private void _startServer(boolean debugFlag) throws Exception, InterruptedException {
+	private void _runServer() throws Exception, InterruptedException {
+		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
+
+		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgs));
+
+		Thread.sleep(1000);
+	}
+
+	private void _runServerDebug() throws Exception, InterruptedException {
+		_useDebug = true;
+
+		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
+
+		final String[] serverRunArgsFinal = _getDebugArgs(serverRunArgs);
+
+		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgsFinal));
+
+		Thread.sleep(1000);
+	}
+
+	private void _startServer() throws Exception, InterruptedException {
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
-		Collection<String> serverStartArgsCollection = Arrays.asList(serverStartArgs);
-
-		serverStartArgsCollection = new ArrayList<>(serverStartArgsCollection);
-
-		if (debugFlag) {
-			serverStartArgsCollection.add("--debug");
-		}
-
-		serverStartArgs = serverStartArgsCollection.toArray(new String[0]);
-
 		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgs);
+
+		Thread.sleep(1000);
+	}
+
+	private void _startServerDebug() throws Exception, InterruptedException {
+		_useDebug = true;
+
+		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
+
+		final String[] serverStartArgsFinal = _getDebugArgs(serverStartArgs);
+
+		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgsFinal);
 
 		Thread.sleep(1000);
 	}
@@ -411,21 +603,9 @@ public class ServerStartCommandTest {
 
 	private static final String _BUNDLE_FOLDER_NAME_WILDFLY = "wildfly-11.0.0";
 
-	private static final int _DEBUG_PORT_TOMCAT = 8000;
+	private static final int _DEFAULT_DEBUG_PORT_TOMCAT = 8000;
 
-	private static final int _DEBUG_PORT_WILDFLY = 8787;
-
-	private static final Predicate<JavaProcess> _FILTER_TOMCAT = process -> {
-		String displayName = process.getDisplayName();
-
-		return displayName.contains("org.apache.catalina.startup.Bootstrap");
-	};
-
-	private static final Predicate<JavaProcess> _FILTER_WILDFLY = process -> {
-		String displayName = process.getDisplayName();
-
-		return displayName.contains("jboss-modules");
-	};
+	private static final int _DEFAULT_DEBUG_PORT_WILDFLY = 8787;
 
 	private static final String _LIFERAY_WORKSPACE_BUNDLE_KEY = "liferay.workspace.bundle.url";
 
@@ -437,7 +617,9 @@ public class ServerStartCommandTest {
 	private static final String _LIFERAY_WORKSPACE_BUNDLE_WILDFLY =
 		"liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz";
 
+	private int _debugPort = -1;
 	private Path _extensionsPath = null;
 	private Path _testWorkspacePath = null;
+	private boolean _useDebug = false;
 
 }

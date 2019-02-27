@@ -22,11 +22,20 @@ import com.liferay.blade.cli.command.JavaProcesses;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
+import java.io.IOException;
+
+import java.net.InetAddress;
+import java.net.Socket;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -41,33 +50,189 @@ import org.zeroturnaround.process.PidProcess;
 import org.zeroturnaround.process.Processes;
 
 /**
+ * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
 public class ServerStartCommandMavenTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_testWorkspaceDir = temporaryFolder.newFolder("testWorkspaceDir");
+		File testWorkspaceFile = temporaryFolder.newFolder("testWorkspaceDir");
 
-		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+		_testWorkspaceDir = testWorkspaceFile.toPath();
 
-		_killTomcat();
+		File extensionsFile = temporaryFolder.newFolder(".blade", "extensions");
+
+		_extensionsDir = extensionsFile.toPath();
+	}
+
+	@Test
+	public void testServerRunCommandTomcat() throws Exception {
+		_initBladeWorkspace();
+
+		_verifyMavenFiles();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_runServer();
+
+		_findAndTerminateTomcat();
+	}
+
+	@Test
+	public void testServerRunCommandTomcatDebug() throws Exception {
+		_initBladeWorkspace();
+
+		_verifyMavenFiles();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_runServerDebug();
+
+		_findAndTerminateTomcat();
 	}
 
 	@Test
 	public void testServerStartCommandTomcat() throws Exception {
-		String[] initArgs = {"--base", _testWorkspaceDir.getPath(), "init", "-f", "-v", "7.1", "-P", "maven"};
+		_initBladeWorkspace();
+
+		_verifyMavenFiles();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_startServer();
+
+		_findAndTerminateTomcat();
+	}
+
+	@Test
+	public void testServerStartCommandTomcatDebug() throws Exception {
+		_initBladeWorkspace();
+
+		_verifyMavenFiles();
+
+		_initServerBundle();
+
+		_verifyTomcatBundlePath();
+
+		_startServerDebug();
+
+		_findAndTerminateTomcat();
+	}
+
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private static boolean _isDebugPortListening(int debugPort) {
+		InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
+
+		try (Socket socket = new Socket(loopbackAddress, debugPort)) {
+			return true;
+		}
+		catch (IOException ioe) {
+			return false;
+		}
+	}
+
+	private static void _terminateProcess(PidProcess tomcatPidProcess) throws InterruptedException, IOException {
+		tomcatPidProcess.destroyForcefully();
+
+		tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
+
+		String processName = tomcatPidProcess.getDescription();
+
+		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
+	}
+
+	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter) throws Exception {
+		PidProcess serverProcess = _findServerProcess(processFilter);
+
+		boolean debugPortListening = false;
+
+		if (_useDebug) {
+			debugPortListening = _isDebugPortListening(_DEBUG_PORT_TOMCAT);
+
+			Assert.assertEquals("Debug port not in a correct state", _useDebug, debugPortListening);
+		}
+
+		_terminateProcess(serverProcess);
+
+		if (_useDebug) {
+			debugPortListening = _isDebugPortListening(_DEBUG_PORT_TOMCAT);
+
+			Assert.assertFalse("Debug port should no longer be listening", debugPortListening);
+		}
+	}
+
+	private void _findAndTerminateTomcat() throws Exception {
+		_findAndTerminateServer(
+			process -> {
+				String displayName = process.getDisplayName();
+
+				return displayName.contains("org.apache.catalina.startup.Bootstrap");
+			});
+	}
+
+	private Optional<JavaProcess> _findProcess(
+		Collection<JavaProcess> javaProcesses, Predicate<JavaProcess> processFilter) {
+
+		Stream<JavaProcess> stream = javaProcesses.stream();
+
+		return stream.filter(
+			processFilter
+		).findFirst();
+	}
+
+	private PidProcess _findServerProcess(Predicate<JavaProcess> processFilter)
+		throws InterruptedException, IOException {
+
+		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
+
+		Optional<JavaProcess> optionalProcess = _findProcess(javaProcesses, processFilter);
+
+		Assert.assertTrue(
+			"Expected to find server process:\n" + _printDisplayNames(javaProcesses), optionalProcess.isPresent());
+
+		JavaProcess javaProcess = optionalProcess.get();
+
+		String processName = javaProcess.getDisplayName();
+
+		PidProcess pidProcess = Processes.newPidProcess(javaProcess.getId());
+
+		Assert.assertTrue("Expected " + processName + " process to be alive", pidProcess.isAlive());
+
+		return pidProcess;
+	}
+
+	private String[] _getDebugArgs(String[] serverStartArgs) {
+		Collection<String> serverStartArgsCollection = Arrays.asList(serverStartArgs);
+
+		serverStartArgsCollection = new ArrayList<>(serverStartArgsCollection);
+
+		serverStartArgsCollection.add("--debug");
+		serverStartArgsCollection.add("--port");
+		serverStartArgsCollection.add(String.valueOf(_DEBUG_PORT_TOMCAT));
+
+		serverStartArgs = serverStartArgsCollection.toArray(new String[0]);
+
+		final String[] serverStartArgsFinal = serverStartArgs;
+
+		return serverStartArgsFinal;
+	}
+
+	private void _initBladeWorkspace() {
+		String[] initArgs = {"--base", _testWorkspaceDir.toString(), "init", "-f", "-v", "7.1", "-P", "maven"};
 
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
+	}
 
-		File pomXml = new File(_testWorkspaceDir, "pom.xml");
-
-		Assert.assertTrue(pomXml.exists());
-
-		File bladeSettings = new File(_testWorkspaceDir, ".blade/settings.properties");
-
-		Assert.assertTrue(bladeSettings.exists());
-
+	private void _initServerBundle() throws InterruptedException, IOException {
 		List<String> commands = new ArrayList<>();
 
 		if (BladeUtil.isWindows()) {
@@ -83,77 +248,11 @@ public class ServerStartCommandMavenTest {
 
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
 
-		processBuilder.directory(_testWorkspaceDir);
+		processBuilder.directory(_testWorkspaceDir.toFile());
 
 		Process process = processBuilder.start();
 
 		process.waitFor();
-
-		File bundles = new File(_testWorkspaceDir, "bundles");
-
-		Assert.assertTrue(bundles.exists());
-
-		String[] serverStartArgs = {"--base", _testWorkspaceDir.getPath(), "server", "start"};
-
-		try {
-			TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgs);
-		}
-		catch (Exception e) {
-		}
-
-		Thread.sleep(1000);
-
-		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
-
-		Optional<JavaProcess> tomcatProcess = _findProcess(javaProcesses, _tomcatFilter);
-
-		Assert.assertTrue(
-			"Expected to find tomcat process:\n" + _printDisplayNames(javaProcesses), tomcatProcess.isPresent());
-
-		JavaProcess javaProcess = tomcatProcess.get();
-
-		PidProcess tomcatPidProcess = Processes.newPidProcess(javaProcess.getId());
-
-		Assert.assertTrue("Expected tomcat process to be alive", tomcatPidProcess.isAlive());
-
-		tomcatPidProcess.destroyForcefully();
-
-		tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
-
-		Assert.assertFalse("Expected tomcat proces to be destroyed.", tomcatPidProcess.isAlive());
-	}
-
-	@Rule
-	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-	private Optional<JavaProcess> _findProcess(
-		Collection<JavaProcess> javaProcesses, Predicate<JavaProcess> processFilter) {
-
-		Stream<JavaProcess> stream = javaProcesses.stream();
-
-		return stream.filter(
-			processFilter
-		).findFirst();
-	}
-
-	private void _killTomcat() throws Exception {
-		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
-
-		Optional<JavaProcess> tomcatProcess = _findProcess(javaProcesses, _tomcatFilter);
-
-		if (tomcatProcess.isPresent()) {
-			JavaProcess javaProcess = tomcatProcess.get();
-
-			PidProcess tomcatPidProcess = Processes.newPidProcess(javaProcess.getId());
-
-			Assert.assertTrue("Expected tomcat process to be alive", tomcatPidProcess.isAlive());
-
-			tomcatPidProcess.destroyForcefully();
-
-			tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
-
-			Assert.assertFalse("Expected tomcat process to be destroyed.", tomcatPidProcess.isAlive());
-		}
 	}
 
 	private String _printDisplayNames(Collection<JavaProcess> javaProcesses) {
@@ -166,13 +265,66 @@ public class ServerStartCommandMavenTest {
 		return sb.toString();
 	}
 
-	private File _extensionsDir = null;
-	private File _testWorkspaceDir = null;
+	private void _runServer() throws Exception, InterruptedException {
+		String[] serverRunArgs = {"--base", _testWorkspaceDir.toString(), "server", "run"};
 
-	private Predicate<JavaProcess> _tomcatFilter = process -> {
-		String displayName = process.getDisplayName();
+		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverRunArgs));
 
-		return displayName.contains("org.apache.catalina.startup.Bootstrap");
-	};
+		Thread.sleep(1000);
+	}
+
+	private void _runServerDebug() throws Exception, InterruptedException {
+		_useDebug = true;
+
+		String[] serverRunArgs = {"--base", _testWorkspaceDir.toString(), "server", "run"};
+
+		final String[] serverRunArgsFinal = _getDebugArgs(serverRunArgs);
+
+		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverRunArgsFinal));
+
+		Thread.sleep(1000);
+	}
+
+	private void _startServer() throws Exception, InterruptedException {
+		String[] serverStartArgs = {"--base", _testWorkspaceDir.toString(), "server", "start"};
+
+		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgs);
+
+		Thread.sleep(1000);
+	}
+
+	private void _startServerDebug() throws Exception, InterruptedException {
+		_useDebug = true;
+
+		String[] serverStartArgs = {"--base", _testWorkspaceDir.toString(), "server", "start"};
+
+		final String[] serverStartArgsFinal = _getDebugArgs(serverStartArgs);
+
+		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgsFinal);
+
+		Thread.sleep(1000);
+	}
+
+	private void _verifyMavenFiles() {
+		Path pomXml = _testWorkspaceDir.resolve("pom.xml");
+
+		Assert.assertTrue(Files.exists(pomXml));
+
+		Path bladeSettings = _testWorkspaceDir.resolve(".blade/settings.properties");
+
+		Assert.assertTrue(Files.exists(bladeSettings));
+	}
+
+	private void _verifyTomcatBundlePath() {
+		Path bundles = _testWorkspaceDir.resolve("bundles");
+
+		Assert.assertTrue(Files.exists(bundles));
+	}
+
+	private static final int _DEBUG_PORT_TOMCAT = 8000;
+
+	private Path _extensionsDir = null;
+	private Path _testWorkspaceDir = null;
+	private boolean _useDebug = false;
 
 }

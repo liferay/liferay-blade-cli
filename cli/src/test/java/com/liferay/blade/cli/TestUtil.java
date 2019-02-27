@@ -48,9 +48,7 @@ import org.w3c.dom.Text;
 public class TestUtil {
 
 	public static BladeTestResults runBlade(
-			BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, boolean assertErrors,
-			String... args)
-		throws Exception {
+		BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, boolean assertErrors, String... args) {
 
 		try {
 			bladeTest.run(args);
@@ -87,27 +85,25 @@ public class TestUtil {
 	}
 
 	public static BladeTestResults runBlade(
-			BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, String... args)
-		throws Exception {
+		BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, String... args) {
 
 		return runBlade(bladeTest, outputStream, errorStream, true, args);
 	}
 
-	public static BladeTestResults runBlade(boolean assertErrors, String... args) throws Exception {
+	public static BladeTestResults runBlade(boolean assertErrors, String... args) {
 		return runBlade(
 			new File(System.getProperty("user.home")), new File(System.getProperty("user.home")), System.in,
 			assertErrors, args);
 	}
 
-	public static BladeTestResults runBlade(File settingsDir, File extensionsDir, boolean assertErrors, String... args)
-		throws Exception {
+	public static BladeTestResults runBlade(
+		File settingsDir, File extensionsDir, boolean assertErrors, String... args) {
 
 		return runBlade(settingsDir, extensionsDir, System.in, assertErrors, args);
 	}
 
 	public static BladeTestResults runBlade(
-			File settingsDir, File extensionsDir, InputStream in, boolean assertErrors, String... args)
-		throws Exception {
+		File settingsDir, File extensionsDir, InputStream in, boolean assertErrors, String... args) {
 
 		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
 
@@ -123,9 +119,8 @@ public class TestUtil {
 	}
 
 	public static BladeTestResults runBlade(
-			File settingsDir, File extensionsDir, PrintStream out, PrintStream err, InputStream in,
-			boolean assertErrors, String... args)
-		throws Exception {
+		File settingsDir, File extensionsDir, PrintStream out, PrintStream err, InputStream in, boolean assertErrors,
+		String... args) {
 
 		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
@@ -148,15 +143,15 @@ public class TestUtil {
 		return runBlade(bladeTest, out, err, assertErrors, args);
 	}
 
-	public static BladeTestResults runBlade(File settingsDir, File extensionsDir, String... args) throws Exception {
+	public static BladeTestResults runBlade(File settingsDir, File extensionsDir, String... args) {
 		return runBlade(settingsDir, extensionsDir, System.in, true, args);
 	}
 
-	public static BladeTestResults runBlade(Path settingsDir, Path extensionsDir, String... args) throws Exception {
+	public static BladeTestResults runBlade(Path settingsDir, Path extensionsDir, String... args) {
 		return runBlade(settingsDir.toFile(), extensionsDir.toFile(), System.in, true, args);
 	}
 
-	public static BladeTestResults runBlade(String... args) throws Exception {
+	public static BladeTestResults runBlade(String... args) {
 		return runBlade(
 			new File(System.getProperty("user.home")), new File(System.getProperty("user.home")), System.in, true,
 			args);

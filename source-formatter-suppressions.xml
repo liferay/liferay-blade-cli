@@ -3,5 +3,6 @@
 <suppressions>
 	<source-check>
 		<suppress checks="BNDDefinitionKeysCheck" files="extensions/maven-profile/bnd\.bnd" />
+		<suppress checks="CDNCheck" files="build.gradle" />
 	</source-check>
 </suppressions>

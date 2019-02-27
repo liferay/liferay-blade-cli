@@ -117,7 +117,6 @@ public class ServerRunCommand extends BaseCommand<ServerRunArgs> {
 					processBuilderEnvironment.put("JAVA_OPTS", opts.toString());
 				}
 				else if (wildfly) {
-					commands.add("--debug");
 					opts.append(
 						"-Xrunjdwp:transport=dt_socket,address=" + debugPortString + ",server=y,suspend=" +
 							suspendValue);
