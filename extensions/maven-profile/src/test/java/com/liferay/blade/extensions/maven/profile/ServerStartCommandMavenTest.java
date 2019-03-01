@@ -310,7 +310,7 @@ public class ServerStartCommandMavenTest {
 
 		Assert.assertTrue(Files.exists(pomXml));
 
-		Path bladeSettings = _testWorkspaceDir.resolve(".blade/settings.properties");
+		Path bladeSettings = _testWorkspaceDir.resolve(".blade.properties");
 
 		Assert.assertTrue(Files.exists(bladeSettings));
 	}
