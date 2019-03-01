@@ -113,6 +113,9 @@ public class Prompter {
 								break;
 						}
 					}
+					else {
+						answer = defaultAnswer;
+					}
 				}
 			}
 		}

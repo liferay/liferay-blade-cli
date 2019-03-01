@@ -16,12 +16,14 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import java.util.List;
 import java.util.Objects;
@@ -103,6 +105,80 @@ public class UtilTest {
 				Files.delete(tempTestFile.toPath());
 			}
 		}
+	}
+
+	@Test
+	public void testMigrateBladeSettings() throws Exception {
+		File rootWorkspaceDir = temporaryFolder.newFolder("workspace");
+
+		File extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+
+		String[] args = {"--base", rootWorkspaceDir.getAbsolutePath(), "init", "-f", "foo"};
+
+		File workspaceDirectory = new File(rootWorkspaceDir, "foo");
+
+		TestUtil.runBlade(workspaceDirectory, extensionsDir, args);
+
+		GradleWorkspaceProvider provider = new GradleWorkspaceProvider();
+
+		boolean workspace = provider.isWorkspace(workspaceDirectory);
+
+		Assert.assertTrue(workspace);
+
+		File bladeSettings = new File(workspaceDirectory, ".blade.properties");
+
+		Path bladeSettingsNewPath = bladeSettings.toPath();
+
+		Path workspacePath = workspaceDirectory.toPath();
+
+		Path bladeDirPath = workspacePath.resolve(".blade");
+
+		if (!Files.exists(bladeDirPath)) {
+			Files.createDirectory(bladeDirPath);
+		}
+
+		Path bladeSettingsOldPath = bladeDirPath.resolve("settings.properties");
+
+		Files.move(bladeSettingsNewPath, bladeSettingsOldPath);
+
+		boolean bladeSettingsOldPathExists = Files.exists(bladeSettingsOldPath);
+
+		Assert.assertTrue(bladeSettingsOldPathExists);
+
+		args = new String[] {"--base", workspaceDirectory.getPath(), "help"};
+
+		TestUtil.runBlade(workspaceDirectory, extensionsDir, args);
+
+		bladeSettingsOldPathExists = Files.exists(bladeSettingsOldPath);
+
+		Assert.assertFalse(bladeSettingsOldPathExists);
+
+		boolean bladeSettingsPathExists = Files.exists(bladeSettingsNewPath);
+
+		Assert.assertTrue(bladeSettingsPathExists);
+	}
+
+	@Test
+	public void testNewBladeSettings() throws Exception {
+		File rootWorkspaceDir = temporaryFolder.newFolder("workspace");
+
+		File extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+
+		String[] args = {"--base", rootWorkspaceDir.getAbsolutePath(), "init", "-f", "foo"};
+
+		File workspaceDirectory = new File(rootWorkspaceDir, "foo");
+
+		TestUtil.runBlade(workspaceDirectory, extensionsDir, args);
+
+		GradleWorkspaceProvider provider = new GradleWorkspaceProvider();
+
+		boolean workspace = provider.isWorkspace(workspaceDirectory);
+
+		Assert.assertTrue(workspace);
+
+		File bladeSettings = new File(workspaceDirectory, ".blade.properties");
+
+		Assert.assertTrue(bladeSettings.exists());
 	}
 
 	@Rule

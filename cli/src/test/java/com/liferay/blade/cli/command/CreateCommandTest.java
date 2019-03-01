@@ -1404,7 +1404,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		File bladeSettings = new File(workspace, ".blade/settings.properties");
+		File bladeSettings = new File(workspace, ".blade.properties");
 
 		try (InputStream inputStream = new FileInputStream(bladeSettings)) {
 			Properties properties = new Properties();
@@ -1420,7 +1420,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		File bladeSettings = new File(workspace, ".blade/settings.properties");
+		File bladeSettings = new File(workspace, ".blade.properties");
 
 		try (InputStream inputStream = new FileInputStream(bladeSettings)) {
 			Properties properties = new Properties();

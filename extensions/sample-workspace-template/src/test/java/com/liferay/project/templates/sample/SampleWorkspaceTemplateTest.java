@@ -61,7 +61,7 @@ public class SampleWorkspaceTemplateTest {
 
 		Assert.assertTrue(new File(tempDir, "settings.gradle").exists());
 
-		File settingsFile = new File(tempDir, "/.blade/settings.properties");
+		File settingsFile = new File(tempDir, ".blade.properties");
 
 		Properties props = new Properties();
 

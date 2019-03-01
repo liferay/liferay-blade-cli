@@ -27,6 +27,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.stream.Stream;
+
 /**
  * @author Gregory Amerson
  */
@@ -36,26 +38,20 @@ public class BladeTest extends BladeCLI {
 		return new BladeTestBuilder();
 	}
 
-	@Override
 	public BladeSettings getBladeSettings() throws IOException {
-		final File settingsFile;
+		File settingsBaseDir = _getSettingsBaseDir();
 
-		BaseArgs baseArgs = getArgs();
+		File settingsFile = new File(settingsBaseDir, ".blade/settings.properties");
 
-		File baseDir = new File(baseArgs.getBase());
+		if (settingsFile.exists()) {
+			String name = settingsFile.getName();
 
-		WorkspaceProvider workspaceProvider = getWorkspaceProvider(baseDir);
-
-		if (workspaceProvider != null) {
-			File workspaceDir = workspaceProvider.getWorkspaceDir(this);
-
-			settingsFile = new File(workspaceDir, ".blade/settings.properties");
+			if ("settings.properties".equals(name)) {
+				_migrateBladeSettingsFile(settingsFile);
+			}
 		}
-		else {
-			Path settingsPath = _settingsDir.resolve("settings.properties");
 
-			settingsFile = settingsPath.toFile();
-		}
+		settingsFile = new File(settingsBaseDir, _BLADE_PROPERTIES);
 
 		return new BladeSettings(settingsFile);
 	}
@@ -170,6 +166,47 @@ public class BladeTest extends BladeCLI {
 	protected BladeTest(PrintStream out, PrintStream err, InputStream in) {
 		super(out, err, in);
 	}
+
+	private File _getSettingsBaseDir() {
+		BaseArgs args = getArgs();
+
+		File baseDir = new File(args.getBase());
+
+		File settingsBaseDir;
+
+		WorkspaceProvider workspaceProvider = getWorkspaceProvider(baseDir);
+
+		if (workspaceProvider != null) {
+			settingsBaseDir = workspaceProvider.getWorkspaceDir(baseDir);
+		}
+		else {
+			settingsBaseDir = _settingsDir.toFile();
+		}
+
+		return settingsBaseDir;
+	}
+
+	private void _migrateBladeSettingsFile(File settingsFile) throws IOException {
+		Path settingsPath = settingsFile.toPath();
+
+		Path settingsParentPath = settingsPath.getParent();
+
+		if (settingsParentPath.endsWith(".blade")) {
+			Path settingsParentParentPath = settingsParentPath.getParent();
+
+			Path newSettingsPath = settingsParentParentPath.resolve(_BLADE_PROPERTIES);
+
+			Files.move(settingsPath, newSettingsPath);
+
+			try (Stream<?> filesStream = Files.list(settingsParentPath)) {
+				if (filesStream.count() == 0) {
+					Files.delete(settingsParentPath);
+				}
+			}
+		}
+	}
+
+	private static final String _BLADE_PROPERTIES = ".blade.properties";
 
 	private boolean _assertErrors = true;
 	private Path _extensionsDir;
