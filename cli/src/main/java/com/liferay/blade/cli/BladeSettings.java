@@ -31,10 +31,6 @@ import java.util.Properties;
  */
 public class BladeSettings {
 
-	public static final String BLADE_SETTINGS_NEW_STRING = ".blade.properties";
-
-	public static final String BLADE_SETTINGS_OLD_STRING = ".blade/settings.properties";
-
 	public BladeSettings(File settingsFile) throws IOException {
 		_settingsFile = settingsFile;
 

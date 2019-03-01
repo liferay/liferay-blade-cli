@@ -27,6 +27,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.stream.Stream;
+
 /**
  * @author Gregory Amerson
  */
@@ -39,17 +41,17 @@ public class BladeTest extends BladeCLI {
 	public BladeSettings getBladeSettings() throws IOException {
 		File settingsBaseDir = _getSettingsBaseDir();
 
-		File settingsFile = new File(settingsBaseDir, BladeSettings.BLADE_SETTINGS_OLD_STRING);
+		File settingsFile = new File(settingsBaseDir, ".blade/settings.properties");
 
 		if (settingsFile.exists()) {
 			String name = settingsFile.getName();
 
 			if ("settings.properties".equals(name)) {
-				migrateBladeSettingsFile(settingsFile);
+				_migrateBladeSettingsFile(settingsFile);
 			}
 		}
 
-		settingsFile = new File(settingsBaseDir, BladeSettings.BLADE_SETTINGS_NEW_STRING);
+		settingsFile = new File(settingsBaseDir, _BLADE_PROPERTIES);
 
 		return new BladeSettings(settingsFile);
 	}
@@ -183,6 +185,28 @@ public class BladeTest extends BladeCLI {
 
 		return settingsBaseDir;
 	}
+
+	private void _migrateBladeSettingsFile(File settingsFile) throws IOException {
+		Path settingsPath = settingsFile.toPath();
+
+		Path settingsParentPath = settingsPath.getParent();
+
+		if (settingsParentPath.endsWith(".blade")) {
+			Path settingsParentParentPath = settingsParentPath.getParent();
+
+			Path newSettingsPath = settingsParentParentPath.resolve(_BLADE_PROPERTIES);
+
+			Files.move(settingsPath, newSettingsPath);
+
+			try (Stream<?> filesStream = Files.list(settingsParentPath)) {
+				if (filesStream.count() == 0) {
+					Files.delete(settingsParentPath);
+				}
+			}
+		}
+	}
+
+	private static final String _BLADE_PROPERTIES = ".blade.properties";
 
 	private boolean _assertErrors = true;
 	private Path _extensionsDir;

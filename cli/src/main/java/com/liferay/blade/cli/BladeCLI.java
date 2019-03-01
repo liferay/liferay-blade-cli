@@ -165,17 +165,17 @@ public class BladeCLI {
 	public BladeSettings getBladeSettings() throws IOException {
 		File settingsBaseDir = _getSettingsBaseDir();
 
-		File settingsFile = new File(settingsBaseDir, BladeSettings.BLADE_SETTINGS_OLD_STRING);
+		File settingsFile = new File(settingsBaseDir, ".blade/settings.properties");
 
 		if (settingsFile.exists()) {
 			String name = settingsFile.getName();
 
 			if ("settings.properties".equals(name)) {
-				migrateBladeSettingsFile(settingsFile);
+				_migrateBladeSettingsFile(settingsFile);
 			}
 		}
 
-		settingsFile = new File(settingsBaseDir, BladeSettings.BLADE_SETTINGS_NEW_STRING);
+		settingsFile = new File(settingsBaseDir, _BLADE_PROPERTIES);
 
 		return new BladeSettings(settingsFile);
 	}
@@ -474,26 +474,6 @@ public class BladeCLI {
 		}
 	}
 
-	protected void migrateBladeSettingsFile(File settingsFile) throws IOException {
-		Path settingsPath = settingsFile.toPath();
-
-		Path settingsParentPath = settingsPath.getParent();
-
-		if (settingsParentPath.endsWith(".blade")) {
-			Path settingsParentParentPath = settingsParentPath.getParent();
-
-			Path newSettingsPath = settingsParentParentPath.resolve(BladeSettings.BLADE_SETTINGS_NEW_STRING);
-
-			Files.move(settingsPath, newSettingsPath);
-
-			try (Stream<?> filesStream = Files.list(settingsParentPath)) {
-				if (filesStream.count() == 0) {
-					Files.delete(settingsParentPath);
-				}
-			}
-		}
-	}
-
 	private static void _addCommand(Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand)
 		throws IllegalAccessException, InstantiationException {
 
@@ -763,6 +743,26 @@ public class BladeCLI {
 		return _workspaceProviders;
 	}
 
+	private void _migrateBladeSettingsFile(File settingsFile) throws IOException {
+		Path settingsPath = settingsFile.toPath();
+
+		Path settingsParentPath = settingsPath.getParent();
+
+		if (settingsParentPath.endsWith(".blade")) {
+			Path settingsParentParentPath = settingsParentPath.getParent();
+
+			Path newSettingsPath = settingsParentParentPath.resolve(_BLADE_PROPERTIES);
+
+			Files.move(settingsPath, newSettingsPath);
+
+			try (Stream<?> filesStream = Files.list(settingsParentPath)) {
+				if (filesStream.count() == 0) {
+					Files.delete(settingsParentPath);
+				}
+			}
+		}
+	}
+
 	private void _runCommand() throws Exception {
 		BaseCommand<?> command = null;
 
@@ -854,6 +854,8 @@ public class BladeCLI {
 			properties.store(outputStream, null);
 		}
 	}
+
+	private static final String _BLADE_PROPERTIES = ".blade.properties";
 
 	private static final String _LAST_UPDATE_CHECK_KEY = "lastUpdateCheck";
 
