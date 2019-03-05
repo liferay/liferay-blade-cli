@@ -237,6 +237,42 @@ public class ConvertCommandTest {
 	}
 
 	@Test
+	public void testSourceParameter() throws Exception {
+		File testdir = new File(_rootDir, "plugins-sdk-alternative-location");
+
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+
+		Assert.assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
+
+		File workspaceParent = new File(_rootDir, "workspace-parent");
+
+		String[] args = {"--base", workspaceParent.getPath(), "init", "ws"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		File workspaceDir = new File(workspaceParent, "ws");
+
+		Assert.assertTrue(workspaceDir.exists());
+
+		args = new String[] {
+			"--base", workspaceDir.getPath(), "convert", "--source", projectDir.getPath(),
+			"sample-application-adapter-hook"
+		};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		File warDir = new File(workspaceDir, "wars/sample-application-adapter-hook");
+
+		Assert.assertTrue(warDir.exists());
+	}
+
+	@Test
 	public void testThemeDocrootBackup() throws Exception {
 		File projectDir = _setupWorkspace("testThemeDocrootBackup");
 
