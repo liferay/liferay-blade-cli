@@ -73,7 +73,7 @@ public class ConvertArgs extends BaseArgs {
 	private List<String> _name = new ArrayList<>();
 
 	@Parameter(
-		description = "The directory where the plugins sdk is",
+		description = "The Plugins SDK directory, otherwise default value is <workspace_dir>/plugins-sdk",
 		names = {"-s", "--source"}
 	)
 	private File _source;
