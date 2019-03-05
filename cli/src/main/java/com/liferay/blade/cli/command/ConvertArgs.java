@@ -19,6 +19,8 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import java.io.File;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,10 @@ public class ConvertArgs extends BaseArgs {
 		return _name;
 	}
 
+	public File getSource() {
+		return _source;
+	}
+
 	public boolean isAll() {
 		return _all;
 	}
@@ -65,6 +71,12 @@ public class ConvertArgs extends BaseArgs {
 
 	@Parameter(description = "name")
 	private List<String> _name = new ArrayList<>();
+
+	@Parameter(
+		description = "The directory where the plugins sdk is",
+		names = {"-s", "--source"}
+	)
+	private File _source;
 
 	@Parameter(
 		description = "Use ThemeBuilder gradle plugin instead of NodeJS to convert theme project",

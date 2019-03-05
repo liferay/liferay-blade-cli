@@ -55,17 +55,24 @@ public class ConvertThemeCommand {
 
 		Properties gradleProperties = workspaceProviderGradle.getGradleProperties(projectDir);
 
-		String pluginsSDKDirPath = null;
+		File source = _convertArgs.getSource();
 
-		if (gradleProperties != null) {
-			pluginsSDKDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+		if (source == null) {
+			String pluginsSDKDirPath = null;
+
+			if (gradleProperties != null) {
+				pluginsSDKDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+			}
+
+			if (pluginsSDKDirPath == null) {
+				pluginsSDKDirPath = WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR;
+			}
+
+			_pluginsSDKThemesDir = new File(projectDir, pluginsSDKDirPath + "/themes");
 		}
-
-		if (pluginsSDKDirPath == null) {
-			pluginsSDKDirPath = WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR;
+		else {
+			_pluginsSDKThemesDir = new File(source, "themes");
 		}
-
-		_pluginsSDKThemesDir = new File(projectDir, pluginsSDKDirPath + "/themes");
 
 		String themesDirPath = null;
 
