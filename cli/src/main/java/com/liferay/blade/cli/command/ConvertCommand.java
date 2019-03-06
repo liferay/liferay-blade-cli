@@ -26,8 +26,10 @@ import com.liferay.project.templates.ProjectTemplatesArgs;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -56,6 +58,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * @author Gregory Amerson
+ * @author Terry Jia
  */
 public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
@@ -568,6 +571,51 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				}
 
 				ivyFile.delete();
+			}
+
+			File liferayPluginPackageFile =
+				new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
+
+			if (liferayPluginPackageFile.exists()) {
+				try (InputStream fileInputStream = new FileInputStream(liferayPluginPackageFile)) {
+					Properties liferayPluginPackageProperties = new Properties();
+
+					liferayPluginPackageProperties.load(fileInputStream);
+
+					String portalJarsValue = liferayPluginPackageProperties.getProperty("portal-dependency-jars");
+
+					if (portalJarsValue != null) {
+						String[] portalJars = portalJarsValue.split(",");
+
+						try (InputStream in = ConvertCommand.class.getResourceAsStream(
+								"/portal-dependency-jars-62.properties")) {
+
+							Properties properties = new Properties();
+
+							properties.load(in);
+
+							for (String portalJar : portalJars) {
+								String newDependency = properties.getProperty(portalJar);
+
+								if ((newDependency == null) || "".equals(newDependency)) {
+									continue;
+								}
+
+								String[] s = newDependency.split(",");
+
+								dependencies.add(
+									MessageFormat.format(
+										"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", s[0], s[1], s[2]));
+							}
+
+						}
+						catch (Exception e) {
+							getBladeCLI().error(
+								"Convert failed on portal jars of liferay-plugin-package.properties. \n",
+								pluginDir.getName(), e.getMessage());
+						}
+					}
+				}
 			}
 
 			StringBuilder depsBlock = new StringBuilder();
