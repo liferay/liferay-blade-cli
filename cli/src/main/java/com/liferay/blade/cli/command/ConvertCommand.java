@@ -77,17 +77,23 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 		Properties gradleProperties = workspaceProviderGradle.getGradleProperties(projectDir);
 
+		File pluginsSdkDir = convertArgs.getSource();
 		String pluginsSdkDirPath = null;
 
-		if (gradleProperties != null) {
-			pluginsSdkDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
-		}
+		if (pluginsSdkDir == null) {
+			if (gradleProperties != null) {
+				pluginsSdkDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+			}
 
-		if (pluginsSdkDirPath == null) {
-			pluginsSdkDirPath = WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR;
-		}
+			if (pluginsSdkDirPath == null) {
+				pluginsSdkDirPath = WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR;
+			}
 
-		File pluginsSdkDir = new File(projectDir, pluginsSdkDirPath);
+			pluginsSdkDir = new File(projectDir, pluginsSdkDirPath);
+		}
+		else {
+			pluginsSdkDirPath = pluginsSdkDir.getPath();
+		}
 
 		File hooksDir = new File(pluginsSdkDir, "hooks");
 		File layouttplDir = new File(pluginsSdkDir, "layouttpl");
