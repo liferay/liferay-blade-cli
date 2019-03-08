@@ -603,6 +603,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 								String[] s = newDependency.split(",");
 
+								if (s.length != 3) {
+									continue;
+								}
+
 								dependencies.add(
 									MessageFormat.format(
 										"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", s[0], s[1], s[2]));
