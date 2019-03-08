@@ -237,6 +237,27 @@ public class ConvertCommandTest {
 	}
 
 	@Test
+	public void testReadLiferayPlguinPackageProperties() throws Exception {
+		File projectDir = _setupWorkspace("readLiferayPlguinPackageProperties");
+
+		String[] args = {"--base", projectDir.getPath(), "convert", "sample-hibernate-portlet"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		_contains(
+			new File(projectDir, "wars/sample-hibernate-portlet/build.gradle"),
+			".*compile group: 'commons-collections', name: 'commons-collections', version: '3.2.2'.*",
+			".*compile group: 'commons-httpclient', name: 'commons-httpclient', version: '3.1'.*",
+			".*compile group: 'dom4j', name: 'dom4j', version: '1.6.1'.*",
+			".*compile group: 'javax.xml.soap', name: 'saaj-api', version: '1.3'.*",
+			".*compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.2'.*");
+
+		_notContains(
+			new File(projectDir, "wars/sample-hibernate-portlet/build.gradle"),
+			".*antlr2.*", ".*hibernate3.*", ".*util-slf4j.*");
+	}
+
+	@Test
 	public void testSourceParameter() throws Exception {
 		File testdir = new File(_rootDir, "plugins-sdk-alternative-location");
 
@@ -298,6 +319,20 @@ public class ConvertCommandTest {
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
 
 		Assert.assertTrue(pattern.matcher(content).matches());
+	}
+
+	private void _notContains(File file, String... patterns) throws Exception {
+		String content = FileUtil.read(file);
+
+		for (String pattern : patterns) {
+			_notContains(content, pattern);
+		}
+	}
+
+	private void _notContains(String content, String regex) throws Exception {
+		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
+
+		Assert.assertFalse(pattern.matcher(content).matches());
 	}
 
 	private File _setupWorkspace(String name) throws Exception {
