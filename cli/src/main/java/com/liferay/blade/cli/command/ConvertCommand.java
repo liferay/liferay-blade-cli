@@ -587,12 +587,12 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 					if (portalJarsValue != null) {
 						String[] portalJars = portalJarsValue.split(",");
 
-						try (InputStream in = ConvertCommand.class.getResourceAsStream(
+						try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(
 								"/portal-dependency-jars-62.properties")) {
 
 							Properties properties = new Properties();
 
-							properties.load(in);
+							properties.load(inputStream);
 
 							for (String portalJar : portalJars) {
 								String newDependency = properties.getProperty(portalJar);
