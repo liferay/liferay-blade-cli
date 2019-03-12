@@ -129,11 +129,15 @@ public class InstallExtensionCommandTest {
 			output.contains(" installed successfully"));
 
 		Assert.assertTrue(sampleCommandFile.lastModified() == 0);
-		Assert.assertFalse(extensionPath.toFile().lastModified() == 0);
+		
+		File extensionFile = extensionPath.toFile();
+
+		
+		Assert.assertFalse(extensionFile.lastModified() == 0);
 
 		output = _testBladeWithInteractive(_rootDir, _extensionsDir, args, "defaultShouldBeNo");
 
-		Assert.assertFalse(extensionPath.toFile().lastModified() == 0);
+		Assert.assertFalse(extensionFile.lastModified() == 0);
 		Assert.assertTrue(
 			"Expected output to contain \"already exists\"\n" + output, output.contains(" already exists"));
 		Assert.assertFalse("Expected output to not contain \"Overwriting\"\n" + output, output.contains("Overwriting"));
@@ -188,7 +192,10 @@ public class InstallExtensionCommandTest {
 			Assert.assertTrue("Expected output to contain \"installed successfully\"\n" + output, assertCorrect);
 		}
 
-		Assert.assertEquals(sampleCommandFile.lastModified(), extensionPath.toFile().lastModified());
+		File extensionFile = extensionPath.toFile();
+
+		
+		Assert.assertEquals(sampleCommandFile.lastModified(), extensionFile.lastModified());
 	}
 
 	@Test

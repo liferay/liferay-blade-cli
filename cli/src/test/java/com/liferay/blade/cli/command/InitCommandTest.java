@@ -254,10 +254,13 @@ public class InitCommandTest {
 				"There should be no results from the command, but bladeTestResults != null)", bladeTestResults != null);
 		}
 		catch (AssertionError e) {
+			
+			String message = e.getMessage();
+
 			Assert.assertTrue(
 				"should say 'does not support initializing a workspace inside of another workspace', but says: " +
-					e.getMessage(),
-				e.getMessage().contains("does not support initializing a workspace inside of another workspace"));
+					message,
+				message.contains("does not support initializing a workspace inside of another workspace"));
 		}
 	}
 

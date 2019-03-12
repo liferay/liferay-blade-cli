@@ -85,10 +85,14 @@ public class GradlePrintErrorTest {
 		IExpectationSetters<Map<String, BaseCommand<? extends BaseArgs>>> expect = EasyMock.expect(
 			BladeCLI.getCommandMapByClassLoader(EasyMock.anyString(), EasyMock.isA(ClassLoader.class)));
 
-		expect.andReturn(commandMap).atLeastOnce();
+		IExpectationSetters<?> expectation = expect.andReturn(commandMap);
+		
+		expectation.atLeastOnce();
 
-		PowerMock.expectNew(
-			GradleExec.class, EasyMock.isA(BladeTest.class)).andReturn(new GradleExecSpecial(bladeTest));
+		IExpectationSetters<GradleExec> expectationNew = PowerMock.expectNew(
+			GradleExec.class, EasyMock.isA(BladeTest.class));
+		
+		expectationNew.andReturn(new GradleExecSpecial(bladeTest));
 
 		PowerMock.replay(BladeCLI.class, GradleExec.class);
 

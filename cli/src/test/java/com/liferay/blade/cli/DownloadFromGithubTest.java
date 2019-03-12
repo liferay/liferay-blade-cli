@@ -18,6 +18,7 @@ package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.util.BladeUtil;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.nio.file.Files;
@@ -35,9 +36,12 @@ public class DownloadFromGithubTest {
 
 	@Test
 	public void testDownloadFromGithub() throws IOException {
-		Path testDir = tempFolder.newFolder().toPath();
+		File testDirFile = tempFolder.newFolder();
 
-		Path zip = testDir.resolve("master.zip");
+		Path testDirPath = testDirFile.toPath();
+
+		
+		Path zip = testDirPath.resolve("master.zip");
 
 		BladeUtil.downloadGithubProject("https://github.com/liferay/liferay-blade-cli", zip);
 
