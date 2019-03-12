@@ -44,6 +44,7 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -130,7 +131,9 @@ public class CreateCommandTest {
 		args =
 			new String[] {"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "-M", "1.0.0", "loginExt"};
 
-		output = TestUtil.runBlade(_rootDir, _extensionsDir, args).getOutput();
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		output = results.getOutput();
 
 		Assert.assertTrue(output, output.contains("modules-ext options"));
 	}
@@ -177,7 +180,9 @@ public class CreateCommandTest {
 
 		args = new String[] {"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "-H", "1.0.0", "loginHook"};
 
-		output = TestUtil.runBlade(_rootDir, _extensionsDir, args).getOutput();
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		output = results.getOutput();
 
 		Assert.assertTrue(output, output.contains("\"-t fragment\" options missing"));
 	}
@@ -503,7 +508,9 @@ public class CreateCommandTest {
 		File existFile = new File(_rootDir, "exist/file.txt");
 
 		if (!existFile.exists()) {
-			existFile.getParentFile().mkdirs();
+			File parentFile = existFile.getParentFile();
+
+			parentFile.mkdirs();
 
 			Assert.assertTrue(existFile.createNewFile());
 		}
@@ -1388,7 +1395,9 @@ public class CreateCommandTest {
 	private void _contains(String content, String regex) throws Exception {
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
 
-		Assert.assertTrue(pattern.matcher(content).matches());
+		Matcher matcher = pattern.matcher(content);
+
+		Assert.assertTrue(matcher.matches());
 	}
 
 	private void _lacks(File file, String regex) throws Exception {
@@ -1396,11 +1405,15 @@ public class CreateCommandTest {
 
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
 
-		Assert.assertFalse(pattern.matcher(content).matches());
+		Matcher matcher = pattern.matcher(content);
+
+		Assert.assertFalse(matcher.matches());
 	}
 
 	private void _makeWorkspace(File workspace) throws Exception {
-		String[] args = {"--base", workspace.getParentFile().getPath(), "init", workspace.getName()};
+		File parentFile = workspace.getParentFile();
+
+		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName()};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1416,7 +1429,9 @@ public class CreateCommandTest {
 	}
 
 	private void _makeWorkspace70(File workspace) throws Exception {
-		String[] args = {"--base", workspace.getParentFile().getPath(), "init", workspace.getName(), "-v", "7.0"};
+		File parentFile = workspace.getParentFile();
+
+		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", "7.0"};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 

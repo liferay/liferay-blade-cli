@@ -25,6 +25,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -74,7 +75,10 @@ public class UtilTest {
 		FileUtil.copyDir(testDir1.toPath(), testDir2.toPath());
 		Assert.assertTrue(testDir2.exists());
 
-		Assert.assertEquals(testDir1.list().length, testDir2.list().length);
+		String[] testDir1List = testDir1.list();
+		String[] testDir2List = testDir2.list();
+
+		Assert.assertEquals(Arrays.toString(testDir2List), testDir1List.length, testDir2List.length);
 	}
 
 	@Test
@@ -82,7 +86,9 @@ public class UtilTest {
 		File tempTestFile = null;
 
 		try {
-			File parentDirectory = new File(".").getAbsoluteFile().getParentFile();
+			File absoluteDirectory = new File(".").getAbsoluteFile();
+
+			File parentDirectory = absoluteDirectory.getParentFile();
 
 			File parentParentDirectory = parentDirectory.getParentFile();
 

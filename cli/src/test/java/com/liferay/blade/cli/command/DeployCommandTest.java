@@ -70,7 +70,9 @@ public class DeployCommandTest {
 
 		Assert.assertTrue(osgiModulesDirectory.exists());
 
-		int filesCount = osgiModulesDirectory.list().length;
+		String[] osgiModulesDirectoryList = osgiModulesDirectory.list();
+
+		int filesCount = osgiModulesDirectoryList.length;
 
 		Assert.assertEquals(0, filesCount);
 
@@ -90,7 +92,9 @@ public class DeployCommandTest {
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
-		filesCount = osgiModulesDirectory.list().length;
+		osgiModulesDirectoryList = osgiModulesDirectory.list();
+		
+		filesCount = osgiModulesDirectoryList.length;
 
 		Assert.assertEquals(1, filesCount);
 	}
@@ -140,7 +144,9 @@ public class DeployCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		int filesCount = deployDirectory.list().length;
+		String[] deployDirectoryList = deployDirectory.list();
+		
+		int filesCount = deployDirectoryList.length;
 
 		Assert.assertEquals(1, filesCount);
 	}
@@ -165,7 +171,9 @@ public class DeployCommandTest {
 
 		Assert.assertTrue(deployDirectory.exists());
 
-		int filesCount = deployDirectory.list().length;
+		String[] deployDirectoryList = deployDirectory.list();
+		
+		int filesCount = deployDirectoryList.length;
 
 		Assert.assertEquals(0, filesCount);
 
@@ -184,8 +192,10 @@ public class DeployCommandTest {
 		args = new String[] {"--base", projectDirectory.getAbsolutePath(), "deploy"};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
+		
+		deployDirectoryList = deployDirectory.list();
 
-		filesCount = deployDirectory.list().length;
+		filesCount = deployDirectoryList.length;
 
 		Assert.assertEquals(1, filesCount);
 	}

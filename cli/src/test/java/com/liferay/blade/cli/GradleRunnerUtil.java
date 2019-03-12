@@ -51,7 +51,9 @@ public class GradleRunnerUtil {
 		BuildTask buildTask = null;
 
 		for (BuildTask task : buildResult.getTasks()) {
-			if (task.getPath().endsWith(taskPath[taskPath.length - 1])) {
+			String taskPathString = task.getPath();
+
+			if (taskPathString.endsWith(taskPath[taskPath.length - 1])) {
 				buildTask = task;
 
 				break;

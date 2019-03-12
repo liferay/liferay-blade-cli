@@ -29,6 +29,7 @@ import java.io.File;
 
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
@@ -229,7 +230,9 @@ public class CreateCommandMavenTest {
 	private void _contains(String content, String regex) throws Exception {
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
 
-		Assert.assertTrue(pattern.matcher(content).matches());
+		Matcher matcher = pattern.matcher(content);
+
+		Assert.assertTrue(matcher.matches());
 	}
 
 	private void _verifyImportPackage(File serviceJar) throws Exception {

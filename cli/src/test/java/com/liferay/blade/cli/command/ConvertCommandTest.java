@@ -21,6 +21,7 @@ import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
@@ -318,7 +319,9 @@ public class ConvertCommandTest {
 	private void _contains(String content, String regex) throws Exception {
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
 
-		Assert.assertTrue(pattern.matcher(content).matches());
+		Matcher matcher = pattern.matcher(content);
+
+		Assert.assertTrue(matcher.matches());
 	}
 
 	private void _notContains(File file, String... patterns) throws Exception {
@@ -332,7 +335,9 @@ public class ConvertCommandTest {
 	private void _notContains(String content, String regex) throws Exception {
 		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
 
-		Assert.assertFalse(pattern.matcher(content).matches());
+		Matcher matcher = pattern.matcher(content);
+
+		Assert.assertFalse(matcher.matches());
 	}
 
 	private File _setupWorkspace(String name) throws Exception {
