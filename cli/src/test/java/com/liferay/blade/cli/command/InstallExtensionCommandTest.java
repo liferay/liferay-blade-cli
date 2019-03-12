@@ -129,10 +129,9 @@ public class InstallExtensionCommandTest {
 			output.contains(" installed successfully"));
 
 		Assert.assertTrue(sampleCommandFile.lastModified() == 0);
-		
+
 		File extensionFile = extensionPath.toFile();
 
-		
 		Assert.assertFalse(extensionFile.lastModified() == 0);
 
 		output = _testBladeWithInteractive(_rootDir, _extensionsDir, args, "defaultShouldBeNo");
@@ -194,7 +193,6 @@ public class InstallExtensionCommandTest {
 
 		File extensionFile = extensionPath.toFile();
 
-		
 		Assert.assertEquals(sampleCommandFile.lastModified(), extensionFile.lastModified());
 	}
 

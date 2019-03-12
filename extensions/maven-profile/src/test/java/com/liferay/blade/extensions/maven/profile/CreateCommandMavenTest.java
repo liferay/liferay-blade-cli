@@ -232,7 +232,6 @@ public class CreateCommandMavenTest {
 
 		Matcher matcher = pattern.matcher(content);
 
-		
 		Assert.assertTrue(matcher.matches());
 	}
 

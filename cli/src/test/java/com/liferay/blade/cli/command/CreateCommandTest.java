@@ -134,7 +134,7 @@ public class CreateCommandTest {
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		output = results.getOutput();
-		
+
 		Assert.assertTrue(output, output.contains("modules-ext options"));
 	}
 
@@ -183,7 +183,7 @@ public class CreateCommandTest {
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		output = results.getOutput();
-		
+
 		Assert.assertTrue(output, output.contains("\"-t fragment\" options missing"));
 	}
 
@@ -508,7 +508,6 @@ public class CreateCommandTest {
 		File existFile = new File(_rootDir, "exist/file.txt");
 
 		if (!existFile.exists()) {
-			
 			File parentFile = existFile.getParentFile();
 
 			parentFile.mkdirs();
@@ -1408,15 +1407,12 @@ public class CreateCommandTest {
 
 		Matcher matcher = pattern.matcher(content);
 
-		
 		Assert.assertFalse(matcher.matches());
 	}
 
 	private void _makeWorkspace(File workspace) throws Exception {
-		
 		File parentFile = workspace.getParentFile();
 
-		
 		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName()};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
@@ -1433,10 +1429,8 @@ public class CreateCommandTest {
 	}
 
 	private void _makeWorkspace70(File workspace) throws Exception {
-
 		File parentFile = workspace.getParentFile();
 
-		
 		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", "7.0"};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);

@@ -40,7 +40,6 @@ public class DownloadFromGithubTest {
 
 		Path testDirPath = testDirFile.toPath();
 
-		
 		Path zip = testDirPath.resolve("master.zip");
 
 		BladeUtil.downloadGithubProject("https://github.com/liferay/liferay-blade-cli", zip);

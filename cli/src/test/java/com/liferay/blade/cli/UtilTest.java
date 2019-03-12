@@ -74,7 +74,7 @@ public class UtilTest {
 
 		FileUtil.copyDir(testDir1.toPath(), testDir2.toPath());
 		Assert.assertTrue(testDir2.exists());
-		
+
 		String[] testDir1List = testDir1.list();
 		String[] testDir2List = testDir2.list();
 
@@ -86,10 +86,8 @@ public class UtilTest {
 		File tempTestFile = null;
 
 		try {
-			
 			File absoluteDirectory = new File(".").getAbsoluteFile();
 
-			
 			File parentDirectory = absoluteDirectory.getParentFile();
 
 			File parentParentDirectory = parentDirectory.getParentFile();

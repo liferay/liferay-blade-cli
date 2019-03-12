@@ -321,7 +321,6 @@ public class ConvertCommandTest {
 
 		Matcher matcher = pattern.matcher(content);
 
-		
 		Assert.assertTrue(matcher.matches());
 	}
 

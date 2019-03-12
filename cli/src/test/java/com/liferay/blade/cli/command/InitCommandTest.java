@@ -254,7 +254,6 @@ public class InitCommandTest {
 				"There should be no results from the command, but bladeTestResults != null)", bladeTestResults != null);
 		}
 		catch (AssertionError e) {
-			
 			String message = e.getMessage();
 
 			Assert.assertTrue(
