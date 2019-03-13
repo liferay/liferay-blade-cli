@@ -22,6 +22,9 @@ import java.io.InputStreamReader;
 
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
@@ -54,6 +57,10 @@ import com.liferay.blade.cli.util.BladeUtil;
 public class MavenUtil {
 
 	public static void executeGoals(String projectPath, String[] goals) {
+		executeGoals(projectPath, goals, false);
+	}
+
+	public static void executeGoals(String projectPath, String[] goals, boolean printOutput) {
 		Objects.requireNonNull(goals, "Goals must be specified");
 
 		if (!(goals.length > 0)) {
@@ -70,7 +77,7 @@ public class MavenUtil {
 			windows = true;
 		}
 
-		boolean buildSuccess = false;
+		AtomicBoolean buildSuccess = new AtomicBoolean(false);
 
 		int exitValue = 1;
 
@@ -94,21 +101,52 @@ public class MavenUtil {
 			BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
-			String line = null;
+			CountDownLatch latch = new CountDownLatch(2);
 
-			while ((line = processOutput.readLine()) != null) {
-				output.append(line);
-				output.append(System.lineSeparator());
+			CompletableFuture.runAsync(() -> {
+				String line = null;
+				
 
-				if (line.contains("BUILD SUCCESS")) {
-					buildSuccess = true;
+				try {
+					while ((line = processOutput.readLine()) != null) {
+						output.append(line);
+						output.append(System.lineSeparator());
+		
+
+						if (line.contains("BUILD SUCCESS")) {
+							buildSuccess.set(true);
+						}
+
+						if (printOutput) {
+							System.out.println(line);
+						}
+					}
+
+					latch.countDown();
+				} catch (Exception e) {
+					
 				}
-			}
+			});
+			CompletableFuture.runAsync(() -> {
+				String line = null;
 
-			while ((line = processError.readLine()) != null) {
-				output.append(line);
-				output.append(System.lineSeparator());
-			}
+				try {
+					while ((line = processError.readLine()) != null) {
+						output.append(line);
+						output.append(System.lineSeparator());
+
+						if (printOutput) {
+							System.err.println(line);
+						}
+					}
+
+					latch.countDown();
+				} catch (Exception e) {
+					
+				}
+			});
+			
+			latch.await();
 
 			exitValue = process.waitFor();
 		}
@@ -133,7 +171,7 @@ public class MavenUtil {
 				"Maven goals " + goals[0] + " failed for project " + projectPath + System.lineSeparator() + output);
 		}
 
-		if (!buildSuccess) {
+		if (!buildSuccess.get()) {
 			throw new RuntimeException("Maven goals " + goals + " failed in project path " + projectPath);
 		}
 	}
