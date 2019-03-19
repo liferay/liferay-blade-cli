@@ -20,6 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.ServerInitCommand;
+import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
@@ -28,7 +29,7 @@ import java.io.File;
  * @author Christopher Bryan Boyd
  */
 @BladeProfile("maven")
-public class ServerInitCommandMaven extends ServerInitCommand {
+public class ServerInitCommandMaven extends ServerInitCommand implements MavenExecutor {
 
 	@Override
 	public void execute() throws Exception {
@@ -44,7 +45,7 @@ public class ServerInitCommandMaven extends ServerInitCommand {
 			if (pomXmlFile.exists()) {
 				bladeCLI.out("Executing maven task bundle-support:init...\n");
 
-				MavenUtil.executeGoals(baseDir.getAbsolutePath(), new String[] {"bundle-support:init"});
+				executeGoals(baseDir.getAbsolutePath(), new String[] {"bundle-support:init"});
 			}
 		}
 		else {

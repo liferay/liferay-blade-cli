@@ -20,6 +20,7 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
+import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
@@ -35,7 +36,7 @@ import java.util.stream.Stream;
  * @author Christopher Bryan Boyd
  */
 @BladeProfile("maven")
-public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven> {
+public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven> implements MavenExecutor {
 
 	@Override
 	public void execute() throws Exception {
@@ -54,7 +55,6 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 				Path baseDirPath = baseDir.toPath();
 
 				try (Stream<Path> pathStream = Files.walk(baseDirPath)) {
-				
 					List<Path> paths = pathStream.filter(
 			        	path -> _pathHasFileName(path, "service.xml")
 			        ).map(
@@ -64,7 +64,7 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 			        ).collect(
 			        	Collectors.toList()
 			        );
-					
+
 
 					if (!paths.isEmpty()) {
 						StringBuilder sb = new StringBuilder();
@@ -72,24 +72,24 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 						for (int x = 0; x < paths.size(); x++) {
 							Path path = paths.get(x);
 
-							
+
 							String pathString = path.toString();
 
-	
+
 							sb.append(pathString);
 
 							if (x + 1 != paths.size()) {
 								sb.append(",");
 							}
 						}
-	
+
 						bladeCLI.out("Executing maven task service-builder:build on projects:");
 						bladeCLI.out(sb.toString());
 						String[] goals = {"--projects", sb.toString(), "service-builder:build"};
-						
-						MavenUtil.executeGoals(baseDir.getAbsolutePath(), goals, true);
+
+						executeGoals(baseDir.getAbsolutePath(), goals, true);
 					}
-					else {					
+					else {
 						bladeCLI.error("No Service Builder projects could be found.");
 					}
 				}
@@ -110,7 +110,7 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 
 		String fileNameString = fileName.toString();
 
-		
+
 		return fileNameString.equals(expectedFileName);
 	}
 

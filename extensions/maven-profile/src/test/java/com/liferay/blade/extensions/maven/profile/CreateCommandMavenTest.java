@@ -23,7 +23,7 @@ import aQute.bnd.osgi.Jar;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
+import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 
 import java.io.File;
 
@@ -41,7 +41,7 @@ import org.junit.rules.TemporaryFolder;
 /**
  * @author Gregory Amerson
  */
-public class CreateCommandMavenTest {
+public class CreateCommandMavenTest implements MavenExecutor {
 
 	@Before
 	public void setUp() throws Exception {
@@ -67,7 +67,7 @@ public class CreateCommandMavenTest {
 			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
 			".*^public class BarActivator implements BundleActivator.*$");
 
-		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
 
@@ -90,7 +90,7 @@ public class CreateCommandMavenTest {
 
 		_contains(_checkFileExists(projectPath + "/src/main/resources/foo/api/packageinfo"), "version 1.0.0");
 
-		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
@@ -129,7 +129,7 @@ public class CreateCommandMavenTest {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
 
@@ -158,7 +158,7 @@ public class CreateCommandMavenTest {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
@@ -187,7 +187,7 @@ public class CreateCommandMavenTest {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		executeGoals(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
