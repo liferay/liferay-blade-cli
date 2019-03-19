@@ -30,15 +30,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public interface MavenExecutor {
 
-	public default void executeGoals(String projectPath, String[] goals) {
-		executeGoals(projectPath, goals, false);
+	public default void execute(String projectPath, String[] args) {
+		execute(projectPath, args, false);
 	}
 
-	public default void executeGoals(String projectPath, String[] goals, boolean printOutput) {
-		Objects.requireNonNull(goals, "Goals must be specified");
+	public default void execute(String projectPath, String[] args, boolean printOutput) {
+		Objects.requireNonNull(args, "Args must be specified");
 
-		if (!(goals.length > 0)) {
-			throw new RuntimeException("Goals must be specified");
+		if (!(args.length > 0)) {
+			throw new RuntimeException("Args must be specified");
 		}
 
 		String os = System.getProperty("os.name");
@@ -57,8 +57,8 @@ public interface MavenExecutor {
 
 		StringBuilder stringBuilder = new StringBuilder();
 
-		for (String goal : goals) {
-			stringBuilder.append(goal + " ");
+		for (String arg : args) {
+			stringBuilder.append(arg + " ");
 		}
 
 		StringBuilder output = new StringBuilder();
@@ -100,6 +100,8 @@ public interface MavenExecutor {
 				} catch (Exception e) {
 				}
 			});
+
+
 			CompletableFuture.runAsync(() -> {
 				String line = null;
 
@@ -139,12 +141,11 @@ public interface MavenExecutor {
 		}
 
 		if (!exitValueCorrect) {
-			throw new RuntimeException(
-				"Maven goals " + goals[0] + " failed for project " + projectPath + System.lineSeparator() + output);
+			throw new RuntimeException("Maven exec failed.\n " + output.toString());
 		}
 
 		if (!buildSuccess.get()) {
-			throw new RuntimeException("Maven goals " + goals + " failed in project path " + projectPath);
+			throw new RuntimeException("Maven exec failed.\n " + output.toString());
 		}
 	}
 

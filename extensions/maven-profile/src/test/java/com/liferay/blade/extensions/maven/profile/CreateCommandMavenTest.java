@@ -67,7 +67,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
 			".*^public class BarActivator implements BundleActivator.*$");
 
-		executeGoals(projectPath, new String[] {"clean", "package"});
+		execute(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
 
@@ -90,7 +90,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		_contains(_checkFileExists(projectPath + "/src/main/resources/foo/api/packageinfo"), "version 1.0.0");
 
-		executeGoals(projectPath, new String[] {"clean", "package"});
+		execute(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
@@ -129,7 +129,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		executeGoals(projectPath, new String[] {"clean", "package"});
+		execute(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "loginHook-1.0.0.jar");
 
@@ -158,7 +158,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		executeGoals(projectPath, new String[] {"clean", "package"});
+		execute(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 
@@ -187,7 +187,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		executeGoals(projectPath, new String[] {"clean", "package"});
+		execute(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 

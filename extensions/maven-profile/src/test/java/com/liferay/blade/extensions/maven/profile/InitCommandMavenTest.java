@@ -210,7 +210,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		executeGoals(projectPath, new String[] {"clean", "package"});
+		execute(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 	}

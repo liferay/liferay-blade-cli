@@ -45,7 +45,7 @@ public class ServerInitCommandMaven extends ServerInitCommand implements MavenEx
 			if (pomXmlFile.exists()) {
 				bladeCLI.out("Executing maven task bundle-support:init...\n");
 
-				executeGoals(baseDir.getAbsolutePath(), new String[] {"bundle-support:init"});
+				execute(baseDir.getAbsolutePath(), new String[] {"bundle-support:init"});
 			}
 		}
 		else {
