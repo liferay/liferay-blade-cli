@@ -83,11 +83,11 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 							}
 						}
 
-						bladeCLI.out("Executing maven task service-builder:build on projects:");
-						bladeCLI.out(sb.toString());
-						String[] goals = {"--projects", sb.toString(), "service-builder:build"};
+						String[] args = {"--projects", sb.toString(), "service-builder:build"};
 
-						execute(baseDir.getAbsolutePath(), goals, true);
+						bladeCLI.out("Executing " + String.join(" ", args));
+
+						execute(baseDir.getAbsolutePath(), args, true);
 					}
 					else {
 						bladeCLI.error("No Service Builder projects could be found.");
