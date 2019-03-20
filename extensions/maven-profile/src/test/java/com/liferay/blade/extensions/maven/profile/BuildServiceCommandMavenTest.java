@@ -93,7 +93,6 @@ public class BuildServiceCommandMavenTest {
 		String output = results.getOutput();
 		
 		String errors = results.getErrors();
-		
 
 		boolean buildSuccess = false;
 
@@ -102,10 +101,7 @@ public class BuildServiceCommandMavenTest {
 		}
 		
 		Assert.assertTrue(buildSuccess);
-		
 	}
-
-	
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
