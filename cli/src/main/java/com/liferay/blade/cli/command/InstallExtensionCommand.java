@@ -31,6 +31,7 @@ import java.io.IOException;
 
 import java.net.URL;
 
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -208,7 +209,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private static boolean _isTemplateMatch(Path path) {
-		if (Files.exists(path) && (_customTemplatePathMatcher.matches(path) || _isArchetype(path))) {
+		if (Files.exists(path) && (_templatePathMatcher.matches(path) || _isArchetype(path))) {
 			return true;
 		}
 
@@ -289,7 +290,9 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		}
 	}
 
-	private static final PathMatcher _customTemplatePathMatcher = FileSystems.getDefault().getPathMatcher(
+	private static final FileSystem _fileSystem = FileSystems.getDefault();
+	
+	private static final PathMatcher _templatePathMatcher = _fileSystem.getPathMatcher(
 		"glob:**/*.project.templates.*");
 
 }
