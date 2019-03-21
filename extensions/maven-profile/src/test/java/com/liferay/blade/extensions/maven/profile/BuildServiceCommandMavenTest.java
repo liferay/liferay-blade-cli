@@ -86,6 +86,7 @@ public class BuildServiceCommandMavenTest {
 		sb2SourceExists = Files.exists(sb2SourcePath);
 		
 		Path fooPath = Paths.get("sb1", "sb1-api", "src", "main", "java", "sb1", "model", "Foo.java");
+
 		
 		fooPath = modulesPath.resolve(fooPath);
 		

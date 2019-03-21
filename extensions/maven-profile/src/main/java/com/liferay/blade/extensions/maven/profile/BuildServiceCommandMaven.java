@@ -109,4 +109,5 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 
 		return fileNameString.equals(expectedFileName);
 	}
+
 }

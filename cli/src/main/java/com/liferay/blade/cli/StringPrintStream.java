@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import java.nio.charset.Charset;
+
 import java.util.Collection;
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -32,37 +33,6 @@ import java.util.stream.Stream;
  */
 public class StringPrintStream extends PrintStream implements Supplier<String> {
 	
-	private static class FilteringPrintStream extends StringPrintStream {
-		private Collection<Predicate<String>> _filters;
-		
-		public FilteringPrintStream(ByteArrayOutputStream outputStream, Charset charset, Collection<Predicate<String>> filters) {
-			super(outputStream, charset);
-			
-			_filters = filters;
-		}
-
-		@Override
-		public String get() {
-			StringBuilder stringBuilder = new StringBuilder();
-			String results = super.get();
-		
-			try (Scanner scanner = new Scanner(results)) {
-				while (scanner.hasNext()) {
-					String line = scanner.nextLine();
-		
-					Stream<Predicate<String>> filtersStream = _filters.stream();
-					
-					if (filtersStream.anyMatch(predicate -> predicate.test(line))) {
-						continue;
-					}
-
-					stringBuilder.append(line + System.lineSeparator());
-				}
-			}
-			return stringBuilder.toString();
-		}
-	}
-
 	public static StringPrintStream fromInputStream(InputStream inputStream) {
 		StringPrintStream stringPrintStream = new StringPrintStream(
 			new ByteArrayOutputStream(), Charset.defaultCharset());
@@ -72,12 +42,12 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 		return stringPrintStream;
 	}
 
-	public static StringPrintStream newInstance() {
-		return newInstance(Charset.defaultCharset());
-	}
-	
 	public static StringPrintStream newFilteredInstance(Collection<Predicate<String>> filters) {
 		return new FilteringPrintStream(new ByteArrayOutputStream(), Charset.defaultCharset(), filters);
+	}
+
+	public static StringPrintStream newInstance() {
+		return newInstance(Charset.defaultCharset());
 	}
 
 	public static StringPrintStream newInstance(Charset charset) {
@@ -103,4 +73,41 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 
 	private Charset _charset;
 	private ByteArrayOutputStream _outputStream;
+
+	private static class FilteringPrintStream extends StringPrintStream {
+		public FilteringPrintStream(ByteArrayOutputStream outputStream, Charset charset, Collection<Predicate<String>> filters) {
+			super(outputStream, charset);
+			
+			_filters = filters;
+		}
+
+		
+
+		@Override
+		public String get() {
+			StringBuilder stringBuilder = new StringBuilder();
+			String results = super.get();
+		
+
+			try (Scanner scanner = new Scanner(results)) {
+				while (scanner.hasNext()) {
+					String line = scanner.nextLine();
+
+					Stream<Predicate<String>> filtersStream = _filters.stream();
+
+					if (filtersStream.anyMatch(predicate -> predicate.test(line))) {
+						continue;
+					}
+
+					stringBuilder.append(line + System.lineSeparator());
+				}
+			}
+
+			return stringBuilder.toString();
+		}
+
+		private Collection<Predicate<String>> _filters;
+
+	}
+
 }
