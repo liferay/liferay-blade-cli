@@ -21,14 +21,47 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import java.nio.charset.Charset;
-
+import java.util.Collection;
 import java.util.Scanner;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * @author Christopher Bryan Boyd
  */
 public class StringPrintStream extends PrintStream implements Supplier<String> {
+	
+	private static class FilteringPrintStream extends StringPrintStream {
+		private Collection<Predicate<String>> _filters;
+		
+		public FilteringPrintStream(ByteArrayOutputStream outputStream, Charset charset, Collection<Predicate<String>> filters) {
+			super(outputStream, charset);
+			
+			_filters = filters;
+		}
+
+		@Override
+		public String get() {
+			StringBuilder stringBuilder = new StringBuilder();
+			String results = super.get();
+		
+			try (Scanner scanner = new Scanner(results)) {
+				while (scanner.hasNext()) {
+					String line = scanner.nextLine();
+		
+					Stream<Predicate<String>> filtersStream = _filters.stream();
+					
+					if (filtersStream.anyMatch(predicate -> predicate.test(line))) {
+						continue;
+					}
+
+					stringBuilder.append(line + System.lineSeparator());
+				}
+			}
+			return stringBuilder.toString();
+		}
+	}
 
 	public static StringPrintStream fromInputStream(InputStream inputStream) {
 		StringPrintStream stringPrintStream = new StringPrintStream(
@@ -42,6 +75,10 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 	public static StringPrintStream newInstance() {
 		return newInstance(Charset.defaultCharset());
 	}
+	
+	public static StringPrintStream newFilteredInstance(Collection<Predicate<String>> filters) {
+		return new FilteringPrintStream(new ByteArrayOutputStream(), Charset.defaultCharset(), filters);
+	}
 
 	public static StringPrintStream newInstance(Charset charset) {
 		return new StringPrintStream(new ByteArrayOutputStream(), charset);
@@ -49,27 +86,7 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 
 	@Override
 	public String get() {
-		StringBuilder stringBuilder = new StringBuilder();
-		String results = new String(_outputStream.toByteArray(), _charset);
-
-		try (Scanner scanner = new Scanner(results)) {
-			while (scanner.hasNext()) {
-				String line = scanner.nextLine();
-
-				if (line.startsWith("SLF4J:")) {
-					continue;
-				}
-				
-
-				if (line.contains("LC_ALL: cannot change locale")) {
-					continue;
-				}
-
-				stringBuilder.append(line + System.lineSeparator());
-			}
-		}
-
-		return stringBuilder.toString();
+		return new String(_outputStream.toByteArray(), _charset);
 	}
 
 	@Override
@@ -86,5 +103,4 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 
 	private Charset _charset;
 	private ByteArrayOutputStream _outputStream;
-
 }

@@ -65,16 +65,13 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 			        	Collectors.toList()
 			        );
 
-
 					if (!paths.isEmpty()) {
 						StringBuilder sb = new StringBuilder();
 
 						for (int x = 0; x < paths.size(); x++) {
 							Path path = paths.get(x);
 
-
 							String pathString = path.toString();
-
 
 							sb.append(pathString);
 
@@ -110,8 +107,6 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 
 		String fileNameString = fileName.toString();
 
-
 		return fileNameString.equals(expectedFileName);
 	}
-
 }

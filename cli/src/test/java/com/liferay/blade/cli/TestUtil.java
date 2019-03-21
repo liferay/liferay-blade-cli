@@ -23,8 +23,10 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import java.nio.file.Path;
-
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -105,9 +107,15 @@ public class TestUtil {
 	public static BladeTestResults runBlade(
 		File settingsDir, File extensionsDir, InputStream in, boolean assertErrors, String... args) {
 
-		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
+		Predicate<String> localeFilter = (line) -> line.contains("LC_ALL: cannot change locale:");
 
-		StringPrintStream errorPrintStream = StringPrintStream.newInstance();
+		Predicate<String> slf4JFilter = (line) -> line.startsWith("SLF4J:");
+
+		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
+		
+		Collection<Predicate<String>> filters = Arrays.asList(localeFilter, slf4JFilter);
+
+		StringPrintStream errorPrintStream = StringPrintStream.newFilteredInstance(filters);
 
 		return runBlade(settingsDir, extensionsDir, outputPrintStream, errorPrintStream, in, assertErrors, args);
 	}

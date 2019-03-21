@@ -80,12 +80,10 @@ public interface MavenExecutor {
 			CompletableFuture.runAsync(() -> {
 				String line = null;
 
-
 				try {
 					while ((line = processOutput.readLine()) != null) {
 						output.append(line);
 						output.append(System.lineSeparator());
-
 
 						if (line.contains("BUILD SUCCESS")) {
 							buildSuccess.set(true);
@@ -100,7 +98,6 @@ public interface MavenExecutor {
 				} catch (Exception e) {
 				}
 			});
-
 
 			CompletableFuture.runAsync(() -> {
 				String line = null;
@@ -148,5 +145,4 @@ public interface MavenExecutor {
 			throw new RuntimeException("Maven exec failed.\n " + output.toString());
 		}
 	}
-
 }
