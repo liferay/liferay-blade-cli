@@ -108,9 +108,9 @@ public class TestUtil {
 	public static BladeTestResults runBlade(
 		File settingsDir, File extensionsDir, InputStream in, boolean assertErrors, String... args) {
 
-		Predicate<String> localeFilter = (line) -> line.contains("LC_ALL: cannot change locale:");
+		Predicate<String> localeFilter = line -> line.contains("LC_ALL: cannot change locale");
 
-		Predicate<String> slf4JFilter = (line) -> line.startsWith("SLF4J:");
+		Predicate<String> slf4JFilter = line -> line.startsWith("SLF4J:");
 
 		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
 		
