@@ -22,6 +22,7 @@ import java.io.PrintStream;
 
 import java.nio.charset.Charset;
 
+import java.util.Scanner;
 import java.util.function.Supplier;
 
 /**
@@ -48,7 +49,27 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 
 	@Override
 	public String get() {
-		return new String(_outputStream.toByteArray(), _charset);
+		StringBuilder stringBuilder = new StringBuilder();
+		String results = new String(_outputStream.toByteArray(), _charset);
+
+		try (Scanner scanner = new Scanner(results)) {
+			while (scanner.hasNext()) {
+				String line = scanner.nextLine();
+
+				if (line.startsWith("SLF4J:")) {
+					continue;
+				}
+				
+
+				if (line.contains("LC_ALL: cannot change locale")) {
+					continue;
+				}
+
+				stringBuilder.append(line + System.lineSeparator());
+			}
+		}
+
+		return stringBuilder.toString();
 	}
 
 	@Override
