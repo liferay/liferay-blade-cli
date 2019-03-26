@@ -295,4 +295,5 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	private static final PathMatcher _templatePathMatcher = _fileSystem.getPathMatcher(
 		"glob:**/*.project.templates.*");
 
+	
 }

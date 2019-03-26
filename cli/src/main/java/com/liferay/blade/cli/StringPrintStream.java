@@ -22,13 +22,17 @@ import java.io.PrintStream;
 
 import java.nio.charset.Charset;
 
+import java.util.Collection;
+import java.util.Scanner;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * @author Christopher Bryan Boyd
  */
 public class StringPrintStream extends PrintStream implements Supplier<String> {
-
+	
 	public static StringPrintStream fromInputStream(InputStream inputStream) {
 		StringPrintStream stringPrintStream = new StringPrintStream(
 			new ByteArrayOutputStream(), Charset.defaultCharset());
@@ -36,6 +40,10 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 		StringConverter.readInputStreamToPrintStream(inputStream, stringPrintStream);
 
 		return stringPrintStream;
+	}
+
+	public static StringPrintStream newFilteredInstance(Collection<Predicate<String>> filters) {
+		return new FilteringPrintStream(new ByteArrayOutputStream(), Charset.defaultCharset(), filters);
 	}
 
 	public static StringPrintStream newInstance() {
@@ -65,5 +73,41 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 
 	private Charset _charset;
 	private ByteArrayOutputStream _outputStream;
+
+	private static class FilteringPrintStream extends StringPrintStream {
+		public FilteringPrintStream(ByteArrayOutputStream outputStream, Charset charset, Collection<Predicate<String>> filters) {
+			super(outputStream, charset);
+			
+			_filters = filters;
+		}
+
+		
+
+		@Override
+		public String get() {
+			StringBuilder stringBuilder = new StringBuilder();
+			String results = super.get();
+		
+
+			try (Scanner scanner = new Scanner(results)) {
+				while (scanner.hasNext()) {
+					String line = scanner.nextLine();
+
+					Stream<Predicate<String>> filtersStream = _filters.stream();
+
+					if (filtersStream.anyMatch(predicate -> predicate.test(line))) {
+						continue;
+					}
+
+					stringBuilder.append(line + System.lineSeparator());
+				}
+			}
+
+			return stringBuilder.toString();
+		}
+
+		private Collection<Predicate<String>> _filters;
+
+	}
 
 }

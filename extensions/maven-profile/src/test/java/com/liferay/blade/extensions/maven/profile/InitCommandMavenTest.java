@@ -19,7 +19,7 @@ package com.liferay.blade.extensions.maven.profile;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
+import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +37,7 @@ import org.junit.rules.TemporaryFolder;
 /**
  * @author Gregory Amerson
  */
-public class InitCommandMavenTest {
+public class InitCommandMavenTest implements MavenExecutor {
 
 	@Before
 	public void setUp() throws Exception {
@@ -210,7 +210,7 @@ public class InitCommandMavenTest {
 
 		TestUtil.updateMavenRepositories(projectPath);
 
-		MavenUtil.executeGoals(projectPath, new String[] {"clean", "package"});
+		execute(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
 	}

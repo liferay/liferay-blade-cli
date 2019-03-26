@@ -1,3 +1,4 @@
+com.liferay.blade.extensions.maven.profile.BuildServiceCommandMaven
 com.liferay.blade.extensions.maven.profile.CreateCommandMaven
 com.liferay.blade.extensions.maven.profile.InitCommandMaven
 com.liferay.blade.extensions.maven.profile.ServerInitCommandMaven
