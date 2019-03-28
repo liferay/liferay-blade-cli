@@ -422,7 +422,8 @@ public class InstallExtensionCommandTest {
 		}
 	}
 
-	private static final String _LINK_TO_DEPLOY_COMMAND = "https://github.com/christopherbryanboyd/liferay-blade-cli/tree/deployremote2/extensions/deploy-remote-command";
+	private static final String _LINK_TO_DEPLOY_COMMAND = "https://github.com/christopherbryanboyd/liferay-blade-cli" +
+	"/tree/deployremote2/extensions/deploy-remote-command";
 
 	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
 

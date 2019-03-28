@@ -126,7 +126,8 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 					process.waitFor();
 					
-					process = runtime.exec("git -C " + projectPath.toString() + " remote add -f origin " + githubRootUrl);
+					process = runtime.exec("git -C " + projectPath.toString() + 
+						" remote add -f origin " + githubRootUrl);
 					
 					process.waitFor();
 					
