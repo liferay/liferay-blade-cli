@@ -39,6 +39,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -72,50 +73,167 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		if (pathArgLower.startsWith("http") && _isValidURL(pathArg)) {
 			if (pathArgLower.contains("//github.com/")) {
-				Path path = Files.createTempDirectory(null);
+				
+				String[] urlSplit = pathArgLower.split("github.com");
+				
+				String[] urlSplitEnd = urlSplit[1].split("/");
+				
+				Collection<String> urlSplitEndCollection = Arrays.asList(urlSplitEnd);
+				
+				Stream<String> urlSplitEndStream = urlSplitEndCollection.stream();
+				
+				urlSplitEndCollection = urlSplitEndStream.filter(
+					x -> x.length() > 0
+				).collect(
+					Collectors.toList()
+				);
 
-				try {
-					Path zip = path.resolve("master.zip");
+				if (urlSplitEndCollection.size() > 2) {
+					StringBuilder githubRootUrl = new StringBuilder("https://github.com/");
 
-					File dir = path.toFile();
+					StringBuilder subpath = new StringBuilder();
+					
+					String branch = null;
+					
+					int x = 0;
 
-					bladeCLI.out("Downloading github repository " + pathArg);
+					for (String urlString : urlSplitEndCollection) {
+						if (x > 3) {
+							subpath.append(urlString + '/');
+						}
+						else if (x == 3) {
+							branch = urlString;
+						}
+						else if (x < 2) {
+							githubRootUrl.append(urlString + '/');
+						}
 
-					BladeUtil.downloadGithubProject(pathArg, zip);
+						x++;
+					}
+					
+					Path projectPath = Files.createTempDirectory("extension");
+					
+					Path projectSubPath = Paths.get(subpath.toString());
 
-					bladeCLI.out("Unzipping github repository to " + path);
+					
+					projectSubPath = projectPath.resolve(projectSubPath);
+					
+					Files.createDirectories(projectSubPath);
+					
+					Runtime runtime = Runtime.getRuntime();
 
-					FileUtil.unzip(zip.toFile(), dir, null);
+					Process process = runtime.exec("git -C " + projectPath.toString() + " init");
 
-					File[] directories = dir.listFiles(File::isDirectory);
+					process.waitFor();
+					
+					process = runtime.exec("git -C " + projectPath.toString() + " remote add -f origin " + githubRootUrl);
+					
+					process.waitFor();
+					
+					process = runtime.exec("git -C " + projectPath.toString() + " config core.sparseCheckout true");
+					
+					process.waitFor();
+					
+					Path gitInfoPath = Paths.get(".git", "info");
 
-					if ((directories != null) && (directories.length > 0)) {
-						Path directory = directories[0].toPath();
+					gitInfoPath = projectPath.resolve(gitInfoPath);
+					
+					Files.createDirectories(gitInfoPath);
+					
+					Path sparseCheckoutPath = gitInfoPath.resolve("sparse-checkout");
 
-						if (_isGradleBuild(directory)) {
-							bladeCLI.out("Building extension...");
+					
+					Files.createFile(sparseCheckoutPath);
+					
+					String subpathstring = subpath.toString();
 
-							Set<Path> extensionPaths = _gradleAssemble(directory);
+					
+					Files.write(sparseCheckoutPath, subpathstring.getBytes());
 
-							if (!extensionPaths.isEmpty()) {
-								for (Path extensionPath : extensionPaths) {
-									_installExtension(extensionPath);
-								}
-							}
-							else {
-								bladeCLI.error("Unable to get output of gradle build " + directory);
+					process = runtime.exec("git -C " + projectPath.toString() + " pull origin " + branch);
+					
+					process.waitFor();
+				
+
+					if (_isGradleBuild(projectSubPath)) {
+						
+						File projectSubDir = projectSubPath.toFile();
+						
+
+						if (!BladeUtil.hasGradleWrapper(projectSubDir)) {
+							BladeUtil.addGradleWrapper(projectSubDir);
+						}
+						
+						bladeCLI.out("Building extension...");
+						
+						Set<Path> extensionPaths = _gradleAssemble(projectSubPath);
+						
+
+						if (!extensionPaths.isEmpty()) {
+							for (Path extensionPath : extensionPaths) {
+								_installExtension(extensionPath);
 							}
 						}
 						else {
-							bladeCLI.error("Path not a gradle build " + directory);
+							bladeCLI.error("Unable to get output of gradle build " + projectSubPath);
 						}
 					}
+					else {
+						bladeCLI.error("Path not a gradle build " + projectSubPath);
+					}
 				}
-				catch (Exception e) {
-					throw e;
-				}
-				finally {
-					FileUtil.deleteDir(path);
+				else {
+					
+					Path path = Files.createTempDirectory(null);
+					
+
+					try {
+						Path zip = path.resolve("master.zip");
+						
+						File dir = path.toFile();
+						
+						bladeCLI.out("Downloading github repository " + pathArg);
+						
+						BladeUtil.downloadGithubProject(pathArg, zip);
+						
+						bladeCLI.out("Unzipping github repository to " + path);
+						
+						FileUtil.unzip(zip.toFile(), dir, null);
+						
+						File[] directories = dir.listFiles(File::isDirectory);
+						
+
+						if ((directories != null) && (directories.length > 0)) {
+							Path directory = directories[0].toPath();
+							
+
+							if (_isGradleBuild(directory)) {
+								bladeCLI.out("Building extension...");
+								
+								Set<Path> extensionPaths = _gradleAssemble(directory);
+								
+
+								if (!extensionPaths.isEmpty()) {
+									for (Path extensionPath : extensionPaths) {
+										_installExtension(extensionPath);
+									}
+								}
+								else {
+									bladeCLI.error("Unable to get output of gradle build " + directory);
+								}
+							}
+							else {
+								bladeCLI.error("Path not a gradle build " + directory);
+							}
+						}
+					}
+					catch (Exception e) {
+						throw e;
+					}
+					finally {
+						FileUtil.deleteDir(path);
+					}
+					
 				}
 			}
 			else {
