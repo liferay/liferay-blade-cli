@@ -24,7 +24,6 @@ import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -82,14 +81,6 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return SamplesArgs.class;
 	}
 
-	private void _addGradleWrapper(File destinationDir) throws Exception {
-		InputStream inputStream = SamplesCommand.class.getResourceAsStream("/wrapper.zip");
-
-		FileUtil.unzip(inputStream, destinationDir);
-
-		new File(destinationDir, "gradlew").setExecutable(true);
-	}
-
 	private void _copySample(String sampleName, String bladeRepoName) throws Exception {
 		SamplesArgs samplesArgs = getArgs();
 
@@ -132,7 +123,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 				}
 
 				if (!BladeUtil.hasGradleWrapper(dest)) {
-					_addGradleWrapper(dest);
+					BladeUtil.addGradleWrapper(dest);
 				}
 			}
 		}
