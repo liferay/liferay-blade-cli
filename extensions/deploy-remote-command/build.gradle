@@ -1,0 +1,58 @@
+buildscript {
+	dependencies {
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
+	}
+
+	repositories {
+		maven {
+			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+		}
+	}
+}
+
+apply plugin: "biz.aQute.bnd.builder"
+apply plugin: "java"
+apply plugin: "maven-publish"
+
+dependencies {
+	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
+	compile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "latest.integration"
+
+	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
+	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
+}
+
+publishing {
+	publications {
+		deployRemoteCommand(MavenPublication) {
+			artifactId = "com.liferay.blade.extensions.deploy.remote.command"
+
+			from components.java
+		}
+	}
+}
+String repoHost = "repository-cdn.liferay.com"
+
+if (project.hasProperty("release") || project.hasProperty("snapshots")) {
+	repoHost = "repository.liferay.com"
+}
+
+repositories {
+	flatDir {
+		dirs "${rootProject.projectDir}/libs"
+	}
+
+	maven {
+		url "https://repo.gradle.org/gradle/libs-releases/"
+	}
+
+	maven {
+		url "https://${repoHost}/nexus/content/repositories/liferay-public-releases/"
+	}
+
+	maven {
+		url "https://${repoHost}/nexus/content/repositories/liferay-public-snapshots/"
+	}
+}
+
+version = "1.0.0-SNAPSHOT"

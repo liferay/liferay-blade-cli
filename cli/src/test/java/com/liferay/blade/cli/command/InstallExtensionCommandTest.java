@@ -39,6 +39,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import net.diibadaaba.zipdiff.DifferenceCalculator;
 import net.diibadaaba.zipdiff.Differences;
@@ -83,6 +84,37 @@ public class InstallExtensionCommandTest {
 		File extensionJar = new File(root, ".blade/extensions/" + _sampleCommandJarFile.getName());
 
 		Assert.assertTrue(extensionJar.getAbsolutePath() + " does not exist", extensionJar.exists());
+	}
+
+	@Test
+	public void testInstallCustomExtensionSubdirectory() throws Exception {
+		Assume.assumeFalse(_isWindows());
+
+		String[] args = {"extension", "install", _LINK_TO_DEPLOY_COMMAND};
+		
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
+
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue("Expected output to contain \"successful\"\n" + output, output.contains(" successful"));
+
+		Path rootPath = _rootDir.toPath();
+
+		Path extensionDirPath = rootPath.resolve(Paths.get(".blade", "extensions"));
+
+		try (Stream<Path> extensionStream = Files.list(extensionDirPath)) {
+			
+			boolean pathExists = extensionStream.map(
+				Path::getFileName
+			).map(
+				Object::toString
+			).anyMatch(
+				fileNameString -> fileNameString.startsWith("maven-profile")
+			);	
+			
+			Assert.assertTrue("maven-profile extension jar does not exist", pathExists);
+		}
+					
 	}
 
 	@Test
@@ -389,6 +421,9 @@ public class InstallExtensionCommandTest {
 			throw new RuntimeException(e);
 		}
 	}
+
+	private static final String _LINK_TO_DEPLOY_COMMAND = "https://github.com/liferay/liferay-blade-cli" +
+	"/tree/master/extensions/maven-profile";
 
 	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
 

@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.util;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.command.SamplesCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.internal.util.ProjectTemplatesUtil;
 
@@ -65,6 +66,14 @@ public class BladeUtil {
 	public static final String APP_SERVER_PARENT_DIR_PROPERTY = "app.server.parent.dir";
 
 	public static final String APP_SERVER_TYPE_PROPERTY = "app.server.type";
+
+	public static void addGradleWrapper(File destinationDir) throws Exception {
+		InputStream inputStream = SamplesCommand.class.getResourceAsStream("/wrapper.zip");
+
+		FileUtil.unzip(inputStream, destinationDir);
+
+		new File(destinationDir, "gradlew").setExecutable(true);
+	}
 
 	public static boolean canConnect(String host, int port) {
 		InetSocketAddress localAddress = new InetSocketAddress(0);
