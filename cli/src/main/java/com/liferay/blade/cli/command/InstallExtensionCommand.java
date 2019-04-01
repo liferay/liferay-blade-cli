@@ -73,15 +73,14 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 		if (pathArgLower.startsWith("http") && _isValidURL(pathArg)) {
 			if (pathArgLower.contains("//github.com/")) {
-				
 				String[] urlSplit = pathArgLower.split("github.com");
-				
+
 				String[] urlSplitEnd = urlSplit[1].split("/");
-				
+
 				Collection<String> urlSplitEndCollection = Arrays.asList(urlSplitEnd);
-				
+
 				Stream<String> urlSplitEndStream = urlSplitEndCollection.stream();
-				
+
 				urlSplitEndCollection = urlSplitEndStream.filter(
 					x -> x.length() > 0
 				).collect(
@@ -92,7 +91,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 					StringBuilder githubRootUrl = new StringBuilder("https://github.com/");
 
 					StringBuilder subpath = new StringBuilder();
-					
+
 					int x = 0;
 
 					for (String urlString : urlSplitEndCollection) {
@@ -105,52 +104,43 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 						x++;
 					}
-					
+
 					Path projectPath = Files.createTempDirectory("extension");
 
 					Path zip = projectPath.resolve("master.zip");
 
 					bladeCLI.out("Downloading github repository " + githubRootUrl);
-					
+
 					BladeUtil.downloadGithubProject(String.valueOf(githubRootUrl), zip);
-					
+
 					bladeCLI.out("Unzipping github repository to " + projectPath);
-					
+
 					File zipFile = zip.toFile();
-					
+
 					File dir = projectPath.toFile();
 
-					
-					FileUtil.unzip(zipFile, dir, null);	
+					FileUtil.unzip(zipFile, dir, null);
 
 					Path extractedDirectory;
-					
 
 					try (Stream<Path> fileStream = Files.list(projectPath)) {
-					
 						extractedDirectory = fileStream.filter(Files::isDirectory).findFirst().orElse(null);
-					
 					}
-					
+
 					Path projectSubPath = Paths.get(subpath.toString());
 
-					
 					projectSubPath = extractedDirectory.resolve(projectSubPath);
-					
 
 					if (Files.exists(projectSubPath) && _isGradleBuild(projectSubPath)) {
-						
 						File projectSubDir = projectSubPath.toFile();
-						
 
 						if (!BladeUtil.hasGradleWrapper(projectSubDir)) {
 							BladeUtil.addGradleWrapper(projectSubDir);
 						}
-						
+
 						bladeCLI.out("Building extension...");
-						
+
 						Set<Path> extensionPaths = _gradleAssemble(projectSubPath);
-						
 
 						if (!extensionPaths.isEmpty()) {
 							for (Path extensionPath : extensionPaths) {
@@ -166,35 +156,30 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 					}
 				}
 				else {
-					
 					Path path = Files.createTempDirectory(null);
-					
 
 					try {
 						Path zip = path.resolve("master.zip");
-						
+
 						File dir = path.toFile();
-						
+
 						bladeCLI.out("Downloading github repository " + pathArg);
-						
+
 						BladeUtil.downloadGithubProject(pathArg, zip);
-						
+
 						bladeCLI.out("Unzipping github repository to " + path);
-						
+
 						FileUtil.unzip(zip.toFile(), dir, null);
-						
+
 						File[] directories = dir.listFiles(File::isDirectory);
-						
 
 						if ((directories != null) && (directories.length > 0)) {
 							Path directory = directories[0].toPath();
-							
 
 							if (_isGradleBuild(directory)) {
 								bladeCLI.out("Building extension...");
-								
+
 								Set<Path> extensionPaths = _gradleAssemble(directory);
-								
 
 								if (!extensionPaths.isEmpty()) {
 									for (Path extensionPath : extensionPaths) {
@@ -216,7 +201,6 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 					finally {
 						FileUtil.deleteDir(path);
 					}
-					
 				}
 			}
 			else {
@@ -392,9 +376,8 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private static final FileSystem _fileSystem = FileSystems.getDefault();
-	
 	private static final PathMatcher _templatePathMatcher = _fileSystem.getPathMatcher(
 		"glob:**/*.project.templates.*");
 
-	
+
 }
