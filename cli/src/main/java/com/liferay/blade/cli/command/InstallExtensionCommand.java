@@ -115,11 +115,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 					bladeCLI.out("Unzipping github repository to " + projectPath);
 
-					File zipFile = zip.toFile();
-
-					File dir = projectPath.toFile();
-
-					FileUtil.unzip(zipFile, dir, null);
+					FileUtil.unzip(zip.toFile(), projectPath.toFile(), null);
 
 					Path extractedDirectory;
 
