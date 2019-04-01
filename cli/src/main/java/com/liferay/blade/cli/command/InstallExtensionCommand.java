@@ -93,16 +93,11 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 					StringBuilder subpath = new StringBuilder();
 					
-					String branch = null;
-					
 					int x = 0;
 
 					for (String urlString : urlSplitEndCollection) {
 						if (x > 3) {
 							subpath.append(urlString + '/');
-						}
-						else if (x == 3) {
-							branch = urlString;
 						}
 						else if (x < 2) {
 							githubRootUrl.append(urlString + '/');
@@ -112,51 +107,38 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 					}
 					
 					Path projectPath = Files.createTempDirectory("extension");
+
+					Path zip = projectPath.resolve("master.zip");
+
+					bladeCLI.out("Downloading github repository " + githubRootUrl);
+					
+					BladeUtil.downloadGithubProject(String.valueOf(githubRootUrl), zip);
+					
+					bladeCLI.out("Unzipping github repository to " + projectPath);
+					
+					File zipFile = zip.toFile();
+					
+					File dir = projectPath.toFile();
+
+					
+					FileUtil.unzip(zipFile, dir, null);	
+
+					Path extractedDirectory;
+					
+
+					try (Stream<Path> fileStream = Files.list(projectPath)) {
+					
+						extractedDirectory = fileStream.filter(Files::isDirectory).findFirst().orElse(null);
+					
+					}
 					
 					Path projectSubPath = Paths.get(subpath.toString());
 
 					
-					projectSubPath = projectPath.resolve(projectSubPath);
+					projectSubPath = extractedDirectory.resolve(projectSubPath);
 					
-					Files.createDirectories(projectSubPath);
-					
-					Runtime runtime = Runtime.getRuntime();
 
-					Process process = runtime.exec("git -C " + projectPath.toString() + " init");
-
-					process.waitFor();
-					
-					process = runtime.exec("git -C " + projectPath.toString() + 
-						" remote add -f origin " + githubRootUrl);
-					
-					process.waitFor();
-					
-					process = runtime.exec("git -C " + projectPath.toString() + " config core.sparseCheckout true");
-					
-					process.waitFor();
-					
-					Path gitInfoPath = Paths.get(".git", "info");
-
-					gitInfoPath = projectPath.resolve(gitInfoPath);
-					
-					Files.createDirectories(gitInfoPath);
-					
-					Path sparseCheckoutPath = gitInfoPath.resolve("sparse-checkout");
-
-					
-					Files.createFile(sparseCheckoutPath);
-					
-					String subpathstring = subpath.toString();
-
-					
-					Files.write(sparseCheckoutPath, subpathstring.getBytes());
-
-					process = runtime.exec("git -C " + projectPath.toString() + " pull origin " + branch);
-					
-					process.waitFor();
-				
-
-					if (_isGradleBuild(projectSubPath)) {
+					if (Files.exists(projectSubPath) && _isGradleBuild(projectSubPath)) {
 						
 						File projectSubDir = projectSubPath.toFile();
 						

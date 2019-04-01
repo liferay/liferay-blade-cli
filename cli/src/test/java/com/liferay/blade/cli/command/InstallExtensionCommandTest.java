@@ -109,10 +109,10 @@ public class InstallExtensionCommandTest {
 			).map(
 				Object::toString
 			).anyMatch(
-				fileNameString -> fileNameString.startsWith("deploy-remote-command")
+				fileNameString -> fileNameString.startsWith("maven-profile")
 			);	
 			
-			Assert.assertTrue("deploy-remote-command extension jar does not exist", pathExists);
+			Assert.assertTrue("maven-profile extension jar does not exist", pathExists);
 		}
 					
 	}
@@ -422,8 +422,8 @@ public class InstallExtensionCommandTest {
 		}
 	}
 
-	private static final String _LINK_TO_DEPLOY_COMMAND = "https://github.com/christopherbryanboyd/liferay-blade-cli" +
-	"/tree/deployremote2/extensions/deploy-remote-command";
+	private static final String _LINK_TO_DEPLOY_COMMAND = "https://github.com/liferay/liferay-blade-cli" +
+	"/tree/master/extensions/maven-profile";
 
 	private static final File _sampleCommandJarFile = new File(System.getProperty("sampleCommandJarFile"));
 
