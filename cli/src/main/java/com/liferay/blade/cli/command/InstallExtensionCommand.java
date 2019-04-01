@@ -78,29 +78,29 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 				String[] urlSplitEnd = urlSplit[1].split("/");
 
-				List<String> urlSplitEndCollection = Arrays.asList(urlSplitEnd);
+				List<String> segments = Arrays.asList(urlSplitEnd);
 
-				Stream<String> urlSplitEndStream = urlSplitEndCollection.stream();
+				Stream<String> urlSplitEndStream = segments.stream();
 
-				urlSplitEndCollection = urlSplitEndStream.filter(
+				segments = urlSplitEndStream.filter(
 					x -> x.length() > 0
 				).collect(
 					Collectors.toList()
 				);
 
-				if (urlSplitEndCollection.size() > 2) {
+				if (segments.size() > 2) {
 					StringBuilder githubRootUrl = new StringBuilder("https://github.com/");
 
 					StringBuilder subpath = new StringBuilder();
 
 					int x = 0;
 
-					for (String urlString : urlSplitEndCollection) {
+					for (String segment : segments) {
 						if (x > 3) {
-							subpath.append(urlString + '/');
+							subpath.append(segment + '/');
 						}
 						else if (x < 2) {
-							githubRootUrl.append(urlString + '/');
+							githubRootUrl.append(segment + '/');
 						}
 
 						x++;
