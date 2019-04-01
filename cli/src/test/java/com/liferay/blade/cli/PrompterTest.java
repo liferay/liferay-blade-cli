@@ -94,7 +94,9 @@ public class PrompterTest {
 
 		String correctResult = _question + " (y/n)";
 
-		String output = _confirm(_question, answer).getValue();
+		Entry<Boolean, String> confirmEntry = _confirm(_question, answer);
+		
+		String output = confirmEntry.getValue();
 
 		Assert.assertEquals(output.trim(), correctResult);
 
@@ -105,7 +107,9 @@ public class PrompterTest {
 		correctEndingOutputTests.put("(y/n)", Optional.empty());
 
 		for (Entry<String, Optional<Boolean>> entry : correctEndingOutputTests.entrySet()) {
-			String receivedOutput = _confirm(_question, answer, entry.getValue()).getValue();
+			confirmEntry = _confirm(_question, answer, entry.getValue());
+			
+			String receivedOutput = confirmEntry.getValue();
 
 			receivedOutput = receivedOutput.trim();
 
@@ -143,7 +147,9 @@ public class PrompterTest {
 	private void _testAnswer(String answerString, Boolean correctAnswerValue, Optional<Boolean> defaultAnswer)
 		throws UnsupportedEncodingException {
 
-		Boolean receivedAnswer = _confirm(_question, answerString, defaultAnswer).getKey();
+		Entry<Boolean, String> confirmEntry = _confirm(_question, answerString, defaultAnswer);
+
+		Boolean receivedAnswer = confirmEntry.getKey();
 
 		boolean assertBoolean = Objects.equals(receivedAnswer, correctAnswerValue);
 
