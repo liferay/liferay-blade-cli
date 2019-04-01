@@ -224,8 +224,6 @@ public class BladeUtil {
 		return templates.keySet();
 	}
 
-	
-
 	public static Map<String, String> getTemplates(BladeCLI bladeCLI) throws Exception {
 		Path extensions = bladeCLI.getExtensionsPath();
 
