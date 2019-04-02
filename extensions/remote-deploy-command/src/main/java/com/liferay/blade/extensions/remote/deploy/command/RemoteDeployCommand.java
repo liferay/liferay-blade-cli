@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.extensions.remote.deploy;
+package com.liferay.blade.extensions.remote.deploy.command;
 
 import aQute.bnd.header.Attrs;
 import aQute.bnd.osgi.Domain;

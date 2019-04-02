@@ -25,7 +25,7 @@ dependencies {
 publishing {
 	publications {
 		deployRemoteCommand(MavenPublication) {
-			artifactId = "com.liferay.blade.extensions.remote.deploy"
+			artifactId = "com.liferay.blade.extensions.remote.deploy.command"
 
 			from components.java
 		}

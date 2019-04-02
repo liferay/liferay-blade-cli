@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.extensions.remote.deploy;
+package com.liferay.blade.extensions.remote.deploy.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;

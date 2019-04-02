@@ -33,6 +33,10 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
+mavenProfileUrl="http://localhost:8081/nexus/content/groups/public/"$mavenProfileUrl
+
+curl -s $mavenProfileUrl -o /tmp/$timestamp/maven_profile.jar
+
 ./gradlew --no-daemon -PlocalNexus -P${1} :extensions:remote-deploy-command:publish
 
 if [ "$?" != "0" ]; then
@@ -40,10 +44,6 @@ if [ "$?" != "0" ]; then
 	rm -rf /tmp/$timestamp
 	exit 1
 fi
-
-mavenProfileUrl="http://localhost:8081/nexus/content/groups/public/"$mavenProfileUrl
-
-curl -s $mavenProfileUrl -o /tmp/$timestamp/maven_profile.jar
 
 ./gradlew --no-daemon -PlocalNexus -P${1} --refresh-dependencies --scan clean check :cli:smokeTests
 
