@@ -37,6 +37,14 @@ mavenProfileUrl="http://localhost:8081/nexus/content/groups/public/"$mavenProfil
 
 curl -s $mavenProfileUrl -o /tmp/$timestamp/maven_profile.jar
 
+./gradlew --no-daemon -PlocalNexus -P${1} :extensions:remote-deploy-command:publish
+
+if [ "$?" != "0" ]; then
+	echo Failed :extensions:remote-deploy-command:publish
+	rm -rf /tmp/$timestamp
+	exit 1
+fi
+
 ./gradlew --no-daemon -PlocalNexus -P${1} --refresh-dependencies --scan clean check :cli:smokeTests
 
 if [ "$?" != "0" ]; then

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.extensions.deploy.remote.command;
+package com.liferay.blade.extensions.remote.deploy.command;
 
 import aQute.bnd.header.Attrs;
 import aQute.bnd.osgi.Domain;
@@ -23,7 +23,6 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.LiferayBundleDeployer;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
-import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.GradleTooling;
 import com.liferay.blade.cli.gradle.ProcessResult;
@@ -54,10 +53,9 @@ import org.osgi.framework.dto.BundleDTO;
 /**
  * @author Gregory Amerson
  */
-@BladeProfile("deploy-remote")
-public class DeployRemoteCommand extends BaseCommand<DeployRemoteArgs> {
+public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
-	public DeployRemoteCommand() {
+	public RemoteDeployCommand() {
 	}
 
 	@Override
@@ -66,7 +64,7 @@ public class DeployRemoteCommand extends BaseCommand<DeployRemoteArgs> {
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		DeployRemoteArgs deployArgs = getArgs();
+		RemoteDeployArgs deployArgs = getArgs();
 
 		File baseDir = new File(deployArgs.getBase());
 		
@@ -109,8 +107,8 @@ public class DeployRemoteCommand extends BaseCommand<DeployRemoteArgs> {
 	}
 
 	@Override
-	public Class<DeployRemoteArgs> getArgsClass() {
-		return DeployRemoteArgs.class;
+	public Class<RemoteDeployArgs> getArgsClass() {
+		return RemoteDeployArgs.class;
 	}
 
 	private void _addError(String msg) {
