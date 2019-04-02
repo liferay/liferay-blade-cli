@@ -33,6 +33,14 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
+./gradlew --no-daemon -PlocalNexus -P${1} :extensions:remote-deploy-command:publish
+
+if [ "$?" != "0" ]; then
+	echo Failed :extensions:remote-deploy-command:publish
+	rm -rf /tmp/$timestamp
+	exit 1
+fi
+
 mavenProfileUrl="http://localhost:8081/nexus/content/groups/public/"$mavenProfileUrl
 
 curl -s $mavenProfileUrl -o /tmp/$timestamp/maven_profile.jar

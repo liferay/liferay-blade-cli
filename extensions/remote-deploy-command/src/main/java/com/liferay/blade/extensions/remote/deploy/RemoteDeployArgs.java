@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.extensions.deploy.remote.command;
+package com.liferay.blade.extensions.remote.deploy;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -25,8 +25,8 @@ import com.liferay.blade.cli.command.BaseArgs;
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = "Builds and deploys bundles to the Liferay module framework with gogo shell.",
-commandNames = "deploy")
-public class DeployRemoteArgs extends BaseArgs {
+commandNames = {"rdeploy", "remote-deploy"})
+public class RemoteDeployArgs extends BaseArgs {
 
 	public boolean isWatch() {
 		return _watch;
