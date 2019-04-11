@@ -1,5 +1,19 @@
 # Liferay Blade CLI Change Log
 
+## 3.5.0 - 2019-2-25 - dae6dffde28c20d3420d6bb34c8bc6e661a68c33
+
+- [BLADE-343]: Pass in environment param when running blade server init
+- [BLADE-383]: Exception stack trace is printed when certain commands are executed
+- [BLADE-385]: Better Blade Maven Workspace Detection and Handling
+- [BLADE-386]: remove unneeded project template test builds
+- [BLADE-387]: Blade should run even if custom extensions have errors
+- [BLADE-388]: snapshots script is broken, doesn't embed correct version of maven profile
+- [BLADE-389]: blade prompter can hang in certain circumstances
+- [BLADE-390]: Turn parallel tests off by default. turn back on by passing in param
+- [BLADE-394]: Add unit tests for Blade Server -d, --debug flag behavior
+- [BLADE-395]: Add a -p, --port flag for blade server start and blade server run
+- [BLADE-397]: blade server start -t does not tail the log for wildfly
+
 ## 3.4.3 - 2019-1-23 - 53683e6dee0a07972b79493944328e56bfaab9cd
 
 - [BLADE-377]: init command should honor the -p, --profile-name flag over any defaults
@@ -238,6 +252,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-334]: https://issues.liferay.com/browse/BLADE-334
 [BLADE-335]: https://issues.liferay.com/browse/BLADE-335
 [BLADE-342]: https://issues.liferay.com/browse/BLADE-342
+[BLADE-343]: https://issues.liferay.com/browse/BLADE-343
 [BLADE-344]: https://issues.liferay.com/browse/BLADE-344
 [BLADE-345]: https://issues.liferay.com/browse/BLADE-345
 [BLADE-346]: https://issues.liferay.com/browse/BLADE-346
@@ -263,6 +278,16 @@ Updated to use Project Templates 4.1.0
 [BLADE-378]: https://issues.liferay.com/browse/BLADE-378
 [BLADE-380]: https://issues.liferay.com/browse/BLADE-380
 [BLADE-381]: https://issues.liferay.com/browse/BLADE-381
+[BLADE-383]: https://issues.liferay.com/browse/BLADE-383
+[BLADE-385]: https://issues.liferay.com/browse/BLADE-385
+[BLADE-386]: https://issues.liferay.com/browse/BLADE-386
+[BLADE-387]: https://issues.liferay.com/browse/BLADE-387
+[BLADE-388]: https://issues.liferay.com/browse/BLADE-388
+[BLADE-389]: https://issues.liferay.com/browse/BLADE-389
+[BLADE-390]: https://issues.liferay.com/browse/BLADE-390
+[BLADE-394]: https://issues.liferay.com/browse/BLADE-394
+[BLADE-395]: https://issues.liferay.com/browse/BLADE-395
+[BLADE-397]: https://issues.liferay.com/browse/BLADE-397
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
