@@ -35,8 +35,8 @@ public class ShellCommand extends BaseCommand<ShellArgs> {
 	public void execute() throws Exception {
 		ShellArgs shellArgs = getArgs();
 
-		String host = shellArgs.getHost() != null ? shellArgs.getHost() : "localhost";
-		int port = shellArgs.getPort() != 0 ? shellArgs.getPort() : 11311;
+		String host = (shellArgs.getHost() != null) ? shellArgs.getHost() : "localhost";
+		int port = (shellArgs.getPort() != 0) ? shellArgs.getPort() : 11311;
 
 		if (!BladeUtil.canConnect(host, port)) {
 			_addError("sh", "Unable to connect to gogo shell on " + host + ":" + port);

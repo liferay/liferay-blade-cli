@@ -67,12 +67,12 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 		RemoteDeployArgs deployArgs = getArgs();
 
 		File baseDir = new File(deployArgs.getBase());
-		
+
 		boolean watch = deployArgs.isWatch();
-		
+
 		String host = "localhost";
 		int port = 11311;
-		
+
 
 		if (!BladeUtil.canConnect(host, port)) {
 			StringBuilder sb = new StringBuilder();
@@ -93,7 +93,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 			return;
 		}
-		
+
 		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(baseDir.toPath());
 
 		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
@@ -291,7 +291,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 					}
 				}
 				catch (Exception e) {
-					String exceptionMessage = e.getMessage() == null ? "" : (System.lineSeparator() + e.getMessage());
+					String exceptionMessage = (e.getMessage() == null) ? "" : (System.lineSeparator() + e.getMessage());
 
 					String message = "Error: Bundle Insatllation failed: " + modified + exceptionMessage;
 
@@ -349,7 +349,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 				}
 			}
 			catch (Exception e) {
-				String exceptionMessage = e.getMessage() == null ? "" : (System.lineSeparator() + e.getMessage());
+				String exceptionMessage = (e.getMessage() == null) ? "" : (System.lineSeparator() + e.getMessage());
 
 				String message = "Error: Bundle Deployment failed: " + bsn + exceptionMessage;
 
