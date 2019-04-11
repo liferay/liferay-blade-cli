@@ -1,5 +1,11 @@
 # Liferay Blade CLI Change Log
 
+## 3.4.3 - 2019-1-23 - 53683e6dee0a07972b79493944328e56bfaab9cd
+
+- [BLADE-377]: init command should honor the -p, --profile-name flag over any defaults
+- [BLADE-380]: Separate handling of settings directory and extensions directory
+- [BLADE-381]: 'blade update' should not run the updateCheck
+
 ## 3.4.2 - 2019-1-18 - 981940b943cc198836483b35569de8e3e3721f38
 
 - [BLADE-346]: Update to project templates
@@ -255,6 +261,8 @@ Updated to use Project Templates 4.1.0
 [BLADE-375]: https://issues.liferay.com/browse/BLADE-375
 [BLADE-377]: https://issues.liferay.com/browse/BLADE-377
 [BLADE-378]: https://issues.liferay.com/browse/BLADE-378
+[BLADE-380]: https://issues.liferay.com/browse/BLADE-380
+[BLADE-381]: https://issues.liferay.com/browse/BLADE-381
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
