@@ -67,7 +67,7 @@ public class AetherClient {
 	}
 
 	public AetherClient(String[] repoUrls, String localRepositoryPath) {
-		_repoUrls = repoUrls == null ? new String[0] : repoUrls;
+		_repoUrls = (repoUrls == null) ? new String[0] : repoUrls;
 		_localRepositoryPath = localRepositoryPath;
 	}
 
