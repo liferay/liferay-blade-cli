@@ -6,7 +6,12 @@ buildscript {
 
 	repositories {
 		maven {
-			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+			if (project.hasProperty("release")) {
+				url "https://repository.liferay.com/nexus/content/groups/public"
+			}
+			else {
+				url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+			}
 		}
 	}
 }
@@ -34,6 +39,11 @@ repositories {
 	}
 
 	maven {
-		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+		if (project.hasProperty("release")) {
+			url "https://repository.liferay.com/nexus/content/groups/public"
+		}
+		else {
+			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+		}
 	}
 }
