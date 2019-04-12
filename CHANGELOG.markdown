@@ -1,5 +1,15 @@
 # Liferay Blade CLI Change Log
 
+## 3.6.0 - 2019-4-12 - 907dbac73496b2436fc44f03e71a19c522dc3c9a
+
+- [BLADE-373]: Change .blade/settings.properties to .blade.properties, add an auto-migration
+- [BLADE-392]: `blade server run` should work on Maven
+- [BLADE-398]: Create blade server start / run tests for verifying custom port functionality
+- [BLADE-407]: Convert command should support "source" to set the plugins sdk location
+- [BLADE-409]: support migration of portal jars in liferay-plugin-package.properties
+- [BLADE-411]: Blade buildService implementation for Maven
+- [BLADE-412]: Restore ability to use old gogo shell deploy functionality in Blade
+
 ## 3.5.0 - 2019-2-25 - dae6dffde28c20d3420d6bb34c8bc6e661a68c33
 
 - [BLADE-343]: Pass in environment param when running blade server init
@@ -273,6 +283,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-370]: https://issues.liferay.com/browse/BLADE-370
 [BLADE-371]: https://issues.liferay.com/browse/BLADE-371
 [BLADE-372]: https://issues.liferay.com/browse/BLADE-372
+[BLADE-373]: https://issues.liferay.com/browse/BLADE-373
 [BLADE-375]: https://issues.liferay.com/browse/BLADE-375
 [BLADE-377]: https://issues.liferay.com/browse/BLADE-377
 [BLADE-378]: https://issues.liferay.com/browse/BLADE-378
@@ -285,9 +296,15 @@ Updated to use Project Templates 4.1.0
 [BLADE-388]: https://issues.liferay.com/browse/BLADE-388
 [BLADE-389]: https://issues.liferay.com/browse/BLADE-389
 [BLADE-390]: https://issues.liferay.com/browse/BLADE-390
+[BLADE-392]: https://issues.liferay.com/browse/BLADE-392
 [BLADE-394]: https://issues.liferay.com/browse/BLADE-394
 [BLADE-395]: https://issues.liferay.com/browse/BLADE-395
 [BLADE-397]: https://issues.liferay.com/browse/BLADE-397
+[BLADE-398]: https://issues.liferay.com/browse/BLADE-398
+[BLADE-407]: https://issues.liferay.com/browse/BLADE-407
+[BLADE-409]: https://issues.liferay.com/browse/BLADE-409
+[BLADE-411]: https://issues.liferay.com/browse/BLADE-411
+[BLADE-412]: https://issues.liferay.com/browse/BLADE-412
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
