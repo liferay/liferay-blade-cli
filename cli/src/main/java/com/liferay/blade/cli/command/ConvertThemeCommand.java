@@ -145,7 +145,17 @@ public class ConvertThemeCommand {
 	}
 
 	public void importTheme(String themePath) throws Exception {
-		Process process = BladeUtil.startProcess(
+		Process process = BladeUtil.startProcess("node -v", _themesDir);
+
+		int nodeJSInstalledChecker = process.waitFor();
+
+		if (nodeJSInstalledChecker != 0) {
+			_bladeCLI.error("Please check Node.js is installed or not.");
+
+			return;
+		}
+
+		process = BladeUtil.startProcess(
 			"yo liferay-theme:import -p \"" + themePath + "\" -c " + _compassSupport(themePath) +
 				" --skip-install",
 			_themesDir, _bladeCLI.out(), _bladeCLI.error());
