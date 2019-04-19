@@ -150,7 +150,7 @@ public class ConvertThemeCommand {
 		int nodeJSInstalledChecker = process.waitFor();
 
 		if (nodeJSInstalledChecker != 0) {
-			_bladeCLI.error("Please check Node.js is installed or not.");
+			_bladeCLI.error("Please check that Node.js properly installed and on the user path.");
 
 			return;
 		}
