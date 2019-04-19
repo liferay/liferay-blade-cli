@@ -32,6 +32,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -137,15 +139,54 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 			Set<Object> keySet = properties.keySet();
 
 			ClassLoader classLoader = Extensions.class.getClassLoader();
+			
 
-			for (Object key : keySet) {
-				String extension = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
+			try {
+				Set<String> extensions = new HashSet<>();
+				
 
-				try (InputStream extensionInputStream = classLoader.getResourceAsStream(extension)) {
-					Path extensionPath = extensionsDirectory.resolve(extension);
+				for (Object key : keySet) {
+					String extension = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
+					
 
-					Files.copy(extensionInputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
+					if (classLoader.getResource(extension) != null) {
+						extensions.add(extension);
+					}
+					else {
+						String errorString = String.format("Unable to locate %s on classpath", extension);
+
+						throw new NoSuchElementException(errorString);
+					}
 				}
+				
+
+				for (String extension : extensions) {
+					try (InputStream extensionInputStream = classLoader.getResourceAsStream(extension)) {
+						Path extensionPath = extensionsDirectory.resolve(extension);
+
+						
+						Files.copy(extensionInputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
+					}
+				}
+			} catch (NoSuchElementException e) {
+				StringBuilder errorStringBuilder = new StringBuilder();
+
+				errorStringBuilder.append("Error encountered while loading custom extensions.");
+				errorStringBuilder.append(System.lineSeparator());
+				errorStringBuilder.append(e.getMessage());
+				errorStringBuilder.append(System.lineSeparator());
+				errorStringBuilder.append("Only built-in commands will be recognized.");
+				errorStringBuilder.append(System.lineSeparator());
+				
+				String errorString = errorStringBuilder.toString();
+
+				System.err.println(errorString);
+			}
+			catch (Throwable th) {
+				String errorMessage = "Error encountered while loading custom extensions." + System.lineSeparator();
+
+				
+				throw new RuntimeException(errorMessage, th);
 			}
 		}
 	}
