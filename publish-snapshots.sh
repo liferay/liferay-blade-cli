@@ -59,11 +59,43 @@ if [ "$?" != "0" ]; then
    exit 1
 fi
 
-# Publish the blade cli jar, then this should embed the recently published maven.profile jar
+# Build the blade cli jar locally, but don't publish.
+bladeCliJarCommand=$(./gradlew --no-daemon --console=plain -Psnapshots --refresh-dependencies :cli:jar --info --scan)
+
+echo "$bladeCliJarCommand"
+
+if [ -z "$bladeCliJarCommand" ]; then
+   echo Failed :cli:jar
+   rm -rf /tmp/$timestamp
+   exit 1
+fi
+
+# now that we have the blade jar just built, lets extract the embedded maven profile jar and compare to the maven profile downloaded from nexus
+embeddedMavenProfileJar=$(jar -tf cli/build/libs/blade.jar | grep "maven.profile-")
+
+if [ -z "$embeddedMavenProfileJar" ]; then
+   echo Failed to find embedded maven.profile jar in blade jar
+   rm -rf /tmp/$timestamp
+   exit 1
+fi
+
+unzip -p cli/build/libs/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
+
+diff -s /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
+
+if [ "$?" != "0" ]; then
+   echo Failed local blade.jar diff with downloaded maven profile jar.  The embedded maven profile jar and nexus maven profile jar are not identical
+   rm -rf /tmp/$timestamp
+   exit 1
+fi
+
+# Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
 bladeCliPublishCommand=$(./gradlew --no-daemon --console=plain -Psnapshots --refresh-dependencies :cli:publish --info --scan)
 
+echo "$bladeCliPublishCommand"
+
 if [ -z "$bladeCliPublishCommand" ]; then
-   echo Failed :extensions:cli:publish
+   echo Failed :cli:publish
    rm -rf /tmp/$timestamp
    exit 1
 fi
@@ -71,7 +103,7 @@ fi
 # Grep the output of the blade jar publish to find the url
 bladeCliJarUrl=$(echo "$bladeCliPublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2)
 
-# download the just published jar in order to extract the embedded maven profile jar to compare to previously downloaded version from above
+# download the just published jar in order to extract the embedded maven profile jar to compare to previously downloaded version from above (just to be double sure)
 bladeCliUrl="$repoHost/nexus/content/groups/public/$bladeCliJarUrl"
 
 curl -s "$bladeCliUrl" -o /tmp/$timestamp/blade.jar
@@ -82,20 +114,12 @@ if [ "$?" != "0" ]; then
    exit 1
 fi
 
-mavenProfileJar=$(jar -tf /tmp/$timestamp/blade.jar | grep "maven.profile-")
-
-if [ -z "$mavenProfileJar" ]; then
-   echo Failed to find embedded maven.profile jar in blade jar
-   rm -rf /tmp/$timestamp
-   exit 1
-fi
-
-unzip -p /tmp/$timestamp/blade.jar "$mavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
+unzip -p /tmp/$timestamp/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
 
 diff -s /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
 
 if [ "$?" != "0" ]; then
-   echo Failed diff
+   echo Failed local blade.jar diff with downloaded maven profile jar.  The embedded maven profile jar and nexus maven profile jar are not identical
    rm -rf /tmp/$timestamp
    exit 1
 fi
