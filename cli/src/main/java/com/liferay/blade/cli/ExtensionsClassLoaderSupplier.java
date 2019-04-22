@@ -152,11 +152,6 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 					if (classLoader.getResource(extension) != null) {
 						extensions.add(extension);
 					}
-					else {
-						String errorString = String.format("Unable to locate %s on classpath", extension);
-
-						throw new NoSuchElementException(errorString);
-					}
 				}
 				
 
@@ -166,6 +161,21 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 
 						
 						Files.copy(extensionInputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
+					}
+					catch (Throwable th) {
+						StringBuilder errorStringBuilder = new StringBuilder();
+
+						
+						errorStringBuilder.append("Error encountered while loading custom extensions.");
+						errorStringBuilder.append(System.lineSeparator());
+						errorStringBuilder.append(th.getMessage());
+						errorStringBuilder.append(System.lineSeparator());
+						errorStringBuilder.append("Not loading extension " + extension + ".");
+						errorStringBuilder.append(System.lineSeparator());
+						
+						String errorString = errorStringBuilder.toString();
+
+						System.err.println(errorString);
 					}
 				}
 			} catch (NoSuchElementException e) {
