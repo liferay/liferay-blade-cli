@@ -16,7 +16,7 @@ fi
 
 localNexusOpt=""
 
-if [ "$repoHost" == "http://localhost:8081" ]; then
+if [ "$repoHost" = "http://localhost:8081" ]; then
     localNexusOpt="-PlocalNexus"
 
     docker stop /local-nexus
