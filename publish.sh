@@ -1,8 +1,35 @@
+# check the arguments first
+if [ "${1}" != "release" -a "${1}" != "snapshots" ]; then
+	echo "Must have one argument, either \"release\" or \"snapshots\"."
+	exit 1
+fi
+  
 # Setup a temp directory
 timestamp=$(date +%s)
 tmpDir="/tmp/$timestamp/"
 
 mkdir -p $tmpDir
+
+if [ -z "$repoHost" ]; then
+  repoHost="https://repository.liferay.com"
+fi
+
+localNexusOpt=""
+
+if [ "$repoHost" == "http://localhost:8081" ]; then
+    localNexusOpt="-PlocalNexus"
+
+    docker stop /local-nexus
+    docker rm /local-nexus
+
+    docker pull sonatype/nexus:2.14.11-01 && \
+    docker run -d -p 8081:8081 --name local-nexus sonatype/nexus:2.14.11-01
+
+    until $(curl --output /dev/null --silent --head --fail http://localhost:8081/nexus/); do
+      printf '.'
+      sleep 5
+    done
+fi
 
 # First clean local build folder to try to minimize variants
 ./gradlew --no-daemon --console=plain clean
@@ -14,7 +41,7 @@ if [ "$?" != "0" ]; then
 fi
 
 # Publish the Remote Deploy Command jar to snapshots
-remoteDeployCommandPublishCommand=$(./gradlew --no-daemon --console=plain -Psnapshots :extensions:remote-deploy-command:publish --info --scan)
+remoteDeployCommandPublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} :extensions:remote-deploy-command:publish --info --scan)
 
 echo "$remoteDeployCommandPublishCommand"
 
@@ -25,7 +52,7 @@ if [ -z "$remoteDeployCommandPublishCommand" ]; then
 fi
 
 # Publish the Maven Profile jar to snapshots
-mavenProfilePublishCommand=$(./gradlew --no-daemon --console=plain -Psnapshots :extensions:maven-profile:publish --info --scan)
+mavenProfilePublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} :extensions:maven-profile:publish --info --scan)
 
 echo "$mavenProfilePublishCommand"
 
@@ -44,8 +71,6 @@ if [ -z "$mavenProfilePublishUrl" ]; then
    exit 1
 fi
 
-repoHost="https://repository.liferay.com"
-
 # Download the just published jar in order to later compare it to the embedded maven profile that is in blade jar
 mavenProfileJarUrl="$repoHost/nexus/content/groups/public/$mavenProfilePublishUrl"
 
@@ -60,7 +85,7 @@ if [ "$?" != "0" ]; then
 fi
 
 # Build the blade cli jar locally, but don't publish.
-bladeCliJarCommand=$(./gradlew --no-daemon --console=plain -Psnapshots --refresh-dependencies :cli:jar --info --scan)
+bladeCliJarCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} --refresh-dependencies :cli:jar --info --scan)
 
 echo "$bladeCliJarCommand"
 
@@ -90,7 +115,7 @@ if [ "$?" != "0" ]; then
 fi
 
 # Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
-bladeCliPublishCommand=$(./gradlew --no-daemon --console=plain -Psnapshots --refresh-dependencies :cli:publish --info --scan)
+bladeCliPublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} --refresh-dependencies :cli:publish --info --scan)
 
 echo "$bladeCliPublishCommand"
 
