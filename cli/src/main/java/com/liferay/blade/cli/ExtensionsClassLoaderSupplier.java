@@ -32,6 +32,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -138,14 +140,60 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 
 			ClassLoader classLoader = Extensions.class.getClassLoader();
 
-			for (Object key : keySet) {
-				String extension = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
+			try {
+				Set<String> extensions = new HashSet<>();
 
-				try (InputStream extensionInputStream = classLoader.getResourceAsStream(extension)) {
-					Path extensionPath = extensionsDirectory.resolve(extension);
+				for (Object key : keySet) {
+					String extension = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
 
-					Files.copy(extensionInputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
+
+					if (classLoader.getResource(extension) != null) {
+						extensions.add(extension);
+					}
+					else {
+						System.err.println("Warning: Unable to locate " + extension);
+					}
 				}
+
+				for (String extension : extensions) {
+					try (InputStream extensionInputStream = classLoader.getResourceAsStream(extension)) {
+						Path extensionPath = extensionsDirectory.resolve(extension);
+
+						Files.copy(extensionInputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
+					}
+					catch (Throwable th) {
+						StringBuilder sb = new StringBuilder();
+
+						sb.append("Error encountered while loading custom extensions.");
+						sb.append(System.lineSeparator());
+						sb.append(th.getMessage());
+						sb.append(System.lineSeparator());
+						sb.append("Not loading extension " + extension + ".");
+						sb.append(System.lineSeparator());
+
+						String errorString = sb.toString();
+
+						System.err.println(errorString);
+					}
+				}
+			} catch (NoSuchElementException e) {
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("Error encountered while loading custom extensions.");
+				sb.append(System.lineSeparator());
+				sb.append(e.getMessage());
+				sb.append(System.lineSeparator());
+				sb.append("Only built-in commands will be recognized.");
+				sb.append(System.lineSeparator());
+
+				String errorString = sb.toString();
+
+				System.err.println(errorString);
+			}
+			catch (Throwable th) {
+				String errorMessage = "Error encountered while loading custom extensions." + System.lineSeparator();
+
+				throw new RuntimeException(errorMessage, th);
 			}
 		}
 	}
