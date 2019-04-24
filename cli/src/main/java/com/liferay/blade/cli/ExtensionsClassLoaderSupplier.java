@@ -139,63 +139,57 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 			Set<Object> keySet = properties.keySet();
 
 			ClassLoader classLoader = Extensions.class.getClassLoader();
-			
 
 			try {
 				Set<String> extensions = new HashSet<>();
-				
 
 				for (Object key : keySet) {
 					String extension = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
-					
+
 
 					if (classLoader.getResource(extension) != null) {
 						extensions.add(extension);
 					}
 				}
-				
 
 				for (String extension : extensions) {
 					try (InputStream extensionInputStream = classLoader.getResourceAsStream(extension)) {
 						Path extensionPath = extensionsDirectory.resolve(extension);
 
-						
 						Files.copy(extensionInputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
 					}
 					catch (Throwable th) {
-						StringBuilder errorStringBuilder = new StringBuilder();
+						StringBuilder sb = new StringBuilder();
 
-						
-						errorStringBuilder.append("Error encountered while loading custom extensions.");
-						errorStringBuilder.append(System.lineSeparator());
-						errorStringBuilder.append(th.getMessage());
-						errorStringBuilder.append(System.lineSeparator());
-						errorStringBuilder.append("Not loading extension " + extension + ".");
-						errorStringBuilder.append(System.lineSeparator());
-						
-						String errorString = errorStringBuilder.toString();
+						sb.append("Error encountered while loading custom extensions.");
+						sb.append(System.lineSeparator());
+						sb.append(th.getMessage());
+						sb.append(System.lineSeparator());
+						sb.append("Not loading extension " + extension + ".");
+						sb.append(System.lineSeparator());
+
+						String errorString = sb.toString();
 
 						System.err.println(errorString);
 					}
 				}
 			} catch (NoSuchElementException e) {
-				StringBuilder errorStringBuilder = new StringBuilder();
+				StringBuilder sb = new StringBuilder();
 
-				errorStringBuilder.append("Error encountered while loading custom extensions.");
-				errorStringBuilder.append(System.lineSeparator());
-				errorStringBuilder.append(e.getMessage());
-				errorStringBuilder.append(System.lineSeparator());
-				errorStringBuilder.append("Only built-in commands will be recognized.");
-				errorStringBuilder.append(System.lineSeparator());
-				
-				String errorString = errorStringBuilder.toString();
+				sb.append("Error encountered while loading custom extensions.");
+				sb.append(System.lineSeparator());
+				sb.append(e.getMessage());
+				sb.append(System.lineSeparator());
+				sb.append("Only built-in commands will be recognized.");
+				sb.append(System.lineSeparator());
+
+				String errorString = sb.toString();
 
 				System.err.println(errorString);
 			}
 			catch (Throwable th) {
 				String errorMessage = "Error encountered while loading custom extensions." + System.lineSeparator();
 
-				
 				throw new RuntimeException(errorMessage, th);
 			}
 		}
