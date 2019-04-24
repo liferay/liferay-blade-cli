@@ -150,6 +150,9 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 					if (classLoader.getResource(extension) != null) {
 						extensions.add(extension);
 					}
+					else {
+						System.err.println("Warning: Unable to locate " + extension);
+					}
 				}
 
 				for (String extension : extensions) {
