@@ -28,6 +28,7 @@ apply plugin: "com.gradle.build-scan"
 apply plugin: "com.liferay.change.log.builder"
 apply plugin: "com.liferay.source.formatter"
 
+task buildInDocker(type:Exec)
 task clean(type:Delete)
 
 buildChangeLog {
@@ -53,6 +54,20 @@ clean {
 			delete mavenLocalRepo
 		}
 	}
+}
+
+buildInDocker {
+	LinkedList commands = new LinkedList <String> ();
+
+	commands.addAll(['docker', 'build', '--tag', 'liferay-gradle', '.'])
+
+	commandLine commands.toArray()
+
+	commands.clear()
+
+	commands.addAll(['docker', 'run', '--rm', '--init', '-p', '5005:5005', 'liferay-gradle'])
+
+	commandLine commands.toArray()
 }
 
 formatSource {

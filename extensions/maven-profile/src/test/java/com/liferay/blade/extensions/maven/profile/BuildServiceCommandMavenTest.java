@@ -81,7 +81,7 @@ public class BuildServiceCommandMavenTest {
 		args = new String[] {"--base", mavenworkspace.getPath(), "buildService"};
 
 		BladeTestResults results = TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
-
+		
 		sb1SourceExists = Files.exists(sb1SourcePath);
 		sb2SourceExists = Files.exists(sb2SourcePath);
 		

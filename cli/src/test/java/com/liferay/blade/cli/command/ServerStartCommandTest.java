@@ -328,7 +328,7 @@ public class ServerStartCommandTest {
 	private static void _terminateProcess(PidProcess tomcatPidProcess) throws InterruptedException, IOException {
 		tomcatPidProcess.destroyForcefully();
 
-		tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
+		tomcatPidProcess.waitFor(5, TimeUnit.SECONDS);
 
 		String processName = tomcatPidProcess.getDescription();
 

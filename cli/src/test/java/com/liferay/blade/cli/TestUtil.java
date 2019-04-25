@@ -62,6 +62,8 @@ public class TestUtil {
 
 		String error = errorStream.toString();
 
+		StringBuilder sb = new StringBuilder();
+
 		try (Scanner scanner = new Scanner(error)) {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
@@ -71,20 +73,32 @@ public class TestUtil {
 						continue;
 					}
 
+					if (line.startsWith("Picked up JAVA_TOOL_OPTIONS")) {
+						continue;
+					}
+					
+
 					if (line.contains("LC_ALL: cannot change locale")) {
 						continue;
 					}
+					
+					sb.append(line);
+					
 
-					if (assertErrors) {
-						Assert.fail("Encountered error at line: " + line + "\n" + error);
+					if (scanner.hasNextLine()) {
+						sb.append(System.lineSeparator());
 					}
 				}
 			}
 		}
 
+		if (assertErrors && (sb.length() > 0)) {
+			Assert.fail("Encountered error: " + sb.toString());
+		}
+
 		String content = outputStream.toString();
 
-		return new BladeTestResults(bladeTest, content, error);
+		return new BladeTestResults(bladeTest, content, sb.toString());
 	}
 
 	public static BladeTestResults runBlade(

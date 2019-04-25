@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 /**
@@ -83,10 +84,40 @@ public class BladeTest extends BladeCLI {
 
 				String errors = stringPrintStream.get();
 
-				errors = errors.replaceAll(
-					"sh: warning: setlocale: LC_ALL: cannot change locale \\(en_US.UTF-8\\)", "");
-
+				
 				errors = errors.trim();
+				
+				StringBuilder sb = new StringBuilder();
+
+				try (Scanner scanner = new Scanner(errors)) {
+					while (scanner.hasNextLine()) {
+						String line = scanner.nextLine();
+
+						if ((line != null) && (line.length() > 0)) {
+							if (line.startsWith("SLF4J:")) {
+								continue;
+							}
+
+							if (line.startsWith("Picked up JAVA_TOOL_OPTIONS")) {
+								continue;
+							}
+							
+
+							if (line.contains("LC_ALL: cannot change locale")) {
+								continue;
+							}
+							
+							sb.append(line);
+							
+
+							if (scanner.hasNextLine()) {
+								sb.append(System.lineSeparator());
+							}
+						}
+					}
+				}
+				
+				errors = sb.toString();
 
 				errors = errors.replaceAll("^\\/bin\\/$", "");
 
