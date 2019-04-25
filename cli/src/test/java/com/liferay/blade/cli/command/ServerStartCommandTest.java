@@ -536,7 +536,7 @@ public class ServerStartCommandTest {
 
 		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgs));
 
-		Thread.sleep(1000);
+		Thread.sleep(5000);
 	}
 
 	private void _runServerDebug() throws Exception, InterruptedException {
@@ -548,7 +548,7 @@ public class ServerStartCommandTest {
 
 		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgsFinal));
 
-		Thread.sleep(1000);
+		Thread.sleep(5000);
 	}
 
 	private void _startServer() throws Exception, InterruptedException {
