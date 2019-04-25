@@ -28,6 +28,7 @@ apply plugin: "com.gradle.build-scan"
 apply plugin: "com.liferay.change.log.builder"
 apply plugin: "com.liferay.source.formatter"
 
+task buildDockerImage(type:Exec)
 task buildInDocker(type:Exec)
 task clean(type:Delete)
 
@@ -56,16 +57,20 @@ clean {
 	}
 }
 
-buildInDocker {
+buildDockerImage {
 	LinkedList commands = new LinkedList <String> ();
 
-	commands.addAll(['docker', 'build', '--tag', 'liferay-gradle', '.'])
+	commands.addAll(['docker', 'build', '--tag', 'liferay-blade-cli-build', '.'])
 
 	commandLine commands.toArray()
+}
 
-	commands.clear()
+buildInDocker {
+	dependsOn buildDockerImage
 
-	commands.addAll(['docker', 'run', '--rm', '--init', '-p', '5004:5004', 'liferay-gradle'])
+	LinkedList commands = new LinkedList <String> ();
+
+	commands.addAll(['docker', 'run', '--rm', '--init', '-p', '5005:5005', 'liferay-blade-cli-build'])
 
 	if (project.hasProperty('gradleTasks')) {
 
