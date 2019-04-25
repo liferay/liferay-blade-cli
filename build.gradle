@@ -61,11 +61,22 @@ buildInDocker {
 
 	commands.addAll(['docker', 'build', '--tag', 'liferay-gradle', '.'])
 
+	println commands.toArray()
+
 	commandLine commands.toArray()
 
 	commands.clear()
 
-	commands.addAll(['docker', 'run', '--rm', '--init', '-p', '5005:5005', 'liferay-gradle'])
+	commands.addAll(['docker', 'run', '--rm', '--init', '-p', '5004:5004', 'liferay-gradle'])
+
+	if (project.hasProperty('gradleTasks')) {
+
+		for (String gradleTask in gradleTasks.split(' ')) {
+			println 'string: ' + gradleTask
+			commands.add(gradleTask)
+
+		}
+	}
 
 	commandLine commands.toArray()
 }

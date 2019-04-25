@@ -11,4 +11,4 @@ WORKDIR /src
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 
-CMD ["clean", "build"]
+CMD ["clean", "build", "--scan"]
