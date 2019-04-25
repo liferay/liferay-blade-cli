@@ -38,6 +38,28 @@ buildChangeLog {
 	ticketIdPrefixes = ["BLADE", "IDE", "LPS", "LRDOCS"]
 }
 
+buildDockerImage {
+	LinkedList commands = new LinkedList <String> ();
+
+	commands.addAll(['docker', 'build', '--tag', 'liferay-blade-cli-build', '.'])
+
+	commandLine commands.toArray()
+}
+
+buildInDocker {
+	dependsOn buildDockerImage
+	LinkedList commands = new LinkedList <String> ();
+
+	commands.addAll(['docker', 'run', '--rm', '--init', '-p', '5005:5005', 'liferay-blade-cli-build'])
+
+	if (project.hasProperty('gradleTasks')) {
+
+		commands.addAll(gradleTasks.split(','))
+	}
+
+	commandLine commands.toArray()
+}
+
 buildScan {
 	termsOfServiceUrl = "https://gradle.com/terms-of-service"
 	termsOfServiceAgree = "yes"
@@ -55,32 +77,6 @@ clean {
 			delete mavenLocalRepo
 		}
 	}
-}
-
-buildDockerImage {
-	LinkedList commands = new LinkedList <String> ();
-
-	commands.addAll(['docker', 'build', '--tag', 'liferay-blade-cli-build', '.'])
-
-	commandLine commands.toArray()
-}
-
-buildInDocker {
-	dependsOn buildDockerImage
-
-	LinkedList commands = new LinkedList <String> ();
-
-	commands.addAll(['docker', 'run', '--rm', '--init', '-p', '5005:5005', 'liferay-blade-cli-build'])
-
-	if (project.hasProperty('gradleTasks')) {
-
-		for (String gradleTask in gradleTasks.split(' ')) {
-			commands.add(gradleTask)
-
-		}
-	}
-
-	commandLine commands.toArray()
 }
 
 formatSource {
