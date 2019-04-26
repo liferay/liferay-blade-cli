@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -534,7 +535,16 @@ public class ServerStartCommandTest {
 	private void _runServer() throws Exception, InterruptedException {
 		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
-		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgs));
+		CountDownLatch latch = new CountDownLatch(1);
+
+		CompletableFuture.runAsync(
+			() -> {
+				latch.countDown();
+
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgs);
+			});
+
+		latch.await(5, TimeUnit.SECONDS);
 
 		Thread.sleep(5000);
 	}
