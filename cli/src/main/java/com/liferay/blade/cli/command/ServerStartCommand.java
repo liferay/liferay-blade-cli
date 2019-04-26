@@ -200,9 +200,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 			}
 		}
 
-		String debugPortString = String.valueOf(debugPort);
-
-		return debugPortString;
+		return String.valueOf(debugPort);
 	}
 
 }

@@ -30,9 +30,7 @@ public class BladeIOTest extends BladeTest {
 
 			StringPrintStream errorStream = StringPrintStream.newInstance();
 
-			BladeIOTest test = new BladeIOTest(outputStream, errorStream);
-
-			return test;
+			return new BladeIOTest(outputStream, errorStream);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
