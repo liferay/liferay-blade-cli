@@ -176,13 +176,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		if (argsDir != null) {
 			dir = new File(argsDir.getAbsolutePath());
 		}
+		else if (template.equals("war-core-ext") || template.startsWith("modules-ext")) {
+			dir = _getDefaultExtDir();
+		}
 		else if (template.startsWith("war") || template.equals("theme") || template.equals("layout-template") ||
 				 template.equals("spring-mvc-portlet")) {
 
 			dir = _getDefaultWarsDir();
-		}
-		else if (template.startsWith("modules-ext")) {
-			dir = _getDefaultExtDir();
 		}
 		else {
 			dir = _getDefaultModulesDir();

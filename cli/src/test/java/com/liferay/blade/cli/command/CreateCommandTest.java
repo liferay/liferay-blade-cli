@@ -774,6 +774,26 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWarCoreExt() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+		
+		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "war-core-ext", "warCoreExt"};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
+
+		String output = bladeTestResults.getOutput();
+
+		
+		output = output.trim();
+
+		Assert.assertTrue(output, output.endsWith("/workspace/ext"));
+		
+		Assert.assertTrue(output, output.startsWith("Success"));
+	}
+
+	@Test
 	public void testCreateWarHookLocation() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
