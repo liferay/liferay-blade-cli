@@ -552,9 +552,18 @@ public class ServerStartCommandTest {
 
 		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
-		final String[] serverRunArgsFinal = _getDebugArgs(serverRunArgs);
+		final String[] serverRunDebugArgs = _getDebugArgs(serverRunArgs);
 
-		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgsFinal));
+		CountDownLatch latch = new CountDownLatch(1);
+
+		CompletableFuture.runAsync(
+			() -> {
+				latch.countDown();
+
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunDebugArgs);
+			});
+
+		latch.await(5, TimeUnit.SECONDS);
 
 		Thread.sleep(5000);
 	}
