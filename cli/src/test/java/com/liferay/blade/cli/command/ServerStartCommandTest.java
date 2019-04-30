@@ -87,6 +87,8 @@ public class ServerStartCommandTest {
 
 	@Test
 	public void testServerRunCommandTomcat() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_initBladeWorkspace();
 
 		_addTomcatBundleToGradle();
@@ -97,11 +99,13 @@ public class ServerStartCommandTest {
 
 		_runServer();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerRunCommandTomcatDebug() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_debugPort = _DEFAULT_DEBUG_PORT_TOMCAT;
 
 		_initBladeWorkspace();
@@ -114,11 +118,13 @@ public class ServerStartCommandTest {
 
 		_runServerDebug();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerRunCommandTomcatDebugCustomPort() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_debugPort = _getAvailablePort();
 
 		_initBladeWorkspace();
@@ -131,11 +137,13 @@ public class ServerStartCommandTest {
 
 		_runServerDebug();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerRunCommandWildfly() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_initBladeWorkspace();
 
 		_addWildflyBundleToGradle();
@@ -146,11 +154,13 @@ public class ServerStartCommandTest {
 
 		_runServer();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
 	public void testServerRunCommandWildflyDebug() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_debugPort = _DEFAULT_DEBUG_PORT_WILDFLY;
 
 		_initBladeWorkspace();
@@ -163,11 +173,13 @@ public class ServerStartCommandTest {
 
 		_runServerDebug();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
 	public void testServerRunCommandWildflyDebugCustomPort() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_debugPort = _getAvailablePort();
 
 		_initBladeWorkspace();
@@ -180,7 +192,7 @@ public class ServerStartCommandTest {
 
 		_runServerDebug();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
@@ -195,6 +207,8 @@ public class ServerStartCommandTest {
 
 	@Test
 	public void testServerStartCommandTomcat() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_initBladeWorkspace();
 
 		_addTomcatBundleToGradle();
@@ -205,11 +219,13 @@ public class ServerStartCommandTest {
 
 		_startServer();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerStartCommandTomcatDebug() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_debugPort = _DEFAULT_DEBUG_PORT_TOMCAT;
 
 		_initBladeWorkspace();
@@ -222,11 +238,13 @@ public class ServerStartCommandTest {
 
 		_startServerDebug();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerStartCommandTomcatDebugCustomPort() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_debugPort = _getAvailablePort();
 
 		_initBladeWorkspace();
@@ -239,11 +257,13 @@ public class ServerStartCommandTest {
 
 		_startServerDebug();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerStartCommandWildfly() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_initBladeWorkspace();
 
 		_addWildflyBundleToGradle();
@@ -254,11 +274,13 @@ public class ServerStartCommandTest {
 
 		_startServer();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
 	public void testServerStartCommandWildflyDebug() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_debugPort = _DEFAULT_DEBUG_PORT_WILDFLY;
 
 		_initBladeWorkspace();
@@ -271,11 +293,13 @@ public class ServerStartCommandTest {
 
 		_startServerDebug();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
 	public void testServerStartCommandWildflyDebugCustomPort() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_debugPort = _getAvailablePort();
 
 		_initBladeWorkspace();
@@ -288,7 +312,7 @@ public class ServerStartCommandTest {
 
 		_startServerDebug();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
@@ -397,8 +421,12 @@ public class ServerStartCommandTest {
 		}
 	}
 
-	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter) throws Exception {
-		PidProcess serverProcess = _findServerProcess(processFilter);
+	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter, boolean assertFound) throws Exception {
+		Optional<PidProcess> serverProcess = _findServerProcess(processFilter, assertFound);
+
+		if (!serverProcess.isPresent()) {
+			return;
+		}
 
 		boolean debugPortListening = false;
 
@@ -408,7 +436,7 @@ public class ServerStartCommandTest {
 			Assert.assertEquals("Debug port not in a correct state", _useDebug, debugPortListening);
 		}
 
-		_terminateProcess(serverProcess);
+		_terminateProcess(serverProcess.get());
 
 		if (_useDebug) {
 			debugPortListening = _isDebugPortListening(_debugPort);
@@ -417,22 +445,24 @@ public class ServerStartCommandTest {
 		}
 	}
 
-	private void _findAndTerminateTomcat() throws Exception {
+	private void _findAndTerminateTomcat(boolean assertFound) throws Exception {
 		_findAndTerminateServer(
 			process -> {
 				String displayName = process.getDisplayName();
 
 				return displayName.contains("org.apache.catalina.startup.Bootstrap");
-			});
+			},
+			assertFound);
 	}
 
-	private void _findAndTerminateWildfly() throws Exception {
+	private void _findAndTerminateWildfly(boolean assertFound) throws Exception {
 		_findAndTerminateServer(
 			process -> {
 				String displayName = process.getDisplayName();
 
 				return displayName.contains("jboss-modules");
-			});
+			},
+			assertFound);
 	}
 
 	private Optional<JavaProcess> _findProcess(
@@ -445,15 +475,20 @@ public class ServerStartCommandTest {
 		).findFirst();
 	}
 
-	private PidProcess _findServerProcess(Predicate<JavaProcess> processFilter)
+	private Optional<PidProcess> _findServerProcess(Predicate<JavaProcess> processFilter, boolean assertFound)
 		throws InterruptedException, IOException {
 
 		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
 
 		Optional<JavaProcess> optionalProcess = _findProcess(javaProcesses, processFilter);
 
-		Assert.assertTrue(
-			"Expected to find server process:\n" + _printDisplayNames(javaProcesses), optionalProcess.isPresent());
+		if (assertFound) {
+			Assert.assertTrue(
+				"Expected to find server process:\n" + _printDisplayNames(javaProcesses), optionalProcess.isPresent());
+		}
+		else {
+			return Optional.ofNullable(null);
+		}
 
 		JavaProcess javaProcess = optionalProcess.get();
 
@@ -463,7 +498,7 @@ public class ServerStartCommandTest {
 
 		Assert.assertTrue("Expected " + processName + " process to be alive", pidProcess.isAlive());
 
-		return pidProcess;
+		return Optional.of(pidProcess);
 	}
 
 	private Path _getBundleConfigPath() {
@@ -571,9 +606,18 @@ public class ServerStartCommandTest {
 	private void _startServer() throws Exception, InterruptedException {
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
-		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgs);
+		CountDownLatch latch = new CountDownLatch(1);
 
-		Thread.sleep(1000);
+		CompletableFuture.runAsync(
+			() -> {
+				latch.countDown();
+
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgs);
+			});
+
+		latch.await(5, TimeUnit.SECONDS);
+
+		Thread.sleep(5000);
 	}
 
 	private void _startServerDebug() throws Exception, InterruptedException {
@@ -583,9 +627,18 @@ public class ServerStartCommandTest {
 
 		final String[] serverStartArgsFinal = _getDebugArgs(serverStartArgs);
 
-		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgsFinal);
+		CountDownLatch latch = new CountDownLatch(1);
 
-		Thread.sleep(1000);
+		CompletableFuture.runAsync(
+			() -> {
+				latch.countDown();
+
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgsFinal);
+			});
+
+		latch.await(5, TimeUnit.SECONDS);
+
+		Thread.sleep(5000);
 	}
 
 	private void _validateBundleConfigFile(Path bundleConfigPath) throws FileNotFoundException, IOException {
