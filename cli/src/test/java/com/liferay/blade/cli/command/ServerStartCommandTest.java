@@ -568,6 +568,8 @@ public class ServerStartCommandTest {
 	private void _runServer() throws Exception, InterruptedException {
 		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
+		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		
 		CountDownLatch latch = new CountDownLatch(1);
 
 		CompletableFuture.runAsync(
@@ -577,15 +579,24 @@ public class ServerStartCommandTest {
 				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgs);
 			});
 
-		latch.await(5, TimeUnit.SECONDS);
-
 		Thread.sleep(5000);
+
+		if (!latch.await(10, TimeUnit.SECONDS)) {
+			
+			Assert.fail("CountDownLatch never triggered.");
+		}
+		
+		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		
+		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
 	private void _runServerDebug() throws Exception, InterruptedException {
 		_useDebug = true;
 
 		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
+
+		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
 
 		final String[] serverRunDebugArgs = _getDebugArgs(serverRunArgs);
 
@@ -598,47 +609,72 @@ public class ServerStartCommandTest {
 				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunDebugArgs);
 			});
 
-		latch.await(5, TimeUnit.SECONDS);
-
 		Thread.sleep(5000);
+
+		if (!latch.await(10, TimeUnit.SECONDS)) {
+			
+			Assert.fail("CountDownLatch never triggered.");
+		}
+		
+		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		
+		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
 	private void _startServer() throws Exception, InterruptedException {
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
+		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		
 		CountDownLatch latch = new CountDownLatch(1);
 
 		CompletableFuture.runAsync(
 			() -> {
-				latch.countDown();
-
 				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgs);
+
+				latch.countDown();
 			});
 
-		latch.await(5, TimeUnit.SECONDS);
-
 		Thread.sleep(5000);
+
+		if (!latch.await(10, TimeUnit.SECONDS)) {
+			
+			Assert.fail("CountDownLatch never triggered.");
+		}
+		
+		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		
+		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
 	private void _startServerDebug() throws Exception, InterruptedException {
 		_useDebug = true;
 
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
-
+		
+		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		
 		final String[] serverStartArgsFinal = _getDebugArgs(serverStartArgs);
 
 		CountDownLatch latch = new CountDownLatch(1);
 
 		CompletableFuture.runAsync(
 			() -> {
-				latch.countDown();
-
 				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgsFinal);
+
+				latch.countDown();
 			});
-
-		latch.await(5, TimeUnit.SECONDS);
-
+		
 		Thread.sleep(5000);
+
+		if (!latch.await(10, TimeUnit.SECONDS)) {
+			
+			Assert.fail("CountDownLatch never triggered.");
+		}
+		
+		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		
+		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
 	private void _validateBundleConfigFile(Path bundleConfigPath) throws FileNotFoundException, IOException {
