@@ -152,6 +152,10 @@ public class JavaProcesses {
 		System.out.println("tomcatProcess = " + tomcatProcess.get().getId());
 	}
 
+	public static int maxProcessId() {
+		return list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+	}
+
 	private static File _findJdkJar(String jar) throws IOException {
 		File retval = null;
 

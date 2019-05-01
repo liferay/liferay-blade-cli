@@ -73,7 +73,7 @@ public class ServerStartCommandTest {
 
 	}
 
-	
+
 
 	@Test
 	public void testServerInitCustomEnvironment() throws Exception {
@@ -572,7 +572,7 @@ public class ServerStartCommandTest {
 		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
 		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
-		
+
 		CountDownLatch latch = new CountDownLatch(1);
 
 		CompletableFuture.runAsync(
@@ -585,10 +585,18 @@ public class ServerStartCommandTest {
 
 		latch.await();
 
-		Thread.sleep(5000);
-		
-		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
-		
+		int newMaxProcessId = JavaProcesses.maxProcessId();
+
+		int retries = 0;
+
+		while ((newMaxProcessId < maxProcessId) && (retries < 12)) {
+			Thread.sleep(5000);
+
+			newMaxProcessId = JavaProcesses.maxProcessId();
+
+			retries++;
+		}
+
 		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
@@ -613,10 +621,18 @@ public class ServerStartCommandTest {
 
 		latch.await();
 
-		Thread.sleep(5000);
-		
-		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
-		
+		int newMaxProcessId = JavaProcesses.maxProcessId();
+
+		int retries = 0;
+
+		while ((newMaxProcessId < maxProcessId) && (retries < 12)) {
+			Thread.sleep(5000);
+
+			newMaxProcessId = JavaProcesses.maxProcessId();
+
+			retries++;
+		}
+
 		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
@@ -624,7 +640,7 @@ public class ServerStartCommandTest {
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
 		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
-		
+
 		CountDownLatch latch = new CountDownLatch(1);
 
 		CompletableFuture.runAsync(
@@ -636,11 +652,19 @@ public class ServerStartCommandTest {
 			_executorService);
 
 		latch.await();
-		
-		Thread.sleep(5000);
-		
-		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
-		
+
+		int newMaxProcessId = JavaProcesses.maxProcessId();
+
+		int retries = 0;
+
+		while ((newMaxProcessId < maxProcessId) && (retries < 12)) {
+			Thread.sleep(5000);
+
+			newMaxProcessId = JavaProcesses.maxProcessId();
+
+			retries++;
+		}
+
 		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
@@ -648,9 +672,9 @@ public class ServerStartCommandTest {
 		_useDebug = true;
 
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
-		
+
 		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
-		
+
 		final String[] serverStartArgsFinal = _getDebugArgs(serverStartArgs);
 
 		CountDownLatch latch = new CountDownLatch(1);
@@ -662,13 +686,21 @@ public class ServerStartCommandTest {
 				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgsFinal);
 			},
 			_executorService);
-		
+
 		latch.await();
-		
-		Thread.sleep(5000);
-		
-		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
-		
+
+		int newMaxProcessId = JavaProcesses.maxProcessId();
+
+		int retries = 0;
+
+		while ((newMaxProcessId < maxProcessId) && (retries < 12)) {
+			Thread.sleep(5000);
+
+			newMaxProcessId = JavaProcesses.maxProcessId();
+
+			retries++;
+		}
+
 		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
