@@ -41,6 +41,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -59,7 +61,6 @@ import org.zeroturnaround.process.Processes;
  * @author Gregory Amerson
  */
 public class ServerStartCommandTest {
-
 	@Before
 	public void setUp() throws Exception {
 		File testWorkspaceFile = temporaryFolder.newFolder("testWorkspaceDir");
@@ -71,6 +72,8 @@ public class ServerStartCommandTest {
 		_extensionsPath = extensionsFile.toPath();
 
 	}
+
+	
 
 	@Test
 	public void testServerInitCustomEnvironment() throws Exception {
@@ -577,14 +580,12 @@ public class ServerStartCommandTest {
 				latch.countDown();
 
 				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgs);
-			});
+			},
+			_executorService);
+
+		latch.await();
 
 		Thread.sleep(5000);
-
-		if (!latch.await(10, TimeUnit.SECONDS)) {
-			
-			Assert.fail("CountDownLatch never triggered.");
-		}
 		
 		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
 		
@@ -607,14 +608,12 @@ public class ServerStartCommandTest {
 				latch.countDown();
 
 				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunDebugArgs);
-			});
+			},
+			_executorService);
+
+		latch.await();
 
 		Thread.sleep(5000);
-
-		if (!latch.await(10, TimeUnit.SECONDS)) {
-			
-			Assert.fail("CountDownLatch never triggered.");
-		}
 		
 		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
 		
@@ -630,17 +629,15 @@ public class ServerStartCommandTest {
 
 		CompletableFuture.runAsync(
 			() -> {
-				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgs);
-
 				latch.countDown();
-			});
 
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgs);
+			},
+			_executorService);
+
+		latch.await();
+		
 		Thread.sleep(5000);
-
-		if (!latch.await(10, TimeUnit.SECONDS)) {
-			
-			Assert.fail("CountDownLatch never triggered.");
-		}
 		
 		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
 		
@@ -660,17 +657,15 @@ public class ServerStartCommandTest {
 
 		CompletableFuture.runAsync(
 			() -> {
-				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgsFinal);
-
 				latch.countDown();
-			});
+
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgsFinal);
+			},
+			_executorService);
+		
+		latch.await();
 		
 		Thread.sleep(5000);
-
-		if (!latch.await(10, TimeUnit.SECONDS)) {
-			
-			Assert.fail("CountDownLatch never triggered.");
-		}
 		
 		int newMaxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
 		
@@ -724,6 +719,7 @@ public class ServerStartCommandTest {
 		"liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz";
 
 	private int _debugPort = -1;
+	private ExecutorService _executorService = Executors.newSingleThreadExecutor();
 	private Path _extensionsPath = null;
 	private Path _testWorkspacePath = null;
 	private boolean _useDebug = false;
