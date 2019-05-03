@@ -788,7 +788,7 @@ public class CreateCommandTest {
 		
 		output = output.trim();
 
-		Assert.assertTrue(output, output.endsWith("/workspace/ext"));
+		Assert.assertTrue(output, output.endsWith(File.separator + "workspace" + File.separator + "ext"));
 		
 		Assert.assertTrue(output, output.startsWith("Success"));
 	}
