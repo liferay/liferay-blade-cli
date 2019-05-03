@@ -96,9 +96,7 @@ public class TemplatesTest {
 	}
 
 	private File _getExtensionsDir() {
-		File extensionsDir = new File(temporaryFolder.getRoot(), ".blade/extensions");
-
-		return extensionsDir;
+		return new File(temporaryFolder.getRoot(), ".blade/extensions");
 	}
 
 	private void _setupTestExtensions() throws Exception {

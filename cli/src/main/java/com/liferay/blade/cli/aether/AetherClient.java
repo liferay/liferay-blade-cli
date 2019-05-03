@@ -165,9 +165,7 @@ public class AetherClient {
 
 		locator.setErrorHandler(handler);
 
-		RepositorySystem system = locator.getService(RepositorySystem.class);
-
-		return system;
+		return locator.getService(RepositorySystem.class);
 	}
 
 	private static DefaultRepositorySystemSession _newRepositorySystemSession(

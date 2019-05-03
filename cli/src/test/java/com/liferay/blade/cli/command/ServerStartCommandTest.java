@@ -40,6 +40,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -58,7 +61,6 @@ import org.zeroturnaround.process.Processes;
  * @author Gregory Amerson
  */
 public class ServerStartCommandTest {
-
 	@Before
 	public void setUp() throws Exception {
 		File testWorkspaceFile = temporaryFolder.newFolder("testWorkspaceDir");
@@ -86,6 +88,8 @@ public class ServerStartCommandTest {
 
 	@Test
 	public void testServerRunCommandTomcat() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_initBladeWorkspace();
 
 		_addTomcatBundleToGradle();
@@ -96,11 +100,13 @@ public class ServerStartCommandTest {
 
 		_runServer();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerRunCommandTomcatDebug() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_debugPort = _DEFAULT_DEBUG_PORT_TOMCAT;
 
 		_initBladeWorkspace();
@@ -113,11 +119,13 @@ public class ServerStartCommandTest {
 
 		_runServerDebug();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerRunCommandTomcatDebugCustomPort() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_debugPort = _getAvailablePort();
 
 		_initBladeWorkspace();
@@ -130,11 +138,13 @@ public class ServerStartCommandTest {
 
 		_runServerDebug();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerRunCommandWildfly() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_initBladeWorkspace();
 
 		_addWildflyBundleToGradle();
@@ -145,11 +155,13 @@ public class ServerStartCommandTest {
 
 		_runServer();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
 	public void testServerRunCommandWildflyDebug() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_debugPort = _DEFAULT_DEBUG_PORT_WILDFLY;
 
 		_initBladeWorkspace();
@@ -162,11 +174,13 @@ public class ServerStartCommandTest {
 
 		_runServerDebug();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
 	public void testServerRunCommandWildflyDebugCustomPort() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_debugPort = _getAvailablePort();
 
 		_initBladeWorkspace();
@@ -179,7 +193,7 @@ public class ServerStartCommandTest {
 
 		_runServerDebug();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
@@ -194,6 +208,8 @@ public class ServerStartCommandTest {
 
 	@Test
 	public void testServerStartCommandTomcat() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_initBladeWorkspace();
 
 		_addTomcatBundleToGradle();
@@ -204,11 +220,13 @@ public class ServerStartCommandTest {
 
 		_startServer();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerStartCommandTomcatDebug() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_debugPort = _DEFAULT_DEBUG_PORT_TOMCAT;
 
 		_initBladeWorkspace();
@@ -221,11 +239,13 @@ public class ServerStartCommandTest {
 
 		_startServerDebug();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerStartCommandTomcatDebugCustomPort() throws Exception {
+		_findAndTerminateTomcat(false);
+
 		_debugPort = _getAvailablePort();
 
 		_initBladeWorkspace();
@@ -238,11 +258,13 @@ public class ServerStartCommandTest {
 
 		_startServerDebug();
 
-		_findAndTerminateTomcat();
+		_findAndTerminateTomcat(true);
 	}
 
 	@Test
 	public void testServerStartCommandWildfly() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_initBladeWorkspace();
 
 		_addWildflyBundleToGradle();
@@ -253,11 +275,13 @@ public class ServerStartCommandTest {
 
 		_startServer();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
 	public void testServerStartCommandWildflyDebug() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_debugPort = _DEFAULT_DEBUG_PORT_WILDFLY;
 
 		_initBladeWorkspace();
@@ -270,11 +294,13 @@ public class ServerStartCommandTest {
 
 		_startServerDebug();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
 	public void testServerStartCommandWildflyDebugCustomPort() throws Exception {
+		_findAndTerminateWildfly(false);
+
 		_debugPort = _getAvailablePort();
 
 		_initBladeWorkspace();
@@ -287,7 +313,7 @@ public class ServerStartCommandTest {
 
 		_startServerDebug();
 
-		_findAndTerminateWildfly();
+		_findAndTerminateWildfly(true);
 	}
 
 	@Test
@@ -328,7 +354,7 @@ public class ServerStartCommandTest {
 	private static void _terminateProcess(PidProcess tomcatPidProcess) throws InterruptedException, IOException {
 		tomcatPidProcess.destroyForcefully();
 
-		tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
+		tomcatPidProcess.waitFor(1, TimeUnit.MINUTES);
 
 		String processName = tomcatPidProcess.getDescription();
 
@@ -396,8 +422,12 @@ public class ServerStartCommandTest {
 		}
 	}
 
-	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter) throws Exception {
-		PidProcess serverProcess = _findServerProcess(processFilter);
+	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter, boolean assertFound) throws Exception {
+		Optional<PidProcess> serverProcess = _findServerProcess(processFilter, assertFound);
+
+		if (!serverProcess.isPresent()) {
+			return;
+		}
 
 		boolean debugPortListening = false;
 
@@ -407,7 +437,7 @@ public class ServerStartCommandTest {
 			Assert.assertEquals("Debug port not in a correct state", _useDebug, debugPortListening);
 		}
 
-		_terminateProcess(serverProcess);
+		_terminateProcess(serverProcess.get());
 
 		if (_useDebug) {
 			debugPortListening = _isDebugPortListening(_debugPort);
@@ -416,22 +446,24 @@ public class ServerStartCommandTest {
 		}
 	}
 
-	private void _findAndTerminateTomcat() throws Exception {
+	private void _findAndTerminateTomcat(boolean assertFound) throws Exception {
 		_findAndTerminateServer(
 			process -> {
 				String displayName = process.getDisplayName();
 
 				return displayName.contains("org.apache.catalina.startup.Bootstrap");
-			});
+			},
+			assertFound);
 	}
 
-	private void _findAndTerminateWildfly() throws Exception {
+	private void _findAndTerminateWildfly(boolean assertFound) throws Exception {
 		_findAndTerminateServer(
 			process -> {
 				String displayName = process.getDisplayName();
 
 				return displayName.contains("jboss-modules");
-			});
+			},
+			assertFound);
 	}
 
 	private Optional<JavaProcess> _findProcess(
@@ -444,15 +476,20 @@ public class ServerStartCommandTest {
 		).findFirst();
 	}
 
-	private PidProcess _findServerProcess(Predicate<JavaProcess> processFilter)
+	private Optional<PidProcess> _findServerProcess(Predicate<JavaProcess> processFilter, boolean assertFound)
 		throws InterruptedException, IOException {
 
 		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
 
 		Optional<JavaProcess> optionalProcess = _findProcess(javaProcesses, processFilter);
 
-		Assert.assertTrue(
-			"Expected to find server process:\n" + _printDisplayNames(javaProcesses), optionalProcess.isPresent());
+		if (assertFound) {
+			Assert.assertTrue(
+				"Expected to find server process:\n" + _printDisplayNames(javaProcesses), optionalProcess.isPresent());
+		}
+		else {
+			return Optional.ofNullable(null);
+		}
 
 		JavaProcess javaProcess = optionalProcess.get();
 
@@ -462,7 +499,7 @@ public class ServerStartCommandTest {
 
 		Assert.assertTrue("Expected " + processName + " process to be alive", pidProcess.isAlive());
 
-		return pidProcess;
+		return Optional.of(pidProcess);
 	}
 
 	private Path _getBundleConfigPath() {
@@ -492,9 +529,7 @@ public class ServerStartCommandTest {
 
 		serverStartArgs = serverStartArgsCollection.toArray(new String[0]);
 
-		final String[] serverStartArgsFinal = serverStartArgs;
-
-		return serverStartArgsFinal;
+		return serverStartArgs;
 	}
 
 	private void _initBladeWorkspace() throws Exception {
@@ -534,9 +569,33 @@ public class ServerStartCommandTest {
 	private void _runServer() throws Exception, InterruptedException {
 		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
-		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgs));
+		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
 
-		Thread.sleep(1000);
+		CountDownLatch latch = new CountDownLatch(1);
+
+		CompletableFuture.runAsync(
+			() -> {
+				latch.countDown();
+
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgs);
+			},
+			_executorService);
+
+		latch.await();
+
+		int newMaxProcessId = JavaProcesses.maxProcessId();
+
+		int retries = 0;
+
+		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
+			Thread.sleep(5000);
+
+			newMaxProcessId = JavaProcesses.maxProcessId();
+
+			retries++;
+		}
+
+		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
 	private void _runServerDebug() throws Exception, InterruptedException {
@@ -544,19 +603,67 @@ public class ServerStartCommandTest {
 
 		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
-		final String[] serverRunArgsFinal = _getDebugArgs(serverRunArgs);
+		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
 
-		CompletableFuture.runAsync(() -> TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunArgsFinal));
+		final String[] serverRunDebugArgs = _getDebugArgs(serverRunArgs);
 
-		Thread.sleep(1000);
+		CountDownLatch latch = new CountDownLatch(1);
+
+		CompletableFuture.runAsync(
+			() -> {
+				latch.countDown();
+
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverRunDebugArgs);
+			},
+			_executorService);
+
+		latch.await();
+
+		int newMaxProcessId = JavaProcesses.maxProcessId();
+
+		int retries = 0;
+
+		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
+			Thread.sleep(5000);
+
+			newMaxProcessId = JavaProcesses.maxProcessId();
+
+			retries++;
+		}
+
+		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
 	private void _startServer() throws Exception, InterruptedException {
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
-		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgs);
+		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
 
-		Thread.sleep(1000);
+		CountDownLatch latch = new CountDownLatch(1);
+
+		CompletableFuture.runAsync(
+			() -> {
+				latch.countDown();
+
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgs);
+			},
+			_executorService);
+
+		latch.await();
+
+		int newMaxProcessId = JavaProcesses.maxProcessId();
+
+		int retries = 0;
+
+		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
+			Thread.sleep(5000);
+
+			newMaxProcessId = JavaProcesses.maxProcessId();
+
+			retries++;
+		}
+
+		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
 	private void _startServerDebug() throws Exception, InterruptedException {
@@ -564,11 +671,35 @@ public class ServerStartCommandTest {
 
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
+		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+
 		final String[] serverStartArgsFinal = _getDebugArgs(serverStartArgs);
 
-		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgsFinal);
+		CountDownLatch latch = new CountDownLatch(1);
 
-		Thread.sleep(1000);
+		CompletableFuture.runAsync(
+			() -> {
+				latch.countDown();
+
+				TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverStartArgsFinal);
+			},
+			_executorService);
+
+		latch.await();
+
+		int newMaxProcessId = JavaProcesses.maxProcessId();
+
+		int retries = 0;
+
+		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
+			Thread.sleep(5000);
+
+			newMaxProcessId = JavaProcesses.maxProcessId();
+
+			retries++;
+		}
+
+		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
 	}
 
 	private void _validateBundleConfigFile(Path bundleConfigPath) throws FileNotFoundException, IOException {
@@ -618,6 +749,7 @@ public class ServerStartCommandTest {
 		"liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz";
 
 	private int _debugPort = -1;
+	private ExecutorService _executorService = Executors.newSingleThreadExecutor();
 	private Path _extensionsPath = null;
 	private Path _testWorkspacePath = null;
 	private boolean _useDebug = false;

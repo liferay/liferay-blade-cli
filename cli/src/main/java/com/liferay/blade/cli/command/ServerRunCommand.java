@@ -167,9 +167,7 @@ public class ServerRunCommand extends BaseCommand<ServerRunArgs> {
 			}
 		}
 
-		String debugPortString = String.valueOf(debugPort);
-
-		return debugPortString;
+		return String.valueOf(debugPort);
 	}
 
 }

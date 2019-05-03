@@ -221,9 +221,7 @@ public class ServerStartCommandMavenTest {
 
 		serverStartArgs = serverStartArgsCollection.toArray(new String[0]);
 
-		final String[] serverStartArgsFinal = serverStartArgs;
-
-		return serverStartArgsFinal;
+		return serverStartArgs;
 	}
 
 	private void _initBladeWorkspace() {

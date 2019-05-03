@@ -28,12 +28,36 @@ apply plugin: "com.gradle.build-scan"
 apply plugin: "com.liferay.change.log.builder"
 apply plugin: "com.liferay.source.formatter"
 
+task buildDockerImage(type:Exec)
+task buildInDocker(type:Exec)
 task clean(type:Delete)
 
 buildChangeLog {
 	changeLogHeader = "BLADE Version ${project.version}"
 	dirs = ["cli", "extensions", "gradle", "gradle-tooling", "libs"]
 	ticketIdPrefixes = ["BLADE", "IDE", "LPS", "LRDOCS"]
+}
+
+buildDockerImage {
+	LinkedList commands = new LinkedList <String> ();
+
+	commands.addAll(['docker', 'build', '--tag', 'liferay-blade-cli-build', '.'])
+
+	commandLine commands.toArray()
+}
+
+buildInDocker {
+	dependsOn buildDockerImage
+	LinkedList commands = new LinkedList <String> ();
+
+	commands.addAll(['docker', 'run', '--rm', '--init', '-p', '5005:5005', 'liferay-blade-cli-build'])
+
+	if (project.hasProperty('gradleTasks')) {
+
+		commands.addAll(gradleTasks.split(','))
+	}
+
+	commandLine commands.toArray()
 }
 
 buildScan {

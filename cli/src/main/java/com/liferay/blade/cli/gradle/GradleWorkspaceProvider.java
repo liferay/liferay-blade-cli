@@ -49,15 +49,11 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 	}
 
 	public File getGradlePropertiesFile(File dir) {
-		File gradlePropertiesFile = new File(getWorkspaceDir(dir), _GRADLE_PROPERTIES_FILE_NAME);
-
-		return gradlePropertiesFile;
+		return new File(getWorkspaceDir(dir), _GRADLE_PROPERTIES_FILE_NAME);
 	}
 
 	public File getSettingGradleFile(File dir) {
-		File settingGradleFile = new File(getWorkspaceDir(dir), _SETTINGS_GRADLE_FILE_NAME);
-
-		return settingGradleFile;
+		return new File(getWorkspaceDir(dir), _SETTINGS_GRADLE_FILE_NAME);
 	}
 
 	public File getWorkspaceDir(BladeCLI blade) {
