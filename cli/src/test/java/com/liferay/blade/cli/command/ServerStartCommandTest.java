@@ -73,8 +73,6 @@ public class ServerStartCommandTest {
 
 	}
 
-
-
 	@Test
 	public void testServerInitCustomEnvironment() throws Exception {
 		_initBladeWorkspace();
@@ -589,7 +587,7 @@ public class ServerStartCommandTest {
 
 		int retries = 0;
 
-		while ((newMaxProcessId < maxProcessId) && (retries < 12)) {
+		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
 			Thread.sleep(5000);
 
 			newMaxProcessId = JavaProcesses.maxProcessId();
@@ -625,7 +623,7 @@ public class ServerStartCommandTest {
 
 		int retries = 0;
 
-		while ((newMaxProcessId < maxProcessId) && (retries < 12)) {
+		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
 			Thread.sleep(5000);
 
 			newMaxProcessId = JavaProcesses.maxProcessId();
@@ -657,7 +655,7 @@ public class ServerStartCommandTest {
 
 		int retries = 0;
 
-		while ((newMaxProcessId < maxProcessId) && (retries < 12)) {
+		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
 			Thread.sleep(5000);
 
 			newMaxProcessId = JavaProcesses.maxProcessId();
@@ -693,7 +691,7 @@ public class ServerStartCommandTest {
 
 		int retries = 0;
 
-		while ((newMaxProcessId < maxProcessId) && (retries < 12)) {
+		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
 			Thread.sleep(5000);
 
 			newMaxProcessId = JavaProcesses.maxProcessId();
