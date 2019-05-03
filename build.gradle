@@ -28,8 +28,10 @@ apply plugin: "com.gradle.build-scan"
 apply plugin: "com.liferay.change.log.builder"
 apply plugin: "com.liferay.source.formatter"
 
-task buildDockerImage(type:Exec)
-task buildInDocker(type:Exec)
+task dockerBuildImage(type:Exec)
+task dockerPublishRelease(type:Exec)
+task dockerPublishSnapshots(type:Exec)
+task dockerPublishSnapshotsTest(type:Exec)
 task clean(type:Delete)
 
 buildChangeLog {
@@ -38,26 +40,28 @@ buildChangeLog {
 	ticketIdPrefixes = ["BLADE", "IDE", "LPS", "LRDOCS"]
 }
 
-buildDockerImage {
-	LinkedList commands = new LinkedList <String> ();
+dockerBuildImage {
+	List<String> args = ['docker', 'build', '--tag', 'liferay-blade-cli-build', '.']
 
-	commands.addAll(['docker', 'build', '--tag', 'liferay-blade-cli-build', '.'])
-
-	commandLine commands.toArray()
+	commandLine args
 }
 
-buildInDocker {
-	dependsOn buildDockerImage
-	LinkedList commands = new LinkedList <String> ();
+dockerPublishSnapshots {
+	dependsOn dockerBuildImage
 
-	commands.addAll(['docker', 'run', '--rm', '--init', '-p', '5005:5005', 'liferay-blade-cli-build'])
+	String userHome = System.getProperty("user.home")
 
-	if (project.hasProperty('gradleTasks')) {
+	List<String> args = ['docker', 'run', '--rm', '--init', '-v', "${userHome}/.gradle/gradle.encrypted.properties:/root/.gradle/gradle.encrypted.properties", 'liferay-blade-cli-build']
 
-		commands.addAll(gradleTasks.split(','))
-	}
+	commandLine args
+}
 
-	commandLine commands.toArray()
+dockerPublishRelease {
+	dependsOn dockerBuildImage
+
+	List<String> args = ['docker', 'run', '--rm', '--init', 'liferay-blade-cli-build', 'release']
+
+	commandLine args
 }
 
 buildScan {
