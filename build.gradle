@@ -28,11 +28,11 @@ apply plugin: "com.gradle.build-scan"
 apply plugin: "com.liferay.change.log.builder"
 apply plugin: "com.liferay.source.formatter"
 
+task clean(type:Delete)
 task dockerBuildImage(type:Exec)
 task dockerPublishRelease(type:Exec)
 task dockerPublishSnapshots(type:Exec)
 task dockerPublishSnapshotsTest(type:Exec)
-task clean(type:Delete)
 
 buildChangeLog {
 	changeLogHeader = "BLADE Version ${project.version}"
