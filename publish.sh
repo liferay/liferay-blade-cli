@@ -18,17 +18,6 @@ localNexusOpt=""
 
 if [ "$repoHost" = "http://localhost:8081" ]; then
     localNexusOpt="-PlocalNexus"
-
-    docker stop /local-nexus
-    docker rm /local-nexus
-
-    docker pull sonatype/nexus:2.14.11-01 && \
-    docker run -d -p 8081:8081 --name local-nexus sonatype/nexus:2.14.11-01
-
-    until $(curl --output /dev/null --silent --head --fail http://localhost:8081/nexus/); do
-      printf '.'
-      sleep 5
-    done
 fi
 
 # First clean local build folder to try to minimize variants
@@ -84,8 +73,8 @@ if [ "$?" != "0" ]; then
    exit 1
 fi
 
-# Build the blade cli jar locally, but don't publish.
-bladeCliJarCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} --refresh-dependencies :cli:jar --info --scan)
+# Test the blade cli jar locally, but don't publish.
+bladeCliJarCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} --refresh-dependencies check --info --scan)
 
 echo "$bladeCliJarCommand"
 

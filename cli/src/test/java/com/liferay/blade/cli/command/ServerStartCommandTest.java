@@ -569,7 +569,7 @@ public class ServerStartCommandTest {
 	private void _runServer() throws Exception, InterruptedException {
 		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
-		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		int maxProcessId = JavaProcesses.maxProcessId();
 
 		CountDownLatch latch = new CountDownLatch(1);
 
@@ -603,7 +603,7 @@ public class ServerStartCommandTest {
 
 		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
-		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		int maxProcessId = JavaProcesses.maxProcessId();
 
 		final String[] serverRunDebugArgs = _getDebugArgs(serverRunArgs);
 
@@ -637,7 +637,7 @@ public class ServerStartCommandTest {
 	private void _startServer() throws Exception, InterruptedException {
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
-		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		int maxProcessId = JavaProcesses.maxProcessId();
 
 		CountDownLatch latch = new CountDownLatch(1);
 
@@ -671,7 +671,7 @@ public class ServerStartCommandTest {
 
 		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
-		int maxProcessId = JavaProcesses.list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		int maxProcessId = JavaProcesses.maxProcessId();
 
 		final String[] serverStartArgsFinal = _getDebugArgs(serverStartArgs);
 
