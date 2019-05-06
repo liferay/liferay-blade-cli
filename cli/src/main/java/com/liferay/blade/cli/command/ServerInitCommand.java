@@ -57,13 +57,13 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 
 			String command = commandStringBuilder.toString();
 
-			ProcessResult processResult = gradleExec.executeTask(command, false);
+			ProcessResult processResult = gradleExec.executeTask(command, true);
 
 			if (processResult.getResultCode() == 0) {
 				bladeCLI.out("\nserver init completed successfully.");
 			}
 			else {
-				bladeCLI.error("\nerror: server init failed.  See error output above.");
+				bladeCLI.error(processResult.getError() + "\nerror: server init failed.  See error output above.");
 			}
 		}
 		else {

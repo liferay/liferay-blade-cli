@@ -54,6 +54,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import org.zeroturnaround.process.PidProcess;
+import org.zeroturnaround.process.ProcessUtil;
 import org.zeroturnaround.process.Processes;
 
 /**
@@ -351,10 +352,8 @@ public class ServerStartCommandTest {
 		}
 	}
 
-	private static void _terminateProcess(PidProcess tomcatPidProcess) throws InterruptedException, IOException {
-		tomcatPidProcess.destroyForcefully();
-
-		tomcatPidProcess.waitFor(1, TimeUnit.MINUTES);
+	private static void _terminateProcess(PidProcess tomcatPidProcess) throws Exception {
+		ProcessUtil.destroyForcefullyAndWait(tomcatPidProcess, 1, TimeUnit.MINUTES);
 
 		String processName = tomcatPidProcess.getDescription();
 

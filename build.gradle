@@ -51,7 +51,7 @@ dockerPublishSnapshots {
 
 	String userHome = System.getProperty("user.home")
 
-	List<String> args = ['docker', 'run', '--rm', '--init', '-v', "${userHome}/.gradle/gradle.encrypted.properties:/root/.gradle/gradle.encrypted.properties", 'liferay-blade-cli-build']
+	List<String> args = ['docker', 'run', '--rm', '--init', '-v', "${userHome}/.gradle/gradle.credentials.properties:/root/.gradle/gradle.encrypted.properties", 'liferay-blade-cli-build']
 
 	commandLine args
 }
