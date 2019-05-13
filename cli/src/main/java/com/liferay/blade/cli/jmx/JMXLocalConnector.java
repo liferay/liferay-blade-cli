@@ -71,7 +71,7 @@ public class JMXLocalConnector {
 
 				logger.accept("Trying to load VirtualMachine class...");
 
-				Class< ? > vmClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachine");
+				Class<?> vmClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachine");
 
 				Method listMethod = vmClass.getMethod("list");
 
@@ -107,7 +107,7 @@ public class JMXLocalConnector {
 
 					nl.setAccessible(true);
 
-					Vector< ? > nativeLibs = (Vector< ? >)nl.get(toolsClassloader);
+					Vector<?> nativeLibs = (Vector<?>)nl.get(toolsClassloader);
 
 					for (Object nativeLib : nativeLibs) {
 						Class<?> clazz = nativeLib.getClass();
@@ -164,7 +164,7 @@ public class JMXLocalConnector {
 		ClassLoader toolsClassloader, Class<?> vmClass, Object vmd, String name, Consumer<String> logger) {
 
 		try {
-			Class< ? > vmdClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
+			Class<?> vmdClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
 
 			Method idMethod = vmdClass.getMethod("id");
 

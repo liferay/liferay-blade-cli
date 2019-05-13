@@ -95,7 +95,7 @@ public class PrompterTest {
 		String correctResult = _question + " (y/n)";
 
 		Entry<Boolean, String> confirmEntry = _confirm(_question, answer);
-		
+
 		String output = confirmEntry.getValue();
 
 		Assert.assertEquals(output.trim(), correctResult);
@@ -108,7 +108,7 @@ public class PrompterTest {
 
 		for (Entry<String, Optional<Boolean>> entry : correctEndingOutputTests.entrySet()) {
 			confirmEntry = _confirm(_question, answer, entry.getValue());
-			
+
 			String receivedOutput = confirmEntry.getValue();
 
 			receivedOutput = receivedOutput.trim();

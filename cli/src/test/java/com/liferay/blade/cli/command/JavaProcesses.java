@@ -72,7 +72,7 @@ public class JavaProcesses {
 				_log(logger, "Found " + vmds.size() + " vms on this machine.");
 
 				for (Object vmd : vmds) {
-					Class< ? > vmdClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
+					Class<?> vmdClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
 
 					Method displayNameMethod = vmdClass.getMethod("displayName");
 
@@ -149,11 +149,19 @@ public class JavaProcesses {
 			tomcatFilter
 		).findAny();
 
-		System.out.println("tomcatProcess = " + tomcatProcess.get().getId());
+		System.out.println(
+			"tomcatProcess = " +
+				tomcatProcess.get(
+				).getId());
 	}
 
 	public static int maxProcessId() {
-		return list().stream().mapToInt(JavaProcess::getId).max().getAsInt();
+		return list(
+		).stream(
+		).mapToInt(
+			JavaProcess::getId
+		).max(
+		).getAsInt();
 	}
 
 	private static File _findJdkJar(String jar) throws IOException {

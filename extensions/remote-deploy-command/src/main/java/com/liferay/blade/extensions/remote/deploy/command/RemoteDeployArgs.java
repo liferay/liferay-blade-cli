@@ -24,8 +24,10 @@ import com.liferay.blade.cli.command.BaseArgs;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandDescription = "Builds and deploys bundles to the Liferay module framework with gogo shell.",
-commandNames = {"rdeploy", "remote-deploy"})
+@Parameters(
+	commandDescription = "Builds and deploys bundles to the Liferay module framework with gogo shell.",
+	commandNames = {"rdeploy", "remote-deploy"}
+)
 public class RemoteDeployArgs extends BaseArgs {
 
 	public boolean isWatch() {

@@ -56,14 +56,14 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 
 				try (Stream<Path> pathStream = Files.walk(baseDirPath)) {
 					List<Path> paths = pathStream.filter(
-			        	path -> _pathHasFileName(path, "service.xml")
-			        ).map(
-			        	path -> baseDirPath.relativize(path)
-			        ).map(
-			        	path -> path.getParent()
-			        ).collect(
-			        	Collectors.toList()
-			        );
+						path -> _pathHasFileName(path, "service.xml")
+					).map(
+						path -> baseDirPath.relativize(path)
+					).map(
+						path -> path.getParent()
+					).collect(
+						Collectors.toList()
+					);
 
 					if (!paths.isEmpty()) {
 						StringBuilder sb = new StringBuilder();
@@ -75,7 +75,7 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 
 							sb.append(pathString);
 
-							if (x + 1 != paths.size()) {
+							if ((x + 1) != paths.size()) {
 								sb.append(",");
 							}
 						}

@@ -196,22 +196,22 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 	private static final int _getState(String state) {
 		String bundleState = state.toUpperCase();
 
-		if ("ACTIVE".equals(bundleState)) {
+		if (Objects.equals("ACTIVE", bundleState)) {
 			return Bundle.ACTIVE;
 		}
-		else if ("INSTALLED".equals(bundleState)) {
+		else if (Objects.equals("INSTALLED", bundleState)) {
 			return Bundle.INSTALLED;
 		}
-		else if ("RESOLVED".equals(bundleState)) {
+		else if (Objects.equals("RESOLVED", bundleState)) {
 			return Bundle.RESOLVED;
 		}
-		else if ("STARTING".equals(bundleState)) {
+		else if (Objects.equals("STARTING", bundleState)) {
 			return Bundle.STARTING;
 		}
-		else if ("STOPPING".equals(bundleState)) {
+		else if (Objects.equals("STOPPING", bundleState)) {
 			return Bundle.STOPPING;
 		}
-		else if ("UNINSTALLED".equals(bundleState)) {
+		else if (Objects.equals("UNINSTALLED", bundleState)) {
 			return Bundle.UNINSTALLED;
 		}
 

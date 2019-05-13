@@ -26,6 +26,7 @@ import java.nio.file.Path;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
@@ -76,14 +77,12 @@ public class TestUtil {
 					if (line.startsWith("Picked up JAVA_TOOL_OPTIONS")) {
 						continue;
 					}
-					
 
 					if (line.contains("LC_ALL: cannot change locale")) {
 						continue;
 					}
-					
+
 					sb.append(line);
-					
 
 					if (scanner.hasNextLine()) {
 						sb.append(System.lineSeparator());
@@ -127,7 +126,7 @@ public class TestUtil {
 		Predicate<String> slf4JFilter = line -> line.startsWith("SLF4J:");
 
 		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
-		
+
 		Collection<Predicate<String>> filters = Arrays.asList(localeFilter, slf4JFilter);
 
 		StringPrintStream errorPrintStream = StringPrintStream.newFilteredInstance(filters);
@@ -151,7 +150,7 @@ public class TestUtil {
 
 		String settingsDirName = settingsDir.getName();
 
-		if (!".blade".equals(settingsDirName)) {
+		if (!Objects.equals(".blade", settingsDirName)) {
 			settingsDir = new File(settingsDir, ".blade");
 		}
 

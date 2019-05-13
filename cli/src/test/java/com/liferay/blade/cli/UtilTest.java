@@ -86,7 +86,9 @@ public class UtilTest {
 		File tempTestFile = null;
 
 		try {
-			File absoluteDirectory = new File(".").getAbsoluteFile();
+			File absoluteDirectory = new File(
+				"."
+			).getAbsoluteFile();
 
 			File parentDirectory = absoluteDirectory.getParentFile();
 

@@ -207,9 +207,8 @@ public class PropertiesLocator {
 				file -> {
 					String absolutePath = file.getAbsolutePath();
 
-					return ((absolutePath.endsWith(".jar")) ||
-						 (absolutePath.endsWith(".lpkg"))) &&
-						 (!absolutePath.contains("/osgi/state/"));
+					return (absolutePath.endsWith(".jar") || absolutePath.endsWith(".lpkg")) &&
+						   !absolutePath.contains("/osgi/state/");
 				}
 			).forEach(
 				file -> {
@@ -490,7 +489,6 @@ public class PropertiesLocator {
 						ioe.printStackTrace();
 					}
 				}
-
 			);
 		}
 

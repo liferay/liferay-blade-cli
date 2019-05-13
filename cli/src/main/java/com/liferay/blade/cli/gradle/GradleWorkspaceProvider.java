@@ -71,8 +71,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		}
 
 		FilenameFilter gradleFilter =
-			(file, name) -> _SETTINGS_GRADLE_FILE_NAME.equals(name) ||
-			 _GRADLE_PROPERTIES_FILE_NAME.equals(name);
+			(file, name) -> _SETTINGS_GRADLE_FILE_NAME.equals(name) || _GRADLE_PROPERTIES_FILE_NAME.equals(name);
 
 		File[] matches = dir.listFiles(gradleFilter);
 

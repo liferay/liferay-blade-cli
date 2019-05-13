@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -47,7 +48,7 @@ public class BladeTest extends BladeCLI {
 		if (settingsFile.exists()) {
 			String name = settingsFile.getName();
 
-			if ("settings.properties".equals(name)) {
+			if (Objects.equals("settings.properties", name)) {
 				_migrateBladeSettingsFile(settingsFile);
 			}
 		}
@@ -84,9 +85,8 @@ public class BladeTest extends BladeCLI {
 
 				String errors = stringPrintStream.get();
 
-				
 				errors = errors.trim();
-				
+
 				StringBuilder sb = new StringBuilder();
 
 				try (Scanner scanner = new Scanner(errors)) {
@@ -101,14 +101,12 @@ public class BladeTest extends BladeCLI {
 							if (line.startsWith("Picked up JAVA_TOOL_OPTIONS")) {
 								continue;
 							}
-							
 
 							if (line.contains("LC_ALL: cannot change locale")) {
 								continue;
 							}
-							
+
 							sb.append(line);
-							
 
 							if (scanner.hasNextLine()) {
 								sb.append(System.lineSeparator());
@@ -116,7 +114,7 @@ public class BladeTest extends BladeCLI {
 						}
 					}
 				}
-				
+
 				errors = sb.toString();
 
 				errors = errors.replaceAll("^\\/bin\\/$", "");

@@ -54,10 +54,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateActivator() throws Exception {
 		File tempRoot = temporaryFolder.getRoot();
 
-		String[] mavenArgs =
-			{"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "activator", "bar-activator"};
+		String[] mavenArgs = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "activator", "bar-activator"
+		};
 
-		String projectPath = new File(tempRoot, "bar-activator").getAbsolutePath();
+		String projectPath = new File(
+			tempRoot, "bar-activator"
+		).getAbsolutePath();
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 
@@ -80,7 +83,9 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "api", "foo"};
 
-		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
+		String projectPath = new File(
+			tempRoot, "foo"
+		).getAbsolutePath();
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 
@@ -114,7 +119,9 @@ public class CreateCommandMavenTest implements MavenExecutor {
 			"-H", "1.0.0", "loginHook"
 		};
 
-		String projectPath = new File(tempRoot, "loginHook").getAbsolutePath();
+		String projectPath = new File(
+			tempRoot, "loginHook"
+		).getAbsolutePath();
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 
@@ -142,7 +149,9 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo"};
 
-		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
+		String projectPath = new File(
+			tempRoot, "foo"
+		).getAbsolutePath();
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 
@@ -171,7 +180,9 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-b", "maven", "-t", "mvc-portlet", "foo"};
 
-		String projectPath = new File(tempRoot, "foo").getAbsolutePath();
+		String projectPath = new File(
+			tempRoot, "foo"
+		).getAbsolutePath();
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 

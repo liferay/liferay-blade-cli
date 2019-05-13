@@ -33,9 +33,7 @@ import java.nio.charset.Charset;
 public class StringConverter {
 
 	public static String fromInputStream(final InputStream inputStream, Charset charset) throws IOException {
-		try (InputStream is = inputStream;
-			ByteArrayOutputStream outputStream = _getOutputStream(is)) {
-
+		try (InputStream is = inputStream; ByteArrayOutputStream outputStream = _getOutputStream(is)) {
 			return new String(outputStream.toByteArray(), charset);
 		}
 	}
@@ -74,6 +72,7 @@ public class StringConverter {
 			final char[] buffer = new char[bufferSize];
 			Reader reader = new InputStreamReader(inputStream, "UTF-8");
 			int length;
+
 			while ((length = reader.read(buffer, 0, buffer.length)) != -1) {
 				printStream.append(CharBuffer.wrap(buffer), 0, length);
 			}

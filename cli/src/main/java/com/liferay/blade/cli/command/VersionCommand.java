@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -49,7 +50,7 @@ public class VersionCommand extends BaseCommand<VersionArgs> {
 
 				String bundleSymbolicName = attributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
 
-				if ("com.liferay.blade.cli".equals(bundleSymbolicName)) {
+				if (Objects.equals("com.liferay.blade.cli", bundleSymbolicName)) {
 					return attributes.getValue(Constants.BUNDLE_VERSION);
 				}
 			}

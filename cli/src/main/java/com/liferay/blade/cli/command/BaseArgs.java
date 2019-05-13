@@ -52,7 +52,9 @@ public class BaseArgs {
 	}
 
 	@Parameter(description = "Specify a new base directory (default working directory).", names = "--base")
-	private String _base = new File("").getAbsolutePath();
+	private String _base = new File(
+		""
+	).getAbsolutePath();
 
 	@Parameter(description = "Get help on a specific command.", help = true, names = "--help")
 	private boolean _help;

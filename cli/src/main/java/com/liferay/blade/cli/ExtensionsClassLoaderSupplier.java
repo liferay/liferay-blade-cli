@@ -146,7 +146,6 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 				for (Object key : keySet) {
 					String extension = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
 
-
 					if (classLoader.getResource(extension) != null) {
 						extensions.add(extension);
 					}
@@ -176,12 +175,13 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 						System.err.println(errorString);
 					}
 				}
-			} catch (NoSuchElementException e) {
+			}
+			catch (NoSuchElementException nsee) {
 				StringBuilder sb = new StringBuilder();
 
 				sb.append("Error encountered while loading custom extensions.");
 				sb.append(System.lineSeparator());
-				sb.append(e.getMessage());
+				sb.append(nsee.getMessage());
 				sb.append(System.lineSeparator());
 				sb.append("Only built-in commands will be recognized.");
 				sb.append(System.lineSeparator());

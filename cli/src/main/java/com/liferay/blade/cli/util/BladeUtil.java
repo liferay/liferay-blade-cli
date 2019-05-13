@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -72,7 +73,11 @@ public class BladeUtil {
 
 		FileUtil.unzip(inputStream, destinationDir);
 
-		new File(destinationDir, "gradlew").setExecutable(true);
+		new File(
+			destinationDir, "gradlew"
+		).setExecutable(
+			true
+		);
 	}
 
 	public static boolean canConnect(String host, int port) {
@@ -103,7 +108,7 @@ public class BladeUtil {
 		if (dir == null) {
 			return null;
 		}
-		else if (".".equals(dir.toString()) || !dir.isAbsolute()) {
+		else if (Objects.equals(".", dir.toString()) || !dir.isAbsolute()) {
 			try {
 				dir = dir.getCanonicalFile();
 			}
@@ -365,7 +370,6 @@ public class BladeUtil {
 						}
 					}
 				}
-
 			}
 			catch (Exception e) {
 				e.printStackTrace();

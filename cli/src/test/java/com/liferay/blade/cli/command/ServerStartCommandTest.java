@@ -62,6 +62,7 @@ import org.zeroturnaround.process.Processes;
  * @author Gregory Amerson
  */
 public class ServerStartCommandTest {
+
 	@Before
 	public void setUp() throws Exception {
 		File testWorkspaceFile = temporaryFolder.newFolder("testWorkspaceDir");
@@ -71,7 +72,6 @@ public class ServerStartCommandTest {
 		File extensionsFile = temporaryFolder.newFolder(".blade", "extensions");
 
 		_extensionsPath = extensionsFile.toPath();
-
 	}
 
 	@Test

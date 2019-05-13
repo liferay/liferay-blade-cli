@@ -77,45 +77,49 @@ public interface MavenExecutor {
 
 			CountDownLatch latch = new CountDownLatch(2);
 
-			CompletableFuture.runAsync(() -> {
-				String line = null;
+			CompletableFuture.runAsync(
+				() -> {
+					String line = null;
 
-				try {
-					while ((line = processOutput.readLine()) != null) {
-						output.append(line);
-						output.append(System.lineSeparator());
+					try {
+						while ((line = processOutput.readLine()) != null) {
+							output.append(line);
+							output.append(System.lineSeparator());
 
-						if (line.contains("BUILD SUCCESS")) {
-							buildSuccess.set(true);
+							if (line.contains("BUILD SUCCESS")) {
+								buildSuccess.set(true);
+							}
+
+							if (printOutput) {
+								System.out.println(line);
+							}
 						}
 
-						if (printOutput) {
-							System.out.println(line);
-						}
+						latch.countDown();
 					}
-
-					latch.countDown();
-				} catch (Exception e) {
-				}
-			});
-
-			CompletableFuture.runAsync(() -> {
-				String line = null;
-
-				try {
-					while ((line = processError.readLine()) != null) {
-						output.append(line);
-						output.append(System.lineSeparator());
-
-						if (printOutput) {
-							System.err.println(line);
-						}
+					catch (Exception e) {
 					}
+				});
 
-					latch.countDown();
-				} catch (Exception e) {
-				}
-			});
+			CompletableFuture.runAsync(
+				() -> {
+					String line = null;
+
+					try {
+						while ((line = processError.readLine()) != null) {
+							output.append(line);
+							output.append(System.lineSeparator());
+
+							if (printOutput) {
+								System.err.println(line);
+							}
+						}
+
+						latch.countDown();
+					}
+					catch (Exception e) {
+					}
+				});
 
 			latch.await();
 

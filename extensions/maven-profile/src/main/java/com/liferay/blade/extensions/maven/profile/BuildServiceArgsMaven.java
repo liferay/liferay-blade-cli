@@ -24,8 +24,7 @@ import com.liferay.blade.cli.command.BaseArgs;
  * @author Christopher Bryan Boyd
  */
 @Parameters(
-	commandDescription = "Run Service Builder on all relevant projects in the workspace.",
-	commandNames = "buildService"
+	commandDescription = "Run Service Builder on all relevant projects in the workspace.", commandNames = "buildService"
 )
 public class BuildServiceArgsMaven extends BaseArgs {
 }

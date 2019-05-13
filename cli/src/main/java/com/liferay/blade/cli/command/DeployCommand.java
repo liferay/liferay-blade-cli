@@ -83,7 +83,11 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 			PrintStream err = bladeCLI.error();
 
-			new ConnectException(errorMessage).printStackTrace(err);
+			new ConnectException(
+				errorMessage
+			).printStackTrace(
+				err
+			);
 
 			return;
 		}

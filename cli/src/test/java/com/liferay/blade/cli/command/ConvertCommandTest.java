@@ -68,14 +68,18 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(
 			new File(
-				testdir, "plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-api").exists());
+				testdir, "plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-api"
+			).exists());
 
 		Assert.assertTrue(
 			new File(
-				testdir,
-				"plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-service").exists());
+				testdir, "plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-service"
+			).exists());
 
-		Assert.assertTrue(new File(testdir, "plugins-sdk-with-git/wars/sample-service-builder-portlet").exists());
+		Assert.assertTrue(
+			new File(
+				testdir, "plugins-sdk-with-git/wars/sample-service-builder-portlet"
+			).exists());
 	}
 
 	@Test
@@ -104,11 +108,20 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(layoutWar.exists());
 
-		Assert.assertFalse(new File(layoutWar, "build.xml").exists());
+		Assert.assertFalse(
+			new File(
+				layoutWar, "build.xml"
+			).exists());
 
-		Assert.assertFalse(new File(layoutWar, "build.gradle").exists());
+		Assert.assertFalse(
+			new File(
+				layoutWar, "build.gradle"
+			).exists());
 
-		Assert.assertFalse(new File(layoutWar, "docroot").exists());
+		Assert.assertFalse(
+			new File(
+				layoutWar, "docroot"
+			).exists());
 	}
 
 	@Test
@@ -137,7 +150,10 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(sampleExpandoHook.exists());
 
-		Assert.assertFalse(new File(projectDir, "plugins-sdk/hooks/sample-application-adapter-hook").exists());
+		Assert.assertFalse(
+			new File(
+				projectDir, "plugins-sdk/hooks/sample-application-adapter-hook"
+			).exists());
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-servlet-filter-hook"};
 
@@ -147,7 +163,10 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(sampleServletFilterHook.exists());
 
-		Assert.assertFalse(new File(projectDir, "plugins-sdk/hooks/sample-servlet-filter-hook").exists());
+		Assert.assertFalse(
+			new File(
+				projectDir, "plugins-sdk/hooks/sample-servlet-filter-hook"
+			).exists());
 	}
 
 	@Test
@@ -176,17 +195,35 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(theme.exists());
 
-		Assert.assertFalse(new File(theme, "build.xml").exists());
+		Assert.assertFalse(
+			new File(
+				theme, "build.xml"
+			).exists());
 
-		Assert.assertTrue(new File(theme, "build.gradle").exists());
+		Assert.assertTrue(
+			new File(
+				theme, "build.gradle"
+			).exists());
 
-		Assert.assertFalse(new File(theme, "docroot").exists());
+		Assert.assertFalse(
+			new File(
+				theme, "docroot"
+			).exists());
 
-		Assert.assertTrue(new File(theme, "src/main/webapp").exists());
+		Assert.assertTrue(
+			new File(
+				theme, "src/main/webapp"
+			).exists());
 
-		Assert.assertFalse(new File(theme, "src/main/webapp/_diffs").exists());
+		Assert.assertFalse(
+			new File(
+				theme, "src/main/webapp/_diffs"
+			).exists());
 
-		Assert.assertFalse(new File(projectDir, "plugins-sdk/themes/sample-styled-minimal-theme").exists());
+		Assert.assertFalse(
+			new File(
+				projectDir, "plugins-sdk/themes/sample-styled-minimal-theme"
+			).exists());
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
 
@@ -196,17 +233,35 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(advancedTheme.exists());
 
-		Assert.assertFalse(new File(advancedTheme, "build.xml").exists());
+		Assert.assertFalse(
+			new File(
+				advancedTheme, "build.xml"
+			).exists());
 
-		Assert.assertTrue(new File(advancedTheme, "build.gradle").exists());
+		Assert.assertTrue(
+			new File(
+				advancedTheme, "build.gradle"
+			).exists());
 
-		Assert.assertFalse(new File(advancedTheme, "docroot").exists());
+		Assert.assertFalse(
+			new File(
+				advancedTheme, "docroot"
+			).exists());
 
-		Assert.assertTrue(new File(advancedTheme, "src/main/webapp").exists());
+		Assert.assertTrue(
+			new File(
+				advancedTheme, "src/main/webapp"
+			).exists());
 
-		Assert.assertFalse(new File(advancedTheme, "src/main/webapp/_diffs").exists());
+		Assert.assertFalse(
+			new File(
+				advancedTheme, "src/main/webapp/_diffs"
+			).exists());
 
-		Assert.assertFalse(new File(projectDir, "plugins-sdk/themes/sample-styled-advanced-theme").exists());
+		Assert.assertFalse(
+			new File(
+				projectDir, "plugins-sdk/themes/sample-styled-advanced-theme"
+			).exists());
 	}
 
 	@Test
@@ -234,7 +289,10 @@ public class ConvertCommandTest {
 			".*compile group: 'org.apache.tapestry', name: 'tapestry-framework', version: '4.1'.*",
 			".*compile group: 'org.apache.tapestry', name: 'tapestry-portlet', version: '4.1'.*");
 
-		Assert.assertFalse(new File(projectDir, "wars/sample-tapestry-portlet/ivy.xml").exists());
+		Assert.assertFalse(
+			new File(
+				projectDir, "wars/sample-tapestry-portlet/ivy.xml"
+			).exists());
 	}
 
 	@Test
@@ -254,8 +312,8 @@ public class ConvertCommandTest {
 			".*compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.2'.*");
 
 		_notContains(
-			new File(projectDir, "wars/sample-hibernate-portlet/build.gradle"),
-			".*antlr2.*", ".*hibernate3.*", ".*util-slf4j.*");
+			new File(projectDir, "wars/sample-hibernate-portlet/build.gradle"), ".*antlr2.*", ".*hibernate3.*",
+			".*util-slf4j.*");
 	}
 
 	@Test
@@ -302,7 +360,10 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		Assert.assertTrue(new File(projectDir, "wars/sample-html4-theme/docroot_backup/other/afile").exists());
+		Assert.assertTrue(
+			new File(
+				projectDir, "wars/sample-html4-theme/docroot_backup/other/afile"
+			).exists());
 	}
 
 	@Rule

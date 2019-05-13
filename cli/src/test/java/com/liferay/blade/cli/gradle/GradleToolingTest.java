@@ -65,7 +65,9 @@ public class GradleToolingTest {
 	@Test
 	public void testGetOutputFiles() throws Exception {
 		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
-			new File(temporaryFolder.getRoot(), "build/testws1").toPath());
+			new File(
+				temporaryFolder.getRoot(), "build/testws1"
+			).toPath());
 
 		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
@@ -82,7 +84,9 @@ public class GradleToolingTest {
 	@Test
 	public void testGetPluginClassNames() throws Exception {
 		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
-			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet").toPath());
+			new File(
+				temporaryFolder.getRoot(), "build/testws1/modules/testportlet"
+			).toPath());
 
 		Set<String> pluginClassNames = projectInfo.getPluginClassNames();
 
@@ -93,7 +97,9 @@ public class GradleToolingTest {
 	@Test
 	public void testIsLiferayModule() throws Exception {
 		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
-			new File(temporaryFolder.getRoot(), "build/testws1/modules/testportlet").toPath());
+			new File(
+				temporaryFolder.getRoot(), "build/testws1/modules/testportlet"
+			).toPath());
 
 		Assert.assertTrue(projectInfo.isLiferayProject());
 	}
@@ -101,7 +107,9 @@ public class GradleToolingTest {
 	@Test
 	public void testIsNotLiferayModule() throws Exception {
 		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
-			new File(temporaryFolder.getRoot(), "build/testws1/modules").toPath());
+			new File(
+				temporaryFolder.getRoot(), "build/testws1/modules"
+			).toPath());
 
 		Assert.assertFalse(projectInfo.isLiferayProject());
 	}

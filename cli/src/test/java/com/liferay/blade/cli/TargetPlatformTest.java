@@ -60,8 +60,9 @@ public class TargetPlatformTest {
 
 	@Test
 	public void testCreateProjectWithoutWorkspace() throws Exception {
-		String[] args =
-			{"--base", _nonGradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"};
+		String[] args = {
+			"--base", _nonGradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"
+		};
 
 		TestUtil.runBlade(_nonGradleWorkspaceDir, _extensionsDir, args);
 
@@ -82,8 +83,9 @@ public class TargetPlatformTest {
 		_setTargetPlatformVersionProperty("7.1.0");
 		_setWorkspacePluginVersion("1.10.2");
 
-		String[] args =
-			{"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-activator"};
+		String[] args = {
+			"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-activator"
+		};
 
 		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
 

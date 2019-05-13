@@ -43,6 +43,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -304,7 +305,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 	}
 
 	private static boolean _hasServiceXmlFile(File pathname) {
-		return new File(pathname, "docroot/WEB-INF/service.xml").exists();
+		return new File(
+			pathname, "docroot/WEB-INF/service.xml"
+		).exists();
 	}
 
 	private static boolean _isServiceBuilderPlugin(File pluginDir) {
@@ -342,10 +345,22 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			}
 
 			FileUtil.deleteDir(docroot.toPath());
-			Files.deleteIfExists(new File(warDir, "build.xml").toPath());
-			Files.deleteIfExists(new File(warDir, ".classpath").toPath());
-			Files.deleteIfExists(new File(warDir, ".project").toPath());
-			FileUtil.deleteDirIfExists(new File(warDir, ".settings").toPath());
+			Files.deleteIfExists(
+				new File(
+					warDir, "build.xml"
+				).toPath());
+			Files.deleteIfExists(
+				new File(
+					warDir, ".classpath"
+				).toPath());
+			Files.deleteIfExists(
+				new File(
+					warDir, ".project"
+				).toPath());
+			FileUtil.deleteDirIfExists(
+				new File(
+					warDir, ".settings"
+				).toPath());
 		}
 		catch (Exception e) {
 			BladeCLI bladeCLI = getBladeCLI();
@@ -386,7 +401,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			convertServiceBuilderArgs.setBase(new File(convertArgs.getBase()));
 
-			new ConvertServiceBuilderCommand(bladeCLI, convertServiceBuilderArgs).execute();
+			new ConvertServiceBuilderCommand(
+				bladeCLI, convertServiceBuilderArgs
+			).execute();
 		}
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + pluginDir.getName() + "\n");
@@ -444,7 +461,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 					@Override
 					public boolean accept(File dir, String name) {
-						if (!"_diffs".equals(name) && !"WEB-INF".equals(name)) {
+						if (!Objects.equals("_diffs", name) && !Objects.equals("WEB-INF", name)) {
 							return true;
 						}
 
@@ -478,7 +495,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		try {
-			new ConvertThemeCommand(bladeCLI, getArgs()).execute();
+			new ConvertThemeCommand(
+				bladeCLI, getArgs()
+			).execute();
 		}
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + themePlugin.getName() + "\n");
@@ -526,11 +545,26 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			}
 
 			FileUtil.deleteDir(docroot.toPath());
-			Files.deleteIfExists(new File(warDir, "build.xml").toPath());
-			Files.deleteIfExists(new File(warDir, ".classpath").toPath());
-			Files.deleteIfExists(new File(warDir, ".project").toPath());
-			FileUtil.deleteDirIfExists(new File(warDir, ".settings").toPath());
-			Files.deleteIfExists(new File(warDir, "ivy.xml.MD5").toPath());
+			Files.deleteIfExists(
+				new File(
+					warDir, "build.xml"
+				).toPath());
+			Files.deleteIfExists(
+				new File(
+					warDir, ".classpath"
+				).toPath());
+			Files.deleteIfExists(
+				new File(
+					warDir, ".project"
+				).toPath());
+			FileUtil.deleteDirIfExists(
+				new File(
+					warDir, ".settings"
+				).toPath());
+			Files.deleteIfExists(
+				new File(
+					warDir, "ivy.xml.MD5"
+				).toPath());
 
 			List<String> dependencies = new ArrayList<>();
 
@@ -573,8 +607,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				ivyFile.delete();
 			}
 
-			File liferayPluginPackageFile =
-				new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
+			File liferayPluginPackageFile = new File(
+				warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
 			if (liferayPluginPackageFile.exists()) {
 				try (InputStream fileInputStream = new FileInputStream(liferayPluginPackageFile)) {
@@ -597,7 +631,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 							for (String portalJar : portalJars) {
 								String newDependency = properties.getProperty(portalJar);
 
-								if ((newDependency == null) || "".equals(newDependency)) {
+								if ((newDependency == null) || newDependency.isEmpty()) {
 									continue;
 								}
 
@@ -611,7 +645,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 									MessageFormat.format(
 										"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", s[0], s[1], s[2]));
 							}
-
 						}
 						catch (Exception e) {
 							getBladeCLI().error(

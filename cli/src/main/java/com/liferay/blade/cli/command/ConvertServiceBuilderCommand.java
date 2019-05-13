@@ -203,8 +203,12 @@ public class ConvertServiceBuilderCommand {
 			newMetaInfFolder.mkdirs();
 
 			Files.move(
-				new File(oldMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML).toPath(),
-				new File(newMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML).toPath());
+				new File(
+					oldMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML
+				).toPath(),
+				new File(
+					newMetaInfFolder, ServiceBuilder.PORTLET_MODEL_HINTS_XML
+				).toPath());
 		}
 
 		File oldSrcFolder = new File(project, Constants.DEFAULT_JAVA_SRC);
@@ -214,8 +218,12 @@ public class ConvertServiceBuilderCommand {
 			newResourcesSrcFolder.mkdirs();
 
 			Files.move(
-				new File(oldSrcFolder, ServiceBuilder.SERVICE_PROPERTIES).toPath(),
-				new File(newResourcesSrcFolder, ServiceBuilder.SERVICE_PROPERTIES).toPath());
+				new File(
+					oldSrcFolder, ServiceBuilder.SERVICE_PROPERTIES
+				).toPath(),
+				new File(
+					newResourcesSrcFolder, ServiceBuilder.SERVICE_PROPERTIES
+				).toPath());
 		}
 
 		File sbApiProject = new File(sbProject, sbProjectName + "-api");
@@ -258,7 +266,11 @@ public class ConvertServiceBuilderCommand {
 		).forEach(
 			file -> {
 				try {
-					Files.write(file.toPath(), new String("version 1.0.0").getBytes());
+					Files.write(
+						file.toPath(),
+						new String(
+							"version 1.0.0"
+						).getBytes());
 				}
 				catch (IOException ioe) {
 					ioe.printStackTrace();

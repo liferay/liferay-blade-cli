@@ -170,7 +170,7 @@ public class BladeCLI {
 		if (settingsFile.exists()) {
 			String name = settingsFile.getName();
 
-			if ("settings.properties".equals(name)) {
+			if (Objects.equals("settings.properties", name)) {
 				_migrateBladeSettingsFile(settingsFile);
 			}
 		}
@@ -347,7 +347,9 @@ public class BladeCLI {
 
 			String profileName = _extractProfileName(args);
 
-			File baseDir = new File(basePath).getAbsoluteFile();
+			File baseDir = new File(
+				basePath
+			).getAbsoluteFile();
 
 			_args.setBase(baseDir);
 
