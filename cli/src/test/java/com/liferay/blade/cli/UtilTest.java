@@ -86,15 +86,15 @@ public class UtilTest {
 		File tempTestFile = null;
 
 		try {
-			File absoluteDirectory = new File(
-				"."
-			).getAbsoluteFile();
+			File dir = new File(".");
 
-			File parentDirectory = absoluteDirectory.getParentFile();
+			dir = dir.getAbsoluteFile();
 
-			File parentParentDirectory = parentDirectory.getParentFile();
+			File parentDir = dir.getParentFile();
 
-			tempTestFile = new File(parentParentDirectory, "test.file");
+			File parentParentDir = parentDir.getParentFile();
+
+			tempTestFile = new File(parentParentDir, "test.file");
 
 			if (tempTestFile.exists()) {
 				Assert.assertTrue(tempTestFile.delete());
@@ -102,7 +102,7 @@ public class UtilTest {
 
 			Assert.assertTrue(tempTestFile.createNewFile());
 
-			File fileRelative = new File(".");
+			File fileRelative = dir;
 
 			File foundFile = BladeUtil.findParentFile(fileRelative, new String[] {"test.file"}, true);
 

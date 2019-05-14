@@ -73,11 +73,9 @@ public class BladeUtil {
 
 		FileUtil.unzip(inputStream, destinationDir);
 
-		new File(
-			destinationDir, "gradlew"
-		).setExecutable(
-			true
-		);
+		File gradlewFile = new File(destinationDir, "gradlew");
+
+		gradlewFile.setExecutable(true);
 	}
 
 	public static boolean canConnect(String host, int port) {

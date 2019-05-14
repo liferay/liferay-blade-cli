@@ -304,10 +304,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		return null;
 	}
 
-	private static boolean _hasServiceXmlFile(File pathname) {
-		Path serviceXml = pathname.toPath();
+	private static boolean _hasServiceXmlFile(File dir) {
+		Path dirPath = dir.toPath();
 
-		serviceXml = serviceXml.resolve("docroot/WEB-INF/service.xml");
+		Path serviceXml = dirPath.resolve("docroot/WEB-INF/service.xml");
 
 		return Files.exists(serviceXml);
 	}
@@ -348,19 +348,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			Path warPath = warDir.toPath();
 
-			Path buildXmlPath = warPath.resolve("build.xml");
-
-			Path classFilePath = warPath.resolve(".classpath");
-
-			Path projectFilePath = warPath.resolve(".project");
-
-			Path settingsPath = warPath.resolve(".settings");
-
 			FileUtil.deleteDir(docroot.toPath());
-			Files.deleteIfExists(buildXmlPath);
-			Files.deleteIfExists(classFilePath);
-			Files.deleteIfExists(projectFilePath);
-			FileUtil.deleteDirIfExists(settingsPath);
+			Files.deleteIfExists(warPath.resolve("build.xml"));
+			Files.deleteIfExists(warPath.resolve(".classpath"));
+			Files.deleteIfExists(warPath.resolve(".project"));
+			FileUtil.deleteDirIfExists(warPath.resolve(".settings"));
 		}
 		catch (Exception e) {
 			BladeCLI bladeCLI = getBladeCLI();
@@ -496,9 +488,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		try {
-			new ConvertThemeCommand(
-				bladeCLI, getArgs()
-			).execute();
+			ConvertThemeCommand convertThemeCommand = new ConvertThemeCommand(bladeCLI, getArgs());
+
+			convertThemeCommand.execute();
 		}
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + themePlugin.getName() + "\n");
@@ -547,22 +539,12 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			Path warPath = warDir.toPath();
 
-			Path buildXmlPath = warPath.resolve("build.xml");
-
-			Path classFilePath = warPath.resolve(".classpath");
-
-			Path projectFilePath = warPath.resolve(".project");
-
-			Path settingsPath = warPath.resolve(".settings");
-
-			Path md5Path = warPath.resolve("ivy.xml.MD5");
-
 			FileUtil.deleteDir(docroot.toPath());
-			Files.deleteIfExists(buildXmlPath);
-			Files.deleteIfExists(classFilePath);
-			Files.deleteIfExists(projectFilePath);
-			FileUtil.deleteDirIfExists(settingsPath);
-			Files.deleteIfExists(md5Path);
+			Files.deleteIfExists(warPath.resolve("build.xml"));
+			Files.deleteIfExists(warPath.resolve(".classpath"));
+			Files.deleteIfExists(warPath.resolve(".project"));
+			FileUtil.deleteDirIfExists(warPath.resolve(".settings"));
+			Files.deleteIfExists(warPath.resolve("ivy.xml.MD5"));
 
 			List<String> dependencies = new ArrayList<>();
 

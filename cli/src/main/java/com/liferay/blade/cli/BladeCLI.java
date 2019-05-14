@@ -347,9 +347,9 @@ public class BladeCLI {
 
 			String profileName = _extractProfileName(args);
 
-			File baseDir = new File(
-				basePath
-			).getAbsoluteFile();
+			File baseDir = new File(basePath);
+
+			baseDir = baseDir.getAbsoluteFile();
 
 			_args.setBase(baseDir);
 

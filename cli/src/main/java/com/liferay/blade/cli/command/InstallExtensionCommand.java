@@ -305,9 +305,9 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 	private static boolean _isValidURL(String urlString) {
 		try {
-			new URL(
-				urlString
-			).toURI();
+			URL url = new URL(urlString);
+
+			url.toURI();
 
 			return true;
 		}

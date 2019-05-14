@@ -22,9 +22,6 @@ import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.ProcessResult;
 
 import java.io.File;
-import java.io.PrintStream;
-
-import java.net.ConnectException;
 
 import java.util.Collections;
 
@@ -62,7 +59,9 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 	}
 
 	private void _addError(String msg) {
-		getBladeCLI().addErrors("deploy", Collections.singleton(msg));
+		BladeCLI bladeCLI = getBladeCLI();
+
+		bladeCLI.addErrors("deploy", Collections.singleton(msg));
 	}
 
 	private void _deploy(GradleExec gradle, String command) throws Exception {
@@ -77,17 +76,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		if (resultCode > 0) {
-			String errorMessage = "Gradle \"" + command + "\" task failed.";
-
-			_addError(errorMessage);
-
-			PrintStream err = bladeCLI.error();
-
-			new ConnectException(
-				errorMessage
-			).printStackTrace(
-				err
-			);
+			_addError("Gradle \"" + command + "\" task failed.");
 
 			return;
 		}

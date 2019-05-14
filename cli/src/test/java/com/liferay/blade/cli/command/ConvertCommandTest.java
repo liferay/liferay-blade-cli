@@ -21,6 +21,9 @@ import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,42 +47,40 @@ public class ConvertCommandTest {
 
 	@Test
 	public void testAll() throws Exception {
-		File testdir = new File(_rootDir, "build/testUpgradePluginsSDKTo70");
+		Path rootPath = _rootDir.toPath();
 
-		testdir.mkdirs();
+		Path testPath = rootPath.resolve("build/testUpgradePluginsSDKTo70");
 
-		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+		Files.createDirectories(testPath);
 
-		Assert.assertTrue(testdir.exists());
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testPath.toFile());
 
-		File projectDir = new File(testdir, "plugins-sdk-with-git");
+		Assert.assertTrue(Files.exists(testPath));
 
-		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+		Path projectPath = testPath.resolve("plugins-sdk-with-git");
 
-		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
+		Path pluginsSdkPath = projectPath.resolve("plugins-sdk");
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		FileUtil.deleteDirIfExists(pluginsSdkPath);
+
+		String[] args = {"--base", projectPath.toString(), "init", "-u"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		args = new String[] {"--base", projectDir.getPath(), "convert", "-a"};
+		args = new String[] {"--base", projectPath.toString(), "convert", "-a"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
 
 		Assert.assertTrue(
-			new File(
-				testdir, "plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-api"
-			).exists());
+			Files.exists(
+				testPath.resolve("plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-api")));
 
 		Assert.assertTrue(
-			new File(
-				testdir, "plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-service"
-			).exists());
+			Files.exists(
+				testPath.resolve(
+					"plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-service")));
 
-		Assert.assertTrue(
-			new File(
-				testdir, "plugins-sdk-with-git/wars/sample-service-builder-portlet"
-			).exists());
+		Assert.assertTrue(Files.exists(testPath.resolve("plugins-sdk-with-git/wars/sample-service-builder-portlet")));
 	}
 
 	@Test
@@ -108,20 +109,17 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(layoutWar.exists());
 
-		Assert.assertFalse(
-			new File(
-				layoutWar, "build.xml"
-			).exists());
+		File buildXmlFile = new File(layoutWar, "build.xml");
 
-		Assert.assertFalse(
-			new File(
-				layoutWar, "build.gradle"
-			).exists());
+		Assert.assertFalse(buildXmlFile.exists());
 
-		Assert.assertFalse(
-			new File(
-				layoutWar, "docroot"
-			).exists());
+		File buildGradleFile = new File(layoutWar, "build.gradle");
+
+		Assert.assertFalse(buildGradleFile.exists());
+
+		File docrootDir = new File(layoutWar, "docroot");
+
+		Assert.assertFalse(docrootDir.exists());
 	}
 
 	@Test
@@ -163,10 +161,9 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(sampleServletFilterHook.exists());
 
-		Assert.assertFalse(
-			new File(
-				projectDir, "plugins-sdk/hooks/sample-servlet-filter-hook"
-			).exists());
+		File hookDir = new File(projectDir, "plugins-sdk/hooks/sample-servlet-filter-hook");
+
+		Assert.assertFalse(hookDir.exists());
 	}
 
 	@Test
@@ -195,35 +192,29 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(theme.exists());
 
-		Assert.assertFalse(
-			new File(
-				theme, "build.xml"
-			).exists());
+		File buildXmlFile = new File(theme, "build.xml");
 
-		Assert.assertTrue(
-			new File(
-				theme, "build.gradle"
-			).exists());
+		Assert.assertFalse(buildXmlFile.exists());
 
-		Assert.assertFalse(
-			new File(
-				theme, "docroot"
-			).exists());
+		File buildGradleFile = new File(theme, "build.gradle");
 
-		Assert.assertTrue(
-			new File(
-				theme, "src/main/webapp"
-			).exists());
+		Assert.assertTrue(buildGradleFile.exists());
 
-		Assert.assertFalse(
-			new File(
-				theme, "src/main/webapp/_diffs"
-			).exists());
+		File docrootDir = new File(theme, "docroot");
 
-		Assert.assertFalse(
-			new File(
-				projectDir, "plugins-sdk/themes/sample-styled-minimal-theme"
-			).exists());
+		Assert.assertFalse(docrootDir.exists());
+
+		File webappDir = new File(theme, "src/main/webapp");
+
+		Assert.assertTrue(webappDir.exists());
+
+		File diffsDir = new File(theme, "src/main/webapp/_diffs");
+
+		Assert.assertFalse(diffsDir.exists());
+
+		File themeDir = new File(projectDir, "plugins-sdk/themes/sample-styled-minimal-theme");
+
+		Assert.assertFalse(themeDir.exists());
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
 
@@ -233,35 +224,29 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(advancedTheme.exists());
 
-		Assert.assertFalse(
-			new File(
-				advancedTheme, "build.xml"
-			).exists());
+		buildXmlFile = new File(advancedTheme, "build.xml");
 
-		Assert.assertTrue(
-			new File(
-				advancedTheme, "build.gradle"
-			).exists());
+		Assert.assertFalse(buildXmlFile.exists());
 
-		Assert.assertFalse(
-			new File(
-				advancedTheme, "docroot"
-			).exists());
+		buildGradleFile = new File(advancedTheme, "build.gradle");
 
-		Assert.assertTrue(
-			new File(
-				advancedTheme, "src/main/webapp"
-			).exists());
+		Assert.assertTrue(buildGradleFile.exists());
 
-		Assert.assertFalse(
-			new File(
-				advancedTheme, "src/main/webapp/_diffs"
-			).exists());
+		docrootDir = new File(advancedTheme, "docroot");
 
-		Assert.assertFalse(
-			new File(
-				projectDir, "plugins-sdk/themes/sample-styled-advanced-theme"
-			).exists());
+		Assert.assertFalse(docrootDir.exists());
+
+		webappDir = new File(advancedTheme, "src/main/webapp");
+
+		Assert.assertTrue(webappDir.exists());
+
+		diffsDir = new File(advancedTheme, "src/main/webapp/_diffs");
+
+		Assert.assertFalse(diffsDir.exists());
+
+		themeDir = new File(projectDir, "plugins-sdk/themes/sample-styled-advanced-theme");
+
+		Assert.assertFalse(themeDir.exists());
 	}
 
 	@Test
@@ -289,10 +274,9 @@ public class ConvertCommandTest {
 			".*compile group: 'org.apache.tapestry', name: 'tapestry-framework', version: '4.1'.*",
 			".*compile group: 'org.apache.tapestry', name: 'tapestry-portlet', version: '4.1'.*");
 
-		Assert.assertFalse(
-			new File(
-				projectDir, "wars/sample-tapestry-portlet/ivy.xml"
-			).exists());
+		File ivmXmlFile = new File(projectDir, "wars/sample-tapestry-portlet/ivy.xml");
+
+		Assert.assertFalse(ivmXmlFile.exists());
 	}
 
 	@Test
@@ -360,10 +344,9 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		Assert.assertTrue(
-			new File(
-				projectDir, "wars/sample-html4-theme/docroot_backup/other/afile"
-			).exists());
+		File afile = new File(projectDir, "wars/sample-html4-theme/docroot_backup/other/afile");
+
+		Assert.assertTrue(afile.exists());
 	}
 
 	@Rule
