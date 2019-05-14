@@ -305,11 +305,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 	}
 
 	private static boolean _hasServiceXmlFile(File pathname) {
-		
 		Path serviceXml = pathname.toPath();
-		
+
 		serviceXml = serviceXml.resolve("docroot/WEB-INF/service.xml");
-		
+
 		return Files.exists(serviceXml);
 	}
 
@@ -346,16 +345,16 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			for (File docrootFile : docroot.listFiles()) {
 				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
-			
+
 			Path warPath = warDir.toPath();
-			
+
 			Path buildXmlPath = warPath.resolve("build.xml");
-			
+
 			Path classFilePath = warPath.resolve(".classpath");
-			
+
 			Path projectFilePath = warPath.resolve(".project");
-			
-			Path settingsPath = warPath.resolve(".settings");		
+
+			Path settingsPath = warPath.resolve(".settings");
 
 			FileUtil.deleteDir(docroot.toPath());
 			Files.deleteIfExists(buildXmlPath);
@@ -403,9 +402,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			convertServiceBuilderArgs.setBase(new File(convertArgs.getBase()));
 
 			ConvertServiceBuilderCommand command = new ConvertServiceBuilderCommand(
-				bladeCLI, convertServiceBuilderArgs
-			);
-			
+				bladeCLI, convertServiceBuilderArgs);
+
 			command.execute();
 		}
 		catch (Exception e) {
@@ -546,18 +544,18 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			for (File docrootFile : docroot.listFiles()) {
 				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
-			
+
 			Path warPath = warDir.toPath();
-			
+
 			Path buildXmlPath = warPath.resolve("build.xml");
-			
+
 			Path classFilePath = warPath.resolve(".classpath");
-			
+
 			Path projectFilePath = warPath.resolve(".project");
 
-			Path settingsPath = warPath.resolve(".settings");	
-			
-			Path md5Path = warPath.resolve("ivy.xml.MD5");		
+			Path settingsPath = warPath.resolve(".settings");
+
+			Path md5Path = warPath.resolve("ivy.xml.MD5");
 
 			FileUtil.deleteDir(docroot.toPath());
 			Files.deleteIfExists(buildXmlPath);

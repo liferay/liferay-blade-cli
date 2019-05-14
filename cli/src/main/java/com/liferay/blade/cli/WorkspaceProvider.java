@@ -38,7 +38,7 @@ public interface WorkspaceProvider {
 
 		if (blade == null) {
 			dirToCheck = new File(".");
-			
+
 			dirToCheck = dirToCheck.getAbsoluteFile();
 		}
 		else {
