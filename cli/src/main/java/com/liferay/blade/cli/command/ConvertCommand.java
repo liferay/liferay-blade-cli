@@ -305,9 +305,12 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 	}
 
 	private static boolean _hasServiceXmlFile(File pathname) {
-		return new File(
-			pathname, "docroot/WEB-INF/service.xml"
-		).exists();
+		
+		Path serviceXml = pathname.toPath();
+		
+		serviceXml = serviceXml.resolve("docroot/WEB-INF/service.xml");
+		
+		return Files.exists(serviceXml);
 	}
 
 	private static boolean _isServiceBuilderPlugin(File pluginDir) {
@@ -343,24 +346,22 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			for (File docrootFile : docroot.listFiles()) {
 				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
+			
+			Path warPath = warDir.toPath();
+			
+			Path buildXmlPath = warPath.resolve("build.xml");
+			
+			Path classFilePath = warPath.resolve(".classpath");
+			
+			Path projectFilePath = warPath.resolve(".project");
+			
+			Path settingsPath = warPath.resolve(".settings");		
 
 			FileUtil.deleteDir(docroot.toPath());
-			Files.deleteIfExists(
-				new File(
-					warDir, "build.xml"
-				).toPath());
-			Files.deleteIfExists(
-				new File(
-					warDir, ".classpath"
-				).toPath());
-			Files.deleteIfExists(
-				new File(
-					warDir, ".project"
-				).toPath());
-			FileUtil.deleteDirIfExists(
-				new File(
-					warDir, ".settings"
-				).toPath());
+			Files.deleteIfExists(buildXmlPath);
+			Files.deleteIfExists(classFilePath);
+			Files.deleteIfExists(projectFilePath);
+			FileUtil.deleteDirIfExists(settingsPath);
 		}
 		catch (Exception e) {
 			BladeCLI bladeCLI = getBladeCLI();
@@ -401,9 +402,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			convertServiceBuilderArgs.setBase(new File(convertArgs.getBase()));
 
-			new ConvertServiceBuilderCommand(
+			ConvertServiceBuilderCommand command = new ConvertServiceBuilderCommand(
 				bladeCLI, convertServiceBuilderArgs
-			).execute();
+			);
+			
+			command.execute();
 		}
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + pluginDir.getName() + "\n");
@@ -543,28 +546,25 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			for (File docrootFile : docroot.listFiles()) {
 				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
+			
+			Path warPath = warDir.toPath();
+			
+			Path buildXmlPath = warPath.resolve("build.xml");
+			
+			Path classFilePath = warPath.resolve(".classpath");
+			
+			Path projectFilePath = warPath.resolve(".project");
+
+			Path settingsPath = warPath.resolve(".settings");	
+			
+			Path md5Path = warPath.resolve("ivy.xml.MD5");		
 
 			FileUtil.deleteDir(docroot.toPath());
-			Files.deleteIfExists(
-				new File(
-					warDir, "build.xml"
-				).toPath());
-			Files.deleteIfExists(
-				new File(
-					warDir, ".classpath"
-				).toPath());
-			Files.deleteIfExists(
-				new File(
-					warDir, ".project"
-				).toPath());
-			FileUtil.deleteDirIfExists(
-				new File(
-					warDir, ".settings"
-				).toPath());
-			Files.deleteIfExists(
-				new File(
-					warDir, "ivy.xml.MD5"
-				).toPath());
+			Files.deleteIfExists(buildXmlPath);
+			Files.deleteIfExists(classFilePath);
+			Files.deleteIfExists(projectFilePath);
+			FileUtil.deleteDirIfExists(settingsPath);
+			Files.deleteIfExists(md5Path);
 
 			List<String> dependencies = new ArrayList<>();
 
