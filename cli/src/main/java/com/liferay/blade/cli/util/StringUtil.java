@@ -67,7 +67,7 @@ public class StringUtil {
 
 		_split(nodeValues, s, 0, delimiter);
 
-		return nodeValues.toArray(new String[nodeValues.size()]);
+		return nodeValues.toArray(new String[0]);
 	}
 
 	public static String[] split(String s, String delimiter) {
@@ -103,7 +103,7 @@ public class StringUtil {
 			nodeValues.add(s.substring(offset));
 		}
 
-		return nodeValues.toArray(new String[nodeValues.size()]);
+		return nodeValues.toArray(new String[0]);
 	}
 
 	private static void _split(Collection<String> values, String s, int offset, char delimiter) {

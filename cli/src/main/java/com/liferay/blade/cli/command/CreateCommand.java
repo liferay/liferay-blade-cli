@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -124,7 +125,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			}
 		}
 		else if (template.equals("modules-ext")) {
-			if ("maven".equals(createArgs.getProfileName())) {
+			if (Objects.equals("maven", createArgs.getProfileName())) {
 				bladeCLI.error(
 					"Modules Ext projects are not supported with Maven build. Please use Gradle build instead.");
 

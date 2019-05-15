@@ -56,11 +56,11 @@ public class BuildServiceCommandMavenTest {
 		args = new String[] {"--base", mavenworkspace.getPath(), "create", "-t", "service-builder", "sb1"};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
-		
+
 		args = new String[] {"--base", mavenworkspace.getPath(), "create", "-t", "service-builder", "sb2"};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
-		
+
 		Path mavenworkspacePath = mavenworkspace.toPath();
 
 		Path modulesPath = mavenworkspacePath.resolve("modules");
@@ -68,34 +68,33 @@ public class BuildServiceCommandMavenTest {
 		Path sb1SourcePath = Paths.get("sb1", "sb1-service", "src");
 
 		sb1SourcePath = modulesPath.resolve(sb1SourcePath);
-		
+
 		Path sb2SourcePath = Paths.get("sb2", "sb2-service", "src");
 
 		sb2SourcePath = modulesPath.resolve(sb2SourcePath);
 
 		boolean sb1SourceExists = Files.exists(sb1SourcePath);
 		boolean sb2SourceExists = Files.exists(sb2SourcePath);
-		
+
 		Assert.assertFalse(sb1SourceExists && sb2SourceExists);
-		
+
 		args = new String[] {"--base", mavenworkspace.getPath(), "buildService"};
 
 		BladeTestResults results = TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
 
 		sb1SourceExists = Files.exists(sb1SourcePath);
 		sb2SourceExists = Files.exists(sb2SourcePath);
-		
+
 		Path fooPath = Paths.get("sb1", "sb1-api", "src", "main", "java", "sb1", "model", "Foo.java");
 
-		
 		fooPath = modulesPath.resolve(fooPath);
-		
+
 		boolean fooExists = Files.exists(fooPath);
-		
+
 		Assert.assertTrue(sb1SourceExists && sb2SourceExists && fooExists);
-		
+
 		String output = results.getOutput();
-		
+
 		String errors = results.getErrors();
 
 		StringBuilder errorMessage = new StringBuilder();
@@ -107,7 +106,7 @@ public class BuildServiceCommandMavenTest {
 		if (!errors.isEmpty()) {
 			errorMessage.append(errors + System.lineSeparator());
 		}
-		
+
 		Assert.assertTrue(errorMessage.toString(), errorMessage.length() == 0);
 	}
 

@@ -56,7 +56,7 @@ public class CreateCommandMaven extends CreateCommand {
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
-		if ((workspaceProvider == null) || workspaceProvider instanceof MavenWorkspaceProvider) {
+		if ((workspaceProvider == null) || (workspaceProvider instanceof MavenWorkspaceProvider)) {
 			createArgs.setProfileName("maven");
 
 			super.execute();

@@ -73,7 +73,6 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 		String host = "localhost";
 		int port = 11311;
 
-
 		if (!BladeUtil.canConnect(host, port)) {
 			StringBuilder sb = new StringBuilder();
 
@@ -89,7 +88,11 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 			PrintStream error = bladeCLI.error();
 
-			new ConnectException(sb.toString()).printStackTrace(error);
+			new ConnectException(
+				sb.toString()
+			).printStackTrace(
+				error
+			);
 
 			return;
 		}
@@ -137,7 +140,11 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 			_addError(processResult.getError());
 
-			new ConnectException(errorMessage).printStackTrace(err);
+			new ConnectException(
+				errorMessage
+			).printStackTrace(
+				err
+			);
 
 			return;
 		}

@@ -45,35 +45,37 @@ public class FileWatcherTest {
 
 	@After
 	public void cleanUp() throws Exception {
-		if (_testDir.exists()) {
-			FileUtil.deleteDir(_testDir.toPath());
+		if (Files.exists(_testDir)) {
+			FileUtil.deleteDir(_testDir);
 
-			Assert.assertFalse(_testDir.exists());
+			Assert.assertFalse(Files.exists(_testDir));
 		}
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		_testDir = temporaryFolder.newFolder("build", "watch");
+		File testDir = temporaryFolder.newFolder("build", "watch");
 
-		_testfile = new File(_testDir, "file.txt");
+		_testDir = testDir.toPath();
 
-		_testfile.createNewFile();
+		_testfile = _testDir.resolve("file.txt");
 
-		_testsecondfile = new File(_testDir, "second.txt");
+		Files.createFile(_testfile);
 
-		_testsecondfile.createNewFile();
+		_testsecondfile = _testDir.resolve("second.txt");
+
+		Files.createFile(_testsecondfile);
 	}
 
 	@Ignore
 	@Test
 	public void testFileWatcherMultipleFiles() throws Exception {
-		Files.write(_testfile.toPath(), "foobar".getBytes());
+		Files.write(_testfile, "foobar".getBytes());
 
 		final Map<Path, Boolean> changed = new HashMap<>();
 
-		changed.put(_testfile.toPath(), false);
-		changed.put(_testsecondfile.toPath(), false);
+		changed.put(_testfile, false);
+		changed.put(_testsecondfile, false);
 
 		final CountDownLatch latch = new CountDownLatch(2);
 
@@ -92,7 +94,7 @@ public class FileWatcherTest {
 			@Override
 			public void run() {
 				try {
-					new FileWatcher(_testDir.toPath(), false, consumer);
+					new FileWatcher(_testDir, false, consumer);
 				}
 				catch (IOException ioe) {
 				}
@@ -107,8 +109,8 @@ public class FileWatcherTest {
 
 		Thread.sleep(2000);
 
-		Files.write(_testfile.toPath(), "touch".getBytes());
-		Files.write(_testsecondfile.toPath(), "second file content".getBytes());
+		Files.write(_testfile, "touch".getBytes());
+		Files.write(_testsecondfile, "second file content".getBytes());
 
 		latch.await();
 
@@ -140,7 +142,7 @@ public class FileWatcherTest {
 			@Override
 			public void run() {
 				try {
-					new FileWatcher(_testDir.toPath(), _testfile.toPath(), false, consumer);
+					new FileWatcher(_testDir, _testfile, false, consumer);
 				}
 				catch (IOException ioe) {
 				}
@@ -155,7 +157,7 @@ public class FileWatcherTest {
 
 		Thread.sleep(1000);
 
-		Files.write(_testfile.toPath(), "touch".getBytes());
+		Files.write(_testfile, "touch".getBytes());
 
 		latch.await();
 
@@ -165,8 +167,8 @@ public class FileWatcherTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private File _testDir = null;
-	private File _testfile = null;
-	private File _testsecondfile = null;
+	private Path _testDir = null;
+	private Path _testfile = null;
+	private Path _testsecondfile = null;
 
 }

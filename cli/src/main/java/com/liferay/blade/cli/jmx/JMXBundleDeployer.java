@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -208,22 +209,22 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 
 		Object state = cd.get("State");
 
-		if ("UNINSTALLED".equals(state)) {
+		if (Objects.equals("UNINSTALLED", state)) {
 			dto.state = Bundle.UNINSTALLED;
 		}
-		else if ("INSTALLED".equals(state)) {
+		else if (Objects.equals("INSTALLED", state)) {
 			dto.state = Bundle.INSTALLED;
 		}
-		else if ("RESOLVED".equals(state)) {
+		else if (Objects.equals("RESOLVED", state)) {
 			dto.state = Bundle.RESOLVED;
 		}
-		else if ("STARTING".equals(state)) {
+		else if (Objects.equals("STARTING", state)) {
 			dto.state = Bundle.STARTING;
 		}
-		else if ("STOPPING".equals(state)) {
+		else if (Objects.equals("STOPPING", state)) {
 			dto.state = Bundle.STOPPING;
 		}
-		else if ("ACTIVE".equals(state)) {
+		else if (Objects.equals("ACTIVE", state)) {
 			dto.state = Bundle.ACTIVE;
 		}
 

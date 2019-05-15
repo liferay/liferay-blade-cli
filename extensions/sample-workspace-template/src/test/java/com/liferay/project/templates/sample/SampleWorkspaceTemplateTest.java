@@ -53,13 +53,18 @@ public class SampleWorkspaceTemplateTest {
 
 		File tempDir = temporaryFolder.newFolder();
 
-		String basePath = new File(tempDir.getPath()).getAbsolutePath();
+		String basePath = new File(
+			tempDir.getPath()
+		).getAbsolutePath();
 
 		String[] args = {"--base", basePath, "init", "-P", "sample"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		Assert.assertTrue(new File(tempDir, "settings.gradle").exists());
+		Assert.assertTrue(
+			new File(
+				tempDir, "settings.gradle"
+			).exists());
 
 		File settingsFile = new File(tempDir, ".blade.properties");
 

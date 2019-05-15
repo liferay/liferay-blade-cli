@@ -130,7 +130,7 @@ public class MavenUtil {
 		if (dir == null) {
 			return null;
 		}
-		else if (".".equals(dir.toString()) || !dir.isAbsolute()) {
+		else if (Objects.equals(".", dir.toString()) || !dir.isAbsolute()) {
 			try {
 				dir = dir.getCanonicalFile();
 			}
@@ -151,7 +151,7 @@ public class MavenUtil {
 	private static boolean _isWorkspacePomFile(File pomFile) {
 		boolean pom = false;
 
-		if ((pomFile != null) && "pom.xml".equals(pomFile.getName()) && pomFile.exists()) {
+		if (Objects.equals("pom.xml", pomFile.getName()) && pomFile.exists()) {
 			pom = true;
 		}
 

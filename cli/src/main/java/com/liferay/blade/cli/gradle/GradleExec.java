@@ -25,6 +25,7 @@ import com.liferay.blade.cli.util.BladeUtil;
 import java.io.File;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * @author David Truong
@@ -152,7 +153,7 @@ public class GradleExec {
 			}
 		}
 
-		if ("gradle".equals(executable)) {
+		if (Objects.equals("gradle", executable)) {
 			if (_isGradleInstalled()) {
 				_blade.out("Could not find gradle wrapper, using gradle");
 			}

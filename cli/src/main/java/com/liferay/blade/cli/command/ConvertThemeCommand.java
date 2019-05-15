@@ -156,8 +156,7 @@ public class ConvertThemeCommand {
 		}
 
 		process = BladeUtil.startProcess(
-			"yo liferay-theme:import -p \"" + themePath + "\" -c " + _compassSupport(themePath) +
-				" --skip-install",
+			"yo liferay-theme:import -p \"" + themePath + "\" -c " + _compassSupport(themePath) + " --skip-install",
 			_themesDir, _bladeCLI.out(), _bladeCLI.error());
 
 		int errCode = process.waitFor();

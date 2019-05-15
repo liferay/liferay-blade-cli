@@ -22,6 +22,7 @@ import com.liferay.blade.cli.util.FileUtil;
 import java.io.File;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -68,11 +69,17 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(sbWar.exists());
 
-		Assert.assertFalse(new File(sbWar, "build.xml").exists());
+		File buildXmlFile = new File(sbWar, "build.xml");
 
-		Assert.assertTrue(new File(sbWar, "build.gradle").exists());
+		Assert.assertFalse(buildXmlFile.exists());
 
-		Assert.assertFalse(new File(sbWar, "docroot").exists());
+		File buildGradleFile = new File(sbWar, "build.gradle");
+
+		Assert.assertTrue(buildGradleFile.exists());
+
+		File docrootDir = new File(sbWar, "docroot");
+
+		Assert.assertFalse(docrootDir.exists());
 
 		File moduleDir = new File(projectDir, "modules");
 
@@ -84,19 +91,32 @@ public class ConvertServiceBuilderCommandTest {
 		Assert.assertTrue(sbServiceDir.exists());
 		Assert.assertTrue(sbApiDir.exists());
 
-		Assert.assertTrue(new File(sbServiceDir, "service.xml").exists());
-		Assert.assertTrue(new File(sbServiceDir, "src/main/resources/service.properties").exists());
-		Assert.assertTrue(new File(sbServiceDir, "src/main/resources/META-INF/portlet-model-hints.xml").exists());
-		Assert.assertTrue(
-			new File(
-				sbServiceDir,
-				"src/main/java/com/liferay/sampleservicebuilder/service/impl/FooLocalServiceImpl.java").exists());
-		Assert.assertTrue(
-			new File(
-				sbServiceDir,
-				"src/main/java/com/liferay/sampleservicebuilder/service/impl/FooServiceImpl.java").exists());
-		Assert.assertTrue(
-			new File(sbServiceDir, "src/main/java/com/liferay/sampleservicebuilder/model/impl/FooImpl.java").exists());
+		File serviceXmlFile = new File(sbServiceDir, "service.xml");
+
+		Assert.assertTrue(serviceXmlFile.exists());
+
+		File servicePropertiesFile = new File(sbServiceDir, "src/main/resources/service.properties");
+
+		Assert.assertTrue(servicePropertiesFile.exists());
+
+		File hintsXmlFile = new File(sbServiceDir, "src/main/resources/META-INF/portlet-model-hints.xml");
+
+		Assert.assertTrue(hintsXmlFile.exists());
+
+		File localImplFile = new File(
+			sbServiceDir, "src/main/java/com/liferay/sampleservicebuilder/service/impl/FooLocalServiceImpl.java");
+
+		Assert.assertTrue(localImplFile.exists());
+
+		File serviceImplFile = new File(
+			sbServiceDir, "src/main/java/com/liferay/sampleservicebuilder/service/impl/FooServiceImpl.java");
+
+		Assert.assertTrue(serviceImplFile.exists());
+
+		File implFile = new File(
+			sbServiceDir, "src/main/java/com/liferay/sampleservicebuilder/model/impl/FooImpl.java");
+
+		Assert.assertTrue(implFile.exists());
 
 		File bndBnd = new File(sbApiDir, "bnd.bnd");
 
@@ -115,17 +135,21 @@ public class ConvertServiceBuilderCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File pluginsSdkDir = new File(testdir, "plugins-sdk");
+		Path testPath = testdir.toPath();
 
-		FileUtil.copyDir(new File("test-resources/projects/tasks-plugins-sdk").toPath(), pluginsSdkDir.toPath());
+		Path pluginsSdkPath = testPath.resolve("plugins-sdk");
 
-		Assert.assertTrue(new File(testdir, "plugins-sdk/portlets/tasks-portlet").exists());
+		File tasksPluginsSdk = new File("test-resources/projects/tasks-plugins-sdk");
+
+		FileUtil.copyDir(tasksPluginsSdk.toPath(), pluginsSdkPath);
+
+		Assert.assertTrue(Files.exists(testPath.resolve("plugins-sdk/portlets/tasks-portlet")));
 
 		String[] convertArgs = {"--base", testdir.getPath(), "convert", "tasks-portlet", "foo"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, convertArgs);
 
-		Assert.assertTrue(new File(testdir, "modules/foo/foo-api/build.gradle").exists());
+		Assert.assertTrue(Files.exists(testPath.resolve("modules/foo/foo-api/build.gradle")));
 	}
 
 	@Test
@@ -136,20 +160,27 @@ public class ConvertServiceBuilderCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File pluginsSdkDir = new File(testdir, "plugins-sdk");
+		Path testPath = testdir.toPath();
 
-		FileUtil.copyDir(new File("test-resources/projects/tasks-plugins-sdk").toPath(), pluginsSdkDir.toPath());
+		Path pluginsSdkPath = testPath.resolve("plugins-sdk");
 
-		Assert.assertTrue(new File(testdir, "plugins-sdk/portlets/tasks-portlet").exists());
+		File taskPluginsSdk = new File("test-resources/projects/tasks-plugins-sdk");
+
+		FileUtil.copyDir(taskPluginsSdk.toPath(), pluginsSdkPath);
+
+		Assert.assertTrue(Files.exists(testPath.resolve("plugins-sdk/portlets/tasks-portlet")));
 
 		String[] convertArgs = {"--base", testdir.getPath(), "convert", "tasks-portlet"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, convertArgs);
 
-		Assert.assertTrue(new File(testdir, "modules/tasks/tasks-api/build.gradle").exists());
+		File buildGradleFile = new File(testdir, "modules/tasks/tasks-api/build.gradle");
 
-		Assert.assertTrue(
-			new File(testdir, "modules/tasks/tasks-api/src/main/java/com/liferay/tasks/exception").exists());
+		Assert.assertTrue(buildGradleFile.exists());
+
+		File exceptionDir = new File(testdir, "modules/tasks/tasks-api/src/main/java/com/liferay/tasks/exception");
+
+		Assert.assertTrue(exceptionDir.exists());
 
 		File file = new File(
 			testdir, "modules/tasks/tasks-service/src/main/java/com/liferay/tasks/model/impl/TasksEntryModelImpl.java");
@@ -162,11 +193,11 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(file.exists());
 
-		Assert.assertTrue(new File(testdir, "modules/tasks/tasks-service/service.xml").exists());
+		Assert.assertTrue(Files.exists(testPath.resolve("modules/tasks/tasks-service/service.xml")));
 
-		Assert.assertFalse(new File(testdir, "wars/tasks-portlet/src/main/webapp/WEB-INF/service.xml").exists());
+		Assert.assertFalse(Files.exists(testPath.resolve("wars/tasks-portlet/src/main/webapp/WEB-INF/service.xml")));
 
-		Assert.assertTrue(new File(testdir, "wars/tasks-portlet/src/main/webapp/WEB-INF/portlet.xml").exists());
+		Assert.assertTrue(Files.exists(testPath.resolve("wars/tasks-portlet/src/main/webapp/WEB-INF/portlet.xml")));
 
 		File portletGradleFile = new File(testdir, "wars/tasks-portlet/build.gradle");
 

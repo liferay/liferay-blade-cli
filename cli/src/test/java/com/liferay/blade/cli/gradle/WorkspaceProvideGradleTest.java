@@ -19,6 +19,7 @@ package com.liferay.blade.cli.gradle;
 import java.io.File;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -32,57 +33,69 @@ public class WorkspaceProvideGradleTest {
 
 	@Test
 	public void testIsWorkspace1() throws Exception {
-		File workspace = new File(temporaryFolder.getRoot(), "workspace");
+		File root = temporaryFolder.getRoot();
 
-		workspace.mkdirs();
+		Path workspace = root.toPath();
 
-		File gradleFile = new File(workspace, "settings.gradle");
+		workspace = workspace.resolve("workspace");
+
+		Files.createDirectories(workspace);
+
+		Path gradlePath = workspace.resolve("settings.gradle");
 
 		String plugin = "apply plugin: \"com.liferay.workspace\"";
 
-		Files.write(gradleFile.toPath(), plugin.getBytes());
+		Files.write(gradlePath, plugin.getBytes());
 
 		GradleWorkspaceProvider workspaceProviderGradle = new GradleWorkspaceProvider();
 
-		Assert.assertTrue(workspaceProviderGradle.isWorkspace(workspace));
+		Assert.assertTrue(workspaceProviderGradle.isWorkspace(workspace.toFile()));
 	}
 
 	@Test
 	public void testIsWorkspace2() throws Exception {
-		File workspace = new File(temporaryFolder.getRoot(), "workspace");
+		File root = temporaryFolder.getRoot();
 
-		workspace.mkdirs();
+		Path workspace = root.toPath();
 
-		File gradleFile = new File(workspace, "settings.gradle");
+		workspace = workspace.resolve("workspace");
+
+		Files.createDirectories(workspace);
+
+		Path gradleFile = workspace.resolve("settings.gradle");
 
 		String plugin = "apply plugin: 'com.liferay.workspace'";
 
-		Files.write(gradleFile.toPath(), plugin.getBytes());
+		Files.write(gradleFile, plugin.getBytes());
 
 		GradleWorkspaceProvider workspaceProviderGradle = new GradleWorkspaceProvider();
 
-		Assert.assertTrue(workspaceProviderGradle.isWorkspace(workspace));
+		Assert.assertTrue(workspaceProviderGradle.isWorkspace(workspace.toFile()));
 	}
 
 	@Test
 	public void testIsWorkspace3() throws Exception {
-		File workspace = new File(temporaryFolder.getRoot(), "workspace");
+		File root = temporaryFolder.getRoot();
 
-		workspace.mkdirs();
+		Path workspace = root.toPath();
 
-		File buildFile = new File(workspace, "build.gradle");
+		workspace = workspace.resolve("workspace");
 
-		File settingsFile = new File(workspace, "settings.gradle");
+		Files.createDirectories(workspace);
 
-		settingsFile.createNewFile();
+		Path buildFile = workspace.resolve("build.gradle");
+
+		Path settingsFile = workspace.resolve("settings.gradle");
+
+		Files.createFile(settingsFile);
 
 		String plugin = "\napply   plugin:   \n\"com.liferay.workspace\"";
 
-		Files.write(buildFile.toPath(), plugin.getBytes());
+		Files.write(buildFile, plugin.getBytes());
 
 		GradleWorkspaceProvider workspaceProviderGradle = new GradleWorkspaceProvider();
 
-		Assert.assertTrue(workspaceProviderGradle.isWorkspace(workspace));
+		Assert.assertTrue(workspaceProviderGradle.isWorkspace(workspace.toFile()));
 	}
 
 	@Rule

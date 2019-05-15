@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import java.util.Properties;
 
@@ -48,6 +49,8 @@ public class InitCommandTest {
 	@Before
 	public void setUp() throws Exception {
 		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
+
+		_workspacePath = _workspaceDir.toPath();
 
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 	}
@@ -100,7 +103,9 @@ public class InitCommandTest {
 	public void testBladeInitEmptyDirectoryHandleDot() throws Exception {
 		File emptyDir = temporaryFolder.newFolder();
 
-		String pathStringToTest = new File(emptyDir.getPath(), ".").getAbsolutePath();
+		String pathStringToTest = new File(
+			emptyDir.getPath(), "."
+		).getAbsolutePath();
 
 		String[] args = {"--base", pathStringToTest, "init"};
 
@@ -117,7 +122,9 @@ public class InitCommandTest {
 	public void testBladeInitEmptyDirectoryHandleTwoDots() throws Exception {
 		File emptyDir = temporaryFolder.newFolder();
 
-		String pathStringToTest = new File(emptyDir.getPath(), ".").getAbsolutePath();
+		String pathStringToTest = new File(
+			emptyDir.getPath(), "."
+		).getAbsolutePath();
 
 		String[] args = {"--base", pathStringToTest, "init", "."};
 
@@ -167,7 +174,9 @@ public class InitCommandTest {
 	public void testBladeInitWithCustomProfile() throws Exception {
 		File tempDir = temporaryFolder.newFolder();
 
-		String basePath = new File(tempDir.getPath()).getAbsolutePath();
+		String basePath = new File(
+			tempDir.getPath()
+		).getAbsolutePath();
 
 		String[] args = {"--base", basePath, "init", "-P", "myprofile"};
 
@@ -194,11 +203,17 @@ public class InitCommandTest {
 
 		Assert.assertTrue(_workspaceDir.exists());
 
-		Assert.assertTrue(new File(_workspaceDir, "build.gradle").exists());
+		Path buildGradlePath = _workspacePath.resolve("build.gradle");
 
-		Assert.assertTrue(new File(_workspaceDir, "modules").exists());
+		Assert.assertTrue(Files.exists(buildGradlePath));
 
-		Assert.assertFalse(new File(_workspaceDir, "com").exists());
+		Path modulesPath = _workspacePath.resolve("modules");
+
+		Assert.assertTrue(Files.exists(modulesPath));
+
+		Path comPath = _workspacePath.resolve("com");
+
+		Assert.assertFalse(Files.exists(comPath));
 
 		_verifyGradleBuild();
 	}
@@ -207,11 +222,17 @@ public class InitCommandTest {
 	public void testDefaultInitWorkspaceDirectoryHasFiles() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 
-		Assert.assertTrue(new File(_workspaceDir, "foo").createNewFile());
+		Path fooPath = _workspacePath.resolve("foo");
+
+		Files.createFile(fooPath);
+
+		Assert.assertTrue(Files.exists(fooPath));
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
-		Assert.assertFalse(new File(_workspaceDir, "build.gradle").exists());
+		Path buildGradlePath = _workspacePath.resolve("build.gradle");
+
+		Assert.assertFalse(Files.exists(buildGradlePath));
 	}
 
 	@Test
@@ -222,9 +243,13 @@ public class InitCommandTest {
 
 		Assert.assertTrue(_workspaceDir.exists());
 
-		Assert.assertTrue(new File(_workspaceDir, "build.gradle").exists());
+		Path buildGradlePath = _workspacePath.resolve("build.gradle");
 
-		Assert.assertTrue(new File(_workspaceDir, "modules").exists());
+		Assert.assertTrue(Files.exists(buildGradlePath));
+
+		Path modulesPath = _workspacePath.resolve("modules");
+
+		Assert.assertTrue(Files.exists(modulesPath));
 
 		_verifyGradleBuild();
 	}
@@ -269,13 +294,17 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		File gradleWorkspace = new File(_workspaceDir, "gradleworkspace");
+		Path gradleWorkspace = _workspacePath.resolve("gradleworkspace");
 
-		Assert.assertTrue(gradleWorkspace.exists());
+		Assert.assertTrue(Files.exists(gradleWorkspace));
 
-		Assert.assertFalse(new File(gradleWorkspace, "pom.xml").exists());
+		Path pomXmlPath = gradleWorkspace.resolve("pom.xml");
 
-		Assert.assertTrue(new File(gradleWorkspace, "build.gradle").exists());
+		Assert.assertFalse(Files.exists(pomXmlPath));
+
+		Path buildGradlePath = gradleWorkspace.resolve("build.gradle");
+
+		Assert.assertTrue(Files.exists(buildGradlePath));
 	}
 
 	@Test
@@ -286,23 +315,41 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		Assert.assertTrue(new File(_workspaceDir, "build.gradle").exists());
+		Path buildGradlePath = _workspacePath.resolve("build.gradle");
 
-		Assert.assertTrue(new File(_workspaceDir, "modules").exists());
+		Assert.assertTrue(Files.exists(buildGradlePath));
 
-		Assert.assertTrue(new File(_workspaceDir, "themes").exists());
+		Path modulesPath = _workspacePath.resolve("modules");
 
-		Assert.assertFalse(new File(_workspaceDir, "portlets").exists());
+		Assert.assertTrue(Files.exists(modulesPath));
 
-		Assert.assertFalse(new File(_workspaceDir, "hooks").exists());
+		Path themesPath = _workspacePath.resolve("themes");
 
-		Assert.assertFalse(new File(_workspaceDir, "build.properties").exists());
+		Assert.assertTrue(Files.exists(themesPath));
 
-		Assert.assertFalse(new File(_workspaceDir, "build.xml").exists());
+		Path portletsPath = _workspacePath.resolve("portlets");
 
-		Assert.assertTrue(new File(_workspaceDir, "plugins-sdk/build.properties").exists());
+		Assert.assertFalse(Files.exists(portletsPath));
 
-		Assert.assertTrue(new File(_workspaceDir, "plugins-sdk/build.xml").exists());
+		Path hooksPath = _workspacePath.resolve("hooks");
+
+		Assert.assertFalse(Files.exists(hooksPath));
+
+		Path buildPropertiesPath = _workspacePath.resolve("build.properties");
+
+		Assert.assertFalse(Files.exists(buildPropertiesPath));
+
+		Path buildXmlPath = _workspacePath.resolve("build.xml");
+
+		Assert.assertFalse(Files.exists(buildXmlPath));
+
+		Path pluginBuildPropertiesPath = _workspacePath.resolve("plugins-sdk/build.properties");
+
+		Assert.assertTrue(Files.exists(pluginBuildPropertiesPath));
+
+		Path pluginBuildXmlPath = _workspacePath.resolve("plugins-sdk/build.xml");
+
+		Assert.assertTrue(Files.exists(pluginBuildXmlPath));
 	}
 
 	@Test
@@ -311,11 +358,15 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
+		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
 		Assert.assertTrue(contents, contents.contains("7.0.6-ga7"));
 
-		String properties = new String(Files.readAllBytes(new File(_workspaceDir, ".blade.properties").toPath()));
+		Path bladePropertiesPath = _workspacePath.resolve(".blade.properties");
+
+		String properties = new String(Files.readAllBytes(bladePropertiesPath));
 
 		Assert.assertTrue(properties, properties.contains("liferay.version.default=7.0"));
 	}
@@ -326,11 +377,15 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
+		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
 		Assert.assertTrue(contents, contents.contains("7.1.1-ga2"));
 
-		String properties = new String(Files.readAllBytes(new File(_workspaceDir, ".blade.properties").toPath()));
+		Path bladePropertiesPath = _workspacePath.resolve(".blade.properties");
+
+		String properties = new String(Files.readAllBytes(bladePropertiesPath));
 
 		Assert.assertTrue(properties, properties.contains("liferay.version.default=7.1"));
 	}
@@ -341,11 +396,15 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		String contents = new String(Files.readAllBytes(new File(_workspaceDir, "gradle.properties").toPath()));
+		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
 		Assert.assertTrue(contents, contents.contains("7.1.1-ga2"));
 
-		String properties = new String(Files.readAllBytes(new File(_workspaceDir, ".blade.properties").toPath()));
+		Path bladePropertiesPath = _workspacePath.resolve(".blade.properties");
+
+		String properties = new String(Files.readAllBytes(bladePropertiesPath));
 
 		Assert.assertTrue(properties, properties.contains("liferay.version.default=7.1"));
 	}
@@ -354,17 +413,25 @@ public class InitCommandTest {
 	public void testInitWithNameWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject"};
 
-		File newproject = new File(_workspaceDir, "newproject");
+		Path newproject = _workspacePath.resolve("newproject");
 
-		Assert.assertTrue(newproject.mkdirs());
+		Files.createDirectories(newproject);
+
+		Assert.assertTrue(Files.exists(newproject));
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		Assert.assertTrue(new File(newproject, "build.gradle").exists());
+		Path buildGradlePath = newproject.resolve("build.gradle");
 
-		Assert.assertTrue(new File(newproject, "modules").exists());
+		Assert.assertTrue(Files.exists(buildGradlePath));
 
-		String contents = new String(Files.readAllBytes(new File(newproject, "settings.gradle").toPath()));
+		Path modulesPath = newproject.resolve("modules");
+
+		Assert.assertTrue(Files.exists(modulesPath));
+
+		Path settingsGradlePath = newproject.resolve("settings.gradle");
+
+		String contents = new String(Files.readAllBytes(settingsGradlePath));
 
 		Assert.assertTrue(contents, contents.contains("1.10"));
 	}
@@ -373,13 +440,23 @@ public class InitCommandTest {
 	public void testInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject"};
 
-		Assert.assertTrue(new File(_workspaceDir, "newproject").mkdirs());
+		Path newProjectPath = _workspacePath.resolve("newproject");
 
-		Assert.assertTrue(new File(_workspaceDir, "newproject/foo").createNewFile());
+		Files.createDirectories(newProjectPath);
+
+		Assert.assertTrue(Files.exists(newProjectPath));
+
+		Path fooPath = newProjectPath.resolve("foo");
+
+		Files.createFile(fooPath);
+
+		Assert.assertTrue(Files.exists(fooPath));
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
-		Assert.assertFalse(new File(_workspaceDir, "newproject/build.gradle").exists());
+		Path buildGradlePath = newProjectPath.resolve("build.gradle");
+
+		Assert.assertFalse(Files.exists(buildGradlePath));
 	}
 
 	@Test
@@ -388,27 +465,32 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		Assert.assertTrue(new File(_workspaceDir, "newproject/build.gradle").exists());
+		Path buildGradlePath = _workspacePath.resolve("newproject/build.gradle");
 
-		Assert.assertTrue(new File(_workspaceDir, "newproject/modules").exists());
+		Assert.assertTrue(Files.exists(buildGradlePath));
+
+		Path modulesPath = _workspacePath.resolve("newproject/modules");
+
+		Assert.assertTrue(Files.exists(modulesPath));
 	}
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _createBundle() throws Exception {
-		String projectPath = new File(_workspaceDir, "modules").getAbsolutePath();
+		Path projectPath = _workspacePath.resolve("modules");
 
-		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "foo"};
+		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath.toString(), "foo"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		File file = new File(projectPath, "/foo");
-		File bndFile = new File(projectPath, "/foo/bnd.bnd");
+		Path path = projectPath.resolve("foo");
 
-		Assert.assertTrue(file.exists());
+		Path bndPath = path.resolve("bnd.bnd");
 
-		Assert.assertTrue(bndFile.exists());
+		Assert.assertTrue(Files.exists(path));
+
+		Assert.assertTrue(Files.exists(bndPath));
 	}
 
 	private BladeTest _getBladeTestCustomWorkspace(File workspaceDir) {
@@ -421,29 +503,73 @@ public class InitCommandTest {
 	}
 
 	private void _makeSDK(File dir) throws IOException {
-		Assert.assertTrue(new File(dir, "portlets").mkdirs());
-		Assert.assertTrue(new File(dir, "hooks").mkdirs());
-		Assert.assertTrue(new File(dir, "layouttpl").mkdirs());
-		Assert.assertTrue(new File(dir, "themes").mkdirs());
-		Assert.assertTrue(new File(dir, "build.properties").createNewFile());
-		Assert.assertTrue(new File(dir, "build.xml").createNewFile());
-		Assert.assertTrue(new File(dir, "build-common.xml").createNewFile());
-		Assert.assertTrue(new File(dir, "build-common-plugin.xml").createNewFile());
+		Path dirPath = dir.toPath();
+
+		Path portletsPath = dirPath.resolve("portlets");
+
+		Files.createDirectories(portletsPath);
+
+		Assert.assertTrue(Files.exists(portletsPath));
+
+		Path hooksPath = dirPath.resolve("hooks");
+
+		Files.createDirectories(hooksPath);
+
+		Assert.assertTrue(Files.exists(hooksPath));
+
+		Path layouttplPath = dirPath.resolve("layouttpl");
+
+		Files.createDirectories(layouttplPath);
+
+		Assert.assertTrue(Files.exists(layouttplPath));
+
+		Path themesPath = dirPath.resolve("themes");
+
+		Files.createDirectories(themesPath);
+
+		Assert.assertTrue(Files.exists(themesPath));
+
+		Path buildPropsPath = dirPath.resolve("build.properties");
+
+		Files.createDirectories(buildPropsPath);
+
+		Assert.assertTrue(Files.exists(buildPropsPath));
+
+		Path buildXmlPath = dirPath.resolve("build.xml");
+
+		Files.createDirectories(buildXmlPath);
+
+		Assert.assertTrue(Files.exists(buildXmlPath));
+
+		Path buildCommonXmlPath = dirPath.resolve("build-common.xml");
+
+		Files.createDirectories(buildCommonXmlPath);
+
+		Assert.assertTrue(Files.exists(buildCommonXmlPath));
+
+		Path buildCommonPluginXmlPath = dirPath.resolve("build-common-plugin.xml");
+
+		Files.createDirectories(buildCommonPluginXmlPath);
+
+		Assert.assertTrue(Files.exists(buildCommonPluginXmlPath));
 	}
 
 	private void _verifyGradleBuild() throws Exception {
 		_createBundle();
 
-		String projectPath = _workspaceDir.getPath() + "/modules";
+		Path projectPath = _workspacePath.resolve("modules");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(_workspaceDir.getPath(), "jar");
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(_workspacePath.toString(), "jar");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
+		projectPath = projectPath.resolve("foo");
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath.toString(), "foo-1.0.0.jar");
 	}
 
 	private File _extensionsDir = null;
 	private File _workspaceDir = null;
+	private Path _workspacePath = null;
 
 }

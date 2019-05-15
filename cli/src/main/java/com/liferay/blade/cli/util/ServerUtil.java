@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
@@ -45,12 +46,12 @@ public class ServerUtil {
 			}
 
 			if (match) {
-				if ("tomcat".equals(serverType)) {
+				if (Objects.equals("tomcat", serverType)) {
 					Path executable = path.resolve(Paths.get("bin", getTomcatExecutable()));
 
 					match = Files.exists(executable);
 				}
-				else if ("jboss".equals(serverType) || "wildfly".equals(serverType)) {
+				else if (Objects.equals("jboss", serverType) || Objects.equals("wildfly", serverType)) {
 					Path executable = path.resolve(Paths.get("bin", getJBossWildflyExecutable()));
 
 					match = Files.exists(executable);

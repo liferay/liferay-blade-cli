@@ -121,7 +121,12 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 					Path extractedDirectory;
 
 					try (Stream<Path> fileStream = Files.list(projectPath)) {
-						extractedDirectory = fileStream.filter(Files::isDirectory).findFirst().orElse(null);
+						extractedDirectory = fileStream.filter(
+							Files::isDirectory
+						).findFirst(
+						).orElse(
+							null
+						);
 					}
 
 					Path projectSubPath = Paths.get(subpath.toString());
@@ -300,7 +305,9 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 	private static boolean _isValidURL(String urlString) {
 		try {
-			new URL(urlString).toURI();
+			URL url = new URL(urlString);
+
+			url.toURI();
 
 			return true;
 		}
@@ -373,8 +380,6 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private static final FileSystem _fileSystem = FileSystems.getDefault();
-	private static final PathMatcher _templatePathMatcher = _fileSystem.getPathMatcher(
-		"glob:**/*.project.templates.*");
-
+	private static final PathMatcher _templatePathMatcher = _fileSystem.getPathMatcher("glob:**/*.project.templates.*");
 
 }

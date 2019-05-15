@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -75,10 +76,10 @@ public class BladeSettings {
 				else {
 					String profilePromptDisabled = _properties.getProperty("profile.prompt.disabled", "false");
 
-					if (!"true".equals(profilePromptDisabled)) {
+					if (!Objects.equals("true", profilePromptDisabled)) {
 						String profileName = getProfileName();
 
-						if (!"maven".equals(profileName)) {
+						if (!Objects.equals("maven", profileName)) {
 							shouldPrompt = true;
 						}
 					}

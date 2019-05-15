@@ -19,6 +19,8 @@ package com.liferay.properties.locator;
 import java.io.File;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.util.SortedSet;
 
@@ -64,7 +66,10 @@ public class PropertiesLocatorTest {
 
 		PropertiesLocator.main(args);
 
-		String expectedOutput = new String(Files.readAllBytes(new File("test-resources/checkProperties.out").toPath()));
+		Path propertiesPath = Paths.get("test-resources/checkProperties.out");
+
+		String expectedOutput = new String(Files.readAllBytes(propertiesPath));
+
 		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
 
 		Assert.assertEquals(expectedOutput.replaceAll("\\r", ""), testOutput.replaceAll("\\r", ""));

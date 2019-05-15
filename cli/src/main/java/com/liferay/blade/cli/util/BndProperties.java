@@ -61,7 +61,7 @@ public class BndProperties extends Properties {
 		if (bdValue != null) {
 			String originalValue = bdValue.getOriginalValue();
 
-			if ((originalValue != null) && !"".equals(originalValue)) {
+			if ((originalValue != null) && !originalValue.isEmpty()) {
 				StringBuilder formatedValueBuilder = new StringBuilder(bdValue.getFormatedValue());
 				StringBuilder originalValueBuilder = new StringBuilder(bdValue.getOriginalValue());
 
@@ -250,6 +250,7 @@ public class BndProperties extends Properties {
 
 			if (!delim && ((c == ':') || (c == '='))) {
 				pos++;
+
 				while ((pos < line.length()) && Character.isWhitespace(c = line.charAt(pos))) {
 					pos++;
 				}
@@ -434,7 +435,7 @@ public class BndProperties extends Properties {
 
 					break;
 
-					// case '\\':
+				// case '\\':
 
 				case '!':
 				case '#':

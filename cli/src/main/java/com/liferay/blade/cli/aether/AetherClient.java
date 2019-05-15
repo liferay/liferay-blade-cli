@@ -144,7 +144,9 @@ public class AetherClient {
 	}
 
 	private static RemoteRepository _newRemoteRepository(String url) {
-		return new RemoteRepository.Builder("blade", "default", url).build();
+		return new RemoteRepository.Builder(
+			"blade", "default", url
+		).build();
 	}
 
 	private static RepositorySystem _newRepositorySystem() {
@@ -196,8 +198,9 @@ public class AetherClient {
 	private static final File _DEFAULT_GLOBAL_SETTINGS_FILE = new File(
 		System.getProperty("maven.home", System.getProperty("user.dir", "")), "conf/settings.xml");
 
-	private static final String[] _DEFAULT_REPO_URLS =
-		{"https://repository-cdn.liferay.com/nexus/content/groups/public"};
+	private static final String[] _DEFAULT_REPO_URLS = {
+		"https://repository-cdn.liferay.com/nexus/content/groups/public"
+	};
 
 	private static final String _USER_HOME = System.getProperty("user.home");
 

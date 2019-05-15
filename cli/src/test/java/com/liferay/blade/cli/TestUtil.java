@@ -26,6 +26,7 @@ import java.nio.file.Path;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
@@ -76,14 +77,12 @@ public class TestUtil {
 					if (line.startsWith("Picked up JAVA_TOOL_OPTIONS")) {
 						continue;
 					}
-					
 
 					if (line.contains("LC_ALL: cannot change locale")) {
 						continue;
 					}
-					
+
 					sb.append(line);
-					
 
 					if (scanner.hasNextLine()) {
 						sb.append(System.lineSeparator());
@@ -108,9 +107,7 @@ public class TestUtil {
 	}
 
 	public static BladeTestResults runBlade(boolean assertErrors, String... args) {
-		return runBlade(
-			new File(System.getProperty("user.home")), new File(System.getProperty("user.home")), System.in,
-			assertErrors, args);
+		return runBlade(_getHomeDir(), _getHomeDir(), System.in, assertErrors, args);
 	}
 
 	public static BladeTestResults runBlade(
@@ -127,7 +124,7 @@ public class TestUtil {
 		Predicate<String> slf4JFilter = line -> line.startsWith("SLF4J:");
 
 		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
-		
+
 		Collection<Predicate<String>> filters = Arrays.asList(localeFilter, slf4JFilter);
 
 		StringPrintStream errorPrintStream = StringPrintStream.newFilteredInstance(filters);
@@ -151,7 +148,7 @@ public class TestUtil {
 
 		String settingsDirName = settingsDir.getName();
 
-		if (!".blade".equals(settingsDirName)) {
+		if (!Objects.equals(".blade", settingsDirName)) {
 			settingsDir = new File(settingsDir, ".blade");
 		}
 
@@ -175,9 +172,7 @@ public class TestUtil {
 	}
 
 	public static BladeTestResults runBlade(String... args) {
-		return runBlade(
-			new File(System.getProperty("user.home")), new File(System.getProperty("user.home")), System.in, true,
-			args);
+		return runBlade(_getHomeDir(), _getHomeDir(), System.in, true, args);
 	}
 
 	public static void updateMavenRepositories(String projectPath) throws Exception {
@@ -238,6 +233,10 @@ public class TestUtil {
 		repositoryElement.appendChild(urlElement);
 
 		repositoriesElement.appendChild(repositoryElement);
+	}
+
+	private static File _getHomeDir() {
+		return new File(System.getProperty("user.home"));
 	}
 
 	private static final String _REPOSITORY_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/groups/public";

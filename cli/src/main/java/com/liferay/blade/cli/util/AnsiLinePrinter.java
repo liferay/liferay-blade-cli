@@ -71,16 +71,22 @@ public class AnsiLinePrinter {
 	}
 
 	private static Function<? super String, ? extends Ansi> _toAnsiColor(Function<Ansi, Ansi> colorizer) {
-		return line -> colorizer.apply(Ansi.ansi()).a(line).reset();
+		return line -> colorizer.apply(
+			Ansi.ansi()
+		).a(
+			line
+		).reset();
 	}
 
 	private static final Pattern[] _BRIGHT_GREEN_LINE_PATTERNS = {Pattern.compile(".*STOPPED.*")};
 
-	private static final Pattern[] _BRIGHT_RED_LINE_PATTERNS =
-		{Pattern.compile("^Error.*"), Pattern.compile(".*ERROR.*"), Pattern.compile(".*FATAL.*")};
+	private static final Pattern[] _BRIGHT_RED_LINE_PATTERNS = {
+		Pattern.compile("^Error.*"), Pattern.compile(".*ERROR.*"), Pattern.compile(".*FATAL.*")
+	};
 
-	private static final Pattern[] _GREEN_LINE_PATTERNS =
-		{Pattern.compile(".*STARTED.*"), Pattern.compile(".*STOPPED.*")};
+	private static final Pattern[] _GREEN_LINE_PATTERNS = {
+		Pattern.compile(".*STARTED.*"), Pattern.compile(".*STOPPED.*")
+	};
 
 	private static final Pattern[] _YELLOW_LINE_PATTERNS = {Pattern.compile(".*WARN.*")};
 

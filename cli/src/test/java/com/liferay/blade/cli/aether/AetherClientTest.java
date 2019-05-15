@@ -43,7 +43,7 @@ public class AetherClientTest {
 
 		Assert.assertNotNull(file);
 		Assert.assertTrue(file.exists());
-		
+
 		String filePathString = file.getPath();
 
 		Assert.assertTrue(filePathString.contains("test-resources/localrepo"));
