@@ -433,7 +433,21 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(settingsGradlePath));
 
-		Assert.assertTrue(contents, contents.contains("1.10"));
+		boolean contentContainsVersion = contents.contains(_GRADLE_PLUGINS_WORKSPACE_VERSION);
+
+		if (!contentContainsVersion) {
+			StringBuilder sb = new StringBuilder("Error checking com.liferay.gradle.plugins.workspace version.");
+
+			sb.append(System.lineSeparator());
+
+			sb.append("Expected " + _GRADLE_PLUGINS_WORKSPACE_VERSION);
+
+			sb.append(System.lineSeparator());
+
+			sb.append(contents);
+
+			Assert.fail(String.valueOf(sb));
+		}
 	}
 
 	@Test
@@ -567,6 +581,8 @@ public class InitCommandTest {
 
 		GradleRunnerUtil.verifyBuildOutput(projectPath.toString(), "foo-1.0.0.jar");
 	}
+
+	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "2.0.2";
 
 	private File _extensionsDir = null;
 	private File _workspaceDir = null;

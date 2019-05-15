@@ -270,10 +270,7 @@ public class CreateCommandTest {
 
 		_contains(
 			_checkFileExists(projectPath + "/src/main/java/gradle/test/portlet/FooPortlet.java"),
-			new String[] {
-				"^package gradle.test.portlet;.*", ".*javax.portlet.display-name=Foo.*",
-				".*^public class FooPortlet .*", ".*Hello from Foo!.*"
-			});
+			".*^public class FooPortlet extends MVCPortlet.*$");
 	}
 
 	@Test
@@ -991,8 +988,9 @@ public class CreateCommandTest {
 		_contains(
 			_checkFileExists(projectPath + "/gradle.test/src/main/java/gradle/test/portlet/FooPortlet.java"),
 			new String[] {
-				"^package gradle.test.portlet;.*", ".*javax.portlet.display-name=Foo.*",
-				".*^public class FooPortlet .*", ".*Hello from Foo!.*"
+				"^package gradle.test.portlet;.*", ".*^import gradle.test.constants.FooPortletKeys;$.*",
+				".*^import javax.portlet.Portlet;$.*", ".*^public class FooPortlet extends MVCPortlet.*$",
+				".*service = Portlet.class.*"
 			});
 
 		_lacks(
@@ -1352,7 +1350,7 @@ public class CreateCommandTest {
 
 		File modulesDir = new File(workspace, "modules");
 
-		String[] args = {"--base", modulesDir.getAbsolutePath(), "create", "-t", "soy-portlet", "foo"};
+		String[] args = {"--base", modulesDir.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo"};
 
 		_makeWorkspace(workspace);
 

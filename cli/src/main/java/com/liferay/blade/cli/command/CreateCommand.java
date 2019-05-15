@@ -71,6 +71,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		String template = createArgs.getTemplate();
 
+		if (Objects.equals(template, "portlet")) {
+			template = "mvc-portlet";
+		}
+
 		if (template == null) {
 			bladeCLI.error("The following option is required: [-t | --template]\n\n");
 			bladeCLI.error("Availble project templates:\n\n");
