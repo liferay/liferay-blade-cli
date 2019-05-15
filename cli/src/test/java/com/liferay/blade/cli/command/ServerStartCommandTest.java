@@ -352,12 +352,26 @@ public class ServerStartCommandTest {
 		}
 	}
 
+	private static boolean _isServerRunning() {
+		for (JavaProcess process : JavaProcesses.list()) {
+			String displayName = process.getDisplayName();
+
+			if (displayName.contains("wildfly") || displayName.contains("catalina")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private static void _terminateProcess(PidProcess tomcatPidProcess) throws Exception {
 		ProcessUtil.destroyForcefullyAndWait(tomcatPidProcess, 1, TimeUnit.MINUTES);
 
 		String processName = tomcatPidProcess.getDescription();
 
 		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
+
+		Assert.assertFalse(_isServerRunning());
 	}
 
 	private void _addBundleToGradle(String bundleFileName) throws Exception {
@@ -422,9 +436,13 @@ public class ServerStartCommandTest {
 	}
 
 	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter, boolean assertFound) throws Exception {
+		if (assertFound) {
+			Assert.assertTrue(_isServerRunning());
+		}
+
 		Optional<PidProcess> serverProcess = _findServerProcess(processFilter, assertFound);
 
-		if (!serverProcess.isPresent()) {
+		if (!assertFound && !serverProcess.isPresent()) {
 			return;
 		}
 
@@ -566,9 +584,9 @@ public class ServerStartCommandTest {
 	}
 
 	private void _runServer() throws Exception, InterruptedException {
-		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
+		Assert.assertFalse(_isServerRunning());
 
-		int maxProcessId = JavaProcesses.maxProcessId();
+		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
 		CountDownLatch latch = new CountDownLatch(1);
 
@@ -582,27 +600,23 @@ public class ServerStartCommandTest {
 
 		latch.await();
 
-		int newMaxProcessId = JavaProcesses.maxProcessId();
-
 		int retries = 0;
 
-		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
+		while (!_isServerRunning() && (retries < 12)) {
 			Thread.sleep(5000);
-
-			newMaxProcessId = JavaProcesses.maxProcessId();
 
 			retries++;
 		}
 
-		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
+		Assert.assertTrue("Expected a new process", _isServerRunning());
 	}
 
 	private void _runServerDebug() throws Exception, InterruptedException {
 		_useDebug = true;
 
-		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
+		Assert.assertFalse(_isServerRunning());
 
-		int maxProcessId = JavaProcesses.maxProcessId();
+		String[] serverRunArgs = {"--base", _testWorkspacePath.toString(), "server", "run"};
 
 		final String[] serverRunDebugArgs = _getDebugArgs(serverRunArgs);
 
@@ -618,25 +632,21 @@ public class ServerStartCommandTest {
 
 		latch.await();
 
-		int newMaxProcessId = JavaProcesses.maxProcessId();
-
 		int retries = 0;
 
-		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
+		while (!_isServerRunning() && (retries < 12)) {
 			Thread.sleep(5000);
-
-			newMaxProcessId = JavaProcesses.maxProcessId();
 
 			retries++;
 		}
 
-		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
+		Assert.assertTrue("Expected a new process", _isServerRunning());
 	}
 
 	private void _startServer() throws Exception, InterruptedException {
-		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
+		Assert.assertFalse(_isServerRunning());
 
-		int maxProcessId = JavaProcesses.maxProcessId();
+		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
 		CountDownLatch latch = new CountDownLatch(1);
 
@@ -650,27 +660,22 @@ public class ServerStartCommandTest {
 
 		latch.await();
 
-		int newMaxProcessId = JavaProcesses.maxProcessId();
-
 		int retries = 0;
 
-		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
+		while (!_isServerRunning() && (retries < 12)) {
 			Thread.sleep(5000);
-
-			newMaxProcessId = JavaProcesses.maxProcessId();
-
 			retries++;
 		}
 
-		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
+		Assert.assertTrue("Expected a new process", _isServerRunning());
 	}
 
 	private void _startServerDebug() throws Exception, InterruptedException {
 		_useDebug = true;
 
-		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
+		Assert.assertFalse(_isServerRunning());
 
-		int maxProcessId = JavaProcesses.maxProcessId();
+		String[] serverStartArgs = {"--base", _testWorkspacePath.toString(), "server", "start"};
 
 		final String[] serverStartArgsFinal = _getDebugArgs(serverStartArgs);
 
@@ -686,19 +691,15 @@ public class ServerStartCommandTest {
 
 		latch.await();
 
-		int newMaxProcessId = JavaProcesses.maxProcessId();
-
 		int retries = 0;
 
-		while ((newMaxProcessId == maxProcessId) && (retries < 12)) {
+		while (!_isServerRunning() && (retries < 12)) {
 			Thread.sleep(5000);
-
-			newMaxProcessId = JavaProcesses.maxProcessId();
 
 			retries++;
 		}
 
-		Assert.assertTrue("Expected a new process", newMaxProcessId > maxProcessId);
+		Assert.assertTrue("Expected a new process", _isServerRunning());
 	}
 
 	private void _validateBundleConfigFile(Path bundleConfigPath) throws FileNotFoundException, IOException {
