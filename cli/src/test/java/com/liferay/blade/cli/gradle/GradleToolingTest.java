@@ -29,10 +29,10 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
@@ -41,33 +41,29 @@ import org.junit.rules.TemporaryFolder;
  */
 public class GradleToolingTest {
 
-	@ClassRule
-	public static final TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		File wsDir = temporaryFolder.newFolder("build", "testws1");
+
+		_wsPath = wsDir.toPath();
 
 		Path toolingZipPath = Paths.get("build/tooling.zip");
 
-		Assert.assertTrue(Files.exists(toolingZipPath));
+		Assert.assertTrue("Expected to find tooling.zip", Files.exists(toolingZipPath));
 
-		Files.copy(toolingZipPath, _TOOLING_ZIP.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(toolingZipPath, _TOOLING_ZIP, StandardCopyOption.REPLACE_EXISTING);
 
-		FileUtil.copyDir(Paths.get("test-resources/projects/testws1"), wsDir.toPath());
+		FileUtil.copyDir(Paths.get("test-resources/projects/testws1"), _wsPath);
 	}
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-		Files.delete(_TOOLING_ZIP.toPath());
+	@After
+	public void tearDownClass() throws Exception {
+		Files.delete(_TOOLING_ZIP);
 	}
 
 	@Test
 	public void testGetOutputFiles() throws Exception {
-		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
-			new File(
-				temporaryFolder.getRoot(), "build/testws1"
-			).toPath());
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(_wsPath);
 
 		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
@@ -83,10 +79,9 @@ public class GradleToolingTest {
 
 	@Test
 	public void testGetPluginClassNames() throws Exception {
-		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
-			new File(
-				temporaryFolder.getRoot(), "build/testws1/modules/testportlet"
-			).toPath());
+		Path projectPath = _wsPath.resolve("modules/testportlet");
+
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(projectPath);
 
 		Set<String> pluginClassNames = projectInfo.getPluginClassNames();
 
@@ -96,26 +91,29 @@ public class GradleToolingTest {
 
 	@Test
 	public void testIsLiferayModule() throws Exception {
-		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
-			new File(
-				temporaryFolder.getRoot(), "build/testws1/modules/testportlet"
-			).toPath());
+		Path projectPath = _wsPath.resolve("modules/testportlet");
+
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(projectPath);
 
 		Assert.assertTrue(projectInfo.isLiferayProject());
 	}
 
 	@Test
 	public void testIsNotLiferayModule() throws Exception {
-		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(
-			new File(
-				temporaryFolder.getRoot(), "build/testws1/modules"
-			).toPath());
+		Path projectPath = _wsPath.resolve("modules");
+
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(projectPath);
 
 		Assert.assertFalse(projectInfo.isLiferayProject());
 	}
 
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
 	private static final String _TEST_OUTPUT_PATH = System.getProperty("testOutputPath");
 
-	private static final File _TOOLING_ZIP = new File(_TEST_OUTPUT_PATH + "/tooling.zip");
+	private static final Path _TOOLING_ZIP = Paths.get(_TEST_OUTPUT_PATH, "tooling.zip");
+
+	private Path _wsPath = null;
 
 }

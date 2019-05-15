@@ -107,9 +107,7 @@ public class TestUtil {
 	}
 
 	public static BladeTestResults runBlade(boolean assertErrors, String... args) {
-		return runBlade(
-			new File(System.getProperty("user.home")), new File(System.getProperty("user.home")), System.in,
-			assertErrors, args);
+		return runBlade(_getHomeDir(), _getHomeDir(), System.in, assertErrors, args);
 	}
 
 	public static BladeTestResults runBlade(
@@ -174,9 +172,7 @@ public class TestUtil {
 	}
 
 	public static BladeTestResults runBlade(String... args) {
-		return runBlade(
-			new File(System.getProperty("user.home")), new File(System.getProperty("user.home")), System.in, true,
-			args);
+		return runBlade(_getHomeDir(), _getHomeDir(), System.in, true, args);
 	}
 
 	public static void updateMavenRepositories(String projectPath) throws Exception {
@@ -237,6 +233,10 @@ public class TestUtil {
 		repositoryElement.appendChild(urlElement);
 
 		repositoriesElement.appendChild(repositoryElement);
+	}
+
+	private static File _getHomeDir() {
+		return new File(System.getProperty("user.home"));
 	}
 
 	private static final String _REPOSITORY_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/groups/public";

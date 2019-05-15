@@ -16,7 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import java.io.File;
 import java.io.IOException;
 
 import java.nio.file.FileVisitResult;
@@ -39,11 +38,11 @@ import org.junit.Assert;
 public class GradleRunnerUtil {
 
 	public static BuildTask executeGradleRunner(String projectPath, String... taskPath) {
-		File projectDir = new File(projectPath);
+		Path projectDir = Paths.get(projectPath);
 
 		GradleRunner gradleRunner = GradleRunner.create();
 
-		gradleRunner.withProjectDir(projectDir);
+		gradleRunner.withProjectDir(projectDir.toFile());
 		gradleRunner.withArguments(taskPath);
 
 		BuildResult buildResult = gradleRunner.build();

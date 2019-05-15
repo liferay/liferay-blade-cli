@@ -71,16 +71,18 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
 
-		Assert.assertTrue(
-			Files.exists(
-				testPath.resolve("plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-api")));
+		Path apiPath = testPath.resolve(
+			"plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-api");
 
-		Assert.assertTrue(
-			Files.exists(
-				testPath.resolve(
-					"plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-service")));
+		Assert.assertTrue(Files.exists(apiPath));
 
-		Assert.assertTrue(Files.exists(testPath.resolve("plugins-sdk-with-git/wars/sample-service-builder-portlet")));
+		Path servicePath = projectPath.resolve("modules/sample-service-builder/sample-service-builder-service");
+
+		Assert.assertTrue(Files.exists(servicePath));
+
+		Path portletPath = projectPath.resolve("wars/sample-service-builder-portlet");
+
+		Assert.assertTrue(Files.exists(portletPath));
 	}
 
 	@Test
@@ -128,42 +130,43 @@ public class ConvertCommandTest {
 
 		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
-		Assert.assertTrue(testdir.exists());
+		Path testPath = testdir.toPath();
 
-		File projectDir = new File(testdir, "plugins-sdk-with-git");
+		Assert.assertTrue(Files.exists(testPath));
 
-		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+		Path projectDir = testPath.resolve("plugins-sdk-with-git");
 
-		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
+		Path pluginsSdkDir = projectDir.resolve("plugins-sdk");
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		FileUtil.deleteDirIfExists(pluginsSdkDir);
 
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-application-adapter-hook"};
+		String[] args = {"--base", projectDir.toString(), "init", "-u"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File sampleExpandoHook = new File(projectDir, "wars/sample-application-adapter-hook");
-
-		Assert.assertTrue(sampleExpandoHook.exists());
-
-		Assert.assertFalse(
-			new File(
-				projectDir, "plugins-sdk/hooks/sample-application-adapter-hook"
-			).exists());
-
-		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-servlet-filter-hook"};
+		args = new String[] {"--base", projectDir.toString(), "convert", "sample-application-adapter-hook"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File sampleServletFilterHook = new File(projectDir, "wars/sample-servlet-filter-hook");
+		Path sampleExpandoHook = projectDir.resolve("wars/sample-application-adapter-hook");
 
-		Assert.assertTrue(sampleServletFilterHook.exists());
+		Assert.assertTrue(Files.exists(sampleExpandoHook));
 
-		File hookDir = new File(projectDir, "plugins-sdk/hooks/sample-servlet-filter-hook");
+		Path sampleHookWrongPath = projectDir.resolve("plugins-sdk/hooks/sample-application-adapter-hook");
 
-		Assert.assertFalse(hookDir.exists());
+		Assert.assertFalse(Files.exists(sampleHookWrongPath));
+
+		args = new String[] {"--base", projectDir.toString(), "convert", "sample-servlet-filter-hook"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		Path sampleServletFilterHook = projectDir.resolve("wars/sample-servlet-filter-hook");
+
+		Assert.assertTrue(Files.exists(sampleServletFilterHook));
+
+		Path hookDir = projectDir.resolve("plugins-sdk/hooks/sample-servlet-filter-hook");
+
+		Assert.assertFalse(Files.exists(hookDir));
 	}
 
 	@Test

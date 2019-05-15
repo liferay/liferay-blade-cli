@@ -24,6 +24,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 
+import java.nio.file.Path;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,16 +39,20 @@ public class GradleExecTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_rootDir = temporaryFolder.getRoot();
+		File rootDir = temporaryFolder.getRoot();
 
-		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+		_rootPath = rootDir.toPath();
+
+		File extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+
+		_extensionsPath = extensionsDir.toPath();
 	}
 
 	@Test
 	public void testGradleWrapper() throws Exception {
-		File temporaryDir = temporaryFolder.getRoot();
+		Path temporaryPath = _rootPath.normalize();
 
-		String[] args = {"--base", temporaryDir.getAbsolutePath(), "create", "-t", "api", "foo"};
+		String[] args = {"--base", temporaryPath.toString(), "create", "-t", "api", "foo"};
 
 		_getBladeTest().run(args);
 
@@ -56,8 +62,8 @@ public class GradleExecTest {
 
 		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
-		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setExtensionsDir(_extensionsPath);
+		bladeTestBuilder.setSettingsDir(_rootPath);
 		bladeTestBuilder.setStdOut(ps);
 
 		BladeCLI bladeCLI = bladeTestBuilder.build();
@@ -86,13 +92,13 @@ public class GradleExecTest {
 	private BladeTest _getBladeTest() {
 		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
-		bladeTestBuilder.setSettingsDir(_rootDir.toPath());
+		bladeTestBuilder.setExtensionsDir(_extensionsPath);
+		bladeTestBuilder.setSettingsDir(_rootPath);
 
 		return bladeTestBuilder.build();
 	}
 
-	private File _extensionsDir = null;
-	private File _rootDir = null;
+	private Path _extensionsPath = null;
+	private Path _rootPath = null;
 
 }

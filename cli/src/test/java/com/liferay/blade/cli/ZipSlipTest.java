@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.zip.ZipException;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -35,23 +36,28 @@ import org.junit.rules.TemporaryFolder;
  */
 public class ZipSlipTest {
 
+	@Before
+	public void setUp() throws Exception {
+		File tempDir = temporaryFolder.getRoot();
+
+		_rootPath = tempDir.toPath();
+	}
+
 	@Test
 	public void testNoZipSlipZip() throws Exception {
 		_testZip("no-zip-slip.zip");
 
-		File tempDir = temporaryFolder.getRoot();
+		Path expectedAPath = _rootPath.resolve("afile");
 
-		File expectedAFile = new File(tempDir, "afile");
+		Assert.assertTrue("Expected file " + expectedAPath + " not found.", Files.exists(expectedAPath));
 
-		Assert.assertTrue("Expected file " + expectedAFile + " not found.", expectedAFile.exists());
+		Path expectedBPath = _rootPath.resolve("b/bfile");
 
-		File expectedBFile = new File(tempDir, "b/bfile");
+		Assert.assertTrue("Expected file " + expectedBPath + " not found.", Files.exists(expectedBPath));
 
-		Assert.assertTrue("Expected file " + expectedBFile + " not found.", expectedBFile.exists());
+		Path expectedEPath = _rootPath.resolve("c/d/efile");
 
-		File expectedEFile = new File(tempDir, "c/d/efile");
-
-		Assert.assertTrue("Expected file " + expectedEFile + " not found.", expectedEFile.exists());
+		Assert.assertTrue("Expected file " + expectedEPath + " not found.", Files.exists(expectedEPath));
 	}
 
 	@Test(expected = ZipException.class)
@@ -63,15 +69,13 @@ public class ZipSlipTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private void _testZip(String fileName) throws Exception {
-		File tempDir = temporaryFolder.getRoot();
-
-		Path tempPath = tempDir.toPath();
-
-		Path zipPath = tempPath.resolve(fileName);
+		Path zipPath = _rootPath.resolve(fileName);
 
 		Files.copy(getClass().getResourceAsStream(fileName), zipPath);
 
-		FileUtil.unzip(zipPath.toFile(), tempDir);
+		FileUtil.unzip(zipPath.toFile(), _rootPath.toFile());
 	}
+
+	private Path _rootPath = null;
 
 }
