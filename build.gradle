@@ -148,4 +148,11 @@ subprojects {
 			}
 		}
 	}
+
+	if (project.hasProperty("mavenLocal")) {
+		repositories {
+			mavenLocal()
+		}
+	}
+
 }
