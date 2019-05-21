@@ -1,19 +1,17 @@
 #!/bin/bash
-# check the arguments first
-#repoHost = ""
+
 localNexusOpt=""
 releaseType=""
 
-  while [ $# -gt 0 ]; do
-    echo $1
-    if [ "$1" = "snapshots" ] || [ "$1" = "release" ]; then
-        releaseType="$1"
-        echo "Found snapshot"
-    elif [ "$1" = "--local" ]; then
-    	localNexusOpt="-PlocalNexus"
-    fi
-    shift
-  done
+# check the arguments first
+while [ $# -gt 0 ]; do
+	if [ "$1" = "snapshots" ] || [ "$1" = "release" ]; then
+		releaseType="$1"
+	elif [ "$1" = "--local" ]; then
+		localNexusOpt="-PlocalNexus"
+	fi
+	shift
+done
 
 if [ "$releaseType" != "release" ] && [ "$releaseType" != "snapshots" ]; then
 	echo "Must have one argument, either \"release\" or \"snapshots\"."
@@ -27,7 +25,6 @@ tmpDir="/tmp/$timestamp/"
 mkdir -p $tmpDir
 
 if [ -z "$repoHost" ]; then
-	
 	if [ "$localNexusOpt" = "-PlocalNexus" ]; then
 		repoHost="http://localhost:8081"
 	else
@@ -120,8 +117,6 @@ fi
 
 # Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
 bladeCliPublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info --scan)
-
-echo "$bladeCliPublishCommand"
 
 if [ -z "$bladeCliPublishCommand" ]; then
    echo Failed :cli:publish
