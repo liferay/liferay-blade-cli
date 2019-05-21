@@ -35,13 +35,24 @@ task dockerNexusDelete(type:Exec)
 task dockerNexusStart(type:Exec)
 task dockerNexusStop(type:Exec)
 task dockerPublishRelease(type:Exec)
-task dockerPublishReleaseTest
 task dockerPublishSnapshots(type:Exec)
-task dockerPublishSnapshotsTest
 
 String userHome = System.getProperty("user.home")
 
 String gradleHome = System.getProperty("gradle.user.home") ?: System.getenv("GRADLE_USER_HOME") ?: new File(userHome, ".gradle").absolutePath
+
+File gradleEncryptedProperties = new File(gradleHome, "gradle.encrypted.properties")
+
+String gradleHome = System.getProperty("gradle.user.home")
+String userHome = System.getProperty("user.home")
+
+if (gradleHome == null) {
+	gradleHome = System.getenv("GRADLE_USER_HOME")
+}
+
+if (gradleHome == null) {
+	gradleHome = new File(userHome, ".gradle").getAbsolutePath()
+}
 
 File gradleEncryptedProperties = new File(gradleHome, "gradle.encrypted.properties")
 
@@ -158,6 +169,7 @@ formatSource {
 
 repositories {
 	maven {
+
 		if (project.hasProperty("release")) {
 			url "https://repository.liferay.com/nexus/content/groups/public"
 		}
@@ -223,6 +235,11 @@ subprojects {
 				}
 			}
 
+				if (gradleEncryptedProperties.exists()) {
+					liferayNexusUsername = credentials.liferayNexusUsername
+					liferayNexusPassword = credentials.liferayNexusPassword
+				}
+			}
 			repositories {
 				maven {
 					credentials {
