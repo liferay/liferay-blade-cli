@@ -842,6 +842,16 @@ public class CreateCommandTest {
 		Assert.assertTrue(output, output.endsWith(File.separator + "workspace" + File.separator + "ext"));
 
 		Assert.assertTrue(output, output.startsWith("Success"));
+
+		File projectDir = new File(workspace, "ext/warCoreExt");
+
+		args = new String[] {"server", "init", "--base", workspace.getAbsolutePath()};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
+
+		args = new String[] {"gw", "build", "--base", projectDir.getAbsolutePath()};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
 	}
 
 	@Test
