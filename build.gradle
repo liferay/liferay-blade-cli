@@ -39,16 +39,9 @@ task dockerPublishReleaseTest
 task dockerPublishSnapshots(type:Exec)
 task dockerPublishSnapshotsTest
 
-String gradleHome = System.getProperty("gradle.user.home")
 String userHome = System.getProperty("user.home")
 
-if (gradleHome == null) {
-	gradleHome = System.getenv("GRADLE_USER_HOME")
-}
-
-if (gradleHome == null) {
-	gradleHome = new File(userHome, ".gradle").getAbsolutePath()
-}
+String gradleHome = System.getProperty("gradle.user.home") ?: System.getenv("GRADLE_USER_HOME") ?: new File(userHome, ".gradle").absolutePath
 
 File gradleEncryptedProperties = new File(gradleHome, "gradle.encrypted.properties")
 
@@ -165,7 +158,6 @@ formatSource {
 
 repositories {
 	maven {
-
 		if (project.hasProperty("release")) {
 			url "https://repository.liferay.com/nexus/content/groups/public"
 		}
@@ -173,12 +165,12 @@ repositories {
 			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 		}
 	}
+
 	if (project.hasProperty("localNexus")) {
 		maven {
 			url "http://localhost:8081/nexus/content/groups/public/"
 		}
 	}
-
 }
 
 subprojects {
@@ -249,5 +241,4 @@ subprojects {
 			mavenLocal()
 		}
 	}
-
 }
