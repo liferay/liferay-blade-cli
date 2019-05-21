@@ -1,9 +1,25 @@
+#!/bin/bash
 # check the arguments first
-if [ "${1}" != "release" -a "${1}" != "snapshots" ]; then
+#repoHost = ""
+localNexusOpt=""
+releaseType=""
+
+  while [ $# -gt 0 ]; do
+    echo $1
+    if [ "$1" = "snapshots" ] || [ "$1" = "release" ]; then
+        releaseType="$1"
+        echo "Found snapshot"
+    elif [ "$1" = "--local" ]; then
+    	localNexusOpt="-PlocalNexus"
+    fi
+    shift
+  done
+
+if [ "$releaseType" != "release" ] && [ "$releaseType" != "snapshots" ]; then
 	echo "Must have one argument, either \"release\" or \"snapshots\"."
 	exit 1
 fi
-  
+
 # Setup a temp directory
 timestamp=$(date +%s)
 tmpDir="/tmp/$timestamp/"
@@ -11,12 +27,13 @@ tmpDir="/tmp/$timestamp/"
 mkdir -p $tmpDir
 
 if [ -z "$repoHost" ]; then
-  repoHost="https://repository.liferay.com"
-fi
-
-localNexusOpt=""
-
-if [ "$repoHost" = "http://localhost:8081" ]; then
+	
+	if [ "$localNexusOpt" = "-PlocalNexus" ]; then
+		repoHost="http://localhost:8081"
+	else
+		repoHost="https://repository.liferay.com"
+	fi
+elif [ "$repoHost" = "http://localhost:8081" ]; then
     localNexusOpt="-PlocalNexus"
 fi
 
@@ -30,9 +47,7 @@ if [ "$?" != "0" ]; then
 fi
 
 # Publish the Remote Deploy Command jar to snapshots
-remoteDeployCommandPublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} :extensions:remote-deploy-command:publish --info --scan)
-
-echo "$remoteDeployCommandPublishCommand"
+remoteDeployCommandPublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info --scan)
 
 if [ -z "$remoteDeployCommandPublishCommand" ]; then
    echo Failed :extensions:remote-deploy-command:publish
@@ -41,9 +56,7 @@ if [ -z "$remoteDeployCommandPublishCommand" ]; then
 fi
 
 # Publish the Maven Profile jar to snapshots
-mavenProfilePublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} :extensions:maven-profile:publish --info --scan)
-
-echo "$mavenProfilePublishCommand"
+mavenProfilePublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:maven-profile:publish --info --scan)
 
 if [ -z "$mavenProfilePublishCommand" ]; then
    echo Failed :extensions:maven-profile:publish
@@ -53,6 +66,8 @@ fi
 
 # Grep the output of the previous command to find the url of the published jar
 mavenProfilePublishUrl=$(echo "$mavenProfilePublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2)
+
+echo "$mavenProfilePublishCommand"
 
 if [ -z "$mavenProfilePublishUrl" ]; then
    echo Failed grepping for mavenProfilePublishUrl
@@ -74,7 +89,7 @@ if [ "$?" != "0" ]; then
 fi
 
 # Test the blade cli jar locally, but don't publish.
-bladeCliJarCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} --refresh-dependencies check --info --scan)
+bladeCliJarCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies check --info --scan)
 
 echo "$bladeCliJarCommand"
 
@@ -104,7 +119,7 @@ if [ "$?" != "0" ]; then
 fi
 
 # Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
-bladeCliPublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${1} --refresh-dependencies :cli:publish --info --scan)
+bladeCliPublishCommand=$(./gradlew --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info --scan)
 
 echo "$bladeCliPublishCommand"
 
