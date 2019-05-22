@@ -72,7 +72,7 @@ testBladeInitCommand {
 }
 
 testBladeSamplesCommand {
-	args = [jar.archivePath, 'samples']
+	args = [jar.archivePath, 'samples', '-v', '7.1']
 	standardOutput = standardStream
 	errorOutput = errorStream
 

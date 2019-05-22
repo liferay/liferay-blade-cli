@@ -45,7 +45,7 @@ public class BladeSettings {
 			return _properties.getProperty("liferay.version.default");
 		}
 		else {
-			return "7.1";
+			return "7.2";
 		}
 	}
 
