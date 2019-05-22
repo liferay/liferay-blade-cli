@@ -65,7 +65,7 @@ public class SamplesCommandTest {
 	public void testGetSample() throws Exception {
 		File root = temporaryFolder.newFolder("samplesroot");
 
-		String[] args = {"samples", "-d", root.getPath() + "/test", "friendly-url"};
+		String[] args = {"samples", "-v", "7.1", "-d", root.getPath() + "/test", "friendly-url"};
 
 		BladeTest bladeTest = _getBladeTest();
 
@@ -142,7 +142,7 @@ public class SamplesCommandTest {
 	public void testGetSampleWithDependencies() throws Exception {
 		File root = temporaryFolder.getRoot();
 
-		String[] args = {"samples", "-d", root.getPath() + "/test", "rest"};
+		String[] args = {"samples", "-v", "7.1", "-d", root.getPath() + "/test", "rest"};
 
 		BladeTest bladeTest = _getBladeTest();
 
@@ -165,7 +165,7 @@ public class SamplesCommandTest {
 	public void testGetSampleWithGradleWrapper() throws Exception {
 		File root = temporaryFolder.getRoot();
 
-		String[] args = {"samples", "-d", root.getPath() + "/test", "authenticator-shiro"};
+		String[] args = {"samples", "-v", "7.1", "-d", root.getPath() + "/test", "authenticator-shiro"};
 
 		BladeTest bladeTest = _getBladeTest();
 
@@ -203,7 +203,9 @@ public class SamplesCommandTest {
 
 		Assert.assertTrue(output, (output == null) || output.isEmpty());
 
-		String[] samplesArgs = {"samples", "-d", _rootDir.getPath() + "/test/workspace/modules", "auth-failure"};
+		String[] samplesArgs = {
+			"samples", "-v", "7.1", "-d", _rootDir.getPath() + "/test/workspace/modules", "auth-failure"
+		};
 
 		bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, samplesArgs);
 
@@ -293,7 +295,7 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testListSamples() throws Exception {
-		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, "samples");
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, "samples", "-v", "7.1");
 
 		String output = bladeTestResults.getOutput();
 

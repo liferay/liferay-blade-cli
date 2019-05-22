@@ -513,7 +513,9 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateNpmAngular() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "npm-angular-portlet", "npmangular"};
+		String[] args = {
+			"create", "-d", _rootDir.getAbsolutePath(), "-t", "npm-angular-portlet", "-v", "7.1", "npmangular"
+		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -1125,9 +1127,11 @@ public class CreateCommandTest {
 
 			Attributes mainAttributes = manifest.getMainAttributes();
 
-			String springContext = mainAttributes.getValue("Liferay-Spring-Context");
+			String liferayService = mainAttributes.getValue("Liferay-Service");
 
-			Assert.assertTrue(springContext.equals("META-INF/spring"));
+			Assert.assertNotNull(liferayService);
+
+			Assert.assertTrue(liferayService.equals("true"));
 		}
 	}
 
@@ -1201,7 +1205,7 @@ public class CreateCommandTest {
 		_makeWorkspace(workspace71);
 
 		String[] sevenOneArgs = {
-			"--base", workspace71.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-one"
+			"--base", workspace71.getAbsolutePath(), "create", "-v", "7.1", "-t", "npm-angular-portlet", "seven-one"
 		};
 
 		TestUtil.runBlade(workspace71, _extensionsDir, sevenOneArgs);
@@ -1396,7 +1400,7 @@ public class CreateCommandTest {
 	@Test
 	public void testLiferayVersionDefault() throws Exception {
 		String[] sevenOneArgs = {
-			"--base", _rootDir.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-one"
+			"--base", _rootDir.getAbsolutePath(), "create", "-v", "7.1", "-t", "npm-angular-portlet", "seven-one"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, sevenOneArgs);
@@ -1516,7 +1520,7 @@ public class CreateCommandTest {
 
 			properties.load(inputStream);
 
-			Assert.assertEquals("7.1", properties.getProperty("liferay.version.default"));
+			Assert.assertEquals("7.2", properties.getProperty("liferay.version.default"));
 		}
 	}
 
