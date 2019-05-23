@@ -17,8 +17,7 @@ if [ "$releaseType" != "release" ] && [ "$releaseType" != "snapshots" ]; then
 	echo "Must have one argument, either \"release\" or \"snapshots\"."
 	exit 1
 fi
-echo "Release type is $releaseType"
-echo "Local Nexus Opt is $localNexusOpt"
+
 # Setup a temp directory
 timestamp=$(date +%s)
 tmpDir="/tmp/$timestamp/"
@@ -37,7 +36,6 @@ fi
 
 # First clean local build folder to try to minimize variants
 
-echo "Running clean"
 ./gradlew -q --no-daemon --console=plain clean
 
 if [ "$?" != "0" ]; then
@@ -45,37 +43,32 @@ if [ "$?" != "0" ]; then
    rm -rf /tmp/$timestamp
    exit 1
 fi
-echo "Finished clean"
 
 # Publish the Remote Deploy Command jar to snapshots
 
-echo "Running :extensions:remote-deploy-command:publish"
 remoteDeployCommandPublishCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info --scan)
 
-if [ -z "$remoteDeployCommandPublishCommand" ]; then
+if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
+   echo $remoteDeployCommandPublishCommand
    echo Failed :extensions:remote-deploy-command:publish
    rm -rf /tmp/$timestamp
    exit 1
 fi
-echo "Finished :extensions:remote-deploy-command:publish"
 
 # Publish the Maven Profile jar to snapshots
-echo "Running :extensions:maven-profile:publish"
 mavenProfilePublishCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:maven-profile:publish --info --scan)
 
-if [ -z "$mavenProfilePublishCommand" ]; then
+if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
+   echo $mavenProfilePublishCommand
    echo Failed :extensions:maven-profile:publish
    rm -rf /tmp/$timestamp
    exit 1
 fi
-echo "Finished :extensions:maven-profile:publish"
 
 # Grep the output of the previous command to find the url of the published jar
 mavenProfilePublishUrl=$(echo "$mavenProfilePublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2)
 
-echo "$mavenProfilePublishCommand"
-
-if [ -z "$mavenProfilePublishUrl" ]; then
+if [ "$?" != "0" ] || [ -z "$mavenProfilePublishUrl" ]; then
    echo Failed grepping for mavenProfilePublishUrl
    rm -rf /tmp/$timestamp
    exit 1
@@ -83,8 +76,6 @@ fi
 
 # Download the just published jar in order to later compare it to the embedded maven profile that is in blade jar
 mavenProfileJarUrl="$repoHost/nexus/content/groups/public/$mavenProfilePublishUrl"
-
-echo "$mavenProfileJarUrl"
 
 curl -s "$mavenProfileJarUrl" -o /tmp/$timestamp/maven_profile.jar
 
@@ -95,13 +86,10 @@ if [ "$?" != "0" ]; then
 fi
 
 # Test the blade cli jar locally, but don't publish.
-echo "Testing blade CLI jar locally"
 bladeCliJarCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies check --info --scan)
 
-echo "Output of CLI jar command"
-echo "$bladeCliJarCommand"
-
-if [ -z "$bladeCliJarCommand" ]; then
+if [ "$?" != "0" ] || [ -z "$bladeCliJarCommand" ]; then
+   echo $bladeCliJarCommand
    echo Failed :cli:jar
    rm -rf /tmp/$timestamp
    exit 1
@@ -109,7 +97,6 @@ fi
 
 # now that we have the blade jar just built, lets extract the embedded maven profile jar and compare to the maven profile downloaded from nexus
 
-echo "Preparing to extract maven profile"
 embeddedMavenProfileJar=$(jar -tf cli/build/libs/blade.jar | grep "maven.profile-")
 
 if [ -z "$embeddedMavenProfileJar" ]; then
@@ -117,7 +104,6 @@ if [ -z "$embeddedMavenProfileJar" ]; then
    rm -rf /tmp/$timestamp
    exit 1
 fi
-echo "Finished extracting maven profile"
 
 unzip -p cli/build/libs/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
 
@@ -131,15 +117,14 @@ fi
 
 # Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
 
-echo "Preparing to publish cli jar"
 bladeCliPublishCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info --scan)
 
-if [ -z "$bladeCliPublishCommand" ]; then
+if [ "$?" != "0" ] || [ -z "$bladeCliPublishCommand" ]; then
+   echo $bladeCliPublishCommand
    echo Failed :cli:publish
    rm -rf /tmp/$timestamp
    exit 1
 fi
-echo "Finished publishing cli jar"
 
 # Grep the output of the blade jar publish to find the url
 bladeCliJarUrl=$(echo "$bladeCliPublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2)
