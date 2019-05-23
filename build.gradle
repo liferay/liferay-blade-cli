@@ -43,19 +43,6 @@ String gradleHome = System.getProperty("gradle.user.home") ?: System.getenv("GRA
 
 File gradleEncryptedProperties = new File(gradleHome, "gradle.encrypted.properties")
 
-String gradleHome = System.getProperty("gradle.user.home")
-String userHome = System.getProperty("user.home")
-
-if (gradleHome == null) {
-	gradleHome = System.getenv("GRADLE_USER_HOME")
-}
-
-if (gradleHome == null) {
-	gradleHome = new File(userHome, ".gradle").getAbsolutePath()
-}
-
-File gradleEncryptedProperties = new File(gradleHome, "gradle.encrypted.properties")
-
 buildChangeLog {
 	changeLogHeader = "BLADE Version ${project.version}"
 	dirs = ["cli", "extensions", "gradle", "gradle-tooling", "libs"]
@@ -79,11 +66,6 @@ dockerNexusDelete {
 dockerNexusStop {
 	commandLine "docker", "stop", "/local-nexus"
 	finalizedBy 'dockerNexusDelete'
-}
-
-dockerPublishSnapshotsTest {
-	project.ext."localNexus" = "localNexus"
-	finalizedBy 'dockerPublishSnapshots'
 }
 
 dockerPublishSnapshots {
@@ -113,11 +95,6 @@ dockerPublishSnapshots {
 	}
 
 	commandLine args
-}
-
-dockerPublishReleaseTest {
-	project.ext."localNexus" = "localNexus"
-	finalizedBy 'dockerPublishRelease'
 }
 
 dockerPublishRelease {
@@ -177,7 +154,6 @@ repositories {
 			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 		}
 	}
-
 	if (project.hasProperty("localNexus")) {
 		maven {
 			url "http://localhost:8081/nexus/content/groups/public/"
@@ -234,12 +210,7 @@ subprojects {
 					liferayNexusPassword = credentials.liferayNexusPassword
 				}
 			}
-
-				if (gradleEncryptedProperties.exists()) {
-					liferayNexusUsername = credentials.liferayNexusUsername
-					liferayNexusPassword = credentials.liferayNexusPassword
-				}
-			}
+			
 			repositories {
 				maven {
 					credentials {
