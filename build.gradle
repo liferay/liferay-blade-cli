@@ -14,7 +14,7 @@ buildscript {
 		}
 
 		maven {
-			if (project.hasProperty("release")) {
+			if (project.hasProperty("release") ) {
 				url "https://repository.liferay.com/nexus/content/groups/public"
 			}
 			else {
@@ -42,6 +42,10 @@ String userHome = System.getProperty("user.home")
 String gradleHome = System.getProperty("gradle.user.home") ?: System.getenv("GRADLE_USER_HOME") ?: new File(userHome, ".gradle").absolutePath
 
 File gradleEncryptedProperties = new File(gradleHome, "gradle.encrypted.properties")
+
+boolean localNexus = project.hasProperty("localNexus")
+
+boolean release = project.hasProperty("release")
 
 buildChangeLog {
 	changeLogHeader = "BLADE Version ${project.version}"
@@ -71,14 +75,14 @@ dockerNexusStop {
 dockerPublishSnapshots {
 	dependsOn dockerImageBuild
 
-	if (project.hasProperty("localNexus")) {
+	if (localNexus) {
 		dependsOn 'dockerNexusStart'
 		finalizedBy 'dockerNexusStop'
 	}
 
 	List<String> args = ['docker', 'run', '--rm', '--init']
 
-	if (project.hasProperty("localNexus")) {
+	if (localNexus) {
 		args.add('--network=host')
 	}
 
@@ -90,7 +94,7 @@ dockerPublishSnapshots {
 
 	args.add('liferay-blade-cli-build')
 
-	if (project.hasProperty("localNexus")) {
+	if (localNexus) {
 		args.addAll(['snapshots', '--local'])
 	}
 
@@ -102,7 +106,7 @@ dockerPublishRelease {
 
 	List<String> args = ['docker', 'run', '--rm', '--init', '-v', "${userHome}/.gradle/wrapper:/root/.gradle/wrapper"]
 
-	if (project.hasProperty("localNexus")) {
+	if (localNexus) {
 		args.add('--network=host')
 		dependsOn 'dockerNexusStart'
 		finalizedBy 'dockerNexusStop'
@@ -114,7 +118,7 @@ dockerPublishRelease {
 
 	args.addAll(['liferay-blade-cli-build', 'release'])
 
-	if (project.hasProperty("localNexus")) {
+	if (localNexus) {
 		args.add('--local')
 	}
 
@@ -146,15 +150,15 @@ formatSource {
 
 repositories {
 	maven {
-
-		if (project.hasProperty("release")) {
+		if (release) {
 			url "https://repository.liferay.com/nexus/content/groups/public"
 		}
 		else {
 			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 		}
 	}
-	if (project.hasProperty("localNexus")) {
+
+	if (localNexus) {
 		maven {
 			url "http://localhost:8081/nexus/content/groups/public/"
 		}
@@ -188,14 +192,14 @@ subprojects {
 			String liferayNexusUsername
 			String liferayNexusPassword
 
-			String repoName = project.hasProperty("release") ? "liferay-public-releases" : "liferay-public-snapshots"
+			String repoName = release ? "liferay-public-releases" : "liferay-public-snapshots"
 			String repoUrl = "https://repository.liferay.com/nexus/content/repositories/" + repoName
 
-			if (project.hasProperty("localNexus")) {
+			if (localNexus) {
 				liferayNexusUsername = "admin"
 				liferayNexusPassword = "admin123"
 
-				if (project.hasProperty("release")) {
+				if (release) {
 					repoUrl = "http://localhost:8081/nexus/content/repositories/releases/"
 				}
 				else {
