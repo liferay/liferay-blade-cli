@@ -30,7 +30,6 @@ apply plugin: "com.liferay.source.formatter"
 
 task clean(type:Delete)
 task dockerImageBuild(type:Exec)
-task dockerImageDelete(type:Exec)
 task dockerNexusDelete(type:Exec)
 task dockerNexusStart(type:Exec)
 task dockerNexusStop(type:Exec)
