@@ -44,7 +44,7 @@ if [ "$?" != "0" ]; then
    exit 1
 fi
 
-# Publish the Remote Deploy Command jar to snapshots
+# Publish the Remote Deploy Command jar
 
 remoteDeployCommandPublishCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info --scan)
 
@@ -55,7 +55,7 @@ if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
    exit 1
 fi
 
-# Publish the Maven Profile jar to snapshots
+# Publish the Maven Profile jar
 mavenProfilePublishCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:maven-profile:publish --info --scan)
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
@@ -80,9 +80,11 @@ mavenProfileJarUrl="$repoHost/nexus/content/groups/public/$mavenProfilePublishUr
 curl -s "$mavenProfileJarUrl" -o /tmp/$timestamp/maven_profile.jar
 
 if [ "$?" != "0" ]; then
-   echo Downloading maven.profile jar from snapshots failed.
+   echo Downloading maven.profile jar failed.
    rm -rf /tmp/$timestamp
    exit 1
+else
+   echo "\nPublished $mavenProfileJarUrl"
 fi
 
 # Test the blade cli jar locally, but don't publish.
@@ -135,9 +137,11 @@ bladeCliUrl="$repoHost/nexus/content/groups/public/$bladeCliJarUrl"
 curl -s "$bladeCliUrl" -o /tmp/$timestamp/blade.jar
 
 if [ "$?" != "0" ]; then
-   echo Downloading blade jar from snapshots failed.
+   echo Downloading blade jar failed.
    rm -rf /tmp/$timestamp
    exit 1
+else
+   echo "\nPublished $bladeCliUrl"
 fi
 
 unzip -p /tmp/$timestamp/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
