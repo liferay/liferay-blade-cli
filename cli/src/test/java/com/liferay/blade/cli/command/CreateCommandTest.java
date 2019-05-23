@@ -53,6 +53,7 @@ import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -1327,6 +1328,7 @@ public class CreateCommandTest {
 		_verifyImportPackage(new File(projectPath, "build/libs/foo.refresh-1.0.0.jar"));
 	}
 
+	@Ignore
 	@Test
 	public void testCreateWorkspaceThemeLocation() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
