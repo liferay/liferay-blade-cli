@@ -40,7 +40,7 @@ String userHome = System.getProperty("user.home")
 
 String gradleHome = System.getProperty("gradle.user.home") ?: System.getenv("GRADLE_USER_HOME") ?: new File(userHome, ".gradle").absolutePath
 
-File gradleEncryptedProperties = new File(gradleHome, "gradle.encrypted.properties")
+File gradleCredentialsProperties = new File(gradleHome, "gradle.credentials.properties")
 
 boolean localNexus = project.hasProperty("localNexus")
 
@@ -87,7 +87,7 @@ dockerPublishSnapshots {
 
 	args.addAll(['-v', "${userHome}/.gradle/wrapper:/root/.gradle/wrapper"])
 
-	if (gradleEncryptedProperties.exists()) {
+	if (gradleCredentialsProperties.exists()) {
 		args.addAll(['-v', "${userHome}/.gradle/gradle.credentials.properties:/root/.gradle/gradle.encrypted.properties"])
 	}
 
@@ -111,7 +111,7 @@ dockerPublishRelease {
 		finalizedBy 'dockerNexusStop'
 	}
 
-	if (gradleEncryptedProperties.exists()) {
+	if (gradleCredentialsProperties.exists()) {
 		args.addAll(['-v', "${userHome}/.gradle/gradle.credentials.properties:/root/.gradle/gradle.encrypted.properties"])
 	}
 
@@ -170,10 +170,7 @@ subprojects {
 	plugins.withId("java") {
 
 		apply plugin: "com.liferay.source.formatter"
-
-		if (gradleEncryptedProperties.exists()) {
-			apply plugin: "nu.studer.credentials"
-		}
+		apply plugin: "nu.studer.credentials"
 
 		checkSourceFormatting {
 			maxLineLength = 120
@@ -205,13 +202,9 @@ subprojects {
 					repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
 				}
 			}
-			else
-			{
-
-				if (gradleEncryptedProperties.exists()) {
-					liferayNexusUsername = credentials.liferayNexusUsername
-					liferayNexusPassword = credentials.liferayNexusPassword
-				}
+			else {
+				liferayNexusUsername = credentials.liferayNexusUsername
+				liferayNexusPassword = credentials.liferayNexusPassword
 			}
 
 			repositories {
