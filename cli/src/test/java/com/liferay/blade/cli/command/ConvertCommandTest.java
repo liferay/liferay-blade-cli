@@ -86,8 +86,52 @@ public class ConvertCommandTest {
 	}
 
 	@Test
+	public void testAllNotRemoveSource() throws Exception {
+		Path rootPath = _rootDir.toPath();
+
+		Path testPath = rootPath.resolve("build/testUpgradePluginsSDKTo70");
+
+		Files.createDirectories(testPath);
+
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testPath.toFile());
+
+		Assert.assertTrue(Files.exists(testPath));
+
+		Path projectPath = testPath.resolve("plugins-sdk-with-git");
+
+		Path pluginsSdkPath = projectPath.resolve("plugins-sdk");
+
+		FileUtil.deleteDirIfExists(pluginsSdkPath);
+
+		String[] args = {"--base", projectPath.toString(), "init", "-u"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		args = new String[] {"--base", projectPath.toString(), "convert", "-a", "-r", "false"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
+
+		Path apiPath = testPath.resolve(
+			"plugins-sdk-with-git/modules/sample-service-builder/sample-service-builder-api");
+
+		Assert.assertTrue(Files.exists(apiPath));
+
+		Path servicePath = projectPath.resolve("modules/sample-service-builder/sample-service-builder-service");
+
+		Assert.assertTrue(Files.exists(servicePath));
+
+		Path portletPath = projectPath.resolve("wars/sample-service-builder-portlet");
+
+		Assert.assertTrue(Files.exists(portletPath));
+
+		Path pluginServiceBuilderPath = pluginsSdkPath.resolve("portlets/sample-service-builder-portlet");
+
+		Assert.assertTrue(Files.exists(pluginServiceBuilderPath));
+	}
+
+	@Test
 	public void testMoveLayouttplToWars() throws Exception {
-		File testdir = new File("build/testMoveLayouttplToWars");
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMoveLayouttplToWars1");
 
 		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
 
@@ -122,6 +166,53 @@ public class ConvertCommandTest {
 		File docrootDir = new File(layoutWar, "docroot");
 
 		Assert.assertFalse(docrootDir.exists());
+	}
+
+	@Test
+	public void testMoveLayouttplToWarsNotRemoveSource() throws Exception {
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMoveLayouttplToWars2");
+
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+
+		Assert.assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
+
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		args = new String[] {"--base", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl", "-r", "false"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		File layoutWar = new File(projectDir, "wars/1-2-1-columns-layouttpl");
+
+		Assert.assertTrue(layoutWar.exists());
+
+		File buildXmlFile = new File(layoutWar, "build.xml");
+
+		Assert.assertFalse(buildXmlFile.exists());
+
+		File buildGradleFile = new File(layoutWar, "build.gradle");
+
+		Assert.assertFalse(buildGradleFile.exists());
+
+		File docrootDir = new File(layoutWar, "docroot");
+
+		Assert.assertFalse(docrootDir.exists());
+
+		File srclayoutDir = new File(pluginsSdkDir, "layouttpl/1-2-1-columns-layouttpl");
+
+		Assert.assertTrue(srclayoutDir.exists());
+
+		File srclayoutBuildXml = new File(srclayoutDir, "build.xml");
+
+		Assert.assertTrue(srclayoutBuildXml.exists());
 	}
 
 	@Test
@@ -167,6 +258,53 @@ public class ConvertCommandTest {
 		Path hookDir = projectDir.resolve("plugins-sdk/hooks/sample-servlet-filter-hook");
 
 		Assert.assertFalse(Files.exists(hookDir));
+	}
+
+	@Test
+	public void testMovePluginsToWarsNotRemoveSource() throws Exception {
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMovePluginsToWars");
+
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+
+		Path testPath = testdir.toPath();
+
+		Assert.assertTrue(Files.exists(testPath));
+
+		Path projectDir = testPath.resolve("plugins-sdk-with-git");
+
+		Path pluginsSdkDir = projectDir.resolve("plugins-sdk");
+
+		FileUtil.deleteDirIfExists(pluginsSdkDir);
+
+		String[] args = {"--base", projectDir.toString(), "init", "-u"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		args = new String[] {
+			"--base", projectDir.toString(), "convert", "sample-application-adapter-hook", "-r", "false"
+		};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		Path sampleExpandoHook = projectDir.resolve("wars/sample-application-adapter-hook");
+
+		Assert.assertTrue(Files.exists(sampleExpandoHook));
+
+		Path sampleHookWrongPath = projectDir.resolve("plugins-sdk/hooks/sample-application-adapter-hook");
+
+		Assert.assertTrue(Files.exists(sampleHookWrongPath));
+
+		args = new String[] {"--base", projectDir.toString(), "convert", "sample-servlet-filter-hook", "-r", "false"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		Path sampleServletFilterHook = projectDir.resolve("wars/sample-servlet-filter-hook");
+
+		Assert.assertTrue(Files.exists(sampleServletFilterHook));
+
+		Path hookDir = projectDir.resolve("plugins-sdk/hooks/sample-servlet-filter-hook");
+
+		Assert.assertTrue(Files.exists(hookDir));
 	}
 
 	@Test
@@ -250,6 +388,93 @@ public class ConvertCommandTest {
 		themeDir = new File(projectDir, "plugins-sdk/themes/sample-styled-advanced-theme");
 
 		Assert.assertFalse(themeDir.exists());
+	}
+
+	@Test
+	public void testMoveThemesToWarsNotRemoveSource() throws Exception {
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMoveThemesToWarNotRemoveSource");
+
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+
+		Assert.assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
+
+		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
+
+		args = new String[] {
+			"--base", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme", "-r", "false"
+		};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		Assert.assertTrue(theme.exists());
+
+		File buildXmlFile = new File(theme, "build.xml");
+
+		Assert.assertFalse(buildXmlFile.exists());
+
+		File buildGradleFile = new File(theme, "build.gradle");
+
+		Assert.assertTrue(buildGradleFile.exists());
+
+		File docrootDir = new File(theme, "docroot");
+
+		Assert.assertFalse(docrootDir.exists());
+
+		File webappDir = new File(theme, "src/main/webapp");
+
+		Assert.assertTrue(webappDir.exists());
+
+		File diffsDir = new File(theme, "src/main/webapp/_diffs");
+
+		Assert.assertFalse(diffsDir.exists());
+
+		File themeDir = new File(projectDir, "plugins-sdk/themes/sample-styled-minimal-theme");
+
+		Assert.assertTrue(themeDir.exists());
+
+		args = new String[] {
+			"--base", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme", "-r", "false"
+		};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		File advancedTheme = new File(projectDir, "wars/sample-styled-advanced-theme");
+
+		Assert.assertTrue(advancedTheme.exists());
+
+		buildXmlFile = new File(advancedTheme, "build.xml");
+
+		Assert.assertFalse(buildXmlFile.exists());
+
+		buildGradleFile = new File(advancedTheme, "build.gradle");
+
+		Assert.assertTrue(buildGradleFile.exists());
+
+		docrootDir = new File(advancedTheme, "docroot");
+
+		Assert.assertFalse(docrootDir.exists());
+
+		webappDir = new File(advancedTheme, "src/main/webapp");
+
+		Assert.assertTrue(webappDir.exists());
+
+		diffsDir = new File(advancedTheme, "src/main/webapp/_diffs");
+
+		Assert.assertFalse(diffsDir.exists());
+
+		themeDir = new File(projectDir, "plugins-sdk/themes/sample-styled-advanced-theme");
+
+		Assert.assertTrue(themeDir.exists());
 	}
 
 	@Test

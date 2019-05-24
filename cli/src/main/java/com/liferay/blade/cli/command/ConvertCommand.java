@@ -61,7 +61,7 @@ import org.w3c.dom.NodeList;
  * @author Gregory Amerson
  * @author Terry Jia
  */
-public class ConvertCommand extends BaseCommand<ConvertArgs> {
+public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSupport {
 
 	public ConvertCommand() {
 	}
@@ -201,32 +201,35 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		List<File> webPlugins = Arrays.asList((webFiles != null) ? webFiles : new File[0]);
 		List<File> themePlugins = Arrays.asList((themeFiles != null) ? themeFiles : new File[0]);
 
+		boolean removeSource = convertArgs.isRemoveSource();
+
 		if (convertArgs.isAll()) {
 			Stream<File> serviceBuilderPluginStream = serviceBuilderPlugins.stream();
 
 			serviceBuilderPluginStream.forEach(
-				serviceBuilderPlugin -> _convertToServiceBuilderWarProject(warsDir, serviceBuilderPlugin));
+				serviceBuilderPlugin -> _convertToServiceBuilderWarProject(
+					warsDir, serviceBuilderPlugin, removeSource));
 
 			Stream<File> portletPluginStream = portletPlugins.stream();
 
-			portletPluginStream.forEach(portalPlugin -> _convertToWarProject(warsDir, portalPlugin));
+			portletPluginStream.forEach(portalPlugin -> _convertToWarProject(warsDir, portalPlugin, removeSource));
 
 			Stream<File> hookPluginStream = hookPlugins.stream();
 
-			hookPluginStream.forEach(hookPlugin -> _convertToWarProject(warsDir, hookPlugin));
+			hookPluginStream.forEach(hookPlugin -> _convertToWarProject(warsDir, hookPlugin, removeSource));
 
 			Stream<File> webPluginStream = webPlugins.stream();
 
-			webPluginStream.forEach(webPlugin -> _convertToWarProject(warsDir, webPlugin));
+			webPluginStream.forEach(webPlugin -> _convertToWarProject(warsDir, webPlugin, removeSource));
 
 			Stream<File> layoutPluginStream = layoutPlugins.stream();
 
-			layoutPluginStream.forEach(layoutPlugin -> _convertToLayoutWarProject(warsDir, layoutPlugin));
+			layoutPluginStream.forEach(layoutPlugin -> _convertToLayoutWarProject(warsDir, layoutPlugin, removeSource));
 
 			Stream<File> themes = themePlugins.stream();
 
 			if (convertArgs.isThemeBuilder()) {
-				themes.forEach(theme -> _convertToThemeBuilderWarProject(warsDir, theme));
+				themes.forEach(theme -> _convertToThemeBuilderWarProject(warsDir, theme, removeSource));
 			}
 			else {
 				themes.forEach(this::_convertToThemeProject);
@@ -259,22 +262,22 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			if (pluginPath.startsWith(portletsDir.toPath())) {
 				if (_isServiceBuilderPlugin(pluginDir)) {
-					_convertToServiceBuilderWarProject(warsDir, pluginDir);
+					_convertToServiceBuilderWarProject(warsDir, pluginDir, removeSource);
 				}
 				else {
-					_convertToWarProject(warsDir, pluginDir);
+					_convertToWarProject(warsDir, pluginDir, removeSource);
 				}
 			}
 
 			if (pluginPath.startsWith(hooksDir.toPath()) || pluginPath.startsWith(websDir.toPath())) {
-				_convertToWarProject(warsDir, pluginDir);
+				_convertToWarProject(warsDir, pluginDir, removeSource);
 			}
 			else if (pluginPath.startsWith(layouttplDir.toPath())) {
-				_convertToLayoutWarProject(warsDir, pluginDir);
+				_convertToLayoutWarProject(warsDir, pluginDir, removeSource);
 			}
 			else if (pluginPath.startsWith(themesDir.toPath())) {
 				if (convertArgs.isThemeBuilder()) {
-					_convertToThemeBuilderWarProject(warsDir, pluginDir);
+					_convertToThemeBuilderWarProject(warsDir, pluginDir, removeSource);
 				}
 				else {
 					_convertToThemeProject(pluginDir);
@@ -316,13 +319,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		return _hasServiceXmlFile(pluginDir);
 	}
 
-	private void _convertToLayoutWarProject(File warsDir, File layoutPluginDir) {
+	private void _convertToLayoutWarProject(File warsDir, File layoutPluginDir, boolean removeSource) {
 		try {
 			warsDir.mkdirs();
 
 			Path warsPath = warsDir.toPath();
 
-			Files.move(layoutPluginDir.toPath(), warsPath.resolve(layoutPluginDir.getName()));
+			moveFile(layoutPluginDir.toPath(), warsPath.resolve(layoutPluginDir.getName()), removeSource);
 
 			File warDir = new File(warsDir, layoutPluginDir.getName());
 
@@ -343,7 +346,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			Path webappPath = webapp.toPath();
 
 			for (File docrootFile : docroot.listFiles()) {
-				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
+				moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
 
 			Path warPath = warDir.toPath();
@@ -363,13 +366,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 	}
 
-	private void _convertToServiceBuilderWarProject(File warsDir, File pluginDir) {
+	private void _convertToServiceBuilderWarProject(File warsDir, File pluginDir, boolean removeSource) {
 		ConvertArgs convertArgs = getArgs();
 
 		BladeCLI bladeCLI = getBladeCLI();
 
 		try {
-			_convertToWarProject(warsDir, pluginDir);
+			_convertToWarProject(warsDir, pluginDir, removeSource);
 
 			List<String> arguments;
 
@@ -389,7 +392,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			}
 
 			ConvertArgs convertServiceBuilderArgs = new ConvertArgs(
-				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), arguments);
+				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), convertArgs.isRemoveSource(),
+				arguments);
 
 			convertServiceBuilderArgs.setBase(new File(convertArgs.getBase()));
 
@@ -405,7 +409,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 	}
 
-	private void _convertToThemeBuilderWarProject(File warsDir, File themePlugin) {
+	private void _convertToThemeBuilderWarProject(File warsDir, File themePlugin, boolean removeSource) {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		try {
@@ -471,11 +475,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				Path backupPath = backup.toPath();
 
 				for (File other : others) {
-					Files.move(other.toPath(), backupPath.resolve(other.getName()));
+					moveFile(other.toPath(), backupPath.resolve(other.getName()), removeSource);
 				}
 			}
 
-			FileUtil.deleteDir(themePlugin.toPath());
+			if (removeSource) {
+				FileUtil.deleteDir(themePlugin.toPath());
+			}
 		}
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + themePlugin.getName() + "\n");
@@ -499,13 +505,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 	}
 
-	private void _convertToWarProject(File warsDir, File pluginDir) {
+	private void _convertToWarProject(File warsDir, File pluginDir, boolean removeSource) {
 		try {
 			warsDir.mkdirs();
 
 			Path warsPath = warsDir.toPath();
 
-			Files.move(pluginDir.toPath(), warsPath.resolve(pluginDir.getName()));
+			moveFile(pluginDir.toPath(), warsPath.resolve(pluginDir.getName()), removeSource);
 
 			File warDir = new File(warsDir, pluginDir.getName());
 
@@ -519,7 +525,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			if (docrootSrc.exists()) {
 				for (File docrootSrcFile : docrootSrc.listFiles()) {
-					Files.move(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
+					moveFile(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
 				}
 
 				docrootSrc.delete();
@@ -534,7 +540,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			Path webappPath = webapp.toPath();
 
 			for (File docrootFile : docroot.listFiles()) {
-				Files.move(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
+				moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
 
 			Path warPath = warDir.toPath();

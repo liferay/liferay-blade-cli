@@ -30,7 +30,6 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 import java.util.List;
 import java.util.Properties;
@@ -48,7 +47,7 @@ import org.xml.sax.InputSource;
 /**
  * @author Terry Jia
  */
-public class ConvertServiceBuilderCommand {
+public class ConvertServiceBuilderCommand implements FilesSupport {
 
 	public static final String DESCRIPTION = "Convert a service builder project to new Liferay Workspace projects";
 
@@ -172,7 +171,7 @@ public class ConvertServiceBuilderCommand {
 
 		Path newServiceXmlPath = sbServiceProjectPath.resolve(ServiceBuilder.SERVICE_XML);
 
-		Files.move(serviceXmlPath, newServiceXmlPath, StandardCopyOption.REPLACE_EXISTING);
+		moveFile(serviceXmlPath, newServiceXmlPath);
 
 		ServiceBuilder serviceBuilderXml = new ServiceBuilder(newServiceXmlPath.toFile());
 
@@ -190,7 +189,7 @@ public class ConvertServiceBuilderCommand {
 		if (Files.exists(oldServiceImplFolder)) {
 			Files.createDirectories(newServiceImplFolder);
 
-			Files.move(oldServiceImplFolder, newServiceImplFolder, StandardCopyOption.REPLACE_EXISTING);
+			moveFile(oldServiceImplFolder, newServiceImplFolder);
 		}
 
 		Path oldModelImplFolder = oldSBFolder.resolve("model");
@@ -199,7 +198,7 @@ public class ConvertServiceBuilderCommand {
 		if (Files.exists(oldModelImplFolder)) {
 			Files.createDirectories(newModelImplFolder);
 
-			Files.move(oldModelImplFolder, newModelImplFolder, StandardCopyOption.REPLACE_EXISTING);
+			moveFile(oldModelImplFolder, newModelImplFolder);
 		}
 
 		Path oldMetaInfFolder = projectPath.resolve(Constants.DEFAULT_JAVA_SRC + ServiceBuilder.META_INF);
@@ -208,7 +207,7 @@ public class ConvertServiceBuilderCommand {
 		if (Files.exists(oldMetaInfFolder)) {
 			Files.createDirectories(newMetaInfFolder);
 
-			Files.move(
+			moveFile(
 				oldMetaInfFolder.resolve(ServiceBuilder.PORTLET_MODEL_HINTS_XML),
 				newMetaInfFolder.resolve(ServiceBuilder.PORTLET_MODEL_HINTS_XML));
 		}
@@ -219,7 +218,7 @@ public class ConvertServiceBuilderCommand {
 		if (Files.exists(oldSrcFolder)) {
 			Files.createDirectories(newResourcesSrcFolder);
 
-			Files.move(
+			moveFile(
 				oldSrcFolder.resolve(ServiceBuilder.SERVICE_PROPERTIES),
 				newResourcesSrcFolder.resolve(ServiceBuilder.SERVICE_PROPERTIES));
 		}
@@ -236,7 +235,7 @@ public class ConvertServiceBuilderCommand {
 				files.forEach(
 					oldApiFile -> {
 						try {
-							Files.move(oldApiFile, newApiPath.resolve(oldApiFile.getFileName()));
+							moveFile(oldApiFile, newApiPath.resolve(oldApiFile.getFileName()));
 						}
 						catch (IOException ioe) {
 							ioe.printStackTrace(_bladeCLI.error());
