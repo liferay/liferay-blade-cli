@@ -45,6 +45,10 @@ public class ConvertArgs extends BaseArgs {
 		_name = name;
 	}
 
+	public ConvertArgs(boolean all, boolean list, boolean themeBuilder, List<String> name) {
+		this(all, list, themeBuilder, false, name);
+	}
+
 	public List<String> getName() {
 		return _name;
 	}
