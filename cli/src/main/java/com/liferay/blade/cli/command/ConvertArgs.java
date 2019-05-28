@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * @author Gregory Amerson
+ * @author Simon Jiang
  */
 @Parameters(
 	commandDescription = "Converts a plugins-sdk plugin project to a gradle WAR project in Liferay workspace",
@@ -36,11 +37,16 @@ public class ConvertArgs extends BaseArgs {
 	public ConvertArgs() {
 	}
 
-	public ConvertArgs(boolean all, boolean list, boolean themeBuilder, List<String> name) {
+	public ConvertArgs(boolean all, boolean list, boolean themeBuilder, boolean removeSource, List<String> name) {
 		_all = all;
 		_list = list;
 		_themeBuilder = themeBuilder;
+		_removeSource = removeSource;
 		_name = name;
+	}
+
+	public ConvertArgs(boolean all, boolean list, boolean themeBuilder, List<String> name) {
+		this(all, list, themeBuilder, false, name);
 	}
 
 	public List<String> getName() {
@@ -59,6 +65,10 @@ public class ConvertArgs extends BaseArgs {
 		return _list;
 	}
 
+	public boolean isRemoveSource() {
+		return _removeSource;
+	}
+
 	public boolean isThemeBuilder() {
 		return _themeBuilder;
 	}
@@ -71,6 +81,9 @@ public class ConvertArgs extends BaseArgs {
 
 	@Parameter(description = "name")
 	private List<String> _name = new ArrayList<>();
+
+	@Parameter(description = "Remove source plugin projects, default value is true", names = {"-r", "--remove"})
+	private boolean _removeSource = true;
 
 	@Parameter(
 		description = "The Plugins SDK directory, otherwise default value is <workspace_dir>/plugins-sdk",

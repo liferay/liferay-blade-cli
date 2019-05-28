@@ -40,7 +40,7 @@ import org.apache.commons.lang3.text.WordUtils;
  * @author David Truong
  * @author Gregory Amerson
  */
-public class ConvertThemeCommand {
+public class ConvertThemeCommand implements FilesSupport {
 
 	public ConvertThemeCommand(BladeCLI bladeCLI, ConvertArgs convertArgs) throws Exception {
 		_bladeCLI = bladeCLI;
@@ -102,13 +102,15 @@ public class ConvertThemeCommand {
 			return;
 		}
 
+		boolean removeSource = _convertArgs.isRemoveSource();
+
 		if (themeName == null) {
 			List<String> themes = new ArrayList<>();
 
 			for (File file : _pluginsSDKThemesDir.listFiles()) {
 				if (file.isDirectory()) {
 					if (_convertArgs.isAll()) {
-						importTheme(file.getCanonicalPath());
+						importTheme(file.getCanonicalPath(), removeSource);
 					}
 					else {
 						themes.add(file.getName());
@@ -136,7 +138,7 @@ public class ConvertThemeCommand {
 			File themeDir = new File(_pluginsSDKThemesDir, themeName);
 
 			if (themeDir.exists()) {
-				importTheme(themeDir.getCanonicalPath());
+				importTheme(themeDir.getCanonicalPath(), removeSource);
 			}
 			else {
 				_bladeCLI.error("Theme does not exist");
@@ -144,7 +146,7 @@ public class ConvertThemeCommand {
 		}
 	}
 
-	public void importTheme(String themePath) throws Exception {
+	public void importTheme(String themePath, boolean removeSource) throws Exception {
 		Process process = BladeUtil.startProcess("node -v", _themesDir);
 
 		int nodeJSInstalledChecker = process.waitFor();
@@ -161,7 +163,7 @@ public class ConvertThemeCommand {
 
 		int errCode = process.waitFor();
 
-		if (errCode == 0) {
+		if ((errCode == 0) && removeSource) {
 			_bladeCLI.out("Theme " + themePath + " migrated successfully");
 
 			File theme = new File(themePath);
