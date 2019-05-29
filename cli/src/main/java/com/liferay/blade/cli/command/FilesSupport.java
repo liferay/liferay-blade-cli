@@ -31,10 +31,30 @@ import org.apache.commons.io.FileUtils;
 public interface FilesSupport {
 
 	public default void moveFile(Path sourcePath, Path destinationPath) throws IOException {
+		if ((sourcePath == null) || (destinationPath == null)) {
+			return;
+		}
+
+		File sourceFile = sourcePath.toFile();
+
+		if (!sourceFile.exists()) {
+			return;
+		}
+
 		Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 	}
 
 	public default void moveFile(Path sourcePath, Path destinationPath, boolean removeSourceFile) throws IOException {
+		if ((sourcePath == null) || (destinationPath == null)) {
+			return;
+		}
+
+		File sourceFile = sourcePath.toFile();
+
+		if (!sourceFile.exists()) {
+			return;
+		}
+
 		if (removeSourceFile) {
 			Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 		}
