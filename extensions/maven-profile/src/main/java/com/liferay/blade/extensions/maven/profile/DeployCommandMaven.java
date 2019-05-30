@@ -17,6 +17,7 @@
 package com.liferay.blade.extensions.maven.profile;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.DeployArgs;
 import com.liferay.blade.cli.command.DeployCommand;
 import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
@@ -29,6 +30,7 @@ import java.util.Collections;
 /**
  * @author Christopher Bryan Boyd
  */
+@BladeProfile("maven")
 public class DeployCommandMaven extends DeployCommand implements MavenExecutor {
 
 	public DeployCommandMaven() {
