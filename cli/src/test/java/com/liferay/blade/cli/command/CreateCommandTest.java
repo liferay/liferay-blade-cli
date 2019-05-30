@@ -1226,9 +1226,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace72);
 
-		String[] sevenTwoArgs = {
-			"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two"
-		};
+		String[] sevenTwoArgs = {"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two"};
 
 		TestUtil.runBlade(workspace72, _extensionsDir, sevenTwoArgs);
 
@@ -1436,9 +1434,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testLiferayVersionDefault() throws Exception {
-		String[] sevenTwoArgs = {
-			"--base", _rootDir.getAbsolutePath(), "create", "-t", "portlet", "seven-two"
-		};
+		String[] sevenTwoArgs = {"--base", _rootDir.getAbsolutePath(), "create", "-t", "portlet", "seven-two"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, sevenTwoArgs);
 
