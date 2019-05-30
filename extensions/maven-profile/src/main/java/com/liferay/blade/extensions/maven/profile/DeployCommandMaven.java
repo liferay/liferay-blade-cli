@@ -38,8 +38,6 @@ public class DeployCommandMaven extends DeployCommand implements MavenExecutor {
 
 	@Override
 	public void execute() throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
 		DeployArgs deployArgs = getArgs();
 
 		File baseDir = new File(deployArgs.getBase());
@@ -47,17 +45,7 @@ public class DeployCommandMaven extends DeployCommand implements MavenExecutor {
 		File pomXmlFile = MavenUtil.getPomXMLFile(baseDir);
 
 		if (pomXmlFile.exists()) {
-			bladeCLI.out("Executing Maven task clean...\n");
-
-			execute(baseDir.getAbsolutePath(), new String[] {"clean"});
-
-			bladeCLI.out("Executing Maven task package...\n");
-
-			execute(baseDir.getAbsolutePath(), new String[] {"package"});
-
-			bladeCLI.out("Executing Maven task bundle-support:deploy...\n");
-
-			execute(baseDir.getAbsolutePath(), new String[] {"bundle-support:deploy"});
+			execute(baseDir.getAbsolutePath(), new String[] {"clean", "package", "bundle-support:deploy"}, true);
 		}
 		else {
 			_addError("Unable to locate pom.xml file.");
