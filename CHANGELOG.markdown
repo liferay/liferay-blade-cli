@@ -1,5 +1,14 @@
 # Liferay Blade CLI Change Log
 
+## 3.7.0 - 2019-5-30 - 8dc27994d5f0dad2bee9ed79f52f481cbbeaead2
+
+- [BLADE-408]: blade convert theme should not find theme under plugins-sdk folder
+- [BLADE-423]: blade convert should support keep the original plugin projects
+- [BLADE-425]: Fix Extension Classloader in the event of failure
+- [BLADE-431]: add support for new core ext project template
+- [BLADE-440]: Add maven bundle support deploy command
+- [BLADE-441]: Use project templates 4.2.20
+
 ## 3.6.0 - 2019-4-12 - 907dbac73496b2436fc44f03e71a19c522dc3c9a
 
 - [BLADE-373]: Change .blade/settings.properties to .blade.properties, add an auto-migration
@@ -302,9 +311,16 @@ Updated to use Project Templates 4.1.0
 [BLADE-397]: https://issues.liferay.com/browse/BLADE-397
 [BLADE-398]: https://issues.liferay.com/browse/BLADE-398
 [BLADE-407]: https://issues.liferay.com/browse/BLADE-407
+[BLADE-408]: https://issues.liferay.com/browse/BLADE-408
 [BLADE-409]: https://issues.liferay.com/browse/BLADE-409
 [BLADE-411]: https://issues.liferay.com/browse/BLADE-411
 [BLADE-412]: https://issues.liferay.com/browse/BLADE-412
+[BLADE-423]: https://issues.liferay.com/browse/BLADE-423
+[BLADE-424]: https://issues.liferay.com/browse/BLADE-424
+[BLADE-425]: https://issues.liferay.com/browse/BLADE-425
+[BLADE-431]: https://issues.liferay.com/browse/BLADE-431
+[BLADE-440]: https://issues.liferay.com/browse/BLADE-440
+[BLADE-441]: https://issues.liferay.com/browse/BLADE-441
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
