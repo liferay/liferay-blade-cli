@@ -512,7 +512,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateNpmAngular() throws Exception {
+	public void testCreateNpmAngular71() throws Exception {
 		String[] args = {
 			"create", "-d", _rootDir.getAbsolutePath(), "-t", "npm-angular-portlet", "-v", "7.1", "npmangular"
 		};
@@ -1197,7 +1197,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateWorkspaceLiferayVersionDefault() throws Exception {
+	public void testCreateWorkspaceLiferayVersion71() throws Exception {
 		File workspace71 = new File(_rootDir, "workspace71");
 
 		File modulesDir = new File(workspace71, "modules");
@@ -1216,6 +1216,27 @@ public class CreateCommandTest {
 
 		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
 		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"3.0.0\""));
+	}
+
+	@Test
+	public void testCreateWorkspaceLiferayVersionDefault() throws Exception {
+		File workspace72 = new File(_rootDir, "workspace72");
+
+		File modulesDir = new File(workspace72, "modules");
+
+		_makeWorkspace(workspace72);
+
+		String[] sevenTwoArgs = {
+			"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two"
+		};
+
+		TestUtil.runBlade(workspace72, _extensionsDir, sevenTwoArgs);
+
+		File buildGradle = new File(modulesDir, "seven-two/build.gradle");
+
+		String content = FileUtil.read(buildGradle);
+
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"4.4.0\""));
 	}
 
 	@Test
@@ -1398,7 +1419,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testLiferayVersionDefault() throws Exception {
+	public void testLiferayVersion71() throws Exception {
 		String[] sevenOneArgs = {
 			"--base", _rootDir.getAbsolutePath(), "create", "-v", "7.1", "-t", "npm-angular-portlet", "seven-one"
 		};
@@ -1411,6 +1432,21 @@ public class CreateCommandTest {
 
 		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
 		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"3.0.0\""));
+	}
+
+	@Test
+	public void testLiferayVersionDefault() throws Exception {
+		String[] sevenTwoArgs = {
+			"--base", _rootDir.getAbsolutePath(), "create", "-t", "portlet", "seven-two"
+		};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, sevenTwoArgs);
+
+		File buildGradle = new File(_rootDir, "seven-two/build.gradle");
+
+		String content = FileUtil.read(buildGradle);
+
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"4.4.0\""));
 	}
 
 	@Test

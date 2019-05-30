@@ -65,7 +65,7 @@ public class SamplesCommandTest {
 	public void testGetSample() throws Exception {
 		File root = temporaryFolder.newFolder("samplesroot");
 
-		String[] args = {"samples", "-v", "7.1", "-d", root.getPath() + "/test", "friendly-url"};
+		String[] args = {"samples", "-d", root.getPath() + "/test", "friendly-url"};
 
 		BladeTest bladeTest = _getBladeTest();
 
@@ -139,10 +139,37 @@ public class SamplesCommandTest {
 	}
 
 	@Test
+	public void testGetSampleMaven72() throws Exception {
+		File root = temporaryFolder.getRoot();
+
+		String[] args = {"samples", "-d", root.getPath() + "/test", "-b", "maven", "-v", "7.2", "friendly-url"};
+
+		BladeTest bladeTest = _getBladeTest();
+
+		bladeTest.run(args);
+
+		File projectDir = new File(root, "test/friendly-url");
+
+		Assert.assertTrue(projectDir.exists());
+
+		File gradleBuildFile = new File(projectDir, "build.gradle");
+		File mavenBuildFile = new File(projectDir, "pom.xml");
+
+		Assert.assertFalse(gradleBuildFile.exists());
+		Assert.assertTrue(mavenBuildFile.exists());
+
+		String content = FileUtil.read(mavenBuildFile);
+
+		Assert.assertTrue(
+			content,
+			content.contains("<artifactId>com.liferay.portal.kernel</artifactId>\n\t\t\t<version>4.4.0</version>"));
+	}
+
+	@Test
 	public void testGetSampleWithDependencies() throws Exception {
 		File root = temporaryFolder.getRoot();
 
-		String[] args = {"samples", "-v", "7.1", "-d", root.getPath() + "/test", "rest"};
+		String[] args = {"samples", "-d", root.getPath() + "/test", "rest"};
 
 		BladeTest bladeTest = _getBladeTest();
 
@@ -165,7 +192,7 @@ public class SamplesCommandTest {
 	public void testGetSampleWithGradleWrapper() throws Exception {
 		File root = temporaryFolder.getRoot();
 
-		String[] args = {"samples", "-v", "7.1", "-d", root.getPath() + "/test", "authenticator-shiro"};
+		String[] args = {"samples", "-d", root.getPath() + "/test", "authenticator-shiro"};
 
 		BladeTest bladeTest = _getBladeTest();
 
@@ -204,7 +231,7 @@ public class SamplesCommandTest {
 		Assert.assertTrue(output, (output == null) || output.isEmpty());
 
 		String[] samplesArgs = {
-			"samples", "-v", "7.1", "-d", _rootDir.getPath() + "/test/workspace/modules", "auth-failure"
+			"samples", "-d", _rootDir.getPath() + "/test/workspace/modules", "auth-failure"
 		};
 
 		bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, samplesArgs);
@@ -295,7 +322,7 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testListSamples() throws Exception {
-		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, "samples", "-v", "7.1");
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, "samples");
 
 		String output = bladeTestResults.getOutput();
 
