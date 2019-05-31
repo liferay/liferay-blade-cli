@@ -1,0 +1,12 @@
+*.iml
+.classpath
+.gradle
+.idea
+.project
+.settings
+.vscode
+.DS_store
+bin
+build
+mavenRepo
+out/

@@ -130,7 +130,14 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		List<String> args = name;
 
-		String sbProjectName = !args.isEmpty() && (args.size() >= 2) ? args.get(1) : null;
+		String sbProjectName = null;
+
+		if (args.contains("true") || args.contains("false")) {
+			sbProjectName = !args.isEmpty() && (args.size() >= 3) ? args.get(1) : null;
+		}
+		else {
+			sbProjectName = !args.isEmpty() && (args.size() >= 2) ? args.get(1) : null;
+		}
 
 		if (sbProjectName == null) {
 			if (projectName.endsWith("-portlet")) {
