@@ -164,11 +164,10 @@ repositories {
 	}
 }
 
-subprojects {
+subprojects { subproject ->
 	group = "com.liferay.blade"
 
 	plugins.withId("java") {
-
 		apply plugin: "com.liferay.source.formatter"
 		apply plugin: "nu.studer.credentials"
 
@@ -179,11 +178,24 @@ subprojects {
 		formatSource {
 			maxLineLength = 120
 		}
+
 		sourceCompatibility = "1.8"
 		targetCompatibility = "1.8"
 	}
 
 	plugins.withId("maven-publish") {
+		task prepareRelease
+
+		prepareRelease {
+			doLast {
+				File buildGradle = subproject.file("build.gradle")
+
+				buildGradle.text = buildGradle.text.replaceAll(/version = "(.*)-SNAPSHOT"/) { all, version ->
+					"version = \"$version\""
+				}
+			}
+		}
+
 		publishing {
 			String liferayNexusUsername
 			String liferayNexusPassword
