@@ -1,9 +1,12 @@
+import org.osgi.framework.Version
+
 buildscript {
 	dependencies {
 		classpath group: "com.gradle", name: "build-scan-plugin", version: "1.16"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.change.log.builder", version: "1.1.1"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "2.3.303"
 		classpath group: "nu.studer", name: "gradle-credentials-plugin", version: "1.0.4"
+		classpath group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	}
 
 	repositories {
@@ -185,6 +188,7 @@ subprojects { subproject ->
 
 	plugins.withId("maven-publish") {
 		task prepareRelease
+		task prepareSnapshot
 
 		prepareRelease {
 			doLast {
@@ -192,6 +196,20 @@ subprojects { subproject ->
 
 				buildGradle.text = buildGradle.text.replaceAll(/version = "(.*)-SNAPSHOT"/) { all, version ->
 					"version = \"$version\""
+				}
+			}
+		}
+
+		prepareSnapshot {
+			doLast {
+				File buildGradle = subproject.file("build.gradle")
+
+				buildGradle.text = buildGradle.text.replaceAll(/version = "(.*)"/) { all, version ->
+					Version currentVersion = new Version(version)
+
+					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)
+
+					"version = \"$newVersion-SNAPSHOT\""
 				}
 			}
 		}
