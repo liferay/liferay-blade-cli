@@ -37,6 +37,7 @@ repositories {
 	maven {
 		url "https://repo.gradle.org/gradle/libs-releases/"
 	}
+
 	maven {
 		if (project.hasProperty("release")) {
 			url "https://repository.liferay.com/nexus/content/groups/public"
