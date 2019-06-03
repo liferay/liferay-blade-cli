@@ -67,7 +67,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		args = new String[] {"--base", projectPath.toString(), "convert", "-a"};
+		args = new String[] {"--base", projectPath.toString(), "convert", "-a", "-r"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
 
@@ -107,7 +107,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		args = new String[] {"--base", projectPath.toString(), "convert", "-a", "-r", "false"};
+		args = new String[] {"--base", projectPath.toString(), "convert", "-a"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
 
@@ -186,7 +186,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		args = new String[] {"--base", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl", "-r", "false"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -235,7 +235,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		args = new String[] {"--base", projectDir.toString(), "convert", "sample-application-adapter-hook"};
+		args = new String[] {"--base", projectDir.toString(), "convert", "-r", "sample-application-adapter-hook"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -247,7 +247,7 @@ public class ConvertCommandTest {
 
 		Assert.assertFalse(Files.exists(sampleHookWrongPath));
 
-		args = new String[] {"--base", projectDir.toString(), "convert", "sample-servlet-filter-hook"};
+		args = new String[] {"--base", projectDir.toString(), "convert", "-r", "sample-servlet-filter-hook"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -280,9 +280,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		args = new String[] {
-			"--base", projectDir.toString(), "convert", "sample-application-adapter-hook", "-r", "false"
-		};
+		args = new String[] {"--base", projectDir.toString(), "convert", "sample-application-adapter-hook"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -294,7 +292,7 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(Files.exists(sampleHookWrongPath));
 
-		args = new String[] {"--base", projectDir.toString(), "convert", "sample-servlet-filter-hook", "-r", "false"};
+		args = new String[] {"--base", projectDir.toString(), "convert", "sample-servlet-filter-hook"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -327,7 +325,7 @@ public class ConvertCommandTest {
 
 		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
 
-		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "-r", "sample-styled-minimal-theme"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -357,7 +355,7 @@ public class ConvertCommandTest {
 
 		Assert.assertFalse(themeDir.exists());
 
-		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "-r", "sample-styled-advanced-theme"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -410,9 +408,7 @@ public class ConvertCommandTest {
 
 		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
 
-		args = new String[] {
-			"--base", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme", "-r", "false"
-		};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -442,9 +438,7 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(themeDir.exists());
 
-		args = new String[] {
-			"--base", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme", "-r", "false"
-		};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-advanced-theme"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
