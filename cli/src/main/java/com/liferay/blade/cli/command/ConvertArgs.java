@@ -83,7 +83,7 @@ public class ConvertArgs extends BaseArgs {
 	private List<String> _name = new ArrayList<>();
 
 	@Parameter(description = "Remove source plugin projects, default value is true", names = {"-r", "--remove"})
-	private boolean _removeSource = true;
+	private boolean _removeSource = false;
 
 	@Parameter(
 		description = "The Plugins SDK directory, otherwise default value is <workspace_dir>/plugins-sdk",
