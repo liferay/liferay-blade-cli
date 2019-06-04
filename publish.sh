@@ -46,20 +46,20 @@ fi
 
 # Publish the Remote Deploy Command jar
 
-remoteDeployCommandPublishCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info --scan)
+./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info --scan | tee /tmp/$timestamp/remote-deploy-publish-command.txt
+remoteDeployCommandPublishCommand=$(cat /tmp/$timestamp/remote-deploy-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
-   echo $remoteDeployCommandPublishCommand
    echo Failed :extensions:remote-deploy-command:publish
    rm -rf /tmp/$timestamp
    exit 1
 fi
 
 # Publish the Maven Profile jar
-mavenProfilePublishCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:maven-profile:publish --info --scan)
+./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info --scan | tee /tmp/$timestamp/maven-profile-publish-command.txt
+mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
-   echo $mavenProfilePublishCommand
    echo Failed :extensions:maven-profile:publish
    rm -rf /tmp/$timestamp
    exit 1
@@ -70,7 +70,7 @@ mavenProfilePublishUrl=$(echo "$mavenProfilePublishCommand" | grep Uploading | g
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishUrl" ]; then
    echo Failed grepping for mavenProfilePublishUrl
-   rm -rf /tmp/$timestamp
+   #rm -rf /tmp/$timestamp
    exit 1
 fi
 
@@ -84,14 +84,14 @@ if [ "$?" != "0" ]; then
    rm -rf /tmp/$timestamp
    exit 1
 else
-   echo "\nPublished $mavenProfileJarUrl"
+   echo "Published $mavenProfileJarUrl"
 fi
 
 # Test the blade cli jar locally, but don't publish.
-bladeCliJarCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies check --info --scan)
+./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies clean check --info --scan | tee /tmp/$timestamp/blade-cli-jar-command.txt
+bladeCliJarCommand=$(cat /tmp/$timestamp/blade-cli-jar-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$bladeCliJarCommand" ]; then
-   echo $bladeCliJarCommand
    echo Failed :cli:jar
    rm -rf /tmp/$timestamp
    exit 1
@@ -119,10 +119,10 @@ fi
 
 # Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
 
-bladeCliPublishCommand=$(./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info --scan)
+./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info --scan | tee /tmp/$timestamp/blade-cli-publish-command.txt
+bladeCliPublishCommand=$(cat /tmp/$timestamp/blade-cli-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$bladeCliPublishCommand" ]; then
-   echo $bladeCliPublishCommand
    echo Failed :cli:publish
    rm -rf /tmp/$timestamp
    exit 1
@@ -141,7 +141,7 @@ if [ "$?" != "0" ]; then
    rm -rf /tmp/$timestamp
    exit 1
 else
-   echo "\nPublished $bladeCliUrl"
+   echo "Published $bladeCliUrl"
 fi
 
 unzip -p /tmp/$timestamp/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
