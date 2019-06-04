@@ -197,12 +197,14 @@ repositories {
 		url "https://repo.gradle.org/gradle/libs-releases/"
 	}
 
-	maven {
-		url "https://${repoHost}/nexus/content/repositories/liferay-public-releases/"
-	}
-
-	maven {
-		url "https://${repoHost}/nexus/content/repositories/liferay-public-snapshots/"
+	if (project.hasProperty("release")) {
+		maven {
+			url "https://${repoHost}/nexus/content/repositories/liferay-public-releases/"
+		}
+	} else {
+		maven {
+			url "https://${repoHost}/nexus/content/repositories/liferay-public-snapshots/"
+		}
 	}
 }
 
