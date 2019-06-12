@@ -1,5 +1,22 @@
 #!/bin/bash
 
+bladeInstall=$(curl -L https://raw.githubusercontent.com/liferay/liferay-blade-cli/master/cli/installers/local | sh)
+
+if [ "$?" != "0" ]; then
+	echo $bladeInstall
+	echo blade install failed
+	exit 1
+fi
+
+export PATH="$PATH:~/jpm/bin"
+
+bladeVersion=$(blade version)
+
+if [ "$?" != "0" ]; then
+	echo blade version failed
+	exit 1
+fi
+
 localNexusOpt=""
 releaseType=""
 
@@ -152,6 +169,22 @@ if [ "$?" != "0" ]; then
    echo Failed local blade.jar diff with downloaded maven profile jar.  The embedded maven profile jar and nexus maven profile jar are not identical
    rm -rf /tmp/$timestamp
    exit 1
+fi
+
+localBladeVersion=$(java -jar /tmp/$timestamp/blade.jar version)
+
+mkdir ~/.blade
+
+echo "$repoHost/nexus/content/groups/public/com/liferay/blade/com.liferay.blade.cli/" > ~/.blade/update.url
+
+updatedBladeVersion=$(blade update)
+
+if [ $localBladeVersion != updateBladeVersion ]; then
+	echo After blade updated versions do not match.
+	echo "Built blade version = $bladeVersion"
+	echo "Updated blade version = $updatedBladeVersion"
+	rm -rf /tmp/$timestamp
+	exit 1
 fi
 
 rm -rf /tmp/$timestamp
