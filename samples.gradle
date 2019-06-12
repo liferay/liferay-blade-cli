@@ -66,11 +66,7 @@ createSamples {
 }
 
 dependencies {
-<<<<<<< HEAD
-	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.2.19"
-=======
 	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "4.2.24"
->>>>>>> 9f15ed4a... BLADE-441 Use project-templates 4.2.24 for service builder TP fix
 }
 
 repositories {
