@@ -16,7 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 
@@ -47,7 +46,7 @@ public class ExtensionsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		_rootDir = temporaryFolder.getRoot();
 

@@ -265,7 +265,6 @@ public class PropertiesLocator {
 											}
 										}
 										catch (Exception e) {
-											continue;
 										}
 									}
 								}
@@ -480,7 +479,6 @@ public class PropertiesLocator {
 									}
 								}
 								catch (Exception e) {
-									continue;
 								}
 							}
 						}
@@ -606,9 +604,8 @@ public class PropertiesLocator {
 		if (!theMostLikelyMatches.isEmpty()) {
 			return theMostLikelyMatches;
 		}
-		else {
-			return mostLikelyMatches;
-		}
+
+		return mostLikelyMatches;
 	}
 
 	private static PrintWriter _generateOutputFile(PropertiesLocatorArgs propertiesLocatorArgs)
@@ -957,9 +954,8 @@ public class PropertiesLocator {
 		if (originalProperty.endsWith(propertySuffix)) {
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	private static boolean _pathContainsPortletName(String propertyPath, String[] portletNames) {
@@ -1016,6 +1012,8 @@ public class PropertiesLocator {
 		File.separator + "WEB-INF" + File.separator + "lib" + File.separator + "portal-impl.jar";
 
 	private static PrintWriter _outputFile;
+
+	@SuppressWarnings("serial")
 	private static final Map<String, String> _portletNameEquivalences = new HashMap<String, String>() {
 		{
 			put("dl", "document-library");

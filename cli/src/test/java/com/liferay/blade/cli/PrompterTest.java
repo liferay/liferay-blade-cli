@@ -24,10 +24,9 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
-import java.util.AbstractMap.SimpleEntry;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -94,7 +93,7 @@ public class PrompterTest {
 
 		String correctResult = _question + " (y/n)";
 
-		Entry<Boolean, String> confirmEntry = _confirm(_question, answer);
+		Map.Entry<Boolean, String> confirmEntry = _confirm(_question, answer);
 
 		String output = confirmEntry.getValue();
 
@@ -106,7 +105,7 @@ public class PrompterTest {
 		correctEndingOutputTests.put("(y/N)", Optional.of(false));
 		correctEndingOutputTests.put("(y/n)", Optional.empty());
 
-		for (Entry<String, Optional<Boolean>> entry : correctEndingOutputTests.entrySet()) {
+		for (Map.Entry<String, Optional<Boolean>> entry : correctEndingOutputTests.entrySet()) {
 			confirmEntry = _confirm(_question, answer, entry.getValue());
 
 			String receivedOutput = confirmEntry.getValue();
@@ -121,13 +120,13 @@ public class PrompterTest {
 		}
 	}
 
-	private static Entry<Boolean, String> _confirm(String question, String answerString)
+	private static Map.Entry<Boolean, String> _confirm(String question, String answerString)
 		throws UnsupportedEncodingException {
 
 		return _confirm(question, answerString, Optional.empty());
 	}
 
-	private static Entry<Boolean, String> _confirm(
+	private static Map.Entry<Boolean, String> _confirm(
 			String question, String answerString, Optional<Boolean> defaultAnswer)
 		throws UnsupportedEncodingException {
 
@@ -141,13 +140,13 @@ public class PrompterTest {
 
 		String outString = outStream.toString();
 
-		return new SimpleEntry<>(answer, outString);
+		return new AbstractMap.SimpleEntry<>(answer, outString);
 	}
 
 	private void _testAnswer(String answerString, Boolean correctAnswerValue, Optional<Boolean> defaultAnswer)
 		throws UnsupportedEncodingException {
 
-		Entry<Boolean, String> confirmEntry = _confirm(_question, answerString, defaultAnswer);
+		Map.Entry<Boolean, String> confirmEntry = _confirm(_question, answerString, defaultAnswer);
 
 		Boolean receivedAnswer = confirmEntry.getKey();
 
@@ -163,7 +162,7 @@ public class PrompterTest {
 	private void _testAnswers(Map<String, Boolean> correctAnswerTestMap, Optional<Boolean> defaultAnswer)
 		throws UnsupportedEncodingException {
 
-		for (Entry<String, Boolean> entry : correctAnswerTestMap.entrySet()) {
+		for (Map.Entry<String, Boolean> entry : correctAnswerTestMap.entrySet()) {
 			String answerString = entry.getKey();
 			Boolean correctAnswerValue = entry.getValue();
 

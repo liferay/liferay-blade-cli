@@ -239,9 +239,8 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 			if (path == null) {
 				throw new Exception("Path to extension does not exist: " + pathArg);
 			}
-			else {
-				_installExtension(path);
-			}
+
+			_installExtension(path);
 		}
 	}
 

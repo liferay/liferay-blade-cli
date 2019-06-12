@@ -56,8 +56,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		int currentMinor = Integer.parseInt(matcher.group(2));
 		int currentPatch = Integer.parseInt(matcher.group(3));
 
-		Version currentSemver = new Version(currentMajor, currentMinor, currentPatch);
-
 		matcher = _versionPattern.matcher(updateVersion);
 
 		matcher.find();
@@ -65,8 +63,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		int updateMajor = Integer.parseInt(matcher.group(1));
 		int updateMinor = Integer.parseInt(matcher.group(2));
 		int updatePatch = Integer.parseInt(matcher.group(3));
-
-		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
 		if (currentVersion.contains("SNAPSHOT")) {
 			if (updateVersion.contains("-")) {
@@ -95,6 +91,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 			}
 		}
+
+		Version currentSemver = new Version(currentMajor, currentMinor, currentPatch);
+
+		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
 		return currentSemver.equals(updateSemver);
 	}
@@ -135,9 +135,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			return url + "/" + version + "/com.liferay.blade.cli-" + snapshotVersion + ".jar";
 		}
-		else {
-			return url + "/" + version + "/com.liferay.blade.cli-" + version + ".jar";
-		}
+
+		return url + "/" + version + "/com.liferay.blade.cli-" + version + ".jar";
 	}
 
 	public static String getUpdateUrlFromBladeDir() {

@@ -53,7 +53,9 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 	public void close() throws Exception {
 		if (_serviceLoaderClassLoader != null) {
 			if (_serviceLoaderClassLoader instanceof Closeable) {
-				((Closeable)_serviceLoaderClassLoader).close();
+				Closeable closeable = (Closeable)_serviceLoaderClassLoader;
+
+				closeable.close();
 			}
 		}
 

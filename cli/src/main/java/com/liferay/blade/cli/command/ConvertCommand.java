@@ -125,10 +125,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			return;
 		}
 
-		List<String> name = convertArgs.getName();
-
-		final String pluginName = name.isEmpty() ? null : name.get(0);
-
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
 		if (workspaceProvider == null) {
@@ -136,6 +132,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			return;
 		}
+
+		List<String> name = convertArgs.getName();
+
+		final String pluginName = name.isEmpty() ? null : name.get(0);
 
 		if ((pluginName == null) && !convertArgs.isAll() && !convertArgs.isList()) {
 			bladeCLI.error(

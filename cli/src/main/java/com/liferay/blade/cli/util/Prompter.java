@@ -47,9 +47,8 @@ public class Prompter {
 		if (answer.isPresent()) {
 			return answer.get();
 		}
-		else {
-			throw new NoSuchElementException("Unable to acquire an answer");
-		}
+
+		throw new NoSuchElementException("Unable to acquire an answer");
 	}
 
 	private static String _buildQuestionWithPrompt(String question, Optional<Boolean> defaultAnswer) {

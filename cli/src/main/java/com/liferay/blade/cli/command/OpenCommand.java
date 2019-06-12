@@ -63,8 +63,6 @@ public class OpenCommand extends BaseCommand<OpenArgs> {
 
 				if (retval != null) {
 					_addError("open", retval.toString());
-
-					return;
 				}
 			}
 		}
@@ -81,7 +79,9 @@ public class OpenCommand extends BaseCommand<OpenArgs> {
 	}
 
 	private void _addError(String prefix, String msg) {
-		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
+		BladeCLI bladeCLI = getBladeCLI();
+
+		bladeCLI.addErrors(prefix, Collections.singleton(msg));
 	}
 
 }

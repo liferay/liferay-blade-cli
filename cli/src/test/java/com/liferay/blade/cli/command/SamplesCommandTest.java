@@ -17,7 +17,6 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
@@ -339,7 +338,7 @@ public class SamplesCommandTest {
 	}
 
 	private BladeTest _getBladeTest() {
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
 

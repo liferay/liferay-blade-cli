@@ -18,7 +18,6 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.StringPrintStream;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.gradle.ProcessResult;
@@ -64,7 +63,7 @@ public class GradlePrintErrorTest {
 	public void testGradleError() throws Exception {
 		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
 
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
 		bladeTestBuilder.setSettingsDir(_rootDir.toPath());

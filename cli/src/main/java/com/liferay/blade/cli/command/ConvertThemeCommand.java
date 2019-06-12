@@ -88,10 +88,6 @@ public class ConvertThemeCommand implements FilesSupport {
 	}
 
 	public void execute() throws Exception {
-		final List<String> args = _convertArgs.getName();
-
-		final String themeName = !args.isEmpty() ? args.get(0) : null;
-
 		File baseDir = new File(_convertArgs.getBase());
 
 		WorkspaceProvider workspaceProvider = _bladeCLI.getWorkspaceProvider(baseDir);
@@ -103,6 +99,10 @@ public class ConvertThemeCommand implements FilesSupport {
 		}
 
 		boolean removeSource = _convertArgs.isRemoveSource();
+
+		final List<String> args = _convertArgs.getName();
+
+		final String themeName = !args.isEmpty() ? args.get(0) : null;
 
 		if (themeName == null) {
 			List<String> themes = new ArrayList<>();

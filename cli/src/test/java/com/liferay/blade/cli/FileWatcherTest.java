@@ -18,7 +18,6 @@ package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.FileWatcher;
-import com.liferay.blade.cli.util.FileWatcher.Consumer;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +78,7 @@ public class FileWatcherTest {
 
 		final CountDownLatch latch = new CountDownLatch(2);
 
-		final Consumer<Path> consumer = new Consumer<Path>() {
+		final FileWatcher.Consumer<Path> consumer = new FileWatcher.Consumer<Path>() {
 
 			@Override
 			public void consume(Path modified) {
@@ -125,7 +124,7 @@ public class FileWatcherTest {
 		final boolean[] changed = new boolean[1];
 		final CountDownLatch latch = new CountDownLatch(1);
 
-		final Consumer<Path> consumer = new Consumer<Path>() {
+		final FileWatcher.Consumer<Path> consumer = new FileWatcher.Consumer<Path>() {
 
 			@Override
 			public void consume(Path modified) {

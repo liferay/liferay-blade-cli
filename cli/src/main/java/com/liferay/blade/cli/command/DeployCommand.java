@@ -73,18 +73,17 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		int resultCode = processResult.getResultCode();
 
-		BladeCLI bladeCLI = getBladeCLI();
-
 		if (resultCode > 0) {
 			_addError("Gradle \"" + command + "\" task failed.");
 
 			return;
 		}
-		else {
-			String output = "Gradle \"" + command + "\" task succeeded.";
 
-			bladeCLI.out(output);
-		}
+		String output = "Gradle \"" + command + "\" task succeeded.";
+
+		BladeCLI bladeCLI = getBladeCLI();
+
+		bladeCLI.out(output);
 	}
 
 }

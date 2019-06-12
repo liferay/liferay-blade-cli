@@ -41,7 +41,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,8 +66,6 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 		RemoteDeployArgs deployArgs = getArgs();
 
 		File baseDir = new File(deployArgs.getBase());
-
-		boolean watch = deployArgs.isWatch();
 
 		String host = "localhost";
 		int port = 11311;
@@ -101,7 +98,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
-		if (watch) {
+		if (deployArgs.isWatch()) {
 			_deployWatch(gradleExec, projectOutputFiles, host, port);
 		}
 		else {
@@ -181,10 +178,10 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 		);
 	}
 
-	private void _deployBundle(File file, LiferayBundleDeployer client, Domain bundle, Entry<String, Attrs> bsn)
+	private void _deployBundle(File file, LiferayBundleDeployer client, Domain bundle, Map.Entry<String, Attrs> bsn)
 		throws Exception {
 
-		Entry<String, Attrs> fragmentHost = bundle.getFragmentHost();
+		Map.Entry<String, Attrs> fragmentHost = bundle.getFragmentHost();
 
 		String hostBsn = null;
 
@@ -320,8 +317,8 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 	}
 
 	private void _installNewBundle(
-			LiferayBundleDeployer client, Entry<String, Attrs> bsn, Entry<String, Attrs> fragmentHost, long hostId,
-			URI uri)
+			LiferayBundleDeployer client, Map.Entry<String, Attrs> bsn, Map.Entry<String, Attrs> fragmentHost,
+			long hostId, URI uri)
 		throws Exception {
 
 		BladeCLI bladeCLI = getBladeCLI();
@@ -383,7 +380,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 			else {
 				Domain bundle = Domain.domain(file);
 
-				Entry<String, Attrs> bsn = bundle.getBundleSymbolicName();
+				Map.Entry<String, Attrs> bsn = bundle.getBundleSymbolicName();
 
 				if (bsn != null) {
 					_deployBundle(file, client, bundle, bsn);
@@ -396,7 +393,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 	}
 
 	private final void _reloadExistingBundle(
-			LiferayBundleDeployer client, Entry<String, Attrs> fragmentHost, long existingId, long hostId, URI uri)
+			LiferayBundleDeployer client, Map.Entry<String, Attrs> fragmentHost, long existingId, long hostId, URI uri)
 		throws Exception {
 
 		if ((fragmentHost != null) && (hostId > 0)) {

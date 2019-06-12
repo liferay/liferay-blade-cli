@@ -87,9 +87,8 @@ public class JMXLocalConnector {
 
 						return localConnectorAddress;
 					}
-					else {
-						logger.accept("Could not find " + objName + " in this vm.");
-					}
+
+					logger.accept("Could not find " + objName + " in this vm.");
 				}
 			}
 		}

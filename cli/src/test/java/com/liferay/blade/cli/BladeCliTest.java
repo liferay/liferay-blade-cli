@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -32,7 +30,7 @@ public class BladeCliTest {
 	@Ignore
 	@Test
 	public void testBladePrintUpdateIfAvailable() throws Exception {
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		BladeTest bladeTest = bladeTestBuilder.build();
 

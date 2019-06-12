@@ -17,7 +17,6 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.StringTestUtil;
 import com.liferay.blade.cli.TestUtil;
@@ -251,7 +250,7 @@ public class InstallExtensionCommandTest {
 	public void testInstallExtensionPathRequired() throws Exception {
 		String[] args = {"extension install"};
 
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		BladeTest bladeTest = bladeTestBuilder.build();
 

@@ -90,10 +90,6 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 	}
 
 	public void execute() throws Exception {
-		List<String> name = _convertArgs.getName();
-
-		final String projectName = name.isEmpty() ? null : name.get(0);
-
 		Path basePath = Paths.get(_convertArgs.getBase());
 
 		WorkspaceProvider workspaceProvider = _bladeCLI.getWorkspaceProvider(basePath.toFile());
@@ -103,6 +99,10 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 			return;
 		}
+
+		List<String> name = _convertArgs.getName();
+
+		final String projectName = name.isEmpty() ? null : name.get(0);
 
 		if (projectName == null) {
 			_bladeCLI.error("Please specify a plugin name");

@@ -44,8 +44,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
-import java.nio.file.WatchEvent.Kind;
-import java.nio.file.WatchEvent.Modifier;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -202,14 +200,14 @@ public class FileWatcher {
 	 * Register the given directory with the WatchService
 	 */
 	private void _register(Path dir) throws IOException {
-		Modifier modifier = null;
+		WatchEvent.Modifier modifier = null;
 
 		try {
 			Class<?> c = Class.forName("com.sun.nio.file.SensitivityWatchEventModifier");
 
 			Field f = c.getField("HIGH");
 
-			modifier = (Modifier)f.get(c);
+			modifier = (WatchEvent.Modifier)f.get(c);
 		}
 		catch (Exception e) {
 		}
@@ -249,7 +247,7 @@ public class FileWatcher {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static final Kind[] _WATCH_KINDS = {StandardWatchEventKinds.ENTRY_CREATE};
+	private static final WatchEvent.Kind[] _WATCH_KINDS = {StandardWatchEventKinds.ENTRY_CREATE};
 
 	private final Map<WatchKey, Path> _keys;
 	private final boolean _recursive;
