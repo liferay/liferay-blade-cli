@@ -380,7 +380,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
-		Assert.assertTrue(contents, contents.contains("7.1.2-ga3"));
+		Assert.assertTrue(contents, contents.contains("7.1.3-ga4"));
 
 		Path bladePropertiesPath = _workspacePath.resolve(".blade.properties");
 
@@ -399,7 +399,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
-		Assert.assertTrue(contents, contents.contains("7.2.0-rc2"));
+		Assert.assertTrue(contents, contents.contains("7.2.0-ga1"));
 
 		Path bladePropertiesPath = _workspacePath.resolve(".blade.properties");
 
@@ -581,7 +581,7 @@ public class InitCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath.toString(), "foo-1.0.0.jar");
 	}
 
-	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "2.0.3";
+	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "2.0.4";
 
 	private File _extensionsDir = null;
 	private File _workspaceDir = null;
