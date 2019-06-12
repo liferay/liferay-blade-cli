@@ -19,11 +19,17 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import java.net.URL;
+
 /**
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = "Update blade to latest version", commandNames = "update")
 public class UpdateArgs extends BaseArgs {
+
+	public URL getUrl() {
+		return _url;
+	}
 
 	public boolean isSnapshots() {
 		return _snapshots;
@@ -33,7 +39,14 @@ public class UpdateArgs extends BaseArgs {
 		_snapshots = snapshots;
 	}
 
+	public void setUrl(URL url) {
+		_url = url;
+	}
+
 	@Parameter(description = "Switch to use the snapshot repository.", names = {"-s", "--snapshots"})
 	private boolean _snapshots;
+
+	@Parameter(description = "Override the update URL", hidden = true, names = {"-u", "--url"})
+	private URL _url;
 
 }

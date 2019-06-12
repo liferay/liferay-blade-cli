@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import java.net.URL;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -99,15 +101,23 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return currentSemver.equals(updateSemver);
 	}
 
-	public static String getUpdateJarUrl(boolean snapshots) throws IOException {
+	public static String getUpdateJarUrl(UpdateArgs updateArgs) throws IOException {
 		String url = _RELEASES_REPO_URL;
+
+		boolean snapshots = updateArgs.isSnapshots();
 
 		if (snapshots) {
 			url = _SNAPSHOTS_REPO_URL;
 		}
 
-		if (hasUpdateUrlFromBladeDir()) {
-			url = getUpdateUrlFromBladeDir();
+		if (_hasUpdateUrlFromBladeDir()) {
+			url = _getUpdateUrlFromBladeDir();
+		}
+
+		URL updateUrl = updateArgs.getUrl();
+
+		if (updateUrl != null) {
+			url = updateUrl.toString();
 		}
 
 		Connection connection = Jsoup.connect(url + "maven-metadata.xml");
@@ -139,25 +149,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return url + "/" + version + "/com.liferay.blade.cli-" + version + ".jar";
 	}
 
-	public static String getUpdateUrlFromBladeDir() {
-		String url = "no url";
-
-		if (hasUpdateUrlFromBladeDir()) {
-			List<String> lines;
-
-			try {
-				lines = Files.readAllLines(Paths.get(_updateUrlFile.toURI()));
-
-				url = lines.get(0);
-			}
-			catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-		}
-
-		return url;
-	}
-
 	public static String getUpdateVersion(boolean snapshotsArg) throws IOException {
 		String url = _RELEASES_REPO_URL;
 
@@ -165,8 +156,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			url = _SNAPSHOTS_REPO_URL;
 		}
 
-		if (hasUpdateUrlFromBladeDir()) {
-			url = getUpdateUrlFromBladeDir();
+		if (_hasUpdateUrlFromBladeDir()) {
+			url = _getUpdateUrlFromBladeDir();
 		}
 
 		Connection connection = Jsoup.connect(url + "maven-metadata.xml");
@@ -197,18 +188,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 
 		return updateVersion;
-	}
-
-	public static boolean hasUpdateUrlFromBladeDir() {
-		boolean hasUpdate = false;
-
-		if (_updateUrlFile.exists() && _updateUrlFile.isFile()) {
-			if (_updateUrlFile.length() > 0) {
-				hasUpdate = true;
-			}
-		}
-
-		return hasUpdate;
 	}
 
 	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
@@ -315,7 +294,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 			}
 
-			String url = getUpdateJarUrl(snapshotsArg);
+			String url = getUpdateJarUrl(updateArgs);
 
 			if (shouldUpdate) {
 				bladeCLI.out("Updating from: " + url);
@@ -419,6 +398,37 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	@Override
 	public Class<UpdateArgs> getArgsClass() {
 		return UpdateArgs.class;
+	}
+
+	private static String _getUpdateUrlFromBladeDir() {
+		String url = "no url";
+
+		if (_hasUpdateUrlFromBladeDir()) {
+			List<String> lines;
+
+			try {
+				lines = Files.readAllLines(Paths.get(_updateUrlFile.toURI()));
+
+				url = lines.get(0);
+			}
+			catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
+
+		return url;
+	}
+
+	private static boolean _hasUpdateUrlFromBladeDir() {
+		boolean hasUpdate = false;
+
+		if (_updateUrlFile.exists() && _updateUrlFile.isFile()) {
+			if (_updateUrlFile.length() > 0) {
+				hasUpdate = true;
+			}
+		}
+
+		return hasUpdate;
 	}
 
 	private static final String _BASE_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/repositories/";
