@@ -140,7 +140,11 @@ public class UpdateCommandTest {
 
 		// assuming target is in releases and available
 
-		String url = UpdateCommand.getUpdateJarUrl(false);
+		UpdateArgs updateArgs = new UpdateArgs();
+
+		updateArgs.setSnapshots(false);
+
+		String url = UpdateCommand.getUpdateJarUrl(updateArgs);
 
 		// expect: valid update url from the releases repo
 
@@ -159,7 +163,11 @@ public class UpdateCommandTest {
 
 		// assuming target is in snapshots and available
 
-		String url = UpdateCommand.getUpdateJarUrl(true);
+		UpdateArgs updateArgs = new UpdateArgs();
+
+		updateArgs.setSnapshots(true);
+
+		String url = UpdateCommand.getUpdateJarUrl(updateArgs);
 
 		// expect: valid update url from the snapshots repo
 
