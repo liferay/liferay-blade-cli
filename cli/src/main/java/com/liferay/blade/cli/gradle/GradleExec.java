@@ -76,13 +76,12 @@ public class GradleExec {
 
 			return new ProcessResult(returnCode, output, error);
 		}
-		else {
-			Process process = BladeUtil.startProcess("\"" + executable + "\" " + task, baseDir);
 
-			int returnCode = process.waitFor();
+		Process process = BladeUtil.startProcess("\"" + executable + "\" " + task, baseDir);
 
-			return new ProcessResult(returnCode, null, null);
-		}
+		int returnCode = process.waitFor();
+
+		return new ProcessResult(returnCode, null, null);
 	}
 
 	private static boolean _isGradleInstalled() {
@@ -114,15 +113,14 @@ public class GradleExec {
 			if (code != 0) {
 				return false;
 			}
-			else {
-				String result = output.toString();
 
-				if ((result != null) && result.contains("version")) {
-					return true;
-				}
+			String result = output.toString();
 
-				return false;
+			if ((result != null) && result.contains("version")) {
+				return true;
 			}
+
+			return false;
 		}
 		catch (Exception e) {
 			return false;

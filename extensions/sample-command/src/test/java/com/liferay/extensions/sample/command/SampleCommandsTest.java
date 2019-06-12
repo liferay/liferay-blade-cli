@@ -17,7 +17,6 @@
 package com.liferay.extensions.sample.command;
 
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.StringPrintStream;
 
 import java.io.File;
@@ -54,7 +53,7 @@ public class SampleCommandsTest {
 		String[] args = {"--base", rootPathString, "hello", "--name", "foobar"};
 
 		StringPrintStream outputStream = StringPrintStream.newInstance();
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		bladeTestBuilder.setExtensionsDir(_extensionsDir.toPath());
 		bladeTestBuilder.setSettingsDir(_rootDir.toPath());

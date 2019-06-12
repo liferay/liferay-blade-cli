@@ -25,7 +25,6 @@ import java.io.File;
 import java.nio.file.Path;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -48,7 +47,7 @@ public class OutputsCommand extends BaseCommand<OutputsArgs> {
 
 		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
-		for (Entry<String, Set<File>> entry : projectOutputFiles.entrySet()) {
+		for (Map.Entry<String, Set<File>> entry : projectOutputFiles.entrySet()) {
 			String projectPath = entry.getKey();
 
 			bladeCLI.out(projectPath);

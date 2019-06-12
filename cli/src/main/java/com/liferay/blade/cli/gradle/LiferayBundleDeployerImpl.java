@@ -283,27 +283,25 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 			throw new Exception(exceptionString);
 		}
-		else {
-			String[] requestSplit = request.split(" ");
-			String[] responseSplit = response.split(" ");
 
-			if (requestSplit.length != responseSplit.length) {
+		String[] requestSplit = request.split(" ");
+		String[] responseSplit = response.split(" ");
+
+		if (requestSplit.length != responseSplit.length) {
+			String exceptionString =
+				"Unexpected response encountered while processing command \"" + request + "\":" +
+					System.lineSeparator() + response;
+
+			throw new Exception(exceptionString);
+		}
+
+		for (int x = 0; x < requestSplit.length; x++) {
+			if (!Objects.equals(requestSplit[0], responseSplit[0])) {
 				String exceptionString =
 					"Unexpected response encountered while processing command \"" + request + "\":" +
 						System.lineSeparator() + response;
 
 				throw new Exception(exceptionString);
-			}
-			else {
-				for (int x = 0; x < requestSplit.length; x++) {
-					if (!Objects.equals(requestSplit[0], responseSplit[0])) {
-						String exceptionString =
-							"Unexpected response encountered while processing command \"" + request + "\":" +
-								System.lineSeparator() + response;
-
-						throw new Exception(exceptionString);
-					}
-				}
 			}
 		}
 	}

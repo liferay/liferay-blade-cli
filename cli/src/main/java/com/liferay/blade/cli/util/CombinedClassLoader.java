@@ -49,7 +49,9 @@ public class CombinedClassLoader extends ClassLoader implements AutoCloseable {
 		for (ClassLoader classLoader : _classLoaders) {
 			try {
 				if (classLoader instanceof Closeable) {
-					((Closeable)classLoader).close();
+					Closeable closeable = (Closeable)classLoader;
+
+					closeable.close();
 				}
 			}
 			catch (Throwable th) {
@@ -68,15 +70,14 @@ public class CombinedClassLoader extends ClassLoader implements AutoCloseable {
 		if (url == null) {
 			throw new ClassNotFoundException(name);
 		}
-		else {
-			try {
-				ByteBuffer byteCode = _loadResourcFromClasspath(url);
 
-				return defineClass(name, byteCode, null);
-			}
-			catch (IOException ioe) {
-				throw new ClassNotFoundException(name, ioe);
-			}
+		try {
+			ByteBuffer byteCode = _loadResourcFromClasspath(url);
+
+			return defineClass(name, byteCode, null);
+		}
+		catch (IOException ioe) {
+			throw new ClassNotFoundException(name, ioe);
 		}
 	}
 

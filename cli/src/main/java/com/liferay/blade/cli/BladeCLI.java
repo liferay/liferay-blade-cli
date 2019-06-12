@@ -17,7 +17,6 @@
 package com.liferay.blade.cli;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.JCommander.Builder;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
@@ -54,7 +53,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
@@ -485,9 +483,9 @@ public class BladeCLI {
 	}
 
 	private static JCommander _buildJCommanderWithCommandMap(Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
-		Builder builder = JCommander.newBuilder();
+		JCommander.Builder builder = JCommander.newBuilder();
 
-		for (Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
+		for (Map.Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
 			BaseCommand<? extends BaseArgs> value = entry.getValue();
 
 			try {
@@ -797,7 +795,9 @@ public class BladeCLI {
 			}
 			finally {
 				if (command instanceof AutoCloseable) {
-					((AutoCloseable)command).close();
+					AutoCloseable autoCloseable = (AutoCloseable)command;
+
+					autoCloseable.close();
 				}
 
 				thread.setContextClassLoader(currentClassLoader);

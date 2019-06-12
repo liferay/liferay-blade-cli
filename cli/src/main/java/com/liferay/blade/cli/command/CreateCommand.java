@@ -61,7 +61,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	@Override
 	public void execute() throws Exception {
 		CreateArgs createArgs = getArgs();
-		BladeCLI bladeCLI = getBladeCLI();
 
 		if (createArgs.isListTemplates()) {
 			_printTemplates();
@@ -74,6 +73,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		if (Objects.equals(template, "portlet")) {
 			template = "mvc-portlet";
 		}
+
+		BladeCLI bladeCLI = getBladeCLI();
 
 		if (template == null) {
 			bladeCLI.error("The following option is required: [-t | --template]\n\n");
@@ -303,12 +304,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			if (!file.isDirectory()) {
 				return false;
 			}
-			else {
-				File[] children = file.listFiles();
 
-				if (BladeUtil.isNotEmpty(children)) {
-					return false;
-				}
+			File[] children = file.listFiles();
+
+			if (BladeUtil.isNotEmpty(children)) {
+				return false;
 			}
 		}
 

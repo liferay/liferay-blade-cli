@@ -298,13 +298,13 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 	private String _removeGradleSection(String script, String section) {
 		int begin = script.indexOf(section + " {");
 
-		int end = begin;
-
-		int count = 0;
-
 		if (begin == -1) {
 			return script;
 		}
+
+		int end = begin;
+
+		int count = 0;
 
 		while (true) {
 			char c = script.charAt(end);

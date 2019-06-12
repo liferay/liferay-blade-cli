@@ -17,7 +17,6 @@
 package com.liferay.project.templates.sample;
 
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
@@ -51,7 +50,7 @@ public class TemplatesTest {
 
 		Path settingsDirPath = settingsDir.toPath();
 
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		bladeTestBuilder.setSettingsDir(settingsDirPath);
 

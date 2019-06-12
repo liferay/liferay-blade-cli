@@ -16,8 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -142,7 +140,7 @@ public class TestUtil {
 		File settingsDir, File extensionsDir, PrintStream out, PrintStream err, InputStream in, boolean assertErrors,
 		String... args) {
 
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		bladeTestBuilder.setExtensionsDir(extensionsDir.toPath());
 

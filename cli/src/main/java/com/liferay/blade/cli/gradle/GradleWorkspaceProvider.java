@@ -138,17 +138,16 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			if (matcher.find()) {
 				return true;
 			}
-			else {
-				//For workspace plugin < 1.0.5
 
-				gradleFile = new File(workspaceDir, _BUILD_GRADLE_FILE_NAME);
+			//For workspace plugin < 1.0.5
 
-				script = BladeUtil.read(gradleFile);
+			gradleFile = new File(workspaceDir, _BUILD_GRADLE_FILE_NAME);
 
-				matcher = patternWorkspacePlugin.matcher(script);
+			script = BladeUtil.read(gradleFile);
 
-				return matcher.find();
-			}
+			matcher = patternWorkspacePlugin.matcher(script);
+
+			return matcher.find();
 		}
 		catch (Exception e) {
 			return false;

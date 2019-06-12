@@ -18,7 +18,6 @@ package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.BladeTest.BladeTestBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -60,7 +59,7 @@ public class GradleExecTest {
 
 		PrintStream ps = new PrintStream(baos);
 
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		bladeTestBuilder.setExtensionsDir(_extensionsPath);
 		bladeTestBuilder.setSettingsDir(_rootPath);
@@ -90,7 +89,7 @@ public class GradleExecTest {
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private BladeTest _getBladeTest() {
-		BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
 		bladeTestBuilder.setExtensionsDir(_extensionsPath);
 		bladeTestBuilder.setSettingsDir(_rootPath);

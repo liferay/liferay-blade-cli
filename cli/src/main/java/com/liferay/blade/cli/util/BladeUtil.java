@@ -157,9 +157,8 @@ public class BladeUtil {
 			if (isWindows()) {
 				return new File(gradleRoot, _GRADLEW_WINDOWS_FILE_NAME);
 			}
-			else {
-				return new File(gradleRoot, _GRADLEW_UNIX_FILE_NAME);
-			}
+
+			return new File(gradleRoot, _GRADLEW_UNIX_FILE_NAME);
 		}
 
 		return null;
@@ -241,12 +240,11 @@ public class BladeUtil {
 		if (new File(dir, _GRADLEW_UNIX_FILE_NAME).exists() && new File(dir, _GRADLEW_WINDOWS_FILE_NAME).exists()) {
 			return true;
 		}
-		else {
-			File parent = dir.getParentFile();
 
-			if ((parent != null) && parent.exists()) {
-				return hasGradleWrapper(parent);
-			}
+		File parent = dir.getParentFile();
+
+		if ((parent != null) && parent.exists()) {
+			return hasGradleWrapper(parent);
 		}
 
 		return false;
