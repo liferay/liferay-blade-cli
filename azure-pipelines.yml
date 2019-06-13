@@ -1,6 +1,6 @@
 jobs:
 
-- job: OpenJDK8
+- job: LinuxJDK8
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
