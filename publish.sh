@@ -8,7 +8,7 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
-export PATH="$PATH:~/jpm/bin"
+export PATH="$PATH:$HOME/jpm/bin"
 
 bladeVersion=$(blade version)
 
@@ -177,11 +177,20 @@ mkdir ~/.blade
 
 echo "$repoHost/nexus/content/groups/public/com/liferay/blade/com.liferay.blade.cli/" > ~/.blade/update.url
 
-updatedBladeVersion=$(blade update)
+bladeUpdate=$(blade update)
 
-if [ $localBladeVersion != updateBladeVersion ]; then
+if [ "$?" != "0" ]; then
+   echo Failed blade update.
+   echo $bladeUpdate
+   rm -rf /tmp/$timestamp
+   exit 1
+fi
+
+updatedBladeVersion=$(blade version)
+
+if [ $localBladeVersion != $updatedBladeVersion ]; then
 	echo After blade updated versions do not match.
-	echo "Built blade version = $bladeVersion"
+	echo "Built blade version = $localBladeVersion"
 	echo "Updated blade version = $updatedBladeVersion"
 	rm -rf /tmp/$timestamp
 	exit 1
