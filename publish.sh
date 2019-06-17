@@ -179,7 +179,7 @@ echo "$repoHost/nexus/content/groups/public/com/liferay/blade/com.liferay.blade.
 
 updatedBladeVersion=$(blade update)
 
-if [ $localBladeVersion != updateBladeVersion ]; then
+if [ $localBladeVersion != updatedBladeVersion ]; then
 	echo After blade updated versions do not match.
 	echo "Built blade version = $bladeVersion"
 	echo "Updated blade version = $updatedBladeVersion"
