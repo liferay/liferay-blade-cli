@@ -5,9 +5,9 @@ ENV GRADLE_OPTS -Xmx4G
 
 CMD ["mkdir", "-p", "/root/.gradle/"]
 
-COPY . /src
+COPY . /liferay-blade-cli
 
-WORKDIR /src
+WORKDIR /liferay-blade-cli
 
 ENTRYPOINT ["./publish.sh"]
 
