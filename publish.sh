@@ -192,6 +192,14 @@ fi
 
 updatedBladeVersion=$(blade version)
 
+echo $bladeUpdate
+echo $localBladeVersion
+echo $updatedBladeVersion
+
+while :; do
+  sleep 300
+done
+
 if [ "$localBladeVersion" != "$updatedBladeVersion" ]; then
 	echo After blade updated versions do not match.
 	echo "Built blade version = $localBladeVersion"
