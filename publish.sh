@@ -177,7 +177,11 @@ mkdir ~/.blade
 
 echo "$repoHost/nexus/content/groups/public/com/liferay/blade/com.liferay.blade.cli/" > ~/.blade/update.url
 
-bladeUpdate=$(blade update)
+if [ "$1" = "snapshots" ]; then
+    bladeUpdate=$(blade update --snapshots)
+else
+    bladeUpdate=$(blade update)
+fi
 
 if [ "$?" != "0" ]; then
    echo Failed blade update.
@@ -188,7 +192,7 @@ fi
 
 updatedBladeVersion=$(blade version)
 
-if [ $localBladeVersion != $updatedBladeVersion ]; then
+if [ "$localBladeVersion" != "$updatedBladeVersion" ]; then
 	echo After blade updated versions do not match.
 	echo "Built blade version = $localBladeVersion"
 	echo "Updated blade version = $updatedBladeVersion"
