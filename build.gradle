@@ -197,6 +197,11 @@ subprojects { subproject ->
 				buildGradle.text = buildGradle.text.replaceAll(/version = "(.*)-SNAPSHOT"/) { all, version ->
 					"version = \"$version\""
 				}
+
+				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.blade.extensions.maven.profile", version: "(.*)-SNAPSHOT"/) { all, version ->
+					"name: \"com.liferay.blade.extensions.maven.profile\", version: \"$version\""
+				}
+
 			}
 		}
 
@@ -210,6 +215,14 @@ subprojects { subproject ->
 					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)
 
 					"version = \"$newVersion-SNAPSHOT\""
+				}
+
+				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.blade.extensions.maven.profile", version: "(.*)"/) { all, version ->
+					Version currentVersion = new Version(version)
+
+					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)
+
+					"name: \"com.liferay.blade.extensions.maven.profile\", version: \"${newVersion}-SNAPSHOT\""
 				}
 			}
 		}
