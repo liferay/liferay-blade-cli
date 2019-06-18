@@ -173,11 +173,16 @@ fi
 
 localBladeVersion=$(java -jar /tmp/$timestamp/blade.jar version)
 
-mkdir ~/.blade
+# Already handled in the dockerfile
+# mkdir ~/.blade
 
 echo "$repoHost/nexus/content/groups/public/com/liferay/blade/com.liferay.blade.cli/" > ~/.blade/update.url
 
-bladeUpdate=$(blade update)
+if [ "$releaseType" = "snapshots" ]; then
+    bladeUpdate=$(blade update --snapshots)
+else
+    bladeUpdate=$(blade update)
+fi
 
 if [ "$?" != "0" ]; then
    echo Failed blade update.
@@ -188,7 +193,11 @@ fi
 
 updatedBladeVersion=$(blade version)
 
-if [ $localBladeVersion != $updatedBladeVersion ]; then
+echo $bladeUpdate
+echo $localBladeVersion
+echo $updatedBladeVersion
+
+if [ "$localBladeVersion" != "$updatedBladeVersion" ]; then
 	echo After blade updated versions do not match.
 	echo "Built blade version = $localBladeVersion"
 	echo "Updated blade version = $updatedBladeVersion"
