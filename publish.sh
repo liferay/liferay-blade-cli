@@ -173,11 +173,12 @@ fi
 
 localBladeVersion=$(java -jar /tmp/$timestamp/blade.jar version)
 
-mkdir ~/.blade
+# Already handled in the dockerfile
+# mkdir ~/.blade
 
 echo "$repoHost/nexus/content/groups/public/com/liferay/blade/com.liferay.blade.cli/" > ~/.blade/update.url
 
-if [ "$1" = "snapshots" ]; then
+if [ "$releaseType" = "snapshots" ]; then
     bladeUpdate=$(blade update --snapshots)
 else
     bladeUpdate=$(blade update)
