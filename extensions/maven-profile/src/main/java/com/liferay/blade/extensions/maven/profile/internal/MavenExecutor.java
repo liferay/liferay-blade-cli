@@ -41,6 +41,15 @@ public interface MavenExecutor {
 			throw new RuntimeException("Args must be specified");
 		}
 
+		File projectFile = new File(projectPath);
+
+		try {
+			projectPath = projectFile.getCanonicalPath();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 		String os = System.getProperty("os.name");
 
 		boolean windows = false;
