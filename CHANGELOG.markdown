@@ -1,5 +1,17 @@
 # Liferay Blade CLI Change Log
 
+## 3.7.2 - 2019-6-19 -
+
+- [BLADE-441]: Use project templates 4.2.25
+- [BLADE-452]: `blade buildService` with Maven should use Canonical path to avoid Windows path problem
+
+## 3.7.1 - 2019-6-17 - 169ed4f04a3a6c2af839e166fa6965aa0bfb287c
+
+- [BLADE-400]: `blade update` should have a flag to specify the repository URL
+- [BLADE-436]: add samples command tests for 7.2
+- [BLADE-441]: Use project templates 4.2.24
+- [BLADE-442]: Service builder project name should not be false in modules folder after convert
+
 ## 3.7.0 - 2019-5-30 - 8dc27994d5f0dad2bee9ed79f52f481cbbeaead2
 
 - [BLADE-408]: blade convert theme should not find theme under plugins-sdk folder
@@ -310,6 +322,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-395]: https://issues.liferay.com/browse/BLADE-395
 [BLADE-397]: https://issues.liferay.com/browse/BLADE-397
 [BLADE-398]: https://issues.liferay.com/browse/BLADE-398
+[BLADE-400]: https://issues.liferay.com/browse/BLADE-400
 [BLADE-407]: https://issues.liferay.com/browse/BLADE-407
 [BLADE-408]: https://issues.liferay.com/browse/BLADE-408
 [BLADE-409]: https://issues.liferay.com/browse/BLADE-409
@@ -319,8 +332,11 @@ Updated to use Project Templates 4.1.0
 [BLADE-424]: https://issues.liferay.com/browse/BLADE-424
 [BLADE-425]: https://issues.liferay.com/browse/BLADE-425
 [BLADE-431]: https://issues.liferay.com/browse/BLADE-431
+[BLADE-436]: https://issues.liferay.com/browse/BLADE-436
 [BLADE-440]: https://issues.liferay.com/browse/BLADE-440
 [BLADE-441]: https://issues.liferay.com/browse/BLADE-441
+[BLADE-442]: https://issues.liferay.com/browse/BLADE-442
+[BLADE-452]: https://issues.liferay.com/browse/BLADE-452
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
