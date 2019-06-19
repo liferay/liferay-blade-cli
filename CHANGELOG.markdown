@@ -1,5 +1,10 @@
 # Liferay Blade CLI Change Log
 
+## 3.7.2 - 2019-6-19 -
+
+- [BLADE-441]: Use project templates 4.2.25
+- [BLADE-452]: `blade buildService` with Maven should use Canonical path to avoid Windows path problem
+
 ## 3.7.1 - 2019-6-17 - 169ed4f04a3a6c2af839e166fa6965aa0bfb287c
 
 - [BLADE-400]: `blade update` should have a flag to specify the repository URL
@@ -331,6 +336,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-440]: https://issues.liferay.com/browse/BLADE-440
 [BLADE-441]: https://issues.liferay.com/browse/BLADE-441
 [BLADE-442]: https://issues.liferay.com/browse/BLADE-442
+[BLADE-452]: https://issues.liferay.com/browse/BLADE-452
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
