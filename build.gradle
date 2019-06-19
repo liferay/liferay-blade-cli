@@ -45,9 +45,9 @@ String gradleHome = System.getProperty("gradle.user.home") ?: System.getenv("GRA
 
 File gradleCredentialsProperties = new File(gradleHome, "gradle.credentials.properties")
 
-boolean localNexus = project.hasProperty("localNexus")
-
 boolean release = project.hasProperty("release")
+
+boolean remoteNexus = project.hasProperty("remoteNexus")
 
 buildChangeLog {
 	changeLogHeader = "BLADE Version ${project.version}"
@@ -77,16 +77,14 @@ dockerNexusStop {
 dockerPublishSnapshots {
 	dependsOn dockerImageBuild
 
-	if (localNexus) {
+	if (!remoteNexus) {
 		dependsOn 'dockerNexusStart'
 		finalizedBy 'dockerNexusStop'
 	}
 
 	List<String> args = ['docker', 'run', '--rm', '--init']
 
-	if (localNexus) {
-		args.add('--network=host')
-	}
+	args.add('--network=host')
 
 	args.addAll(['-v', "${userHome}/.gradle/wrapper:/root/.gradle/wrapper"])
 
@@ -96,7 +94,10 @@ dockerPublishSnapshots {
 
 	args.add('liferay-blade-cli-build')
 
-	if (localNexus) {
+	if (remoteNexus) {
+		args.addAll(['snapshots', '--remote'])
+	}
+	else {
 		args.addAll(['snapshots', '--local'])
 	}
 
@@ -106,10 +107,9 @@ dockerPublishSnapshots {
 dockerPublishRelease {
 	dependsOn dockerImageBuild
 
-	List<String> args = ['docker', 'run', '--rm', '--init', '-v', "${userHome}/.gradle/wrapper:/root/.gradle/wrapper"]
+	List<String> args = ['docker', 'run', '--rm', '--init', '-v', "${userHome}/.gradle/wrapper:/root/.gradle/wrapper", "--network=host"]
 
-	if (localNexus) {
-		args.add('--network=host')
+	if (!remoteNexus) {
 		dependsOn 'dockerNexusStart'
 		finalizedBy 'dockerNexusStop'
 	}
@@ -120,7 +120,10 @@ dockerPublishRelease {
 
 	args.addAll(['liferay-blade-cli-build', 'release'])
 
-	if (localNexus) {
+	if (remoteNexus) {
+		args.add('--remote')
+	}
+	else {
 		args.add('--local')
 	}
 
@@ -160,7 +163,7 @@ repositories {
 		}
 	}
 
-	if (localNexus) {
+	if (!remoteNexus) {
 		maven {
 			url "http://localhost:8081/nexus/content/groups/public/"
 		}
@@ -234,7 +237,11 @@ subprojects { subproject ->
 			String repoName = release ? "liferay-public-releases" : "liferay-public-snapshots"
 			String repoUrl = "https://repository.liferay.com/nexus/content/repositories/" + repoName
 
-			if (localNexus) {
+			if (remoteNexus) {
+				liferayNexusUsername = credentials.liferayNexusUsername
+				liferayNexusPassword = credentials.liferayNexusPassword
+			}
+			else {
 				liferayNexusUsername = "admin"
 				liferayNexusPassword = "admin123"
 
@@ -244,10 +251,6 @@ subprojects { subproject ->
 				else {
 					repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
 				}
-			}
-			else {
-				liferayNexusUsername = credentials.liferayNexusUsername
-				liferayNexusPassword = credentials.liferayNexusPassword
 			}
 
 			repositories {
