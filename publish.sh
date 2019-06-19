@@ -107,7 +107,7 @@ else
 fi
 
 # Test the blade cli jar locally, but don't publish.
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean jar --info --scan | tee /tmp/$timestamp/blade-cli-jar-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean check --info --scan | tee /tmp/$timestamp/blade-cli-jar-command.txt
 bladeCliJarCommand=$(cat /tmp/$timestamp/blade-cli-jar-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$bladeCliJarCommand" ]; then
