@@ -17,7 +17,7 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
-localNexusOpt=""
+nexusOpt=""
 releaseType=""
 
 # check the arguments first
@@ -25,7 +25,9 @@ while [ $# -gt 0 ]; do
 	if [ "$1" = "snapshots" ] || [ "$1" = "release" ]; then
 		releaseType="$1"
 	elif [ "$1" = "--local" ]; then
-		localNexusOpt="-PlocalNexus"
+		nexusOpt="-PlocalNexus"
+	elif [ "$1" = "--remote" ]; then
+		nexusOpt="-PremoteNexus"
 	fi
 	shift
 done
@@ -42,13 +44,13 @@ tmpDir="/tmp/$timestamp/"
 mkdir -p $tmpDir
 
 if [ -z "$repoHost" ]; then
-	if [ "$localNexusOpt" = "-PlocalNexus" ]; then
+	if [ "$nexusOpt" = "-PlocalNexus" ]; then
 		repoHost="http://localhost:8081"
 	else
 		repoHost="https://repository.liferay.com"
 	fi
 elif [ "$repoHost" = "http://localhost:8081" ]; then
-    localNexusOpt="-PlocalNexus"
+    nexusOpt="-PlocalNexus"
 fi
 
 # First clean local build folder to try to minimize variants
@@ -63,7 +65,7 @@ fi
 
 # Publish the Remote Deploy Command jar
 
-./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info --scan | tee /tmp/$timestamp/remote-deploy-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info --scan | tee /tmp/$timestamp/remote-deploy-publish-command.txt
 remoteDeployCommandPublishCommand=$(cat /tmp/$timestamp/remote-deploy-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
@@ -73,7 +75,7 @@ if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
 fi
 
 # Publish the Maven Profile jar
-./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info --scan | tee /tmp/$timestamp/maven-profile-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info --scan | tee /tmp/$timestamp/maven-profile-publish-command.txt
 mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
@@ -105,7 +107,7 @@ else
 fi
 
 # Test the blade cli jar locally, but don't publish.
-./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies clean check --info --scan | tee /tmp/$timestamp/blade-cli-jar-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean jar --info --scan | tee /tmp/$timestamp/blade-cli-jar-command.txt
 bladeCliJarCommand=$(cat /tmp/$timestamp/blade-cli-jar-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$bladeCliJarCommand" ]; then
@@ -136,7 +138,7 @@ fi
 
 # Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
 
-./gradlew -q --no-daemon --console=plain $localNexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info --scan | tee /tmp/$timestamp/blade-cli-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info --scan | tee /tmp/$timestamp/blade-cli-publish-command.txt
 bladeCliPublishCommand=$(cat /tmp/$timestamp/blade-cli-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$bladeCliPublishCommand" ]; then
