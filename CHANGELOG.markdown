@@ -1,6 +1,16 @@
 # Liferay Blade CLI Change Log
 
-## 3.7.2 - 2019-6-19 -
+## 3.7.4 - 2019-7-23 -
+
+- [BLADE-461]: Use Project Templates 4.2.27 - Point users to Liferay JS Toolkit for Npm projects
+
+## 3.7.3 - 2019-6-24 - 1e0872fd2051fdfe0a2b4665f396a865024cf162
+
+- Update to Project Templates 4.2.26
+- [LPS-96205]: Parameterize SB dependency injector to use either DS or spring
+- [LPS-97114]: Add display name to portlet related template
+
+## 3.7.2 - 2019-6-19 - 261bf24cb6c9ab7ce70066576e2e1f22ff2e460f
 
 - [BLADE-441]: Use project templates 4.2.25
 - [BLADE-452]: `blade buildService` with Maven should use Canonical path to avoid Windows path problem
@@ -337,6 +347,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-441]: https://issues.liferay.com/browse/BLADE-441
 [BLADE-442]: https://issues.liferay.com/browse/BLADE-442
 [BLADE-452]: https://issues.liferay.com/browse/BLADE-452
+[BLADE-461]: https://issues.liferay.com/browse/BLADE-461
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
@@ -356,5 +367,7 @@ Updated to use Project Templates 4.1.0
 [LPS-80404]: https://issues.liferay.com/browse/LPS-80404
 [LPS-80472]: https://issues.liferay.com/browse/LPS-80472
 [LPS-82590]: https://issues.liferay.com/browse/LPS-82590
+[LPS-96205]: https://issues.liferay.com/browse/LPS-96205
+[LPS-97114]: https://issues.liferay.com/browse/LPS-97114
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [Updated Liferay Gradle Plugin]: https://github.com/liferay/liferay-portal/blob/master/modules/sdk/gradle-plugins/CHANGELOG.markdown#3523---2017-10-26
