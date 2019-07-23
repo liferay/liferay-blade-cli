@@ -35,9 +35,7 @@ public class ServerUtil {
 
 	public static Optional<Path> findAppServerPath(Path dir, String serverType) throws IOException {
 		BiPredicate<Path, BasicFileAttributes> binFolderMatcher = (path, attrs) -> {
-			Path fileName = path.getFileName();
-
-			String fileNameString = String.valueOf(fileName);
+			String fileNameString = String.valueOf(path.getFileName());
 
 			boolean match = false;
 

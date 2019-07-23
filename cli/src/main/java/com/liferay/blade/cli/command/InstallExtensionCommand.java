@@ -316,9 +316,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 	}
 
 	private Set<Path> _gradleAssemble(Path projectPath) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		GradleExec gradleExec = new GradleExec(bladeCLI);
+		GradleExec gradleExec = new GradleExec(getBladeCLI());
 
 		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(projectPath);
 

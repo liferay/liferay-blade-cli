@@ -63,9 +63,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(watchPath);
 
-		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
-
-		_watch(watchPath, projectOutputFiles);
+		_watch(watchPath, projectInfo.getProjectOutputFiles());
 	}
 
 	@Override

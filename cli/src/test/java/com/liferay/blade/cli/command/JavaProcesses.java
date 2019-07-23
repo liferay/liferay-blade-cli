@@ -156,9 +156,9 @@ public class JavaProcesses {
 	}
 
 	public static int maxProcessId() {
-		return list(
-		).stream(
-		).mapToInt(
+		Stream<JavaProcess> listStream = list().stream();
+
+		return listStream.mapToInt(
 			JavaProcess::getId
 		).max(
 		).getAsInt();
