@@ -51,12 +51,10 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 
 	@Override
 	public void close() throws Exception {
-		if (_serviceLoaderClassLoader != null) {
-			if (_serviceLoaderClassLoader instanceof Closeable) {
-				Closeable closeable = (Closeable)_serviceLoaderClassLoader;
+		if ((_serviceLoaderClassLoader != null) && (_serviceLoaderClassLoader instanceof Closeable)) {
+			Closeable closeable = (Closeable)_serviceLoaderClassLoader;
 
-				closeable.close();
-			}
+			closeable.close();
 		}
 
 		if ((_tempExtensionsDirectory != null) && Files.exists(_tempExtensionsDirectory)) {

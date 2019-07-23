@@ -190,10 +190,10 @@ public class LocalServer {
 
 		String serverType = getServerType();
 
-		if (serverBinPath.isPresent()) {
-			if (serverType.equals("tomcat") || serverType.equals("jboss") || serverType.equals("wildfly")) {
-				return true;
-			}
+		if (serverBinPath.isPresent() &&
+			(serverType.equals("tomcat") || serverType.equals("jboss") || serverType.equals("wildfly"))) {
+
+			return true;
 		}
 
 		return false;

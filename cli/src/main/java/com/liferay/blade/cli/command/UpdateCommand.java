@@ -66,31 +66,29 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		int updateMinor = Integer.parseInt(matcher.group(2));
 		int updatePatch = Integer.parseInt(matcher.group(3));
 
-		if (currentVersion.contains("SNAPSHOT")) {
-			if (updateVersion.contains("-")) {
-				matcher = _bladeSnapshotPattern.matcher(currentVersion);
+		if (currentVersion.contains("SNAPSHOT") && updateVersion.contains("-")) {
+			matcher = _bladeSnapshotPattern.matcher(currentVersion);
 
-				matcher.find();
+			matcher.find();
 
-				Long currentSnapshot = Long.parseLong(matcher.group(4));
+			Long currentSnapshot = Long.parseLong(matcher.group(4));
 
-				matcher = _nexusSnapshotPattern.matcher(updateVersion);
+			matcher = _nexusSnapshotPattern.matcher(updateVersion);
 
-				matcher.find();
+			matcher.find();
 
-				Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
+			Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
 
-				if (updateSnapshot > currentSnapshot) {
-					return false;
-				}
+			if (updateSnapshot > currentSnapshot) {
+				return false;
+			}
 
-				if (updateSnapshot < currentSnapshot) {
-					return false;
-				}
+			if (updateSnapshot < currentSnapshot) {
+				return false;
+			}
 
-				if (updateSnapshot == currentSnapshot) {
-					return true;
-				}
+			if (updateSnapshot == currentSnapshot) {
+				return true;
 			}
 		}
 
@@ -215,23 +213,21 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			return true;
 		}
 
-		if (currentVersion.contains("SNAPSHOT")) {
-			if (updateVersion.contains("-")) {
-				matcher = _bladeSnapshotPattern.matcher(currentVersion);
+		if (currentVersion.contains("SNAPSHOT") && updateVersion.contains("-")) {
+			matcher = _bladeSnapshotPattern.matcher(currentVersion);
 
-				matcher.find();
+			matcher.find();
 
-				Long currentSnapshot = Long.parseLong(matcher.group(4));
+			Long currentSnapshot = Long.parseLong(matcher.group(4));
 
-				matcher = _nexusSnapshotPattern.matcher(updateVersion);
+			matcher = _nexusSnapshotPattern.matcher(updateVersion);
 
-				matcher.find();
+			matcher.find();
 
-				Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
+			Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
 
-				if (updateSnapshot > currentSnapshot) {
-					return true;
-				}
+			if (updateSnapshot > currentSnapshot) {
+				return true;
 			}
 		}
 
@@ -286,12 +282,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 			}
 
-			if (currentVersion.contains("SNAPSHOT")) {
-				if (!snapshotsArg) {
-					if (shouldUpdate) {
-						bladeCLI.out("Updating from a snapshot to the newest released version.");
-					}
-				}
+			if (currentVersion.contains("SNAPSHOT") && !snapshotsArg && shouldUpdate) {
+				bladeCLI.out("Updating from a snapshot to the newest released version.");
 			}
 
 			String url = getUpdateJarUrl(updateArgs);
@@ -422,10 +414,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	private static boolean _hasUpdateUrlFromBladeDir() {
 		boolean hasUpdate = false;
 
-		if (_updateUrlFile.exists() && _updateUrlFile.isFile()) {
-			if (_updateUrlFile.length() > 0) {
-				hasUpdate = true;
-			}
+		if (_updateUrlFile.exists() && _updateUrlFile.isFile() && (_updateUrlFile.length() > 0)) {
+			hasUpdate = true;
 		}
 
 		return hasUpdate;

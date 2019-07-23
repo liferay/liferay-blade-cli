@@ -244,9 +244,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		settings.setProfileName(profileName);
 
-		String liferayVersion = initArgs.getLiferayVersion();
-
-		settings.setLiferayVersionDefault(liferayVersion);
+		settings.setLiferayVersionDefault(initArgs.getLiferayVersion());
 
 		settings.save();
 	}

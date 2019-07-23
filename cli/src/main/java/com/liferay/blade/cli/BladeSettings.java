@@ -75,12 +75,8 @@ public class BladeSettings {
 				else {
 					String profilePromptDisabled = _properties.getProperty("profile.prompt.disabled", "false");
 
-					if (!Objects.equals("true", profilePromptDisabled)) {
-						String profileName = getProfileName();
-
-						if (!Objects.equals("maven", profileName)) {
-							shouldPrompt = true;
-						}
+					if (!Objects.equals("true", profilePromptDisabled) && !Objects.equals("maven", getProfileName())) {
+						shouldPrompt = true;
 					}
 				}
 			}

@@ -132,27 +132,25 @@ public class Extensions {
 				String[] foundStrArray = null;
 
 				for (String[] strArray : spaceCommandSplitCollection) {
-					if (argsList.size() >= (x + strArray.length)) {
-						if (foundStrArray == null) {
-							boolean mismatch = false;
+					if ((argsList.size() >= (x + strArray.length)) && (foundStrArray == null)) {
+						boolean mismatch = false;
 
-							if (strArray.length == 0) {
-								mismatch = true;
+						if (strArray.length == 0) {
+							mismatch = true;
+						}
+
+						for (int y = 0; y < strArray.length; y++) {
+							if (Objects.equals(strArray[y], argsList.get(x + y))) {
+								continue;
 							}
 
-							for (int y = 0; y < strArray.length; y++) {
-								if (Objects.equals(strArray[y], argsList.get(x + y))) {
-									continue;
-								}
+							mismatch = true;
+						}
 
-								mismatch = true;
-							}
+						if (!mismatch) {
+							foundStrArray = strArray;
 
-							if (!mismatch) {
-								foundStrArray = strArray;
-
-								break;
-							}
+							break;
 						}
 					}
 				}

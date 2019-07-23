@@ -962,10 +962,8 @@ public class PropertiesLocator {
 		for (String portletName : portletNames) {
 			portletName = _getEquivalence(portletName);
 
-			if (portletName != null) {
-				if (propertyPath.contains(portletName)) {
-					return true;
-				}
+			if ((portletName != null) && propertyPath.contains(portletName)) {
+				return true;
 			}
 		}
 

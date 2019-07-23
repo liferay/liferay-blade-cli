@@ -289,13 +289,11 @@ public class BladeCLI {
 							System.lineSeparator());
 			}
 			else {
-				if (fromSnapshots) {
-					if (!UpdateCommand.equal(bladeCLIVersion, updateVersion)) {
-						out(
-							String.format(
-								"blade version %s is newer than latest snapshot %s; skipping update.\n",
-								bladeCLIVersion, updateVersion));
-					}
+				if (fromSnapshots && !UpdateCommand.equal(bladeCLIVersion, updateVersion)) {
+					out(
+						String.format(
+							"blade version %s is newer than latest snapshot %s; skipping update.\n", bladeCLIVersion,
+							updateVersion));
 				}
 			}
 		}
