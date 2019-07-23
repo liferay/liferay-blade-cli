@@ -1,6 +1,12 @@
 # Liferay Blade CLI Change Log
 
-## 3.7.2 - 2019-6-19 -
+## 3.7.3 - 2019-6-24 - 1e0872fd2051fdfe0a2b4665f396a865024cf162
+
+- Update to Project Templates 4.2.26
+- [LPS-96205]: Parameterize SB dependency injector to use either DS or spring
+- [LPS-97114]: Add display name to portlet related template
+
+## 3.7.2 - 2019-6-19 - 261bf24cb6c9ab7ce70066576e2e1f22ff2e460f
 
 - [BLADE-441]: Use project templates 4.2.25
 - [BLADE-452]: `blade buildService` with Maven should use Canonical path to avoid Windows path problem
