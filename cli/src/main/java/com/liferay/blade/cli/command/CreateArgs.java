@@ -44,6 +44,14 @@ public class CreateArgs extends BaseArgs {
 		return _dir;
 	}
 
+	public String getFramework() {
+		return _framework;
+	}
+
+	public String getFrameworkDependencies() {
+		return _frameworkDependencies;
+	}
+
 	public String getHostBundleBSN() {
 		return _hostBundleBSN;
 	}
@@ -80,6 +88,10 @@ public class CreateArgs extends BaseArgs {
 		return _template;
 	}
 
+	public String getViewType() {
+		return _viewType;
+	}
+
 	public boolean isListTemplates() {
 		return _listTemplates;
 	}
@@ -90,6 +102,14 @@ public class CreateArgs extends BaseArgs {
 
 	public void setDir(File dir) {
 		_dir = dir;
+	}
+
+	public void setFramework(String framework) {
+		_framework = framework;
+	}
+
+	public void setFrameworkDependencies(String frameworkDependencies) {
+		_frameworkDependencies = frameworkDependencies;
 	}
 
 	public void setHostBundleBSN(String hostBundleBSN) {
@@ -124,6 +144,10 @@ public class CreateArgs extends BaseArgs {
 		_template = template;
 	}
 
+	public void setViewType(String viewType) {
+		_viewType = viewType;
+	}
+
 	@Parameter(
 		description = "If a class is generated in the project, provide the name of the class to be generated. If not provided defaults to project name.",
 		names = {"-c", "--classname"}
@@ -138,6 +162,14 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
 	private File _dir;
+
+	@Parameter(description = "The name of the framework to use in the generated project.", names = "--framework")
+	private String _framework;
+
+	@Parameter(
+		description = "The way that the framework dependencies will be configured.", names = "--framework-dependencies"
+	)
+	private String _frameworkDependencies = "embedded";
 
 	@Parameter(
 		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle symbolic name. Required for \"-t fragment\".",
@@ -189,5 +221,10 @@ public class CreateArgs extends BaseArgs {
 		names = {"-t", "--template"}
 	)
 	private String _template;
+
+	@Parameter(
+		description = "Choose the view technology that will be used in the generated project.", names = "--view-type"
+	)
+	private String _viewType;
 
 }
