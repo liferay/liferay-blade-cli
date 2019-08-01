@@ -741,7 +741,7 @@ public class CreateCommandTest {
 	public void testCreateSpringMvcPortlet() throws Exception {
 		String[] args = {
 			"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "-p", "test.spring.portlet",
-			"--class-name", "Sample", "--framework", "springportletmvc", "--framework-dependencies", "embedded",
+			"--classname", "Sample", "--framework", "springportletmvc", "--framework-dependencies", "embedded",
 			"--view-type", "jsp", "spring-test"
 		};
 
