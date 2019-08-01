@@ -40,6 +40,10 @@ public class CreateArgs extends BaseArgs {
 		return _contributorType;
 	}
 
+	public String getDependencyInjector() {
+		return _dependencyInjector;
+	}
+
 	public File getDir() {
 		return _dir;
 	}
@@ -98,6 +102,10 @@ public class CreateArgs extends BaseArgs {
 
 	public void setClassName(String className) {
 		_classname = className;
+	}
+
+	public void setDependencyInjector(String dependencyInjector) {
+		_dependencyInjector = dependencyInjector;
 	}
 
 	public void setDir(File dir) {
@@ -159,6 +167,12 @@ public class CreateArgs extends BaseArgs {
 		names = {"-C", "--contributor-type"}
 	)
 	private String _contributorType;
+
+	@Parameter(
+		description = "For Service Builder projects, specify the preferred dependency injection method (ds | spring). Default is DS",
+		names = "--dependency-injector"
+	)
+	private String _dependencyInjector = "ds";
 
 	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
 	private File _dir;
