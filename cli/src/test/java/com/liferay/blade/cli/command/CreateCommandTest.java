@@ -740,21 +740,21 @@ public class CreateCommandTest {
 	@Test
 	public void testCreateSpringMvcPortlet() throws Exception {
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "-p", "test.spring.portlet",
-			"--classname", "Sample", "--framework", "springportletmvc", "--framework-dependencies", "embedded",
-			"--view-type", "jsp", "spring-test"
+			"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "springtest",
+			"--package-name", "com.test", "--classname",
+			"Sample", "--framework", "springportletmvc", "--view-type", "jsp", "-v", "7.2"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String projectPath = new File(
-			_rootDir, "spring-test"
+			_rootDir, "springtest"
 		).getAbsolutePath();
 
 		_checkFileExists(projectPath);
 
 		_checkFileExists(
-			projectPath + "/src/main/java/test/spring/portlet/portlet/SpringTestPortletViewController.java");
+			projectPath + "/src/main/java/com/test/controller/UserController.java");
 
 		_checkFileExists(projectPath + "/build.gradle");
 	}

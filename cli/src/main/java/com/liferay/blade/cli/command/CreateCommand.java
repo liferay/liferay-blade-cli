@@ -261,6 +261,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setClassName(createArgs.getClassname());
 		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
+		projectTemplatesArgs.setDependencyInjector(createArgs.getDependencyInjector());
+		projectTemplatesArgs.setFramework(createArgs.getFramework());
+		projectTemplatesArgs.setFrameworkDependencies(createArgs.getFrameworkDependencies());
 
 		File baseDir = new File(createArgs.getBase());
 
@@ -282,6 +285,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
 		projectTemplatesArgs.setService(createArgs.getService());
 		projectTemplatesArgs.setTemplate(template);
+		projectTemplatesArgs.setViewType(createArgs.getViewType());
 
 		return projectTemplatesArgs;
 	}
