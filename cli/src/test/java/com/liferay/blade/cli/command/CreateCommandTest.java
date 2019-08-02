@@ -1184,7 +1184,7 @@ public class CreateCommandTest {
 		_makeWorkspace70(workspace70);
 
 		String[] sevenZeroArgs = {
-			"--base", workspace70.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-zero"
+			"--base", workspace70.getAbsolutePath(), "create", "-v", "7.0", "-t", "npm-angular-portlet", "seven-zero"
 		};
 
 		TestUtil.runBlade(workspace70, _extensionsDir, sevenZeroArgs);
