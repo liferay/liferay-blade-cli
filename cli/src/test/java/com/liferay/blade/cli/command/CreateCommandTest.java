@@ -740,20 +740,19 @@ public class CreateCommandTest {
 	@Test
 	public void testCreateSpringMvcPortlet() throws Exception {
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "-p", "test.spring.portlet",
-			"spring-test"
+			"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "springtest", "--package-name",
+			"com.test", "--classname", "Sample", "--framework", "springportletmvc", "--view-type", "jsp", "-v", "7.2"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String projectPath = new File(
-			_rootDir, "spring-test"
+			_rootDir, "springtest"
 		).getAbsolutePath();
 
 		_checkFileExists(projectPath);
 
-		_checkFileExists(
-			projectPath + "/src/main/java/test/spring/portlet/portlet/SpringTestPortletViewController.java");
+		_checkFileExists(projectPath + "/src/main/java/com/test/controller/UserController.java");
 
 		_checkFileExists(projectPath + "/build.gradle");
 	}
@@ -1183,7 +1182,7 @@ public class CreateCommandTest {
 		_makeWorkspace70(workspace70);
 
 		String[] sevenZeroArgs = {
-			"--base", workspace70.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-zero"
+			"--base", workspace70.getAbsolutePath(), "create", "-v", "7.0", "-t", "npm-angular-portlet", "seven-zero"
 		};
 
 		TestUtil.runBlade(workspace70, _extensionsDir, sevenZeroArgs);

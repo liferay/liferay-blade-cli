@@ -21,9 +21,9 @@ import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.project.templates.FileUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.ProjectTemplatesArgs;
-import com.liferay.project.templates.internal.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
