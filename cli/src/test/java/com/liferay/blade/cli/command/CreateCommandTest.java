@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 
@@ -1179,10 +1180,10 @@ public class CreateCommandTest {
 
 		File modulesDir = new File(workspace70, "modules");
 
-		_makeWorkspace70(workspace70);
+		_makeWorkspaceVersion(workspace70, "7.0");
 
 		String[] sevenZeroArgs = {
-			"--base", workspace70.getAbsolutePath(), "create", "-v", "7.0", "-t", "npm-angular-portlet", "seven-zero"
+			"--base", workspace70.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-zero"
 		};
 
 		TestUtil.runBlade(workspace70, _extensionsDir, sevenZeroArgs);
@@ -1346,6 +1347,89 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceTargetPlatformLiferayVersion70() throws Exception {
+		File workspace70 = new File(_rootDir, "workspace70");
+
+		File modulesDir = new File(workspace70, "modules");
+
+		String projectPath = modulesDir.getAbsolutePath();
+
+		_makeWorkspaceVersion(workspace70, "7.0");
+
+		_enableTargetPlatformInWorkspace(workspace70, "7.0.6");
+
+		String[] sevenZeroArgs = {
+			"--base", workspace70.getAbsolutePath(), "create", "-t", "service-builder", "seven-zero"
+		};
+
+		TestUtil.runBlade(workspace70, _extensionsDir, sevenZeroArgs);
+
+		_checkFileExists(projectPath + "/seven-zero/build.gradle");
+
+		_checkFileDoesNotExists(projectPath + "/seven-zero/settings.gradle");
+
+		_checkFileExists(projectPath + "/seven-zero/seven-zero-api/build.gradle");
+
+		_checkFileExists(projectPath + "/seven-zero/seven-zero-service/build.gradle");
+
+		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace70.getPath(), "buildService");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace70.getPath(), "jar");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/seven-zero/seven-zero-api", "seven.zero.api-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/seven-zero/seven-zero-service", "seven.zero.service-1.0.0.jar");
+
+		_verifyImportPackage(
+			new File(projectPath, "seven-zero/seven-zero-service/build/libs/seven.zero.service-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateWorkspaceTargetPlatformLiferayVersion71() throws Exception {
+		File workspace71 = new File(_rootDir, "workspace70");
+
+		File modulesDir = new File(workspace71, "modules");
+
+		String projectPath = modulesDir.getAbsolutePath();
+
+		_makeWorkspaceVersion(workspace71, "7.1");
+
+		_enableTargetPlatformInWorkspace(workspace71, "7.1.3");
+
+		String[] sevenZeroArgs = {
+			"--base", workspace71.getAbsolutePath(), "create", "-t", "service-builder", "seven-one"
+		};
+
+		TestUtil.runBlade(workspace71, _extensionsDir, sevenZeroArgs);
+
+		_checkFileExists(projectPath + "/seven-one/build.gradle");
+
+		_checkFileDoesNotExists(projectPath + "/seven-one/settings.gradle");
+
+		_checkFileExists(projectPath + "/seven-one/seven-one-api/build.gradle");
+
+		_checkFileExists(projectPath + "/seven-one/seven-one-service/build.gradle");
+
+		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace71.getPath(), "buildService");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace71.getPath(), "jar");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/seven-one/seven-one-api", "seven.one.api-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/seven-one/seven-one-service", "seven.one.service-1.0.0.jar");
+
+		_verifyImportPackage(
+			new File(projectPath, "seven-one/seven-one-service/build/libs/seven.one.service-1.0.0.jar"));
+	}
+
+	@Test
 	public void testCreateWorkspaceThemeLocation() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
@@ -1481,6 +1565,16 @@ public class CreateCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static File _enableTargetPlatformInWorkspace(File workspaceDir, String liferayVersion) throws IOException {
+		File gradlePropertiesFile = new File(workspaceDir, "gradle.properties");
+
+		String targetPlatformVersionProperty = "\nliferay.workspace.target.platform.version=" + liferayVersion;
+
+		Files.write(gradlePropertiesFile.toPath(), targetPlatformVersionProperty.getBytes(), StandardOpenOption.APPEND);
+
+		return gradlePropertiesFile;
+	}
+
 	private File _checkFileDoesNotExists(String path) {
 		File file = new File(path);
 
@@ -1555,10 +1649,10 @@ public class CreateCommandTest {
 		}
 	}
 
-	private void _makeWorkspace70(File workspace) throws Exception {
+	private void _makeWorkspaceVersion(File workspace, String version) throws Exception {
 		File parentFile = workspace.getParentFile();
 
-		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", "7.0"};
+		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", version};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1569,7 +1663,7 @@ public class CreateCommandTest {
 
 			properties.load(inputStream);
 
-			Assert.assertEquals("7.0", properties.getProperty("liferay.version.default"));
+			Assert.assertEquals(version, properties.getProperty("liferay.version.default"));
 		}
 	}
 
