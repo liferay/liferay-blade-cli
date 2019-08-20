@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<archetype-descriptor name="liferay-module-js-widget">
+	<fileSets>
+		<fileSet filtered="true">
+			<directory></directory>
+			<includes>
+				<include>.gitignore</include>
+				<include>build.gradle</include>
+				<include>config.json</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+	<requiredProperties>
+		<requiredProperty key="buildType">
+			<defaultValue>maven</defaultValue>
+		</requiredProperty>
+		<requiredProperty key="liferayVersion">
+		</requiredProperty>
+		<requiredProperty key="projectType">
+			<defaultValue>standalone</defaultValue>
+		</requiredProperty>
+	</requiredProperties>
+</archetype-descriptor>

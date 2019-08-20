@@ -1,0 +1,13 @@
+{
+    "batchMode": false,
+    "answers": {
+        "*": {
+            "target": "[$TARGET$]",
+            "folder": "[$OUTPUT_PATH$]",
+            "description": "[$DESCRIPTION$]",
+            "category": "category.sample",
+            "liferayPresent": false,
+            "createInitializer": false
+        }
+    }
+}
