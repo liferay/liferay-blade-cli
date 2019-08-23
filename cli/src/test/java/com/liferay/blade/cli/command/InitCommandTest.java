@@ -70,7 +70,7 @@ public class InitCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -87,7 +87,7 @@ public class InitCommandTest {
 	public void testBladeInitEmptyDirectory() throws Exception {
 		File emptyDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", emptyDir.getPath(), "init"};
+		String[] args = {"--base", emptyDir.getPath(), "init", "-v", "7.2"};
 
 		BladeTest bladeTest = _getBladeTestCustomWorkspace(emptyDir);
 
@@ -106,7 +106,7 @@ public class InitCommandTest {
 			emptyDir.getPath(), "."
 		).getAbsolutePath();
 
-		String[] args = {"--base", pathStringToTest, "init"};
+		String[] args = {"--base", pathStringToTest, "init", "-v", "7.2"};
 
 		BladeTest bladeTest = _getBladeTestCustomWorkspace(emptyDir);
 
@@ -125,7 +125,7 @@ public class InitCommandTest {
 			emptyDir.getPath(), "."
 		).getAbsolutePath();
 
-		String[] args = {"--base", pathStringToTest, "init", "."};
+		String[] args = {"--base", pathStringToTest, "init", ".", "-v", "7.2"};
 
 		BladeTest bladeTest = _getBladeTestCustomWorkspace(emptyDir);
 
@@ -152,7 +152,7 @@ public class InitCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.0"};
 
 		BladeTest bladeTest = _getBladeTestCustomWorkspace(projectDir);
 
@@ -177,7 +177,7 @@ public class InitCommandTest {
 			tempDir.getPath()
 		).getAbsolutePath();
 
-		String[] args = {"--base", basePath, "init", "-P", "myprofile"};
+		String[] args = {"--base", basePath, "init", "-P", "myprofile", "-v", "7.2"};
 
 		TestUtil.runBlade(tempDir, _extensionsDir, args);
 
@@ -196,7 +196,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", "7.2"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -236,7 +236,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryHasFilesForce() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-v", "7.2"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -255,13 +255,13 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryIsWorkspace() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "firstWorkspace"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "firstWorkspace", "-v", "7.2"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
 		File firstWorkspace = new File(_workspaceDir, "firstWorkspace");
 
-		String[] moreArgs = {"--base", firstWorkspace.getPath(), "init", "nextWorkspace"};
+		String[] moreArgs = {"--base", firstWorkspace.getPath(), "init", "nextWorkspace", "-v", "7.2"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
@@ -289,7 +289,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitCommandGradleOption() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "gradle", "gradleworkspace"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "gradle", "gradleworkspace", "-v", "7.2"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -308,7 +308,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitInPluginsSDKDirectory() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-u"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		_makeSDK(_workspaceDir);
 
@@ -389,28 +389,16 @@ public class InitCommandTest {
 		Assert.assertTrue(properties, properties.contains("liferay.version.default=7.1"));
 	}
 
-	@Test
-	public void testInitWithLiferayVersionDefault() throws Exception {
+	@Test(expected = AssertionError.class)
+	public void testInitWithLiferayVersionUnset() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-
-		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
-
-		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
-
-		Assert.assertTrue(contents, contents.contains("7.2.0-ga1"));
-
-		Path bladePropertiesPath = _workspacePath.resolve(".blade.properties");
-
-		String properties = new String(Files.readAllBytes(bladePropertiesPath));
-
-		Assert.assertTrue(properties, properties.contains("liferay.version.default=7.2"));
 	}
 
 	@Test
 	public void testInitWithNameWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject", "-v", "7.2"};
 
 		Path newproject = _workspacePath.resolve("newproject");
 
@@ -451,7 +439,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject", "-v", "7.2"};
 
 		Path newProjectPath = _workspacePath.resolve("newproject");
 
@@ -474,7 +462,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitWithNameWorkspaceNotExists() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "newproject", "-v", "7.2"};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 

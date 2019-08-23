@@ -63,7 +63,7 @@ public class ConvertCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkPath);
 
-		String[] args = {"--base", projectPath.toString(), "init", "-u"};
+		String[] args = {"--base", projectPath.toString(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -103,7 +103,7 @@ public class ConvertCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkPath);
 
-		String[] args = {"--base", projectPath.toString(), "init", "-u"};
+		String[] args = {"--base", projectPath.toString(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -143,7 +143,7 @@ public class ConvertCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -182,7 +182,7 @@ public class ConvertCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -231,7 +231,7 @@ public class ConvertCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir);
 
-		String[] args = {"--base", projectDir.toString(), "init", "-u"};
+		String[] args = {"--base", projectDir.toString(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -276,7 +276,7 @@ public class ConvertCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir);
 
-		String[] args = {"--base", projectDir.toString(), "init", "-u"};
+		String[] args = {"--base", projectDir.toString(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -319,7 +319,7 @@ public class ConvertCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -402,7 +402,7 @@ public class ConvertCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -538,7 +538,7 @@ public class ConvertCommandTest {
 
 		File workspaceParent = new File(_rootDir, "workspace-parent");
 
-		String[] args = {"--base", workspaceParent.getPath(), "init", "ws"};
+		String[] args = {"--base", workspaceParent.getPath(), "init", "ws", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -619,7 +619,7 @@ public class ConvertCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 

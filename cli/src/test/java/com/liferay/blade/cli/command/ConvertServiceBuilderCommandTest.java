@@ -57,7 +57,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -135,7 +135,7 @@ public class ConvertServiceBuilderCommandTest {
 	public void testConvertServiceBuilderTasksPortletCustomName() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/test-tasks-portlet-conversion");
 
-		String[] args = {"--base", testdir.getPath(), "init", "-u"};
+		String[] args = {"--base", testdir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -160,7 +160,7 @@ public class ConvertServiceBuilderCommandTest {
 	public void testConvertServiceBuilderTasksPortletDefaultName() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/test-tasks-portlet-conversion");
 
-		String[] args = {"--base", testdir.getPath(), "init", "-u"};
+		String[] args = {"--base", testdir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -226,7 +226,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -267,7 +267,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u"};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
