@@ -1634,7 +1634,7 @@ public class CreateCommandTest {
 	private void _makeWorkspace(File workspace) throws Exception {
 		File parentFile = workspace.getParentFile();
 
-		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName()};
+		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", "7.2"};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 

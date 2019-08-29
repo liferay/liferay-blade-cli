@@ -45,7 +45,7 @@ public class BuildServiceCommandMavenTest {
 
 	@Test
 	public void testMavenServiceBuilder() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace"};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v", "7.2"};
 
 		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
 

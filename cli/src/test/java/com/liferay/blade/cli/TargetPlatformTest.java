@@ -48,7 +48,7 @@ public class TargetPlatformTest {
 
 		_nonGradleWorkspaceDir = temporaryFolder.newFolder("non-gradle-workspace");
 
-		String[] args = {"init", "--base", _gradleWorkspaceDir.getAbsolutePath()};
+		String[] args = {"init", "--base", _gradleWorkspaceDir.getAbsolutePath(), "-v", "7.2"};
 
 		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
 

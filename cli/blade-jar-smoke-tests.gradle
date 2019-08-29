@@ -56,7 +56,7 @@ testBladeInitCommand {
 
 	initDir.mkdirs()
 
-	args = [jar.archivePath, 'init', "hello world"]
+	args = [jar.archivePath, 'init', "hello world", "-v", "7.2"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = initDir

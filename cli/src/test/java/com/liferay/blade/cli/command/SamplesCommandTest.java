@@ -221,7 +221,7 @@ public class SamplesCommandTest {
 
 	@Test
 	public void testGetSampleWithGradleWrapperExisting() throws Exception {
-		String[] initArgs = {"--base", _rootDir.getPath() + "/test/workspace", "init"};
+		String[] initArgs = {"--base", _rootDir.getPath() + "/test/workspace", "init", "-v", "7.2"};
 
 		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, initArgs);
 

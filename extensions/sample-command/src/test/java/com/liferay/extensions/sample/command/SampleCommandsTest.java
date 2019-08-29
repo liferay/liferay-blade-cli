@@ -71,7 +71,7 @@ public class SampleCommandsTest {
 
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
-		args = new String[] {"--base", workspaceDir.getPath(), "init", "-P", "maven"};
+		args = new String[] {"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", "7.2"};
 
 		outputStream = StringPrintStream.newInstance();
 

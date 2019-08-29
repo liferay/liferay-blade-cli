@@ -44,8 +44,6 @@ public class HelpCommandTest {
 		String content = _runBlade("help");
 
 		Assert.assertTrue(content, content.contains("Usage:"));
-
-		Assert.assertFalse(content, content.contains("--"));
 	}
 
 	@Test
@@ -53,8 +51,6 @@ public class HelpCommandTest {
 		String content = _runBlade("help", "create");
 
 		Assert.assertTrue(content, content.contains("Usage:"));
-
-		Assert.assertTrue(content, content.contains("--"));
 	}
 
 	@Test
