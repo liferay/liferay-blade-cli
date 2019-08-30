@@ -419,7 +419,7 @@ public class BladeCLI {
 										missingParameter = missingParameter.substring(0, missingParameter.length() - 1);
 									}
 
-									promptForMissingParameter(commandArgs, argsCollection, missingParameter);
+									_promptForMissingParameter(commandArgs, argsCollection, missingParameter);
 								}
 
 								args = argsCollection.toArray(new String[0]);
@@ -452,7 +452,7 @@ public class BladeCLI {
 								commandArgs = objects.get(0);
 							}
 							else if (parameterMessage.contains("Main parameters are required")) {
-								promptForMissingMainParameter(commandArgs, argsCollection);
+								_promptForMissingMainParameter(commandArgs, argsCollection);
 
 								args = argsCollection.toArray(new String[0]);
 
@@ -863,6 +863,70 @@ public class BladeCLI {
 		}
 	}
 
+	private void _promptForMissingMainParameter(Object commandArgs, List<String> argsCollection) {
+		Class<?> commandArgsClass = commandArgs.getClass();
+
+		for (Field field : commandArgsClass.getDeclaredFields()) {
+			if (field.isAnnotationPresent(Parameter.class)) {
+				Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
+
+				String[] parameterAnnotationNames = parameterAnnotation.names();
+
+				if (parameterAnnotation.required() &&
+					((parameterAnnotationNames == null) || (parameterAnnotationNames.length == 0))) {
+
+					String message = "Please specify the main parameter";
+
+					if (parameterAnnotation.description() != null) {
+						message = message + " (" + parameterAnnotation.description() + ")";
+					}
+
+					message = message + System.lineSeparator();
+
+					String value = Prompter.promptString(message);
+
+					argsCollection.add(value);
+
+					break;
+				}
+			}
+		}
+	}
+
+	private void _promptForMissingParameter(Object commandArgs, List<String> argsCollection, String missingParameter) {
+		Class<?> commandArgsClass = commandArgs.getClass();
+
+		for (Field field : commandArgsClass.getDeclaredFields()) {
+			if (field.isAnnotationPresent(Parameter.class)) {
+				Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
+
+				String[] parameterAnnotationNames = parameterAnnotation.names();
+
+				if (parameterAnnotation.required() && (parameterAnnotationNames != null)) {
+					List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
+
+					if (parameterNamesList.contains(missingParameter)) {
+						String message = "Please specify the value for " + missingParameter;
+
+						if (parameterAnnotation.description() != null) {
+							message = message + " (" + parameterAnnotation.description() + ")";
+						}
+
+						message = message + System.lineSeparator();
+
+						String value = Prompter.promptString(message);
+
+						argsCollection.add(1, missingParameter);
+
+						argsCollection.add(2, value);
+
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	private void _runCommand() throws Exception {
 		BaseCommand<?> command = null;
 
@@ -954,63 +1018,6 @@ public class BladeCLI {
 
 		try (OutputStream outputStream = Files.newOutputStream(updateCheckPath)) {
 			properties.store(outputStream, null);
-		}
-	}
-
-	private void promptForMissingMainParameter(Object commandArgs, List<String> argsCollection) {
-		for (Field field : commandArgs.getClass().getDeclaredFields()) {
-			if (field.isAnnotationPresent(Parameter.class)) {
-				Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
-
-				if (parameterAnnotation.required()) {
-					if ((parameterAnnotation.names() == null) || (parameterAnnotation.names().length == 0)) {
-						String message = "Please specify the main parameter";
-
-						if (parameterAnnotation.description() != null) {
-							message = message + " (" + parameterAnnotation.description() + ")";
-						}
-
-						message = message + System.lineSeparator();
-
-						String value = Prompter.promptString(message);
-
-						argsCollection.add(value);
-
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	private void promptForMissingParameter(Object commandArgs, List<String> argsCollection, String missingParameter) {
-		for (Field field : commandArgs.getClass().getDeclaredFields()) {
-			if (field.isAnnotationPresent(Parameter.class)) {
-				Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
-
-				if (parameterAnnotation.required()) {
-					if (parameterAnnotation.names() != null) {
-						List<String> parameterNamesList = Arrays.asList(parameterAnnotation.names());
-
-						if (parameterNamesList.contains(missingParameter)) {
-							String message = "Please specify the value for " + missingParameter;
-
-							if (parameterAnnotation.description() != null) {
-								message = message + " (" + parameterAnnotation.description() + ")";
-							}
-
-							message = message + System.lineSeparator();
-							String value = Prompter.promptString(message);
-
-							argsCollection.add(1, missingParameter);
-
-							argsCollection.add(2, value);
-
-							break;
-						}
-					}
-				}
-			}
 		}
 	}
 
