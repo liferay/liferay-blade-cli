@@ -149,7 +149,11 @@ public class Prompter {
 			Scanner scanner = new Scanner(closeShieldInputStream)) {
 
 			while ((answer == null) || !answer.isPresent()) {
-				printStream.println(questionWithPrompt);
+				if ((questionWithPrompt != null) && (questionWithPrompt.length() > 0)) {
+					printStream.println(questionWithPrompt);
+				}
+
+				printStream.print("> ");
 
 				String readLine = null;
 

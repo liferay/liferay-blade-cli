@@ -27,6 +27,9 @@ import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
+import com.liferay.blade.cli.command.validator.InputOptions;
+import com.liferay.blade.cli.command.validator.NoSupplierValidator;
+import com.liferay.blade.cli.command.validator.SupplierValidator;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.Prompter;
 
@@ -53,6 +56,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -397,6 +401,10 @@ public class BladeCLI {
 						Console console = System.console();
 
 						if (console != null) {
+							if (parameterException != null) {
+								System.out.println("The command " + command + " has more required arguments.");
+							}
+
 							while (parameterException != null) {
 								String parameterMessage = parameterException.getMessage();
 
@@ -886,13 +894,52 @@ public class BladeCLI {
 				if (parameterAnnotation.required() &&
 					((parameterAnnotationNames == null) || (parameterAnnotationNames.length == 0))) {
 
-					String message = "Please specify the main parameter";
+					StringBuilder sb = new StringBuilder("The main parameter is required: ");
 
 					if (parameterAnnotation.description() != null) {
-						message = message + " (" + parameterAnnotation.description() + ")";
+						sb.append(" (" + parameterAnnotation.description() + ")");
 					}
 
-					message = message + System.lineSeparator();
+					sb.append(System.lineSeparator());
+
+					InputOptions optionsAnnotation = field.getDeclaredAnnotation(InputOptions.class);
+
+					Map<String, String> optionsMap = null;
+
+					if (optionsAnnotation != null) {
+						Class<? extends SupplierValidator> supplierValidator = optionsAnnotation.value();
+
+						if (!supplierValidator.equals(NoSupplierValidator.class)) {
+							try {
+								SupplierValidator instance = supplierValidator.newInstance();
+
+								instance.setBladeCLI(this);
+
+								Collection<String> options = instance.get();
+
+								Iterator<String> it = options.iterator();
+
+								optionsMap = new HashMap<>();
+
+								for (int x = 1; it.hasNext(); x++) {
+									String option = it.next();
+
+									optionsMap.put(String.valueOf(x), option);
+								}
+
+								for (Map.Entry<String, String> entry : optionsMap.entrySet()) {
+									sb.append(System.lineSeparator());
+
+									sb.append(entry.getKey() + ": " + entry.getValue());
+								}
+							}
+							catch (Exception e) {
+								throw new RuntimeException(e);
+							}
+						}
+					}
+
+					String message = sb.toString();
 
 					String value = Prompter.promptString(message);
 
@@ -917,15 +964,83 @@ public class BladeCLI {
 					List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
 
 					if (parameterNamesList.contains(missingParameter)) {
-						String message = "Please specify the value for " + missingParameter;
+						StringBuilder sb = new StringBuilder("The following option is required: ");
 
-						if (parameterAnnotation.description() != null) {
-							message = message + " (" + parameterAnnotation.description() + ")";
+						StringBuilder missingOptionSb = new StringBuilder();
+
+						for (int x = 0; x < parameterNamesList.size(); x++) {
+							String missingParameterArgument = parameterNamesList.get(x);
+
+							if (x == 0) {
+								missingOptionSb.append("[");
+							}
+
+							missingOptionSb.append(missingParameterArgument);
+
+							if ((x + 1) <= (parameterNamesList.size() - 1)) {
+								missingOptionSb.append(" | ");
+							}
+							else {
+								missingOptionSb.append("]");
+							}
 						}
 
-						message = message + System.lineSeparator();
+						sb.append(missingOptionSb.toString());
+
+						InputOptions optionsAnnotation = field.getDeclaredAnnotation(InputOptions.class);
+
+						/*if (parameterAnnotation.description() != null) {
+							message = message + " (" + parameterAnnotation.description() + ")";
+						}*/
+
+						Map<String, String> optionsMap = null;
+
+						if (optionsAnnotation != null) {
+							Class<? extends SupplierValidator> supplierValidator = optionsAnnotation.value();
+
+							if (!supplierValidator.equals(NoSupplierValidator.class)) {
+								try {
+									SupplierValidator instance = supplierValidator.newInstance();
+
+									instance.setBladeCLI(this);
+
+									Collection<String> options = instance.get();
+
+									Iterator<String> it = options.iterator();
+
+									optionsMap = new LinkedHashMap<>();
+
+									for (int x = 1; it.hasNext(); x++) {
+										String option = it.next();
+
+										optionsMap.put(String.valueOf(x), option);
+									}
+
+									for (Map.Entry<String, String> entry : optionsMap.entrySet()) {
+										sb.append(System.lineSeparator());
+
+										sb.append(entry.getKey() + ": " + entry.getValue());
+									}
+								}
+								catch (Exception e) {
+									throw new RuntimeException(e);
+								}
+							}
+						}
+
+						String message = sb.toString();
 
 						String value = Prompter.promptString(message);
+
+						if ((optionsMap != null) && !optionsMap.isEmpty()) {
+							while (!optionsMap.containsKey(value)) {
+								System.out.println("Please enter a valid value for " + missingOptionSb.toString());
+
+								value = Prompter.promptString("");
+							}
+
+							value = optionsMap.get(value);
+						}
 
 						argsCollection.add(1, missingParameter);
 

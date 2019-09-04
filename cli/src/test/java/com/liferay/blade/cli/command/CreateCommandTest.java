@@ -24,7 +24,6 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,7 +39,6 @@ import java.nio.file.StandardOpenOption;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -1526,23 +1524,6 @@ public class CreateCommandTest {
 		String content = FileUtil.read(buildGradle);
 
 		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"4.4.0\""));
-	}
-
-	@Test
-	public void testListTemplates() throws Exception {
-		String[] args = {"create", "-l"};
-
-		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		String output = bladeTestResults.getOutput();
-
-		Map<String, String> templates = ProjectTemplates.getTemplates();
-
-		List<String> templateNames = new ArrayList<>(templates.keySet());
-
-		for (String templateName : templateNames) {
-			Assert.assertTrue(output.contains(templateName));
-		}
 	}
 
 	@Test
