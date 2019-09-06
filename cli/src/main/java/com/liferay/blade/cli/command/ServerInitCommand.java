@@ -47,7 +47,7 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 
 			GradleExec gradleExec = new GradleExec(bladeCLI);
 
-			StringBuilder commandStringBuilder = new StringBuilder("initBundle");
+			StringBuilder commandStringBuilder = new StringBuilder(":initBundle");
 
 			String liferayWorkspaceEnvironment = serverInitArgs.getEnvironment();
 
