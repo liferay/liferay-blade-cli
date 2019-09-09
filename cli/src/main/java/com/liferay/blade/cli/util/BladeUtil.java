@@ -19,7 +19,7 @@ package com.liferay.blade.cli.util;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.SamplesCommand;
 import com.liferay.project.templates.ProjectTemplates;
-import com.liferay.project.templates.internal.util.ProjectTemplatesUtil;
+import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
