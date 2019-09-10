@@ -74,7 +74,7 @@ public class InitArgs extends BaseArgs {
 	@InputOptions(LiferayVersionValidator.class)
 	@Parameter(
 		description = "The version of Liferay to target for this workspace. Options are 7.0, 7.1, 7.2",
-		names = {"-v", "--liferay-version"}, required = true, validateValueWith = LiferayVersionValidator.class
+		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayVersionValidator.class
 	)
 	private String _liferayVersion;
 

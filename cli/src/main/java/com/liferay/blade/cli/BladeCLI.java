@@ -402,7 +402,7 @@ public class BladeCLI {
 
 						if (console != null) {
 							if (parameterException != null) {
-								System.out.println("The command " + command + " has more required arguments.");
+								System.out.println("Error: The command " + command + " is missing required parameters.");
 							}
 
 							while (parameterException != null) {
@@ -1033,7 +1033,7 @@ public class BladeCLI {
 						String value = Prompter.promptString(message);
 
 						if ((optionsMap != null) && !optionsMap.isEmpty()) {
-							while (!optionsMap.containsKey(value)) {
+							while (!optionsMap.containsKey(value) && !optionsMap.containsValue(value)) {
 								System.out.println("Please enter a valid value for " + missingOptionSb.toString());
 
 								value = Prompter.promptString("");
