@@ -402,7 +402,8 @@ public class BladeCLI {
 
 						if (console != null) {
 							if (parameterException != null) {
-								System.out.println("Error: The command " + command + " is missing required parameters.");
+								System.out.println(
+									"Error: The command " + command + " is missing required parameters.");
 							}
 
 							while (parameterException != null) {
