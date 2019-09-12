@@ -19,6 +19,9 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
+import com.liferay.blade.cli.command.validator.TemplateNameValidator;
+
 import java.io.File;
 
 /**
@@ -203,10 +206,12 @@ public class CreateArgs extends BaseArgs {
 	)
 	private String _liferayVersion;
 
-	@Parameter(description = "Prints a list of available project templates", names = {"-l", "--list-templates"})
+	@Parameter(
+		description = "Prints a list of available project templates", hidden = true, names = {"-l", "--list-templates"}
+	)
 	private boolean _listTemplates;
 
-	@Parameter(description = "The project name")
+	@Parameter(description = "The project name", required = true)
 	private String _name;
 
 	@Parameter(
@@ -232,8 +237,9 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(
 		description = "The project template to use when creating the project. To see the list of templates available use blade create <-l | --list-templates>",
-		names = {"-t", "--template"}
+		names = {"--template", "-t"}, required = true, validateValueWith = TemplateNameValidator.class
 	)
+	@ParameterPossibleValues(TemplateNameValidator.class)
 	private String _template;
 
 	@Parameter(

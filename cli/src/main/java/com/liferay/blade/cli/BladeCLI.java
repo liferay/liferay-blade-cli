@@ -27,8 +27,11 @@ import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
+import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.util.CombinedClassLoader;
+import com.liferay.blade.cli.util.Prompter;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,12 +54,15 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.ServiceLoader;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -372,7 +378,20 @@ public class BladeCLI {
 			}
 			else {
 				try {
-					_jCommander.parse(args);
+					ParameterException parameterException = null;
+
+					try {
+						_jCommander.parse(args);
+					}
+					catch (ParameterException pe) {
+						String parameterExceptionMessage = pe.getMessage();
+
+						if (parameterExceptionMessage.contains("Only one main parameter allowed")) {
+							throw pe;
+						}
+
+						parameterException = pe;
+					}
 
 					String command = _jCommander.getParsedCommand();
 
@@ -385,17 +404,111 @@ public class BladeCLI {
 
 						Object commandArgs = objects.get(0);
 
-						_command = command;
+						Console console = System.console();
 
-						_args = (BaseArgs)commandArgs;
+						if (console != null) {
+							String parameterMessage = null;
 
-						_args.setProfileName(profileName);
+							if (parameterException != null) {
+								parameterMessage = parameterException.getMessage();
 
-						_args.setBase(baseDir);
+								if (parameterMessage.contains("Main parameters are required") ||
+									parameterMessage.contains(_MESSAGE_OPTIONS_ARE_REQUIRED) ||
+									parameterMessage.contains(_MESSAGE_OPTION_IS_REQUIRED)) {
 
-						runCommand();
+									System.out.println(
+										"Error: The command " + command + " is missing required parameters.");
+								}
+								else {
+									throw parameterException;
+								}
+							}
 
-						postRunCommand();
+							while (parameterException != null) {
+								parameterMessage = parameterException.getMessage();
+
+								List<String> fixedArgs = new ArrayList<>(Arrays.asList(args));
+
+								if (parameterMessage.contains(_MESSAGE_OPTIONS_ARE_REQUIRED) ||
+									parameterMessage.contains(_MESSAGE_OPTION_IS_REQUIRED)) {
+
+									parameterMessage = parameterMessage.replace(_MESSAGE_OPTIONS_ARE_REQUIRED, "");
+									parameterMessage = parameterMessage.replace(_MESSAGE_OPTION_IS_REQUIRED, "");
+
+									String[] missingParameters = parameterMessage.split(", ");
+
+									String value = null;
+
+									for (String missingParameter : missingParameters) {
+										missingParameter = _getMissingParameterUnformatted(missingParameter);
+
+										value = _promptForMissingParameter(commandArgs, Optional.of(missingParameter));
+
+										fixedArgs.add(1, missingParameter);
+
+										fixedArgs.add(2, value);
+									}
+
+									args = fixedArgs.toArray(new String[0]);
+
+									args = Extensions.sortArgs(_commands, args);
+								}
+								else if (parameterMessage.contains("Main parameters are required")) {
+									String value = _promptForMissingParameter(commandArgs, Optional.empty());
+
+									fixedArgs.add(value);
+
+									args = fixedArgs.toArray(new String[0]);
+
+									args = Extensions.sortArgs(_commands, args);
+								}
+								else {
+									throw parameterException;
+								}
+
+								try {
+									parameterException = null;
+
+									_jCommander = _buildJCommanderWithCommandMap(_commands);
+
+									_jCommander.parse(args);
+								}
+								catch (ParameterException pe) {
+									parameterException = pe;
+								}
+
+								jCommands = _jCommander.getCommands();
+
+								jCommander = jCommands.get(command);
+
+								if (jCommander == null) {
+									printUsage();
+
+									break;
+								}
+
+								objects = jCommander.getObjects();
+
+								commandArgs = objects.get(0);
+							}
+						}
+
+						if (parameterException == null) {
+							_command = command;
+
+							_args = (BaseArgs)commandArgs;
+
+							_args.setProfileName(profileName);
+
+							_args.setBase(baseDir);
+
+							runCommand();
+
+							postRunCommand();
+						}
+						else {
+							throw parameterException;
+						}
 					}
 					else {
 						printUsage();
@@ -624,6 +737,31 @@ public class BladeCLI {
 		return allCommands;
 	}
 
+	private Map<String, String> _buildPossibleValuesMap(
+		Class<? extends Supplier<Collection<String>>> supplierValidator) {
+
+		try {
+			Supplier<Collection<String>> instance = supplierValidator.newInstance();
+
+			Collection<String> options = instance.get();
+
+			Iterator<String> it = options.iterator();
+
+			Map<String, String> optionsMap = new LinkedHashMap<>();
+
+			for (int x = 1; it.hasNext(); x++) {
+				String option = it.next();
+
+				optionsMap.put(String.valueOf(x), option);
+			}
+
+			return optionsMap;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private String _extractProfileName(String[] args) {
 		List<String> argsList = new ArrayList<>();
 		List<String> originalArgsList = Arrays.asList(args);
@@ -657,6 +795,75 @@ public class BladeCLI {
 		}
 
 		return _extensionsClassLoaderSupplier.get();
+	}
+
+	private String _getMessageFromPossibleValues(Map<String, String> optionsMap) {
+		StringBuilder sb = new StringBuilder();
+
+		for (Map.Entry<String, String> entry : optionsMap.entrySet()) {
+			sb.append(System.lineSeparator());
+
+			sb.append(entry.getKey() + ": " + entry.getValue());
+		}
+
+		return sb.toString();
+	}
+
+	private String _getMissingParameterUnformatted(String missingParameter) {
+		if (missingParameter.contains(" | ")) {
+			missingParameter = missingParameter.split(" | ")[0];
+		}
+
+		if (missingParameter.startsWith("[")) {
+			missingParameter = missingParameter.substring(1);
+		}
+
+		if (missingParameter.endsWith("]")) {
+			missingParameter = missingParameter.substring(0, missingParameter.length() - 1);
+		}
+
+		return missingParameter;
+	}
+
+	private String _getParameterNames(List<String> parameterNamesList) {
+		StringBuilder missingOptionSb = new StringBuilder();
+
+		for (int x = 0; x < parameterNamesList.size(); x++) {
+			String missingParameterArgument = parameterNamesList.get(x);
+
+			if (x == 0) {
+				missingOptionSb.append("[");
+			}
+
+			missingOptionSb.append(missingParameterArgument);
+
+			if ((x + 1) <= (parameterNamesList.size() - 1)) {
+				missingOptionSb.append(" | ");
+			}
+			else {
+				missingOptionSb.append("]");
+			}
+		}
+
+		return missingOptionSb.toString();
+	}
+
+	private Map<String, String> _getPossibleValuesMap(Field field, StringBuilder sb) {
+		Map<String, String> possibleValuesMap = null;
+
+		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
+
+		if (possibleValuesAnnotation != null) {
+			Class<? extends Supplier<Collection<String>>> possibleValuesSupplier = possibleValuesAnnotation.value();
+
+			if (possibleValuesSupplier != null) {
+				possibleValuesMap = _buildPossibleValuesMap(possibleValuesSupplier);
+
+				sb.append(_getMessageFromPossibleValues(possibleValuesMap));
+			}
+		}
+
+		return possibleValuesMap;
 	}
 
 	private File _getSettingsBaseDir() {
@@ -761,6 +968,88 @@ public class BladeCLI {
 		}
 	}
 
+	private String _promptForMissingParameter(Object commandArgs, Optional<String> missingParameterOptional) {
+		String value = null;
+
+		Class<?> commandArgsClass = commandArgs.getClass();
+
+		for (Field field : commandArgsClass.getDeclaredFields()) {
+			if (field.isAnnotationPresent(Parameter.class)) {
+				Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
+
+				String[] parameterAnnotationNames = parameterAnnotation.names();
+
+				if (parameterAnnotation.required()) {
+					List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
+
+					StringBuilder sb = null;
+
+					String missingParametersFormatted = null;
+
+					boolean found = false;
+
+					if (missingParameterOptional.isPresent() &&
+						parameterNamesList.contains(missingParameterOptional.get())) {
+
+						sb = new StringBuilder("The following option is required: ");
+
+						missingParametersFormatted = _getParameterNames(parameterNamesList);
+
+						sb.append(missingParametersFormatted);
+
+						found = true;
+					}
+					else if (!missingParameterOptional.isPresent() &&
+							 ((parameterAnnotationNames == null) || (parameterAnnotationNames.length == 0))) {
+
+						sb = new StringBuilder("The main parameter is required: ");
+
+						if (parameterAnnotation.description() != null) {
+							sb.append(" (" + parameterAnnotation.description() + ")");
+						}
+
+						missingParametersFormatted = "the main parameter";
+
+						found = true;
+					}
+
+					if (found) {
+						Map<String, String> optionsMap = _getPossibleValuesMap(field, sb);
+
+						String message = sb.toString();
+
+						value = _promptForValueWithOptions(missingParametersFormatted, optionsMap, message);
+
+						break;
+					}
+				}
+			}
+		}
+
+		return value;
+	}
+
+	private String _promptForValueWithOptions(
+		String missingParametersFormatted, Map<String, String> optionsMap, String message) {
+
+		String value;
+		value = Prompter.promptString(message);
+
+		if ((optionsMap != null) && !optionsMap.isEmpty()) {
+			while (!optionsMap.containsKey(value) && !optionsMap.containsValue(value)) {
+				System.out.println("Please enter a valid value for " + missingParametersFormatted);
+
+				value = Prompter.promptString("");
+			}
+
+			if (optionsMap.containsKey(value)) {
+				value = optionsMap.get(value);
+			}
+		}
+
+		return value;
+	}
+
 	private void _runCommand() throws Exception {
 		BaseCommand<?> command = null;
 
@@ -858,6 +1147,10 @@ public class BladeCLI {
 	private static final String _BLADE_PROPERTIES = ".blade.properties";
 
 	private static final String _LAST_UPDATE_CHECK_KEY = "lastUpdateCheck";
+
+	private static final String _MESSAGE_OPTION_IS_REQUIRED = "The following option is required: ";
+
+	private static final String _MESSAGE_OPTIONS_ARE_REQUIRED = "The following options are required: ";
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 

@@ -95,9 +95,7 @@ public class ExtensionsTest {
 
 		String[] args = {"create", "-l"};
 
-		BladeTestResults results = null;
-
-		results = TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
 
 		String output = results.getOutput();
 

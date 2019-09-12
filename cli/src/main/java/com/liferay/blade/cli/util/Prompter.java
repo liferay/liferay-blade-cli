@@ -40,7 +40,7 @@ public class Prompter {
 	}
 
 	public static boolean confirm(String question, InputStream in, PrintStream out, Optional<Boolean> defaultAnswer) {
-		String questionWithPrompt = _buildQuestionWithPrompt(question, defaultAnswer);
+		String questionWithPrompt = _buildBooleanQuestionWithPrompt(question, defaultAnswer);
 
 		Optional<Boolean> answer = _getBooleanAnswer(questionWithPrompt, in, out, defaultAnswer);
 
@@ -51,7 +51,17 @@ public class Prompter {
 		throw new NoSuchElementException("Unable to acquire an answer");
 	}
 
-	private static String _buildQuestionWithPrompt(String question, Optional<Boolean> defaultAnswer) {
+	public static String promptString(String question) {
+		Optional<String> answer = _getStringAnswer(question, System.in, System.out, Optional.empty());
+
+		if (answer.isPresent()) {
+			return answer.get();
+		}
+
+		throw new NoSuchElementException("Unable to acquire an answer");
+	}
+
+	private static String _buildBooleanQuestionWithPrompt(String question, Optional<Boolean> defaultAnswer) {
 		String yesDefault = "y";
 		String noDefault = "n";
 
@@ -78,17 +88,17 @@ public class Prompter {
 			while ((answer == null) || !answer.isPresent()) {
 				printStream.println(questionWithPrompt);
 
-				String readLine = null;
+				String line = null;
 
 				while (((answer == null) || !answer.isPresent()) && !Objects.equals(answer, defaultAnswer) &&
 					   scanner.hasNextLine()) {
 
-					readLine = scanner.nextLine();
+					line = scanner.nextLine();
 
-					if (readLine != null) {
-						readLine = readLine.toLowerCase();
+					if (line != null) {
+						line = line.toLowerCase();
 
-						switch (readLine.trim()) {
+						switch (line.trim()) {
 							case "y":
 							case "yes":
 								answer = Optional.of(true);
@@ -104,12 +114,68 @@ public class Prompter {
 									answer = defaultAnswer;
 								}
 								else {
-									printStream.println("Unrecognized input: " + readLine);
+									printStream.println("Unrecognized input: " + line);
 
 									continue;
 								}
 
 								break;
+						}
+					}
+					else {
+						answer = defaultAnswer;
+					}
+				}
+			}
+		}
+		catch (IllegalStateException ise) {
+			throw new RuntimeException(ise);
+		}
+		catch (Exception exception) {
+			if (defaultAnswer.isPresent()) {
+				answer = defaultAnswer;
+			}
+		}
+
+		return answer;
+	}
+
+	private static Optional<String> _getStringAnswer(
+		String questionWithPrompt, InputStream inputStream, PrintStream printStream, Optional<String> defaultAnswer) {
+
+		Optional<String> answer = null;
+
+		try (CloseShieldInputStream closeShieldInputStream = new CloseShieldInputStream(inputStream);
+			Scanner scanner = new Scanner(closeShieldInputStream)) {
+
+			while ((answer == null) || !answer.isPresent()) {
+				if ((questionWithPrompt != null) && (questionWithPrompt.length() > 0)) {
+					printStream.println(questionWithPrompt);
+				}
+
+				printStream.print("> ");
+
+				String line = null;
+
+				while (((answer == null) || !answer.isPresent()) && !Objects.equals(answer, defaultAnswer) &&
+					   scanner.hasNextLine()) {
+
+					line = scanner.nextLine();
+
+					if (line != null) {
+						line = line.trim();
+
+						if (line.length() > 0) {
+							answer = Optional.of(line);
+
+							break;
+						}
+
+						if (defaultAnswer.isPresent()) {
+							answer = defaultAnswer;
+						}
+						else {
+							printStream.println("Unrecognized input: " + line);
 						}
 					}
 					else {

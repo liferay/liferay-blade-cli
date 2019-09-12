@@ -23,7 +23,7 @@ testBladeCreateCommand {
 	errorOutput = errorStream
 	standardOutput = standardStream
 
-	doLast{
+	doLast {
 		assert standardStream.toString().contains("service-builder")
 		assert !errorStream.toString().toLowerCase().contains("error")
 	}

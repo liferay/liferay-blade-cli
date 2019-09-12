@@ -19,6 +19,9 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import com.liferay.blade.cli.command.validator.LiferayVersionValidator;
+import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
+
 /**
  * @author Gregory Amerson
  */
@@ -70,8 +73,9 @@ public class InitArgs extends BaseArgs {
 
 	@Parameter(
 		description = "The version of Liferay to target for this workspace. Options are 7.0, 7.1, 7.2",
-		names = {"-v", "--liferay-version"}, required = true
+		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayVersionValidator.class
 	)
+	@ParameterPossibleValues(LiferayVersionValidator.class)
 	private String _liferayVersion;
 
 	@Parameter(description = "[name]")
