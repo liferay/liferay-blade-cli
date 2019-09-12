@@ -33,8 +33,10 @@ public class LiferayVersionValidator implements ValidatorSupplier {
 
 	@Override
 	public void validate(String name, String value) throws ParameterException {
-		if (!get().contains(value)) {
-			throw new ParameterException(name + " is invalid.");
+		Collection<String> possibleValues = get();
+
+		if (!possibleValues.contains(value)) {
+			throw new ParameterException(name + " is not a valid value.");
 		}
 	}
 

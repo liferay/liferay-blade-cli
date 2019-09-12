@@ -46,8 +46,10 @@ public class TemplateNameValidator implements ValidatorSupplier {
 			value = "mvc-portlet";
 		}
 
-		if (!get().contains(value)) {
-			throw new ParameterException("TemplateNameValidator failed");
+		Collection<String> possibleValues = get();
+
+		if (!possibleValues.contains(value)) {
+			throw new ParameterException(value + " is not amoung the possible values.");
 		}
 	}
 

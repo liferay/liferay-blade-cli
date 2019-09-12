@@ -88,17 +88,17 @@ public class Prompter {
 			while ((answer == null) || !answer.isPresent()) {
 				printStream.println(questionWithPrompt);
 
-				String readLine = null;
+				String line = null;
 
 				while (((answer == null) || !answer.isPresent()) && !Objects.equals(answer, defaultAnswer) &&
 					   scanner.hasNextLine()) {
 
-					readLine = scanner.nextLine();
+					line = scanner.nextLine();
 
-					if (readLine != null) {
-						readLine = readLine.toLowerCase();
+					if (line != null) {
+						line = line.toLowerCase();
 
-						switch (readLine.trim()) {
+						switch (line.trim()) {
 							case "y":
 							case "yes":
 								answer = Optional.of(true);
@@ -114,7 +114,7 @@ public class Prompter {
 									answer = defaultAnswer;
 								}
 								else {
-									printStream.println("Unrecognized input: " + readLine);
+									printStream.println("Unrecognized input: " + line);
 
 									continue;
 								}
@@ -155,18 +155,18 @@ public class Prompter {
 
 				printStream.print("> ");
 
-				String readLine = null;
+				String line = null;
 
 				while (((answer == null) || !answer.isPresent()) && !Objects.equals(answer, defaultAnswer) &&
 					   scanner.hasNextLine()) {
 
-					readLine = scanner.nextLine();
+					line = scanner.nextLine();
 
-					if (readLine != null) {
-						readLine = readLine.trim();
+					if (line != null) {
+						line = line.trim();
 
-						if (readLine.length() > 0) {
-							answer = Optional.of(readLine);
+						if (line.length() > 0) {
+							answer = Optional.of(line);
 
 							break;
 						}
@@ -175,7 +175,7 @@ public class Prompter {
 							answer = defaultAnswer;
 						}
 						else {
-							printStream.println("Unrecognized input: " + readLine);
+							printStream.println("Unrecognized input: " + line);
 						}
 					}
 					else {
