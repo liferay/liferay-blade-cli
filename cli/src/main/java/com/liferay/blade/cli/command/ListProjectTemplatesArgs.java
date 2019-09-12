@@ -14,35 +14,13 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli.command.validator;
+package com.liferay.blade.cli.command;
 
-import com.beust.jcommander.ParameterException;
-
-import com.liferay.blade.cli.BladeCLI;
-
-import java.util.Collection;
+import com.beust.jcommander.Parameters;
 
 /**
  * @author Christopher Bryan Boyd
  */
-public final class NoSupplierValidator implements SupplierValidator {
-
-	@Override
-	public Collection<String> get() {
-		return null;
-	}
-
-	@Override
-	public BladeCLI getBladeCLI() {
-		return null;
-	}
-
-	@Override
-	public void setBladeCLI(BladeCLI bladeCLI) {
-	}
-
-	@Override
-	public void validate(String name, String value) throws ParameterException {
-	}
-
+@Parameters(commandDescription = "List all available project templates.", commandNames = "create -l", hidden = true)
+public class ListProjectTemplatesArgs extends BaseArgs {
 }

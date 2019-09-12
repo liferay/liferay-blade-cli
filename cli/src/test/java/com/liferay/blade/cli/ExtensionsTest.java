@@ -19,7 +19,6 @@ package com.liferay.blade.cli;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,15 +95,13 @@ public class ExtensionsTest {
 
 		String[] args = {"create", "-l"};
 
-		BladeTestResults results = null;
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
 
-		InputStream in = new ByteArrayInputStream(new byte[0]);
-
-		results = TestUtil.runBlade(_rootDir, _extensionsDir, in, false, args);
+		String output = results.getOutput();
 
 		String errors = results.getErrors();
 
-		boolean commandSuccess = errors.contains("create: The following option is required");
+		boolean commandSuccess = output.contains("Creates a Liferay");
 
 		Assert.assertTrue(commandSuccess);
 

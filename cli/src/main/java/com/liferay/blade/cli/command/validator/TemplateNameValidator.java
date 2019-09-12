@@ -32,19 +32,11 @@ public class TemplateNameValidator implements SupplierValidator {
 	@Override
 	public Collection<String> get() {
 		try {
-			return new ArrayList<>(BladeUtil.getTemplateNames(_bladeCLI));
+			return new ArrayList<>(BladeUtil.getTemplateNames(new BladeCLI()));
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public BladeCLI getBladeCLI() {
-		return _bladeCLI;
-	}
-
-	public void setBladeCLI(BladeCLI bladeCLI) {
-		_bladeCLI = bladeCLI;
 	}
 
 	@Override
@@ -53,7 +45,5 @@ public class TemplateNameValidator implements SupplierValidator {
 			throw new ParameterException("TemplateNameValidator failed");
 		}
 	}
-
-	private BladeCLI _bladeCLI = null;
 
 }

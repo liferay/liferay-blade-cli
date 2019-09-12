@@ -18,8 +18,6 @@ package com.liferay.blade.cli.command.validator;
 
 import com.beust.jcommander.IValueValidator;
 
-import com.liferay.blade.cli.BladeCLI;
-
 import java.util.Collection;
 import java.util.function.Supplier;
 
@@ -27,9 +25,4 @@ import java.util.function.Supplier;
  * @author Christopher Bryan Boyd
  */
 public interface SupplierValidator extends IValueValidator<String>, Supplier<Collection<String>> {
-
-	public BladeCLI getBladeCLI();
-
-	public void setBladeCLI(BladeCLI bladeCLI);
-
 }

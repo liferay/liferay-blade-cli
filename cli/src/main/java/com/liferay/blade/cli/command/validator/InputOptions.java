@@ -28,6 +28,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface InputOptions {
 
-	Class<? extends SupplierValidator> value() default NoSupplierValidator.class;
+	Class<? extends SupplierValidator> value();
 
 }

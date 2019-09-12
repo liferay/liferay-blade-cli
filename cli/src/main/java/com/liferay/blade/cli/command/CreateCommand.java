@@ -62,12 +62,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	public void execute() throws Exception {
 		CreateArgs createArgs = getArgs();
 
-		if (createArgs.isListTemplates()) {
-			_printTemplates();
-
-			return;
-		}
-
 		String template = createArgs.getTemplate();
 
 		if (Objects.equals(template, "portlet")) {

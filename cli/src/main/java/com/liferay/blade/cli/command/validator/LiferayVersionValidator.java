@@ -18,8 +18,6 @@ package com.liferay.blade.cli.command.validator;
 
 import com.beust.jcommander.ParameterException;
 
-import com.liferay.blade.cli.BladeCLI;
-
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -33,21 +31,11 @@ public class LiferayVersionValidator implements SupplierValidator {
 		return Arrays.asList("7.0", "7.1", "7.2");
 	}
 
-	public BladeCLI getBladeCLI() {
-		return _bladeCLI;
-	}
-
-	public void setBladeCLI(BladeCLI bladeCLI) {
-		_bladeCLI = bladeCLI;
-	}
-
 	@Override
 	public void validate(String name, String value) throws ParameterException {
 		if (!get().contains(value)) {
 			throw new ParameterException(name + " is invalid.");
 		}
 	}
-
-	private BladeCLI _bladeCLI = null;
 
 }
