@@ -27,7 +27,7 @@ import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
-import com.liferay.blade.cli.command.validator.InputOptions;
+import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.SupplierValidator;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.Prompter;
@@ -811,7 +811,7 @@ public class BladeCLI {
 	private Map<String, String> _getOptionsMap(Field field, StringBuilder sb) {
 		Map<String, String> optionsMap = null;
 
-		InputOptions optionsAnnotation = field.getDeclaredAnnotation(InputOptions.class);
+		ParameterPossibleValues optionsAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
 
 		if (optionsAnnotation != null) {
 			Class<? extends SupplierValidator> supplierValidator = optionsAnnotation.value();

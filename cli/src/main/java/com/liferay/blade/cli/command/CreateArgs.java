@@ -19,7 +19,7 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import com.liferay.blade.cli.command.validator.InputOptions;
+import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.TemplateNameValidator;
 
 import java.io.File;
@@ -235,11 +235,11 @@ public class CreateArgs extends BaseArgs {
 	)
 	private String _service;
 
-	@InputOptions(TemplateNameValidator.class)
 	@Parameter(
 		description = "The project template to use when creating the project. To see the list of templates available use blade create <-l | --list-templates>",
 		names = {"--template", "-t"}, required = true, validateValueWith = TemplateNameValidator.class
 	)
+	@ParameterPossibleValues(TemplateNameValidator.class)
 	private String _template;
 
 	@Parameter(

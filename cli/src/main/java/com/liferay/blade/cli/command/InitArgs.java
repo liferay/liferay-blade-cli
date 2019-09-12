@@ -19,8 +19,8 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import com.liferay.blade.cli.command.validator.InputOptions;
 import com.liferay.blade.cli.command.validator.LiferayVersionValidator;
+import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 
 /**
  * @author Gregory Amerson
@@ -71,11 +71,11 @@ public class InitArgs extends BaseArgs {
 	@Parameter(description = "create anyway if there are files located at target folder", names = {"-f", "--force"})
 	private boolean _force;
 
-	@InputOptions(LiferayVersionValidator.class)
 	@Parameter(
 		description = "The version of Liferay to target for this workspace. Options are 7.0, 7.1, 7.2",
 		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayVersionValidator.class
 	)
+	@ParameterPossibleValues(LiferayVersionValidator.class)
 	private String _liferayVersion;
 
 	@Parameter(description = "[name]")
