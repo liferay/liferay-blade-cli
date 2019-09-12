@@ -1528,6 +1528,7 @@ public class CreateCommandTest {
 		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"4.4.0\""));
 	}
 
+	@Test
 	public void testListTemplates() throws Exception {
 		String[] args = {"create", "-l"};
 
