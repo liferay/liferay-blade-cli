@@ -384,6 +384,12 @@ public class BladeCLI {
 						_jCommander.parse(args);
 					}
 					catch (ParameterException pe) {
+						String parameterExceptionMessage = pe.getMessage();
+
+						if (parameterExceptionMessage.contains("Only one main parameter allowed")) {
+							throw pe;
+						}
+
 						parameterException = pe;
 					}
 
