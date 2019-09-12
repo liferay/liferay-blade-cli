@@ -415,15 +415,13 @@ public class BladeCLI {
 							while (parameterException != null) {
 								String parameterMessage = parameterException.getMessage();
 
-								List<String> argsCollection = new ArrayList<>(Arrays.asList(args));
+								List<String> fixedArgs = new ArrayList<>(Arrays.asList(args));
 
-								if (parameterMessage.contains("The following options are required: ") ||
-									parameterMessage.contains("The following option is required: ")) {
+								if (parameterMessage.contains(_MESSAGE_OPTIONS_ARE_REQUIRED) ||
+									parameterMessage.contains(_MESSAGE_OPTION_IS_REQUIRED)) {
 
-									parameterMessage = parameterMessage.replace(
-										"The following options are required: ", "");
-									parameterMessage = parameterMessage.replace(
-										"The following option is required: ", "");
+									parameterMessage = parameterMessage.replace(_MESSAGE_OPTIONS_ARE_REQUIRED, "");
+									parameterMessage = parameterMessage.replace(_MESSAGE_OPTION_IS_REQUIRED, "");
 
 									String[] missingParameters = parameterMessage.split(", ");
 
@@ -434,21 +432,21 @@ public class BladeCLI {
 
 										value = _promptForMissingParameter(commandArgs, Optional.of(missingParameter));
 
-										argsCollection.add(1, missingParameter);
+										fixedArgs.add(1, missingParameter);
 
-										argsCollection.add(2, value);
+										fixedArgs.add(2, value);
 									}
 
-									args = argsCollection.toArray(new String[0]);
+									args = fixedArgs.toArray(new String[0]);
 
 									args = Extensions.sortArgs(_commands, args);
 								}
 								else if (parameterMessage.contains("Main parameters are required")) {
 									String value = _promptForMissingParameter(commandArgs, Optional.empty());
 
-									argsCollection.add(value);
+									fixedArgs.add(value);
 
-									args = argsCollection.toArray(new String[0]);
+									args = fixedArgs.toArray(new String[0]);
 
 									args = Extensions.sortArgs(_commands, args);
 								}
@@ -1132,6 +1130,10 @@ public class BladeCLI {
 	private static final String _BLADE_PROPERTIES = ".blade.properties";
 
 	private static final String _LAST_UPDATE_CHECK_KEY = "lastUpdateCheck";
+
+	private static final String _MESSAGE_OPTION_IS_REQUIRED = "The following option is required: ";
+
+	private static final String _MESSAGE_OPTIONS_ARE_REQUIRED = "The following options are required: ";
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
