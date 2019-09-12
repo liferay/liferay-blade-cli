@@ -28,7 +28,7 @@ import java.util.Objects;
 /**
  * @author Christopher Bryan Boyd
  */
-public class TemplateNameValidator implements SupplierValidator {
+public class TemplateNameValidator implements ValidatorSupplier {
 
 	@Override
 	public Collection<String> get() {

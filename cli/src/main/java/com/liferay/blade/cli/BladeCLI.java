@@ -28,7 +28,6 @@ import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
-import com.liferay.blade.cli.command.validator.SupplierValidator;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.Prompter;
 
@@ -63,6 +62,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.ServiceLoader;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -722,9 +722,11 @@ public class BladeCLI {
 		return allCommands;
 	}
 
-	private Map<String, String> _buildOptionsMap(Class<? extends SupplierValidator> supplierValidator) {
+	private Map<String, String> _buildPossibleValuesMap(
+		Class<? extends Supplier<Collection<String>>> supplierValidator) {
+
 		try {
-			SupplierValidator instance = supplierValidator.newInstance();
+			Supplier<Collection<String>> instance = supplierValidator.newInstance();
 
 			Collection<String> options = instance.get();
 
@@ -780,7 +782,7 @@ public class BladeCLI {
 		return _extensionsClassLoaderSupplier.get();
 	}
 
-	private String _getMessageFromOptions(Map<String, String> optionsMap) {
+	private String _getMessageFromPossibleValues(Map<String, String> optionsMap) {
 		StringBuilder sb = new StringBuilder();
 
 		for (Map.Entry<String, String> entry : optionsMap.entrySet()) {
@@ -808,24 +810,6 @@ public class BladeCLI {
 		return missingParameter;
 	}
 
-	private Map<String, String> _getOptionsMap(Field field, StringBuilder sb) {
-		Map<String, String> optionsMap = null;
-
-		ParameterPossibleValues optionsAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
-
-		if (optionsAnnotation != null) {
-			Class<? extends SupplierValidator> supplierValidator = optionsAnnotation.value();
-
-			if (supplierValidator != null) {
-				optionsMap = _buildOptionsMap(supplierValidator);
-
-				sb.append(_getMessageFromOptions(optionsMap));
-			}
-		}
-
-		return optionsMap;
-	}
-
 	private String _getParameterNames(List<String> parameterNamesList) {
 		StringBuilder missingOptionSb = new StringBuilder();
 
@@ -847,6 +831,24 @@ public class BladeCLI {
 		}
 
 		return missingOptionSb.toString();
+	}
+
+	private Map<String, String> _getPossibleValuesMap(Field field, StringBuilder sb) {
+		Map<String, String> possibleValuesMap = null;
+
+		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
+
+		if (possibleValuesAnnotation != null) {
+			Class<? extends Supplier<Collection<String>>> possibleValuesSupplier = possibleValuesAnnotation.value();
+
+			if (possibleValuesSupplier != null) {
+				possibleValuesMap = _buildPossibleValuesMap(possibleValuesSupplier);
+
+				sb.append(_getMessageFromPossibleValues(possibleValuesMap));
+			}
+		}
+
+		return possibleValuesMap;
 	}
 
 	private File _getSettingsBaseDir() {
@@ -997,7 +999,7 @@ public class BladeCLI {
 					}
 
 					if (found) {
-						Map<String, String> optionsMap = _getOptionsMap(field, sb);
+						Map<String, String> optionsMap = _getPossibleValuesMap(field, sb);
 
 						String message = sb.toString();
 

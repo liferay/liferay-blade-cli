@@ -24,5 +24,5 @@ import java.util.function.Supplier;
 /**
  * @author Christopher Bryan Boyd
  */
-public interface SupplierValidator extends IValueValidator<String>, Supplier<Collection<String>> {
+public interface ValidatorSupplier extends IValueValidator<String>, Supplier<Collection<String>> {
 }

@@ -24,7 +24,7 @@ import java.util.Collection;
 /**
  * @author Christopher Bryan Boyd
  */
-public class LiferayVersionValidator implements SupplierValidator {
+public class LiferayVersionValidator implements ValidatorSupplier {
 
 	@Override
 	public Collection<String> get() {

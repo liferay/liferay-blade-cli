@@ -21,6 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import java.util.Collection;
+import java.util.function.Supplier;
+
 /**
  * @author Christopher Bryan Boyd
  */
@@ -28,6 +31,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ParameterPossibleValues {
 
-	Class<? extends SupplierValidator> value();
+	Class<? extends Supplier<Collection<String>>> value();
 
 }
