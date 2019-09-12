@@ -407,13 +407,25 @@ public class BladeCLI {
 						Console console = System.console();
 
 						if (console != null) {
+							String parameterMessage = null;
+
 							if (parameterException != null) {
-								System.out.println(
-									"Error: The command " + command + " is missing required parameters.");
+								parameterMessage = parameterException.getMessage();
+
+								if (parameterMessage.contains("Main parameters are required") ||
+									parameterMessage.contains(_MESSAGE_OPTIONS_ARE_REQUIRED) ||
+									parameterMessage.contains(_MESSAGE_OPTION_IS_REQUIRED)) {
+
+									System.out.println(
+										"Error: The command " + command + " is missing required parameters.");
+								}
+								else {
+									throw parameterException;
+								}
 							}
 
 							while (parameterException != null) {
-								String parameterMessage = parameterException.getMessage();
+								parameterMessage = parameterException.getMessage();
 
 								List<String> fixedArgs = new ArrayList<>(Arrays.asList(args));
 
@@ -449,6 +461,9 @@ public class BladeCLI {
 									args = fixedArgs.toArray(new String[0]);
 
 									args = Extensions.sortArgs(_commands, args);
+								}
+								else {
+									throw parameterException;
 								}
 
 								try {
