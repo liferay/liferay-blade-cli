@@ -23,6 +23,7 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @author Christopher Bryan Boyd
@@ -41,6 +42,10 @@ public class TemplateNameValidator implements SupplierValidator {
 
 	@Override
 	public void validate(String name, String value) throws ParameterException {
+		if (Objects.equals("portlet", value)) {
+			value = "mvc-portlet";
+		}
+
 		if (!get().contains(value)) {
 			throw new ParameterException("TemplateNameValidator failed");
 		}
