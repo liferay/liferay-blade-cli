@@ -1,6 +1,15 @@
 # Liferay Blade CLI Change Log
 
-## 3.7.4 - 2019-7-23 -
+## 3.8.0 - 2019-9 -
+
+- [BLADE-221]: Support for Blade CLI "Interactive" mode
+- [BLADE-329]: blade server init should work from any workspace directory
+- [BLADE-464]: Update to project templates 4.3.1 to include new spring mvc portlet template
+- [BLADE-467]: Create args not taking blade settings
+- [BLADE-468]: Init command should prompt user for version and not set it by default
+- [LPS-98820]: Compile java failed because of missing dependency when building service in 71 project with target.platform specified
+
+## 3.7.4 - 2019-7-23 - 5fb0dece50bd5a9603337d942ceb730f31951885
 
 - [BLADE-461]: Use Project Templates 4.2.27 - Point users to Liferay JS Toolkit for Npm projects
 
@@ -239,6 +248,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-216]: https://issues.liferay.com/browse/BLADE-216
 [BLADE-218]: https://issues.liferay.com/browse/BLADE-218
 [BLADE-219]: https://issues.liferay.com/browse/BLADE-219
+[BLADE-221]: https://issues.liferay.com/browse/BLADE-221
 [BLADE-226]: https://issues.liferay.com/browse/BLADE-226
 [BLADE-227]: https://issues.liferay.com/browse/BLADE-227
 [BLADE-228]: https://issues.liferay.com/browse/BLADE-228
@@ -287,6 +297,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-321]: https://issues.liferay.com/browse/BLADE-321
 [BLADE-323]: https://issues.liferay.com/browse/BLADE-323
 [BLADE-327]: https://issues.liferay.com/browse/BLADE-327
+[BLADE-329]: https://issues.liferay.com/browse/BLADE-329
 [BLADE-331]: https://issues.liferay.com/browse/BLADE-331
 [BLADE-332]: https://issues.liferay.com/browse/BLADE-332
 [BLADE-333]: https://issues.liferay.com/browse/BLADE-333
@@ -348,6 +359,8 @@ Updated to use Project Templates 4.1.0
 [BLADE-442]: https://issues.liferay.com/browse/BLADE-442
 [BLADE-452]: https://issues.liferay.com/browse/BLADE-452
 [BLADE-461]: https://issues.liferay.com/browse/BLADE-461
+[BLADE-467]: https://issues.liferay.com/browse/BLADE-467
+[BLADE-468]: https://issues.liferay.com/browse/BLADE-468
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
@@ -369,5 +382,6 @@ Updated to use Project Templates 4.1.0
 [LPS-82590]: https://issues.liferay.com/browse/LPS-82590
 [LPS-96205]: https://issues.liferay.com/browse/LPS-96205
 [LPS-97114]: https://issues.liferay.com/browse/LPS-97114
+[LPS-98820]: https://issues.liferay.com/browse/LPS-98820
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [Updated Liferay Gradle Plugin]: https://github.com/liferay/liferay-portal/blob/master/modules/sdk/gradle-plugins/CHANGELOG.markdown#3523---2017-10-26
