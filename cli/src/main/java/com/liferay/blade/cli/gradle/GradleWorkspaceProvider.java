@@ -38,6 +38,9 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
+	public static final Pattern patternWorkspacePluginLatestRelease = Pattern.compile(
+		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:\\s*\"([latest.release]+)\".*",
+		Pattern.MULTILINE | Pattern.DOTALL);
 	public static final Pattern patternWorkspacePluginVersion = Pattern.compile(
 		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:\\s*\"([0-9\\.]+)\".*",
 		Pattern.MULTILINE | Pattern.DOTALL);
@@ -93,22 +96,31 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		boolean targetPlatformEnabled = properties.containsKey(targetPlatformVersionKey);
 
 		try {
+			if (!targetPlatformEnabled) {
+				return false;
+			}
+
 			String settingsGradleFileContent = BladeUtil.read(getSettingGradleFile(dir));
 
 			Matcher matcher = patternWorkspacePluginVersion.matcher(settingsGradleFileContent);
 
-			if (!targetPlatformEnabled || !matcher.find()) {
-				return false;
+			boolean foundMatch = matcher.find();
+
+			if (foundMatch) {
+				Version minVersion = new Version(1, 9, 0);
+
+				Version pluginVersion = new Version(matcher.group(1));
+
+				int result = pluginVersion.compareTo(minVersion);
+
+				if (result >= 0) {
+					return true;
+				}
 			}
+			else {
+				matcher = patternWorkspacePluginLatestRelease.matcher(settingsGradleFileContent);
 
-			Version minVersion = new Version(1, 9, 0);
-
-			Version pluginVersion = new Version(matcher.group(1));
-
-			int result = pluginVersion.compareTo(minVersion);
-
-			if (result >= 0) {
-				return true;
+				return matcher.find();
 			}
 		}
 		catch (Exception e) {
