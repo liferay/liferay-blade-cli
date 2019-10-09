@@ -39,7 +39,8 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
 	public static final Pattern patternWorkspacePluginLatestRelease = Pattern.compile(
-		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:\\s*\"([latest.release]+)\".*",
+		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:" +
+			"\\s*\"([latest\\.release|latest\\.integration]+)\".*",
 		Pattern.MULTILINE | Pattern.DOTALL);
 	public static final Pattern patternWorkspacePluginVersion = Pattern.compile(
 		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:\\s*\"([0-9\\.]+)\".*",
