@@ -116,20 +116,13 @@ public interface MavenExecutor {
 					() -> {
 						String line = null;
 
-						boolean bridj = false;
-
 						try {
-							while (((line = processError.readLine()) != null) && !bridj) {
-								if (line.contains("org/bridj/Platform$DeleteFiles")) {
-									bridj = true;
-								}
-								else if (!line.contains("org.bridj.BridJ log")) {
-									output.append(line);
-									output.append(System.lineSeparator());
+							while ((line = processError.readLine()) != null) {
+								output.append(line);
+								output.append(System.lineSeparator());
 
-									if (printOutput) {
-										System.err.println(line);
-									}
+								if (printOutput) {
+									System.err.println(line);
 								}
 							}
 						}
