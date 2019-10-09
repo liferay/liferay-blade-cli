@@ -104,9 +104,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 			Matcher matcher = patternWorkspacePluginVersion.matcher(settingsGradleFileContent);
 
-			boolean foundMatch = matcher.find();
-
-			if (foundMatch) {
+			if (matcher.find()) {
 				Version minVersion = new Version(1, 9, 0);
 
 				Version pluginVersion = new Version(matcher.group(1));
