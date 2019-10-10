@@ -52,57 +52,27 @@ public class TestUtil {
 	public static BladeTestResults runBlade(
 		BladeTest bladeTest, PrintStream outputStream, PrintStream errorStream, boolean assertErrors, String... args) {
 
+		PrintStream originalOutputStream = System.out;
+		PrintStream originalErrorStream = System.err;
 		try {
+			System.setOut(outputStream);
+			System.setErr(errorStream);
 			bladeTest.run(args);
 		}
 		catch (Exception e) {
-			e.printStackTrace(errorStream);
-		}
-
-		String error = errorStream.toString();
-
-		StringBuilder sb = new StringBuilder();
-
-		boolean bridj = false;
-
-		try (Scanner scanner = new Scanner(error)) {
-			while (scanner.hasNextLine() && !bridj) {
-				String line = scanner.nextLine();
-
-				if ((line != null) && (line.length() > 0)) {
-					/*if (line.contains("org/bridj/Platform$DeleteFiles")) {
-						bridj = true;
-					}
-					else if (!line.contains("org.bridj.BridJ log")) {*/
-					if (line.startsWith("SLF4J:")) {
-						continue;
-					}
-
-					if (line.startsWith("Picked up JAVA_TOOL_OPTIONS")) {
-						continue;
-					}
-
-					if (line.contains("LC_ALL: cannot change locale")) {
-						continue;
-					}
-
-					sb.append(line);
-
-					if (scanner.hasNextLine()) {
-						sb.append(System.lineSeparator());
-					}
-					//}
-				}
+			if (assertErrors) {
+				e.printStackTrace(errorStream);
+				Assert.fail("Encountered error: " + errorStream.toString());
 			}
 		}
-
-		if (assertErrors && (sb.length() > 0)) {
-			Assert.fail("Encountered error: " + sb.toString());
+		finally {
+			System.setOut(originalOutputStream);
+			System.setErr(originalErrorStream);
 		}
-
+		
 		String content = outputStream.toString();
 
-		return new BladeTestResults(bladeTest, content, sb.toString());
+		return new BladeTestResults(bladeTest, content, errorStream.toString());
 	}
 
 	public static BladeTestResults runBlade(
