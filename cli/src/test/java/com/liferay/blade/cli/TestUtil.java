@@ -70,10 +70,10 @@ public class TestUtil {
 				String line = scanner.nextLine();
 
 				if ((line != null) && (line.length() > 0)) {
-					if (line.contains("org/bridj/Platform$DeleteFiles")) {
+					/*if (line.contains("org/bridj/Platform$DeleteFiles")) {
 						bridj = true;
 					}
-					else if (!line.contains("org.bridj.BridJ log")) {
+					else if (!line.contains("org.bridj.BridJ log")) {*/
 						if (line.startsWith("SLF4J:")) {
 							continue;
 						}
@@ -91,7 +91,7 @@ public class TestUtil {
 						if (scanner.hasNextLine()) {
 							sb.append(System.lineSeparator());
 						}
-					}
+					//}
 				}
 			}
 		}
