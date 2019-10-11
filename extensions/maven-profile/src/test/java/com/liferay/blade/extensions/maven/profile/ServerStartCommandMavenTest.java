@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -47,6 +48,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import org.zeroturnaround.process.PidProcess;
+import org.zeroturnaround.process.ProcessUtil;
 import org.zeroturnaround.process.Processes;
 
 /**
@@ -140,14 +142,28 @@ public class ServerStartCommandMavenTest {
 		}
 	}
 
-	private static void _terminateProcess(PidProcess tomcatPidProcess) throws InterruptedException, IOException {
-		tomcatPidProcess.destroyForcefully();
+	private static boolean _isServerRunning() {
+		for (JavaProcess process : JavaProcesses.list()) {
+			String displayName = process.getDisplayName();
 
-		tomcatPidProcess.waitFor(1, TimeUnit.SECONDS);
+			if (displayName.contains("wildfly") || displayName.contains("catalina")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static void _terminateProcess(PidProcess tomcatPidProcess)
+		throws InterruptedException, IOException, TimeoutException {
+
+		ProcessUtil.destroyForcefullyAndWait(tomcatPidProcess, 1, TimeUnit.MINUTES);
 
 		String processName = tomcatPidProcess.getDescription();
 
 		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
+
+		Assert.assertFalse(_isServerRunning());
 	}
 
 	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter) throws Exception {

@@ -81,58 +81,63 @@ public interface MavenExecutor {
 
 			Process process = runtime.exec(command, null, new File(projectPath));
 
-			BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			try (BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+				BufferedReader processError = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
 
-			CountDownLatch latch = new CountDownLatch(2);
+				CountDownLatch latch = new CountDownLatch(2);
 
-			CompletableFuture.runAsync(
-				() -> {
-					String line = null;
+				CompletableFuture.runAsync(
+					() -> {
+						String line = null;
 
-					try {
-						while ((line = processOutput.readLine()) != null) {
-							output.append(line);
-							output.append(System.lineSeparator());
+						try {
+							while ((line = processOutput.readLine()) != null) {
+								output.append(line);
+								output.append(System.lineSeparator());
 
-							if (line.contains("BUILD SUCCESS")) {
-								buildSuccess.set(true);
-							}
+								if (line.contains("BUILD SUCCESS")) {
+									buildSuccess.set(true);
+								}
 
-							if (printOutput) {
-								System.out.println(line);
-							}
-						}
-
-						latch.countDown();
-					}
-					catch (Exception e) {
-					}
-				});
-
-			CompletableFuture.runAsync(
-				() -> {
-					String line = null;
-
-					try {
-						while ((line = processError.readLine()) != null) {
-							output.append(line);
-							output.append(System.lineSeparator());
-
-							if (printOutput) {
-								System.err.println(line);
+								if (printOutput) {
+									System.out.println(line);
+								}
 							}
 						}
+						catch (Exception e) {
+							e.printStackTrace(System.err);
+						}
+						finally {
+							latch.countDown();
+						}
+					});
 
-						latch.countDown();
-					}
-					catch (Exception e) {
-					}
-				});
+				CompletableFuture.runAsync(
+					() -> {
+						String line = null;
 
-			latch.await();
+						try {
+							while ((line = processError.readLine()) != null) {
+								output.append(line);
+								output.append(System.lineSeparator());
 
-			exitValue = process.waitFor();
+								if (printOutput) {
+									System.err.println(line);
+								}
+							}
+						}
+						catch (Exception e) {
+							e.printStackTrace(System.err);
+						}
+						finally {
+							latch.countDown();
+						}
+					});
+
+				latch.await();
+
+				exitValue = process.waitFor();
+			}
 		}
 		catch (Exception e) {
 			StringBuilder sb = new StringBuilder();
