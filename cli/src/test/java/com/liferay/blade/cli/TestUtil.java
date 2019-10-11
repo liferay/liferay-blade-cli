@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -46,6 +45,7 @@ import org.w3c.dom.Text;
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
+ *
  */
 public class TestUtil {
 
@@ -54,6 +54,7 @@ public class TestUtil {
 
 		PrintStream originalOutputStream = System.out;
 		PrintStream originalErrorStream = System.err;
+
 		try {
 			System.setOut(outputStream);
 			System.setErr(errorStream);
@@ -69,7 +70,7 @@ public class TestUtil {
 			System.setOut(originalOutputStream);
 			System.setErr(originalErrorStream);
 		}
-		
+
 		String content = outputStream.toString();
 
 		return new BladeTestResults(bladeTest, content, errorStream.toString());
