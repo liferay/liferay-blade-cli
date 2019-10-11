@@ -36,12 +36,14 @@ import java.io.InputStream;
 import java.io.Writer;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -938,6 +940,101 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/loginExt", extJarName);
 
 		_verifyImportPackage(new File(projectPath, "loginExt/build/libs/" + extJarName));
+	}
+
+	@Test
+	public void testCreateWorkspaceGradleExtModuleTargetPlatform() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		File settingsGradle = new File(workspace, "settings.gradle");
+
+		Path settingsGradlePath = settingsGradle.toPath();
+
+		String content = new String(Files.readAllBytes(settingsGradlePath));
+
+		StringBuilder sb = new StringBuilder();
+
+		try (Scanner scanner = new Scanner(content)) {
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+
+				if (line.contains("com.liferay.gradle.plugins.workspace")) {
+					String[] lineSplit = line.split("version: ");
+
+					lineSplit[1] = "\"latest.release\"";
+
+					line = lineSplit[0] + "version: " + lineSplit[1];
+				}
+
+				sb.append(line + System.lineSeparator());
+			}
+		}
+
+		content = sb.toString();
+
+		Files.delete(settingsGradlePath);
+
+		Files.write(settingsGradlePath, content.getBytes(), StandardOpenOption.CREATE_NEW);
+
+		File gradleProperties = new File(workspace, "gradle.properties");
+
+		Path gradlePropertiesPath = gradleProperties.toPath();
+
+		byte[] gradlePropertiesBytes = Files.readAllBytes(gradlePropertiesPath);
+
+		content = new String(gradlePropertiesBytes);
+
+		sb = new StringBuilder();
+
+		try (Scanner scanner = new Scanner(content)) {
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+
+				if (line.contains("liferay.workspace.target.platform.version")) {
+					line = line.substring(line.indexOf("#") + 1);
+				}
+
+				sb.append(line + System.lineSeparator());
+			}
+		}
+
+		content = sb.toString();
+
+		Files.delete(gradlePropertiesPath);
+
+		Files.write(gradlePropertiesPath, content.getBytes(), StandardOpenOption.CREATE_NEW);
+
+		File extDir = new File(workspace, "ext");
+
+		String[] gradleArgs = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", extDir.getAbsolutePath(), "-t", "modules-ext", "-m",
+			"com.liferay.login.web", "loginExt"
+		};
+
+		TestUtil.runBlade(workspace, _extensionsDir, gradleArgs);
+
+		String projectPath = extDir.getAbsolutePath();
+
+		_checkFileExists(projectPath + "/loginExt");
+
+		_contains(
+			_checkFileExists(projectPath + "/loginExt/build.gradle"),
+			new String[] {"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\".*$"});
+
+		_lacks(
+			_checkFileExists(projectPath + "/loginExt/build.gradle"),
+			".*^apply plugin: \"com.liferay.osgi.ext.plugin\".*$");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar"));
+
+		Path extJarPath = GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/loginExt", "com\\.liferay\\.login\\.web-([0-9]\\.[0-9]\\.[0-9])\\.ext\\.jar", true);
+
+		Path extJarPathName = extJarPath.getFileName();
+
+		_verifyImportPackage(new File(projectPath, "loginExt/build/libs/" + extJarPathName.toString()));
 	}
 
 	@Test

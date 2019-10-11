@@ -25,6 +25,10 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.gradle.internal.impldep.com.google.common.base.Objects;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
@@ -62,7 +66,11 @@ public class GradleRunnerUtil {
 		return buildTask;
 	}
 
-	public static void verifyBuildOutput(String projectPath, String fileName) throws IOException {
+	public static Path verifyBuildOutput(String projectPath, String fileName) throws IOException {
+		return verifyBuildOutput(projectPath, fileName, false);
+	}
+
+	public static Path verifyBuildOutput(String projectPath, String fileName, boolean regex) throws IOException {
 		final Path[] projectFilePath = new Path[1];
 
 		Files.walkFileTree(
@@ -73,10 +81,23 @@ public class GradleRunnerUtil {
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					Path pathFileName = file.getFileName();
 
-					if (fileName.equals(pathFileName.toString())) {
+					String pathFileNameString = pathFileName.toString();
+
+					if (Objects.equal(pathFileNameString, fileName)) {
 						projectFilePath[0] = file;
 
 						return FileVisitResult.TERMINATE;
+					}
+					else if (regex) {
+						Pattern fileNamePattern = Pattern.compile(fileName, Pattern.DOTALL);
+
+						Matcher matcher = fileNamePattern.matcher(pathFileNameString);
+
+						if (matcher.find()) {
+							projectFilePath[0] = file;
+
+							return FileVisitResult.TERMINATE;
+						}
 					}
 
 					return FileVisitResult.CONTINUE;
@@ -85,6 +106,8 @@ public class GradleRunnerUtil {
 			});
 
 		Assert.assertNotNull("Unable to find project file " + fileName + " in " + projectPath, projectFilePath[0]);
+
+		return projectFilePath[0];
 	}
 
 	public static void verifyGradleRunnerOutput(BuildTask buildTask) {
