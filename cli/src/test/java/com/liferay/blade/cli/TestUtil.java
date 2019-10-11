@@ -45,7 +45,7 @@ import org.w3c.dom.Text;
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
- *
+ * @author Foo Bar
  */
 public class TestUtil {
 
