@@ -946,17 +946,13 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceGradleExtModuleTargetPlatform() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
-		File extDir = new File(workspace, "ext");
-
 		_makeWorkspace(workspace);
 
 		File settingsGradle = new File(workspace, "settings.gradle");
 
 		Path settingsGradlePath = settingsGradle.toPath();
 
-		byte[] settingsGradleBytes = Files.readAllBytes(settingsGradlePath);
-
-		String content = new String(settingsGradleBytes);
+		String content = new String(Files.readAllBytes(settingsGradlePath));
 
 		StringBuilder sb = new StringBuilder();
 
@@ -997,9 +993,7 @@ public class CreateCommandTest {
 				String line = scanner.nextLine();
 
 				if (line.contains("liferay.workspace.target.platform.version")) {
-					int hashIndex = line.indexOf("#");
-
-					line = line.substring(hashIndex + 1);
+					line = line.substring(line.indexOf("#") + 1);
 				}
 
 				sb.append(line + System.lineSeparator());
@@ -1011,6 +1005,8 @@ public class CreateCommandTest {
 		Files.delete(gradlePropertiesPath);
 
 		Files.write(gradlePropertiesPath, content.getBytes(), StandardOpenOption.CREATE_NEW);
+
+		File extDir = new File(workspace, "ext");
 
 		String[] gradleArgs = {
 			"create", "--base", workspace.getAbsolutePath(), "-d", extDir.getAbsolutePath(), "-t", "modules-ext", "-m",
@@ -1031,19 +1027,14 @@ public class CreateCommandTest {
 			_checkFileExists(projectPath + "/loginExt/build.gradle"),
 			".*^apply plugin: \"com.liferay.osgi.ext.plugin\".*$");
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
+		GradleRunnerUtil.verifyGradleRunnerOutput(GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar"));
 
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		String extJarName = "com\\.liferay\\.login\\.web-([0-9]\\.[0-9]\\.[0-9])\\.ext\\.jar";
-
-		Path extJarPath = GradleRunnerUtil.verifyBuildOutput(projectPath + "/loginExt", extJarName, true);
+		Path extJarPath = GradleRunnerUtil.verifyBuildOutput(
+			projectPath + "/loginExt", "com\\.liferay\\.login\\.web-([0-9]\\.[0-9]\\.[0-9])\\.ext\\.jar", true);
 
 		Path extJarPathName = extJarPath.getFileName();
 
-		extJarName = extJarPathName.toString();
-
-		_verifyImportPackage(new File(projectPath, "loginExt/build/libs/" + extJarName));
+		_verifyImportPackage(new File(projectPath, "loginExt/build/libs/" + extJarPathName.toString()));
 	}
 
 	@Test
