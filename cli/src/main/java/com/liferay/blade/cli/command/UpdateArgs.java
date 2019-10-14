@@ -31,6 +31,10 @@ public class UpdateArgs extends BaseArgs {
 		return _url;
 	}
 
+	public boolean isCheckOnly() {
+		return _checkOnly;
+	}
+
 	public boolean isSnapshots() {
 		return _snapshots;
 	}
@@ -45,6 +49,9 @@ public class UpdateArgs extends BaseArgs {
 
 	@Parameter(description = "Switch to use the snapshot repository.", names = {"-s", "--snapshots"})
 	private boolean _snapshots;
+	
+	@Parameter(description = "Do not update, only check if an update is necessary.", names = {"-c", "--check"})
+	private boolean _checkOnly;
 
 	@Parameter(description = "Override the update URL", hidden = true, names = {"-u", "--url"})
 	private URL _url;

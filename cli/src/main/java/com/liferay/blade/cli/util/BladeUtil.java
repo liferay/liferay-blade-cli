@@ -18,6 +18,8 @@ package com.liferay.blade.cli.util;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.command.SamplesCommand;
+import com.liferay.blade.cli.command.UpdateCommand;
+import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
@@ -33,12 +35,14 @@ import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.net.URL;
-
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -57,6 +61,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * @author Gregory Amerson
@@ -90,7 +96,21 @@ public class BladeUtil {
 
 		downloadLink(zipUrl, target);
 	}
-
+	public static String readTextFileFromURL(String urlString) {
+		try {
+			StringBuilder sb = new StringBuilder();
+			   URL url = new URL(urlString);
+			   try (Scanner scanner = new Scanner(url.openStream())) {
+				   while (scanner.hasNextLine()) {
+					   sb.append(scanner.nextLine() + System.lineSeparator());
+				   }
+			   }
+			   return sb.toString().trim();
+			}
+			catch(IOException e) {
+			   throw new RuntimeException(e);
+			}
+	}
 	public static void downloadLink(String link, Path target) throws IOException {
 		if (_isURLAvailable(link)) {
 			LinkDownloader downloader = new LinkDownloader(link, target);
@@ -101,7 +121,48 @@ public class BladeUtil {
 			throw new RuntimeException("url '" + link + "' is not accessible.");
 		}
 	}
+	public static boolean printUpdateIfAvailable(BladeCLI blade) throws IOException {
+		boolean available;
 
+		String bladeCLIVersion = VersionCommand.getBladeCLIVersion();
+
+		boolean fromSnapshots = false;
+
+		if (bladeCLIVersion == null) {
+			throw new IOException("Could not determine blade version");
+		}
+
+		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
+
+		String updateVersion = "";
+
+		try {
+			updateVersion = UpdateCommand.getUpdateVersion(fromSnapshots);
+
+			available = UpdateCommand.shouldUpdate(bladeCLIVersion, updateVersion);
+
+			if (available) {
+				blade.out(System.lineSeparator() + "blade version " + bladeCLIVersion + System.lineSeparator());
+				blade.out(
+					"Run \'blade update" + (fromSnapshots ? " --snapshots" : "") + "\' to update to " +
+						(fromSnapshots ? "the latest snapshot " : " ") + "version " + updateVersion +
+							System.lineSeparator());
+			}
+			else {
+				if (fromSnapshots && !UpdateCommand.equal(bladeCLIVersion, updateVersion)) {
+					blade.out(
+						String.format(
+							"blade version %s is newer than latest snapshot %s; skipping update.\n", bladeCLIVersion,
+							updateVersion));
+				}
+			}
+		}
+		catch (IOException ioe) {
+			available = false;
+		}
+
+		return available;
+	}
 	public static File findParentFile(File dir, String[] fileNames, boolean checkParents) {
 		if (dir == null) {
 			return null;
@@ -128,6 +189,38 @@ public class BladeUtil {
 		}
 
 		return null;
+	}
+	
+	public static Path getRunningJar() {
+		try {
+			return new File(BladeCLI.class.getProtectionDomain().getCodeSource().getLocation()
+				    .toURI()).toPath();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static String getMD5(Path path) {
+		try (FileChannel fileChannel = FileChannel.open(path)) {
+			
+			long fileChannelSize = fileChannel.size();
+			
+			MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannelSize);
+		    MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+		    messageDigest.update(buffer);
+		    
+		    byte[] digest = messageDigest.digest();
+		    
+		    String md5Sum = DatatypeConverter
+		      .printHexBinary(digest);
+		    
+		    buffer.clear();
+		    
+		    return md5Sum.toUpperCase();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static List<Properties> getAppServerProperties(File dir) {

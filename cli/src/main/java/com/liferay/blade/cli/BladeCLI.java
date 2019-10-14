@@ -28,6 +28,7 @@ import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
+import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.Prompter;
 
@@ -259,7 +260,7 @@ public class BladeCLI {
 			try {
 				_writeLastUpdateCheck();
 
-				printUpdateIfAvailable();
+				BladeUtil.printUpdateIfAvailable(this);
 			}
 			catch (IOException ioe) {
 				error(ioe);
@@ -267,48 +268,7 @@ public class BladeCLI {
 		}
 	}
 
-	public boolean printUpdateIfAvailable() throws IOException {
-		boolean available;
-
-		String bladeCLIVersion = VersionCommand.getBladeCLIVersion();
-
-		boolean fromSnapshots = false;
-
-		if (bladeCLIVersion == null) {
-			throw new IOException("Could not determine blade version");
-		}
-
-		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
-
-		String updateVersion = "";
-
-		try {
-			updateVersion = UpdateCommand.getUpdateVersion(fromSnapshots);
-
-			available = UpdateCommand.shouldUpdate(bladeCLIVersion, updateVersion);
-
-			if (available) {
-				out(System.lineSeparator() + "blade version " + bladeCLIVersion + System.lineSeparator());
-				out(
-					"Run \'blade update" + (fromSnapshots ? " --snapshots" : "") + "\' to update to " +
-						(fromSnapshots ? "the latest snapshot " : " ") + "version " + updateVersion +
-							System.lineSeparator());
-			}
-			else {
-				if (fromSnapshots && !UpdateCommand.equal(bladeCLIVersion, updateVersion)) {
-					out(
-						String.format(
-							"blade version %s is newer than latest snapshot %s; skipping update.\n", bladeCLIVersion,
-							updateVersion));
-				}
-			}
-		}
-		catch (IOException ioe) {
-			available = false;
-		}
-
-		return available;
-	}
+	
 
 	public void printUsage() {
 		StringBuilder usageString = new StringBuilder();
@@ -342,7 +302,7 @@ public class BladeCLI {
 	}
 
 	public void run(String[] args) throws Exception {
-		try {
+		try {			
 			Extensions extensions = getExtensions();
 
 			String basePath = _extractBasePath(args);

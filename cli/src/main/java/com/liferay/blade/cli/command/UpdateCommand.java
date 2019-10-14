@@ -26,13 +26,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import java.net.URL;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -99,23 +98,59 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return currentSemver.equals(updateSemver);
 	}
 
-	public static String getUpdateJarUrl(UpdateArgs updateArgs) throws IOException {
-		String url = _RELEASES_REPO_URL;
+	public static String getUpdateJarMD5Url(String url, boolean snapshots) throws IOException {
+		if (url == null) {
+			if (snapshots) {
+				url = SNAPSHOTS_REPO_URL;
+			}
+			else if (_hasUpdateUrlFromBladeDir()) {
+				url = _getUpdateUrlFromBladeDir();
+			}
+			else {
+				url = RELEASES_REPO_URL;
+			}
+		}
 
-		boolean snapshots = updateArgs.isSnapshots();
+		Connection connection = Jsoup.connect(url + "maven-metadata.xml");
+
+		connection = connection.parser(Parser.xmlParser());
+
+		Document document = connection.get();
+
+		Elements versionElements = document.select("version");
+
+		Element lastVersionElement = versionElements.last();
+
+		String version = lastVersionElement.text();
 
 		if (snapshots) {
-			url = _SNAPSHOTS_REPO_URL;
+			connection.url(url + "/" + version + "/maven-metadata.xml");
+
+			document = connection.get();
+
+			Elements valueElements = document.select("snapshotVersion > value");
+
+			Element valueElement = valueElements.get(0);
+
+			String snapshotVersion = valueElement.text();
+
+			return url + "/" + version + "/com.liferay.blade.cli-" + snapshotVersion + ".jar.md5";
 		}
 
-		if (_hasUpdateUrlFromBladeDir()) {
-			url = _getUpdateUrlFromBladeDir();
-		}
-
-		URL updateUrl = updateArgs.getUrl();
-
-		if (updateUrl != null) {
-			url = updateUrl.toString();
+		return url + "/" + version + "/com.liferay.blade.cli-" + version + ".jar.md5";
+	}
+	
+	public static String getUpdateJarUrl(String url, boolean snapshots) throws IOException {
+		if (url == null) {
+			if (snapshots) {
+				url = SNAPSHOTS_REPO_URL;
+			}
+			else if (_hasUpdateUrlFromBladeDir()) {
+				url = _getUpdateUrlFromBladeDir();
+			}
+			else {
+				url = RELEASES_REPO_URL;
+			}
 		}
 
 		Connection connection = Jsoup.connect(url + "maven-metadata.xml");
@@ -148,10 +183,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	public static String getUpdateVersion(boolean snapshotsArg) throws IOException {
-		String url = _RELEASES_REPO_URL;
+		String url = RELEASES_REPO_URL;
 
 		if (snapshotsArg) {
-			url = _SNAPSHOTS_REPO_URL;
+			url = SNAPSHOTS_REPO_URL;
 		}
 
 		if (_hasUpdateUrlFromBladeDir()) {
@@ -189,6 +224,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
+		
+		boolean snapshot = currentVersion.contains("SNAPSHOT");
+		
 		Matcher matcher = _versionPattern.matcher(currentVersion);
 
 		matcher.find();
@@ -209,11 +247,13 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
-		if (updateSemver.compareTo(currentSemver) > 0) {
-			return true;
-		}
+		//if (updateSemver.compareTo(currentSemver) > 0) {
+			if (!_doesMD5Match(snapshot)) {
+				return true;
+			}
+		//}
 
-		if (currentVersion.contains("SNAPSHOT") && updateVersion.contains("-")) {
+		if (snapshot && updateVersion.contains("-")) {
 			matcher = _bladeSnapshotPattern.matcher(currentVersion);
 
 			matcher.find();
@@ -226,12 +266,36 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
 
-			if (updateSnapshot > currentSnapshot) {
-				return true;
-			}
-		}
+			//if (updateSnapshot > currentSnapshot) {
+				if (!_doesMD5Match(snapshot))
+					return true;
+				}
+			//}
+		
 
 		return false;
+	}
+	
+	private static boolean _doesMD5Match(boolean snapshot) {
+		Path currentJarPath = BladeUtil.getRunningJar();
+		
+		String currentJarMD5 = BladeUtil.getMD5(currentJarPath);
+		
+		
+		String updateJarMD5Url;
+		
+		try {
+			updateJarMD5Url = getUpdateJarMD5Url(null, snapshot);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+		String updateJarMD5 = BladeUtil.readTextFileFromURL(updateJarMD5Url);
+		
+		updateJarMD5 = updateJarMD5.toUpperCase();
+		
+		return Objects.equals(updateJarMD5, currentJarMD5);
 	}
 
 	public UpdateCommand() {
@@ -252,6 +316,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		String currentVersion = "0.0.0.0";
 
 		boolean snapshotsArg = updateArgs.isSnapshots();
+		
+		boolean checkUpdateOnly = updateArgs.isCheckOnly();
 
 		String updateVersion = "";
 
@@ -261,14 +327,26 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			try {
 				currentVersion = VersionCommand.getBladeCLIVersion();
 
-				bladeCLI.out("Current blade version " + currentVersion);
+				if (!checkUpdateOnly) {
+					bladeCLI.out("Current blade version " + currentVersion);
+				}
 			}
 			catch (IOException ioe) {
-				bladeCLI.error("Could not determine current blade version, continuing with update.");
+				if (!checkUpdateOnly) {
+					bladeCLI.error("Could not determine current blade version, continuing with update.");
+				}
+				else {
+					throw new RuntimeException(ioe);
+				}
 			}
 
 			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion);
 
+			if (checkUpdateOnly) {
+				bladeCLI.out(shouldUpdate ? "true" : "false");
+				
+				return;
+			}
 			if (currentVersion.contains("SNAPSHOT")) {
 				if (snapshotsArg) {
 					shouldUpdate = true;
@@ -286,7 +364,11 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				bladeCLI.out("Updating from a snapshot to the newest released version.");
 			}
 
-			String url = getUpdateJarUrl(updateArgs);
+			String updateUrl = null;
+			if (updateArgs.getUrl() != null) {
+				updateUrl = updateArgs.getUrl().toString();
+			}
+			String url = getUpdateJarUrl(updateUrl, snapshotsArg);
 
 			if (shouldUpdate) {
 				bladeCLI.out("Updating from: " + url);
@@ -425,9 +507,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	private static final String _BLADE_CLI_CONTEXT = "com/liferay/blade/com.liferay.blade.cli/";
 
-	private static final String _RELEASES_REPO_URL = _BASE_CDN_URL + "liferay-public-releases/" + _BLADE_CLI_CONTEXT;
+	public static final String RELEASES_REPO_URL = _BASE_CDN_URL + "liferay-public-releases/" + _BLADE_CLI_CONTEXT;
 
-	private static final String _SNAPSHOTS_REPO_URL = _BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
+	public static final String SNAPSHOTS_REPO_URL = _BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
 
 	private static final Pattern _bladeSnapshotPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+).SNAPSHOT(\\d+)");
 	private static final Pattern _nexusSnapshotPattern = Pattern.compile(
