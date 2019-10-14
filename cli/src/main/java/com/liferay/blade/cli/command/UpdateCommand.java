@@ -223,8 +223,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return updateVersion;
 	}
 
-	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
-		
+	public static boolean shouldUpdate(String currentVersion, String updateVersion, String url) {
+
 		boolean snapshot = currentVersion.contains("SNAPSHOT");
 		
 		Matcher matcher = _versionPattern.matcher(currentVersion);
@@ -247,11 +247,11 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
-		//if (updateSemver.compareTo(currentSemver) > 0) {
-			if (!_doesMD5Match(snapshot)) {
+		if (updateSemver.compareTo(currentSemver) > 0) {
+			if (!_doesMD5Match(url, snapshot)) {
 				return true;
 			}
-		//}
+		}
 
 		if (snapshot && updateVersion.contains("-")) {
 			matcher = _bladeSnapshotPattern.matcher(currentVersion);
@@ -266,36 +266,36 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
 
-			//if (updateSnapshot > currentSnapshot) {
-				if (!_doesMD5Match(snapshot))
+			if (updateSnapshot > currentSnapshot) {
+				if (!_doesMD5Match(url, snapshot))
 					return true;
 				}
-			//}
+			}
 		
 
 		return false;
 	}
+	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
+		return shouldUpdate(currentVersion, updateVersion, null);
+	}
 	
-	private static boolean _doesMD5Match(boolean snapshot) {
-		Path currentJarPath = BladeUtil.getRunningJar();
-		
-		String currentJarMD5 = BladeUtil.getMD5(currentJarPath);
-		
-		
-		String updateJarMD5Url;
-		
+	private static boolean _doesMD5Match(String url, boolean snapshot) {
 		try {
-			updateJarMD5Url = getUpdateJarMD5Url(null, snapshot);
+			Path currentJarPath = BladeUtil.getRunningJarFile();
+			
+			String currentJarMD5 = BladeUtil.getMD5(currentJarPath);
+			
+			String updateJarMD5Url = getUpdateJarMD5Url(url, snapshot);
+			
+			String updateJarMD5 = BladeUtil.readTextFileFromURL(updateJarMD5Url);
+			
+			updateJarMD5 = updateJarMD5.toUpperCase();
+			
+			return Objects.equals(updateJarMD5, currentJarMD5);
 		}
 		catch (Exception e) {
-			throw new RuntimeException(e);
 		}
-		
-		String updateJarMD5 = BladeUtil.readTextFileFromURL(updateJarMD5Url);
-		
-		updateJarMD5 = updateJarMD5.toUpperCase();
-		
-		return Objects.equals(updateJarMD5, currentJarMD5);
+		return false;
 	}
 
 	public UpdateCommand() {
@@ -320,8 +320,16 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		boolean checkUpdateOnly = updateArgs.isCheckOnly();
 
 		String updateVersion = "";
+		
+		String updateUrl = null;
+		if (updateArgs.getUrl() != null) {
+			updateUrl = updateArgs.getUrl().toString();
+		}
+		String url = null;
 
 		try {
+			getUpdateJarUrl(updateUrl, snapshotsArg);
+			
 			updateVersion = getUpdateVersion(snapshotsArg);
 
 			try {
@@ -340,7 +348,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 			}
 
-			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion);
+			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion, url);
 
 			if (checkUpdateOnly) {
 				bladeCLI.out(shouldUpdate ? "true" : "false");
@@ -363,12 +371,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			if (currentVersion.contains("SNAPSHOT") && !snapshotsArg && shouldUpdate) {
 				bladeCLI.out("Updating from a snapshot to the newest released version.");
 			}
-
-			String updateUrl = null;
-			if (updateArgs.getUrl() != null) {
-				updateUrl = updateArgs.getUrl().toString();
-			}
-			String url = getUpdateJarUrl(updateUrl, snapshotsArg);
 
 			if (shouldUpdate) {
 				bladeCLI.out("Updating from: " + url);

@@ -25,8 +25,6 @@ import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
-import com.liferay.blade.cli.command.UpdateCommand;
-import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CombinedClassLoader;

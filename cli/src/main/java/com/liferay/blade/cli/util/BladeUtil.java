@@ -191,7 +191,7 @@ public class BladeUtil {
 		return null;
 	}
 	
-	public static Path getRunningJar() {
+	public static Path getRunningJarFile() {
 		try {
 			return new File(BladeCLI.class.getProtectionDomain().getCodeSource().getLocation()
 				    .toURI()).toPath();

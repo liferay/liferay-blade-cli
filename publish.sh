@@ -203,8 +203,21 @@ if [ "$localBladeVersion" != "$updatedBladeVersion" ]; then
 	echo After blade updated versions do not match.
 	echo "Built blade version = $localBladeVersion"
 	echo "Updated blade version = $updatedBladeVersion"
-	rm -rf /tmp/$timestamp
-	exit 1
+else
+	if [ "$releaseType" = "snapshots" ]; then
+        bladeUpdateCheck=$(blade update --snapshots --check)
+    else
+        bladeUpdateCheck=$(blade update --check)
+    fi
+
+	if [ "$bladeUpdateCheck" = "true" ]; then
+        echo "Error: blade update --check returned true when it should have returned false."
+        rm -rf /tmp/$timestamp
+        exit 1
+	else
+        echo "Success: blade update --check returned $bladeUpdateCheck."
+	fi
 fi
+
 
 rm -rf /tmp/$timestamp
