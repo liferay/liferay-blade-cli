@@ -213,12 +213,12 @@ else
         bladeUpdateCheck=$(blade update --check)
     fi
 
-	if [ "$bladeUpdateCheck" = "true" ]; then
+	if [ "$bladeUpdateCheck" = "false" ]; then
+        echo "Success: blade update --check returned $bladeUpdateCheck."
+	else
         echo "Error: blade update --check returned true when it should have returned false."
         rm -rf /tmp/$timestamp
         exit 1
-	else
-        echo "Success: blade update --check returned $bladeUpdateCheck."
 	fi
 fi
 
