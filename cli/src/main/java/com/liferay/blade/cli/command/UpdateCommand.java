@@ -25,8 +25,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,6 +50,12 @@ import org.jsoup.select.Elements;
  * @author Gregory Amerson
  */
 public class UpdateCommand extends BaseCommand<UpdateArgs> {
+
+	public static final String RELEASES_REPO_URL =
+		UpdateCommand._BASE_CDN_URL + "liferay-public-releases/" + UpdateCommand._BLADE_CLI_CONTEXT;
+
+	public static final String SNAPSHOTS_REPO_URL =
+		UpdateCommand._BASE_CDN_URL + "liferay-public-snapshots/" + UpdateCommand._BLADE_CLI_CONTEXT;
 
 	public static boolean equal(String currentVersion, String updateVersion) {
 		Matcher matcher = _versionPattern.matcher(currentVersion);
@@ -140,7 +148,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		return url + "/" + version + "/com.liferay.blade.cli-" + version + ".jar.md5";
 	}
-	
+
 	public static String getUpdateJarUrl(String url, boolean snapshots) throws IOException {
 		if (url == null) {
 			if (snapshots) {
@@ -224,10 +232,13 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return updateVersion;
 	}
 
-	public static boolean shouldUpdate(String currentVersion, String updateVersion, String url) {
+	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
+		return shouldUpdate(currentVersion, updateVersion, null);
+	}
 
+	public static boolean shouldUpdate(String currentVersion, String updateVersion, String url) {
 		boolean snapshot = currentVersion.contains("SNAPSHOT");
-		
+
 		Matcher matcher = _versionPattern.matcher(currentVersion);
 
 		matcher.find();
@@ -248,10 +259,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
-		if (updateSemver.compareTo(currentSemver) > 0) {
-			if (!_doesMD5Match(url, snapshot)) {
-				return true;
-			}
+		if ((updateSemver.compareTo(currentSemver) > 0) && !_doesMD5Match(url, snapshot)) {
+			return true;
 		}
 
 		if (snapshot && updateVersion.contains("-")) {
@@ -267,37 +276,11 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
 
-			if (updateSnapshot > currentSnapshot) {
-				if (!_doesMD5Match(url, snapshot))
-					return true;
-				}
+			if ((updateSnapshot > currentSnapshot) && !_doesMD5Match(url, snapshot)) {
+				return true;
 			}
-		
-
-		return false;
-	}
-	public static boolean shouldUpdate(String currentVersion, String updateVersion) {
-		return shouldUpdate(currentVersion, updateVersion, null);
-	}
-	
-	private static boolean _doesMD5Match(String url, boolean snapshot) {
-		try {
-			Path currentJarPath = BladeUtil.getRunningJarFile();
-			
-			String currentJarMD5 = BladeUtil.getMD5(currentJarPath);
-			
-			String updateJarMD5Url = getUpdateJarMD5Url(url, snapshot);
-			
-			String updateJarMD5 = BladeUtil.readTextFileFromURL(updateJarMD5Url);
-			
-			updateJarMD5 = updateJarMD5.toUpperCase();
-
-			boolean equal = Objects.equals(updateJarMD5, currentJarMD5);
-			
-			return equal;
 		}
-		catch (Exception e) {
-		}
+
 		return false;
 	}
 
@@ -319,29 +302,33 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		String currentVersion = "0.0.0.0";
 
 		boolean snapshotsArg = updateArgs.isSnapshots();
-		
+
 		boolean checkUpdateOnly = updateArgs.isCheckOnly();
 
 		String updateVersion = "";
-		
+
 		String updateUrl = null;
+
 		if (_hasUpdateUrlFromBladeDir()) {
 			try {
 				updateArgs.setUrl(new URL(_getUpdateUrlFromBladeDir()));
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			}
+			catch (MalformedURLException murle) {
+				throw new RuntimeException(murle);
 			}
 		}
+
 		if (updateArgs.getUrl() != null) {
-			updateUrl = updateArgs.getUrl().toString();
+			URL updateUrlVar = updateArgs.getUrl();
+
+			updateUrl = updateUrlVar.toString();
 		}
+
 		String url = null;
-		
 
 		try {
 			url = getUpdateJarUrl(updateUrl, snapshotsArg);
-			
+
 			updateVersion = getUpdateVersion(snapshotsArg);
 
 			try {
@@ -364,9 +351,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			if (checkUpdateOnly) {
 				bladeCLI.out(shouldUpdate ? "true" : "false");
-				
+
 				return;
 			}
+
 			if (currentVersion.contains("SNAPSHOT")) {
 				if (snapshotsArg) {
 					shouldUpdate = true;
@@ -488,6 +476,26 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return UpdateArgs.class;
 	}
 
+	private static boolean _doesMD5Match(String url, boolean snapshot) {
+		try {
+			Path currentJarPath = BladeUtil.getRunningJarFile();
+
+			String currentJarMD5 = BladeUtil.getMD5(currentJarPath);
+
+			String updateJarMD5Url = getUpdateJarMD5Url(url, snapshot);
+
+			String updateJarMD5 = BladeUtil.readTextFileFromURL(updateJarMD5Url);
+
+			updateJarMD5 = updateJarMD5.toUpperCase();
+
+			return Objects.equals(updateJarMD5, currentJarMD5);
+		}
+		catch (Exception e) {
+		}
+
+		return false;
+	}
+
 	private static String _getUpdateUrlFromBladeDir() {
 		String url = "no url";
 
@@ -503,7 +511,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				ioe.printStackTrace();
 			}
 		}
-		
+
 		return url;
 	}
 
@@ -513,17 +521,13 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		if (_updateUrlFile.exists() && _updateUrlFile.isFile() && (_updateUrlFile.length() > 0)) {
 			hasUpdate = true;
 		}
-		
+
 		return hasUpdate;
 	}
 
 	private static final String _BASE_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/repositories/";
 
 	private static final String _BLADE_CLI_CONTEXT = "com/liferay/blade/com.liferay.blade.cli/";
-
-	public static final String RELEASES_REPO_URL = _BASE_CDN_URL + "liferay-public-releases/" + _BLADE_CLI_CONTEXT;
-
-	public static final String SNAPSHOTS_REPO_URL = _BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
 
 	private static final Pattern _bladeSnapshotPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+).SNAPSHOT(\\d+)");
 	private static final Pattern _nexusSnapshotPattern = Pattern.compile(

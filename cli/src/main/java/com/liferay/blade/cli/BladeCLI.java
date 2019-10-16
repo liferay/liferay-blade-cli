@@ -266,8 +266,6 @@ public class BladeCLI {
 		}
 	}
 
-	
-
 	public void printUsage() {
 		StringBuilder usageString = new StringBuilder();
 
@@ -300,7 +298,7 @@ public class BladeCLI {
 	}
 
 	public void run(String[] args) throws Exception {
-		try {			
+		try {
 			Extensions extensions = getExtensions();
 
 			String basePath = _extractBasePath(args);

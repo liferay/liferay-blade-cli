@@ -16,13 +16,13 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.util.BladeUtil;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import com.liferay.blade.cli.util.BladeUtil;
 
 /**
  * @author Vernon Singleton
@@ -36,7 +36,8 @@ public class BladeCliTest {
 
 		BladeTest bladeTest = bladeTestBuilder.build();
 
-		Assert.assertTrue("New update should be available from snapshots.", BladeUtil.printUpdateIfAvailable(bladeTest));
+		Assert.assertTrue(
+			"New update should be available from snapshots.", BladeUtil.printUpdateIfAvailable(bladeTest));
 	}
 
 	@Rule

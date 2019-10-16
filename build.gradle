@@ -103,9 +103,9 @@ dockerPublishSnapshots {
 		args.addAll(['snapshots', '--local'])
 	}
 
-    if (skipTests) {
-        args.add('--skip-tests')
-    }
+	if (skipTests) {
+		args.add('--skip-tests')
+	}
 	commandLine args
 }
 
@@ -131,10 +131,10 @@ dockerPublishRelease {
 	else {
 		args.add('--local')
 	}
-    
-    if (skipTests) {
-        args.add('--skip-tests')
-    }
+
+	if (skipTests) {
+		args.add('--skip-tests')
+	}
 	commandLine args
 }
 
