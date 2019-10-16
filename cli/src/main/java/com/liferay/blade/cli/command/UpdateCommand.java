@@ -25,7 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -290,8 +291,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			String updateJarMD5 = BladeUtil.readTextFileFromURL(updateJarMD5Url);
 			
 			updateJarMD5 = updateJarMD5.toUpperCase();
+
+			boolean equal = Objects.equals(updateJarMD5, currentJarMD5);
 			
-			return Objects.equals(updateJarMD5, currentJarMD5);
+			return equal;
 		}
 		catch (Exception e) {
 		}
@@ -322,13 +325,22 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		String updateVersion = "";
 		
 		String updateUrl = null;
+		if (_hasUpdateUrlFromBladeDir()) {
+			try {
+				updateArgs.setUrl(new URL(_getUpdateUrlFromBladeDir()));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		if (updateArgs.getUrl() != null) {
 			updateUrl = updateArgs.getUrl().toString();
 		}
 		String url = null;
+		
 
 		try {
-			getUpdateJarUrl(updateUrl, snapshotsArg);
+			url = getUpdateJarUrl(updateUrl, snapshotsArg);
 			
 			updateVersion = getUpdateVersion(snapshotsArg);
 
@@ -348,7 +360,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 			}
 
-			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion, url);
+			boolean shouldUpdate = shouldUpdate(currentVersion, updateVersion, updateUrl);
 
 			if (checkUpdateOnly) {
 				bladeCLI.out(shouldUpdate ? "true" : "false");
@@ -491,7 +503,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				ioe.printStackTrace();
 			}
 		}
-
+		
 		return url;
 	}
 
@@ -501,7 +513,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		if (_updateUrlFile.exists() && _updateUrlFile.isFile() && (_updateUrlFile.length() > 0)) {
 			hasUpdate = true;
 		}
-
+		
 		return hasUpdate;
 	}
 
