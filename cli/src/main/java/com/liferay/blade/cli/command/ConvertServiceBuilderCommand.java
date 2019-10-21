@@ -53,6 +53,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 	public ConvertServiceBuilderCommand(BladeCLI bladeCLI, ConvertArgs convertArgs) throws Exception {
 		_bladeCLI = bladeCLI;
+
 		_convertArgs = convertArgs;
 
 		File baseDir = new File(_convertArgs.getBase());
