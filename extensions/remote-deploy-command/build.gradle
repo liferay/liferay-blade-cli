@@ -1,6 +1,6 @@
 buildscript {
 	dependencies {
-		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "4.3.0"
 	}
 
 	repositories {
@@ -20,7 +20,7 @@ apply plugin: "java"
 apply plugin: "maven-publish"
 
 dependencies {
-	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
+	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "4.3.0"
 	compile group: "com.liferay.blade", name: "com.liferay.blade.cli", version: "latest.integration"
 
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"

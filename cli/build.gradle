@@ -2,7 +2,7 @@ import de.undercouch.gradle.tasks.download.Download
 
 buildscript {
 	dependencies {
-		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "4.3.0"
 		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
 	}
 
@@ -70,7 +70,7 @@ createWrapperZip {
 dependencies {
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.14-SNAPSHOT", changing: true
 
-	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
+	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "4.3.0"
 	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
 	compile group: "com.liferay", name: "com.liferay.project.templates", version: "4.5.3"
 	compile group: "commons-io", name: "commons-io", version: "2.6"
