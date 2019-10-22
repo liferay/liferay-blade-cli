@@ -270,9 +270,9 @@ test {
 }
 
 unzipManifest {
-	from zipTree("${buildDir}/libs/blade.jar")
-	into "$buildDir/classes/java/main/"
-	include '**/MANIFEST.MF'
+	from zipTree(jar.archivePath)
+	into sourceSets.main.output.classesDir
+	include '/META-INF/MANIFEST.MF'
 }
 
 unzipPortal {
