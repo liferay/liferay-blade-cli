@@ -29,6 +29,7 @@ task copyMavenProfileJar(type: Copy)
 task createToolingZip(type:Zip)
 task createWrapperZip(type:Zip)
 task downloadPortal(type: Download)
+task unzipManifest(type: Copy)
 task unzipPortal(type: Copy)
 
 configurations {
@@ -222,7 +223,7 @@ sourceSets {
 }
 
 test {
-	dependsOn jar, unzipPortal
+	dependsOn jar, unzipManifest, unzipPortal
 
 	systemProperty "bladeJarPath", jar.archivePath
 	systemProperty "buildDir", "${buildDir}"
@@ -266,6 +267,12 @@ test {
 	}
 
 	maxParallelForks = forks
+}
+
+unzipManifest {
+	from zipTree("${buildDir}/libs/blade.jar")
+	into "$buildDir/classes/java/main/"
+	include '**/MANIFEST.MF'
 }
 
 unzipPortal {

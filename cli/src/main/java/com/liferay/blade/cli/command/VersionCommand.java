@@ -23,6 +23,9 @@ import java.io.InputStream;
 
 import java.net.URL;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.jar.Attributes;
@@ -36,22 +39,37 @@ import org.osgi.framework.Constants;
 public class VersionCommand extends BaseCommand<VersionArgs> {
 
 	public static String getBladeCLIVersion() throws IOException {
-		ClassLoader classLoader = BladeCLI.class.getClassLoader();
+		Path path = UpdateCommand.getRunningJarFile();
 
-		Enumeration<URL> resources = classLoader.getResources("META-INF/MANIFEST.MF");
+		if (Files.isDirectory(path)) {
+			Path manifestPath = path.resolve("META-INF/MANIFEST.MF");
 
-		while (resources.hasMoreElements()) {
-			URL url = resources.nextElement();
-
-			try (InputStream inputStream = url.openStream()) {
+			try (InputStream inputStream = Files.newInputStream(manifestPath)) {
 				Manifest manifest = new Manifest(inputStream);
 
-				Attributes attributes = manifest.getMainAttributes();
+				String version = _getVersionFromManifest(manifest);
 
-				String bundleSymbolicName = attributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
+				if (version != null) {
+					return version;
+				}
+			}
+		}
+		else {
+			ClassLoader classLoader = BladeCLI.class.getClassLoader();
 
-				if (Objects.equals("com.liferay.blade.cli", bundleSymbolicName)) {
-					return attributes.getValue(Constants.BUNDLE_VERSION);
+			Enumeration<URL> resources = classLoader.getResources("META-INF/MANIFEST.MF");
+
+			while (resources.hasMoreElements()) {
+				URL url = resources.nextElement();
+
+				try (InputStream inputStream = url.openStream()) {
+					Manifest manifest = new Manifest(inputStream);
+
+					String version = _getVersionFromManifest(manifest);
+
+					if (version != null) {
+						return version;
+					}
 				}
 			}
 		}
@@ -82,6 +100,18 @@ public class VersionCommand extends BaseCommand<VersionArgs> {
 	@Override
 	public Class<VersionArgs> getArgsClass() {
 		return VersionArgs.class;
+	}
+
+	private static String _getVersionFromManifest(Manifest manifest) {
+		Attributes attributes = manifest.getMainAttributes();
+
+		String bundleSymbolicName = attributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
+
+		if (Objects.equals("com.liferay.blade.cli", bundleSymbolicName)) {
+			return attributes.getValue(Constants.BUNDLE_VERSION);
+		}
+
+		return null;
 	}
 
 }

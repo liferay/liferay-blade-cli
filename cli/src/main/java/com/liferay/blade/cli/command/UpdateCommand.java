@@ -27,17 +27,27 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import java.security.CodeSource;
+import java.security.MessageDigest;
+import java.security.ProtectionDomain;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -105,6 +115,25 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
 		return currentSemver.equals(updateSemver);
+	}
+
+	public static Path getRunningJarFile() {
+		try {
+			ProtectionDomain pd = BladeCLI.class.getProtectionDomain();
+
+			CodeSource cs = pd.getCodeSource();
+
+			URL location = cs.getLocation();
+
+			URI locationUri = location.toURI();
+
+			File runningJarFile = new File(locationUri);
+
+			return runningJarFile.toPath();
+		}
+		catch (URISyntaxException urise) {
+			throw new RuntimeException(urise);
+		}
 	}
 
 	public static String getUpdateJarMD5Url(String url, boolean snapshots) throws IOException {
@@ -478,13 +507,13 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	private static boolean _doesMD5Match(String url, boolean snapshot) {
 		try {
-			Path currentJarPath = BladeUtil.getRunningJarFile();
+			Path currentJarPath = getRunningJarFile();
 
-			String currentJarMD5 = BladeUtil.getMD5(currentJarPath);
+			String currentJarMD5 = _getMD5(currentJarPath);
 
 			String updateJarMD5Url = getUpdateJarMD5Url(url, snapshot);
 
-			String updateJarMD5 = BladeUtil.readTextFileFromURL(updateJarMD5Url);
+			String updateJarMD5 = _readTextFileFromURL(updateJarMD5Url);
 
 			updateJarMD5 = updateJarMD5.toUpperCase();
 
@@ -494,6 +523,29 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 
 		return false;
+	}
+
+	private static String _getMD5(Path path) {
+		try (FileChannel fileChannel = FileChannel.open(path)) {
+			long fileChannelSize = fileChannel.size();
+
+			MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannelSize);
+
+			MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+
+			messageDigest.update(buffer);
+
+			byte[] digest = messageDigest.digest();
+
+			String md5Sum = DatatypeConverter.printHexBinary(digest);
+
+			buffer.clear();
+
+			return md5Sum.toUpperCase();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static String _getUpdateUrlFromBladeDir() {
@@ -523,6 +575,26 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 
 		return hasUpdate;
+	}
+
+	private static String _readTextFileFromURL(String urlString) {
+		try {
+			StringBuilder sb = new StringBuilder();
+			URL url = new URL(urlString);
+
+			try (Scanner scanner = new Scanner(url.openStream())) {
+				while (scanner.hasNextLine()) {
+					sb.append(scanner.nextLine() + System.lineSeparator());
+				}
+			}
+
+			String returnValue = sb.toString();
+
+			return returnValue.trim();
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
 	}
 
 	private static final String _BASE_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/repositories/";
