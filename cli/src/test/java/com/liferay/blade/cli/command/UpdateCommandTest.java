@@ -16,9 +16,6 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeTestResults;
-import com.liferay.blade.cli.TestUtil;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -111,17 +108,6 @@ public class UpdateCommandTest {
 			"currentVersion = " + currentVersion + " should be the latest snapshot " + updatedVersion +
 				" but it is not",
 			UpdateCommand.equal(currentVersion, updatedVersion));
-	}
-
-	@Test
-	public void testCurrentVersionWithNoManifest() throws Exception {
-		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, false, "version");
-
-		String errors = bladeTestResults.getErrors();
-
-		String expectedErrorMessage = "Could not determine version.";
-
-		Assert.assertEquals(expectedErrorMessage, errors.trim());
 	}
 
 	@Ignore
