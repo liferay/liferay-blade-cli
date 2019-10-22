@@ -491,7 +491,6 @@ public class BladeCLI {
 		}
 		catch (Throwable e) {
 			error(e);
-			e.printStackTrace();
 		}
 		finally {
 			if (_extensionsClassLoaderSupplier != null) {

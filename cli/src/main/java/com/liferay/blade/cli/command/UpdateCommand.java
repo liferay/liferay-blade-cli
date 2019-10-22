@@ -119,11 +119,11 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	public static Path getRunningJarFile() {
 		try {
-			ProtectionDomain pd = BladeCLI.class.getProtectionDomain();
+			ProtectionDomain protectionDomain = BladeCLI.class.getProtectionDomain();
 
-			CodeSource cs = pd.getCodeSource();
+			CodeSource codeSource = protectionDomain.getCodeSource();
 
-			URL location = cs.getLocation();
+			URL location = codeSource.getLocation();
 
 			URI locationUri = location.toURI();
 

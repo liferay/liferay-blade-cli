@@ -43,6 +43,8 @@ public class BladeCliTest {
 
 		String output = results.getOutput();
 
+		output = output.trim();
+
 		boolean containsFalse = output.equals("false");
 
 		Assert.assertTrue("Current jar should be the latest version", containsFalse);
