@@ -23,7 +23,7 @@ import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.project.templates.ProjectTemplates;
-import com.liferay.project.templates.ProjectTemplatesArgs;
+import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -234,7 +235,14 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		File dir = projectTemplatesArgs.getDestinationDir();
 		String name = projectTemplatesArgs.getName();
 
-		new ProjectTemplates(projectTemplatesArgs);
+		Map<String, String> properties = null;
+		CreateArgs args = getArgs();
+
+		if (args != null) {
+			properties = getProjectTemplateArgsExtProperties(getArgs());
+		}
+
+		new ProjectTemplates(projectTemplatesArgs, properties);
 
 		File gradlew = new File(dir, name + "/gradlew");
 
@@ -253,11 +261,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setMaven(false);
 
 		projectTemplatesArgs.setClassName(createArgs.getClassname());
-		projectTemplatesArgs.setContributorType(createArgs.getContributorType());
+
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
-		projectTemplatesArgs.setDependencyInjector(createArgs.getDependencyInjector());
-		projectTemplatesArgs.setFramework(createArgs.getFramework());
-		projectTemplatesArgs.setFrameworkDependencies(createArgs.getFrameworkDependencies());
 
 		File baseDir = new File(createArgs.getBase());
 
@@ -270,18 +275,31 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 				workspaceProviderGradle.isDependencyManagementEnabled(baseDir));
 		}
 
-		projectTemplatesArgs.setHostBundleSymbolicName(createArgs.getHostBundleBSN());
 		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
-		projectTemplatesArgs.setOriginalModuleName(createArgs.getOriginalModuleName());
-		projectTemplatesArgs.setOriginalModuleVersion(createArgs.getOriginalModuleVersion());
-		projectTemplatesArgs.setHostBundleVersion(createArgs.getHostBundleVersion());
+
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
-		projectTemplatesArgs.setService(createArgs.getService());
+
 		projectTemplatesArgs.setTemplate(template);
-		projectTemplatesArgs.setViewType(createArgs.getViewType());
 
 		return projectTemplatesArgs;
+	}
+
+	protected Map<String, String> getProjectTemplateArgsExtProperties(CreateArgs createArgs) {
+		Map<String, String> properties = new HashMap<>();
+
+		properties.put("setContributorType", createArgs.getContributorType());
+		properties.put("setDependencyInjector", createArgs.getDependencyInjector());
+		properties.put("setFramework", createArgs.getFramework());
+		properties.put("setFrameworkDependencies", createArgs.getFrameworkDependencies());
+		properties.put("setHostBundleSymbolicName", createArgs.getHostBundleBSN());
+		properties.put("setHostBundleVersion", createArgs.getHostBundleVersion());
+		properties.put("setOriginalModuleName", createArgs.getOriginalModuleName());
+		properties.put("setOriginalModuleVersion", createArgs.getOriginalModuleVersion());
+		properties.put("setService", createArgs.getService());
+		properties.put("setViewType", createArgs.getViewType());
+
+		return properties;
 	}
 
 	protected Properties getWorkspaceProperties() {
