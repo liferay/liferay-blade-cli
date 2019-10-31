@@ -105,13 +105,14 @@ dockerPublishSnapshots {
 		args.addAll(['snapshots', '--local'])
 	}
 
+	if (skipScan) {
+		args.add('--skip-scan')
+	}
+
 	if (skipTests) {
 		args.add('--skip-tests')
 	}
 
-	if (skipScan) {
-		args.add('--skip-scan')
-	}
 	commandLine args
 }
 
