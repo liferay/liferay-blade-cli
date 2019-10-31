@@ -45,9 +45,9 @@ public class BladeCliTest {
 
 		output = output.trim();
 
-		boolean containsFalse = output.equals("false");
+		boolean updateAvailable = output.contains("A new update is available for this version of blade");
 
-		Assert.assertTrue("Current jar should be the latest version", containsFalse);
+		Assert.assertFalse("Current jar should be the latest version", updateAvailable);
 	}
 
 	@Rule
