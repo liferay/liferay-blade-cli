@@ -19,12 +19,16 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import com.liferay.blade.cli.command.validator.UpdateArgsValidator;
+import com.liferay.blade.cli.command.validator.ValidateParameters;
+
 import java.net.URL;
 
 /**
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = "Update blade to latest version", commandNames = "update")
+@ValidateParameters(UpdateArgsValidator.class)
 public class UpdateArgs extends BaseArgs {
 
 	public URL getUrl() {
@@ -35,8 +39,16 @@ public class UpdateArgs extends BaseArgs {
 		return _checkOnly;
 	}
 
+	public boolean isRelease() {
+		return _release;
+	}
+
 	public boolean isSnapshots() {
 		return _snapshots;
+	}
+
+	public void setRelease(boolean release) {
+		_release = release;
 	}
 
 	public void setSnapshots(boolean snapshots) {
@@ -47,10 +59,11 @@ public class UpdateArgs extends BaseArgs {
 		_url = url;
 	}
 
-	@Parameter(
-		description = "Do not update, only check if an update is necessary.", hidden = true, names = {"-c", "--check"}
-	)
+	@Parameter(description = "Do not update, only check if an update is necessary.", names = {"-c", "--check"})
 	private boolean _checkOnly;
+
+	@Parameter(description = "Switch to use the release repository.", names = {"-r", "--release"})
+	private boolean _release;
 
 	@Parameter(description = "Switch to use the snapshot repository.", names = {"-s", "--snapshots"})
 	private boolean _snapshots;
