@@ -28,6 +28,8 @@ import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
+import com.liferay.blade.cli.command.validator.ParametersValidator;
+import com.liferay.blade.cli.command.validator.ValidateParameters;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.Prompter;
 
@@ -360,6 +362,8 @@ public class BladeCLI {
 						List<Object> objects = jCommander.getObjects();
 
 						Object commandArgs = objects.get(0);
+
+						_validateParameters((BaseArgs)commandArgs);
 
 						Console console = System.console();
 
@@ -695,6 +699,32 @@ public class BladeCLI {
 		}
 
 		return allCommands;
+	}
+
+	private static <T extends BaseArgs> void _validateParameters(T args) throws IllegalArgumentException {
+		try {
+			Class<? extends BaseArgs> argsClass = args.getClass();
+
+			ValidateParameters validateParameters = argsClass.getAnnotation(ValidateParameters.class);
+
+			if (validateParameters != null) {
+				Class<? extends ParametersValidator<T>> possibleValuesSupplier =
+					(Class<? extends ParametersValidator<T>>)validateParameters.value();
+
+				if (possibleValuesSupplier != null) {
+					ParametersValidator<T> validator = possibleValuesSupplier.newInstance();
+
+					if (!validator.test(args)) {
+						throw new IllegalArgumentException();
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			Class<?> argsClass = args.getClass();
+
+			throw new IllegalArgumentException("Validation failed for " + argsClass.getSimpleName(), e);
+		}
 	}
 
 	private Map<String, String> _buildPossibleValuesMap(
