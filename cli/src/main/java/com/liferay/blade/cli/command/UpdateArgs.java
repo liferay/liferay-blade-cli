@@ -19,8 +19,8 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import com.liferay.blade.cli.command.validator.ParametersValidator;
 import com.liferay.blade.cli.command.validator.UpdateArgsValidator;
-import com.liferay.blade.cli.command.validator.ValidateParameters;
 
 import java.net.URL;
 
@@ -28,7 +28,7 @@ import java.net.URL;
  * @author Gregory Amerson
  */
 @Parameters(commandDescription = "Update blade to latest version", commandNames = "update")
-@ValidateParameters(UpdateArgsValidator.class)
+@ParametersValidator(UpdateArgsValidator.class)
 public class UpdateArgs extends BaseArgs {
 
 	public URL getUrl() {

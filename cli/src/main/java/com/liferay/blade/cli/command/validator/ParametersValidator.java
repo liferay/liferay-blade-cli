@@ -16,10 +16,20 @@
 
 package com.liferay.blade.cli.command.validator;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import java.util.function.Predicate;
 
 /**
  * @author Christopher Bryan Boyd
  */
-public abstract class ParametersValidator<T> implements Predicate<T> {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface ParametersValidator {
+
+	Class<? extends Predicate<?>> value();
+
 }

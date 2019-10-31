@@ -29,7 +29,6 @@ import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.ParametersValidator;
-import com.liferay.blade.cli.command.validator.ValidateParameters;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.Prompter;
 
@@ -64,6 +63,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.ServiceLoader;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -701,20 +701,20 @@ public class BladeCLI {
 		return allCommands;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <T extends BaseArgs> void _validateParameters(T args) throws IllegalArgumentException {
 		try {
 			Class<? extends BaseArgs> argsClass = args.getClass();
 
-			ValidateParameters validateParameters = argsClass.getAnnotation(ValidateParameters.class);
+			ParametersValidator validateParameters = argsClass.getAnnotation(ParametersValidator.class);
 
 			if (validateParameters != null) {
-				Class<? extends ParametersValidator<T>> possibleValuesSupplier =
-					(Class<? extends ParametersValidator<T>>)validateParameters.value();
+				Class<? extends Predicate<?>> predicateClass = validateParameters.value();
 
-				if (possibleValuesSupplier != null) {
-					ParametersValidator<T> validator = possibleValuesSupplier.newInstance();
+				if (predicateClass != null) {
+					Predicate<T> predicate = (Predicate<T>)predicateClass.newInstance();
 
-					if (!validator.test(args)) {
+					if (!predicate.test(args)) {
 						throw new IllegalArgumentException();
 					}
 				}
