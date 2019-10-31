@@ -20,6 +20,7 @@ fi
 bladeTestOpt="check"
 nexusOpt=""
 releaseType=""
+scanOpt="--scan"
 
 # check the arguments first
 while [ $# -gt 0 ]; do
@@ -31,6 +32,8 @@ while [ $# -gt 0 ]; do
 		nexusOpt="-PremoteNexus"
 	elif [ "$1" = "--skip-tests" ]; then
 		bladeTestOpt="jar"
+	elif [ "$1" = "--skip-scan" ]; then
+		scanOpt=""
 	fi
 	shift
 done
@@ -68,7 +71,7 @@ fi
 
 # Publish the Remote Deploy Command jar
 
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info --scan | tee /tmp/$timestamp/remote-deploy-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info ${scanOpt} | tee /tmp/$timestamp/remote-deploy-publish-command.txt
 remoteDeployCommandPublishCommand=$(cat /tmp/$timestamp/remote-deploy-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
@@ -78,7 +81,7 @@ if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
 fi
 
 # Publish the Maven Profile jar
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info --scan | tee /tmp/$timestamp/maven-profile-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/maven-profile-publish-command.txt
 mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
@@ -110,7 +113,9 @@ else
 fi
 
 # Test the blade cli jar locally, but don't publish.
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTestOpt --info --scan | tee /tmp/$timestamp/blade-cli-jar-command.txt
+
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTestOpt --info ${scanOpt} | tee /tmp/$timestamp/blade-cli-jar-command.txt
+
 bladeCliJarCommand=$(cat /tmp/$timestamp/blade-cli-jar-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$bladeCliJarCommand" ]; then
@@ -141,7 +146,7 @@ fi
 
 # Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
 
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info --scan | tee /tmp/$timestamp/blade-cli-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info ${scanOpt} | tee /tmp/$timestamp/blade-cli-publish-command.txt
 bladeCliPublishCommand=$(cat /tmp/$timestamp/blade-cli-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$bladeCliPublishCommand" ]; then
@@ -206,21 +211,6 @@ if [ "$localBladeVersion" != "$updatedBladeVersion" ]; then
 	echo After blade updated versions do not match.
 	echo "Built blade version = $localBladeVersion"
 	echo "Updated blade version = $updatedBladeVersion"
-else
-	if [ "$releaseType" = "snapshots" ]; then
-        bladeUpdateCheck=$(blade update --snapshots --check)
-    else
-        bladeUpdateCheck=$(blade update --check)
-    fi
-
-	if [ "$bladeUpdateCheck" = "false" ]; then
-        echo "Success: blade update --check returned $bladeUpdateCheck."
-	else
-        echo "Error: blade update --check returned true when it should have returned false."
-        rm -rf /tmp/$timestamp
-        exit 1
-	fi
 fi
-
 
 rm -rf /tmp/$timestamp

@@ -51,6 +51,8 @@ boolean remoteNexus = project.hasProperty("remoteNexus")
 
 boolean skipTests = project.hasProperty("skipTests")
 
+boolean skipScan = project.hasProperty("skipScan")
+
 buildChangeLog {
 	changeLogHeader = "BLADE Version ${project.version}"
 	dirs = ["cli", "extensions", "gradle", "gradle-tooling", "libs"]
@@ -105,6 +107,10 @@ dockerPublishSnapshots {
 
 	if (skipTests) {
 		args.add('--skip-tests')
+	}
+
+	if (skipScan) {
+		args.add('--skip-scan')
 	}
 	commandLine args
 }
