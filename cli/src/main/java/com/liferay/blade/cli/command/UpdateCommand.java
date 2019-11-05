@@ -108,11 +108,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			updateUrl = url.toString();
 		}
 
-		String url = null;
-
 		try {
-			url = _getUpdateJarUrl(updateArgs);
-
 			Versions versions = _getVersions();
 
 			currentVersion = versions.getCurrentVersion();
@@ -172,6 +168,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 				return;
 			}
+
+			String url = _getUpdateJarUrl(updateArgs);
 
 			if (shouldUpdate) {
 				_performUpdate(url);
