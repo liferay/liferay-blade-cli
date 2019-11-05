@@ -62,12 +62,6 @@ import org.jsoup.select.Elements;
  */
 public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
-	public static final String RELEASES_REPO_URL =
-		UpdateCommand._BASE_CDN_URL + "liferay-public-releases/" + UpdateCommand._BLADE_CLI_CONTEXT;
-
-	public static final String SNAPSHOTS_REPO_URL =
-		UpdateCommand._BASE_CDN_URL + "liferay-public-snapshots/" + UpdateCommand._BLADE_CLI_CONTEXT;
-
 	public UpdateCommand() {
 	}
 
@@ -350,19 +344,19 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		if (url == null) {
 			if (snapshots) {
-				url = SNAPSHOTS_REPO_URL;
+				url = _SNAPSHOTS_REPO_URL;
 			}
 			else if (release) {
-				url = RELEASES_REPO_URL;
+				url = _RELEASES_REPO_URL;
 			}
 			else {
 				String currentVersion = VersionCommand.getBladeCLIVersion();
 
 				if (currentVersion.contains("SNAPSHOT")) {
-					url = SNAPSHOTS_REPO_URL;
+					url = _SNAPSHOTS_REPO_URL;
 				}
 				else {
-					url = RELEASES_REPO_URL;
+					url = _RELEASES_REPO_URL;
 				}
 			}
 		}
@@ -379,7 +373,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		String version = lastVersionElement.text();
 
-		if (Objects.equals(url, SNAPSHOTS_REPO_URL)) {
+		if (Objects.equals(url, _SNAPSHOTS_REPO_URL)) {
 			connection.url(url + "/" + version + "/maven-metadata.xml");
 
 			document = connection.get();
@@ -411,19 +405,19 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		if (url == null) {
 			if (snapshots) {
-				url = SNAPSHOTS_REPO_URL;
+				url = _SNAPSHOTS_REPO_URL;
 			}
 			else if (release) {
-				url = RELEASES_REPO_URL;
+				url = _RELEASES_REPO_URL;
 			}
 			else {
 				String currentVersion = VersionCommand.getBladeCLIVersion();
 
 				if (currentVersion.contains("SNAPSHOT")) {
-					url = SNAPSHOTS_REPO_URL;
+					url = _SNAPSHOTS_REPO_URL;
 				}
 				else {
-					url = RELEASES_REPO_URL;
+					url = _RELEASES_REPO_URL;
 				}
 			}
 		}
@@ -440,7 +434,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		String version = lastVersionElement.text();
 
-		if (Objects.equals(url, SNAPSHOTS_REPO_URL)) {
+		if (Objects.equals(url, _SNAPSHOTS_REPO_URL)) {
 			connection.url(url + "/" + version + "/maven-metadata.xml");
 
 			document = connection.get();
@@ -477,10 +471,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	private static String _getUpdateVersion(boolean snapshotsArg) throws IOException {
-		String url = RELEASES_REPO_URL;
+		String url = _RELEASES_REPO_URL;
 
 		if (snapshotsArg) {
-			url = SNAPSHOTS_REPO_URL;
+			url = _SNAPSHOTS_REPO_URL;
 		}
 
 		if (_hasUpdateUrlFromBladeDir()) {
@@ -600,10 +594,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		catch (IOException ioe) {
 			throw new RuntimeException(ioe);
 		}
-	}
-
-	private static boolean _shouldUpdate(String currentVersion, String updateVersion) {
-		return _shouldUpdate(currentVersion, updateVersion, null);
 	}
 
 	private static boolean _shouldUpdate(String currentVersion, String updateVersion, String url) {
@@ -729,6 +719,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	private static final String _BASE_CDN_URL = "https://repository-cdn.liferay.com/nexus/content/repositories/";
 
 	private static final String _BLADE_CLI_CONTEXT = "com/liferay/blade/com.liferay.blade.cli/";
+
+	private static final String _RELEASES_REPO_URL = _BASE_CDN_URL + "liferay-public-releases/" + _BLADE_CLI_CONTEXT;
+
+	private static final String _SNAPSHOTS_REPO_URL = _BASE_CDN_URL + "liferay-public-snapshots/" + _BLADE_CLI_CONTEXT;
 
 	private static final Pattern _bladeSnapshotPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+).SNAPSHOT(\\d+)");
 	private static final Pattern _nexusSnapshotPattern = Pattern.compile(
