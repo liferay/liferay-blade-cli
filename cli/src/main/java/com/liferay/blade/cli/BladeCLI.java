@@ -25,8 +25,8 @@ import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
+import com.liferay.blade.cli.command.UpdateArgs;
 import com.liferay.blade.cli.command.UpdateCommand;
-import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.ParametersValidator;
 import com.liferay.blade.cli.util.CombinedClassLoader;
@@ -958,47 +958,39 @@ public class BladeCLI {
 		}
 	}
 
-	private boolean _printUpdateIfAvailable() throws IOException {
-		boolean available;
+	private void _printUpdateIfAvailable() throws IOException {
+		UpdateArgs updateArgs = new UpdateArgs();
 
-		String bladeCLIVersion = VersionCommand.getBladeCLIVersion();
+		updateArgs.setCheckOnly(true);
 
-		boolean fromSnapshots = false;
+		UpdateCommand updateCommand = new UpdateCommand();
 
-		if (bladeCLIVersion == null) {
-			throw new IOException("Could not determine blade version");
-		}
+		updateCommand.setArgs(updateArgs);
 
-		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
+		updateCommand.setBlade(this);
 
-		String updateVersion = "";
+		StringPrintStream stdOut = StringPrintStream.newFilteredInstance(x -> !x.contains("available"));
+
+		PrintStream currentStdOut = System.out;
 
 		try {
-			updateVersion = UpdateCommand.getUpdateVersion(fromSnapshots);
+			System.setOut(stdOut);
 
-			available = UpdateCommand.shouldUpdate(bladeCLIVersion, updateVersion);
+			_out = System.out;
 
-			if (available) {
-				out(System.lineSeparator() + "blade version " + bladeCLIVersion + System.lineSeparator());
-				out(
-					"Run \'blade update" + (fromSnapshots ? " --snapshots" : "") + "\' to update to " +
-						(fromSnapshots ? "the latest snapshot " : " ") + "version " + updateVersion +
-							System.lineSeparator());
-			}
-			else {
-				if (fromSnapshots && !UpdateCommand.equal(bladeCLIVersion, updateVersion)) {
-					out(
-						String.format(
-							"blade version %s is newer than latest snapshot %s; skipping update.\n", bladeCLIVersion,
-							updateVersion));
-				}
-			}
+			updateCommand.execute();
 		}
-		catch (IOException ioe) {
-			available = false;
+		finally {
+			System.setOut(currentStdOut);
+
+			_out = System.out;
 		}
 
-		return available;
+		String updateAvailable = stdOut.get();
+
+		if ((updateAvailable != null) && (updateAvailable.length() > 0)) {
+			System.out.println(updateAvailable);
+		}
 	}
 
 	private String _promptForMissingParameter(Object commandArgs, Optional<String> missingParameterOptional) {
@@ -1198,7 +1190,7 @@ public class BladeCLI {
 	private ExtensionsClassLoaderSupplier _extensionsClassLoaderSupplier;
 	private final InputStream _in;
 	private JCommander _jCommander;
-	private final PrintStream _out;
+	private PrintStream _out;
 	private Collection<WorkspaceProvider> _workspaceProviders = null;
 
 }

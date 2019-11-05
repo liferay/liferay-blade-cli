@@ -47,6 +47,10 @@ public class UpdateArgs extends BaseArgs {
 		return _snapshots;
 	}
 
+	public void setCheckOnly(boolean checkOnly) {
+		_checkOnly = checkOnly;
+	}
+
 	public void setRelease(boolean release) {
 		_release = release;
 	}

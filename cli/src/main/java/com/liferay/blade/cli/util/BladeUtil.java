@@ -33,11 +33,16 @@ import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -217,6 +222,25 @@ public class BladeUtil {
 		}
 		catch (Exception e) {
 			return null;
+		}
+	}
+
+	public static Path getRunningJarFile() {
+		try {
+			ProtectionDomain protectionDomain = BladeCLI.class.getProtectionDomain();
+
+			CodeSource codeSource = protectionDomain.getCodeSource();
+
+			URL location = codeSource.getLocation();
+
+			URI locationUri = location.toURI();
+
+			File runningJarFile = new File(locationUri);
+
+			return runningJarFile.toPath();
+		}
+		catch (URISyntaxException urise) {
+			throw new RuntimeException(urise);
 		}
 	}
 

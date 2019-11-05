@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +40,7 @@ import org.osgi.framework.Constants;
 public class VersionCommand extends BaseCommand<VersionArgs> {
 
 	public static String getBladeCLIVersion() throws IOException {
-		Path path = UpdateCommand.getRunningJarFile();
+		Path path = BladeUtil.getRunningJarFile();
 
 		if (Files.isDirectory(path)) {
 			Path manifestPath = path.resolve("META-INF/MANIFEST.MF");
