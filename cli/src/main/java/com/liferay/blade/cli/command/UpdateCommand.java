@@ -81,11 +81,11 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		String updateVersion = "0.0.0.0";
 
-		boolean snapshotsArg = updateArgs.isSnapshots();
+		boolean checkOnly = updateArgs.isCheckOnly();
 
-		boolean releaseArg = updateArgs.isRelease();
+		boolean release = updateArgs.isRelease();
 
-		boolean checkUpdateOnly = updateArgs.isCheckOnly();
+		boolean snapshots = updateArgs.isSnapshots();
 
 		String releaseUpdateVersion = "";
 
@@ -103,9 +103,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 
 		if (updateArgs.getUrl() != null) {
-			URL updateUrlVar = updateArgs.getUrl();
+			URL url = updateArgs.getUrl();
 
-			updateUrl = updateUrlVar.toString();
+			updateUrl = url.toString();
 		}
 
 		String url = null;
@@ -119,12 +119,12 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			currentVersion = currentVersion.toUpperCase();
 
-			if (snapshotsArg) {
+			if (snapshots) {
 				snapshotUpdateVersion = versions.getSnapshotUpdatedVersion();
 
 				updateVersion = snapshotUpdateVersion;
 			}
-			else if (releaseArg) {
+			else if (release) {
 				releaseUpdateVersion = versions.getReleasedUpdatedVersion();
 
 				updateVersion = releaseUpdateVersion;
@@ -142,7 +142,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			boolean shouldUpdate = _shouldUpdate(currentVersion, updateVersion, updateUrl);
 
-			if (checkUpdateOnly) {
+			if (checkOnly) {
 				if (_hasUpdateUrlFromBladeDir()) {
 					bladeCLI.out("Custom URL specified: " + updateUrl);
 				}
@@ -177,7 +177,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				_performUpdate(url);
 			}
 			else {
-				if (snapshotsArg) {
+				if (snapshots) {
 					if (currentVersion.contains("SNAPSHOT")) {
 						bladeCLI.out(
 							"Current blade version " + currentVersion +
