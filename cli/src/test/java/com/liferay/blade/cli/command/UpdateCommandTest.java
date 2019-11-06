@@ -424,7 +424,8 @@ public class UpdateCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private void _setupCommandServiceLoader() {
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	private static void _setupCommandServiceLoader() {
 		ServiceLoader<BaseCommand> commandServiceLoader = PowerMock.createNiceMock(ServiceLoader.class);
 
 		Collection<BaseCommand> commands = new ArrayList<>();
@@ -446,7 +447,7 @@ public class UpdateCommandTest {
 		).once();
 	}
 
-	private void _setupStaticVersionsMock(
+	private static void _setupStaticVersionsMock(
 		String currentVersion, String releaseUpdatedVersion, String snapshotUpdatedVersion) {
 
 		try {
@@ -465,7 +466,8 @@ public class UpdateCommandTest {
 		}
 	}
 
-	private void _setupWorkspaceProviderServiceLoader() {
+	@SuppressWarnings("unchecked")
+	private static void _setupWorkspaceProviderServiceLoader() {
 		ServiceLoader<WorkspaceProvider> workspaceServiceLoader = PowerMock.createNiceMock(ServiceLoader.class);
 
 		Collection<WorkspaceProvider> workspaceProviders = new ArrayList<>();
@@ -478,7 +480,7 @@ public class UpdateCommandTest {
 			workspaceProviders.iterator()
 		).once();
 
-		Capture<Class<WorkspaceProvider>> workspaceClassCapture = new Capture<>();
+		Capture<Class<WorkspaceProvider>> workspaceClassCapture = EasyMock.newCapture();
 
 		EasyMock.expect(
 			ServiceLoader.load(EasyMock.capture(workspaceClassCapture), EasyMock.anyObject())
