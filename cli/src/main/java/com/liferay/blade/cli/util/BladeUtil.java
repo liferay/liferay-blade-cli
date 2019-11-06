@@ -33,7 +33,6 @@ import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -151,6 +150,23 @@ public class BladeUtil {
 		return properties;
 	}
 
+	public static Path getBladeJarPath() {
+		try {
+			ProtectionDomain protectionDomain = BladeCLI.class.getProtectionDomain();
+
+			CodeSource codeSource = protectionDomain.getCodeSource();
+
+			URL location = codeSource.getLocation();
+
+			File file = new File(location.toURI());
+
+			return file.toPath();
+		}
+		catch (URISyntaxException urise) {
+			throw new RuntimeException(urise);
+		}
+	}
+
 	public static String getBundleVersion(Path pathToJar) throws IOException {
 		return getManifestProperty(pathToJar, "Bundle-Version");
 	}
@@ -222,25 +238,6 @@ public class BladeUtil {
 		}
 		catch (Exception e) {
 			return null;
-		}
-	}
-
-	public static Path getRunningJarFile() {
-		try {
-			ProtectionDomain protectionDomain = BladeCLI.class.getProtectionDomain();
-
-			CodeSource codeSource = protectionDomain.getCodeSource();
-
-			URL location = codeSource.getLocation();
-
-			URI locationUri = location.toURI();
-
-			File runningJarFile = new File(locationUri);
-
-			return runningJarFile.toPath();
-		}
-		catch (URISyntaxException urise) {
-			throw new RuntimeException(urise);
 		}
 	}
 

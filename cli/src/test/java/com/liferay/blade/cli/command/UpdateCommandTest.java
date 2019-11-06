@@ -83,7 +83,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (Release)"));
+				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (Release)"));
+				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (Snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
 	}
 
 	@Test
@@ -137,7 +137,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (Release)"));
+				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (Snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
 	}
 
 	@Test
@@ -224,7 +224,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (Release)"));
+				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
 	}
 
 	@Test
@@ -242,7 +242,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (Release)"));
+				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
 	}
 
 	@Test
@@ -260,7 +260,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (Snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
 	}
 
 	@Test
@@ -329,7 +329,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (Release)"));
+				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
 	}
 
 	@Test
@@ -347,7 +347,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (Release)"));
+				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
 	}
 
 	@Test
@@ -365,7 +365,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (Snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
 	}
 
 	@Test
@@ -418,7 +418,7 @@ public class UpdateCommandTest {
 		Assert.assertTrue(
 			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (Snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
 	}
 
 	@Rule
@@ -437,7 +437,7 @@ public class UpdateCommandTest {
 			commands.iterator()
 		).once();
 
-		Capture<Class<BaseCommand>> classCapture = new Capture<>();
+		Capture<Class<BaseCommand>> classCapture = EasyMock.newCapture();
 
 		EasyMock.expect(
 			ServiceLoader.load(EasyMock.capture(classCapture), EasyMock.anyObject())

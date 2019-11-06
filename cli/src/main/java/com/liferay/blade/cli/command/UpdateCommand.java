@@ -146,20 +146,20 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 
 				bladeCLI.out("Current blade version: " + currentVersion);
-				bladeCLI.out("Latest Release Version: " + releaseUpdateVersion);
-				bladeCLI.out("Latest Snapshot Version: " + snapshotUpdateVersion);
+				bladeCLI.out("Latest release version: " + releaseUpdateVersion);
+				bladeCLI.out("Latest snapshot bersion: " + snapshotUpdateVersion);
 
 				if (shouldUpdate) {
 					String versionTag;
 
 					if (Objects.equals(updateVersion, snapshotUpdateVersion)) {
-						versionTag = "(Snapshot)";
+						versionTag = "(snapshot)";
 					}
 					else if (Objects.equals(updateVersion, releaseUpdateVersion)) {
-						versionTag = "(Release)";
+						versionTag = "(release)";
 					}
 					else {
-						versionTag = "(Custom)";
+						versionTag = "(custom)";
 					}
 
 					bladeCLI.out(
@@ -240,15 +240,11 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	private static boolean _doesMD5Match(UpdateArgs updateArgs) {
 		try {
-			Path currentJarPath = BladeUtil.getRunningJarFile();
-
-			String currentJarMD5 = _getMD5(currentJarPath);
+			String bladeJarMD5 = _getMD5(BladeUtil.getBladeJarPath());
 
 			String updateJarMD5 = _readTextFileFromURL(_getUpdateJarMD5Url(updateArgs));
 
-			updateJarMD5 = updateJarMD5.toUpperCase();
-
-			return Objects.equals(updateJarMD5, currentJarMD5);
+			return Objects.equals(updateJarMD5.toUpperCase(), bladeJarMD5);
 		}
 		catch (Exception e) {
 		}
@@ -296,19 +292,15 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	private static String _getMD5(Path path) {
 		try (FileChannel fileChannel = FileChannel.open(path)) {
-			long fileChannelSize = fileChannel.size();
-
-			MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannelSize);
+			MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
 
 			MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 
-			messageDigest.update(buffer);
+			messageDigest.update(mappedByteBuffer);
 
-			byte[] digest = messageDigest.digest();
+			String md5Sum = DatatypeConverter.printHexBinary(messageDigest.digest());
 
-			String md5Sum = DatatypeConverter.printHexBinary(digest);
-
-			buffer.clear();
+			mappedByteBuffer.clear();
 
 			return md5Sum.toUpperCase();
 		}
@@ -397,9 +389,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			url = updateUrlVar.toString();
 		}
 
-		boolean snapshots = updateArgs.isSnapshots();
-
 		boolean release = updateArgs.isRelease();
+
+		boolean snapshots = updateArgs.isSnapshots();
 
 		if (url == null) {
 			if (snapshots) {

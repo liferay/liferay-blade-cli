@@ -40,7 +40,7 @@ import org.osgi.framework.Constants;
 public class VersionCommand extends BaseCommand<VersionArgs> {
 
 	public static String getBladeCLIVersion() throws IOException {
-		Path path = BladeUtil.getRunningJarFile();
+		Path path = BladeUtil.getBladeJarPath();
 
 		if (Files.isDirectory(path)) {
 			Path manifestPath = path.resolve("META-INF/MANIFEST.MF");
