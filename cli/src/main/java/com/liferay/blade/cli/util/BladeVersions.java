@@ -19,28 +19,28 @@ package com.liferay.blade.cli.util;
 /**
  * @author Christopher Bryan Boyd
  */
-public final class Versions {
+public final class BladeVersions {
 
-	public Versions(String currentVersion, String releaseUpdatedVersion, String snapshotUpdatedVersion) {
+	public BladeVersions(String currentVersion, String releaseUpdateVersion, String snapshotUpdateVersion) {
 		_currentVersion = currentVersion;
-		_releasedUpdatedVersion = releaseUpdatedVersion;
-		_snapshotUpdatedVersion = snapshotUpdatedVersion;
+		_releasedUpdateVersion = releaseUpdateVersion;
+		_snapshotUpdateVersion = snapshotUpdateVersion;
 	}
 
 	public String getCurrentVersion() {
 		return _currentVersion;
 	}
 
-	public String getReleasedUpdatedVersion() {
-		return _releasedUpdatedVersion;
+	public String getReleasedUpdateVersion() {
+		return _releasedUpdateVersion;
 	}
 
-	public String getSnapshotUpdatedVersion() {
-		return _snapshotUpdatedVersion;
+	public String getSnapshotUpdateVersion() {
+		return _snapshotUpdateVersion;
 	}
 
 	private final String _currentVersion;
-	private final String _releasedUpdatedVersion;
-	private final String _snapshotUpdatedVersion;
+	private final String _releasedUpdateVersion;
+	private final String _snapshotUpdateVersion;
 
 }

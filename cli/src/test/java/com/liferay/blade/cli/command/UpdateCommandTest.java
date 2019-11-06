@@ -21,7 +21,7 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
-import com.liferay.blade.cli.util.Versions;
+import com.liferay.blade.cli.util.BladeVersions;
 
 import java.io.File;
 
@@ -49,7 +49,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @author Vernon Singleton
  * @author Gregory Amerson
  */
-@PrepareForTest({ServiceLoader.class, UpdateCommand.class, Versions.class, BladeCLI.class})
+@PrepareForTest({ServiceLoader.class, UpdateCommand.class, BladeVersions.class, BladeCLI.class})
 @RunWith(PowerMockRunner.class)
 public class UpdateCommandTest {
 
@@ -71,100 +71,100 @@ public class UpdateCommandTest {
 	@Test
 	public void testCurrentMajorLessThanUpdatedMajorDefault() {
 		String currentVersion = "1.5.9.1.2.3.4.5.6.7.8.9";
-		String releaseUpdatedVersion = "2.1.1.4.5.6";
-		String snapshotUpdatedVersion = "2.1.1.5.6.7-snapshot";
+		String releaseUpdateVersion = "2.1.1.4.5.6";
+		String snapshotUpdateVersion = "2.1.1.5.6.7-snapshot";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
+				"A new update is available for this version of blade: " + releaseUpdateVersion + " (release)"));
 	}
 
 	@Test
 	public void testCurrentMajorLessThanUpdatedMajorReleaseToRelease() {
 		String currentVersion = "1.5.9.1.2.3.4.5.6.7.8.9";
-		String releaseUpdatedVersion = "2.1.1.4.5.6";
-		String snapshotUpdatedVersion = "2.1.1.5.6.7-snapshot";
+		String releaseUpdateVersion = "2.1.1.4.5.6";
+		String snapshotUpdateVersion = "2.1.1.5.6.7-snapshot";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-r", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
+				"A new update is available for this version of blade: " + releaseUpdateVersion + " (release)"));
 	}
 
 	@Test
 	public void testCurrentMajorLessThanUpdatedMajorReleaseToSnapshot() {
 		String currentVersion = "1.5.9.1.2.3.4.5.6.7.8.9";
-		String releaseUpdatedVersion = "2.1.1.4.5.6";
-		String snapshotUpdatedVersion = "2.1.1.5.6.7-snapshot";
+		String releaseUpdateVersion = "2.1.1.4.5.6";
+		String snapshotUpdateVersion = "2.1.1.5.6.7-snapshot";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-s", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdateVersion + " (snapshot)"));
 	}
 
 	@Test
 	public void testCurrentMajorLessThanUpdatedMajorSnapshotToRelease() {
 		String currentVersion = "1.5.9.1.2.3.4.5.6.7.8.9-snapshot";
-		String releaseUpdatedVersion = "2.1.1.4.5.6";
-		String snapshotUpdatedVersion = "2.1.1.5.6.7-snapshot";
+		String releaseUpdateVersion = "2.1.1.4.5.6";
+		String snapshotUpdateVersion = "2.1.1.5.6.7-snapshot";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-r", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
+				"A new update is available for this version of blade: " + releaseUpdateVersion + " (release)"));
 	}
 
 	@Test
 	public void testCurrentMajorLessThanUpdatedMajorSnapshotToSnapshot() {
 		String currentVersion = "1.5.9.1.2.3.4.5.6.7.8.9-snapshot";
-		String releaseUpdatedVersion = "2.1.1.4.5.6";
-		String snapshotUpdatedVersion = "2.1.1.5.6.7-snapshot";
+		String releaseUpdateVersion = "2.1.1.4.5.6";
+		String snapshotUpdateVersion = "2.1.1.5.6.7-snapshot";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-s", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdateVersion + " (snapshot)"));
 	}
 
 	@Test
 	public void testCurrentMajorMoreThanUpdatedMajorDefault() {
 		String currentVersion = "3.0.0.2018.10.23.1234";
-		String releaseUpdatedVersion = "2.1.1.4.5.6";
-		String snapshotUpdatedVersion = "2.5.9-SNAPSHOT";
+		String releaseUpdateVersion = "2.1.1.4.5.6";
+		String snapshotUpdateVersion = "2.5.9-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "--check");
 
@@ -178,10 +178,10 @@ public class UpdateCommandTest {
 	@Test
 	public void testCurrentMajorMoreThanUpdatedMajorRelease() {
 		String currentVersion = "3.0.0.2018.10.23.1234";
-		String releaseUpdatedVersion = "2.1.1.4.5.6";
-		String snapshotUpdatedVersion = "2.5.9-SNAPSHOT";
+		String releaseUpdateVersion = "2.1.1.4.5.6";
+		String snapshotUpdateVersion = "2.5.9-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-r", "--check");
 
@@ -195,10 +195,10 @@ public class UpdateCommandTest {
 	@Test
 	public void testCurrentMajorMoreThanUpdatedMajorSnapshot() {
 		String currentVersion = "3.0.0.2018.10.23.1234";
-		String releaseUpdatedVersion = "2.1.1.4.5.6";
-		String snapshotUpdatedVersion = "2.5.9-SNAPSHOT";
+		String releaseUpdateVersion = "2.1.1.4.5.6";
+		String snapshotUpdateVersion = "2.5.9-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-s", "--check");
 
@@ -212,64 +212,64 @@ public class UpdateCommandTest {
 	@Test
 	public void testCurrentMinorLessThanUpdatedMinorDefault() {
 		String currentVersion = "12.1.9.SCHWIBBY";
-		String releaseUpdatedVersion = "12.2.0";
-		String snapshotUpdatedVersion = "12.2.1-snapshot";
+		String releaseUpdateVersion = "12.2.0";
+		String snapshotUpdateVersion = "12.2.1-snapshot";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
+				"A new update is available for this version of blade: " + releaseUpdateVersion + " (release)"));
 	}
 
 	@Test
 	public void testCurrentMinorLessThanUpdatedMinorRelease() {
 		String currentVersion = "12.1.9.SCHWIBBY";
-		String releaseUpdatedVersion = "12.2.0";
-		String snapshotUpdatedVersion = "12.2.1-snapshot";
+		String releaseUpdateVersion = "12.2.0";
+		String snapshotUpdateVersion = "12.2.1-snapshot";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-r", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
+				"A new update is available for this version of blade: " + releaseUpdateVersion + " (release)"));
 	}
 
 	@Test
 	public void testCurrentMinorLessThanUpdatedMinorSnapshot() {
 		String currentVersion = "12.1.9.SCHWIBBY";
-		String releaseUpdatedVersion = "12.2.0";
-		String snapshotUpdatedVersion = "12.2.1-snapshot";
+		String releaseUpdateVersion = "12.2.0";
+		String snapshotUpdateVersion = "12.2.1-snapshot";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-s", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdateVersion + " (snapshot)"));
 	}
 
 	@Test
 	public void testCurrentMinorMoreThanUpdatedMinorDefault() {
 		String currentVersion = "3.6.0.001810231234";
-		String releaseUpdatedVersion = "3.5.9-SCHNAPS";
-		String snapshotUpdatedVersion = "3.5.9-SNAPSHOT";
+		String releaseUpdateVersion = "3.5.9-SCHNAPS";
+		String snapshotUpdateVersion = "3.5.9-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "--check");
 
@@ -283,10 +283,10 @@ public class UpdateCommandTest {
 	@Test
 	public void testCurrentMinorMoreThanUpdatedMinorRelease() {
 		String currentVersion = "3.6.0.001810231234";
-		String releaseUpdatedVersion = "3.5.9-SCHNAPS";
-		String snapshotUpdatedVersion = "3.5.9-SNAPSHOT";
+		String releaseUpdateVersion = "3.5.9-SCHNAPS";
+		String snapshotUpdateVersion = "3.5.9-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-r", "--check");
 
@@ -300,10 +300,10 @@ public class UpdateCommandTest {
 	@Test
 	public void testCurrentMinorMoreThanUpdatedMinorSnapshot() {
 		String currentVersion = "3.6.0.001810231234";
-		String releaseUpdatedVersion = "3.5.9-SCHNAPS";
-		String snapshotUpdatedVersion = "3.5.9-SNAPSHOT";
+		String releaseUpdateVersion = "3.5.9-SCHNAPS";
+		String snapshotUpdateVersion = "3.5.9-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-s", "--check");
 
@@ -317,64 +317,64 @@ public class UpdateCommandTest {
 	@Test
 	public void testCurrentPatchLessThanUpdatedPatchDefault() {
 		String currentVersion = "123.10.10.SCHOOBY";
-		String releaseUpdatedVersion = "123.10.20-whiff";
-		String snapshotUpdatedVersion = "123.10.20-whiff-SNAPSHOT";
+		String releaseUpdateVersion = "123.10.20-whiff";
+		String snapshotUpdateVersion = "123.10.20-whiff-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
+				"A new update is available for this version of blade: " + releaseUpdateVersion + " (release)"));
 	}
 
 	@Test
 	public void testCurrentPatchLessThanUpdatedPatchRelease() {
 		String currentVersion = "123.10.10.SCHOOBY";
-		String releaseUpdatedVersion = "123.10.20-whiff";
-		String snapshotUpdatedVersion = "123.10.20-whiff-SNAPSHOT";
+		String releaseUpdateVersion = "123.10.20-whiff";
+		String snapshotUpdateVersion = "123.10.20-whiff-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-r", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + releaseUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + releaseUpdatedVersion + " (release)"));
+				"A new update is available for this version of blade: " + releaseUpdateVersion + " (release)"));
 	}
 
 	@Test
 	public void testCurrentPatchLessThanUpdatedPatchSnapshot() {
 		String currentVersion = "123.10.10.SCHOOBY";
-		String releaseUpdatedVersion = "123.10.20-whiff";
-		String snapshotUpdatedVersion = "123.10.20-whiff-SNAPSHOT";
+		String releaseUpdateVersion = "123.10.20-whiff";
+		String snapshotUpdateVersion = "123.10.20-whiff-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "-s", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdateVersion + " (snapshot)"));
 	}
 
 	@Test
 	public void testCurrentPatchMoreThanUpdatedPatchDefault() {
 		String currentVersion = "3.5.9.001810231234";
-		String releaseUpdatedVersion = "3.5.8.999999";
-		String snapshotUpdatedVersion = "3.5.8.999999-SNAPSHOT";
+		String releaseUpdateVersion = "3.5.8.999999";
+		String snapshotUpdateVersion = "3.5.8.999999-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "--check");
 
@@ -388,10 +388,10 @@ public class UpdateCommandTest {
 	@Test
 	public void testCurrentSnapshot() {
 		String currentVersion = "3.4.0.SNAPSHOT201812060746";
-		String releaseUpdatedVersion = "3.4.0-20181206.074623-13";
-		String snapshotUpdatedVersion = "3.4.0-20181206.074623-13";
+		String releaseUpdateVersion = "3.4.0-20181206.074623-13";
+		String snapshotUpdateVersion = "3.4.0-20181206.074623-13";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "--check");
 
@@ -406,19 +406,19 @@ public class UpdateCommandTest {
 	public void testTwoSnapshotVersions() {
 		String currentVersion = "3.3.1.SNAPSHOT201811211846";
 
-		String releaseUpdatedVersion = "3.3.1-20181128.214621-308";
-		String snapshotUpdatedVersion = "3.3.1-20181128.214621-308-SNAPSHOT";
+		String releaseUpdateVersion = "3.3.1-20181128.214621-308";
+		String snapshotUpdateVersion = "3.3.1-20181128.214621-308-SNAPSHOT";
 
-		_setupStaticVersionsMock(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion);
+		_setupStaticVersionsMock(currentVersion, releaseUpdateVersion, snapshotUpdateVersion);
 
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, false, "update", "--check");
 
 		String resultsOutput = results.getOutput();
 
 		Assert.assertTrue(
-			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdatedVersion,
+			"currentVersion = " + currentVersion + " should be updated to " + snapshotUpdateVersion,
 			resultsOutput.contains(
-				"A new update is available for this version of blade: " + snapshotUpdatedVersion + " (snapshot)"));
+				"A new update is available for this version of blade: " + snapshotUpdateVersion + " (snapshot)"));
 	}
 
 	@Rule
@@ -448,14 +448,14 @@ public class UpdateCommandTest {
 	}
 
 	private static void _setupStaticVersionsMock(
-		String currentVersion, String releaseUpdatedVersion, String snapshotUpdatedVersion) {
+		String currentVersion, String releaseUpdateVersion, String snapshotUpdateVersion) {
 
 		try {
 			PowerMock.mockStaticPartialNice(UpdateCommand.class, "_getVersions");
 
 			IExpectationSetters<Object> andReturn = PowerMock.expectPrivate(UpdateCommand.class, "_getVersions");
 
-			andReturn.andReturn(new Versions(currentVersion, releaseUpdatedVersion, snapshotUpdatedVersion));
+			andReturn.andReturn(new BladeVersions(currentVersion, releaseUpdateVersion, snapshotUpdateVersion));
 
 			PowerMock.replayAll();
 		}

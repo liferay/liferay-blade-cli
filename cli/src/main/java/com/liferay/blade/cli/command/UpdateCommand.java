@@ -20,7 +20,7 @@ import aQute.bnd.version.Version;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.Versions;
+import com.liferay.blade.cli.util.BladeVersions;
 
 import java.io.File;
 import java.io.IOException;
@@ -109,29 +109,29 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 
 		try {
-			Versions versions = _getVersions();
+			BladeVersions versions = _getVersions();
 
 			currentVersion = versions.getCurrentVersion();
 
 			currentVersion = currentVersion.toUpperCase();
 
 			if (snapshots) {
-				snapshotUpdateVersion = versions.getSnapshotUpdatedVersion();
+				snapshotUpdateVersion = versions.getSnapshotUpdateVersion();
 
 				updateVersion = snapshotUpdateVersion;
 			}
 			else if (release) {
-				releaseUpdateVersion = versions.getReleasedUpdatedVersion();
+				releaseUpdateVersion = versions.getReleasedUpdateVersion();
 
 				updateVersion = releaseUpdateVersion;
 			}
 			else if (currentVersion.contains("SNAPSHOT")) {
-				snapshotUpdateVersion = versions.getSnapshotUpdatedVersion();
+				snapshotUpdateVersion = versions.getSnapshotUpdateVersion();
 
 				updateVersion = snapshotUpdateVersion;
 			}
 			else {
-				releaseUpdateVersion = versions.getReleasedUpdatedVersion();
+				releaseUpdateVersion = versions.getReleasedUpdateVersion();
 
 				updateVersion = releaseUpdateVersion;
 			}
@@ -252,10 +252,10 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return false;
 	}
 
-	private static boolean _equal(Versions versions) {
+	private static boolean _equal(BladeVersions versions) {
 		String currentVersion = versions.getCurrentVersion();
 
-		String updateVersion = versions.getReleasedUpdatedVersion();
+		String updateVersion = versions.getReleasedUpdateVersion();
 
 		if (currentVersion.contains("SNAPSHOT") && updateVersion.contains("-")) {
 			Long currentSnapshot = _getBladeSnapshotVersion(currentVersion);
@@ -538,7 +538,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return new Version(currentMajor, currentMinor, currentPatch);
 	}
 
-	private static Versions _getVersions() {
+	private static BladeVersions _getVersions() {
 		String currentVersion = null;
 
 		try {
@@ -549,7 +549,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 
 		try {
-			return new Versions(currentVersion, _getUpdateVersion(false), _getUpdateVersion(true));
+			return new BladeVersions(currentVersion, _getUpdateVersion(false), _getUpdateVersion(true));
 		}
 		catch (IOException ioe) {
 			throw new RuntimeException(ioe);
