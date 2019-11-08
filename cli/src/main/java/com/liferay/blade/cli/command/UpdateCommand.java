@@ -128,6 +128,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			else if (currentVersion.contains("SNAPSHOT")) {
 				snapshotUpdateVersion = versions.getSnapshotUpdateVersion();
 
+				updateArgs.setSnapshots(true);
+
 				updateVersion = snapshotUpdateVersion;
 			}
 			else {
@@ -424,7 +426,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		String version = lastVersionElement.text();
 
-		if (Objects.equals(url, _SNAPSHOTS_REPO_URL)) {
+		if (Objects.equals(url, _SNAPSHOTS_REPO_URL) || snapshots) {
 			connection.url(url + "/" + version + "/maven-metadata.xml");
 
 			document = connection.get();
