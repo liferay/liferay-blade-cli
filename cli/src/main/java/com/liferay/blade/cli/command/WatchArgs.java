@@ -16,14 +16,42 @@
 
 package com.liferay.blade.cli.command;
 
+import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * @author Gregory Amerson
+ * @author David Truong
  */
 @Parameters(
 	commandDescription = "Watch for changes to workspace projects and automatically build, deploy, or update them into running Liferay instance.",
 	commandNames = "watch"
 )
 public class WatchArgs extends BaseArgs {
+	public List<String> getIgnores() {
+		return _ignores;
+	}
+
+	public void setIgnores(List<String> ignores) {
+		_ignores.addAll(ignores);
+	}
+
+	@Parameter(description = "Ignored watch paths.", names = {"--ignores"})
+	private List<String> _ignores = Arrays.asList(
+		".gradle", ".idea", ".settings", "**/.sass-cache", "**/build", "**/dist", "**/liferay-theme.json", "**/node_modules",
+		"**/liferay-npm-bundler-report.html", "**/target", "bundles", "gradle");
+
+	@Parameter(description = "File extensions that will use deployFast instead of deploy.", names = {"--fast-extensions"})
+	private List<String> _fastExtensions = Arrays.asList(
+		"**/*.css", "**/*.js", "**/*.jsp", "**/*.map", "**/*.scss");
+
+	public List<String> getFastExtensions() {
+		return _fastExtensions;
+	}
+
+	public void setFastExtensions(List<String> fastExtensions) {
+		_fastExtensions.addAll(fastExtensions);
+	}
 }
