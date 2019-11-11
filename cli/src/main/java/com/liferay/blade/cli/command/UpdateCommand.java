@@ -359,9 +359,15 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			url = updateUrlVar.toString();
 		}
 
+		boolean release = updateArgs.isRelease();
+
 		boolean snapshots = updateArgs.isSnapshots();
 
-		boolean release = updateArgs.isRelease();
+		String currentVersion = VersionCommand.getBladeCLIVersion();
+
+		if (!release && !snapshots && currentVersion.contains("SNAPSHOT")) {
+			snapshots = true;
+		}
 
 		if (url == null) {
 			if (snapshots) {
@@ -369,16 +375,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			}
 			else if (release) {
 				url = _RELEASES_REPO_URL;
-			}
-			else {
-				String currentVersion = VersionCommand.getBladeCLIVersion();
-
-				if (currentVersion.contains("SNAPSHOT")) {
-					url = _SNAPSHOTS_REPO_URL;
-				}
-				else {
-					url = _RELEASES_REPO_URL;
-				}
 			}
 		}
 
@@ -390,11 +386,36 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Elements versionElements = document.select("version");
 
+		Iterator<Element> it = versionElements.iterator();
+
+		Collection<Element> elements = new HashSet<>();
+
+		while (it.hasNext()) {
+			Element versionElement = it.next();
+
+			Node node = versionElement.childNode(0);
+
+			String nodeString = node.toString();
+
+			if (nodeString.contains("SNAPSHOT")) {
+				if (!snapshots) {
+					elements.add(versionElement);
+				}
+			}
+			else {
+				if (snapshots) {
+					elements.add(versionElement);
+				}
+			}
+		}
+
+		versionElements.removeAll(elements);
+
 		Element lastVersionElement = versionElements.last();
 
 		String version = lastVersionElement.text();
 
-		if (Objects.equals(url, _SNAPSHOTS_REPO_URL)) {
+		if (Objects.equals(url, _SNAPSHOTS_REPO_URL) || snapshots) {
 			connection.url(url + "/" + version + "/maven-metadata.xml");
 
 			document = connection.get();
@@ -672,25 +693,27 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		boolean md5Match = _doesMD5Match(url, snapshot);
 
-		if ((updateSemver.compareTo(currentSemver) > 0) && !md5Match) {
-			return true;
-		}
-
-		if (snapshot && updateVersion.contains("-")) {
-			matcher = _bladeSnapshotPattern.matcher(currentVersion);
-
-			matcher.find();
-
-			Long currentSnapshot = Long.parseLong(matcher.group(4));
-
-			matcher = _nexusSnapshotPattern.matcher(updateVersion);
-
-			matcher.find();
-
-			Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
-
-			if ((updateSnapshot > currentSnapshot) && !md5Match) {
+		if (!md5Match) {
+			if (updateSemver.compareTo(currentSemver) > 0) {
 				return true;
+			}
+
+			if (snapshot && updateVersion.contains("-")) {
+				matcher = _bladeSnapshotPattern.matcher(currentVersion);
+
+				matcher.find();
+
+				Long currentSnapshot = Long.parseLong(matcher.group(4));
+
+				matcher = _nexusSnapshotPattern.matcher(updateVersion);
+
+				matcher.find();
+
+				Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
+
+				if (updateSnapshot > currentSnapshot) {
+					return true;
+				}
 			}
 		}
 
