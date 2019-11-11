@@ -115,41 +115,55 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			currentVersion = currentVersion.toUpperCase();
 
-			if (snapshots) {
-				snapshotUpdateVersion = versions.getSnapshotUpdateVersion();
+			snapshotUpdateVersion = versions.getSnapshotUpdateVersion();
+			releaseUpdateVersion = versions.getReleasedUpdateVersion();
 
+			if (snapshots) {
 				updateVersion = snapshotUpdateVersion;
 			}
 			else if (release) {
-				releaseUpdateVersion = versions.getReleasedUpdateVersion();
-
 				updateVersion = releaseUpdateVersion;
 			}
 			else if (currentVersion.contains("SNAPSHOT")) {
-				snapshotUpdateVersion = versions.getSnapshotUpdateVersion();
-
 				updateArgs.setSnapshots(true);
 
 				updateVersion = snapshotUpdateVersion;
 			}
 			else {
-				releaseUpdateVersion = versions.getReleasedUpdateVersion();
+				updateArgs.setRelease(true);
 
 				updateVersion = releaseUpdateVersion;
+			}
+
+			if (updateVersion == null) {
+				String message;
+
+				if (updateArgs.isSnapshots()) {
+					message = "No new snapshot updates are available for this version of blade.";
+				}
+				else {
+					message = "No new release updates are available for this version of blade.";
+				}
+
+				if (updateUrl != null) {
+					bladeCLI.out("Custom URL specified: " + updateUrl);
+				}
+
+				bladeCLI.out(message);
+
+				return;
 			}
 
 			boolean shouldUpdate = _shouldUpdate(currentVersion, updateVersion, updateUrl);
 
 			if (checkOnly) {
-				if (_hasUpdateUrlFromBladeDir()) {
+				if (updateUrl != null) {
 					bladeCLI.out("Custom URL specified: " + updateUrl);
-				}
-				else {
 				}
 
 				bladeCLI.out("Current blade version: " + currentVersion);
 				bladeCLI.out("Latest release version: " + releaseUpdateVersion);
-				bladeCLI.out("Latest snapshot bersion: " + snapshotUpdateVersion);
+				bladeCLI.out("Latest snapshot version: " + snapshotUpdateVersion);
 
 				if (shouldUpdate) {
 					String versionTag;
@@ -173,6 +187,25 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			String url = _getUpdateJarUrl(updateArgs);
 
+			if (url == null) {
+				String message;
+
+				if (updateArgs.isSnapshots()) {
+					message = "No new snapshot updates are available for this version of blade.";
+				}
+				else {
+					message = "No new release updates are available for this version of blade.";
+				}
+
+				if (updateUrl != null) {
+					bladeCLI.out("Custom URL specified: " + updateUrl);
+				}
+
+				bladeCLI.out(message);
+
+				return;
+			}
+
 			if (shouldUpdate) {
 				_performUpdate(url);
 			}
@@ -190,7 +223,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					}
 				}
 				else {
-					if (_equal(versions)) {
+					if (_equal(currentVersion, updateVersion)) {
 						bladeCLI.out("Current blade version " + currentVersion + " is the latest released version.");
 					}
 					else {
@@ -254,11 +287,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return false;
 	}
 
-	private static boolean _equal(BladeVersions versions) {
-		String currentVersion = versions.getCurrentVersion();
-
-		String updateVersion = versions.getReleasedUpdateVersion();
-
+	private static boolean _equal(String currentVersion, String updateVersion) {
 		if (currentVersion.contains("SNAPSHOT") && updateVersion.contains("-")) {
 			Long currentSnapshot = _getBladeSnapshotVersion(currentVersion);
 
@@ -395,22 +424,18 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		boolean snapshots = updateArgs.isSnapshots();
 
+		String currentVersion = VersionCommand.getBladeCLIVersion();
+
+		if (!release && !snapshots && currentVersion.contains("SNAPSHOT")) {
+			snapshots = true;
+		}
+
 		if (url == null) {
 			if (snapshots) {
 				url = _SNAPSHOTS_REPO_URL;
 			}
 			else if (release) {
 				url = _RELEASES_REPO_URL;
-			}
-			else {
-				String currentVersion = VersionCommand.getBladeCLIVersion();
-
-				if (currentVersion.contains("SNAPSHOT")) {
-					url = _SNAPSHOTS_REPO_URL;
-				}
-				else {
-					url = _RELEASES_REPO_URL;
-				}
 			}
 		}
 
@@ -422,9 +447,38 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Elements versionElements = document.select("version");
 
-		Element lastVersionElement = versionElements.last();
+		Iterator<Element> it = versionElements.iterator();
 
-		String version = lastVersionElement.text();
+		Collection<Element> elements = new HashSet<>();
+
+		while (it.hasNext()) {
+			Element versionElement = it.next();
+
+			Node node = versionElement.childNode(0);
+
+			String nodeString = node.toString();
+
+			if (nodeString.contains("SNAPSHOT")) {
+				if (!snapshots) {
+					elements.add(versionElement);
+				}
+			}
+			else {
+				if (snapshots) {
+					elements.add(versionElement);
+				}
+			}
+		}
+
+		versionElements.removeAll(elements);
+
+		Element lastVersion = versionElements.last();
+
+		if (lastVersion == null) {
+			return null;
+		}
+
+		String version = lastVersion.text();
 
 		if (Objects.equals(url, _SNAPSHOTS_REPO_URL) || snapshots) {
 			connection.url(url + "/" + version + "/maven-metadata.xml");
@@ -511,15 +565,20 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		String updateVersion = null;
 
 		if (snapshotsArg) {
-			connection.url(url + lastVersion.text() + "/maven-metadata.xml");
+			if (lastVersion != null) {
+				connection.url(url + lastVersion.text() + "/maven-metadata.xml");
 
-			document = connection.get();
+				document = connection.get();
 
-			Elements valueElements = document.select("snapshotVersion > value");
+				Elements valueElements = document.select("snapshotVersion > value");
 
-			Element valueElement = valueElements.get(0);
+				Element valueElement = valueElements.get(0);
 
-			updateVersion = valueElement.text();
+				updateVersion = valueElement.text();
+			}
+			else {
+				return null;
+			}
 		}
 		else {
 			updateVersion = lastVersion.text();
