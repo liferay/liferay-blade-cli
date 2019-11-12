@@ -119,9 +119,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 			releaseUpdateVersion = versions.getReleasedUpdateVersion();
 
-			boolean releaseShouldUpdate = _shouldUpdate(currentVersion, releaseUpdateVersion, updateUrl);
+			boolean releaseShouldUpdate = _shouldUpdate(currentVersion, releaseUpdateVersion, updateUrl, true);
 
-			boolean snapshotShouldUpdate = _shouldUpdate(currentVersion, snapshotUpdateVersion, updateUrl);
+			boolean snapshotShouldUpdate = _shouldUpdate(currentVersion, snapshotUpdateVersion, updateUrl, false);
 
 			boolean shouldUpdate;
 
@@ -244,7 +244,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					}
 				}
 				else {
-					if (_equal(currentVersion, updateVersion)) {
+					if (_equal(currentVersion, updateVersion) || _doesMD5Match(updateArgs)) {
 						bladeCLI.out("Current blade version " + currentVersion + " is the latest released version.");
 					}
 					else {
@@ -694,13 +694,13 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 	}
 
-	private static boolean _shouldUpdate(String currentVersion, String updateVersion, String url) {
+	private static boolean _shouldUpdate(String currentVersion, String updateVersion, String url, boolean release) {
 		if (updateVersion == null) {
 			return false;
 		}
 
 		boolean updatedVersionIsSnapshot = updateVersion.contains("-");
-		
+
 		boolean currentVersionIsSnapshot = currentVersion.contains("SNAPSHOT");
 
 		Matcher matcher = _versionPattern.matcher(currentVersion);
@@ -724,6 +724,11 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
 		if (updateSemver.compareTo(currentSemver) > 0) {
+			return true;
+		}
+		else if (currentVersionIsSnapshot && !updatedVersionIsSnapshot && release &&
+				 (updateSemver.compareTo(currentSemver) == 0)) {
+
 			return true;
 		}
 
