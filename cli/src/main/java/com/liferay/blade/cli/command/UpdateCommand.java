@@ -186,7 +186,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
 
 					if (updateArgs.isRelease() || currentVersion.contains("SNAPSHOT")) {
-						bladeCLI.out("Pass the -r flag to 'blade update' to switch to release branch'");
+						bladeCLI.out("Pass the -r flag to 'blade update' to switch to release branch.");
 					}
 				}
 
@@ -199,7 +199,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					bladeCLI.out("A new snapshot update is available for blade: " + snapshotUpdateVersion);
 
 					if (updateArgs.isSnapshots() && !currentVersion.contains("SNAPSHOT")) {
-						bladeCLI.out("Pass the -s flag to 'blade update' to switch to snapshots branch'");
+						bladeCLI.out("Pass the -s flag to 'blade update' to switch to snapshots branch.");
 					}
 				}
 
@@ -725,29 +725,27 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Version updateSemver = new Version(updateMajor, updateMinor, updatePatch);
 
+		if (updateSemver.compareTo(currentSemver) > 0) {
+			return true;
+		}
+
 		boolean md5Match = _doesMD5Match(url, snapshot);
 
-		if (!md5Match) {
-			if (updateSemver.compareTo(currentSemver) > 0) {
+		if (!md5Match && snapshot) {
+			matcher = _bladeSnapshotPattern.matcher(currentVersion);
+
+			matcher.find();
+
+			Long currentSnapshot = Long.parseLong(matcher.group(4));
+
+			matcher = _nexusSnapshotPattern.matcher(updateVersion);
+
+			matcher.find();
+
+			Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
+
+			if (updateSnapshot > currentSnapshot) {
 				return true;
-			}
-
-			if (snapshot) {
-				matcher = _bladeSnapshotPattern.matcher(currentVersion);
-
-				matcher.find();
-
-				Long currentSnapshot = Long.parseLong(matcher.group(4));
-
-				matcher = _nexusSnapshotPattern.matcher(updateVersion);
-
-				matcher.find();
-
-				Long updateSnapshot = Long.parseLong(matcher.group(4) + matcher.group(5));
-
-				if (updateSnapshot > currentSnapshot) {
-					return true;
-				}
 			}
 		}
 
