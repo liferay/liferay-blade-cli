@@ -699,11 +699,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			return false;
 		}
 
-		boolean snapshot = false;
-
-		if (currentVersion.contains("SNAPSHOT") && updateVersion.contains("-")) {
-			snapshot = true;
-		}
+		boolean updatedVersionIsSnapshot = updateVersion.contains("-");
+		
+		boolean currentVersionIsSnapshot = currentVersion.contains("SNAPSHOT");
 
 		Matcher matcher = _versionPattern.matcher(currentVersion);
 
@@ -729,9 +727,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			return true;
 		}
 
-		boolean md5Match = _doesMD5Match(url, snapshot);
+		boolean md5Match = _doesMD5Match(url, updatedVersionIsSnapshot);
 
-		if (!md5Match && snapshot) {
+		if (!md5Match && updatedVersionIsSnapshot && currentVersionIsSnapshot) {
 			matcher = _bladeSnapshotPattern.matcher(currentVersion);
 
 			matcher.find();
