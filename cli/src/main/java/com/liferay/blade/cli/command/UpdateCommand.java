@@ -235,25 +235,42 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					if (currentVersion.contains("SNAPSHOT")) {
 						bladeCLI.out(
 							"Current blade version " + currentVersion +
-								" is greater than the latest snapshot version " + releaseUpdateVersion);
+								" is greater than the latest snapshot version " + snapshotUpdateVersion);
 					}
 					else {
 						bladeCLI.out(
 							"Current blade version " + currentVersion +
-								" (released) is greater than the latest snapshot version " + releaseUpdateVersion);
+								" (released) is greater than the latest snapshot version " + snapshotUpdateVersion);
 					}
 				}
 				else {
 					if (_equal(currentVersion, updateVersion) || _doesMD5Match(updateArgs)) {
-						bladeCLI.out("Current blade version " + currentVersion + " is the latest released version.");
+						if (updateVersion.contains("-")) {
+							bladeCLI.out(
+								"Current blade version " + currentVersion + " is the latest snapshot version.");
+
+							if (releaseShouldUpdate) {
+								bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
+								bladeCLI.out("Pass the -r flag to 'blade update' to switch to release branch.");
+							}
+						}
+						else {
+							bladeCLI.out(
+								"Current blade version " + currentVersion + " is the latest released version.");
+						}
 					}
 					else {
 						bladeCLI.out(
-							"Current blade version " + currentVersion + " is higher than the latest version " +
+							"Current blade version " + currentVersion + " is greater than the latest version " +
 								updateVersion);
 						bladeCLI.out("Not updating, since downgrades are not supported at this time.");
 						bladeCLI.out("If you want to force a downgrade, use the following command:");
 						bladeCLI.out("\tjpm install -f " + url);
+
+						if (releaseShouldUpdate) {
+							bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
+							bladeCLI.out("Pass the -r flag to 'blade update' to switch to release branch.");
+						}
 					}
 				}
 			}
