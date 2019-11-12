@@ -116,15 +116,17 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			currentVersion = currentVersion.toUpperCase();
 
 			snapshotUpdateVersion = versions.getSnapshotUpdateVersion();
+
 			releaseUpdateVersion = versions.getReleasedUpdateVersion();
-			
+
 			boolean releaseShouldUpdate = _shouldUpdate(currentVersion, releaseUpdateVersion, updateUrl);
+
 			boolean snapshotShouldUpdate = _shouldUpdate(currentVersion, snapshotUpdateVersion, updateUrl);
 
 			boolean shouldUpdate;
+
 			if (snapshots) {
 				updateVersion = snapshotUpdateVersion;
-				
 			}
 			else if (release) {
 				updateVersion = releaseUpdateVersion;
@@ -139,28 +141,22 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 				updateVersion = releaseUpdateVersion;
 			}
-			
+
 			if (Objects.equals(updateVersion, releaseUpdateVersion)) {
 				shouldUpdate = releaseShouldUpdate;
 			}
 			else if (Objects.equals(updateVersion, snapshotUpdateVersion)) {
 				shouldUpdate = snapshotShouldUpdate;
 			}
-			else
-			{
+			else {
 				shouldUpdate = false;
 			}
-			
 
-
-			
 			if (updateUrl != null) {
 				bladeCLI.out("Custom URL specified: " + updateUrl);
 			}
 
-
 			if (checkOnly) {
-
 				String versionTag;
 
 				if (Objects.equals(updateVersion, snapshotUpdateVersion)) {
@@ -172,35 +168,41 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				else {
 					versionTag = "(custom)";
 				}
-				bladeCLI.out("Current blade version: " + currentVersion + " " + versionTag);
-				bladeCLI.out("Latest release version: " + (releaseUpdateVersion == null ? "(Unavailable)" : releaseUpdateVersion));
-				bladeCLI.out("Latest snapshot version: " + (snapshotUpdateVersion == null ? "(Unavailable)" : snapshotUpdateVersion));
 
-				if (releaseUpdateVersion == null || !releaseShouldUpdate) {
+				bladeCLI.out("Current blade version: " + currentVersion + " " + versionTag);
+				bladeCLI.out(
+					"Latest release version: " +
+						((releaseUpdateVersion == null) ? "(Unavailable)" : releaseUpdateVersion));
+				bladeCLI.out(
+					"Latest snapshot version: " +
+						((snapshotUpdateVersion == null) ? "(Unavailable)" : snapshotUpdateVersion));
+
+				if ((releaseUpdateVersion == null) || !releaseShouldUpdate) {
 					String message = "No new release updates are available for this version of blade.";
 
-
 					bladeCLI.out(message);
-				} else if (releaseShouldUpdate) {
-					bladeCLI.out(
-						"A new release update is available for blade: " + releaseUpdateVersion);
-						if (updateArgs.isRelease() || currentVersion.contains("SNAPSHOT")) {
-							bladeCLI.out("Pass the -r flag to 'blade update' to switch to release branch'");
-						}
 				}
-				if (snapshotUpdateVersion == null || !snapshotShouldUpdate) {
-					String message = "No new snapshot updates are available for this version of blade.";
+				else if (releaseShouldUpdate) {
+					bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
 
+					if (updateArgs.isRelease() || currentVersion.contains("SNAPSHOT")) {
+						bladeCLI.out("Pass the -r flag to 'blade update' to switch to release branch'");
+					}
+				}
+
+				if ((snapshotUpdateVersion == null) || !snapshotShouldUpdate) {
+					String message = "No new snapshot updates are available for this version of blade.";
 
 					bladeCLI.out(message);
 				}
 				else if (snapshotShouldUpdate) {
-					bladeCLI.out(
-						"A new snapshot update is available for blade: " + snapshotUpdateVersion);
-						if (updateArgs.isSnapshots() && !currentVersion.contains("SNAPSHOT")) {
-							bladeCLI.out("Pass the -s flag to 'blade update' to switch to snapshots branch'");
-						}
+					bladeCLI.out("A new snapshot update is available for blade: " + snapshotUpdateVersion);
+
+					if (updateArgs.isSnapshots() && !currentVersion.contains("SNAPSHOT")) {
+						bladeCLI.out("Pass the -s flag to 'blade update' to switch to snapshots branch'");
+					}
 				}
+
 				return;
 			}
 
@@ -293,7 +295,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		else {
 			updateArgs.setRelease(true);
 		}
-		
+
 		return _doesMD5Match(updateArgs);
 	}
 
@@ -696,8 +698,12 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		if (updateVersion == null) {
 			return false;
 		}
-		
-		boolean snapshot = currentVersion.contains("SNAPSHOT") && updateVersion.contains("-");
+
+		boolean snapshot = false;
+
+		if (currentVersion.contains("SNAPSHOT") && updateVersion.contains("-")) {
+			snapshot = true;
+		}
 
 		Matcher matcher = _versionPattern.matcher(currentVersion);
 
