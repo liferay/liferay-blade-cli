@@ -27,6 +27,7 @@ import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
 import com.liferay.blade.cli.command.UpdateArgs;
 import com.liferay.blade.cli.command.UpdateCommand;
+import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.ParametersValidator;
 import com.liferay.blade.cli.util.CombinedClassLoader;
@@ -856,6 +857,46 @@ public class BladeCLI {
 		return possibleValuesMap;
 	}
 
+	private String _getReleaseVersionIfAvailable() {
+		UpdateArgs updateArgs = new UpdateArgs();
+
+		updateArgs.setCheckOnly(true);
+
+		UpdateCommand updateCommand = new UpdateCommand();
+
+		updateCommand.setArgs(updateArgs);
+
+		updateCommand.setBlade(this);
+
+		StringPrintStream stdOut = StringPrintStream.newFilteredInstance(
+			x -> !x.contains("release update is available for blade: "));
+
+		PrintStream currentStdOut = System.out;
+
+		try {
+			System.setOut(stdOut);
+
+			_out = System.out;
+
+			updateCommand.execute();
+		}
+		finally {
+			System.setOut(currentStdOut);
+
+			_out = System.out;
+		}
+
+		String updateAvailable = stdOut.get();
+
+		if (updateAvailable.length() > 0) {
+			String[] updateParts = updateAvailable.split(" ");
+
+			return updateParts[updateParts.length - 1].trim();
+		}
+
+		return null;
+	}
+
 	private File _getSettingsBaseDir() {
 		File baseDir = new File(_args.getBase());
 
@@ -871,6 +912,50 @@ public class BladeCLI {
 		}
 
 		return settingsBaseDir;
+	}
+
+	private String _getSnapshotVersionIfAvailable() {
+		UpdateArgs updateArgs = new UpdateArgs();
+
+		updateArgs.setCheckOnly(true);
+
+		UpdateCommand updateCommand = new UpdateCommand();
+
+		updateCommand.setArgs(updateArgs);
+
+		updateCommand.setBlade(this);
+
+		StringPrintStream stdOut = StringPrintStream.newFilteredInstance(
+			x -> !x.contains("snapshot update is available for blade: "));
+
+		PrintStream currentStdOut = System.out;
+
+		try {
+			System.setOut(stdOut);
+
+			_out = System.out;
+
+			updateCommand.execute();
+		}
+		finally {
+			System.setOut(currentStdOut);
+
+			_out = System.out;
+		}
+
+		String updateAvailable = stdOut.get();
+
+		if (updateAvailable.length() > 0) {
+			String[] updateParts = updateAvailable.split(" ");
+
+			String result = updateParts[updateParts.length - 1];
+
+			result = result.substring(0, 14) + result.substring(15, 20);
+
+			return result.trim();
+		}
+
+		return null;
 	}
 
 	private Path _getUpdateCheckPath() throws IOException {
@@ -959,37 +1044,34 @@ public class BladeCLI {
 	}
 
 	private void _printUpdateIfAvailable() throws IOException {
-		UpdateArgs updateArgs = new UpdateArgs();
+		String releaseUpdateVersion = _getReleaseVersionIfAvailable();
 
-		updateArgs.setCheckOnly(true);
+		String currentVersion = VersionCommand.getBladeCLIVersion();
 
-		UpdateCommand updateCommand = new UpdateCommand();
+		boolean currentVersionIsSnapshot = currentVersion.contains("SNAPSHOT");
 
-		updateCommand.setArgs(updateArgs);
+		currentVersion = currentVersion.replace("SNAPSHOT", "");
 
-		updateCommand.setBlade(this);
-
-		StringPrintStream stdOut = StringPrintStream.newFilteredInstance(x -> !x.contains("available"));
-
-		PrintStream currentStdOut = System.out;
-
-		try {
-			System.setOut(stdOut);
-
-			_out = System.out;
-
-			updateCommand.execute();
-		}
-		finally {
-			System.setOut(currentStdOut);
-
-			_out = System.out;
+		if (!currentVersionIsSnapshot) {
+			currentVersion = currentVersion.substring(0, 5);
 		}
 
-		String updateAvailable = stdOut.get();
+		if (currentVersionIsSnapshot) {
+			String snapshotUpdateVersion = _getSnapshotVersionIfAvailable();
 
-		if ((updateAvailable != null) && (updateAvailable.length() > 0)) {
-			System.out.println(updateAvailable);
+			if ((releaseUpdateVersion != null) && (snapshotUpdateVersion != null)) {
+				out("Updates available to the installed version: " + currentVersion);
+				out("-> (Snapshot) " + snapshotUpdateVersion + "\t Run `blade update` to install");
+				out("-> (Release) " + releaseUpdateVersion + "\t\t\t Run `blade update -r` to install");
+			}
+			else if (snapshotUpdateVersion != null) {
+				out("Update available " + currentVersion + " -> " + snapshotUpdateVersion);
+				out("Run `blade update` to install");
+			}
+		}
+		else if (releaseUpdateVersion != null) {
+			out("Update available " + currentVersion + " -> " + releaseUpdateVersion);
+			out("Run `blade update` to install");
 		}
 	}
 

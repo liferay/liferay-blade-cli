@@ -170,12 +170,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 
 				bladeCLI.out("Current blade version: " + currentVersion + " " + versionTag);
-				bladeCLI.out(
-					"Latest release version: " +
-						((releaseUpdateVersion == null) ? "(Unavailable)" : releaseUpdateVersion));
-				bladeCLI.out(
-					"Latest snapshot version: " +
-						((snapshotUpdateVersion == null) ? "(Unavailable)" : snapshotUpdateVersion));
 
 				if ((releaseUpdateVersion == null) || !releaseShouldUpdate) {
 					String message = "No new release updates are available for this version of blade.";
@@ -235,12 +229,12 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					if (currentVersion.contains("SNAPSHOT")) {
 						bladeCLI.out(
 							"Current blade version " + currentVersion +
-								" is greater than the latest snapshot version " + snapshotUpdateVersion);
+								" is greater than the latest snapshot version.");
 					}
 					else {
 						bladeCLI.out(
 							"Current blade version " + currentVersion +
-								" (released) is greater than the latest snapshot version " + snapshotUpdateVersion);
+								" (released) is greater than the latest snapshot version.");
 					}
 				}
 				else {
@@ -261,11 +255,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					}
 					else {
 						bladeCLI.out(
-							"Current blade version " + currentVersion + " is greater than the latest version " +
-								updateVersion);
-						bladeCLI.out("Not updating, since downgrades are not supported at this time.");
-						bladeCLI.out("If you want to force a downgrade, use the following command:");
-						bladeCLI.out("\tjpm install -f " + url);
+							"Current blade version " + currentVersion + " is greater than the latest version.");
 
 						if (releaseShouldUpdate) {
 							bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
