@@ -51,8 +51,8 @@ public class WatchArgs extends BaseArgs {
 
 	@Parameter(description = "Ignored watch paths.", names = {"--ignores"})
 	private List<String> _ignores = Arrays.asList(
-		".gradle", ".idea", ".settings", "**/.sass-cache", "**/build", "**/dist", "**/liferay-theme.json", "**/node_modules",
-		"**/liferay-npm-bundler-report.html", "**/target", "bundles", "gradle");
+		".gradle", ".idea", ".settings", "**/.sass-cache", "**/build", "**/classes", "**/dist", "**/liferay-theme.json",
+		"**/node_modules", "**/liferay-npm-bundler-report.html", "**/target", "bundles", "gradle");
 
 	@Parameter(description = "File extensions that will use deployFast instead of deploy.", names = {"--fast-extensions"})
 	private List<String> _fastExtensions = Arrays.asList(
