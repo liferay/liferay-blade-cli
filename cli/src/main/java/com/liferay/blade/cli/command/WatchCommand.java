@@ -25,6 +25,7 @@ import com.liferay.gogo.shell.client.GogoShellClient;
 import com.sun.nio.file.SensitivityWatchEventModifier;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -45,9 +46,12 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -76,9 +80,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			return;
 		}
 
-		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(watchPath);
+		Map<String, Path> projectPaths = _getProjectPaths(watchPath);
 
-		_watch(watchArgs, watchPath, projectInfo.getProjectOutputFiles());
+		_watch(watchArgs, watchPath, projectPaths);
 	}
 
 	@Override
@@ -91,7 +95,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 	}
 
 	private void _watch(
-			WatchArgs watchArgs, Path watchPath, Map<String, Set<File>> projectOutputFiles)
+			WatchArgs watchArgs, Path watchPath, Map<String, Path> projectPaths)
 		throws InterruptedException {
 
 		Thread watchThread = new Thread() {
@@ -119,16 +123,14 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 						_getPathMatchers(
 							watchPath, fastExtensions.toArray(new String[0]));
 
-					System.out.println("Watching " + watchPath);
-
 					_walkAndRegisterDirectories(
 						watcher, keys, watchPath, ignorePathMatchers);
 
 					final GradleExec gradleExec = new GradleExec(bladeCLI);
 
-					gradleExec.executeTask("deploy", false);
-
-					Set<String> projectPaths = projectOutputFiles.keySet();
+					if (watchArgs.isInit()) {
+					    gradleExec.executeTask("deploy", false);
+                    }
 
 					while (true) {
 						WatchKey key;
@@ -157,6 +159,19 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 							Path projectPath = _getGradleProjectPath(watchPath, resolvedPath, projectPaths);
 
+                            boolean ignoredPath = false;
+
+                            for (PathMatcher pathMatcher : ignorePathMatchers) {
+                                if (pathMatcher.matches(resolvedPath)) {
+                                    ignoredPath = true;
+                                    break;
+                                }
+                            }
+
+                            if (ignoredPath) {
+                                continue;
+                            }
+
 							boolean directory = Files.isDirectory(resolvedPath);
 
 							if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
@@ -180,34 +195,28 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 								gradleExec.executeTask("clean deploy", projectPath.toFile(), false);
 							}
 							else if (!directory) {
-								boolean ignoredPath = false;
+                                boolean fastExtension = false;
 
-								for (PathMatcher pathMatcher : ignorePathMatchers) {
-									if (pathMatcher.matches(resolvedPath)) {
-										ignoredPath = true;
-										break;
-									}
-								}
+                                for (PathMatcher pathMatcher : fastExtensionMatchers) {
+                                    if (pathMatcher.matches(resolvedPath)) {
+                                        fastExtension = true;
+                                        break;
+                                    }
+                                }
 
-								if (!ignoredPath) {
-									boolean fastExtension = false;
-									for (PathMatcher pathMatcher : fastExtensionMatchers) {
-										if (pathMatcher.matches(resolvedPath)) {
-											fastExtension = true;
-											break;
-										}
-									}
+                                if (fastExtension) {
+                                    System.out.println(resolvedPath + " has caused a fast deployment");
 
-									System.out.println(resolvedPath + " has caused a new deployment");
+                                    gradleExec.executeTask("deployFast -a", projectPath.toFile(), false);
+                                }
+                                else {
+                                    System.out.println(resolvedPath + " has caused a new deployment");
 
-									if (fastExtension) {
-										gradleExec.executeTask("deployFast -a", projectPath.toFile(), false);
-									}
-									else {
-										gradleExec.executeTask("deploy -a", projectPath.toFile(), false);
-									}
-								}
+                                    gradleExec.executeTask("deploy -a", projectPath.toFile(), false);
+                                }
 							}
+
+                            System.out.println("Watching files in " + watchPath + ". Press Crtl + C to stop.");
 						}
 
 						boolean valid = key.reset();
@@ -266,16 +275,51 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			});
 	}
 
-	private Path _getGradleProjectPath(Path basePath, Path path, Set<String> projectPaths) {
-		Path relativePath = basePath.relativize(path);
+    private Map<String, Path> _getProjectPaths(final Path projectPath) throws Exception {
+        final Map<String, Path> projectPaths = new HashMap<>();
 
-		String gradlePath = ":" + relativePath.toString();
+        Files.walkFileTree(
+            projectPath,
+            new SimpleFileVisitor<Path>() {
 
-		gradlePath = gradlePath.replaceAll(File.separator, ":");
+                @Override
+                public FileVisitResult preVisitDirectory(
+                    Path path, BasicFileAttributes basicFileAttributes)
+                throws IOException {
+                    File dir = path.toFile();
 
-		for (String projectPath : projectPaths) {
+                    String[] files = dir.list((dir1, name) -> "src".equals(name));
+
+                    if(files.length > 0) {
+                        projectPaths.put(_getGradlePath(path, projectPath), path);
+
+                       return FileVisitResult.SKIP_SUBTREE;
+                    }
+
+                    return FileVisitResult.CONTINUE;
+                }
+
+            });
+
+        return projectPaths;
+    }
+
+    private String _getGradlePath(Path path, Path basePath) {
+        Path relativePath = basePath.relativize(path);
+
+        String gradlePath = ":" + relativePath.toString();
+
+        gradlePath = gradlePath.replaceAll(File.separator, ":");
+
+        return gradlePath;
+    }
+
+	private Path _getGradleProjectPath(Path basePath, Path path, Map<String, Path> projectPaths) {
+		String gradlePath = _getGradlePath(path, basePath);
+
+		for (String projectPath : projectPaths.keySet()) {
 			if (gradlePath.startsWith(projectPath)) {
-				return Paths.get(basePath.toString(), projectPath.replaceAll(":", File.separator));
+				return projectPaths.get(projectPath);
 			}
 		}
 
