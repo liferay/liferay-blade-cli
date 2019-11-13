@@ -38,6 +38,17 @@ public class WatchArgs extends BaseArgs {
 		_ignores.addAll(ignores);
 	}
 
+	@Parameter(description = "Skip initial deploy", names = {"--no-init"})
+	private boolean _init = true;
+
+	public boolean isInit() {
+		return _init;
+	}
+
+	public void setInit(boolean init) {
+		_init = init;
+	}
+
 	@Parameter(description = "Ignored watch paths.", names = {"--ignores"})
 	private List<String> _ignores = Arrays.asList(
 		".gradle", ".idea", ".settings", "**/.sass-cache", "**/build", "**/dist", "**/liferay-theme.json", "**/node_modules",
