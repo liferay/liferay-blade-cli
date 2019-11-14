@@ -30,39 +30,40 @@ import java.util.List;
 	commandNames = "watch"
 )
 public class WatchArgs extends BaseArgs {
+
+	public List<String> getFastExtensions() {
+		return _fastExtensions;
+	}
+
 	public List<String> getIgnores() {
 		return _ignores;
+	}
+
+	public boolean isInit() {
+		return _init;
+	}
+
+	public void setFastExtensions(List<String> fastExtensions) {
+		_fastExtensions.addAll(fastExtensions);
 	}
 
 	public void setIgnores(List<String> ignores) {
 		_ignores.addAll(ignores);
 	}
 
-	@Parameter(description = "Skip initial deploy", names = {"--no-init"})
-	private boolean _init = true;
-
-	public boolean isInit() {
-		return _init;
-	}
-
 	public void setInit(boolean init) {
 		_init = init;
 	}
 
-	@Parameter(description = "Ignored watch paths.", names = {"--ignores"})
+	@Parameter(description = "File extensions that will use deployFast instead of deploy.", names = "--fast-extensions")
+	private List<String> _fastExtensions = Arrays.asList("**/*.css", "**/*.js", "**/*.jsp", "**/*.map", "**/*.scss");
+
+	@Parameter(description = "Ignored watch paths.", names = "--ignores")
 	private List<String> _ignores = Arrays.asList(
 		".gradle", ".idea", ".settings", "**/.sass-cache", "**/build", "**/classes", "**/dist", "**/liferay-theme.json",
 		"**/node_modules", "**/liferay-npm-bundler-report.html", "**/target", "bundles", "gradle");
 
-	@Parameter(description = "File extensions that will use deployFast instead of deploy.", names = {"--fast-extensions"})
-	private List<String> _fastExtensions = Arrays.asList(
-		"**/*.css", "**/*.js", "**/*.jsp", "**/*.map", "**/*.scss");
+	@Parameter(description = "Skip initial deploy", names = "--no-init")
+	private boolean _init = true;
 
-	public List<String> getFastExtensions() {
-		return _fastExtensions;
-	}
-
-	public void setFastExtensions(List<String> fastExtensions) {
-		_fastExtensions.addAll(fastExtensions);
-	}
 }
