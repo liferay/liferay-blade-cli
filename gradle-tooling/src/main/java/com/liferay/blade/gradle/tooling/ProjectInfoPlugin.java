@@ -39,6 +39,7 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.PublishArtifactSet;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.tooling.provider.model.ToolingModelBuilder;
@@ -46,6 +47,7 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
 
 /**
  * @author Gregory Amerson
+ * @author Simon Jiang
  */
 public class ProjectInfoPlugin implements Plugin<Project> {
 
@@ -106,6 +108,12 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 			String deployDir = _getDeployDir(project);
 
+			String dockerImageId = _getDockerImageId(project);
+
+			String dockerImageLiferay = _getDockerImageLiferay(project);
+
+			String dockerContainerId = _getDockerContainerId(project);
+
 			try {
 				Configuration archivesConfiguration = configurations.getByName(Dependency.ARCHIVES_CONFIGURATION);
 
@@ -122,7 +130,9 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			catch (Exception e) {
 			}
 
-			return new DefaultModel(pluginClassNames, projectOutputFiles, deployDir, liferayHome);
+			return new DefaultModel(
+				pluginClassNames, projectOutputFiles, deployDir, liferayHome, dockerImageId, dockerContainerId,
+				dockerImageLiferay);
 		}
 
 		@Override
@@ -134,10 +144,30 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			return _getExtensionProperty(project, "liferay", "deployDir");
 		}
 
+		private String _getDockerContainerId(Project project) {
+			return _getExtensionProperty(project, "liferayWorkspace", "dockerContainerId");
+		}
+
+		private String _getDockerImageId(Project project) {
+			return _getExtensionProperty(project, "liferayWorkspace", "dockerImageId");
+		}
+
+		private String _getDockerImageLiferay(Project project) {
+			return _getExtensionProperty(project, "liferayWorkspace", "dockerImageLiferay");
+		}
+
 		private String _getExtensionProperty(Project project, String extension, String property) {
 			ExtensionContainer extensionContainer = project.getExtensions();
 
 			Object liferayExtension = extensionContainer.findByName(extension);
+
+			if (project.equals(project.getRootProject())) {
+				ExtensionAware extensionAware = (ExtensionAware)project.getGradle();
+
+				ExtensionContainer rootExtensionContainer = extensionAware.getExtensions();
+
+				liferayExtension = rootExtensionContainer.findByName("liferayWorkspace");
+			}
 
 			String liferayHome = null;
 

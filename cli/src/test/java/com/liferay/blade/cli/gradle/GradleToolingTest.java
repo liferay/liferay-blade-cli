@@ -38,6 +38,7 @@ import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Gregory Amerson
+ * @author Simon Jiang
  */
 public class GradleToolingTest {
 
@@ -59,6 +60,33 @@ public class GradleToolingTest {
 	@After
 	public void tearDownClass() throws Exception {
 		Files.delete(_TOOLING_ZIP);
+	}
+
+	@Test
+	public void testGetDockerContainerId() throws Exception {
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(_wsPath);
+
+		String dockerContainerId = projectInfo.getDockerContainerId();
+
+		Assert.assertNotNull(dockerContainerId);
+	}
+
+	@Test
+	public void testGetDockerImageId() throws Exception {
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(_wsPath);
+
+		String dockerImageId = projectInfo.getDockerImageId();
+
+		Assert.assertNotNull(dockerImageId);
+	}
+
+	@Test
+	public void testGetDockerImageLiferay() throws Exception {
+		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(_wsPath);
+
+		String dockerImageLiferay = projectInfo.getDockerImageLiferay();
+
+		Assert.assertNotNull(dockerImageLiferay);
 	}
 
 	@Test
