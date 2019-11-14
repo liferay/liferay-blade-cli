@@ -39,8 +39,8 @@ public class WatchArgs extends BaseArgs {
 		return _ignorePaths;
 	}
 
-	public boolean isInit() {
-		return _init;
+	public boolean isSkipInit() {
+		return _skipInit;
 	}
 
 	public void setFastPaths(List<String> fastPaths) {
@@ -51,8 +51,8 @@ public class WatchArgs extends BaseArgs {
 		_ignorePaths.addAll(ignorePaths);
 	}
 
-	public void setInit(boolean init) {
-		_init = init;
+	public void setSkipInit(boolean skipInit) {
+		_skipInit = skipInit;
 	}
 
 	@Parameter(description = "File paths that will use deployFast instead of deploy.", names = {"-f", "--fast-paths"})
@@ -63,7 +63,7 @@ public class WatchArgs extends BaseArgs {
 		".gradle", ".idea", ".settings", "**/.sass-cache", "**/build", "**/classes", "**/dist", "**/liferay-theme.json",
 		"**/node_modules", "**/liferay-npm-bundler-report.html", "**/target", "bundles", "gradle");
 
-	@Parameter(description = "Skip initial deploy", names = "--no-init")
-	private boolean _init = true;
+	@Parameter(description = "Skip initial deploy", names = {"-s", "--skip-init"})
+	private boolean _skipInit = false;
 
 }

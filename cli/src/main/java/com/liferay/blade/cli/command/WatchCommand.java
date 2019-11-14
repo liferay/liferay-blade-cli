@@ -244,7 +244,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 					final GradleExec gradleExec = new GradleExec(bladeCLI);
 
-					if (watchArgs.isInit()) {
+					if (!watchArgs.isSkipInit()) {
 						gradleExec.executeTask("deploy", false);
 					}
 
