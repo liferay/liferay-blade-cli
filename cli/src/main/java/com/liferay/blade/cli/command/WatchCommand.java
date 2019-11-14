@@ -230,15 +230,15 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 					final Map<WatchKey, Path> keys = new HashMap<>();
 
-					List<String> ignores = watchArgs.getIgnores();
+					List<String> ignorePaths = watchArgs.getIgnorePaths();
 
 					final List<PathMatcher> ignorePathMatchers = _getPathMatchers(
-						watchPath, ignores.toArray(new String[0]));
+						watchPath, ignorePaths.toArray(new String[0]));
 
-					List<String> fastExtensions = watchArgs.getFastExtensions();
+					List<String> fastPaths = watchArgs.getFastPaths();
 
-					final List<PathMatcher> fastExtensionMatchers = _getPathMatchers(
-						watchPath, fastExtensions.toArray(new String[0]));
+					final List<PathMatcher> fastPathMatchers = _getPathMatchers(
+						watchPath, fastPaths.toArray(new String[0]));
 
 					_walkAndRegisterDirectories(watcher, keys, watchPath, ignorePathMatchers);
 
@@ -313,7 +313,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 							else if (!directory) {
 								boolean fastExtension = false;
 
-								for (PathMatcher pathMatcher : fastExtensionMatchers) {
+								for (PathMatcher pathMatcher : fastPathMatchers) {
 									if (pathMatcher.matches(resolvedPath)) {
 										fastExtension = true;
 
