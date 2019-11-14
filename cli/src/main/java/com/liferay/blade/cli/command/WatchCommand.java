@@ -45,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Gregory Amerson
@@ -72,9 +74,11 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			return;
 		}
 
-		Map<String, Path> projectPaths = _getProjectPaths(watchPath);
+		List<String> ignorePaths = watchArgs.getIgnorePaths();
 
-		_watch(watchArgs, watchPath, projectPaths);
+		Map<String, Path> projectPaths = _getProjectPaths(watchPath, watchArgs.getProjectPaths(), ignorePaths);
+
+		_watch(watchPath, projectPaths, watchArgs.getFastPaths(), ignorePaths, !watchArgs.isSkipInit());
 	}
 
 	@Override
@@ -146,25 +150,62 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 		return pathMatchers;
 	}
 
-	private Map<String, Path> _getProjectPaths(final Path projectPath) throws Exception {
-		final Map<String, Path> projectPaths = new HashMap<>();
+	private Map<String, Path> _getProjectPaths(
+			final Path watchPath, List<String> projectPaths, List<String> ignorePaths)
+		throws Exception {
+
+		final Map<String, Path> foundProjectPaths = new HashMap<>();
+
+		FileSystem fileSystem = FileSystems.getDefault();
+
+		List<PathMatcher> ignorePathMatchers = ignorePaths.stream(
+		).map(
+			ignorePath -> fileSystem.getPathMatcher("glob:" + ignorePath)
+		).collect(
+			Collectors.toList()
+		);
 
 		Files.walkFileTree(
-			projectPath,
+			watchPath,
 			new SimpleFileVisitor<Path>() {
 
 				@Override
 				public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes)
 					throws IOException {
 
-					File dir = path.toFile();
+					boolean shouldIgnorePath = ignorePathMatchers.stream(
+					).filter(
+						pathMatcher -> pathMatcher.matches(path)
+					).findFirst(
+					).isPresent();
 
-					String[] files = dir.list((dir1, name) -> Objects.equals("src", name));
-
-					if (files.length > 0) {
-						projectPaths.put(_getGradlePath(path, projectPath), path);
-
+					if (shouldIgnorePath) {
 						return FileVisitResult.SKIP_SUBTREE;
+					}
+
+					try (Stream<Path> files = Files.list(path)) {
+						boolean projectPathFound = files.map(
+							p -> p.getFileName()
+						).filter(
+							p -> !ignorePathMatchers.stream(
+							).filter(
+								pathMatcher -> pathMatcher.matches(path.resolve(p))
+							).findFirst(
+							).isPresent()
+						).filter(
+							p -> projectPaths.stream(
+							).filter(
+								pp -> Objects.equals(pp, p.toString())
+							).findFirst(
+							).isPresent()
+						).findFirst(
+						).isPresent();
+
+						if (projectPathFound) {
+							foundProjectPaths.put(_getGradlePath(path, watchPath), path);
+
+							return FileVisitResult.SKIP_SUBTREE;
+						}
 					}
 
 					return FileVisitResult.CONTINUE;
@@ -172,7 +213,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 			});
 
-		return projectPaths;
+		return foundProjectPaths;
 	}
 
 	private void _registerDirectory(WatchService watcher, Map<WatchKey, Path> keys, Path dir) throws IOException {
@@ -214,7 +255,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			});
 	}
 
-	private void _watch(WatchArgs watchArgs, Path watchPath, Map<String, Path> projectPaths)
+	private void _watch(
+			Path watchPath, Map<String, Path> projectPaths, List<String> fastPaths, List<String> ignorePaths,
+			boolean deploy)
 		throws InterruptedException {
 
 		Thread watchThread = new Thread() {
@@ -230,12 +273,8 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 					final Map<WatchKey, Path> keys = new HashMap<>();
 
-					List<String> ignorePaths = watchArgs.getIgnorePaths();
-
 					final List<PathMatcher> ignorePathMatchers = _getPathMatchers(
 						watchPath, ignorePaths.toArray(new String[0]));
-
-					List<String> fastPaths = watchArgs.getFastPaths();
 
 					final List<PathMatcher> fastPathMatchers = _getPathMatchers(
 						watchPath, fastPaths.toArray(new String[0]));
@@ -244,7 +283,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 					final GradleExec gradleExec = new GradleExec(bladeCLI);
 
-					if (!watchArgs.isSkipInit()) {
+					if (deploy) {
 						gradleExec.executeTask("deploy", false);
 					}
 
