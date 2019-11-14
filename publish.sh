@@ -208,7 +208,7 @@ echo $localBladeVersion
 echo $updatedBladeVersion
 
 if [ "$localBladeVersion" != "$updatedBladeVersion" ]; then
-	echo After blade updated versions do not match.
+	echo "After blade updated versions do not match."
 	echo "Built blade version = $localBladeVersion"
 	echo "Updated blade version = $updatedBladeVersion"
 	rm -rf /tmp/$timestamp
