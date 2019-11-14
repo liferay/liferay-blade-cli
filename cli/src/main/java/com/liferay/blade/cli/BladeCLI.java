@@ -857,46 +857,6 @@ public class BladeCLI {
 		return possibleValuesMap;
 	}
 
-	private String _getReleaseVersionIfAvailable() {
-		UpdateArgs updateArgs = new UpdateArgs();
-
-		updateArgs.setCheckOnly(true);
-
-		UpdateCommand updateCommand = new UpdateCommand();
-
-		updateCommand.setArgs(updateArgs);
-
-		updateCommand.setBlade(this);
-
-		StringPrintStream stdOut = StringPrintStream.newFilteredInstance(
-			x -> !x.contains("release update is available for blade: "));
-
-		PrintStream currentStdOut = System.out;
-
-		try {
-			System.setOut(stdOut);
-
-			_out = System.out;
-
-			updateCommand.execute();
-		}
-		finally {
-			System.setOut(currentStdOut);
-
-			_out = System.out;
-		}
-
-		String updateAvailable = stdOut.get();
-
-		if (updateAvailable.length() > 0) {
-			String[] updateParts = updateAvailable.split(" ");
-
-			return updateParts[updateParts.length - 1].trim();
-		}
-
-		return null;
-	}
-
 	private File _getSettingsBaseDir() {
 		File baseDir = new File(_args.getBase());
 
@@ -914,7 +874,13 @@ public class BladeCLI {
 		return settingsBaseDir;
 	}
 
-	private String _getSnapshotVersionIfAvailable() {
+	private Path _getUpdateCheckPath() throws IOException {
+		Path userBladePath = _getUserBladePath();
+
+		return userBladePath.resolve("updateCheck.properties");
+	}
+
+	private String _getUpdateVersionIfAvailable(boolean snapshots) {
 		UpdateArgs updateArgs = new UpdateArgs();
 
 		updateArgs.setCheckOnly(true);
@@ -925,8 +891,7 @@ public class BladeCLI {
 
 		updateCommand.setBlade(this);
 
-		StringPrintStream stdOut = StringPrintStream.newFilteredInstance(
-			x -> !x.contains("snapshot update is available for blade: "));
+		StringPrintStream stdOut = StringPrintStream.newInstance();
 
 		PrintStream currentStdOut = System.out;
 
@@ -943,27 +908,21 @@ public class BladeCLI {
 			_out = System.out;
 		}
 
-		String updateAvailable = stdOut.get();
+		if (snapshots) {
+			String snapshotUpdateVersion = updateCommand.getSnapshotUpdateVersion();
 
-		if (updateAvailable.length() > 0) {
-			String[] updateParts = updateAvailable.split(" ");
+			if (snapshotUpdateVersion == null) {
+				return null;
+			}
 
-			String result = updateParts[updateParts.length - 1];
+			snapshotUpdateVersion = snapshotUpdateVersion.substring(0, 14) + snapshotUpdateVersion.substring(15, 19);
 
-			result = result.substring(0, 14) + result.substring(15, 19);
+			snapshotUpdateVersion = snapshotUpdateVersion.replace('-', '.');
 
-			result = result.replace('-', '.');
-
-			return result.trim();
+			return snapshotUpdateVersion.trim();
 		}
 
-		return null;
-	}
-
-	private Path _getUpdateCheckPath() throws IOException {
-		Path userBladePath = _getUserBladePath();
-
-		return userBladePath.resolve("updateCheck.properties");
+		return updateCommand.getReleaseUpdateVersion();
 	}
 
 	private Path _getUserBladePath() {
@@ -1046,7 +1005,7 @@ public class BladeCLI {
 	}
 
 	private void _printUpdateIfAvailable() throws IOException {
-		String releaseUpdateVersion = _getReleaseVersionIfAvailable();
+		String releaseUpdateVersion = _getUpdateVersionIfAvailable(false);
 
 		String currentVersion = VersionCommand.getBladeCLIVersion();
 
@@ -1059,7 +1018,7 @@ public class BladeCLI {
 		}
 
 		if (currentVersionIsSnapshot) {
-			String snapshotUpdateVersion = _getSnapshotVersionIfAvailable();
+			String snapshotUpdateVersion = _getUpdateVersionIfAvailable(true);
 
 			if ((releaseUpdateVersion != null) && (snapshotUpdateVersion != null)) {
 				out("Updates available to the installed version: " + currentVersion);

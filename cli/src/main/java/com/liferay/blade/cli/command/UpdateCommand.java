@@ -75,8 +75,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		UpdateArgs updateArgs = getArgs();
 
-		// String oldUrl = "https://releases.liferay.com/tools/blade-cli/latest/blade.jar";
-
 		String currentVersion = "0.0.0.0";
 
 		String updateVersion = "0.0.0.0";
@@ -179,6 +177,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					bladeCLI.out(message);
 				}
 				else if (releaseShouldUpdate) {
+					_releaseUpdateVersion = releaseUpdateVersion;
+
 					bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
 
 					if (updateArgs.isRelease() || currentVersion.contains("SNAPSHOT")) {
@@ -192,6 +192,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					bladeCLI.out(message);
 				}
 				else if (snapshotShouldUpdate) {
+					_snapshotUpdateVersion = snapshotUpdateVersion;
+
 					bladeCLI.out("A new snapshot update is available for blade: " + snapshotUpdateVersion);
 
 					if (updateArgs.isSnapshots() && !currentVersion.contains("SNAPSHOT")) {
@@ -247,7 +249,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 							if (releaseShouldUpdate) {
 								bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
-								bladeCLI.out("Pass the -r flag to 'blade update' to switch to release branch.");
+								bladeCLI.out("Run `blade update -r` to install.");
 							}
 						}
 						else {
@@ -261,7 +263,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 						if (releaseShouldUpdate) {
 							bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
-							bladeCLI.out("Pass the -r flag to 'blade update' to switch to release branch.");
+							bladeCLI.out("Run `blade update -r` to install.");
 						}
 					}
 				}
@@ -284,6 +286,14 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	@Override
 	public Class<UpdateArgs> getArgsClass() {
 		return UpdateArgs.class;
+	}
+
+	public String getReleaseUpdateVersion() {
+		return _releaseUpdateVersion;
+	}
+
+	public String getSnapshotUpdateVersion() {
+		return _snapshotUpdateVersion;
 	}
 
 	private static boolean _doesMD5Match(String url, boolean snapshot) {
@@ -421,12 +431,12 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Elements versionElements = document.select("version");
 
-		Iterator<Element> it = versionElements.iterator();
+		Iterator<Element> iterator = versionElements.iterator();
 
 		Collection<Element> elements = new HashSet<>();
 
-		while (it.hasNext()) {
-			Element versionElement = it.next();
+		while (iterator.hasNext()) {
+			Element versionElement = iterator.next();
 
 			Node node = versionElement.childNode(0);
 
@@ -503,12 +513,12 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		Elements versionElements = document.select("version");
 
-		Iterator<Element> it = versionElements.iterator();
+		Iterator<Element> iterator = versionElements.iterator();
 
 		Collection<Element> elements = new HashSet<>();
 
-		while (it.hasNext()) {
-			Element versionElement = it.next();
+		while (iterator.hasNext()) {
+			Element versionElement = iterator.next();
 
 			Node node = versionElement.childNode(0);
 
@@ -847,5 +857,8 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		"(\\d+)\\.(\\d+)\\.(\\d+)-(\\d+)\\.(\\d\\d\\d\\d)\\d\\d-\\d+");
 	private static final File _updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
 	private static final Pattern _versionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
+
+	private String _releaseUpdateVersion;
+	private String _snapshotUpdateVersion;
 
 }
