@@ -78,6 +78,14 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 		Map<String, Path> projectPaths = _getProjectPaths(watchPath, watchArgs.getProjectPaths(), ignorePaths);
 
+		bladeCLI.out("Watching projects...");
+
+		projectPaths.keySet(
+		).stream(
+		).forEach(
+			bladeCLI::out
+		);
+
 		_watch(watchPath, projectPaths, watchArgs.getFastPaths(), ignorePaths, !watchArgs.isSkipInit());
 	}
 
@@ -217,7 +225,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 	}
 
 	private void _registerDirectory(WatchService watcher, Map<WatchKey, Path> keys, Path dir) throws IOException {
-		WatchKey key = dir.register(
+		WatchKey watchKey = dir.register(
 			watcher,
 			new WatchEvent.Kind[] {
 				StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE,
@@ -225,11 +233,11 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			},
 			SensitivityWatchEventModifier.HIGH);
 
-		keys.put(key, dir);
+		keys.put(watchKey, dir);
 	}
 
 	private void _walkAndRegisterDirectories(
-			final WatchService watcher, final Map<WatchKey, Path> keys, final Path basePath,
+			final WatchService watchService, final Map<WatchKey, Path> watchKeys, final Path basePath,
 			final List<PathMatcher> ignorePathMatchers)
 		throws IOException {
 
@@ -247,7 +255,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 						}
 					}
 
-					_registerDirectory(watcher, keys, path);
+					_registerDirectory(watchService, watchKeys, path);
 
 					return FileVisitResult.CONTINUE;
 				}
@@ -269,9 +277,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 				try {
 					FileSystem fileSystem = FileSystems.getDefault();
 
-					final WatchService watcher = fileSystem.newWatchService();
+					final WatchService watchService = fileSystem.newWatchService();
 
-					final Map<WatchKey, Path> keys = new HashMap<>();
+					final Map<WatchKey, Path> watchKeys = new HashMap<>();
 
 					final List<PathMatcher> ignorePathMatchers = _getPathMatchers(
 						watchPath, ignorePaths.toArray(new String[0]));
@@ -279,33 +287,35 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 					final List<PathMatcher> fastPathMatchers = _getPathMatchers(
 						watchPath, fastPaths.toArray(new String[0]));
 
-					_walkAndRegisterDirectories(watcher, keys, watchPath, ignorePathMatchers);
+					_walkAndRegisterDirectories(watchService, watchKeys, watchPath, ignorePathMatchers);
 
 					final GradleExec gradleExec = new GradleExec(bladeCLI);
 
 					if (deploy) {
+						bladeCLI.out("Deploying...  To skip initial deployment, use `blade watch -s`");
+
 						gradleExec.executeTask("deploy", false);
 					}
 
 					while (true) {
-						WatchKey key;
+						WatchKey watchKey;
 
 						try {
-							key = watcher.take();
+							watchKey = watchService.take();
 						}
 						catch (InterruptedException ie) {
 							return;
 						}
 
-						Path dir = keys.get(key);
+						Path dir = watchKeys.get(watchKey);
 
 						if (dir == null) {
-							System.err.println("WatchKey not recognized!!");
+							bladeCLI.error("WatchKey not recognized!!");
 
 							continue;
 						}
 
-						for (WatchEvent<?> event : key.pollEvents()) {
+						for (WatchEvent<?> event : watchKey.pollEvents()) {
 							WatchEvent.Kind<?> kind = event.kind();
 
 							Path path = (Path)event.context();
@@ -331,21 +341,22 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 							boolean directory = Files.isDirectory(resolvedPath);
 
 							if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
-								try {
-									if (directory) {
-										_walkAndRegisterDirectories(watcher, keys, resolvedPath, ignorePathMatchers);
+								if (directory) {
+									try {
+										_walkAndRegisterDirectories(
+											watchService, watchKeys, resolvedPath, ignorePathMatchers);
 									}
-
-									System.out.println(resolvedPath + " has been created");
-
-									gradleExec.executeTask("deploy", projectPath.toFile(), false);
+									catch (IOException ioe) {
+										bladeCLI.error("Could not register directory:" + resolvedPath);
+									}
 								}
-								catch (IOException ioe) {
-									System.err.println("Could not register directory:" + resolvedPath);
-								}
+
+								bladeCLI.out(resolvedPath + " has been created, deploying...");
+
+								gradleExec.executeTask("deploy", projectPath.toFile(), false);
 							}
 							else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
-								System.out.println(resolvedPath + " has been deleted");
+								bladeCLI.out(resolvedPath + " has been deleted, redeploying...");
 
 								gradleExec.executeTask("clean deploy", projectPath.toFile(), false);
 							}
@@ -361,26 +372,26 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 								}
 
 								if (fastExtension) {
-									System.out.println(resolvedPath + " has caused a fast deployment");
+									bladeCLI.out(resolvedPath + " has changed, fast deploying...");
 
 									gradleExec.executeTask("deployFast -a", projectPath.toFile(), false);
 								}
 								else {
-									System.out.println(resolvedPath + " has caused a new deployment");
+									System.out.println(resolvedPath + " has changed, deploying...");
 
 									gradleExec.executeTask("deploy -a", projectPath.toFile(), false);
 								}
 							}
 
-							System.out.println("Watching files in " + watchPath + ". Press Crtl + C to stop.");
+							bladeCLI.out("Watching files in " + watchPath + ". Press Crtl + C to stop.");
 						}
 
-						boolean valid = key.reset();
+						boolean valid = watchKey.reset();
 
 						if (!valid) {
-							keys.remove(key);
+							watchKeys.remove(watchKey);
 
-							if (keys.isEmpty()) {
+							if (watchKeys.isEmpty()) {
 								break;
 							}
 						}
