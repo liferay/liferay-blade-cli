@@ -950,7 +950,9 @@ public class BladeCLI {
 
 			String result = updateParts[updateParts.length - 1];
 
-			result = result.substring(0, 14) + result.substring(15, 20);
+			result = result.substring(0, 14) + result.substring(15, 19);
+
+			result = result.replace('-', '.');
 
 			return result.trim();
 		}
