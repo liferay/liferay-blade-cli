@@ -50,6 +50,7 @@ import java.util.Objects;
  * @author Gregory Amerson
  * @author David Truong
  */
+@SuppressWarnings("restriction")
 public class WatchCommand extends BaseCommand<WatchArgs> {
 
 	public WatchCommand() {
