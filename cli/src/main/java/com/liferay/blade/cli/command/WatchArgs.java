@@ -20,7 +20,10 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author David Truong
@@ -32,11 +35,27 @@ import java.util.List;
 public class WatchArgs extends BaseArgs {
 
 	public List<String> getFastPaths() {
-		return _fastPaths;
+		return Stream.concat(
+			_defaultFastPaths.stream(), _fastPaths.stream()
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	public List<String> getIgnorePaths() {
-		return _ignorePaths;
+		return Stream.concat(
+			_defaultIgnorePaths.stream(), _ignorePaths.stream()
+		).collect(
+			Collectors.toList()
+		);
+	}
+
+	public List<String> getProjectPaths() {
+		return Stream.concat(
+			_defaultProjectPaths.stream(), _projectPaths.stream()
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	public boolean isSkipInit() {
@@ -51,17 +70,29 @@ public class WatchArgs extends BaseArgs {
 		_ignorePaths.addAll(ignorePaths);
 	}
 
+	public void setProjectPaths(List<String> projectPaths) {
+		_projectPaths.addAll(projectPaths);
+	}
+
 	public void setSkipInit(boolean skipInit) {
 		_skipInit = skipInit;
 	}
 
-	@Parameter(description = "File paths that will use deployFast instead of deploy.", names = {"-f", "--fast-paths"})
-	private List<String> _fastPaths = Arrays.asList("**/*.css", "**/*.js", "**/*.jsp", "**/*.map", "**/*.scss");
-
-	@Parameter(description = "Ignored watch paths.", names = {"-i", "--ignore-paths"})
-	private List<String> _ignorePaths = Arrays.asList(
+	private static final List<String> _defaultFastPaths = Arrays.asList(
+		"**/*.css", "**/*.js", "**/*.jsp", "**/*.map", "**/*.scss");
+	private static final List<String> _defaultIgnorePaths = Arrays.asList(
 		".gradle", ".idea", ".settings", "**/.sass-cache", "**/build", "**/classes", "**/dist", "**/liferay-theme.json",
 		"**/node_modules", "**/liferay-npm-bundler-report.html", "**/target", "bundles", "gradle");
+	private static final List<String> _defaultProjectPaths = Arrays.asList("src");
+
+	@Parameter(description = "File paths that will use deployFast instead of deploy.", names = {"-f", "--fast-paths"})
+	private List<String> _fastPaths = Collections.emptyList();
+
+	@Parameter(description = "Ignored watch paths.", names = {"-i", "--ignore-paths"})
+	private List<String> _ignorePaths = Collections.emptyList();
+
+	@Parameter(description = "File paths to use to identify a project path.", names = {"-p", "--project-paths"})
+	private List<String> _projectPaths = Collections.emptyList();
 
 	@Parameter(description = "Skip initial deploy", names = {"-s", "--skip-init"})
 	private boolean _skipInit = false;
