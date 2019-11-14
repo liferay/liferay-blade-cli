@@ -1070,6 +1070,10 @@ public class BladeCLI {
 				out("Update available " + currentVersion + " -> " + snapshotUpdateVersion);
 				out("Run `blade update` to install");
 			}
+			else if (releaseUpdateVersion != null) {
+				out("Update available " + currentVersion + " -> " + releaseUpdateVersion);
+				out("Run `blade update -r` to install");
+			}
 		}
 		else if (releaseUpdateVersion != null) {
 			out("Update available " + currentVersion + " -> " + releaseUpdateVersion);

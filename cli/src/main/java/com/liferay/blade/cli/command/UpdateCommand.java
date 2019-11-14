@@ -169,7 +169,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 					versionTag = "(custom)";
 				}
 
-				bladeCLI.out("Current blade version: " + currentVersion + " " + versionTag);
+				String currentVersionOutput = currentVersion.replace("SNAPSHOT", "");
+
+				bladeCLI.out("Current blade version: " + currentVersionOutput + " " + versionTag);
 
 				if ((releaseUpdateVersion == null) || !releaseShouldUpdate) {
 					String message = "No new release updates are available for this version of blade.";
