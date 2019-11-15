@@ -145,34 +145,34 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 		}
 
 		private String _getDockerContainerId(Project project) {
-			return _getExtensionProperty(project, "liferayWorkspace", "dockerContainerId");
+			Project rootProject = project.getRootProject();
+
+			return _getExtensionProperty(
+				(ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerContainerId");
 		}
 
 		private String _getDockerImageId(Project project) {
-			return _getExtensionProperty(project, "liferayWorkspace", "dockerImageId");
+			Project rootProject = project.getRootProject();
+
+			return _getExtensionProperty((ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerImageId");
 		}
 
 		private String _getDockerImageLiferay(Project project) {
-			return _getExtensionProperty(project, "liferayWorkspace", "dockerImageLiferay");
+			Project rootProject = project.getRootProject();
+
+			return _getExtensionProperty(
+				(ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerImageLiferay");
 		}
 
-		private String _getExtensionProperty(Project project, String extension, String property) {
-			ExtensionContainer extensionContainer = project.getExtensions();
+		private String _getExtensionProperty(ExtensionAware extensionAware, String extensionName, String property) {
+			ExtensionContainer extensionContainer = extensionAware.getExtensions();
 
-			Object liferayExtension = extensionContainer.findByName(extension);
+			Object extension = extensionContainer.findByName(extensionName);
 
-			if (project.equals(project.getRootProject())) {
-				ExtensionAware extensionAware = (ExtensionAware)project.getGradle();
+			String returnVal = null;
 
-				ExtensionContainer rootExtensionContainer = extensionAware.getExtensions();
-
-				liferayExtension = rootExtensionContainer.findByName("liferayWorkspace");
-			}
-
-			String liferayHome = null;
-
-			if (liferayExtension != null) {
-				Class<?> clazz = liferayExtension.getClass();
+			if (extension != null) {
+				Class<?> clazz = extension.getClass();
 
 				try {
 					BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
@@ -183,9 +183,9 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 						Method method = propertyDescriptor.getReadMethod();
 
 						if ((method != null) && property.equals(propertyDescriptorName)) {
-							Object value = method.invoke(liferayExtension);
+							Object value = method.invoke(extension);
 
-							liferayHome = String.valueOf(value);
+							returnVal = String.valueOf(value);
 						}
 					}
 				}
@@ -193,7 +193,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 				}
 			}
 
-			return liferayHome;
+			return returnVal;
 		}
 
 		private String _getLiferayHome(Project project) {
