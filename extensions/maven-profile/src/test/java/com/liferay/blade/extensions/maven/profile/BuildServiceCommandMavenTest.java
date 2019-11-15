@@ -95,19 +95,9 @@ public class BuildServiceCommandMavenTest {
 
 		String output = results.getOutput();
 
-		String errors = results.getErrors();
+		boolean containsSuccess = output.contains("BUILD SUCCESS");
 
-		StringBuilder errorMessage = new StringBuilder();
-
-		if (!output.contains("BUILD SUCCESS")) {
-			errorMessage.append("Expected 'BUILD SUCCESS' message." + System.lineSeparator());
-		}
-
-		if (!errors.isEmpty()) {
-			errorMessage.append(errors + System.lineSeparator());
-		}
-
-		Assert.assertTrue(errorMessage.toString(), errorMessage.length() == 0);
+		Assert.assertTrue("Expected 'BUILD SUCCESS' message." + System.lineSeparator() + output, containsSuccess);
 	}
 
 	@Rule

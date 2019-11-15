@@ -22,6 +22,7 @@ import java.io.PrintStream;
 
 import java.nio.charset.Charset;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -44,6 +45,11 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 
 	public static StringPrintStream newFilteredInstance(Collection<Predicate<String>> filters) {
 		return new FilteringPrintStream(new ByteArrayOutputStream(), Charset.defaultCharset(), filters);
+	}
+
+	@SafeVarargs
+	public static StringPrintStream newFilteredInstance(Predicate<String>... filters) {
+		return new FilteringPrintStream(new ByteArrayOutputStream(), Charset.defaultCharset(), Arrays.asList(filters));
 	}
 
 	public static StringPrintStream newInstance() {

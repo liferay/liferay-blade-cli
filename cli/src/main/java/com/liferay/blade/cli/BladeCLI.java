@@ -25,9 +25,11 @@ import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
+import com.liferay.blade.cli.command.UpdateArgs;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
+import com.liferay.blade.cli.command.validator.ParametersValidator;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.Prompter;
 
@@ -62,6 +64,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.ServiceLoader;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -259,55 +262,12 @@ public class BladeCLI {
 			try {
 				_writeLastUpdateCheck();
 
-				printUpdateIfAvailable();
+				_printUpdateIfAvailable();
 			}
 			catch (IOException ioe) {
 				error(ioe);
 			}
 		}
-	}
-
-	public boolean printUpdateIfAvailable() throws IOException {
-		boolean available;
-
-		String bladeCLIVersion = VersionCommand.getBladeCLIVersion();
-
-		boolean fromSnapshots = false;
-
-		if (bladeCLIVersion == null) {
-			throw new IOException("Could not determine blade version");
-		}
-
-		fromSnapshots = bladeCLIVersion.contains("SNAPSHOT");
-
-		String updateVersion = "";
-
-		try {
-			updateVersion = UpdateCommand.getUpdateVersion(fromSnapshots);
-
-			available = UpdateCommand.shouldUpdate(bladeCLIVersion, updateVersion);
-
-			if (available) {
-				out(System.lineSeparator() + "blade version " + bladeCLIVersion + System.lineSeparator());
-				out(
-					"Run \'blade update" + (fromSnapshots ? " --snapshots" : "") + "\' to update to " +
-						(fromSnapshots ? "the latest snapshot " : " ") + "version " + updateVersion +
-							System.lineSeparator());
-			}
-			else {
-				if (fromSnapshots && !UpdateCommand.equal(bladeCLIVersion, updateVersion)) {
-					out(
-						String.format(
-							"blade version %s is newer than latest snapshot %s; skipping update.\n", bladeCLIVersion,
-							updateVersion));
-				}
-			}
-		}
-		catch (IOException ioe) {
-			available = false;
-		}
-
-		return available;
 	}
 
 	public void printUsage() {
@@ -403,6 +363,8 @@ public class BladeCLI {
 						List<Object> objects = jCommander.getObjects();
 
 						Object commandArgs = objects.get(0);
+
+						_validateParameters((BaseArgs)commandArgs);
 
 						Console console = System.console();
 
@@ -531,6 +493,9 @@ public class BladeCLI {
 					error(_jCommander.getParsedCommand() + ": " + pe.getMessage());
 				}
 			}
+		}
+		catch (Throwable e) {
+			error(e);
 		}
 		finally {
 			if (_extensionsClassLoaderSupplier != null) {
@@ -737,6 +702,32 @@ public class BladeCLI {
 		return allCommands;
 	}
 
+	@SuppressWarnings("unchecked")
+	private static <T extends BaseArgs> void _validateParameters(T args) throws IllegalArgumentException {
+		try {
+			Class<? extends BaseArgs> argsClass = args.getClass();
+
+			ParametersValidator validateParameters = argsClass.getAnnotation(ParametersValidator.class);
+
+			if (validateParameters != null) {
+				Class<? extends Predicate<?>> predicateClass = validateParameters.value();
+
+				if (predicateClass != null) {
+					Predicate<T> predicate = (Predicate<T>)predicateClass.newInstance();
+
+					if (!predicate.test(args)) {
+						throw new IllegalArgumentException();
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			Class<?> argsClass = args.getClass();
+
+			throw new IllegalArgumentException("Validation failed for " + argsClass.getSimpleName(), e);
+		}
+	}
+
 	private Map<String, String> _buildPossibleValuesMap(
 		Class<? extends Supplier<Collection<String>>> supplierValidator) {
 
@@ -889,6 +880,51 @@ public class BladeCLI {
 		return userBladePath.resolve("updateCheck.properties");
 	}
 
+	private String _getUpdateVersionIfAvailable(boolean snapshots) {
+		UpdateArgs updateArgs = new UpdateArgs();
+
+		updateArgs.setCheckOnly(true);
+
+		UpdateCommand updateCommand = new UpdateCommand();
+
+		updateCommand.setArgs(updateArgs);
+
+		updateCommand.setBlade(this);
+
+		StringPrintStream stdOut = StringPrintStream.newInstance();
+
+		PrintStream currentStdOut = System.out;
+
+		try {
+			System.setOut(stdOut);
+
+			_out = System.out;
+
+			updateCommand.execute();
+		}
+		finally {
+			System.setOut(currentStdOut);
+
+			_out = System.out;
+		}
+
+		if (snapshots) {
+			String snapshotUpdateVersion = updateCommand.getSnapshotUpdateVersion();
+
+			if (snapshotUpdateVersion == null) {
+				return null;
+			}
+
+			snapshotUpdateVersion = snapshotUpdateVersion.substring(0, 14) + snapshotUpdateVersion.substring(15, 19);
+
+			snapshotUpdateVersion = snapshotUpdateVersion.replace('-', '.');
+
+			return snapshotUpdateVersion.trim();
+		}
+
+		return updateCommand.getReleaseUpdateVersion();
+	}
+
 	private Path _getUserBladePath() {
 		Path userHomePath = _USER_HOME_DIR.toPath();
 
@@ -965,6 +1001,42 @@ public class BladeCLI {
 					Files.delete(settingsParentPath);
 				}
 			}
+		}
+	}
+
+	private void _printUpdateIfAvailable() throws IOException {
+		String releaseUpdateVersion = _getUpdateVersionIfAvailable(false);
+
+		String currentVersion = VersionCommand.getBladeCLIVersion();
+
+		boolean currentVersionIsSnapshot = currentVersion.contains("SNAPSHOT");
+
+		currentVersion = currentVersion.replace("SNAPSHOT", "");
+
+		if (!currentVersionIsSnapshot) {
+			currentVersion = currentVersion.substring(0, 5);
+		}
+
+		if (currentVersionIsSnapshot) {
+			String snapshotUpdateVersion = _getUpdateVersionIfAvailable(true);
+
+			if ((releaseUpdateVersion != null) && (snapshotUpdateVersion != null)) {
+				out("Updates available to the installed version: " + currentVersion);
+				out("-> (Snapshot) " + snapshotUpdateVersion + "\t Run `blade update` to install");
+				out("-> (Release) " + releaseUpdateVersion + "\t\t\t Run `blade update -r` to install");
+			}
+			else if (snapshotUpdateVersion != null) {
+				out("Update available " + currentVersion + " -> " + snapshotUpdateVersion);
+				out("Run `blade update` to install");
+			}
+			else if (releaseUpdateVersion != null) {
+				out("Update available " + currentVersion + " -> " + releaseUpdateVersion);
+				out("Run `blade update -r` to install");
+			}
+		}
+		else if (releaseUpdateVersion != null) {
+			out("Update available " + currentVersion + " -> " + releaseUpdateVersion);
+			out("Run `blade update` to install");
 		}
 	}
 
@@ -1165,7 +1237,7 @@ public class BladeCLI {
 	private ExtensionsClassLoaderSupplier _extensionsClassLoaderSupplier;
 	private final InputStream _in;
 	private JCommander _jCommander;
-	private final PrintStream _out;
+	private PrintStream _out;
 	private Collection<WorkspaceProvider> _workspaceProviders = null;
 
 }

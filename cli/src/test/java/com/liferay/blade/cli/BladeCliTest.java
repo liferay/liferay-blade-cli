@@ -16,28 +16,44 @@
 
 package com.liferay.blade.cli;
 
+import java.io.File;
+
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
+ * @author Christopher Bryan Boyd
  * @author Vernon Singleton
  */
 public class BladeCliTest {
 
-	@Ignore
+	@Before
+	public void setUp() throws Exception {
+		_rootDir = temporaryFolder.getRoot();
+
+		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
 	@Test
 	public void testBladePrintUpdateIfAvailable() throws Exception {
-		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, "update", "--check");
 
-		BladeTest bladeTest = bladeTestBuilder.build();
+		String output = results.getOutput();
 
-		Assert.assertTrue("New update should be available from snapshots.", bladeTest.printUpdateIfAvailable());
+		output = output.trim();
+
+		boolean updateAvailable = output.contains("A new update is available for this version of blade");
+
+		Assert.assertFalse("Current jar should be the latest version", updateAvailable);
 	}
 
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+	private File _extensionsDir = null;
+	private File _rootDir = null;
 
 }
