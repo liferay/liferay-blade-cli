@@ -17,29 +17,42 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
-import com.liferay.blade.cli.gradle.GradleTooling;
-import com.liferay.blade.gradle.tooling.ProjectInfo;
-import com.liferay.gogo.shell.client.GogoShellClient;
+
+import com.sun.nio.file.SensitivityWatchEventModifier;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.nio.file.attribute.BasicFileAttributes;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * @author Gregory Amerson
+ * @author David Truong
  */
+@SuppressWarnings("restriction")
 public class WatchCommand extends BaseCommand<WatchArgs> {
 
 	public WatchCommand() {
@@ -53,7 +66,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 		File base = new File(watchArgs.getBase());
 
-		Path watchPath = Paths.get(base.getAbsolutePath());
+		Path watchPath = Paths.get(base.getCanonicalPath());
 
 		if (!Files.isDirectory(watchPath)) {
 			bladeCLI.error("Error: base dir is not a directory: " + watchPath);
@@ -61,9 +74,19 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			return;
 		}
 
-		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(watchPath);
+		List<String> ignorePaths = watchArgs.getIgnorePaths();
 
-		_watch(watchPath, projectInfo.getProjectOutputFiles());
+		Map<String, Path> projectPaths = _getProjectPaths(watchPath, watchArgs.getProjectPaths(), ignorePaths);
+
+		bladeCLI.out("Watching projects...");
+
+		projectPaths.keySet(
+		).stream(
+		).forEach(
+			bladeCLI::out
+		);
+
+		_watch(watchPath, projectPaths, watchArgs.getFastPaths(), ignorePaths, !watchArgs.isSkipInit());
 	}
 
 	@Override
@@ -75,102 +98,301 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private void _deleteWatchOutputFiles(Map<String, Set<File>> projectOutputFiles) {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		BaseArgs baseArgs = bladeCLI.getArgs();
-
-		File baseDir = new File(baseArgs.getBase());
-
-		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
-
-		File workspaceDir = workspaceProvider.getWorkspaceDir(bladeCLI);
-
-		Set<String> projectPaths = projectOutputFiles.keySet();
-
-		for (String projectPath : projectPaths) {
-			File projectDir = new File(workspaceDir, projectPath.replaceAll(":", File.separator));
-
-			File watchOutputFile = new File(projectDir, "build/installedBundleId");
-
-			if (watchOutputFile.exists()) {
-				watchOutputFile.delete();
-			}
+	private void _addPathMatcher(List<PathMatcher> pathMatchers, FileSystem fileSystem, String pattern) {
+		if (File.separatorChar == '\\') {
+			pattern = pattern.replace("/", "\\\\");
 		}
+
+		PathMatcher pathMatcher = fileSystem.getPathMatcher("glob:" + pattern);
+
+		pathMatchers.add(pathMatcher);
 	}
 
-	private void _uninstallBundles(Map<String, Set<File>> projectOutputFiles) {
-		BladeCLI bladeCLI = getBladeCLI();
+	private String _getGradlePath(Path path, Path basePath) {
+		Path relativePath = basePath.relativize(path);
 
-		BaseArgs baseArgs = bladeCLI.getArgs();
+		String gradlePath = ":" + relativePath.toString();
 
-		File baseDir = new File(baseArgs.getBase());
+		gradlePath = gradlePath.replaceAll(File.separator, ":");
 
-		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+		return gradlePath;
+	}
 
-		File workspaceDir = workspaceProvider.getWorkspaceDir(bladeCLI);
+	private Path _getGradleProjectPath(Path basePath, Path path, Map<String, Path> projectPaths) {
+		String gradlePath = _getGradlePath(path, basePath);
 
-		Set<String> projectPaths = projectOutputFiles.keySet();
+		for (Map.Entry<String, Path> entry : projectPaths.entrySet()) {
+			String projectPath = entry.getKey();
 
-		try (final GogoShellClient client = new GogoShellClient()) {
-			for (String projectPath : projectPaths) {
-				File projectDir = new File(workspaceDir, projectPath.replaceAll(":", File.separator));
+			if (gradlePath.startsWith(projectPath)) {
+				return projectPaths.get(projectPath);
+			}
+		}
 
-				File watchOutputFile = new File(projectDir, "build/installedBundleId");
+		return basePath;
+	}
 
-				if (watchOutputFile.exists()) {
-					try {
-						String installedBundleId = new String(Files.readAllBytes(watchOutputFile.toPath()));
+	private List<PathMatcher> _getPathMatchers(Path baseDirPath, String... patterns) {
+		FileSystem fileSystem = FileSystems.getDefault();
 
-						String response = client.send("uninstall " + installedBundleId);
+		List<PathMatcher> pathMatchers = new ArrayList<>(patterns.length);
 
-						bladeCLI.out(response);
+		String patternPrefix = baseDirPath.toAbsolutePath() + File.separator;
+
+		if (File.separatorChar != '/') {
+			patternPrefix = patternPrefix.replace(File.separatorChar, '/');
+		}
+
+		for (String pattern : patterns) {
+			if (pattern.startsWith("**/")) {
+				String absolutePattern = patternPrefix + pattern.substring(3);
+
+				_addPathMatcher(pathMatchers, fileSystem, absolutePattern);
+			}
+
+			String absolutePattern = patternPrefix + pattern;
+
+			_addPathMatcher(pathMatchers, fileSystem, absolutePattern);
+		}
+
+		return pathMatchers;
+	}
+
+	private Map<String, Path> _getProjectPaths(
+			final Path watchPath, List<String> projectPaths, List<String> ignorePaths)
+		throws Exception {
+
+		final Map<String, Path> foundProjectPaths = new HashMap<>();
+
+		try (FileSystem fileSystem = FileSystems.getDefault()) {
+			List<PathMatcher> ignorePathMatchers = ignorePaths.stream(
+			).map(
+				ignorePath -> fileSystem.getPathMatcher("glob:" + ignorePath)
+			).collect(
+				Collectors.toList()
+			);
+
+			Files.walkFileTree(
+				watchPath,
+				new SimpleFileVisitor<Path>() {
+
+					@Override
+					public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes)
+						throws IOException {
+
+						boolean shouldIgnorePath = ignorePathMatchers.stream(
+						).anyMatch(
+							pathMatcher -> pathMatcher.matches(path)
+						);
+
+						if (shouldIgnorePath) {
+							return FileVisitResult.SKIP_SUBTREE;
+						}
+
+						try (Stream<Path> files = Files.list(path)) {
+							boolean projectPathFound = files.map(
+								p -> p.getFileName()
+							).filter(
+								p -> !ignorePathMatchers.stream(
+								).anyMatch(
+									pathMatcher -> pathMatcher.matches(path.resolve(p))
+								)
+							).anyMatch(
+								p -> projectPaths.stream(
+								).anyMatch(
+									pp -> Objects.equals(pp, p.toString())
+								)
+							);
+
+							if (projectPathFound) {
+								foundProjectPaths.put(_getGradlePath(path, watchPath), path);
+
+								return FileVisitResult.SKIP_SUBTREE;
+							}
+						}
+
+						return FileVisitResult.CONTINUE;
 					}
-					catch (IOException ioe) {
+
+				});
+		}
+
+		return foundProjectPaths;
+	}
+
+	private void _registerDirectory(WatchService watcher, Map<WatchKey, Path> keys, Path dir) throws IOException {
+		WatchKey watchKey = dir.register(
+			watcher,
+			new WatchEvent.Kind[] {
+				StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE,
+				StandardWatchEventKinds.ENTRY_MODIFY
+			},
+			SensitivityWatchEventModifier.HIGH);
+
+		keys.put(watchKey, dir);
+	}
+
+	private void _walkAndRegisterDirectories(
+			final WatchService watchService, final Map<WatchKey, Path> watchKeys, final Path basePath,
+			final List<PathMatcher> ignorePathMatchers)
+		throws IOException {
+
+		Files.walkFileTree(
+			basePath,
+			new SimpleFileVisitor<Path>() {
+
+				@Override
+				public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes)
+					throws IOException {
+
+					for (PathMatcher pathMatcher : ignorePathMatchers) {
+						if (pathMatcher.matches(path)) {
+							return FileVisitResult.SKIP_SUBTREE;
+						}
 					}
+
+					_registerDirectory(watchService, watchKeys, path);
+
+					return FileVisitResult.CONTINUE;
 				}
-			}
-		}
-		catch (IOException ioe) {
-		}
+
+			});
 	}
 
-	private void _watch(Path watchPath, Map<String, Set<File>> projectOutputFiles) throws InterruptedException {
+	private void _watch(
+			Path watchPath, Map<String, Path> projectPaths, List<String> fastPaths, List<String> ignorePaths,
+			boolean deploy)
+		throws InterruptedException {
+
 		Thread watchThread = new Thread() {
 
 			@Override
 			public void run() {
 				BladeCLI bladeCLI = getBladeCLI();
 
-				try {
+				try (final FileSystem fileSystem = FileSystems.getDefault();
+					final WatchService watchService = fileSystem.newWatchService()) {
+
+					final Map<WatchKey, Path> watchKeys = new HashMap<>();
+
+					final List<PathMatcher> ignorePathMatchers = _getPathMatchers(
+						watchPath, ignorePaths.toArray(new String[0]));
+
+					final List<PathMatcher> fastPathMatchers = _getPathMatchers(
+						watchPath, fastPaths.toArray(new String[0]));
+
+					_walkAndRegisterDirectories(watchService, watchKeys, watchPath, ignorePathMatchers);
+
 					final GradleExec gradleExec = new GradleExec(bladeCLI);
 
-					Set<String> projectPaths = projectOutputFiles.keySet();
+					if (deploy) {
+						bladeCLI.out("Deploying...  To skip initial deployment, use `blade watch -s`");
 
-					Stream<String> stream = projectPaths.stream();
-
-					String assembleTasks = stream.collect(Collectors.joining(":assemble "));
-
-					String assembleTaskPath = assembleTasks + ":assemble";
-
-					gradleExec.executeTask(assembleTaskPath, watchPath.toFile(), false);
-
-					stream = projectPaths.stream();
-
-					String watchTasks = stream.collect(Collectors.joining(":watch "));
-
-					String watchTaskPath = watchTasks + ":watch --continuous --no-rebuild --stacktrace";
-
-					gradleExec.executeTask(watchTaskPath, watchPath.toFile(), false);
-				}
-				catch (Exception e) {
-					String message = e.getMessage();
-
-					if (message == null) {
-						message = "Gradle task failed.";
+						gradleExec.executeTask("deploy", false);
 					}
 
-					_addError("watch", message);
+					while (true) {
+						WatchKey watchKey;
+
+						try {
+							watchKey = watchService.take();
+						}
+						catch (InterruptedException ie) {
+							continue;
+						}
+
+						Path dir = watchKeys.get(watchKey);
+
+						if (dir == null) {
+							bladeCLI.error("WatchKey not recognized!!");
+
+							continue;
+						}
+
+						for (WatchEvent<?> event : watchKey.pollEvents()) {
+							WatchEvent.Kind<?> kind = event.kind();
+
+							Path path = (Path)event.context();
+
+							Path resolvedPath = dir.resolve(path);
+
+							boolean ignoredPath = false;
+
+							for (PathMatcher pathMatcher : ignorePathMatchers) {
+								if (pathMatcher.matches(resolvedPath)) {
+									ignoredPath = true;
+
+									break;
+								}
+							}
+
+							if (ignoredPath) {
+								continue;
+							}
+
+							boolean directory = Files.isDirectory(resolvedPath);
+
+							Path projectPath = _getGradleProjectPath(watchPath, resolvedPath, projectPaths);
+
+							if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
+								if (directory) {
+									try {
+										_walkAndRegisterDirectories(
+											watchService, watchKeys, resolvedPath, ignorePathMatchers);
+									}
+									catch (IOException ioe) {
+										bladeCLI.error("Could not register directory:" + resolvedPath);
+									}
+								}
+
+								bladeCLI.out(resolvedPath + " has been created, deploying...");
+
+								gradleExec.executeTask("deploy", projectPath.toFile(), false);
+							}
+							else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
+								bladeCLI.out(resolvedPath + " has been deleted, redeploying...");
+
+								gradleExec.executeTask("clean deploy", projectPath.toFile(), false);
+							}
+							else if (!directory) {
+								boolean fastExtension = false;
+
+								for (PathMatcher pathMatcher : fastPathMatchers) {
+									if (pathMatcher.matches(resolvedPath)) {
+										fastExtension = true;
+
+										break;
+									}
+								}
+
+								if (fastExtension) {
+									bladeCLI.out(resolvedPath + " has changed, fast deploying...");
+
+									gradleExec.executeTask("deployFast -a", projectPath.toFile(), false);
+								}
+								else {
+									System.out.println(resolvedPath + " has changed, deploying...");
+
+									gradleExec.executeTask("deploy -a", projectPath.toFile(), false);
+								}
+							}
+
+							bladeCLI.out("Watching files in " + watchPath + ". Press Crtl + C to stop.");
+						}
+
+						boolean valid = watchKey.reset();
+
+						if (!valid) {
+							watchKeys.remove(watchKey);
+
+							if (watchKeys.isEmpty()) {
+								break;
+							}
+						}
+					}
+				}
+				catch (Exception e) {
+					_addError("watch", e.getMessage());
 
 					PrintStream error = bladeCLI.error();
 
@@ -179,16 +401,6 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			}
 
 		};
-
-		Runtime runtime = Runtime.getRuntime();
-
-		runtime.addShutdownHook(
-			new Thread(
-				() -> {
-					_uninstallBundles(projectOutputFiles);
-
-					_deleteWatchOutputFiles(projectOutputFiles);
-				}));
 
 		watchThread.start();
 
