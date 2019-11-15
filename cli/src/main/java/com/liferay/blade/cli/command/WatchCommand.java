@@ -182,10 +182,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 					throws IOException {
 
 					boolean shouldIgnorePath = ignorePathMatchers.stream(
-					).filter(
+					).anyMatch(
 						pathMatcher -> pathMatcher.matches(path)
-					).findFirst(
-					).isPresent();
+					);
 
 					if (shouldIgnorePath) {
 						return FileVisitResult.SKIP_SUBTREE;
@@ -196,18 +195,15 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 							p -> p.getFileName()
 						).filter(
 							p -> !ignorePathMatchers.stream(
-							).filter(
+							).anyMatch(
 								pathMatcher -> pathMatcher.matches(path.resolve(p))
-							).findFirst(
-							).isPresent()
-						).filter(
+							)
+						).anyMatch(
 							p -> projectPaths.stream(
-							).filter(
+							).anyMatch(
 								pp -> Objects.equals(pp, p.toString())
-							).findFirst(
-							).isPresent()
-						).findFirst(
-						).isPresent();
+							)
+						);
 
 						if (projectPathFound) {
 							foundProjectPaths.put(_getGradlePath(path, watchPath), path);
