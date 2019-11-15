@@ -298,7 +298,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 							watchKey = watchService.take();
 						}
 						catch (InterruptedException ie) {
-							return;
+							continue;
 						}
 
 						Path dir = watchKeys.get(watchKey);
@@ -316,8 +316,6 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 							Path resolvedPath = dir.resolve(path);
 
-							Path projectPath = _getGradleProjectPath(watchPath, resolvedPath, projectPaths);
-
 							boolean ignoredPath = false;
 
 							for (PathMatcher pathMatcher : ignorePathMatchers) {
@@ -333,6 +331,8 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 							}
 
 							boolean directory = Files.isDirectory(resolvedPath);
+
+							Path projectPath = _getGradleProjectPath(watchPath, resolvedPath, projectPaths);
 
 							if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
 								if (directory) {
