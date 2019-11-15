@@ -108,9 +108,9 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 			String deployDir = _getDeployDir(project);
 
-			String dockerImageId = _getDockerImageId(project);
-
 			String dockerImageLiferay = _getDockerImageLiferay(project);
+
+			String dockerImageId = _getDockerImageId(project);
 
 			String dockerContainerId = _getDockerContainerId(project);
 
@@ -131,8 +131,8 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			}
 
 			return new DefaultModel(
-				pluginClassNames, projectOutputFiles, deployDir, liferayHome, dockerImageId, dockerContainerId,
-				dockerImageLiferay);
+				pluginClassNames, projectOutputFiles, deployDir, liferayHome, dockerImageLiferay, dockerImageId,
+				dockerContainerId);
 		}
 
 		@Override

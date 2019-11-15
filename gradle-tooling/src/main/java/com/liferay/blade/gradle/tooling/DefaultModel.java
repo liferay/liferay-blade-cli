@@ -31,15 +31,15 @@ public class DefaultModel implements ProjectInfo, Serializable {
 
 	public DefaultModel(
 		Set<String> pluginClassNames, Map<String, Set<File>> projectOutputFiles, String deployDir, String liferayHome,
-		String dockerImageId, String dockerContainerId, String dockerImageLiferay) {
+		String dockerImageLiferay, String dockerImageId, String dockerContainerId) {
 
 		_pluginClassNames = pluginClassNames;
 		_projectOutputFiles = projectOutputFiles;
 		_deployDir = deployDir;
 		_liferayHome = liferayHome;
+		_dockerImageLiferay = dockerImageLiferay;
 		_dockerImageId = dockerImageId;
 		_dockerContainerId = dockerContainerId;
-		_dockerImageLiferay = dockerImageLiferay;
 	}
 
 	@Override

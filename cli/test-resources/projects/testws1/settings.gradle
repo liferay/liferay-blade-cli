@@ -8,14 +8,16 @@ buildscript {
 		maven {
 			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 		}
-		mavenLocal()
+
+		maven {
+			url new File(rootProject.dir, "repo").toURI()
+		}
 	}
 }
 
 apply plugin: "net.saliman.properties"
 
 apply plugin: "com.liferay.workspace"
-
 
 gradle.liferayWorkspace {
 	dockerImageId {

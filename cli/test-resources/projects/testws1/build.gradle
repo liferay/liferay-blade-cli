@@ -1,4 +1,0 @@
-task aaa {
-	println gradle.liferayWorkspace.dockerImageId
-  println gradle.liferayWorkspace.dockerContainerId
-}
