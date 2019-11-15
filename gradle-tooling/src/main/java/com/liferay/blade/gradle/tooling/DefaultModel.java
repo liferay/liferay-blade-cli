@@ -24,22 +24,42 @@ import java.util.Set;
 
 /**
  * @author Gregory Amerson
+ * @author Simon Jiang
  */
 @SuppressWarnings("serial")
 public class DefaultModel implements ProjectInfo, Serializable {
 
 	public DefaultModel(
-		Set<String> pluginClassNames, Map<String, Set<File>> projectOutputFiles, String deployDir, String liferayHome) {
+		Set<String> pluginClassNames, Map<String, Set<File>> projectOutputFiles, String deployDir, String liferayHome,
+		String dockerImageLiferay, String dockerImageId, String dockerContainerId) {
 
 		_pluginClassNames = pluginClassNames;
 		_projectOutputFiles = projectOutputFiles;
 		_deployDir = deployDir;
 		_liferayHome = liferayHome;
+		_dockerImageLiferay = dockerImageLiferay;
+		_dockerImageId = dockerImageId;
+		_dockerContainerId = dockerContainerId;
 	}
 
 	@Override
 	public String getDeployDir() {
 		return _deployDir;
+	}
+
+	@Override
+	public String getDockerContainerId() {
+		return _dockerContainerId;
+	}
+
+	@Override
+	public String getDockerImageId() {
+		return _dockerImageId;
+	}
+
+	@Override
+	public String getDockerImageLiferay() {
+		return _dockerImageLiferay;
 	}
 
 	@Override
@@ -74,6 +94,9 @@ public class DefaultModel implements ProjectInfo, Serializable {
 	}
 
 	private final String _deployDir;
+	private final String _dockerContainerId;
+	private final String _dockerImageId;
+	private final String _dockerImageLiferay;
 	private final String _liferayHome;
 	private final Set<String> _pluginClassNames;
 	private final Map<String, Set<File>> _projectOutputFiles;

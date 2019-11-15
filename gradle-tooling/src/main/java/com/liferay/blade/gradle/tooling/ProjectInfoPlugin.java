@@ -39,6 +39,7 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.PublishArtifactSet;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.tooling.provider.model.ToolingModelBuilder;
@@ -46,6 +47,7 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
 
 /**
  * @author Gregory Amerson
+ * @author Simon Jiang
  */
 public class ProjectInfoPlugin implements Plugin<Project> {
 
@@ -106,6 +108,12 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 			String deployDir = _getDeployDir(project);
 
+			String dockerImageLiferay = _getDockerImageLiferay(project);
+
+			String dockerImageId = _getDockerImageId(project);
+
+			String dockerContainerId = _getDockerContainerId(project);
+
 			try {
 				Configuration archivesConfiguration = configurations.getByName(Dependency.ARCHIVES_CONFIGURATION);
 
@@ -122,7 +130,9 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			catch (Exception e) {
 			}
 
-			return new DefaultModel(pluginClassNames, projectOutputFiles, deployDir, liferayHome);
+			return new DefaultModel(
+				pluginClassNames, projectOutputFiles, deployDir, liferayHome, dockerImageLiferay, dockerImageId,
+				dockerContainerId);
 		}
 
 		@Override
@@ -134,15 +144,35 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			return _getExtensionProperty(project, "liferay", "deployDir");
 		}
 
-		private String _getExtensionProperty(Project project, String extension, String property) {
-			ExtensionContainer extensionContainer = project.getExtensions();
+		private String _getDockerContainerId(Project project) {
+			Project rootProject = project.getRootProject();
 
-			Object liferayExtension = extensionContainer.findByName(extension);
+			return _getExtensionProperty(
+				(ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerContainerId");
+		}
 
-			String liferayHome = null;
+		private String _getDockerImageId(Project project) {
+			Project rootProject = project.getRootProject();
 
-			if (liferayExtension != null) {
-				Class<?> clazz = liferayExtension.getClass();
+			return _getExtensionProperty((ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerImageId");
+		}
+
+		private String _getDockerImageLiferay(Project project) {
+			Project rootProject = project.getRootProject();
+
+			return _getExtensionProperty(
+				(ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerImageLiferay");
+		}
+
+		private String _getExtensionProperty(ExtensionAware extensionAware, String extensionName, String property) {
+			ExtensionContainer extensionContainer = extensionAware.getExtensions();
+
+			Object extension = extensionContainer.findByName(extensionName);
+
+			String returnVal = null;
+
+			if (extension != null) {
+				Class<?> clazz = extension.getClass();
 
 				try {
 					BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
@@ -153,9 +183,9 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 						Method method = propertyDescriptor.getReadMethod();
 
 						if ((method != null) && property.equals(propertyDescriptorName)) {
-							Object value = method.invoke(liferayExtension);
+							Object value = method.invoke(extension);
 
-							liferayHome = String.valueOf(value);
+							returnVal = String.valueOf(value);
 						}
 					}
 				}
@@ -163,7 +193,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 				}
 			}
 
-			return liferayHome;
+			return returnVal;
 		}
 
 		private String _getLiferayHome(Project project) {

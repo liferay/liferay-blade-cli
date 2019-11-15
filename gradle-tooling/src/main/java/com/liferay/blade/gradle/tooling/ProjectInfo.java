@@ -23,10 +23,17 @@ import java.util.Set;
 
 /**
  * @author Gregory Amerson
+ * @author Simon Jiang
  */
 public interface ProjectInfo {
 
 	public String getDeployDir();
+
+	public String getDockerContainerId();
+
+	public String getDockerImageId();
+
+	public String getDockerImageLiferay();
 
 	public String getLiferayHome();
 
