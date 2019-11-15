@@ -19,14 +19,15 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * @author David Truong
+ * @author Gregory Amerson
  */
 @Parameters(
 	commandDescription = "Watch for changes to workspace projects and automatically build, deploy, or update them into running Liferay instance.",
@@ -86,13 +87,13 @@ public class WatchArgs extends BaseArgs {
 	private static final List<String> _defaultProjectPaths = Arrays.asList("src");
 
 	@Parameter(description = "File paths that will use deployFast instead of deploy.", names = {"-f", "--fast-paths"})
-	private List<String> _fastPaths = Collections.emptyList();
+	private List<String> _fastPaths = new ArrayList<>();
 
 	@Parameter(description = "Ignored watch paths.", names = {"-i", "--ignore-paths"})
-	private List<String> _ignorePaths = Collections.emptyList();
+	private List<String> _ignorePaths = new ArrayList<>();
 
 	@Parameter(description = "File paths to use to identify a project path.", names = {"-p", "--project-paths"})
-	private List<String> _projectPaths = Collections.emptyList();
+	private List<String> _projectPaths = new ArrayList<>();
 
 	@Parameter(description = "Skip initial deploy", names = {"-s", "--skip-init"})
 	private boolean _skipInit = false;
