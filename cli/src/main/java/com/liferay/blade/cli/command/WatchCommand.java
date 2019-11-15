@@ -164,58 +164,58 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 		final Map<String, Path> foundProjectPaths = new HashMap<>();
 
-		FileSystem fileSystem = FileSystems.getDefault();
+		try (FileSystem fileSystem = FileSystems.getDefault()) {
+			List<PathMatcher> ignorePathMatchers = ignorePaths.stream(
+			).map(
+				ignorePath -> fileSystem.getPathMatcher("glob:" + ignorePath)
+			).collect(
+				Collectors.toList()
+			);
 
-		List<PathMatcher> ignorePathMatchers = ignorePaths.stream(
-		).map(
-			ignorePath -> fileSystem.getPathMatcher("glob:" + ignorePath)
-		).collect(
-			Collectors.toList()
-		);
+			Files.walkFileTree(
+				watchPath,
+				new SimpleFileVisitor<Path>() {
 
-		Files.walkFileTree(
-			watchPath,
-			new SimpleFileVisitor<Path>() {
+					@Override
+					public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes)
+						throws IOException {
 
-				@Override
-				public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes)
-					throws IOException {
-
-					boolean shouldIgnorePath = ignorePathMatchers.stream(
-					).anyMatch(
-						pathMatcher -> pathMatcher.matches(path)
-					);
-
-					if (shouldIgnorePath) {
-						return FileVisitResult.SKIP_SUBTREE;
-					}
-
-					try (Stream<Path> files = Files.list(path)) {
-						boolean projectPathFound = files.map(
-							p -> p.getFileName()
-						).filter(
-							p -> !ignorePathMatchers.stream(
-							).anyMatch(
-								pathMatcher -> pathMatcher.matches(path.resolve(p))
-							)
+						boolean shouldIgnorePath = ignorePathMatchers.stream(
 						).anyMatch(
-							p -> projectPaths.stream(
-							).anyMatch(
-								pp -> Objects.equals(pp, p.toString())
-							)
+							pathMatcher -> pathMatcher.matches(path)
 						);
 
-						if (projectPathFound) {
-							foundProjectPaths.put(_getGradlePath(path, watchPath), path);
-
+						if (shouldIgnorePath) {
 							return FileVisitResult.SKIP_SUBTREE;
 						}
+
+						try (Stream<Path> files = Files.list(path)) {
+							boolean projectPathFound = files.map(
+								p -> p.getFileName()
+							).filter(
+								p -> !ignorePathMatchers.stream(
+								).anyMatch(
+									pathMatcher -> pathMatcher.matches(path.resolve(p))
+								)
+							).anyMatch(
+								p -> projectPaths.stream(
+								).anyMatch(
+									pp -> Objects.equals(pp, p.toString())
+								)
+							);
+
+							if (projectPathFound) {
+								foundProjectPaths.put(_getGradlePath(path, watchPath), path);
+
+								return FileVisitResult.SKIP_SUBTREE;
+							}
+						}
+
+						return FileVisitResult.CONTINUE;
 					}
 
-					return FileVisitResult.CONTINUE;
-				}
-
-			});
+				});
+		}
 
 		return foundProjectPaths;
 	}
@@ -270,10 +270,8 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			public void run() {
 				BladeCLI bladeCLI = getBladeCLI();
 
-				try {
-					FileSystem fileSystem = FileSystems.getDefault();
-
-					final WatchService watchService = fileSystem.newWatchService();
+				try (final FileSystem fileSystem = FileSystems.getDefault();
+					final WatchService watchService = fileSystem.newWatchService()) {
 
 					final Map<WatchKey, Path> watchKeys = new HashMap<>();
 
