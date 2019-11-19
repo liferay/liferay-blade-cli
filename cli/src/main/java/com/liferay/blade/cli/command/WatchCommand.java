@@ -164,58 +164,58 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 		final Map<String, Path> foundProjectPaths = new HashMap<>();
 
-		try (FileSystem fileSystem = FileSystems.getDefault()) {
-			List<PathMatcher> ignorePathMatchers = ignorePaths.stream(
-			).map(
-				ignorePath -> fileSystem.getPathMatcher("glob:" + ignorePath)
-			).collect(
-				Collectors.toList()
-			);
+		FileSystem fileSystem = FileSystems.getDefault();
 
-			Files.walkFileTree(
-				watchPath,
-				new SimpleFileVisitor<Path>() {
+		List<PathMatcher> ignorePathMatchers = ignorePaths.stream(
+		).map(
+			ignorePath -> fileSystem.getPathMatcher("glob:" + ignorePath)
+		).collect(
+			Collectors.toList()
+		);
 
-					@Override
-					public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes)
-						throws IOException {
+		Files.walkFileTree(
+			watchPath,
+			new SimpleFileVisitor<Path>() {
 
-						boolean shouldIgnorePath = ignorePathMatchers.stream(
-						).anyMatch(
-							pathMatcher -> pathMatcher.matches(path)
-						);
+				@Override
+				public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes)
+					throws IOException {
 
-						if (shouldIgnorePath) {
-							return FileVisitResult.SKIP_SUBTREE;
-						}
+					boolean shouldIgnorePath = ignorePathMatchers.stream(
+					).anyMatch(
+						pathMatcher -> pathMatcher.matches(path)
+					);
 
-						try (Stream<Path> files = Files.list(path)) {
-							boolean projectPathFound = files.map(
-								p -> p.getFileName()
-							).filter(
-								p -> !ignorePathMatchers.stream(
-								).anyMatch(
-									pathMatcher -> pathMatcher.matches(path.resolve(p))
-								)
-							).anyMatch(
-								p -> projectPaths.stream(
-								).anyMatch(
-									pp -> Objects.equals(pp, p.toString())
-								)
-							);
-
-							if (projectPathFound) {
-								foundProjectPaths.put(_getGradlePath(path, watchPath), path);
-
-								return FileVisitResult.SKIP_SUBTREE;
-							}
-						}
-
-						return FileVisitResult.CONTINUE;
+					if (shouldIgnorePath) {
+						return FileVisitResult.SKIP_SUBTREE;
 					}
 
-				});
-		}
+					try (Stream<Path> files = Files.list(path)) {
+						boolean projectPathFound = files.map(
+							p -> p.getFileName()
+						).filter(
+							p -> !ignorePathMatchers.stream(
+							).anyMatch(
+								pathMatcher -> pathMatcher.matches(path.resolve(p))
+							)
+						).anyMatch(
+							p -> projectPaths.stream(
+							).anyMatch(
+								pp -> Objects.equals(pp, p.toString())
+							)
+						);
+
+						if (projectPathFound) {
+							foundProjectPaths.put(_getGradlePath(path, watchPath), path);
+
+							return FileVisitResult.SKIP_SUBTREE;
+						}
+					}
+
+					return FileVisitResult.CONTINUE;
+				}
+
+			});
 
 		return foundProjectPaths;
 	}
