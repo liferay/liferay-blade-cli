@@ -82,8 +82,9 @@ public class WatchArgs extends BaseArgs {
 	private static final List<String> _defaultFastPaths = Arrays.asList(
 		"**/*.css", "**/*.js", "**/*.jsp", "**/*.map", "**/*.scss");
 	private static final List<String> _defaultIgnorePaths = Arrays.asList(
-		".gradle", ".idea", ".settings", "**/.sass-cache", "**/build", "**/classes", "**/dist", "**/liferay-theme.json",
-		"**/node_modules", "**/liferay-npm-bundler-report.html", "**/target", "bundles", "gradle");
+		".gradle", ".idea", ".settings", "**/.sass-cache", "**/bin", "**/build", "**/classes", "**/dist",
+		"**/liferay-theme.json", "**/node_modules", "**/liferay-npm-bundler-report.html", "**/target", "bundles",
+		"gradle");
 	private static final List<String> _defaultProjectPaths = Arrays.asList("src");
 
 	@Parameter(description = "File paths that will use deployFast instead of deploy.", names = {"-f", "--fast-paths"})
