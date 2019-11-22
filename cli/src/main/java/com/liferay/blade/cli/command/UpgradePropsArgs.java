@@ -25,7 +25,7 @@ import java.io.File;
  * @author Gregory Amerson
  */
 @Parameters(
-	commandDescription = "Helps to upgrade portal properties from Liferay server 6.x to 7.x versions",
+	commandDescription = "Analyzes current portal properties for properties that have been moved to OSGi configurations or removed in the target version from 6.x to 7.x versions",
 	commandNames = "upgradeProps"
 )
 public class UpgradePropsArgs extends BaseArgs {
