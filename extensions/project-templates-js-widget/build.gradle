@@ -20,6 +20,7 @@ apply plugin: "java"
 
 dependencies {
 	compile group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.1"
+
 	compileOnly group: "org.apache.maven.archetype", name: "archetype-common", version: "2.4"
 
 	testCompile gradleTestKit()

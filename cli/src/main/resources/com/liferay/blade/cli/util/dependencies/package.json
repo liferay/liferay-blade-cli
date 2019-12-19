@@ -1,20 +1,20 @@
 {
-  "name": "liferay-blade-js",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build-widget": "yo liferay-js",
-    "build-theme": "yo liferay-theme",
-    "build-fragment": "yo liferay-fragments"
-  },
-  "author": "David Truong",
-  "license": "LGPL",
-  "devDependencies": {
-    "yo": "3.1.0",
-    "generator-liferay-theme": "9.3.0",
-    "generator-liferay-theme-themelet": "1.2.0",
-    "generator-liferay-fragments": "1.2.1",
-    "generator-liferay-js": "2.11.0"
-  }
+	"author": "David Truong",
+	"description": "",
+	"devDependencies": {
+		"generator-liferay-fragments": "1.2.1",
+		"generator-liferay-js": "2.11.0",
+		"generator-liferay-theme": "9.3.0",
+		"generator-liferay-theme-themelet": "1.2.0",
+		"yo": "3.1.0"
+	},
+	"license": "LGPL",
+	"main": "index.js",
+	"name": "liferay-blade-js",
+	"scripts": {
+		"build-fragment": "yo liferay-fragments",
+		"build-theme": "yo liferay-theme",
+		"build-widget": "yo liferay-js"
+	},
+	"version": "1.0.0"
 }

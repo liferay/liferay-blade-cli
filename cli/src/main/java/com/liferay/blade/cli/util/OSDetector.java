@@ -21,71 +21,69 @@ import java.io.File;
  */
 public class OSDetector {
 
-    public static String getBitmode() {
-        if (_bitMode != null) {
-            return _bitMode;
-        }
+	public static String getBitmode() {
+		if (_bitMode != null) {
+			return _bitMode;
+		}
 
-        _bitMode = System.getProperty("sun.arch.data.model");
+		_bitMode = System.getProperty("sun.arch.data.model");
 
-        if ((_bitMode == null) || _bitMode.equals("null")) {
-            _bitMode = System.getProperty("com.ibm.vm.bitmode");
-        }
+		if ((_bitMode == null) || _bitMode.equals("null")) {
+			_bitMode = System.getProperty("com.ibm.vm.bitmode");
+		}
 
-        if ((_bitMode == null) || _bitMode.equals("null")) {
-            String arch = System.getProperty("os.arch");
+		if ((_bitMode == null) || _bitMode.equals("null")) {
+			String arch = System.getProperty("os.arch");
 
-            arch = arch.toLowerCase();
+			arch = arch.toLowerCase();
 
-            if (arch.equals("amd64") || arch.equals("x86_64")) {
-                _bitMode = "64";
-            }
-            else if (arch.equals("i386") || arch.equals("i686") ||
-                    arch.equals("x86")) {
+			if (arch.equals("amd64") || arch.equals("x86_64")) {
+				_bitMode = "64";
+			}
+			else if (arch.equals("i386") || arch.equals("i686") || arch.equals("x86")) {
+				_bitMode = "32";
+			}
+		}
 
-                _bitMode = "32";
-            }
-        }
+		return _bitMode;
+	}
 
-        return _bitMode;
-    }
+	public static boolean isApple() {
+		if (_apple != null) {
+			return _apple.booleanValue();
+		}
 
-    public static boolean isApple() {
-        if (_apple != null) {
-            return _apple.booleanValue();
-        }
+		String osName = System.getProperty("os.name");
 
-        String osName = System.getProperty("os.name");
+		osName = osName.toLowerCase();
 
-        osName = osName.toLowerCase();
+		if (osName.contains("darwin") || osName.contains("mac")) {
+			_apple = Boolean.TRUE;
+		}
+		else {
+			_apple = Boolean.FALSE;
+		}
 
-        if (osName.contains("darwin") || osName.contains("mac")) {
-            _apple = Boolean.TRUE;
-        }
-        else {
-            _apple = Boolean.FALSE;
-        }
+		return _apple.booleanValue();
+	}
 
-        return _apple.booleanValue();
-    }
+	public static boolean isWindows() {
+		if (_windows != null) {
+			return _windows.booleanValue();
+		}
 
-    public static boolean isWindows() {
-        if (_windows != null) {
-            return _windows.booleanValue();
-        }
+		if (File.pathSeparator.equals(";")) {
+			_windows = Boolean.TRUE;
+		}
+		else {
+			_windows = Boolean.FALSE;
+		}
 
-        if (File.pathSeparator.equals(";")) {
-            _windows = Boolean.TRUE;
-        }
-        else {
-            _windows = Boolean.FALSE;
-        }
+		return _windows.booleanValue();
+	}
 
-        return _windows.booleanValue();
-    }
-
-    private static Boolean _apple;
-    private static String _bitMode;
-    private static Boolean _windows;
+	private static Boolean _apple;
+	private static String _bitMode;
+	private static Boolean _windows;
 
 }
