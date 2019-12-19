@@ -305,6 +305,21 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		properties.put("setOriginalModuleVersion", createArgs.getOriginalModuleVersion());
 		properties.put("setService", createArgs.getService());
 		properties.put("setViewType", createArgs.getViewType());
+		WorkspaceProvider workspaceProvider = getBladeCLI().getWorkspaceProvider(
+		new File(createArgs.getBase()));
+
+		try {
+			if (workspaceProvider != null) {
+				File workspaceLocation = workspaceProvider.getWorkspaceDir(getBladeCLI());
+				if (workspaceLocation != null) {
+					properties.put("setWorkspaceLocation", workspaceLocation.toString());
+					properties.put("setModulesLocation", _getDefaultModulesDir().toString());
+				}
+			}
+		}
+		catch (Exception e) {
+			getBladeCLI().error(e);
+		}
 
 		return properties;
 	}

@@ -1,8 +1,5 @@
 package com.liferay.blade.cli.util;
 
-import org.gradle.api.AntBuilder;
-import org.gradle.api.Project;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.HashMap;
-import java.util.Map;
 
 public class NodeUtil {
 
@@ -30,6 +25,8 @@ public class NodeUtil {
             Files.createDirectories(nodeCachePath);
 
             String nodeURL = getNodeURL();
+            
+            System.out.println("Node URL: " + nodeURL);
 
             Path downloadPath = bladeCachePath.resolve(
                     nodeURL.substring(nodeURL.lastIndexOf("/") + 1));
@@ -39,9 +36,25 @@ public class NodeUtil {
             }
 
             FileUtil.unpack(downloadPath, nodeCachePath, 1);
-
-            Files.setPosixFilePermissions(nodeCachePath.resolve("bin/node"), PosixFilePermissions.fromString("rwxrwxr--"));
-            Files.setPosixFilePermissions(nodeCachePath.resolve("bin/npm"), PosixFilePermissions.fromString("rwxrwxr--"));
+            if (OSDetector.isWindows()) {
+            	Path nodePath = Files.list(nodeCachePath).findFirst().get();
+            	
+            	Files.list(nodePath).forEach(x -> {
+					try {
+						Files.move(x, nodeCachePath.resolve(x.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+            	//Files.move(nodePath, nodeCachePath, StandardCopyOption.REPLACE_EXISTING);
+            	
+            	Files.delete(nodePath);
+            }
+            else {
+	            Files.setPosixFilePermissions(nodeCachePath.resolve("bin/node"), PosixFilePermissions.fromString("rwxrwxr--"));
+	            Files.setPosixFilePermissions(nodeCachePath.resolve("bin/npm"), PosixFilePermissions.fromString("rwxrwxr--"));
+            }
         }
 
         return nodeCachePath;
@@ -73,8 +86,17 @@ public class NodeUtil {
 
             File npmDir = getNpmDir(nodeDirPath.toFile());
 
-            Process process = BladeUtil.startProcess(
-                nodeDirPath.toString() + File.separator + "bin" + File.separator + "node " + npmDir + "/bin/npm-cli.js install", yoDirPath.toFile());
+            Process process;
+            if (OSDetector.isWindows()) {
+               	process = BladeUtil.startProcess(
+            			nodeDirPath.toString() + File.separator + "node.exe " + npmDir + "/bin/npm-cli.js install --scripts-prepend-node-path", yoDirPath.toFile());
+             	
+            }
+            else {
+            	
+            	process = BladeUtil.startProcess(
+            			nodeDirPath.toString() + File.separator + "bin" + File.separator + "node " + npmDir + "/bin/npm-cli.js install", yoDirPath.toFile());
+            }
 
             int returnCode = process.waitFor();
         }

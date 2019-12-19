@@ -2,11 +2,12 @@
     "batchMode": false,
     "answers": {
         "*": {
+            "liferayDir": "[$LIFERAY_DIR$]",
             "target": "[$TARGET$]",
-            "folder": "[$OUTPUT_PATH$]",
+            "folder": "[$FOLDER$]",
             "description": "[$DESCRIPTION$]",
             "category": "category.sample",
-            "liferayPresent": false,
+            "liferayPresent": "[$LIFERAY_PRESENT$]",
             "createInitializer": false
         }
     }
