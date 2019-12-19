@@ -17,7 +17,7 @@ public class NodeUtil {
 
         Path userHomePath = userHome.toPath();
 
-        Path bladeCachePath = userHomePath.resolve(".blade/cache");
+        Path bladeCachePath = userHomePath.resolve(".blade" + File.separator + "cache");
 
         Path nodeCachePath = bladeCachePath.resolve("node");
 
@@ -43,11 +43,9 @@ public class NodeUtil {
 					try {
 						Files.move(x, nodeCachePath.resolve(x.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						throw new RuntimeException(e);
 					}
 				});
-            	//Files.move(nodePath, nodeCachePath, StandardCopyOption.REPLACE_EXISTING);
             	
             	Files.delete(nodePath);
             }
@@ -65,7 +63,7 @@ public class NodeUtil {
 
         Path userHomePath = userHome.toPath();
 
-        Path bladeCachePath = userHomePath.resolve(".blade/cache");
+        Path bladeCachePath = userHomePath.resolve(".blade" + File.separator + "cache");
 
         Path nodeDirPath = bladeCachePath.resolve("node");
 
@@ -77,7 +75,7 @@ public class NodeUtil {
             Files.createDirectories(yoDirPath);
 
             InputStream inputStream = NodeUtil.class.getResourceAsStream(
-                "dependencies/package.json");
+                "dependencies" + File.separator + "package.json");
 
             Path targetPath = yoDirPath.resolve("package.json");
 
@@ -89,16 +87,20 @@ public class NodeUtil {
             Process process;
             if (OSDetector.isWindows()) {
                	process = BladeUtil.startProcess(
-            			nodeDirPath.toString() + File.separator + "node.exe " + npmDir + "/bin/npm-cli.js install --scripts-prepend-node-path", yoDirPath.toFile());
+            			nodeDirPath.toString() + File.separator + "node.exe " + npmDir + File.separator + "bin" + File.separator + "npm-cli.js install --scripts-prepend-node-path", yoDirPath.toFile());
              	
             }
             else {
             	
             	process = BladeUtil.startProcess(
-            			nodeDirPath.toString() + File.separator + "bin" + File.separator + "node " + npmDir + "/bin/npm-cli.js install", yoDirPath.toFile());
+            			nodeDirPath.toString() + File.separator + "bin" + File.separator + "node " + npmDir + File.separator + "bin" + File.separator + "npm-cli.js install", yoDirPath.toFile());
             }
 
             int returnCode = process.waitFor();
+            
+            if (returnCode != 0) {
+            	throw new RuntimeException("Problem occurred while downloading yo");
+            }
         }
 
         return yoDirPath;
@@ -108,7 +110,7 @@ public class NodeUtil {
         File nodeModulesDir = new File(nodeDir, "node_modules");
 
         if (!nodeModulesDir.exists()) {
-            nodeModulesDir = new File(nodeDir, "lib/node_modules");
+            nodeModulesDir = new File(nodeDir, "lib" + File.separator + "node_modules");
         }
 
         return new File(nodeModulesDir, "npm");

@@ -112,8 +112,6 @@ public class JSWidgetProjectTemplateCustomizer
             Path yoPath =
                 bladeCachePath.resolve("yo/node_modules/yo/lib/cli.js");
 
-            //commands.add("sh");
-            //commands.add("-c");
             commands.add(
                 nodePath.toString());
             commands.add(yoPath.toString());
@@ -148,8 +146,6 @@ public class JSWidgetProjectTemplateCustomizer
         outputStream.close();
 
         process.waitFor();
-
-        //Files.delete(configPath);
     }
 
     public boolean isWindows() {
@@ -177,10 +173,6 @@ public class JSWidgetProjectTemplateCustomizer
             ProjectTemplatesArgs projectTemplatesArgs,
             ArchetypeGenerationRequest archetypeGenerationRequest)
     throws Exception {
-
-//            Properties properties = archetypeGenerationRequest.getProperties();
-//
-//            properties.put("packageJsonVersion", "1.0.0");
 
     }
 
