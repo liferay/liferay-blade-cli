@@ -22,7 +22,6 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.NodeUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
@@ -155,11 +154,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 				return;
 			}
-		}
-		else if (template.equals("js-widget")) {
-			NodeUtil.downloadNode();
-
-			NodeUtil.downloadYo();
 		}
 
 		String name = createArgs.getName();

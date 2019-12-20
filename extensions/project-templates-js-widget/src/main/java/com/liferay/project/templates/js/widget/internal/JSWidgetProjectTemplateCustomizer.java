@@ -51,6 +51,10 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 			ArchetypeGenerationResult archetypeGenerationResult)
 		throws Exception {
 
+		NodeUtil.downloadNode();
+
+		NodeUtil.downloadYo();
+
 		File userHome = new File(System.getProperty("user.home"));
 
 		Path userHomePath = userHome.toPath();
@@ -80,7 +84,7 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 			String liferayLocation = liferayLocationPath.toString();
 
-			if (_isWindows()) {
+			if (OSDetector.isWindows()) {
 				liferayLocation = liferayLocation.replace("\\", "\\\\");
 			}
 
@@ -93,7 +97,7 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 				ext.getModulesLocation(), projectTemplatesArgs.getName()
 			).getAbsolutePath();
 
-			if (_isWindows()) {
+			if (OSDetector.isWindows()) {
 				modulesLocation = modulesLocation.replace("\\", "\\\\");
 			}
 
@@ -107,7 +111,7 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 			String relativePathString = relativePath.toString();
 
-			if (_isWindows()) {
+			if (OSDetector.isWindows()) {
 				relativePathString = relativePathString.replace("\\", "\\\\");
 			}
 
@@ -130,7 +134,7 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 		List<String> commands = new ArrayList<>();
 
-		if (_isWindows()) {
+		if (OSDetector.isWindows()) {
 			commands.add("cmd.exe");
 			commands.add("/c");
 
@@ -184,10 +188,6 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 	public void write(Path destination, String content) throws Exception {
 		Files.write(destination, content.getBytes());
-	}
-
-	private static boolean _isWindows() {
-		return File.pathSeparator.equals(";");
 	}
 
 	private String _replace(String s, String key, Object value) {
