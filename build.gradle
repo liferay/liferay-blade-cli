@@ -4,7 +4,7 @@ buildscript {
 	dependencies {
 		classpath group: "com.gradle", name: "build-scan-plugin", version: "2.0.2"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.change.log.builder", version: "1.1.1"
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "2.3.303"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "2.3.479"
 		classpath group: "nu.studer", name: "gradle-credentials-plugin", version: "1.0.4"
 		classpath group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	}

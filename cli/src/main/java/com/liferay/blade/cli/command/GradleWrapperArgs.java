@@ -25,7 +25,10 @@ import java.util.List;
 /**
  * @author Gregory Amerson
  */
-@Parameters(commandDescription = "Execute gradle command using the gradle wrapper if detected. Example: blade gw -- --help", commandNames = "gw")
+@Parameters(
+	commandDescription = "Execute gradle command using the gradle wrapper if detected. Example: blade gw -- --help",
+	commandNames = "gw"
+)
 public class GradleWrapperArgs extends BaseArgs {
 
 	public List<String> getArgs() {
