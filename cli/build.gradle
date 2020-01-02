@@ -271,7 +271,7 @@ test {
 
 unzipManifest {
 	from zipTree(jar.archivePath)
-	into sourceSets.main.output.classesDir
+	into sourceSets.main.output.classesDirs.singleFile
 	include '/META-INF/MANIFEST.MF'
 }
 

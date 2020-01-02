@@ -57,3 +57,5 @@ test {
 		systemProperty 'sampleTemplateJarFile', jar.archivePath
 	}
 }
+
+version = "1.0.0"
