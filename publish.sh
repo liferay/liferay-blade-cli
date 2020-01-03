@@ -91,7 +91,7 @@ if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
 fi
 
 # Grep the output of the previous command to find the url of the published jar
-mavenProfilePublishUrl=$(echo "$mavenProfilePublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2)
+mavenProfilePublishUrl=$(echo "$mavenProfilePublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f4)
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishUrl" ]; then
    echo Failed grepping for mavenProfilePublishUrl
@@ -100,7 +100,7 @@ if [ "$?" != "0" ] || [ -z "$mavenProfilePublishUrl" ]; then
 fi
 
 # Download the just published jar in order to later compare it to the embedded maven profile that is in blade jar
-mavenProfileJarUrl="$repoHost/nexus/content/groups/public/$mavenProfilePublishUrl"
+mavenProfileJarUrl="${repoHost}${mavenProfilePublishUrl}"
 
 curl -s "$mavenProfileJarUrl" -o /tmp/$timestamp/maven_profile.jar
 
@@ -156,10 +156,10 @@ if [ "$?" != "0" ] || [ -z "$bladeCliPublishCommand" ]; then
 fi
 
 # Grep the output of the blade jar publish to find the url
-bladeCliJarUrl=$(echo "$bladeCliPublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f2)
+bladeCliJarUrl=$(echo "$bladeCliPublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f4)
 
 # download the just published jar in order to extract the embedded maven profile jar to compare to previously downloaded version from above (just to be double sure)
-bladeCliUrl="$repoHost/nexus/content/groups/public/$bladeCliJarUrl"
+bladeCliUrl="${repoHost}${bladeCliJarUrl}"
 
 curl -s "$bladeCliUrl" -o /tmp/$timestamp/blade.jar
 
