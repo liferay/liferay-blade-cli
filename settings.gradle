@@ -1,5 +1,3 @@
-enableFeaturePreview('STABLE_PUBLISHING')
-
 include "cli"
 include "extensions:bad-command"
 include "extensions:project-templates-js-widget"

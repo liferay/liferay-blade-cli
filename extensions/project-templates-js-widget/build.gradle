@@ -1,6 +1,6 @@
 buildscript {
 	dependencies {
-		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "3.5.0"
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "4.3.0"
 	}
 
 	repositories {
@@ -29,7 +29,7 @@ dependencies {
 	testCompile project(path: ":cli", configuration: "testApi")
 }
 
-jar.baseName = "com.liferay.project.templates.js.widget-1.0.0"
+jar.baseName = "com.liferay.project.templates.js.widget"
 
 repositories {
 	flatDir {
@@ -44,3 +44,5 @@ repositories {
 		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 	}
 }
+
+version = "1.0.0-SNAPSHOT"
