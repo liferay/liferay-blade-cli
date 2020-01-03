@@ -53,24 +53,21 @@ public class SampleWorkspaceTemplateTest {
 
 		File tempDir = temporaryFolder.newFolder();
 
-		String basePath = new File(
-			tempDir.getPath()
-		).getAbsolutePath();
+		String basePath = tempDir.getAbsolutePath();
 
 		String[] args = {"--base", basePath, "init", "-P", "sample", "-v", "7.2"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		Assert.assertTrue(
-			new File(
-				tempDir, "settings.gradle"
-			).exists());
+		File settingsFile = new File(tempDir, "settings.gradle");
 
-		File settingsFile = new File(tempDir, ".blade.properties");
+		Assert.assertTrue(settingsFile.exists());
+
+		File bladePropertiesFile = new File(tempDir, ".blade.properties");
 
 		Properties props = new Properties();
 
-		try (FileInputStream fileInputStream = new FileInputStream(settingsFile)) {
+		try (FileInputStream fileInputStream = new FileInputStream(bladePropertiesFile)) {
 			props.load(fileInputStream);
 
 			String profileName = props.getProperty("profile.name");

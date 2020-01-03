@@ -239,7 +239,8 @@ public class InstallExtensionCommandTest {
 
 		Path rootPath = _rootDir.toPath();
 
-		Path extensionJarPath = rootPath.resolve(Paths.get(".blade", "extensions", "blade-sample-command-master.jar"));
+		Path extensionJarPath = rootPath.resolve(
+			Paths.get(".blade", "extensions", "blade-sample-command-master-1.0.0.jar"));
 
 		boolean pathExists = Files.exists(extensionJarPath);
 

@@ -55,3 +55,5 @@ test {
 		systemProperty 'sampleCommandJarFile', jar.archivePath
 	}
 }
+
+version = "1.0.0"

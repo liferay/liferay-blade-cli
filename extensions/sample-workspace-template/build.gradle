@@ -34,7 +34,7 @@ eclipse {
 	}
 }
 
-jar.baseName = "com.liferay.project.templates.workspace.sample-1.0.0"
+jar.baseName = "com.liferay.project.templates.workspace.sample"
 
 repositories {
 	flatDir {
@@ -57,3 +57,5 @@ test {
 		systemProperty 'sampleTemplateJarFile', jar.archivePath
 	}
 }
+
+version = "1.0.0"

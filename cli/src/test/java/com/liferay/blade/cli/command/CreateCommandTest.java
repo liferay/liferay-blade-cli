@@ -948,45 +948,15 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		File settingsGradle = new File(workspace, "settings.gradle");
-
-		Path settingsGradlePath = settingsGradle.toPath();
-
-		String content = new String(Files.readAllBytes(settingsGradlePath));
-
-		StringBuilder sb = new StringBuilder();
-
-		try (Scanner scanner = new Scanner(content)) {
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-
-				if (line.contains("com.liferay.gradle.plugins.workspace")) {
-					String[] lineSplit = line.split("version: ");
-
-					lineSplit[1] = "\"latest.release\"";
-
-					line = lineSplit[0] + "version: " + lineSplit[1];
-				}
-
-				sb.append(line + System.lineSeparator());
-			}
-		}
-
-		content = sb.toString();
-
-		Files.delete(settingsGradlePath);
-
-		Files.write(settingsGradlePath, content.getBytes(), StandardOpenOption.CREATE_NEW);
-
 		File gradleProperties = new File(workspace, "gradle.properties");
 
 		Path gradlePropertiesPath = gradleProperties.toPath();
 
 		byte[] gradlePropertiesBytes = Files.readAllBytes(gradlePropertiesPath);
 
-		content = new String(gradlePropertiesBytes);
+		String content = new String(gradlePropertiesBytes);
 
-		sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
 		try (Scanner scanner = new Scanner(content)) {
 			while (scanner.hasNextLine()) {
@@ -1030,7 +1000,7 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar"));
 
 		Path extJarPath = GradleRunnerUtil.verifyBuildOutput(
-			projectPath + "/loginExt", "com\\.liferay\\.login\\.web-([0-9]\\.[0-9]\\.[0-9])\\.ext\\.jar", true);
+			projectPath + "/loginExt", "com\\.liferay\\.login\\.web-([0-9]+\\.[0-9]+\\.[0-9]+)\\.ext\\.jar", true);
 
 		Path extJarPathName = extJarPath.getFileName();
 

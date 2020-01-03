@@ -50,3 +50,5 @@ test {
 		systemProperty 'badCommandJarFile', jar.archivePath
 	}
 }
+
+version = "1.0.0"
