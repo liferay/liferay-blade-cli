@@ -88,7 +88,7 @@ channel. Register here:
 
 Blade comes with over 37+ project templates (whew!) right now, but many times
 you may feel that those are too simple or don't fit the need for your
-development team. You can create new custom project templates that fit  your
+development team. You can create new custom project templates that fit your
 team's workflow and have Blade use it instead. To do this, follow this example:
 https://github.com/liferay/liferay-blade-cli/tree/master/extensions/sample-template
 
