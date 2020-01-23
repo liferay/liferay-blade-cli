@@ -26,22 +26,16 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.Vector;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.zeroturnaround.process.PidProcess;
-import org.zeroturnaround.process.Processes;
 
 /**
  * @author Gregory Amerson
@@ -62,41 +56,39 @@ public class JavaProcesses {
 			if (version.indexOf('.') > -1) {
 				version = version.substring(version.indexOf('.') + 1);
 			}
+
 			int versionNumber = Integer.parseInt(version);
 
 			if (versionNumber > 8) {
-
-				Class c = Class.forName("java.lang.ProcessHandle");
+				Class<?> c = Class.forName("java.lang.ProcessHandle");
 
 				Method m = c.getDeclaredMethod("allProcesses", null);
 
 				Object o = m.invoke(null, null);
 
-				Stream<?> handles = (Stream<?>) o;
+				Stream<?> handles = (Stream<?>)o;
 
 				List<?> list = handles.collect(Collectors.toList());
 
 				for (Object lo : list) {
-
 					Class<?> clazz = lo.getClass();
 
 					Method pidMethod = clazz.getDeclaredMethod("pid");
-					
+
 					pidMethod.setAccessible(true);
 
 					Method infoMethod = clazz.getDeclaredMethod("info");
-					
+
 					infoMethod.setAccessible(true);
 
-					long pid = (long) pidMethod.invoke(lo);
+					long pid = (long)pidMethod.invoke(lo);
 
-					String info = (String) String.valueOf(infoMethod.invoke(lo));
+					String info = (String)String.valueOf(infoMethod.invoke(lo));
 
-					javaProcesses.add(new JavaProcess((int) pid, info));
+					javaProcesses.add(new JavaProcess((int)pid, info));
 				}
-
-			} else {
-
+			}
+			else {
 				Thread thread = Thread.currentThread();
 
 				ClassLoader cl = thread.getContextClassLoader();
@@ -115,33 +107,33 @@ public class JavaProcesses {
 
 						Method listMethod = vmClass.getMethod("list");
 
-						List<Object> vmds = (List<Object>) listMethod.invoke(null);
+						List<Object> vmds = (List<Object>)listMethod.invoke(null);
 
 						_log(logger, "Found " + vmds.size() + " vms on this machine.");
 
 						for (Object vmd : vmds) {
-							Class<?> vmdClass = toolsClassloader
-									.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
+							Class<?> vmdClass = toolsClassloader.loadClass(
+								"com.sun.tools.attach.VirtualMachineDescriptor");
 
 							Method displayNameMethod = vmdClass.getMethod("displayName");
 
-							String displayName = (String) displayNameMethod.invoke(vmd);
+							String displayName = (String)displayNameMethod.invoke(vmd);
 
 							Method idMethod = vmdClass.getMethod("id");
 
-							String id = (String) idMethod.invoke(vmd);
+							String id = (String)idMethod.invoke(vmd);
 
-							_log(logger,
-									"Found vm id of " + id + " with name " + displayName + ". Trying to attach...");
+							_log(
+								logger, "Found vm id of " + id + " with name " + displayName + ". Trying to attach...");
 
 							javaProcesses.add(new JavaProcess(Integer.parseInt(id), displayName));
 						}
 					}
 				}
-
 				catch (Exception e) {
 					e.printStackTrace();
-				} finally {
+				}
+				finally {
 					thread.setContextClassLoader(cl);
 
 					// try to get custom classloader to unload native libs
@@ -152,7 +144,7 @@ public class JavaProcesses {
 
 							nl.setAccessible(true);
 
-							Vector<?> nativeLibs = (Vector<?>) nl.get(toolsClassloader);
+							Vector<?> nativeLibs = (Vector<?>)nl.get(toolsClassloader);
 
 							for (Object nativeLib : nativeLibs) {
 								Class<?> clazz = nativeLib.getClass();
@@ -161,7 +153,7 @@ public class JavaProcesses {
 
 								nameField.setAccessible(true);
 
-								String name = (String) nameField.get(nativeLib);
+								String name = (String)nameField.get(nativeLib);
 
 								File nativeLibFile = new File(name);
 
@@ -175,16 +167,18 @@ public class JavaProcesses {
 								}
 							}
 						}
-					} catch (Exception e) {
+					}
+					catch (Exception e) {
 						throw e;
 					}
 				}
 			}
+
 			return javaProcesses;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	public static void main(String[] args) {

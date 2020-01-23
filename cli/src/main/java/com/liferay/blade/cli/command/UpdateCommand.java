@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -364,8 +365,13 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	private static String _getMD5(Path path) {
 		try {
+			File file = path.toFile();
 
-			return DigestUtils.md5Hex(FileUtils.readFileToByteArray(path.toFile())).toUpperCase();
+			byte[] data = FileUtils.readFileToByteArray(file);
+
+			String md5 = DigestUtils.md5Hex(data);
+
+			return md5.toUpperCase();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);

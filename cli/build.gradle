@@ -108,11 +108,10 @@ dependencies {
 	testCompile group: "net.diibadaaba.zipdiff", name: "zipdiff", version: "1.0"
 	testCompile group: "org.easymock", name: "easymock", version: "3.5.1"
 	testCompile group: "org.osgi", name: "osgi.core", version: "6.0.0"
-	
-	testCompile group: 'org.powermock', name: 'powermock-api-easymock', version: '2.0.4'
-	testCompile group: 'org.powermock', name: 'powermock-classloading-xstream', version: '2.0.4'
-	testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.4'
-	testCompile group: 'org.powermock', name: 'powermock-module-junit4-rule', version: '2.0.4'
+	testCompile group: "org.powermock", name: "powermock-api-easymock", version: "2.0.4"
+	testCompile group: "org.powermock", name: "powermock-classloading-xstream", version: "2.0.4"
+	testCompile group: "org.powermock", name: "powermock-module-junit4", version: "2.0.4"
+	testCompile group: "org.powermock", name: "powermock-module-junit4-rule", version: "2.0.4"
 	testCompile group: "org.zeroturnaround", name: "zt-process-killer", version: "1.9"
 }
 
