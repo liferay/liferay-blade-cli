@@ -95,10 +95,10 @@ public class InstallExtensionCommandTest {
 
 		String output = bladeTestResults.getOutput();
 
-		String error = bladeTestResults.getErrors();
+		String errors = bladeTestResults.getErrors();
 
 		Assert.assertTrue(
-			"Expected output to contain \"successful\"\n" + output + System.lineSeparator() + error,
+			"Expected output to contain \"successful\"\n" + output + System.lineSeparator() + errors,
 			output.contains(" successful"));
 
 		Path rootPath = _rootDir.toPath();

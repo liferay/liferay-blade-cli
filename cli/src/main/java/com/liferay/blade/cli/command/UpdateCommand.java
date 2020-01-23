@@ -366,13 +366,13 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	private static String _getMD5(Path path) {
 		try {
-			MessageDigest md = MessageDigest.getInstance("MD5");
+			MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 
 			byte[] data = Files.readAllBytes(path);
 
-			md.update(data);
+			messageDigest.update(data);
 
-			BigInteger md5Int = new BigInteger(1, md.digest());
+			BigInteger md5Int = new BigInteger(1, messageDigest.digest());
 
 			String md5 = md5Int.toString(16);
 

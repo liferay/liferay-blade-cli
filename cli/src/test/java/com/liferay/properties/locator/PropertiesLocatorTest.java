@@ -16,8 +16,6 @@
 
 package com.liferay.properties.locator;
 
-import static org.junit.Assume.assumeTrue;
-
 import java.io.File;
 
 import java.nio.file.Files;
@@ -27,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.SortedSet;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -67,7 +66,7 @@ public class PropertiesLocatorTest {
 
 		int versionNumber = Integer.parseInt(version);
 
-		assumeTrue(versionNumber > 8);
+		Assume.assumeTrue(versionNumber > 8);
 
 		File outputFile = new File(_buildDir, "testProperties.out");
 

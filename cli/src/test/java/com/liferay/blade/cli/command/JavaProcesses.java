@@ -62,16 +62,12 @@ public class JavaProcesses {
 			if (versionNumber > 8) {
 				Class<?> c = Class.forName("java.lang.ProcessHandle");
 
-				Method m = c.getDeclaredMethod("allProcesses", null);
+				Method allProcessesMethod = c.getDeclaredMethod("allProcesses");
 
-				Object o = m.invoke(null, null);
+				Stream<?> handles = (Stream<?>)allProcessesMethod.invoke(null);
 
-				Stream<?> handles = (Stream<?>)o;
-
-				List<?> list = handles.collect(Collectors.toList());
-
-				for (Object lo : list) {
-					Class<?> clazz = lo.getClass();
+				for (Object handle : handles.collect(Collectors.toList())) {
+					Class<?> clazz = handle.getClass();
 
 					Method pidMethod = clazz.getDeclaredMethod("pid");
 
@@ -81,11 +77,9 @@ public class JavaProcesses {
 
 					infoMethod.setAccessible(true);
 
-					long pid = (long)pidMethod.invoke(lo);
+					long pid = (long)pidMethod.invoke(handle);
 
-					String info = (String)String.valueOf(infoMethod.invoke(lo));
-
-					javaProcesses.add(new JavaProcess((int)pid, info));
+					javaProcesses.add(new JavaProcess((int)pid, String.valueOf(infoMethod.invoke(handle))));
 				}
 			}
 			else {
