@@ -53,9 +53,9 @@ Some properties have been moved to a module portlet.properties:
 	dynamic.data.mapping.template.language.content[xsl] can match with the following portlet properties:
 		dynamic.data.mapping.template.language.content[xsl] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
 	dynamic.data.mapping.template.language.default can match with the following portlet properties:
-		dynamic.data.mapping.template.language.content[xsl] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
-		dynamic.data.mapping.template.language.content[vm] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
 		dynamic.data.mapping.template.language.content[ftl] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
+		dynamic.data.mapping.template.language.content[vm] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
+		dynamic.data.mapping.template.language.content[xsl] from osgi/marketplace/Liferay CE Forms and Workflow.lpkg/com.liferay.dynamic.data.mapping.web-1.0.32.jar/portlet.properties
 	journal.content.publish.to.live.by.default can match with the following portlet properties:
 		publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience.lpkg/com.liferay.journal.content.web-1.1.14.jar/portlet.properties
 	journal.publish.to.live.by.default can match with the following portlet properties:

@@ -26,15 +26,22 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Vector;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.zeroturnaround.process.PidProcess;
+import org.zeroturnaround.process.Processes;
 
 /**
  * @author Gregory Amerson
@@ -47,91 +54,137 @@ public class JavaProcesses {
 
 	@SuppressWarnings("unchecked")
 	public static Collection<JavaProcess> list(Optional<Consumer<String>> logger) {
-		Collection<JavaProcess> javaProcesses = new HashSet<>();
+		Collection<JavaProcess> javaProcesses = new ArrayList<>();
 
-		Thread thread = Thread.currentThread();
-
-		ClassLoader cl = thread.getContextClassLoader();
-
-		ClassLoader toolsClassloader = null;
+		String version = System.getProperty("java.specification.version");
 
 		try {
-			toolsClassloader = _getToolsClassLoader(cl);
-
-			if (toolsClassloader != null) {
-				thread.setContextClassLoader(toolsClassloader);
-
-				_log(logger, "Trying to load VirtualMachine class...");
-
-				Class<?> vmClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachine");
-
-				Method listMethod = vmClass.getMethod("list");
-
-				List<Object> vmds = (List<Object>)listMethod.invoke(null);
-
-				_log(logger, "Found " + vmds.size() + " vms on this machine.");
-
-				for (Object vmd : vmds) {
-					Class<?> vmdClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
-
-					Method displayNameMethod = vmdClass.getMethod("displayName");
-
-					String displayName = (String)displayNameMethod.invoke(vmd);
-
-					Method idMethod = vmdClass.getMethod("id");
-
-					String id = (String)idMethod.invoke(vmd);
-
-					_log(logger, "Found vm id of " + id + " with name " + displayName + ". Trying to attach...");
-
-					javaProcesses.add(new JavaProcess(Integer.parseInt(id), displayName));
-				}
+			if (version.indexOf('.') > -1) {
+				version = version.substring(version.indexOf('.') + 1);
 			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally {
-			thread.setContextClassLoader(cl);
+			int versionNumber = Integer.parseInt(version);
 
-			// try to get custom classloader to unload native libs
+			if (versionNumber > 8) {
 
-			try {
-				if (toolsClassloader != null) {
-					Field nl = ClassLoader.class.getDeclaredField("nativeLibraries");
+				Class c = Class.forName("java.lang.ProcessHandle");
 
-					nl.setAccessible(true);
+				Method m = c.getDeclaredMethod("allProcesses", null);
 
-					Vector<?> nativeLibs = (Vector<?>)nl.get(toolsClassloader);
+				Object o = m.invoke(null, null);
 
-					for (Object nativeLib : nativeLibs) {
-						Class<?> clazz = nativeLib.getClass();
+				Stream<?> handles = (Stream<?>) o;
 
-						Field nameField = clazz.getDeclaredField("name");
+				List<?> list = handles.collect(Collectors.toList());
 
-						nameField.setAccessible(true);
+				for (Object lo : list) {
 
-						String name = (String)nameField.get(nativeLib);
+					Class<?> clazz = lo.getClass();
 
-						File nativeLibFile = new File(name);
+					Method pidMethod = clazz.getDeclaredMethod("pid");
+					
+					pidMethod.setAccessible(true);
 
-						String nativeLibFileName = nativeLibFile.getName();
+					Method infoMethod = clazz.getDeclaredMethod("info");
+					
+					infoMethod.setAccessible(true);
 
-						if (nativeLibFileName.contains("attach")) {
-							Method f = clazz.getDeclaredMethod("finalize");
+					long pid = (long) pidMethod.invoke(lo);
 
-							f.setAccessible(true);
-							f.invoke(nativeLib);
+					String info = (String) String.valueOf(infoMethod.invoke(lo));
+
+					javaProcesses.add(new JavaProcess((int) pid, info));
+				}
+
+			} else {
+
+				Thread thread = Thread.currentThread();
+
+				ClassLoader cl = thread.getContextClassLoader();
+
+				ClassLoader toolsClassloader = null;
+
+				try {
+					toolsClassloader = _getToolsClassLoader(cl);
+
+					if (toolsClassloader != null) {
+						thread.setContextClassLoader(toolsClassloader);
+
+						_log(logger, "Trying to load VirtualMachine class...");
+
+						Class<?> vmClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachine");
+
+						Method listMethod = vmClass.getMethod("list");
+
+						List<Object> vmds = (List<Object>) listMethod.invoke(null);
+
+						_log(logger, "Found " + vmds.size() + " vms on this machine.");
+
+						for (Object vmd : vmds) {
+							Class<?> vmdClass = toolsClassloader
+									.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
+
+							Method displayNameMethod = vmdClass.getMethod("displayName");
+
+							String displayName = (String) displayNameMethod.invoke(vmd);
+
+							Method idMethod = vmdClass.getMethod("id");
+
+							String id = (String) idMethod.invoke(vmd);
+
+							_log(logger,
+									"Found vm id of " + id + " with name " + displayName + ". Trying to attach...");
+
+							javaProcesses.add(new JavaProcess(Integer.parseInt(id), displayName));
 						}
 					}
 				}
+
+				catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					thread.setContextClassLoader(cl);
+
+					// try to get custom classloader to unload native libs
+
+					try {
+						if (toolsClassloader != null) {
+							Field nl = ClassLoader.class.getDeclaredField("nativeLibraries");
+
+							nl.setAccessible(true);
+
+							Vector<?> nativeLibs = (Vector<?>) nl.get(toolsClassloader);
+
+							for (Object nativeLib : nativeLibs) {
+								Class<?> clazz = nativeLib.getClass();
+
+								Field nameField = clazz.getDeclaredField("name");
+
+								nameField.setAccessible(true);
+
+								String name = (String) nameField.get(nativeLib);
+
+								File nativeLibFile = new File(name);
+
+								String nativeLibFileName = nativeLibFile.getName();
+
+								if (nativeLibFileName.contains("attach")) {
+									Method f = clazz.getDeclaredMethod("finalize");
+
+									f.setAccessible(true);
+									f.invoke(nativeLib);
+								}
+							}
+						}
+					} catch (Exception e) {
+						throw e;
+					}
+				}
 			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+			return javaProcesses;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
-		return javaProcesses;
 	}
 
 	public static void main(String[] args) {

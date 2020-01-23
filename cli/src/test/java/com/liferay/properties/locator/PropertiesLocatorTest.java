@@ -16,12 +16,14 @@
 
 package com.liferay.properties.locator;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.io.File;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.nio.file.StandardOpenOption;
 import java.util.SortedSet;
 
 import org.junit.Assert;
@@ -57,6 +59,16 @@ public class PropertiesLocatorTest {
 
 	@Test
 	public void testPropertiesLocatorOutputFile() throws Exception {
+		
+		String version = System.getProperty("java.specification.version");
+
+		if (version.indexOf('.') > -1) {
+			version = version.substring(version.indexOf('.') + 1);
+		}
+		int versionNumber = Integer.parseInt(version);
+
+		assumeTrue(versionNumber > 8);
+	
 		File outputFile = new File(_buildDir, "testProperties.out");
 
 		String[] args = {
@@ -71,6 +83,13 @@ public class PropertiesLocatorTest {
 		String expectedOutput = new String(Files.readAllBytes(propertiesPath));
 
 		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
+
+		Files.deleteIfExists(Paths.get(System.getProperty("user.home")).resolve("a.txt"));
+		Files.deleteIfExists(Paths.get(System.getProperty("user.home")).resolve("b.txt"));
+		
+		Files.write(Paths.get(System.getProperty("user.home")).resolve("a.txt"), expectedOutput.getBytes());
+		Files.write(Paths.get(System.getProperty("user.home")).resolve("b.txt"), testOutput.getBytes());
+		
 
 		Assert.assertEquals(expectedOutput.replaceAll("\\r", ""), testOutput.replaceAll("\\r", ""));
 	}
