@@ -6,7 +6,7 @@ jobs:
   steps:
   - bash: |
       set -ev
-      curl -O -L --retry 3 https://github.com/sormuras/bach/raw/master/install-jdk.sh
+      curl -O -L --retry 3 https://raw.githubusercontent.com/christopherbryanboyd/bach/master/install-jdk.sh
       source install-jdk.sh --url https://cdn.azul.com/zulu/bin/zulu8.38.0.13-ca-jdk8.0.212-linux_x64.tar.gz
       ./gradlew --no-daemon --version
       ./gradlew --no-daemon checkSourceFormatting
@@ -18,7 +18,7 @@ jobs:
   steps:
   - bash: |
       set -ev
-      curl -O -L --retry 3 https://github.com/sormuras/bach/raw/master/install-jdk.sh
+      curl -O -L --retry 3 https://raw.githubusercontent.com/christopherbryanboyd/bach/master/install-jdk.sh
       source install-jdk.sh --url https://cdn.azul.com/zulu/bin/zulu8.38.0.13-ca-jdk8.0.212-linux_x64.tar.gz
       ./gradlew --no-daemon --version
       ./run-tests.sh
@@ -29,6 +29,23 @@ jobs:
       testResultsFiles: "**/TEST-*.xml"
     condition: succeededOrFailed()
 
+- job: LinuxJDK11
+  pool:
+    vmImage: 'ubuntu-18.04'
+  steps:
+  - bash: |
+      set -ev
+      curl -O -L --retry 3 https://raw.githubusercontent.com/christopherbryanboyd/bach/master/install-jdk.sh
+      source install-jdk.sh --url https://cdn.azul.com/zulu/bin/zulu11.37.17-ca-jdk11.0.6-linux_x64.tar.gz
+      ./gradlew --no-daemon --version
+      ./run-tests.sh
+    displayName: Build
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: "**/TEST-*.xml"
+    condition: succeededOrFailed()
+    
 - job: WindowsJDK8
   pool:
     vmImage: 'vs2017-win2016'
