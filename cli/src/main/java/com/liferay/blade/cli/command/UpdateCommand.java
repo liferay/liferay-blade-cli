@@ -27,12 +27,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import java.math.BigInteger;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import java.security.MessageDigest;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,9 +46,6 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -365,11 +366,15 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 	private static String _getMD5(Path path) {
 		try {
-			File file = path.toFile();
+			MessageDigest md = MessageDigest.getInstance("MD5");
 
-			byte[] data = FileUtils.readFileToByteArray(file);
+			byte[] data = Files.readAllBytes(path);
 
-			String md5 = DigestUtils.md5Hex(data);
+			md.update(data);
+
+			BigInteger md5Int = new BigInteger(1, md.digest());
+
+			String md5 = md5Int.toString(16);
 
 			return md5.toUpperCase();
 		}
