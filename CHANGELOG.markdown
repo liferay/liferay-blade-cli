@@ -1,6 +1,6 @@
 # Liferay Blade CLI Change Log
 
-## 3.9.0 - 2020-1-23 -
+## 3.9.0 - 2020-1-23 - 23d6986650aac47c37e98a3a3aac5804de3970dd
 
 - [BLADE-474]: blade create can throw a NullPointerException when workspace version is set to latest.release
 - [BLADE-475]: Adopt new project-templates 5.0.0 api
