@@ -1,6 +1,22 @@
 # Liferay Blade CLI Change Log
 
-## 3.8.0 - 2019-9 -
+## 3.9.0 - 2020-1-23 - 
+
+- [BLADE-474]: blade create can throw a NullPointerException when workspace version is set to latest.release
+- [BLADE-475]: Adopt new project-templates 5.0.0 api
+- [BLADE-481]: Maven sometimes fails with erroneous exception "Failed to launch process to delete files after JVM exit : java.lang.NoClassDefFoundError: org/bridj/Platform$DeleteFiles"
+- [BLADE-482]: Upgrade blade to use bnd 4.3.0
+- [BLADE-483]: Blade Up To Date Checker Sometimes Detects Current Version As Out Of Date
+- [BLADE-486]: As a developer, I would like blade watch to support docker
+- [BLADE-487]: get dockerImageId and dockerContainerId from ProjectInfo model
+- [BLADE-489]: Blade gw does not function like ./gradlew
+- [BLADE-490]: update build to gradle 5.6.4
+- [BLADE-493]: Use Gradle 5 Project Templates in Blade
+- [BLADE-499]: Update Blade CLI to use Project Templates 5.0.18
+- [LPS-105502]: Update project templates for gradle 5 compatibility
+- [LRDOCS-7448]: Blade upgradeProps sub-command is not explained
+
+## 3.8.0 - 2019-9-19 - 7ccb989a2b8fef4786812c8f74a75eb81923d2ce
 
 - [BLADE-221]: Support for Blade CLI "Interactive" mode
 - [BLADE-329]: blade server init should work from any workspace directory
@@ -361,6 +377,17 @@ Updated to use Project Templates 4.1.0
 [BLADE-461]: https://issues.liferay.com/browse/BLADE-461
 [BLADE-467]: https://issues.liferay.com/browse/BLADE-467
 [BLADE-468]: https://issues.liferay.com/browse/BLADE-468
+[BLADE-474]: https://issues.liferay.com/browse/BLADE-474
+[BLADE-475]: https://issues.liferay.com/browse/BLADE-475
+[BLADE-481]: https://issues.liferay.com/browse/BLADE-481
+[BLADE-482]: https://issues.liferay.com/browse/BLADE-482
+[BLADE-483]: https://issues.liferay.com/browse/BLADE-483
+[BLADE-486]: https://issues.liferay.com/browse/BLADE-486
+[BLADE-487]: https://issues.liferay.com/browse/BLADE-487
+[BLADE-489]: https://issues.liferay.com/browse/BLADE-489
+[BLADE-490]: https://issues.liferay.com/browse/BLADE-490
+[BLADE-493]: https://issues.liferay.com/browse/BLADE-493
+[BLADE-499]: https://issues.liferay.com/browse/BLADE-499
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
@@ -383,5 +410,7 @@ Updated to use Project Templates 4.1.0
 [LPS-96205]: https://issues.liferay.com/browse/LPS-96205
 [LPS-97114]: https://issues.liferay.com/browse/LPS-97114
 [LPS-98820]: https://issues.liferay.com/browse/LPS-98820
+[LPS-105502]: https://issues.liferay.com/browse/LPS-105502
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
+[LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
 [Updated Liferay Gradle Plugin]: https://github.com/liferay/liferay-portal/blob/master/modules/sdk/gradle-plugins/CHANGELOG.markdown#3523---2017-10-26
