@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.SortedSet;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -57,6 +58,16 @@ public class PropertiesLocatorTest {
 
 	@Test
 	public void testPropertiesLocatorOutputFile() throws Exception {
+		String version = System.getProperty("java.specification.version");
+
+		if (version.indexOf('.') > -1) {
+			version = version.substring(version.indexOf('.') + 1);
+		}
+
+		int versionNumber = Integer.parseInt(version);
+
+		Assume.assumeTrue(versionNumber > 8);
+
 		File outputFile = new File(_buildDir, "testProperties.out");
 
 		String[] args = {

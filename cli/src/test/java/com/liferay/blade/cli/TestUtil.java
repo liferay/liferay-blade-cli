@@ -99,9 +99,11 @@ public class TestUtil {
 
 		Predicate<String> slf4JFilter = line -> line.startsWith("SLF4J:");
 
+		Predicate<String> warningFilter = line -> line.startsWith("WARNING:");
+
 		StringPrintStream outputPrintStream = StringPrintStream.newInstance();
 
-		Collection<Predicate<String>> filters = Arrays.asList(localeFilter, slf4JFilter);
+		Collection<Predicate<String>> filters = Arrays.asList(localeFilter, slf4JFilter, warningFilter);
 
 		StringPrintStream errorPrintStream = StringPrintStream.newFilteredInstance(filters);
 

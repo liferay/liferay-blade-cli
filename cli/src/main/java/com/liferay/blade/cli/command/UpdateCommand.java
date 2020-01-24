@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import java.math.BigInteger;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,8 +46,6 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -367,18 +365,18 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	private static String _getMD5(Path path) {
-		try (FileChannel fileChannel = FileChannel.open(path)) {
-			MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
-
+		try {
 			MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 
-			messageDigest.update(mappedByteBuffer);
+			byte[] data = Files.readAllBytes(path);
 
-			String md5Sum = DatatypeConverter.printHexBinary(messageDigest.digest());
+			messageDigest.update(data);
 
-			mappedByteBuffer.clear();
+			BigInteger md5Int = new BigInteger(1, messageDigest.digest());
 
-			return md5Sum.toUpperCase();
+			String md5 = md5Int.toString(16);
+
+			return md5.toUpperCase();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);

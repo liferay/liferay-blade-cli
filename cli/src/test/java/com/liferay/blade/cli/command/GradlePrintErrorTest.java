@@ -47,7 +47,7 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 @PowerMockIgnore(
 	{
 		"java.util.ServiceLoader", "com.liferay.blade.cli.WorkspaceProvider",
-		"com.liferay.blade.cli.gradle.GradleWorkspaceProvider"
+		"com.liferay.blade.cli.gradle.GradleWorkspaceProvider", "javax.xml."
 	}
 )
 @PrepareForTest({InstallExtensionCommand.class, BladeCLI.class, BladeTest.class})

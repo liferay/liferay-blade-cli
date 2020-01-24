@@ -46,12 +46,12 @@ import java.security.ProtectionDomain;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -198,7 +198,7 @@ public class PropertiesLocator {
 			SortedSet<PropertyProblem> problems, Path searchPathRoot)
 		throws IOException {
 
-		Map<String, ConfigurationClassData> configClassesMap = new HashMap<>();
+		Map<String, ConfigurationClassData> configClassesMap = new TreeMap<>();
 
 		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
 			Stream<File> files = paths.map(path -> path.toFile());
@@ -1012,7 +1012,7 @@ public class PropertiesLocator {
 	private static PrintWriter _outputFile;
 
 	@SuppressWarnings("serial")
-	private static final Map<String, String> _portletNameEquivalences = new HashMap<String, String>() {
+	private static final Map<String, String> _portletNameEquivalences = new TreeMap<String, String>() {
 		{
 			put("dl", "document-library");
 		}
