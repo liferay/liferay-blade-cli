@@ -1,0 +1,47 @@
+buildscript {
+	dependencies {
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "4.3.0"
+	}
+
+	repositories {
+		maven {
+			if (project.hasProperty("release")) {
+				url "https://repository.liferay.com/nexus/content/groups/public"
+			}
+			else {
+				url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+			}
+		}
+	}
+}
+
+apply plugin: "biz.aQute.bnd.builder"
+apply plugin: "java"
+
+dependencies {
+	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.0"
+	compileOnly group: "org.apache.maven.archetype", name: "archetype-common", version: "2.4"
+	compileOnly project(":cli")
+
+	testCompile gradleTestKit()
+	testCompile group: "junit", name: "junit", version: "4.12"
+	testCompile project(path: ":cli", configuration: "testApi")
+}
+
+jar.baseName = "com.liferay.project.templates.js.widget"
+
+repositories {
+	flatDir {
+		dirs "${rootProject.projectDir}/libs"
+	}
+
+	maven {
+		url "https://repo.gradle.org/gradle/libs-releases/"
+	}
+
+	maven {
+		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+	}
+}
+
+version = "1.0.0-SNAPSHOT"

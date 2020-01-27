@@ -23,6 +23,12 @@ Private-Package:\
 	com.liferay.gogo.shell.client,\
 	com.liferay.properties.locator,\
 	\
+	org.apache.commons.compress.archivers,\
+	org.apache.commons.compress.archivers.tar,\
+	org.apache.commons.compress.archivers.zip,\
+	org.apache.commons.compress.compressors,\
+	org.apache.commons.compress.compressors.gzip,\
+	org.apache.commons.compress.utils,\
 	org.apache.commons.io,\
 	org.apache.commons.io.filefilter,\
 	org.apache.commons.io.input,\

@@ -1,0 +1,14 @@
+{
+    "batchMode": false,
+    "answers": {
+        "*": {
+            "liferayDir": "[$LIFERAY_DIR$]",
+            "target": "[$TARGET$]",
+            "folder": "[$FOLDER$]",
+            "description": "[$DESCRIPTION$]",
+            "category": "category.sample",
+            "liferayPresent": "[$LIFERAY_PRESENT$]",
+            "createInitializer": false
+        }
+    }
+}

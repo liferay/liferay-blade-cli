@@ -1,8 +1,7 @@
-enableFeaturePreview('STABLE_PUBLISHING')
-
 include "cli"
 include "extensions:bad-command"
 include "extensions:maven-profile"
+include "extensions:project-templates-js-widget"
 include "extensions:remote-deploy-command"
 include "extensions:sample-command"
 include "extensions:sample-profile"

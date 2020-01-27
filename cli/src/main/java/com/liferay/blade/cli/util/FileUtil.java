@@ -35,11 +35,14 @@ import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
@@ -49,6 +52,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 /**
  * @author Gregory Amerson
@@ -115,6 +122,20 @@ public class FileUtil {
 
 	public static String read(File file) throws IOException {
 		return _collect(file.toPath(), _UTF_8);
+	}
+
+	public static void unpack(Path path, Path destinationDirPath, int stripComponents) throws IOException {
+		String fileName = String.valueOf(path.getFileName());
+
+		if (fileName.endsWith(".gz") || fileName.endsWith(".tar") || fileName.endsWith(".tgz")) {
+			_untar(path, destinationDirPath, stripComponents);
+		}
+		else if (fileName.endsWith(".zip")) {
+			unzip(path.toFile(), destinationDirPath.toFile());
+		}
+		else {
+			throw new UnsupportedOperationException("Unsupported format for " + fileName);
+		}
 	}
 
 	public static void unzip(File srcFile, File destDir) throws IOException {
@@ -316,6 +337,48 @@ public class FileUtil {
 
 	private static BufferedReader _reader(ReadableByteChannel in, Charset encoding) throws IOException {
 		return new BufferedReader(Channels.newReader(in, encoding.newDecoder(), -1));
+	}
+
+	private static Path _stripComponents(Path path, int stripComponents, boolean directory) {
+		if (stripComponents > 0) {
+			int nameCount = path.getNameCount();
+
+			if (stripComponents < nameCount) {
+				return path.subpath(stripComponents, nameCount);
+			}
+			else if (directory && (stripComponents == nameCount)) {
+				return path.relativize(path);
+			}
+		}
+
+		return path;
+	}
+
+	private static void _untar(Path tarPath, Path destinationDirPath, int stripComponents) throws IOException {
+		try (InputStream inputStream = Files.newInputStream(tarPath);
+			TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(
+				new GzipCompressorInputStream(inputStream))) {
+
+			TarArchiveEntry tarArchiveEntry = null;
+
+			while ((tarArchiveEntry = tarArchiveInputStream.getNextTarEntry()) != null) {
+				Path destinationPath = destinationDirPath.resolve(
+					_stripComponents(
+						Paths.get(tarArchiveEntry.getName()), stripComponents, tarArchiveEntry.isDirectory()));
+
+				if (tarArchiveEntry.isDirectory()) {
+					Files.createDirectories(destinationPath);
+
+					continue;
+				}
+
+				Files.copy(tarArchiveInputStream, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+				Date lastModifiedDate = tarArchiveEntry.getLastModifiedDate();
+
+				Files.setLastModifiedTime(destinationPath, FileTime.fromMillis(lastModifiedDate.getTime()));
+			}
+		}
 	}
 
 	private static FileChannel _writeChannel(Path path) throws IOException {
