@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -101,6 +103,8 @@ public class DeployCommandTest {
 
 	@Test
 	public void testInstallJarStandalone() throws Exception {
+		Assume.assumeTrue(!BladeUtil.isWindows());
+
 		File workspaceDir = temporaryFolder.newFolder();
 
 		File standaloneDir = temporaryFolder.newFolder();
