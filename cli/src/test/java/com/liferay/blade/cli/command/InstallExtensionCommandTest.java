@@ -268,10 +268,7 @@ public class InstallExtensionCommandTest {
 			error = e.getMessage();
 		}
 
-		Assert.assertTrue(
-			error,
-			error.contains(
-				"extension install: Main parameters are required (\"The path of the extension to install.\")"));
+		Assert.assertTrue(error, error.contains("Unable to acquire an answer"));
 	}
 
 	@Test

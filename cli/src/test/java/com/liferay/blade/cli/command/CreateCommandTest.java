@@ -27,6 +27,7 @@ import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.project.templates.ProjectTemplates;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -37,6 +38,7 @@ import java.io.Writer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import java.util.ArrayList;
@@ -131,21 +133,29 @@ public class CreateCommandTest {
 	public void testCreateExtModuleWithoutOriginalModuleOptions() throws Exception {
 		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "loginExt"};
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+		String data = "foobar" + System.lineSeparator() + "1.0" + System.lineSeparator();
+		
+		InputStream testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
+		
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, testData, false, args);
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output.contains("modules-ext options"));
+		Assert.assertTrue(output, output.contains("Successfully created project"));
 
 		args = new String[] {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "-M", "1.0.0", "loginExt"
+			"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "-M", "1.0.0", "loginExt2"
 		};
-
-		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+		
+		data = "foobar" + System.lineSeparator();
+		
+		testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
+		
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, testData, false, args);
 
 		output = results.getOutput();
 
-		Assert.assertTrue(output, output.contains("modules-ext options"));
+		Assert.assertTrue(output, output.contains("Successfully created project"));
 	}
 
 	@Test
@@ -177,27 +187,28 @@ public class CreateCommandTest {
 	public void testCreateFragmentWithoutHostOptions() throws Exception {
 		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "loginHook"};
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+		String data = "foobar" + System.lineSeparator() + "1.0" + System.lineSeparator();
+		
+		InputStream testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
+		
+		BladeTestResults bladeTestResults = TestUtil.runBlade(
+				_rootDir, _extensionsDir, testData, args);
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output.contains("\"-t fragment\" options missing"));
+		Assert.assertTrue(output, output.contains("Successfully created project"));
 
-		args = new String[] {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "-h", "com.liferay.login.web", "loginHook"
-		};
+		args = new String[] {"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "-H", "1.0.0", "loginHook2"};
+
+		data = "foobar" + System.lineSeparator();
+		
+		testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
+		
+		bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, testData, args);
 
 		output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output.contains("\"-t fragment\" options missing"));
-
-		args = new String[] {"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "-H", "1.0.0", "loginHook"};
-
-		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		output = results.getOutput();
-
-		Assert.assertTrue(output, output.contains("\"-t fragment\" options missing"));
+		Assert.assertTrue(output, output.contains("Successfully created project"));
 	}
 
 	@Test
@@ -473,22 +484,27 @@ public class CreateCommandTest {
 
 		String[] args = {"create", "foobar", "-d", tempRoot.getAbsolutePath()};
 
-		String output = null;
+		InputStream nullInputStream = new InputStream() {
+
+			@Override
+			public int read() throws IOException {
+				return -1;
+			}
+
+		};
+
+		String message = null;
 
 		try {
-			BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-			output = bladeTestResults.getOutput();
+			TestUtil.runBlade(_rootDir, _extensionsDir, nullInputStream, true, args);
 		}
 		catch (Throwable t) {
-			output = t.getMessage();
+			message = t.getMessage();
 		}
 
-		Assert.assertNotNull(output);
+		Assert.assertNotNull(message);
 
-		boolean containsError = output.contains("The following option is required");
-
-		Assert.assertTrue(containsError);
+		Assert.assertTrue(message, message.contains("Unable to acquire an answer"));
 	}
 
 	@Test
@@ -512,6 +528,19 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
+	}
+
+	@Test
+	public void testCreateMVCPortletInteractive() throws Exception {
+		String[] gradleArgs = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet"};
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream("foo\n".getBytes());
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, byteArrayInputStream, true, gradleArgs);
+
+		File project = new File(_rootDir, "foo");
+
+		_checkGradleBuildFiles(project.getAbsolutePath());
 	}
 
 	@Test
@@ -685,19 +714,27 @@ public class CreateCommandTest {
 		BladeTestResults bladeTestResults = null;
 
 		String errors = null;
+		
+		String output = null;
 
 		try {
-			bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
+			String data = "com.test.Foo" + System.lineSeparator();
+			
+			InputStream testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
+			
+			bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, testData, false, args);
 
+			output = bladeTestResults.getOutput();
+			
 			errors = bladeTestResults.getErrors();
 		}
 		catch (Throwable t) {
 			errors = t.getMessage();
 		}
 
-		Assert.assertNotNull(errors);
+		Assert.assertTrue(errors.isEmpty());
 
-		Assert.assertTrue(errors, errors.contains("Usage:"));
+		Assert.assertTrue(output, output.contains("Successfully created project"));
 
 		args = new String[] {"create", "-t", "service", "-s com.test.Foo", "foo"};
 
@@ -758,6 +795,19 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/java/com/test/controller/UserController.java");
 
 		_checkFileExists(projectPath + "/build.gradle");
+	}
+
+	@Test
+	public void testCreateSpringMVCPortletInteractive() throws Exception {
+		String[] gradleArgs = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "foo"};
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(("springportletmvc" + System.lineSeparator() + "jsp" + System.lineSeparator()).getBytes());
+
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, byteArrayInputStream, false, gradleArgs);
+
+		File project = new File(_rootDir, "foo");
+
+		_checkGradleBuildFiles(project.getAbsolutePath());
 	}
 
 	@Test
@@ -978,12 +1028,16 @@ public class CreateCommandTest {
 
 		File extDir = new File(workspace, "ext");
 
+		String data = "1.0" + System.lineSeparator();
+		
+		InputStream testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
+		
 		String[] gradleArgs = {
 			"create", "--base", workspace.getAbsolutePath(), "-d", extDir.getAbsolutePath(), "-t", "modules-ext", "-m",
 			"com.liferay.login.web", "loginExt"
 		};
 
-		TestUtil.runBlade(workspace, _extensionsDir, gradleArgs);
+		TestUtil.runBlade(workspace, _extensionsDir, testData, gradleArgs);
 
 		String projectPath = extDir.getAbsolutePath();
 
@@ -1658,10 +1712,15 @@ public class CreateCommandTest {
 		return file;
 	}
 
-	private void _checkGradleBuildFiles(String projectPath) {
+	private void _checkGradleBuildFiles(String projectPath) throws IOException {
 		_checkFileExists(projectPath);
-		_checkFileExists(projectPath + "/bnd.bnd");
 		_checkFileExists(projectPath + "/build.gradle");
+		Path gradlePath = Paths.get(projectPath);
+		gradlePath = gradlePath.resolve("build.gradle");
+		List<String> lines = Files.readAllLines(gradlePath);
+		if (!lines.contains("apply plugin: \"war\"")) {
+			_checkFileExists(projectPath + "/bnd.bnd");
+		}
 		_checkFileExists(projectPath + "/gradlew");
 		_checkFileExists(projectPath + "/gradlew.bat");
 	}

@@ -16,7 +16,10 @@
 
 package com.liferay.blade.cli.util;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import java.util.NoSuchElementException;
@@ -31,14 +34,6 @@ import org.apache.commons.io.input.CloseShieldInputStream;
  */
 public class Prompter {
 
-	public static boolean confirm(String question) {
-		return confirm(question, System.in, System.out, Optional.empty());
-	}
-
-	public static boolean confirm(String question, boolean defaultAnswer) {
-		return confirm(question, System.in, System.out, Optional.of(defaultAnswer));
-	}
-
 	public static boolean confirm(String question, InputStream in, PrintStream out, Optional<Boolean> defaultAnswer) {
 		String questionWithPrompt = _buildBooleanQuestionWithPrompt(question, defaultAnswer);
 
@@ -51,8 +46,8 @@ public class Prompter {
 		throw new NoSuchElementException("Unable to acquire an answer");
 	}
 
-	public static String promptString(String question) {
-		Optional<String> answer = _getStringAnswer(question, System.in, System.out, Optional.empty());
+	public static String promptString(String question, BufferedReader reader, PrintStream outputStream) {
+		Optional<String> answer = _getStringAnswer(question, reader, outputStream, Optional.empty());
 
 		if (answer.isPresent()) {
 			return answer.get();
@@ -141,13 +136,11 @@ public class Prompter {
 	}
 
 	private static Optional<String> _getStringAnswer(
-		String questionWithPrompt, InputStream inputStream, PrintStream printStream, Optional<String> defaultAnswer) {
+		String questionWithPrompt, BufferedReader reader, PrintStream printStream, Optional<String> defaultAnswer) {
 
-		Optional<String> answer = null;
+		Optional<String> answer = Optional.empty();
 
-		try (CloseShieldInputStream closeShieldInputStream = new CloseShieldInputStream(inputStream);
-			Scanner scanner = new Scanner(closeShieldInputStream)) {
-
+		try {
 			while ((answer == null) || !answer.isPresent()) {
 				if ((questionWithPrompt != null) && (questionWithPrompt.length() > 0)) {
 					printStream.println(questionWithPrompt);
@@ -155,12 +148,15 @@ public class Prompter {
 
 				printStream.print("> ");
 
-				String line = null;
+				answer = Optional.of(reader.readLine());
+				//answer = Optional.of(scanner.nextLine());
 
-				while (((answer == null) || !answer.isPresent()) && !Objects.equals(answer, defaultAnswer) &&
-					   scanner.hasNextLine()) {
+				while (((answer == null) || !answer.isPresent()) && !Objects.equals(answer, defaultAnswer)
+				//		&& scanner.hasNextLine()
+					) 
+				{
 
-					line = scanner.nextLine();
+					String line = reader.readLine();
 
 					if (line != null) {
 						line = line.trim();

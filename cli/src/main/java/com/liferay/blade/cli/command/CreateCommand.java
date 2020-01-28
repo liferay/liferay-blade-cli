@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.BladeCLI;
@@ -26,12 +27,18 @@ import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
+import com.liferay.project.templates.extensions.ProjectTemplatesArgsExt;
+import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
-
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,7 +74,14 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		BladeCLI bladeCLI = getBladeCLI();
 
-		if (template.equals("service")) {
+		/*if (template.equals("spring-mvc-portlet")) {
+
+			if (createArgs.getViewType() == null) {
+
+				throw new ParameterException("The following option is required: [--view-type]");
+			}
+		}
+		else if (template.equals("service")) {
 			if (createArgs.getService() == null) {
 				StringBuilder sb = new StringBuilder();
 
@@ -119,22 +133,19 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			}
 
 			if (!hasOriginalModuleName) {
-				StringBuilder sb = new StringBuilder();
-
-				sb.append("modules-ext options missing:");
-				sb.append(System.lineSeparator());
-				sb.append("\"-m\", \"--original-module-name\") is required.");
-				sb.append(System.lineSeparator());
-				sb.append(
-					"\"-M\", \"--original-module-version\") is required unless you have enabled target platform.");
-				sb.append(System.lineSeparator());
-				sb.append(System.lineSeparator());
-
-				bladeCLI.printUsage("create", sb.toString());
 
 				throw new ParameterException("The following option is required: [--original-module-name]");
 			}
-		}
+			boolean hasOriginalModuleVersion = false;
+
+			if (createArgs.getOriginalModuleVersion() != null) {
+				hasOriginalModuleVersion = true;
+			}
+			if (!hasOriginalModuleVersion) {
+
+				throw new ParameterException("The following option is required: [--original-module-version]");
+			}
+		}*/
 
 		String name = createArgs.getName();
 
@@ -179,6 +190,88 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		ProjectTemplatesArgs projectTemplatesArgs = getProjectTemplateArgs(createArgs, bladeCLI, template, name, dir);
 
+		File templateFile = ProjectTemplatesUtil.getTemplateFile(projectTemplatesArgs);
+		
+		Thread thread = Thread.currentThread();
+
+		ClassLoader oldContextClassLoader = thread.getContextClassLoader();
+		
+		Method m = null;
+		try {
+			URI uri = templateFile.toURI();
+	
+			thread.setContextClassLoader(
+				new URLClassLoader(new URL[] {uri.toURL()}));
+			
+			m = ProjectTemplates.class.getDeclaredMethod("_getProjectTemplateArgsExt", String.class, File.class);
+			m.setAccessible(true); //if security settings allow this
+			Object o = m.invoke(null, projectTemplatesArgs.getTemplate(), templateFile); //use null if the method is static
+			if (o != null) {
+				ProjectTemplatesArgsExt projectTemplatesArgsExt = (ProjectTemplatesArgsExt)o;
+				Class<? extends ProjectTemplatesArgsExt> argsClass = projectTemplatesArgsExt.getClass();
+				
+
+				for (Field field : argsClass.getDeclaredFields()) {
+					if (field.isAnnotationPresent(Parameter.class)) {
+						Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
+
+						String[] parameterAnnotationNames = parameterAnnotation.names();
+
+						if (parameterAnnotation.required()) {
+							List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
+							
+							for (Field createField : CreateArgs.class.getDeclaredFields()) {
+	
+								if (createField.isAnnotationPresent(Parameter.class)) {
+									Parameter createParameterAnnotation = createField.getDeclaredAnnotation(Parameter.class);
+									
+	
+									String[] createParameterAnnotationNames = createParameterAnnotation.names();
+									
+									List<String> createParameterNamesList = Arrays.asList(createParameterAnnotationNames);
+									
+									boolean found = false;
+									
+									for (String createParameterName : createParameterNamesList) {
+										if (parameterNamesList.contains(createParameterName)) {
+											found = true;
+											break;
+										}
+									}
+									
+									if (found) {
+										createField.setAccessible(true);
+										Object value = createField.get(createArgs);
+										if (value == null) {
+											StringBuilder sb = new StringBuilder("The following option is required: [");
+											
+											for (int x = 0; x < createParameterNamesList.size(); x++) {
+												String parameterName = createParameterNamesList.get(x);
+												
+												if (x > 0) {
+													sb.append(" | ");
+												}
+												sb.append(parameterName);
+											}
+											sb.append("]");
+											createField.setAccessible(false);
+											throw new ParameterException(sb.toString());
+										}
+									}
+								}
+	
+							}
+						}
+					}
+				}
+			}
+		}
+		finally {
+			if (m != null) {
+				m.setAccessible(false);
+			}
+			thread.setContextClassLoader(oldContextClassLoader);
+		}
 		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
 
 		Path customTemplatesPath = bladeCLI.getExtensionsPath();

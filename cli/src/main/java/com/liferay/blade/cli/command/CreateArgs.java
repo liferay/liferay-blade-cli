@@ -190,7 +190,7 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(
 		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle symbolic name. Required for \"-t fragment\".",
-		names = {"-h", "--host-bundle-bsn"}
+		names = {"-h", "--host-bundle-bsn", "--host-bundle-symbolic-name"}
 	)
 	private String _hostBundleBSN;
 
