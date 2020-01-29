@@ -5,12 +5,12 @@ function archiveTests {
 }
 
 function checkError {
-	if [ $? -ne 0 ]; then
-		local ERRCODE = $?
+	local retcode=$?
 
+	if [ $retcode -ne 0 ]; then
 		archiveTests
 
-		exit $ERRCODE
+		exit $retcode
 	fi
 }
 
