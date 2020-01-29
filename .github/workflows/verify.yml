@@ -48,7 +48,8 @@ jobs:
         shell: bash
         run: |
           ./run-tests.sh
-      - uses: actions/upload-artifact@v1
+      - name: Upload tests zip
+        uses: actions/upload-artifact@v1
         if: failure()
         with:
           name: LinuxJDK8-tests.zip
@@ -74,7 +75,8 @@ jobs:
         shell: bash
         run: |
           ./run-tests.sh
-      - uses: actions/upload-artifact@v1
+      - name: Upload tests zip
+        uses: actions/upload-artifact@v1
         if: failure()
         with:
           name: LinuxJDK11-tests.zip
@@ -100,11 +102,12 @@ jobs:
         shell: bash
         run: |
           ./run-tests.sh
-      - uses: actions/upload-artifact@v1
+      - name: Upload tests zip
+        uses: actions/upload-artifact@v1
         if: failure()
         with:
           name: MacOSJDK8-tests.zip
-          path: tests.zip          
+          path: tests.zip
   WindowsJDK8:
     name: Windows JDK8
     runs-on: windows-latest
