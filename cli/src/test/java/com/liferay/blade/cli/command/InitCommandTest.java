@@ -288,24 +288,6 @@ public class InitCommandTest {
 	}
 
 	@Test
-	public void testFailLinux() throws Exception {
-		String osName = System.getProperty("os.name");
-
-		osName = osName.toLowerCase();
-
-		Assert.assertTrue(osName.contains("linux"));
-	}
-
-	@Test
-	public void testFailMac() throws Exception {
-		String osName = System.getProperty("os.name");
-
-		osName = osName.toLowerCase();
-
-		Assert.assertTrue(osName.contains("mac"));
-	}
-
-	@Test
 	public void testInitCommandGradleOption() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-b", "gradle", "gradleworkspace", "-v", "7.2"};
 
