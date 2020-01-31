@@ -3,14 +3,18 @@ task testBladeCreateCommand(type: JavaExec)
 task testBladeGwCommand(type: JavaExec)
 task testBladeHelpCommand(type: JavaExec)
 task testBladeInitCommand(type: JavaExec)
+task testBladeReturnCodeFailure(type: Exec)
 task testBladeSamplesCommand(type: JavaExec)
 task testBladeVersionCommand(type: JavaExec)
 
 Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith('testBlade') }
 
 testBladeTasks.each { task ->
+
 	task.dependsOn jar
-	task.main = "-jar"
+	if (task instanceof JavaExec) {
+		task.main = "-jar"
+	}
 }
 
 smokeTests.dependsOn testBladeTasks
@@ -26,6 +30,9 @@ testBladeCreateCommand {
 	doLast {
 		assert standardStream.toString().contains("service-builder")
 		assert !errorStream.toString().toLowerCase().contains("error")
+
+		errorStream.reset()
+		standardStream.reset()
 	}
 }
 
@@ -37,6 +44,9 @@ testBladeGwCommand {
 	doLast{
 		assert standardStream.toString().contains(gradle.gradleVersion)
 		assert !errorStream.toString().toLowerCase().contains("error")
+
+		errorStream.reset()
+		standardStream.reset()
 	}
 }
 
@@ -48,6 +58,9 @@ testBladeHelpCommand {
 	doLast{
 		assert standardStream.toString().contains("init")
 		assert !errorStream.toString().toLowerCase().contains("error")
+
+		errorStream.reset()
+		standardStream.reset()
 	}
 }
 
@@ -68,6 +81,24 @@ testBladeInitCommand {
 		assert !errorStream.toString().toLowerCase().contains("error")
 
 		delete initDir
+
+		errorStream.reset()
+		standardStream.reset()
+	}
+}
+
+testBladeReturnCodeFailure {
+	commandLine "java", "-jar", jar.archivePath, "gw", "foo"
+	ignoreExitValue = true
+	errorOutput = errorStream
+	standardOutput = standardStream
+
+	doLast {
+		assert execResult.getExitValue() > 0
+		assert errorStream.toString().toLowerCase().contains("foo")
+
+		errorStream.reset()
+		standardStream.reset()
 	}
 }
 
@@ -79,6 +110,9 @@ testBladeSamplesCommand {
 	doLast{
 		assert standardStream.toString().contains("jsp-portlet")
 		assert !errorStream.toString().toLowerCase().contains("error")
+
+		errorStream.reset()
+		standardStream.reset()
 	}
 }
 
@@ -91,5 +125,8 @@ testBladeVersionCommand {
 		String projectVersion = project.version.replaceFirst("-", ".")
 		assert !errorStream.toString().toLowerCase().contains("error")
 		assert standardStream.toString().contains(projectVersion)
+
+		errorStream.reset()
+		standardStream.reset()
 	}
 }
