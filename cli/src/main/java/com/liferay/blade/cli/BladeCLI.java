@@ -126,14 +126,9 @@ public class BladeCLI {
 		catch (GradleExecutionException e) {
 			System.exit(e.getReturnCode());
 		}
-		catch (Exception e) {
+		catch (Throwable th) {
 			bladeCLI.error("Unexpected error occured.");
 
-			e.printStackTrace(bladeCLI._error);
-
-			System.exit(1);
-		}
-		catch (Throwable th) {
 			th.printStackTrace(bladeCLI._error);
 
 			System.exit(1);
