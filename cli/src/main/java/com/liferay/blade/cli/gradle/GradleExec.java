@@ -74,12 +74,21 @@ public class GradleExec {
 
 			String error = errorStream.get();
 
+			if (returnCode > 0) {
+				throw new GradleExecutionException(error, returnCode);
+			}
+
 			return new ProcessResult(returnCode, output, error);
 		}
 
 		Process process = BladeUtil.startProcess("\"" + executable + "\" " + task, baseDir);
 
 		int returnCode = process.waitFor();
+
+		if (returnCode > 0) {
+			throw new GradleExecutionException(
+				"Gradle error executing task '" + task + "' in " + baseDir.getAbsolutePath(), returnCode);
+		}
 
 		return new ProcessResult(returnCode, null, null);
 	}

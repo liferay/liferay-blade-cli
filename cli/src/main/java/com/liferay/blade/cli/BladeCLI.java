@@ -30,6 +30,7 @@ import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.ParametersValidator;
+import com.liferay.blade.cli.gradle.GradleExecutionException;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.Prompter;
 
@@ -122,10 +123,21 @@ public class BladeCLI {
 		try {
 			bladeCLI.run(args);
 		}
+		catch (GradleExecutionException e) {
+			bladeCLI.error(e);
+			System.exit(e.getReturnCode());
+		}
 		catch (Exception e) {
 			bladeCLI.error("Unexpected error occured.");
 
 			e.printStackTrace(bladeCLI._error);
+
+			System.exit(1);
+		}
+		catch (Throwable th) {
+			th.printStackTrace(bladeCLI._error);
+
+			System.exit(1);
 		}
 	}
 
@@ -494,6 +506,9 @@ public class BladeCLI {
 				}
 			}
 		}
+		catch (GradleExecutionException e) {
+			throw e;
+		}
 		catch (Throwable e) {
 			error(e);
 		}
@@ -525,6 +540,9 @@ public class BladeCLI {
 		}
 		catch (ParameterException pe) {
 			throw pe;
+		}
+		catch (GradleExecutionException e) {
+			throw e;
 		}
 		catch (Exception e) {
 			Class<?> exceptionClass = e.getClass();
