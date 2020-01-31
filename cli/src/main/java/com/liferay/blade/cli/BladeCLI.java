@@ -124,7 +124,6 @@ public class BladeCLI {
 			bladeCLI.run(args);
 		}
 		catch (GradleExecutionException e) {
-			bladeCLI.error(e);
 			System.exit(e.getReturnCode());
 		}
 		catch (Exception e) {
