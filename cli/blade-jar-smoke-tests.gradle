@@ -10,8 +10,8 @@ task testBladeVersionCommand(type: JavaExec)
 Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith('testBlade') }
 
 testBladeTasks.each { task ->
-
 	task.dependsOn jar
+
 	if (task instanceof JavaExec) {
 		task.main = "-jar"
 	}
