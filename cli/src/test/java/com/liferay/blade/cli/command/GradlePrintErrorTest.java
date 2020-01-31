@@ -18,8 +18,8 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.StringPrintStream;
 import com.liferay.blade.cli.gradle.GradleExec;
+import com.liferay.blade.cli.gradle.GradleExecutionException;
 import com.liferay.blade.cli.gradle.ProcessResult;
 
 import java.io.File;
@@ -61,7 +61,7 @@ public class GradlePrintErrorTest {
 
 	@Test
 	public void testGradleError() throws Exception {
-		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command"};
+		String[] args = {"extension", "install", "https://github.com/gamerson/blade-sample-command", "--trace"};
 
 		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
@@ -95,11 +95,14 @@ public class GradlePrintErrorTest {
 
 		PowerMock.replay(BladeCLI.class, GradleExec.class);
 
-		bladeTest.run(args);
+		String error = null;
 
-		StringPrintStream errPrintStream = (StringPrintStream)bladeTest.error();
-
-		String error = errPrintStream.toString();
+		try {
+			bladeTest.run(args);
+		}
+		catch (GradleExecutionException e) {
+			error = e.getMessage();
+		}
 
 		error = error.toLowerCase();
 
