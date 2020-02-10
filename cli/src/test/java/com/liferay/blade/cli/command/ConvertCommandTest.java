@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
@@ -127,6 +128,47 @@ public class ConvertCommandTest {
 		Path pluginServiceBuilderPath = pluginsSdkPath.resolve("portlets/sample-service-builder-portlet");
 
 		Assert.assertTrue(Files.exists(pluginServiceBuilderPath));
+	}
+
+	@Test
+	public void testFindPluginsSdkPlugin() throws Exception {
+		Path rootPath = _rootDir.toPath();
+
+		Path testPath = rootPath.resolve("build/testPluginsSdkWithMetadata");
+
+		Files.createDirectories(testPath);
+
+		FileUtil.unzip(new File("test-resources/projects/invalid-plugins-sdk-path.zip"), testPath.toFile());
+
+		Assert.assertTrue(Files.exists(testPath));
+
+		Path pluginsSdkPath = testPath.resolve("invalid-plugins-sdk-path");
+
+		Assert.assertTrue(Files.exists(pluginsSdkPath));
+
+		Path workspacePath = testPath.resolve("workspace");
+
+		Files.createDirectories(workspacePath);
+
+		String[] args = {"--base", workspacePath.toString(), "init", "-v", "7.2"};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		args = new String[] {
+			"--base", workspacePath.toString(), "convert", "-s", pluginsSdkPath.toString(), "tasks-portlet"
+		};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		Path tasksPortletPath = workspacePath.resolve("wars/tasks-portlet");
+
+		Assert.assertTrue(
+			bladeTestResults.getErrors() + "\n" + bladeTestResults.getOutput(), Files.exists(tasksPortletPath));
+
+		Assert.assertTrue(Files.exists(tasksPortletPath.resolve("build.gradle")));
+
+		Assert.assertTrue(
+			Files.exists(tasksPortletPath.resolve("src/main/webapp/WEB-INF/liferay--plugin-package.properties")));
 	}
 
 	@Test
