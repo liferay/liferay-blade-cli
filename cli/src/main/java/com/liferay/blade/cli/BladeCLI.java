@@ -513,44 +513,21 @@ public class BladeCLI {
 		}
 	}
 
-	public void runCommand() {
-		try {
-			if (_args.isHelp()) {
-				if (Objects.isNull(_command) || (_command.length() == 0)) {
-					printUsage();
-				}
-				else {
-					printUsage(_command);
-				}
+	public void runCommand() throws Exception {
+		if (_args.isHelp()) {
+			if (Objects.isNull(_command) || (_command.length() == 0)) {
+				printUsage();
 			}
 			else {
-				if (_args != null) {
-					_runCommand();
-				}
-				else {
-					_jCommander.usage();
-				}
+				printUsage(_command);
 			}
 		}
-		catch (ParameterException pe) {
-			throw pe;
-		}
-		catch (GradleExecutionException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			Class<?> exceptionClass = e.getClass();
-
-			String exceptionClassName = exceptionClass.getName();
-
-			error("error: " + exceptionClassName + " :: " + e.getMessage() + System.lineSeparator());
-
-			if (_args.isTrace()) {
-				e.printStackTrace(error());
+		else {
+			if (_args != null) {
+				_runCommand();
 			}
 			else {
-				error("\tat " + e.getStackTrace()[0] + System.lineSeparator());
-				error("For more information run `blade " + _command + " --trace");
+				_jCommander.usage();
 			}
 		}
 	}
