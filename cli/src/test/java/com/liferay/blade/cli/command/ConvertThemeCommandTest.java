@@ -143,6 +143,28 @@ public class ConvertThemeCommandTest {
 
 		_createTheme(workspace, "non-compass-theme", false);
 
+		File pluginsSdk = new File(workspace, "plugins-sdk");
+
+		File buildProperties = new File(pluginsSdk, "build.properties");
+
+		buildProperties.createNewFile();
+
+		File portletsDir = new File(workspace, "plugins-sdk/portlets");
+
+		portletsDir.mkdirs();
+
+		File buildXml = new File(portletsDir, "build.xml");
+
+		buildXml.createNewFile();
+
+		File hooksDir = new File(workspace, "plugins-sdk/hooks");
+
+		hooksDir.mkdirs();
+
+		buildXml = new File(hooksDir, "build.xml");
+
+		buildXml.createNewFile();
+
 		return workspace;
 	}
 

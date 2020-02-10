@@ -158,17 +158,11 @@ public class ConvertCommandTest {
 			"--base", workspacePath.toString(), "convert", "-s", pluginsSdkPath.toString(), "tasks-portlet"
 		};
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
 
-		Path tasksPortletPath = workspacePath.resolve("wars/tasks-portlet");
+		String errors = bladeTestResults.getErrors();
 
-		Assert.assertTrue(
-			bladeTestResults.getErrors() + "\n" + bladeTestResults.getOutput(), Files.exists(tasksPortletPath));
-
-		Assert.assertTrue(Files.exists(tasksPortletPath.resolve("build.gradle")));
-
-		Assert.assertTrue(
-			Files.exists(tasksPortletPath.resolve("src/main/webapp/WEB-INF/liferay--plugin-package.properties")));
+		Assert.assertTrue(errors, errors.contains("pluginsSdkDir is not a valid Plugins SDK"));
 	}
 
 	@Test
