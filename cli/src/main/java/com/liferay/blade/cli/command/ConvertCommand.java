@@ -85,18 +85,24 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		if (pluginsSdkDir == null) {
 			if (gradleProperties != null) {
-				pluginsSdkDir = new File(
-					gradleProperties.getProperty(WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY));
+				String pluginsSdkDirValue = gradleProperties.getProperty(
+					WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+
+				if (pluginsSdkDirValue != null) {
+					pluginsSdkDir = new File(projectDir, pluginsSdkDirValue);
+				}
 			}
 
 			if (pluginsSdkDir == null) {
-				pluginsSdkDir = new File(WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR);
+				pluginsSdkDir = new File(projectDir, WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR);
 			}
 		}
 
-		_assertTrue("pluginsSdkDir is not null", pluginsSdkDir != null);
-		_assertTrue("pluginsSdkDir exists", pluginsSdkDir.exists());
-		_assertTrue("pluginsSdkDir is valid Plugins SDK", _isValidSDKDir(pluginsSdkDir));
+		_assertTrue("pluginsSdkDir is null: %s", pluginsSdkDir != null);
+		_assertTrue(String.format("pluginsSdkDir does not exist: %s", pluginsSdkDir), pluginsSdkDir.exists());
+		_assertTrue(
+			String.format("pluginsSdkDir is not a valid Plugins SDK dir: %s", pluginsSdkDir),
+			_isValidSDKDir(pluginsSdkDir));
 
 		File hooksDir = new File(pluginsSdkDir, "hooks");
 		File layouttplDir = new File(pluginsSdkDir, "layouttpl");
@@ -276,8 +282,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		else {
 			File pluginDir = _findPluginDir(pluginsSdkDir, pluginName);
 
-			_assertTrue("pluginDir is not null", pluginDir != null);
-			_assertTrue("pluginDir exists", pluginDir.exists());
+			_assertTrue("pluginDir is null", pluginDir != null);
+			_assertTrue("pluginDir does not exists", pluginDir.exists());
 
 			Path pluginPath = pluginDir.toPath();
 
@@ -703,12 +709,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 							parent = parent.getParent();
 						}
 
-						if ((parent != null) && Files.exists(parent)) {
-							if (_isValidSDKDir(parent.toFile())) {
-								pluginDir[0] = dir.toFile();
+						if ((parent != null) && Files.exists(parent) && _isValidSDKDir(parent.toFile())) {
+							pluginDir[0] = dir.toFile();
 
-								return FileVisitResult.TERMINATE;
-							}
+							return FileVisitResult.TERMINATE;
 						}
 					}
 
