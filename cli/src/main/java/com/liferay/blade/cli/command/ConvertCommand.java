@@ -82,22 +82,21 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		Properties gradleProperties = workspaceProviderGradle.getGradleProperties(projectDir);
 
 		File pluginsSdkDir = convertArgs.getSource();
-		String pluginsSdkDirPath = null;
 
 		if (pluginsSdkDir == null) {
 			if (gradleProperties != null) {
-				pluginsSdkDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+				pluginsSdkDir = new File(
+					gradleProperties.getProperty(WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY));
 			}
 
-			if (pluginsSdkDirPath == null) {
-				pluginsSdkDirPath = WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR;
+			if (pluginsSdkDir == null) {
+				pluginsSdkDir = new File(WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR);
 			}
+		}
 
-			pluginsSdkDir = new File(projectDir, pluginsSdkDirPath);
-		}
-		else {
-			pluginsSdkDirPath = pluginsSdkDir.getPath();
-		}
+		_assertTrue("pluginsSdkDir is not null", pluginsSdkDir != null);
+		_assertTrue("pluginsSdkDir exists", pluginsSdkDir.exists());
+		_assertTrue("pluginsSdkDir is valid Plugins SDK", _isValidSDKDir(pluginsSdkDir));
 
 		File hooksDir = new File(pluginsSdkDir, "hooks");
 		File layouttplDir = new File(pluginsSdkDir, "layouttpl");
@@ -119,8 +118,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		if (!pluginsSdkDir.exists()) {
 			bladeCLI.error(
-				"Plugins SDK folder " + pluginsSdkDirPath + " does not exist.\nPlease edit gradle.properties and set " +
-					WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+				"Plugins SDK folder " + pluginsSdkDir.getAbsolutePath() +
+					" does not exist.\nPlease edit gradle.properties and set " +
+						WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
 
 			return;
 		}
@@ -212,15 +212,39 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			Stream<File> portletPluginStream = portletPlugins.stream();
 
-			portletPluginStream.forEach(portalPlugin -> _convertToWarProject(warsDir, portalPlugin, removeSource));
+			portletPluginStream.forEach(
+				portalPlugin -> {
+					try {
+						_convertToWarProject(warsDir, portalPlugin, removeSource);
+					}
+					catch (Exception e) {
+						e.printStackTrace(bladeCLI.error());
+					}
+				});
 
 			Stream<File> hookPluginStream = hookPlugins.stream();
 
-			hookPluginStream.forEach(hookPlugin -> _convertToWarProject(warsDir, hookPlugin, removeSource));
+			hookPluginStream.forEach(
+				hookPlugin -> {
+					try {
+						_convertToWarProject(warsDir, hookPlugin, removeSource);
+					}
+					catch (Exception e) {
+						e.printStackTrace(bladeCLI.error());
+					}
+				});
 
 			Stream<File> webPluginStream = webPlugins.stream();
 
-			webPluginStream.forEach(webPlugin -> _convertToWarProject(warsDir, webPlugin, removeSource));
+			webPluginStream.forEach(
+				webPlugin -> {
+					try {
+						_convertToWarProject(warsDir, webPlugin, removeSource);
+					}
+					catch (Exception e) {
+						e.printStackTrace(bladeCLI.error());
+					}
+				});
 
 			Stream<File> layoutPluginStream = layoutPlugins.stream();
 
@@ -252,11 +276,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		else {
 			File pluginDir = _findPluginDir(pluginsSdkDir, pluginName);
 
-			if (pluginDir == null) {
-				bladeCLI.error("Plugin does not exist.");
-
-				return;
-			}
+			_assertTrue("pluginDir is not null", pluginDir != null);
+			_assertTrue("pluginDir exists", pluginDir.exists());
 
 			Path pluginPath = pluginDir.toPath();
 
@@ -317,6 +338,12 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 	private static boolean _isServiceBuilderPlugin(File pluginDir) {
 		return _hasServiceXmlFile(pluginDir);
+	}
+
+	private void _assertTrue(String message, boolean value) {
+		if (!value) {
+			throw new AssertionError(message);
+		}
 	}
 
 	private void _convertToLayoutWarProject(File warsDir, File layoutPluginDir, boolean removeSource) {
@@ -505,161 +532,155 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 	}
 
-	private void _convertToWarProject(File warsDir, File pluginDir, boolean removeSource) {
-		try {
-			warsDir.mkdirs();
+	private void _convertToWarProject(File warsDir, File pluginDir, boolean removeSource) throws Exception {
+		warsDir.mkdirs();
 
-			Path warsPath = warsDir.toPath();
+		Path warsPath = warsDir.toPath();
 
-			moveFile(pluginDir.toPath(), warsPath.resolve(pluginDir.getName()), removeSource);
+		moveFile(pluginDir.toPath(), warsPath.resolve(pluginDir.getName()), removeSource);
 
-			File warDir = new File(warsDir, pluginDir.getName());
+		File warDir = new File(warsDir, pluginDir.getName());
 
-			File src = new File(warDir, "src/main/java");
+		File src = new File(warDir, "src/main/java");
 
-			src.mkdirs();
+		src.mkdirs();
 
-			File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
+		File docrootSrc = new File(warDir, "docroot/WEB-INF/src");
 
-			Path srcPath = src.toPath();
+		Path srcPath = src.toPath();
 
-			if (docrootSrc.exists()) {
-				for (File docrootSrcFile : docrootSrc.listFiles()) {
-					moveFile(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
+		if (docrootSrc.exists()) {
+			for (File docrootSrcFile : docrootSrc.listFiles()) {
+				moveFile(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
+			}
+
+			docrootSrc.delete();
+		}
+
+		File webapp = new File(warDir, "src/main/webapp");
+
+		webapp.mkdirs();
+
+		File docroot = new File(warDir, "docroot");
+
+		Path webappPath = webapp.toPath();
+
+		for (File docrootFile : docroot.listFiles()) {
+			moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
+		}
+
+		Path warPath = warDir.toPath();
+
+		FileUtil.deleteDir(docroot.toPath());
+		Files.deleteIfExists(warPath.resolve("build.xml"));
+		Files.deleteIfExists(warPath.resolve(".classpath"));
+		Files.deleteIfExists(warPath.resolve(".project"));
+		FileUtil.deleteDirIfExists(warPath.resolve(".settings"));
+		Files.deleteIfExists(warPath.resolve("ivy.xml.MD5"));
+
+		List<String> dependencies = new ArrayList<>();
+
+		dependencies.add(
+			"compileOnly group: \"com.liferay.portal\", name: \"com.liferay.portal.kernel\", version: \"2.0.0\"");
+		dependencies.add("compileOnly group: \"javax.portlet\", name: \"portlet-api\", version: \"2.0\"");
+		dependencies.add("compileOnly group: \"javax.servlet\", name: \"javax.servlet-api\", version: \"3.0.1\"");
+
+		File ivyFile = new File(warDir, "ivy.xml");
+
+		if (ivyFile.exists()) {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+
+			Document doc = dBuilder.parse(ivyFile);
+
+			Element documentElement = doc.getDocumentElement();
+
+			documentElement.normalize();
+
+			NodeList depElements = documentElement.getElementsByTagName("dependency");
+
+			if ((depElements != null) && (depElements.getLength() > 0)) {
+				for (int i = 0; i < depElements.getLength(); i++) {
+					Node depElement = depElements.item(i);
+
+					String name = _getAttr(depElement, "name");
+					String org = _getAttr(depElement, "org");
+					String rev = _getAttr(depElement, "rev");
+
+					if ((name != null) && (org != null) && (rev != null)) {
+						dependencies.add(
+							MessageFormat.format(
+								"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", org, name, rev));
+					}
 				}
-
-				docrootSrc.delete();
 			}
 
-			File webapp = new File(warDir, "src/main/webapp");
+			ivyFile.delete();
+		}
 
-			webapp.mkdirs();
+		File liferayPluginPackageFile = new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
-			File docroot = new File(warDir, "docroot");
+		if (liferayPluginPackageFile.exists()) {
+			try (InputStream fileInputStream = new FileInputStream(liferayPluginPackageFile)) {
+				Properties liferayPluginPackageProperties = new Properties();
 
-			Path webappPath = webapp.toPath();
+				liferayPluginPackageProperties.load(fileInputStream);
 
-			for (File docrootFile : docroot.listFiles()) {
-				moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
-			}
+				String portalJarsValue = liferayPluginPackageProperties.getProperty("portal-dependency-jars");
 
-			Path warPath = warDir.toPath();
+				if (portalJarsValue != null) {
+					String[] portalJars = portalJarsValue.split(",");
 
-			FileUtil.deleteDir(docroot.toPath());
-			Files.deleteIfExists(warPath.resolve("build.xml"));
-			Files.deleteIfExists(warPath.resolve(".classpath"));
-			Files.deleteIfExists(warPath.resolve(".project"));
-			FileUtil.deleteDirIfExists(warPath.resolve(".settings"));
-			Files.deleteIfExists(warPath.resolve("ivy.xml.MD5"));
+					try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(
+							"/portal-dependency-jars-62.properties")) {
 
-			List<String> dependencies = new ArrayList<>();
+						Properties properties = new Properties();
 
-			dependencies.add(
-				"compileOnly group: \"com.liferay.portal\", name: \"com.liferay.portal.kernel\", version: \"2.0.0\"");
-			dependencies.add("compileOnly group: \"javax.portlet\", name: \"portlet-api\", version: \"2.0\"");
-			dependencies.add("compileOnly group: \"javax.servlet\", name: \"javax.servlet-api\", version: \"3.0.1\"");
+						properties.load(inputStream);
 
-			File ivyFile = new File(warDir, "ivy.xml");
+						for (String portalJar : portalJars) {
+							String newDependency = properties.getProperty(portalJar);
 
-			if (ivyFile.exists()) {
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+							if ((newDependency == null) || newDependency.isEmpty()) {
+								continue;
+							}
 
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+							String[] s = newDependency.split(",");
 
-				Document doc = dBuilder.parse(ivyFile);
+							if (s.length != 3) {
+								continue;
+							}
 
-				Element documentElement = doc.getDocumentElement();
-
-				documentElement.normalize();
-
-				NodeList depElements = documentElement.getElementsByTagName("dependency");
-
-				if ((depElements != null) && (depElements.getLength() > 0)) {
-					for (int i = 0; i < depElements.getLength(); i++) {
-						Node depElement = depElements.item(i);
-
-						String name = _getAttr(depElement, "name");
-						String org = _getAttr(depElement, "org");
-						String rev = _getAttr(depElement, "rev");
-
-						if ((name != null) && (org != null) && (rev != null)) {
 							dependencies.add(
 								MessageFormat.format(
-									"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", org, name, rev));
+									"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", s[0], s[1], s[2]));
 						}
 					}
-				}
-
-				ivyFile.delete();
-			}
-
-			File liferayPluginPackageFile = new File(
-				warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
-
-			if (liferayPluginPackageFile.exists()) {
-				try (InputStream fileInputStream = new FileInputStream(liferayPluginPackageFile)) {
-					Properties liferayPluginPackageProperties = new Properties();
-
-					liferayPluginPackageProperties.load(fileInputStream);
-
-					String portalJarsValue = liferayPluginPackageProperties.getProperty("portal-dependency-jars");
-
-					if (portalJarsValue != null) {
-						String[] portalJars = portalJarsValue.split(",");
-
-						try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(
-								"/portal-dependency-jars-62.properties")) {
-
-							Properties properties = new Properties();
-
-							properties.load(inputStream);
-
-							for (String portalJar : portalJars) {
-								String newDependency = properties.getProperty(portalJar);
-
-								if ((newDependency == null) || newDependency.isEmpty()) {
-									continue;
-								}
-
-								String[] s = newDependency.split(",");
-
-								if (s.length != 3) {
-									continue;
-								}
-
-								dependencies.add(
-									MessageFormat.format(
-										"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", s[0], s[1], s[2]));
-							}
-						}
-						catch (Exception e) {
-							getBladeCLI().error(
-								"Convert failed on portal jars of liferay-plugin-package.properties. \n",
-								pluginDir.getName(), e.getMessage());
-						}
+					catch (Exception e) {
+						getBladeCLI().error(
+							"Convert failed on portal jars of liferay-plugin-package.properties. \n",
+							pluginDir.getName(), e.getMessage());
 					}
 				}
 			}
-
-			StringBuilder depsBlock = new StringBuilder();
-
-			depsBlock.append("dependencies {" + System.lineSeparator());
-
-			for (String dependency : dependencies) {
-				depsBlock.append("\t" + dependency + System.lineSeparator());
-			}
-
-			depsBlock.append("}");
-
-			File gradleFile = new File(warDir, "build.gradle");
-
-			String content = depsBlock.toString();
-
-			Files.write(gradleFile.toPath(), content.getBytes());
 		}
-		catch (Exception e) {
-			getBladeCLI().error("Error upgrading project %s\n%s", pluginDir.getName(), e.getMessage());
+
+		StringBuilder depsBlock = new StringBuilder();
+
+		depsBlock.append("dependencies {" + System.lineSeparator());
+
+		for (String dependency : dependencies) {
+			depsBlock.append("\t" + dependency + System.lineSeparator());
 		}
+
+		depsBlock.append("}");
+
+		File gradleFile = new File(warDir, "build.gradle");
+
+		String content = depsBlock.toString();
+
+		Files.write(gradleFile.toPath(), content.getBytes());
 	}
 
 	private File _findPluginDir(File pluginsSdkDir, final String pluginName) throws Exception {
@@ -676,9 +697,19 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					String nameValue = name.toString();
 
 					if (nameValue.equals(pluginName)) {
-						pluginDir[0] = dir.toFile();
+						Path parent = dir.getParent();
 
-						return FileVisitResult.TERMINATE;
+						if ((parent != null) && Files.exists(parent)) {
+							parent = parent.getParent();
+						}
+
+						if ((parent != null) && Files.exists(parent)) {
+							if (_isValidSDKDir(parent.toFile())) {
+								pluginDir[0] = dir.toFile();
+
+								return FileVisitResult.TERMINATE;
+							}
+						}
 					}
 
 					return FileVisitResult.CONTINUE;
@@ -687,6 +718,18 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			});
 
 		return pluginDir[0];
+	}
+
+	private boolean _isValidSDKDir(File pluginsSdkDir) {
+		File buildProperties = new File(pluginsSdkDir, "build.properties");
+		File portletsBuildXml = new File(pluginsSdkDir, "portlets/build.xml");
+		File hooksBuildXml = new File(pluginsSdkDir, "hooks/build.xml");
+
+		if (buildProperties.exists() && portletsBuildXml.exists() && hooksBuildXml.exists()) {
+			return true;
+		}
+
+		return false;
 	}
 
 }
