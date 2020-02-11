@@ -172,10 +172,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			name = destDir.getName();
 		}
 
-		Path destPath = destDir.toPath();
-
-		destPath = destPath.normalize();
-
 		File destParentDir = destDir.getParentFile();
 
 		projectTemplatesArgs.setDestinationDir(destParentDir);

@@ -377,8 +377,6 @@ public class ServerStartCommandTest {
 	private void _addBundleToGradle(String bundleFileName) throws Exception {
 		Path gradlePropertiesPath = _testWorkspacePath.resolve("gradle.properties");
 
-		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
-
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(_LIFERAY_WORKSPACE_BUNDLE_KEY);
@@ -388,8 +386,6 @@ public class ServerStartCommandTest {
 		sb.append(System.lineSeparator());
 
 		String bundleUrl = sb.toString();
-
-		contents = bundleUrl + contents;
 
 		Files.write(gradlePropertiesPath, bundleUrl.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
 	}
