@@ -744,7 +744,7 @@ public class CreateCommandTest {
 	public void testCreateSpringMvcPortlet() throws Exception {
 		String[] args = {
 			"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "springtest", "--package-name",
-			"com.test", "--classname", "Sample", "--framework", "springportletmvc", "--view-type", "jsp", "-v", "7.2"
+			"com.test", "--classname", "Sample", "--framework", "springportletmvc", "--view-type", "jsp", "-v", "7.3"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -1287,21 +1287,21 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceLiferayVersionDefault() throws Exception {
-		File workspace72 = new File(_rootDir, "workspace72");
+		File workspace73 = new File(_rootDir, "workspace73");
 
-		File modulesDir = new File(workspace72, "modules");
+		File modulesDir = new File(workspace73, "modules");
 
-		_makeWorkspace(workspace72);
+		_makeWorkspace(workspace73);
 
-		String[] sevenTwoArgs = {"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two"};
+		String[] sevenThreeArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
 
-		TestUtil.runBlade(workspace72, _extensionsDir, sevenTwoArgs);
+		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
 
-		File buildGradle = new File(modulesDir, "seven-two/build.gradle");
+		File buildGradle = new File(modulesDir, "seven-three/build.gradle");
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"4.4.0\""));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"5.4.0\""));
 	}
 
 	@Test
@@ -1584,15 +1584,15 @@ public class CreateCommandTest {
 
 	@Test
 	public void testLiferayVersionDefault() throws Exception {
-		String[] sevenTwoArgs = {"--base", _rootDir.getAbsolutePath(), "create", "-t", "portlet", "seven-two"};
+		String[] sevenThreeArgs = {"--base", _rootDir.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
 
-		TestUtil.runBlade(_rootDir, _extensionsDir, sevenTwoArgs);
+		TestUtil.runBlade(_rootDir, _extensionsDir, sevenThreeArgs);
 
-		File buildGradle = new File(_rootDir, "seven-two/build.gradle");
+		File buildGradle = new File(_rootDir, "seven-three/build.gradle");
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"4.4.0\""));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"5.4.0\""));
 	}
 
 	@Test
@@ -1701,7 +1701,7 @@ public class CreateCommandTest {
 	private void _makeWorkspace(File workspace) throws Exception {
 		File parentFile = workspace.getParentFile();
 
-		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", "7.2"};
+		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", "7.3"};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1712,7 +1712,7 @@ public class CreateCommandTest {
 
 			properties.load(inputStream);
 
-			Assert.assertEquals("7.2", properties.getProperty("liferay.version.default"));
+			Assert.assertEquals("7.3", properties.getProperty("liferay.version.default"));
 		}
 	}
 
