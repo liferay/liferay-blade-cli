@@ -72,7 +72,7 @@ public class InitArgs extends BaseArgs {
 	private boolean _force;
 
 	@Parameter(
-		description = "The version of Liferay to target for this workspace. Options are 7.0, 7.1, 7.2",
+		description = "The version of Liferay to target for this workspace. Options are 7.0, 7.1, 7.2, 7.3",
 		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayVersionValidator.class
 	)
 	@ParameterPossibleValues(LiferayVersionValidator.class)
