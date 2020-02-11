@@ -1584,15 +1584,15 @@ public class CreateCommandTest {
 
 	@Test
 	public void testLiferayVersionDefault() throws Exception {
-		String[] sevenThreeArgs = {"--base", _rootDir.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
+		String[] args = {"--base", _rootDir.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo"};
 
-		TestUtil.runBlade(_rootDir, _extensionsDir, sevenThreeArgs);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File buildGradle = new File(_rootDir, "seven-three/build.gradle");
+		File buildGradle = new File(_rootDir, "foo/build.gradle");
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"5.4.0\""));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"4.4.0\""));
 	}
 
 	@Test
