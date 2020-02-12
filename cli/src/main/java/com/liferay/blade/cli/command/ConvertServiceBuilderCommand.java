@@ -303,8 +303,6 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		String updatedContent = gradleContent.replaceAll("dependencies \\{", sb.toString());
 
 		Files.write(gradlePath, updatedContent.getBytes());
-
-		System.out.println("Migrating files done, then you should fix breaking changes and re-run build-service task.");
 	}
 
 	private static boolean _isInExportedApiFolder(File file) {
