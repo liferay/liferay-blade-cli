@@ -517,8 +517,8 @@ public class ConvertCommandTest {
 
 		_contains(
 			new File(projectDir, "wars/sample-dao-portlet/build.gradle"),
-			".*compile group: 'c3p0', name: 'c3p0', version: '0.9.0.4'.*",
-			".*compile group: 'mysql', name: 'mysql-connector-java', version: '5.0.7'.*");
+			".*compile group: \"c3p0\", name: \"c3p0\", version: \"0.9.0.4\".*",
+			".*compile group: \"mysql\", name: \"mysql-connector-java\", version: \"5.0.7\".*");
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "sample-tapestry-portlet"};
 
@@ -526,11 +526,11 @@ public class ConvertCommandTest {
 
 		_contains(
 			new File(projectDir, "wars/sample-tapestry-portlet/build.gradle"),
-			".*compile group: 'hivemind', name: 'hivemind', version: '1.1'.*",
-			".*compile group: 'hivemind', name: 'hivemind-lib', version: '1.1'.*",
-			".*compile group: 'org.apache.tapestry', name: 'tapestry-annotations', version: '4.1'.*",
-			".*compile group: 'org.apache.tapestry', name: 'tapestry-framework', version: '4.1'.*",
-			".*compile group: 'org.apache.tapestry', name: 'tapestry-portlet', version: '4.1'.*");
+			".*compile group: \"hivemind\", name: \"hivemind\", version: \"1.1\".*",
+			".*compile group: \"hivemind\", name: \"hivemind-lib\", version: \"1.1\".*",
+			".*compile group: \"org.apache.tapestry\", name: \"tapestry-annotations\", version: \"4.1\".*",
+			".*compile group: \"org.apache.tapestry\", name: \"tapestry-framework\", version: \"4.1\".*",
+			".*compile group: \"org.apache.tapestry\", name: \"tapestry-portlet\", version: \"4.1\".*");
 
 		File ivmXmlFile = new File(projectDir, "wars/sample-tapestry-portlet/ivy.xml");
 
@@ -547,11 +547,11 @@ public class ConvertCommandTest {
 
 		_contains(
 			new File(projectDir, "wars/sample-hibernate-portlet/build.gradle"),
-			".*compile group: 'commons-collections', name: 'commons-collections', version: '3.2.2'.*",
-			".*compile group: 'commons-httpclient', name: 'commons-httpclient', version: '3.1'.*",
-			".*compile group: 'dom4j', name: 'dom4j', version: '1.6.1'.*",
-			".*compile group: 'javax.xml.soap', name: 'saaj-api', version: '1.3'.*",
-			".*compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.2'.*");
+			".*compile group: \"commons-collections\", name: \"commons-collections\", version: \"3.2.2\".*",
+			".*compile group: \"commons-httpclient\", name: \"commons-httpclient\", version: \"3.1\".*",
+			".*compile group: \"dom4j\", name: \"dom4j\", version: \"1.6.1\".*",
+			".*compile group: \"javax.xml.soap\", name: \"saaj-api\", version: \"1.3\".*",
+			".*compile group: \"org.slf4j\", name: \"slf4j-api\", version: \"1.7.2\".*");
 
 		_notContains(
 			new File(projectDir, "wars/sample-hibernate-portlet/build.gradle"), ".*antlr2.*", ".*hibernate3.*",

@@ -617,7 +617,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					if ((name != null) && (org != null) && (rev != null)) {
 						dependencies.add(
 							MessageFormat.format(
-								"compile group: ''{0}'', name: ''{1}'', version: ''{2}''", org, name, rev));
+								"compile group: \"{0}\", name: \"{1}\", version: \"{2}\"", org, name, rev));
 					}
 				}
 			}
