@@ -92,6 +92,8 @@ dockerPublishSnapshots {
 
 	args.addAll(['-v', "${userHome}/.gradle/wrapper:/root/.gradle/wrapper"])
 
+	args.addAll(['-v', "${userHome}/.liferay/bundles:/root/.liferay/bundles"])
+
 	if (gradleCredentialsProperties.exists()) {
 		args.addAll(['-v', "${userHome}/.gradle/gradle.credentials.properties:/root/.gradle/gradle.encrypted.properties"])
 	}
