@@ -23,6 +23,17 @@ Private-Package:\
 	com.liferay.gogo.shell.client,\
 	com.liferay.properties.locator,\
 	\
+	org.apache.tools.ant,\
+	org.apache.tools.ant.filters,\
+	org.apache.tools.ant.filters.util,\
+	org.apache.tools.ant.input,\
+	org.apache.tools.ant.property,\
+	org.apache.tools.ant.taskdefs,\
+	org.apache.tools.ant.taskdefs.condition,\
+	org.apache.tools.ant.types,\
+	org.apache.tools.ant.types.resources,\
+	org.apache.tools.ant.util,\
+	\
 	org.apache.commons.compress.archivers,\
 	org.apache.commons.compress.archivers.tar,\
 	org.apache.commons.compress.archivers.zip,\
