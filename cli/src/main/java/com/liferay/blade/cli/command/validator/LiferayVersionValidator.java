@@ -23,12 +23,13 @@ import java.util.Collection;
 
 /**
  * @author Christopher Bryan Boyd
+ * @author Gregory Amerson
  */
 public class LiferayVersionValidator implements ValidatorSupplier {
 
 	@Override
 	public Collection<String> get() {
-		return Arrays.asList("7.0", "7.1", "7.2");
+		return Arrays.asList("7.0", "7.1", "7.2", "7.3");
 	}
 
 	@Override
