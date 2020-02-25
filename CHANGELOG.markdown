@@ -1,5 +1,20 @@
 # Liferay Blade CLI Change Log
 
+## 3.9.1 - 2020-2-25 -
+
+- [BLADE-418]: As a frontend developer, I'd like to generate pure js portlets using blade create
+- [BLADE-496]: Update Blade to build with JDK 11
+- [BLADE-501]: Blade should report errors from gradle task failures
+- [BLADE-502]: Add azure pipeline support for testing with JDK 11
+- [BLADE-504]: gw command wipes out gradle wrapper return code
+- [BLADE-505]: Update Blade Project Templates to use 5.0.19
+- [BLADE-507]: Use project-templates 5.0.20
+- [BLADE-509]: blade convert command fails to always find valid plugin sub directory
+- [BLADE-510]: blade convert should try check portal-dependency-jar for maven metadata
+- [BLADE-513]: init command 7.3 support
+- [BLADE-520]: Update workspace used in project templates to fix workspace issues for Liferay 7.3
+- [LPS-108630]: Missing <webapp> in spring-mvc-portlet project web.xml on latest blade 391
+
 ## 3.9.0 - 2020-1-23 - 23d6986650aac47c37e98a3a3aac5804de3970dd
 
 - [BLADE-474]: blade create can throw a NullPointerException when workspace version is set to latest.release
@@ -365,6 +380,7 @@ Updated to use Project Templates 4.1.0
 [BLADE-409]: https://issues.liferay.com/browse/BLADE-409
 [BLADE-411]: https://issues.liferay.com/browse/BLADE-411
 [BLADE-412]: https://issues.liferay.com/browse/BLADE-412
+[BLADE-418]: https://issues.liferay.com/browse/BLADE-418
 [BLADE-423]: https://issues.liferay.com/browse/BLADE-423
 [BLADE-424]: https://issues.liferay.com/browse/BLADE-424
 [BLADE-425]: https://issues.liferay.com/browse/BLADE-425
@@ -388,6 +404,16 @@ Updated to use Project Templates 4.1.0
 [BLADE-490]: https://issues.liferay.com/browse/BLADE-490
 [BLADE-493]: https://issues.liferay.com/browse/BLADE-493
 [BLADE-499]: https://issues.liferay.com/browse/BLADE-499
+[BLADE-496]: https://issues.liferay.com/browse/BLADE-496
+[BLADE-501]: https://issues.liferay.com/browse/BLADE-501
+[BLADE-502]: https://issues.liferay.com/browse/BLADE-502
+[BLADE-504]: https://issues.liferay.com/browse/BLADE-504
+[BLADE-505]: https://issues.liferay.com/browse/BLADE-505
+[BLADE-507]: https://issues.liferay.com/browse/BLADE-507
+[BLADE-509]: https://issues.liferay.com/browse/BLADE-509
+[BLADE-510]: https://issues.liferay.com/browse/BLADE-510
+[BLADE-513]: https://issues.liferay.com/browse/BLADE-513
+[BLADE-520]: https://issues.liferay.com/browse/BLADE-520
 [IDE-4081]: https://issues.liferay.com/browse/IDE-4081
 [LPS-73746]: https://issues.liferay.com/browse/LPS-73746
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
@@ -411,6 +437,7 @@ Updated to use Project Templates 4.1.0
 [LPS-97114]: https://issues.liferay.com/browse/LPS-97114
 [LPS-98820]: https://issues.liferay.com/browse/LPS-98820
 [LPS-105502]: https://issues.liferay.com/browse/LPS-105502
+[LPS-108630]: https://issues.liferay.com/browse/LPS-108630
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
 [Updated Liferay Gradle Plugin]: https://github.com/liferay/liferay-portal/blob/master/modules/sdk/gradle-plugins/CHANGELOG.markdown#3523---2017-10-26
