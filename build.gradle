@@ -57,6 +57,7 @@ buildChangeLog {
 	changeLogHeader = "BLADE Version ${project.version}"
 	dirs = ["cli", "extensions", "gradle", "gradle-tooling", "libs"]
 	ticketIdPrefixes = ["BLADE", "IDE", "LPS", "LRDOCS"]
+	rangeStart = "23d6986650aac47c37e98a3a3aac5804de3970dd"
 }
 
 dockerImageBuild {
