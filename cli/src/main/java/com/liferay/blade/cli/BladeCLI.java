@@ -443,6 +443,8 @@ public class BladeCLI {
 								}
 								catch (ParameterException pe) {
 									parameterException = pe;
+
+									continue;
 								}
 
 								jCommands = _jCommander.getCommands();
@@ -458,24 +460,31 @@ public class BladeCLI {
 								objects = jCommander.getObjects();
 
 								commandArgs = objects.get(0);
+
+								if (parameterException == null) {
+									_command = command;
+
+									_args = (BaseArgs)commandArgs;
+
+									_args.setProfileName(profileName);
+
+									_args.setBase(baseDir);
+
+									try {
+										runCommand();
+									}
+									catch (ParameterException e) {
+										parameterException = e;
+
+										continue;
+									}
+
+									postRunCommand();
+								}
+								else {
+									throw parameterException;
+								}
 							}
-						}
-
-						if (parameterException == null) {
-							_command = command;
-
-							_args = (BaseArgs)commandArgs;
-
-							_args.setProfileName(profileName);
-
-							_args.setBase(baseDir);
-
-							runCommand();
-
-							postRunCommand();
-						}
-						else {
-							throw parameterException;
 						}
 					}
 					else {
@@ -1040,50 +1049,50 @@ public class BladeCLI {
 
 				String[] parameterAnnotationNames = parameterAnnotation.names();
 
-				if (parameterAnnotation.required()) {
-					List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
+				//if (parameterAnnotation.required()) {
+				List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
 
-					StringBuilder sb = null;
+				StringBuilder sb = null;
 
-					String missingParametersFormatted = null;
+				String missingParametersFormatted = null;
 
-					boolean found = false;
+				boolean found = false;
 
-					if (missingParameterOptional.isPresent() &&
-						parameterNamesList.contains(missingParameterOptional.get())) {
+				if (missingParameterOptional.isPresent() &&
+					parameterNamesList.contains(missingParameterOptional.get())) {
 
-						sb = new StringBuilder("The following option is required: ");
+					sb = new StringBuilder("The following option is required: ");
 
-						missingParametersFormatted = _getParameterNames(parameterNamesList);
+					missingParametersFormatted = _getParameterNames(parameterNamesList);
 
-						sb.append(missingParametersFormatted);
+					sb.append(missingParametersFormatted);
 
-						found = true;
-					}
-					else if (!missingParameterOptional.isPresent() &&
-							 ((parameterAnnotationNames == null) || (parameterAnnotationNames.length == 0))) {
-
-						sb = new StringBuilder("The main parameter is required: ");
-
-						if (parameterAnnotation.description() != null) {
-							sb.append(" (" + parameterAnnotation.description() + ")");
-						}
-
-						missingParametersFormatted = "the main parameter";
-
-						found = true;
-					}
-
-					if (found) {
-						Map<String, String> optionsMap = _getPossibleValuesMap(field, sb);
-
-						String message = sb.toString();
-
-						value = _promptForValueWithOptions(missingParametersFormatted, optionsMap, message);
-
-						break;
-					}
+					found = true;
 				}
+				else if (!missingParameterOptional.isPresent() &&
+						 ((parameterAnnotationNames == null) || (parameterAnnotationNames.length == 0))) {
+
+					sb = new StringBuilder("The main parameter is required: ");
+
+					if (parameterAnnotation.description() != null) {
+						sb.append(" (" + parameterAnnotation.description() + ")");
+					}
+
+					missingParametersFormatted = "the main parameter";
+
+					found = true;
+				}
+
+				if (found) {
+					Map<String, String> optionsMap = _getPossibleValuesMap(field, sb);
+
+					String message = sb.toString();
+
+					value = _promptForValueWithOptions(missingParametersFormatted, optionsMap, message);
+
+					break;
+				}
+				//}
 			}
 		}
 
@@ -1137,6 +1146,9 @@ public class BladeCLI {
 				}
 
 				command.execute();
+			}
+			catch (ParameterException e) {
+				throw e;
 			}
 			catch (Throwable th) {
 				throw th;

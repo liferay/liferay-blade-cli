@@ -16,6 +16,8 @@
 
 package com.liferay.blade.cli.command;
 
+import com.beust.jcommander.ParameterException;
+
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceConstants;
@@ -27,22 +29,16 @@ import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 
 import java.nio.file.Path;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Gregory Amerson
@@ -71,15 +67,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		BladeCLI bladeCLI = getBladeCLI();
 
-		if (template == null) {
-			bladeCLI.error("The following option is required: [-t | --template]\n\n");
-			bladeCLI.error("Availble project templates:\n\n");
-
-			_printTemplates();
-
-			return;
-		}
-		else if (template.equals("service")) {
+		if (template.equals("service")) {
 			if (createArgs.getService() == null) {
 				StringBuilder sb = new StringBuilder();
 
@@ -90,7 +78,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 				bladeCLI.error(sb.toString());
 
-				return;
+				throw new ParameterException("The following option is required: [-s]");
 			}
 		}
 		else if (template.equals("fragment")) {
@@ -107,21 +95,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			}
 
 			if (!hasHostBundleBSN || !hasHostBundleVersion) {
-				StringBuilder sb = new StringBuilder("\"-t fragment\" options missing:" + System.lineSeparator());
-
 				if (!hasHostBundleBSN) {
-					sb.append("Host Bundle BSN (\"-h\", \"--host-bundle-bsn\") is required.");
-					sb.append(System.lineSeparator());
+					throw new ParameterException("The following option is required: [--host-bundle-bsn | -h]");
 				}
 
 				if (!hasHostBundleVersion) {
-					sb.append("Host Bundle Version (\"-H\", \"--host-bundle-version\") is required.");
-					sb.append(System.lineSeparator());
+					throw new ParameterException("The following option is required: [--host-bundle-version | -H]");
 				}
-
-				bladeCLI.printUsage("create", sb.toString());
-
-				return;
 			}
 		}
 		else if (template.equals("modules-ext")) {
@@ -152,7 +132,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 				bladeCLI.printUsage("create", sb.toString());
 
-				return;
+				throw new ParameterException("The following option is required: [--original-module-name]");
 			}
 		}
 
@@ -490,34 +470,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		Collection<String> templateNames = BladeUtil.getTemplateNames(getBladeCLI());
 
 		return templateNames.contains(templateName);
-	}
-
-	private void _printTemplates() throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		Map<String, String> templates = BladeUtil.getTemplates(bladeCLI);
-
-		List<String> templateNames = new ArrayList<>(BladeUtil.getTemplateNames(getBladeCLI()));
-
-		Collections.sort(templateNames);
-
-		Comparator<String> compareLength = Comparator.comparingInt(String::length);
-
-		Stream<String> stream = templateNames.stream();
-
-		String longestString = stream.max(
-			compareLength
-		).get();
-
-		int padLength = longestString.length() + 2;
-
-		for (String name : templateNames) {
-			PrintStream out = bladeCLI.out();
-
-			out.print(StringUtils.rightPad(name, padLength));
-
-			bladeCLI.out(templates.get(name));
-		}
 	}
 
 }
