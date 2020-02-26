@@ -102,6 +102,10 @@ public class LinkDownloader implements Runnable {
 				while (get()) {
 					List<String> headers = _headers.get("location");
 
+					if (headers == null) {
+						headers = _headers.get("Location");
+					}
+
 					_link = headers.get(0);
 
 					_url = new URL(_link);
