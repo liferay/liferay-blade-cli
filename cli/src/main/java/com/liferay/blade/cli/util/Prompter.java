@@ -17,9 +17,7 @@
 package com.liferay.blade.cli.util;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import java.util.NoSuchElementException;
@@ -153,7 +151,7 @@ public class Prompter {
 
 				while (((answer == null) || !answer.isPresent()) && !Objects.equals(answer, defaultAnswer)
 				//		&& scanner.hasNextLine()
-					) 
+					)
 				{
 
 					String line = reader.readLine();

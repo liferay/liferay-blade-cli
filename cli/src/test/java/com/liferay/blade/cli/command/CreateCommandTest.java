@@ -134,9 +134,9 @@ public class CreateCommandTest {
 		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "loginExt"};
 
 		String data = "foobar" + System.lineSeparator() + "1.0" + System.lineSeparator();
-		
-		InputStream testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
-		
+
+		InputStream testData = new ByteArrayInputStream(data.getBytes("UTF-8"));
+
 		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, testData, false, args);
 
 		String output = bladeTestResults.getOutput();
@@ -146,11 +146,11 @@ public class CreateCommandTest {
 		args = new String[] {
 			"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "-M", "1.0.0", "loginExt2"
 		};
-		
+
 		data = "foobar" + System.lineSeparator();
-		
-		testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
-		
+
+		testData = new ByteArrayInputStream(data.getBytes("UTF-8"));
+
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, testData, false, args);
 
 		output = results.getOutput();
@@ -188,11 +188,10 @@ public class CreateCommandTest {
 		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "loginHook"};
 
 		String data = "foobar" + System.lineSeparator() + "1.0" + System.lineSeparator();
-		
-		InputStream testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
-		
-		BladeTestResults bladeTestResults = TestUtil.runBlade(
-				_rootDir, _extensionsDir, testData, args);
+
+		InputStream testData = new ByteArrayInputStream(data.getBytes("UTF-8"));
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, testData, args);
 
 		String output = bladeTestResults.getOutput();
 
@@ -201,9 +200,9 @@ public class CreateCommandTest {
 		args = new String[] {"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "-H", "1.0.0", "loginHook2"};
 
 		data = "foobar" + System.lineSeparator();
-		
-		testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
-		
+
+		testData = new ByteArrayInputStream(data.getBytes("UTF-8"));
+
 		bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, testData, args);
 
 		output = bladeTestResults.getOutput();
@@ -714,18 +713,18 @@ public class CreateCommandTest {
 		BladeTestResults bladeTestResults = null;
 
 		String errors = null;
-		
+
 		String output = null;
 
 		try {
 			String data = "com.test.Foo" + System.lineSeparator();
-			
-			InputStream testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
-			
+
+			InputStream testData = new ByteArrayInputStream(data.getBytes("UTF-8"));
+
 			bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, testData, false, args);
 
 			output = bladeTestResults.getOutput();
-			
+
 			errors = bladeTestResults.getErrors();
 		}
 		catch (Throwable t) {
@@ -801,9 +800,10 @@ public class CreateCommandTest {
 	public void testCreateSpringMVCPortletInteractive() throws Exception {
 		String[] gradleArgs = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "foo"};
 
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(("springportletmvc" + System.lineSeparator() + "jsp" + System.lineSeparator()).getBytes());
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+			("springportletmvc" + System.lineSeparator() + "jsp" + System.lineSeparator()).getBytes());
 
-		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, byteArrayInputStream, false, gradleArgs);
+		TestUtil.runBlade(_rootDir, _extensionsDir, byteArrayInputStream, gradleArgs);
 
 		File project = new File(_rootDir, "foo");
 
@@ -1029,9 +1029,9 @@ public class CreateCommandTest {
 		File extDir = new File(workspace, "ext");
 
 		String data = "1.0" + System.lineSeparator();
-		
-		InputStream testData = new ByteArrayInputStream( data.getBytes("UTF-8") );
-		
+
+		InputStream testData = new ByteArrayInputStream(data.getBytes("UTF-8"));
+
 		String[] gradleArgs = {
 			"create", "--base", workspace.getAbsolutePath(), "-d", extDir.getAbsolutePath(), "-t", "modules-ext", "-m",
 			"com.liferay.login.web", "loginExt"
@@ -1716,11 +1716,15 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath);
 		_checkFileExists(projectPath + "/build.gradle");
 		Path gradlePath = Paths.get(projectPath);
+
 		gradlePath = gradlePath.resolve("build.gradle");
+
 		List<String> lines = Files.readAllLines(gradlePath);
+
 		if (!lines.contains("apply plugin: \"war\"")) {
 			_checkFileExists(projectPath + "/bnd.bnd");
 		}
+
 		_checkFileExists(projectPath + "/gradlew");
 		_checkFileExists(projectPath + "/gradlew.bat");
 	}

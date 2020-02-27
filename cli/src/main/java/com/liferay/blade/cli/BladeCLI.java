@@ -73,6 +73,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.input.CloseShieldInputStream;
+
 import org.fusesource.jansi.AnsiConsole;
 
 /**
@@ -311,7 +312,6 @@ public class BladeCLI {
 
 	public void run(String[] args) throws Exception {
 		try {
-			
 			Extensions extensions = getExtensions();
 
 			String basePath = _extractBasePath(args);
@@ -347,7 +347,8 @@ public class BladeCLI {
 			}
 			else {
 				try (CloseShieldInputStream closeShieldInputStream = new CloseShieldInputStream(in());
-					BufferedReader reader = new BufferedReader(new InputStreamReader(closeShieldInputStream));)				{
+					BufferedReader reader = new BufferedReader(new InputStreamReader(closeShieldInputStream))) {
+
 					ParameterException parameterException = null;
 
 					try {
@@ -368,7 +369,7 @@ public class BladeCLI {
 					Map<String, JCommander> jCommands = _jCommander.getCommands();
 
 					JCommander jCommander = jCommands.get(command);
-					
+
 					if (jCommander != null) {
 						List<Object> objects = jCommander.getObjects();
 
@@ -429,7 +430,8 @@ public class BladeCLI {
 								for (String missingParameter : missingParameters) {
 									missingParameter = _getMissingParameterUnformatted(missingParameter);
 
-									value = _promptForMissingParameter(commandArgs, Optional.of(missingParameter), reader);
+									value = _promptForMissingParameter(
+										commandArgs, Optional.of(missingParameter), reader);
 
 									fixedArgs.add(1, missingParameter);
 
@@ -496,8 +498,6 @@ public class BladeCLI {
 								}
 								catch (ParameterException e) {
 									parameterException = e;
-
-									continue;
 								}
 							}
 						}
@@ -1056,7 +1056,9 @@ public class BladeCLI {
 		}
 	}
 
-	private String _promptForMissingParameter(Object commandArgs, Optional<String> missingParameterOptional, BufferedReader reader) {
+	private String _promptForMissingParameter(
+		Object commandArgs, Optional<String> missingParameterOptional, BufferedReader reader) {
+
 		String value = null;
 
 		Class<?> commandArgsClass = commandArgs.getClass();
@@ -1234,7 +1236,7 @@ public class BladeCLI {
 			properties.store(outputStream, null);
 		}
 	}
-	
+
 	private static final String _BLADE_PROPERTIES = ".blade.properties";
 
 	private static final String _LAST_UPDATE_CHECK_KEY = "lastUpdateCheck";
@@ -1258,4 +1260,5 @@ public class BladeCLI {
 	private JCommander _jCommander;
 	private PrintStream _out;
 	private Collection<WorkspaceProvider> _workspaceProviders = null;
+
 }

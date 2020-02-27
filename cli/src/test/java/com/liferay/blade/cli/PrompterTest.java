@@ -16,23 +16,6 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.util.Prompter;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 /**
  * @author Christopher Bryan Boyd
  */

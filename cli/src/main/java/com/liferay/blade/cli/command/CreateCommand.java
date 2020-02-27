@@ -32,12 +32,16 @@ import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+
 import java.nio.file.Path;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -71,8 +75,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		if (Objects.equals(template, "portlet")) {
 			template = "mvc-portlet";
 		}
-
-		BladeCLI bladeCLI = getBladeCLI();
 
 		String name = createArgs.getName();
 
@@ -115,28 +117,33 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return;
 		}
 
+		BladeCLI bladeCLI = getBladeCLI();
+
 		ProjectTemplatesArgs projectTemplatesArgs = getProjectTemplateArgs(createArgs, bladeCLI, template, name, dir);
 
 		File templateFile = ProjectTemplatesUtil.getTemplateFile(projectTemplatesArgs);
-		
+
 		Thread thread = Thread.currentThread();
 
 		ClassLoader oldContextClassLoader = thread.getContextClassLoader();
-		
+
 		Method m = null;
+
 		try {
 			URI uri = templateFile.toURI();
-	
-			thread.setContextClassLoader(
-				new URLClassLoader(new URL[] {uri.toURL()}));
-			
+
+			thread.setContextClassLoader(new URLClassLoader(new URL[] {uri.toURL()}));
+
 			m = ProjectTemplates.class.getDeclaredMethod("_getProjectTemplateArgsExt", String.class, File.class);
+
 			m.setAccessible(true); //if security settings allow this
+
 			Object o = m.invoke(null, projectTemplatesArgs.getTemplate(), templateFile); //use null if the method is static
+
 			if (o != null) {
 				ProjectTemplatesArgsExt projectTemplatesArgsExt = (ProjectTemplatesArgsExt)o;
+
 				Class<? extends ProjectTemplatesArgsExt> argsClass = projectTemplatesArgsExt.getClass();
-				
 
 				for (Field field : argsClass.getDeclaredFields()) {
 					if (field.isAnnotationPresent(Parameter.class)) {
@@ -146,47 +153,52 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 						if (parameterAnnotation.required()) {
 							List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
-							
+
 							for (Field createField : CreateArgs.class.getDeclaredFields()) {
-	
 								if (createField.isAnnotationPresent(Parameter.class)) {
-									Parameter createParameterAnnotation = createField.getDeclaredAnnotation(Parameter.class);
-									
-	
+									Parameter createParameterAnnotation = createField.getDeclaredAnnotation(
+										Parameter.class);
+
 									String[] createParameterAnnotationNames = createParameterAnnotation.names();
-									
-									List<String> createParameterNamesList = Arrays.asList(createParameterAnnotationNames);
-									
+
+									List<String> createParameterNamesList = Arrays.asList(
+										createParameterAnnotationNames);
+
 									boolean found = false;
-									
+
 									for (String createParameterName : createParameterNamesList) {
 										if (parameterNamesList.contains(createParameterName)) {
 											found = true;
+
 											break;
 										}
 									}
-									
+
 									if (found) {
 										createField.setAccessible(true);
+
 										Object value = createField.get(createArgs);
+
 										if (value == null) {
 											StringBuilder sb = new StringBuilder("The following option is required: [");
-											
+
 											for (int x = 0; x < createParameterNamesList.size(); x++) {
 												String parameterName = createParameterNamesList.get(x);
-												
+
 												if (x > 0) {
 													sb.append(" | ");
 												}
+
 												sb.append(parameterName);
 											}
+
 											sb.append("]");
 											createField.setAccessible(false);
+
 											throw new ParameterException(sb.toString());
 										}
 									}
 								}
-	
 							}
 						}
 					}
@@ -197,8 +209,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			if (m != null) {
 				m.setAccessible(false);
 			}
+
 			thread.setContextClassLoader(oldContextClassLoader);
 		}
+
 		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
 
 		Path customTemplatesPath = bladeCLI.getExtensionsPath();
