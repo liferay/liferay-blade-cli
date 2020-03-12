@@ -1,0 +1,36 @@
+dependencies {
+	classpath group: "com.liferay", name: "com.liferay.gradle.plugins.defaults", version: "6.1.194"
+	classpath group: "com.liferay", name: "com.liferay.gradle.plugins.maven.plugin.builder", version: "1.2.6"
+	classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
+	classpath group: "gradle.plugin.org.ysb33r.gradle", name: "gradletest", version: "2.0"
+	classpath group: "xalan", name: "xalan", version: "2.7.2"
+
+	if (Boolean.getBoolean("gradle.build.scan.enabled")) {
+		classpath group: "com.gradle", name: "gradle-enterprise-gradle-plugin", version: "3.1.1"
+	}
+}
+
+repositories {
+	if (!Boolean.getBoolean("maven.local.ignore")) {
+		mavenLocal()
+
+		File tmpMavenRepositoryDir = null
+
+		if (hasProperty("tmp.maven.repository.dir")) {
+			tmpMavenRepositoryDir = file(properties["tmp.maven.repository.dir"])
+		}
+		else {
+			tmpMavenRepositoryDir = file("../.m2-tmp")
+		}
+
+		if (tmpMavenRepositoryDir.exists()) {
+			maven {
+				url tmpMavenRepositoryDir
+			}
+		}
+	}
+
+	maven {
+		url System.properties["repository.url"] ?: "https://repository-cdn.liferay.com/nexus/content/groups/public"
+	}
+}
