@@ -21,7 +21,7 @@ buildscript {
 task buildChangelogs
 task recordCommits
 
-File sdkDir = file("sdk")
+//File sdkDir = file("sdk")
 
 buildChangelogs {
 	dependsOn recordCommits
@@ -30,250 +30,232 @@ buildChangelogs {
 	group = "changelogs"
 
 	doLast {
-		sdkDir.eachDir {
-			File sdkProjectDir ->
+		File changelogCommitsFile = file("CHANGELOG.commits")
 
-			if (project.properties["projectName"] && (project.properties["projectName"] != sdkProjectDir.name)) {
-				return
+		if (!changelogCommitsFile.exists()) {
+			return
+		}
+
+		String text = "# Liferay Blade CLI Change Log"
+
+		String commitRange = ""
+		List<String> ticketNumbers = []
+		String version = ""
+
+		File changelogDescriptionsFile = file("CHANGELOG.descriptions")
+
+		changelogCommitsFile.getText("UTF-8").split("\n").each {
+			String recordCommitLine ->
+
+			Matcher matcher = recordCommitLine =~ /(\d+\.\d+\.\d+):([a-f0-9]+\.\.[a-f0-9]+)/
+
+			if (matcher.find()) {
+				commitRange = matcher.group(2)
+				version = matcher.group(1)
 			}
 
-			if (sdkProjectDir.name == "project-templates") {
-				return
+			ByteArrayOutputStream standardOutputByteArrayOutputStream = new ByteArrayOutputStream()
+
+			exec {
+				commandLine "git", "--no-pager", "log", "--pretty=format:%H:%cd:%s", "--date=short", "${commitRange}", "--", ".", ":(exclude,glob)**/CHANGELOG.*"
+				standardOutput = standardOutputByteArrayOutputStream
 			}
 
-			File changelogCommitsFile = file("sdk/" + sdkProjectDir.name + "/CHANGELOG.commits")
+			String gitLogOutput = standardOutputByteArrayOutputStream.toString()
 
-			if (!changelogCommitsFile.exists()) {
-				return
+			Closure<Void> getGitLogAttributes = {
+				String gitLogLine ->
+
+				String commitMessage = ""
+				String sha = ""
+				String ticketNumber = ""
+
+				Matcher gitLogMatcher = gitLogLine =~ /([a-f0-9]+):.+:((?:.*?)(?<![A-Z])(?:[A-Z]+-\d+(?:[^A-Za-z0-9]+[A-Z]+-\d+)*))(.*)/
+
+				if (gitLogMatcher.find()) {
+					commitMessage = gitLogMatcher.group(3)
+					sha = gitLogMatcher.group(1)
+					ticketNumber = gitLogMatcher.group(2)
+				}
+
+				if (ticketNumber.startsWith("Revert \"")) {
+					commitMessage = ticketNumber + commitMessage
+
+					ticketNumber = ticketNumber.substring(8)
+				}
+
+				return ["SHA" : sha, "TICKET-NUMBER" : ticketNumber.replaceAll(".*?([A-Z]+-\\d+.*)", "\$1"), "COMMIT-MESSAGE" : commitMessage]
 			}
 
-			String text = "# " + GUtil.loadProperties(new File(sdkDir, sdkProjectDir.name + "/bnd.bnd"))["Bundle-Name"] + " Change Log"
+			String commits = ""
 
-			String commitRange = ""
-			List<String> ticketNumbers = []
-			String version = ""
+			gitLogOutput.eachLine {
+				String gitLogLine ->
 
-			File changelogDescriptionsFile = file("sdk/" + sdkProjectDir.name + "/CHANGELOG.descriptions")
+				Map<String, String> gitLogAttributes = getGitLogAttributes(gitLogLine)
 
-			changelogCommitsFile.getText("UTF-8").split("\n").each {
-				String recordCommitLine ->
+				String sha = gitLogAttributes["SHA"]
 
-				Matcher matcher = recordCommitLine =~ /(\d+\.\d+\.\d+):([a-f0-9]+\.\.[a-f0-9]+)/
+				if (Validator.isNotNull(sha)) {
+					String commitMessage = gitLogAttributes["COMMIT-MESSAGE"].trim()
 
-				if (matcher.find()) {
-					commitRange = matcher.group(2)
-					version = matcher.group(1)
-				}
-
-				ByteArrayOutputStream standardOutputByteArrayOutputStream = new ByteArrayOutputStream()
-
-				exec {
-					commandLine "git", "--no-pager", "log", "--pretty=format:%H:%cd:%s", "--date=short", "${commitRange}", "--", "modules/sdk/" + sdkProjectDir.name, ":(exclude,glob)**/CHANGELOG.*"
-					standardOutput = standardOutputByteArrayOutputStream
-					workingDir = projectDir.parentFile
-				}
-
-				String gitLogOutput = standardOutputByteArrayOutputStream.toString()
-
-				Closure<Void> getGitLogAttributes = {
-					String gitLogLine ->
-
-					String commitMessage = ""
-					String sha = ""
-					String ticketNumber = ""
-
-					Matcher gitLogMatcher = gitLogLine =~ /([a-f0-9]+):.+:((?:.*?)(?<![A-Z])(?:[A-Z]+-\d+(?:[^A-Za-z0-9]+[A-Z]+-\d+)*))(.*)/
-
-					if (gitLogMatcher.find()) {
-						commitMessage = gitLogMatcher.group(3)
-						sha = gitLogMatcher.group(1)
-						ticketNumber = gitLogMatcher.group(2)
-					}
-
-					if (ticketNumber.startsWith("Revert \"")) {
-						commitMessage = ticketNumber + commitMessage
-
-						ticketNumber = ticketNumber.substring(8)
-					}
-
-					return ["SHA" : sha, "TICKET-NUMBER" : ticketNumber.replaceAll(".*?([A-Z]+-\\d+.*)", "\$1"), "COMMIT-MESSAGE" : commitMessage]
-				}
-
-				String commits = ""
-
-				gitLogOutput.eachLine {
-					String gitLogLine ->
-
-					Map<String, String> gitLogAttributes = getGitLogAttributes(gitLogLine)
-
-					String sha = gitLogAttributes["SHA"]
-
-					if (Validator.isNotNull(sha)) {
-						String commitMessage = gitLogAttributes["COMMIT-MESSAGE"].trim()
-
-						if (!commitMessage.equalsIgnoreCase("Auto SF") &&
+					if (!commitMessage.equalsIgnoreCase("Auto SF") &&
 							!commitMessage.equalsIgnoreCase("SF") &&
 							!commitMessage.matches(".*[Pp]rep next.*") &&
+							!commitMessage.matches(".*[Pp]repare.*") &&
 							!commitMessage.matches(".*[Uu]se (\\d+\\.\\d+\\.\\d+|latest).*") &&
 							!commitMessage.matches("Revert \".* SF\"") &&
 							!commitMessage.startsWith("Semver")) {
 
-							commits = commits + "\n" + _format("- [" + gitLogAttributes["TICKET-NUMBER"] + "]: " + commitMessage + " (" + sha.substring(0, 10) + ")")
-
-							ticketNumbers.add(gitLogAttributes["TICKET-NUMBER"])
-						}
-					}
-				}
-
-				String dependencies = ""
-
-				standardOutputByteArrayOutputStream = new ByteArrayOutputStream()
-
-				exec {
-					List<String> commandLineArgs = ["git", "--no-pager", "log", "--pretty=format:%H:%cd:%s", "--date=short", "-p", "${commitRange}", "--", "modules/sdk/" + sdkProjectDir.name + "/build.gradle"]
-
-					if (sdkProjectDir.name == "gradle-plugins") {
-						commandLineArgs.add("modules/sdk/" + sdkProjectDir.name + "/src/main/resources/com/liferay/gradle/plugins/dependencies/portal-tools.properties")
-					}
-
-					commandLine commandLineArgs
-					standardOutput = standardOutputByteArrayOutputStream
-					workingDir = projectDir.parentFile
-				}
-
-				gitLogOutput = standardOutputByteArrayOutputStream.toString()
-
-				Map<String, String> gitLogAttributes = [:]
-
-				gitLogOutput.eachLine {
-					String gitLogLine ->
-
-					if (gitLogLine ==~ /([a-f0-9]+):.+:(.*)/) {
-						gitLogAttributes = getGitLogAttributes(gitLogLine)
-					}
-					else {
-						matcher = gitLogLine =~ /^\+\s*.+ group: .*, name: \"(.+)", .*version: \"(.*)\"/
-
-						if (!matcher.find()) {
-							matcher = gitLogLine =~ /^\+([^ \t]+)=([0-9.]+)/
-
-							if (!matcher.find()) {
-								return
-							}
-						}
-
-						String dependencyName = matcher.group(1)
-						String dependencyVersion = matcher.group(2)
-
-						dependencies = dependencies + "\n" + _format("- [" + gitLogAttributes["TICKET-NUMBER"] + "]: Update the " + dependencyName + " dependency to version " + dependencyVersion + ".")
+						commits = commits + "\n" + _format("- [" + gitLogAttributes["TICKET-NUMBER"] + "]: " + commitMessage + " (" + sha.substring(0, 10) + ")")
 
 						ticketNumbers.add(gitLogAttributes["TICKET-NUMBER"])
 					}
 				}
+			}
 
-				String descriptions = ""
+			String dependencies = ""
 
-				if (changelogDescriptionsFile.exists()) {
+			standardOutputByteArrayOutputStream = new ByteArrayOutputStream()
 
-					String escapedDotVersion = version.replace(".", "\\.")
+			exec {
+				List<String> commandLineArgs = ["git", "--no-pager", "log", "--pretty=format:%H:%cd:%s", "--date=short", "-p", "${commitRange}", "--", "cli/build.gradle"]
 
-					matcher = changelogDescriptionsFile.text =~ /(?s)${escapedDotVersion}:description(.+?)(?:(?=\d+\.\d+\.\d+:description)|$)/
+				commandLine commandLineArgs
+				standardOutput = standardOutputByteArrayOutputStream
+			}
 
-					if (matcher.find()) {
-						descriptions = "\n" + matcher.group(1).trim()
+			gitLogOutput = standardOutputByteArrayOutputStream.toString()
+
+			Map<String, String> gitLogAttributes = [:]
+
+			gitLogOutput.eachLine {
+				String gitLogLine ->
+
+				if (gitLogLine ==~ /([a-f0-9]+):.+:(.*)/) {
+					gitLogAttributes = getGitLogAttributes(gitLogLine)
+				}
+				else {
+					matcher = gitLogLine =~ /^\+\s*.+ group: .*, name: \"(.+)", .*version: \"(.*)\"/
+
+					if (!matcher.find()) {
+						matcher = gitLogLine =~ /^\+([^ \t]+)=([0-9.]+)/
+
+						if (!matcher.find()) {
+							return
+						}
 					}
+
+					String dependencyName = matcher.group(1)
+					String dependencyVersion = matcher.group(2)
+
+					dependencies = dependencies + "\n" + _format("- [" + gitLogAttributes["TICKET-NUMBER"] + "]: Update the " + dependencyName + " dependency to version " + dependencyVersion + ".")
+
+					ticketNumbers.add(gitLogAttributes["TICKET-NUMBER"])
 				}
+			}
 
-				String endRange = commitRange.split("\\.\\.")[1]
+			String descriptions = ""
 
-				standardOutputByteArrayOutputStream = new ByteArrayOutputStream()
+			if (changelogDescriptionsFile.exists()) {
 
-				exec {
-					commandLine "git", "log", "-1", "--pretty=format:%H:%cd:%s", "--date=short", "${endRange}"
-					standardOutput = standardOutputByteArrayOutputStream
-					workingDir = projectDir.parentFile
+				String escapedDotVersion = version.replace(".", "\\.")
+
+				matcher = changelogDescriptionsFile.text =~ /(?s)${escapedDotVersion}:description(.+?)(?:(?=\d+\.\d+\.\d+:description)|$)/
+
+				if (matcher.find()) {
+					descriptions = "\n" + matcher.group(1).trim()
 				}
+			}
 
-				String publishDate = standardOutputByteArrayOutputStream.toString().split(":")[1]
+			String endRange = commitRange.split("\\.\\.")[1]
 
-				if ((commits.length() > 0) || (dependencies.length() > 0) || (descriptions.length() > 0)) {
-					text += """\
+			standardOutputByteArrayOutputStream = new ByteArrayOutputStream()
+
+			exec {
+				commandLine "git", "log", "-1", "--pretty=format:%H:%cd:%s", "--date=short", "${endRange}"
+				standardOutput = standardOutputByteArrayOutputStream
+			}
+
+			String publishDate = standardOutputByteArrayOutputStream.toString().split(":")[1]
+
+			if ((commits.length() > 0) || (dependencies.length() > 0) || (descriptions.length() > 0)) {
+				text += """\
 						|
 						|
 						|## ${version} - ${publishDate}""".stripMargin()
-				}
+			}
 
-				if (commits.length() > 0) {
-					text += """\
+			if (commits.length() > 0) {
+				text += """\
 						|
 						|
 						|### Commits""".stripMargin()
 
-					text += commits
-				}
+				text += commits
+			}
 
-				if (dependencies.length() > 0) {
-					text += """\
+			if (dependencies.length() > 0) {
+				text += """\
 						|
 						|
 						|### Dependencies""".stripMargin()
 
-					text += dependencies
-				}
+				text += dependencies
+			}
 
-				if (descriptions.length() > 0) {
-					text += """\
+			if (descriptions.length() > 0) {
+				text += """\
 						|
 						|
 						|### Description""".stripMargin()
 
-					text += descriptions
-				}
+				text += descriptions
 			}
+		}
 
-			if (ticketNumbers.size > 0) {
-				text += """\
+		if (ticketNumbers.size > 0) {
+			text += """\
 					|
 					|
 					|## Markdown Links""".stripMargin()
 
-				Matcher matcher = ticketNumbers =~ /([A-Z]+-\d+)/
+			Matcher matcher = ticketNumbers =~ /([A-Z]+-\d+)/
 
-				List<String> tickets = []
+			List<String> tickets = []
 
-				while (matcher.find()) {
-					tickets.add(matcher.group(1))
-				}
-
-				tickets = tickets.flatten().unique().sort{
-					ticket1, ticket2 ->
-
-					String ticketType1 = ticket1.substring(0, ticket1.indexOf("-"))
-					String ticketType2 = ticket2.substring(0, ticket2.indexOf("-"))
-
-					String ticketNumber1 = ticket1.substring(ticket1.indexOf("-") + 1)
-					String ticketNumber2 = ticket2.substring(ticket2.indexOf("-") + 1)
-
-					if (ticketType1 == ticketType2) {
-						return Integer.valueOf(ticketNumber1) - Integer.valueOf(ticketNumber2)
-					}
-
-					return ticketType1.compareTo(ticketType2)
-				}
-
-				tickets.each {
-					String ticket ->
-
-					text += "\n[" + ticket + "](https://issues.liferay.com/browse/" + ticket + ")"
-				}
+			while (matcher.find()) {
+				tickets.add(matcher.group(1))
 			}
 
-			File changelogMarkdownFile = file("sdk/" + sdkProjectDir.name + "/CHANGELOG.markdown")
+			tickets = tickets.flatten().unique().sort{
+				ticket1, ticket2 ->
 
-			changelogMarkdownFile.text = text
+				String ticketType1 = ticket1.substring(0, ticket1.indexOf("-"))
+				String ticketType2 = ticket2.substring(0, ticket2.indexOf("-"))
 
-			logger.lifecycle "Updated '{}'", changelogMarkdownFile
+				String ticketNumber1 = ticket1.substring(ticket1.indexOf("-") + 1)
+				String ticketNumber2 = ticket2.substring(ticket2.indexOf("-") + 1)
+
+				if (ticketType1 == ticketType2) {
+					return Integer.valueOf(ticketNumber1) - Integer.valueOf(ticketNumber2)
+				}
+
+				return ticketType1.compareTo(ticketType2)
+			}
+
+			tickets.each {
+				String ticket ->
+
+				text += "\n[" + ticket + "](https://issues.liferay.com/browse/" + ticket + ")"
+			}
 		}
+
+		File changelogMarkdownFile = file("CHANGELOG.markdown")
+
+		changelogMarkdownFile.text = text
+
+		logger.lifecycle "Updated '{}'", changelogMarkdownFile
 	}
 }
 
@@ -282,116 +264,141 @@ recordCommits {
 	group = "changelogs"
 
 	doLast {
-		sdkDir.eachDir {
-			File sdkProjectDir ->
 
-			if (project.properties["projectName"] && (project.properties["projectName"] != sdkProjectDir.name)) {
-				return
-			}
+		ByteArrayOutputStream standardOutputByteArrayOutputStream = new ByteArrayOutputStream()
 
-			if (sdkProjectDir.name == "project-templates") {
-				return
-			}
-
-			ByteArrayOutputStream standardOutputByteArrayOutputStream = new ByteArrayOutputStream()
-
-			exec {
-				commandLine "git", "--no-pager", "log", "--date=rfc2822", "--format=fuller", "-p", "--", "modules/sdk/" + sdkProjectDir.name + "/"
-				standardOutput = standardOutputByteArrayOutputStream
-				workingDir = projectDir.parentFile
-			}
-
-			String gitLogOutput = standardOutputByteArrayOutputStream.toString()
-
-			List<String> commits = []
-
-			if (Validator.isNotNull(gitLogOutput)) {
-				String text = gitLogOutput
-
-				if (text.startsWith("commit ")) {
-					text = text.substring(7)
-				}
-
-				commits = text.split("\ncommit ")
-			}
-
-			String lastVersionCommitId = null
-			VersionNumber lastVersionNumber = null
-			Map<VersionNumber, String> recordCommitIDs = [:]
-
-			Closure<Void> getPublishedVersionNumberClosure = {
-				String diff, String projectName ->
-
-				int x = diff.indexOf("/" + projectName + "/bnd.bnd");
-				int y = diff.indexOf("-Bundle-Version: ", x)
-
-				if ((x != -1) && (y != -1)) {
-					return VersionNumber.parse(diff.substring(y + 17, diff.indexOf("\n", y)))
-				}
-
-				return null
-			}
-
-			for (int i = 0; i < (commits.size() - 1); i++) {
-				String commit = commits.get(i)
-
-				String[] lines = commit.split("\n", 8)
-
-				VersionNumber publishedVersionNumber = getPublishedVersionNumberClosure(lines[7], sdkProjectDir.name)
-
-				if ((publishedVersionNumber != null) && !recordCommitIDs.containsKey(publishedVersionNumber) && (publishedVersionNumber.major > 0) && ((lastVersionNumber == null) || (publishedVersionNumber.compareTo(lastVersionNumber) < 0))) {
-					String commitDateString = lines[4]
-					String commitId = lines[0]
-
-					Date commitDate = Date.parse("E, d MMM yyyy H:m:s Z", commitDateString.substring(12))
-
-					for (int j = i - 1; j >= 0; j--) {
-						String previousCommit = commits.get(j)
-
-						lines = previousCommit.split("\n", 8)
-
-						String previousCommitMessage = lines[6]
-
-						if (!previousCommitMessage.contains("prep next") || (getPublishedVersionNumberClosure(lines[7], sdkProjectDir.name) != null)) {
-							break
-						}
-
-						String previousCommitDateString = lines[4]
-
-						Date previousCommitDate = Date.parse("E, d MMM yyyy H:m:s Z", previousCommitDateString.substring(12))
-
-						TimeDuration duration = TimeCategory.minus(previousCommitDate, commitDate)
-
-						if (duration.toMilliseconds() > 1800000) {
-							break
-						}
-
-						commitId = lines[0]
-					}
-
-					if (lastVersionNumber != null) {
-						recordCommitIDs.put(lastVersionNumber, commitId + ".." + lastVersionCommitId)
-					}
-
-					lastVersionCommitId = commitId
-					lastVersionNumber = publishedVersionNumber
-				}
-			}
-
-			if (recordCommitIDs.size() <= 0) {
-				return
-			}
-
-			File changelogCommitsFile = file("sdk/" + sdkProjectDir.name + "/CHANGELOG.commits")
-
-			changelogCommitsFile.text = recordCommitIDs.collect {
-				VersionNumber versionNumber, String commitIds ->
-
-				"${versionNumber}:${commitIds}"
-			} join "\n"
-
-			logger.lifecycle "Updated '{}'", changelogCommitsFile
+		exec {
+			commandLine "git", "--no-pager", "log", "--date=rfc2822", "--format=fuller", "-p"
+			standardOutput = standardOutputByteArrayOutputStream
 		}
+
+		String gitLogOutput = standardOutputByteArrayOutputStream.toString()
+
+		List<String> commits = []
+
+		if (Validator.isNotNull(gitLogOutput)) {
+			String text = gitLogOutput
+
+			if (text.startsWith("commit ")) {
+				text = text.substring(7)
+			}
+
+			commits = text.split("\ncommit ")
+		}
+
+		String lastVersionCommitId = null
+		VersionNumber lastVersionNumber = null
+		Map<VersionNumber, String> recordCommitIDs = [:]
+
+		Closure<Void> getPublishedVersionNumberClosure = {
+			//				String diff, String fileName ->
+			String diff, String fileName1, String fileName2 ->
+
+			String[] diffFiles = diff.split("\ndiff --git ")
+
+			for (String diffFile : diffFiles) {
+				//					if (!diffFile.startsWith("a/" + fileName + " b/" + fileName)) {
+				//						continue
+				//					}
+				//
+				//					Matcher matcher = diffFile =~ /\n\+version = "(\d+\.\d+\.\d+)"\n/
+				//
+				//					String version = null
+				//
+				//					if (matcher.find()) {
+				//						version = matcher.group(1)
+				//
+				//						return VersionNumber.parse(version)
+				//					}
+
+				if (diffFile.startsWith("a/" + fileName1 + " b/" + fileName1)) {
+					Matcher matcher = diffFile =~ /\n\+version = "(\d+\.\d+\.\d+)"\n/
+
+					String version = null
+
+					if (matcher.find()) {
+						version = matcher.group(1)
+
+						return VersionNumber.parse(version)
+					}
+				}
+
+				if (diffFile.startsWith("a/" + fileName2 + " b/" + fileName2)) {
+					Matcher matcher = diffFile =~ /\n-base-version: *(\d+\.\d+\.\d+)\n/
+
+					String version = null
+
+					if (matcher.find()) {
+						version = matcher.group(1)
+
+						return VersionNumber.parse(version)
+					}
+				}
+
+			}
+
+			return null
+		}
+
+		for (int i = 0; i < (commits.size() - 1); i++) {
+			String commit = commits.get(i)
+
+			String[] lines = commit.split("\n", 8)
+			//				VersionNumber publishedVersionNumber = getPublishedVersionNumberClosure(lines[7], "cli/build.gradle")
+			VersionNumber publishedVersionNumber = getPublishedVersionNumberClosure(lines[7], "cli/build.gradle", "cnf/build.bnd")
+
+			if ((publishedVersionNumber != null) && !recordCommitIDs.containsKey(publishedVersionNumber) && (publishedVersionNumber.major > 0) && ((lastVersionNumber == null) || (publishedVersionNumber.compareTo(lastVersionNumber) < 0))) {
+				String commitDateString = lines[4]
+				String commitId = lines[0]
+				Date commitDate = Date.parse("E, d MMM yyyy H:m:s Z", commitDateString.substring(12))
+
+				for (int j = i - 1; j >= 0; j--) {
+					String previousCommit = commits.get(j)
+
+					lines = previousCommit.split("\n", 8)
+
+					String previousCommitMessage = lines[6]
+
+					//						if (!previousCommitMessage.contains("Prepare") || (getPublishedVersionNumberClosure(lines[7], "cli/build.gradle") != null)) {
+					if (!previousCommitMessage.contains("Prepare") || (getPublishedVersionNumberClosure(lines[7], "cli/build.gradle", "cnf/build.bnd") != null)) {
+						break
+					}
+
+					String previousCommitDateString = lines[4]
+
+					Date previousCommitDate = Date.parse("E, d MMM yyyy H:m:s Z", previousCommitDateString.substring(12))
+
+					TimeDuration duration = TimeCategory.minus(previousCommitDate, commitDate)
+
+					if (duration.toMilliseconds() > 1800000) {
+						break
+					}
+
+					commitId = lines[0]
+				}
+
+				if (lastVersionNumber != null) {
+					recordCommitIDs.put(lastVersionNumber, commitId + ".." + lastVersionCommitId)
+				}
+
+				lastVersionCommitId = commitId
+				lastVersionNumber = publishedVersionNumber
+			}
+		}
+
+		if (recordCommitIDs.size() <= 0) {
+			return
+		}
+		File changelogCommitsFile = file("CHANGELOG.commits")
+
+		changelogCommitsFile.text = recordCommitIDs.collect {
+			VersionNumber versionNumber, String commitIds ->
+
+			"${versionNumber}:${commitIds}"
+		} join "\n"
+
+		logger.lifecycle "Updated '{}'", changelogCommitsFile
+
 	}
 }
 
