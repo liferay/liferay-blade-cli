@@ -294,7 +294,6 @@ recordCommits {
 			String[] diffFiles = diff.split("\ndiff --git ")
 
 			for (String diffFile : diffFiles) {
-
 				if (diffFile.startsWith("a/" + fileName1 + " b/" + fileName1)) {
 					Matcher matcher = diffFile =~ /\n\+version = "(\d+\.\d+\.\d+)"\n/
 
@@ -342,8 +341,7 @@ recordCommits {
 
 					String previousCommitMessage = lines[6]
 
-					if ((!previousCommitMessage.matches(".*[Pp]rep next.*") && !previousCommitMessage.matches(".*[Pp]repare.*")) ||
-						(getPublishedVersionNumberClosure(lines[7], "cli/build.gradle", "cnf/build.bnd") != null)) {
+					if ((!previousCommitMessage.matches(".*[Pp]rep next.*") && !previousCommitMessage.matches(".*[Pp]repare.*")) || (getPublishedVersionNumberClosure(lines[7], "cli/build.gradle", "cnf/build.bnd") != null)) {
 						break
 					}
 
