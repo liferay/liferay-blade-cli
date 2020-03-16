@@ -21,8 +21,6 @@ buildscript {
 task buildChangelogs
 task recordCommits
 
-//File sdkDir = file("sdk")
-
 buildChangelogs {
 	dependsOn recordCommits
 
@@ -291,25 +289,11 @@ recordCommits {
 		Map<VersionNumber, String> recordCommitIDs = [:]
 
 		Closure<Void> getPublishedVersionNumberClosure = {
-			//				String diff, String fileName ->
 			String diff, String fileName1, String fileName2 ->
 
 			String[] diffFiles = diff.split("\ndiff --git ")
 
 			for (String diffFile : diffFiles) {
-				//					if (!diffFile.startsWith("a/" + fileName + " b/" + fileName)) {
-				//						continue
-				//					}
-				//
-				//					Matcher matcher = diffFile =~ /\n\+version = "(\d+\.\d+\.\d+)"\n/
-				//
-				//					String version = null
-				//
-				//					if (matcher.find()) {
-				//						version = matcher.group(1)
-				//
-				//						return VersionNumber.parse(version)
-				//					}
 
 				if (diffFile.startsWith("a/" + fileName1 + " b/" + fileName1)) {
 					Matcher matcher = diffFile =~ /\n\+version = "(\d+\.\d+\.\d+)"\n/
@@ -344,7 +328,6 @@ recordCommits {
 			String commit = commits.get(i)
 
 			String[] lines = commit.split("\n", 8)
-			//				VersionNumber publishedVersionNumber = getPublishedVersionNumberClosure(lines[7], "cli/build.gradle")
 			VersionNumber publishedVersionNumber = getPublishedVersionNumberClosure(lines[7], "cli/build.gradle", "cnf/build.bnd")
 
 			if ((publishedVersionNumber != null) && !recordCommitIDs.containsKey(publishedVersionNumber) && (publishedVersionNumber.major > 0) && ((lastVersionNumber == null) || (publishedVersionNumber.compareTo(lastVersionNumber) < 0))) {
@@ -359,8 +342,8 @@ recordCommits {
 
 					String previousCommitMessage = lines[6]
 
-					//						if (!previousCommitMessage.contains("Prepare") || (getPublishedVersionNumberClosure(lines[7], "cli/build.gradle") != null)) {
-					if (!previousCommitMessage.contains("Prepare") || (getPublishedVersionNumberClosure(lines[7], "cli/build.gradle", "cnf/build.bnd") != null)) {
+					if ((!previousCommitMessage.matches(".*[Pp]rep next.*") && !previousCommitMessage.matches(".*[Pp]repare.*")) ||
+						(getPublishedVersionNumberClosure(lines[7], "cli/build.gradle", "cnf/build.bnd") != null)) {
 						break
 					}
 
