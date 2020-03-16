@@ -118,8 +118,8 @@ dependencies {
 }
 
 downloadPortal {
-	src "https://releases-cdn.liferay.com/portal/7.0.3-ga4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip"
-	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip')
+	src "https://releases-cdn.liferay.com/portal/7.3.0-ga1/liferay-ce-portal-tomcat-7.3.0-ga1-20200127150653953.tar.gz"
+	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.3.0-ga1-20200127150653953.tar.gz')
 	onlyIfNewer true
 }
 
@@ -229,7 +229,7 @@ test {
 
 	systemProperty "bladeJarPath", jar.archivePath
 	systemProperty "buildDir", "${buildDir}"
-	systemProperty "liferay.home", "${buildDir}/liferay-ce-portal-7.0-ga4"
+	systemProperty "liferay.home", "${buildDir}/liferay-ce-portal-7.3.0-ga1"
 	systemProperty "jna.nosys", "true"
 	systemProperty "testOutputPath", sourceSets.test.output.classesDirs.singleFile.absolutePath
 
@@ -279,7 +279,7 @@ unzipManifest {
 
 unzipPortal {
 	dependsOn downloadPortal
-	from zipTree(downloadPortal.dest)
+	from tarTree(resources.gzip(downloadPortal.dest))
 	into buildDir
 }
 

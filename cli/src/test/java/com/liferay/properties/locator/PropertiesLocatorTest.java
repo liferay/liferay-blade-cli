@@ -57,6 +57,22 @@ public class PropertiesLocatorTest {
 	}
 
 	@Test
+	public void testPropertiesFromComments() throws Exception {
+		File outputFile = new File(_buildDir, "commentedProperties.out");
+
+		String[] args = {
+			"-p", "test-resources/originalProperties.properties",
+				"-d", _liferayHome.getAbsolutePath(), "-o", outputFile.getAbsolutePath()
+		};
+
+		PropertiesLocator.main(args);
+
+		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
+
+		Assert.assertTrue(testOutput.contains("commented.properties"));
+	}
+
+	@Test
 	public void testPropertiesLocatorOutputFile() throws Exception {
 		String version = System.getProperty("java.specification.version");
 
