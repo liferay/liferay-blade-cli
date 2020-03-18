@@ -247,7 +247,7 @@ buildChangelogs {
 			tickets.each {
 				String ticket ->
 
-				text += "\n[" + ticket + "](https://issues.liferay.com/browse/" + ticket + ")"
+				text += "\n[" + ticket + "]: https://issues.liferay.com/browse/" + ticket
 			}
 		}
 
