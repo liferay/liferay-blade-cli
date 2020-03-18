@@ -847,7 +847,7 @@ public class PropertiesLocator {
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-			br.lines().filter(line -> line.matches(".*#[a-zA-Z].*=")
+			br.lines().filter(line -> line.matches(".*#[a-zA-Z\\.\\[\\]]+=.*")
 				).map(line -> line.substring(line.indexOf("#") + 1, line.indexOf("="))).forEach(line -> properties.put(line, ""));
 
 			is.close();
