@@ -9,7 +9,9 @@ import org.gradle.util.GUtil
 import org.gradle.util.VersionNumber
 
 buildscript {
-	apply from: file("build-buildscript.gradle"), to: buildscript
+	dependencies {
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.defaults", version: "latest.release"
+	}
 
 	repositories {
 		maven {
