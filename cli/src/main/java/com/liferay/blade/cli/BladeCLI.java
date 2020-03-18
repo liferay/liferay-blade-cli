@@ -65,6 +65,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.ServiceLoader;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -85,7 +86,7 @@ public class BladeCLI {
 
 		Collection<BaseCommand<?>> allCommands = _getCommandsByClassLoader(classLoader);
 
-		Map<String, BaseCommand<?>> commandMap = new HashMap<>();
+		Map<String, BaseCommand<?>> commandMap = new TreeMap<>();
 
 		Collection<BaseCommand<?>> commandsToRemove = new ArrayList<>();
 
