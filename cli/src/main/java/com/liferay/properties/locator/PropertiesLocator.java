@@ -27,11 +27,9 @@ import com.liferay.blade.cli.util.StringPool;
 import com.liferay.blade.cli.util.StringUtil;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -635,6 +633,35 @@ public class PropertiesLocator {
 		}
 	}
 
+	private static void _getCommentedPropertiesFromJar(String propertiesJarURL, Properties properties)
+		throws Exception {
+
+		try {
+			URL url = new URL(propertiesJarURL);
+
+			InputStream is = url.openStream();
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+			Stream<String> stream = br.lines();
+
+			stream.filter(
+				line -> line.matches(".*#[a-zA-Z\\.\\[\\]]+=.*")
+			).map(
+				line -> line.substring(line.indexOf("#") + 1, line.indexOf("="))
+			).forEach(
+				line -> properties.put(line, "")
+			);
+
+			is.close();
+		}
+		catch (Exception e) {
+			System.out.println("Unable to read properties file " + propertiesJarURL);
+
+			throw e;
+		}
+	}
+
 	private static List<Pair<String, String[]>> _getConfigurationProperties(
 		Map<String, ConfigurationClassData> configClassesMap) {
 
@@ -672,7 +699,8 @@ public class PropertiesLocator {
 				path -> {
 					try {
 						_getPropertiesFromJar("jar:file:" + path.toString() + "!/portal.properties", properties);
-						_getCommentedPropertiesFromJar("jar:file:" + path.toString() + "!/portal.properties", properties);
+						_getCommentedPropertiesFromJar(
+							"jar:file:" + path.toString() + "!/portal.properties", properties);
 					}
 					catch (Exception e) {
 						e.printStackTrace();
@@ -763,6 +791,9 @@ public class PropertiesLocator {
 		return numOccurrences;
 	}
 
+	/*
+		We get portlet names from first two words in a property
+	 */
 	private static String _getPortletNameAsProperty(String[] portletNames) {
 		String portletNameAsProperty = StringPool.BLANK;
 
@@ -777,9 +808,6 @@ public class PropertiesLocator {
 		return portletNameAsProperty;
 	}
 
-	/*
-		We get portlet names from first two words in a property
-	 */
 	private static String[] _getPortletNames(String property) {
 		String[] portletNames = new String[0];
 
@@ -829,26 +857,6 @@ public class PropertiesLocator {
 			InputStream is = url.openStream();
 
 			properties.load(is);
-
-			is.close();
-		}
-		catch (Exception e) {
-			System.out.println("Unable to read properties file " + propertiesJarURL);
-
-			throw e;
-		}
-	}
-
-	private static void _getCommentedPropertiesFromJar(String propertiesJarURL, Properties properties) throws Exception {
-		try {
-			URL url = new URL(propertiesJarURL);
-
-			InputStream is = url.openStream();
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-			br.lines().filter(line -> line.matches(".*#[a-zA-Z\\.\\[\\]]+=.*")
-				).map(line -> line.substring(line.indexOf("#") + 1, line.indexOf("="))).forEach(line -> properties.put(line, ""));
 
 			is.close();
 		}

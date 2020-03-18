@@ -40,6 +40,26 @@ public class PropertiesLocatorTest {
 	}
 
 	@Test
+	public void testPropertiesFromComments() throws Exception {
+		File outputFile = new File(_buildDir, "commentedProperties.out");
+
+		String[] args = {
+			"-p", "test-resources/originalProperties.properties", "-d", _liferayHome.getAbsolutePath(), "-o",
+			outputFile.getAbsolutePath()
+		};
+
+		PropertiesLocator.main(args);
+
+		Path propertiesPath = Paths.get("test-resources/upgradeProperties.out");
+
+		String expectedOutput = new String(Files.readAllBytes(propertiesPath));
+
+		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
+
+		Assert.assertEquals(expectedOutput.replaceAll("\\r", ""), testOutput.replaceAll("\\r", ""));
+	}
+
+	@Test
 	public void testPropertiesLocatorAPI() throws Exception {
 		PropertiesLocatorArgs args = new PropertiesLocatorArgs();
 
@@ -54,26 +74,6 @@ public class PropertiesLocatorTest {
 		Assert.assertNotNull(problems);
 
 		Assert.assertEquals(problems.toString(), 627, problems.size());
-	}
-
-	@Test
-	public void testPropertiesFromComments() throws Exception {
-		File outputFile = new File(_buildDir, "commentedProperties.out");
-
-		String[] args = {
-			"-p", "test-resources/originalProperties.properties",
-				"-d", _liferayHome.getAbsolutePath(), "-o", outputFile.getAbsolutePath()
-		};
-
-		PropertiesLocator.main(args);
-
-		Path propertiesPath = Paths.get("test-resources/upgradeProperties.out");
-
-		String expectedOutput = new String(Files.readAllBytes(propertiesPath));
-
-		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
-
-		Assert.assertEquals(expectedOutput.replaceAll("\\r", ""), testOutput.replaceAll("\\r", ""));
 	}
 
 	@Test
