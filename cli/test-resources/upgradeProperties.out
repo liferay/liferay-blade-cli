@@ -1,0 +1,31 @@
+Checking the location for old properties in the new version
+-----------------------------------------------------------
+
+
+Properties moved to OSGI configuration:
+	index.search.query.suggestion.dictionary[ca_ES] can match with the following OSGI properties:
+		searchQueryResultWindowLimit from com.liferay.portal.search.configuration.DefaultSearchResultPermissionFilterConfiguration
+	index.search.query.suggestion.dictionary[en_US] can match with the following OSGI properties:
+		searchQueryResultWindowLimit from com.liferay.portal.search.configuration.DefaultSearchResultPermissionFilterConfiguration
+	index.search.query.suggestion.dictionary[en_US][999999] can match with the following OSGI properties:
+		searchQueryResultWindowLimit from com.liferay.portal.search.configuration.DefaultSearchResultPermissionFilterConfiguration
+	index.search.query.suggestion.dictionary[es_ES] can match with the following OSGI properties:
+		searchQueryResultWindowLimit from com.liferay.portal.search.configuration.DefaultSearchResultPermissionFilterConfiguration
+
+We have not found a new property for the following old properties (check if you still need them or check the documentation to find a replacement):
+	buffered.increment.enabled[CustomEntity]
+	buffered.increment.standby.queue.threshold[CustomEntity]
+	buffered.increment.standby.time.upper.limit[CustomEntity]
+	buffered.increment.threadpool.keep.alive.time[CustomEntity]
+	buffered.increment.threadpool.max.size[CustomEntity]
+	index.search.spell.checker.dictionary[ca_ES]
+	index.search.spell.checker.dictionary[en_US][999999]
+
+The following properties still exist in the new portal.properties:
+	buffered.increment.enabled[AssetEntry]
+	buffered.increment.standby.queue.threshold[AssetEntry]
+	buffered.increment.standby.time.upper.limit[AssetEntry]
+	buffered.increment.threadpool.keep.alive.time[AssetEntry]
+	buffered.increment.threadpool.max.size[AssetEntry]
+	sites.friendly.url.page.not.found
+	web.server.protocol

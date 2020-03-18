@@ -67,9 +67,13 @@ public class PropertiesLocatorTest {
 
 		PropertiesLocator.main(args);
 
+		Path propertiesPath = Paths.get("test-resources/upgradeProperties.out");
+
+		String expectedOutput = new String(Files.readAllBytes(propertiesPath));
+
 		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
 
-		Assert.assertTrue(testOutput.contains("commented.properties"));
+		Assert.assertEquals(expectedOutput.replaceAll("\\r", ""), testOutput.replaceAll("\\r", ""));
 	}
 
 	@Test
