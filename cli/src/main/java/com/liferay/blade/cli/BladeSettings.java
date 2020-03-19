@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -86,14 +87,14 @@ public class BladeSettings {
 					"WARNING: blade commands will not function properly in a Maven workspace unless the blade " +
 						"profile is set to \"maven\". Should the settings for this workspace be updated?";
 
-				if (Prompter.confirm(question, true)) {
+				if (Prompter.confirm(question, bladeCLI.in(), bladeCLI.out(), Optional.of(true))) {
 					setProfileName("maven");
 					save();
 				}
 				else {
 					question = "Should blade remember this setting for this workspace?";
 
-					if (Prompter.confirm(question, true)) {
+					if (Prompter.confirm(question, bladeCLI.in(), bladeCLI.out(), Optional.of(true))) {
 						_properties.setProperty("profile.prompt.disabled", "true");
 						save();
 					}

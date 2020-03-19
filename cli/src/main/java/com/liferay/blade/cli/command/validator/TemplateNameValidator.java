@@ -49,7 +49,7 @@ public class TemplateNameValidator implements ValidatorSupplier {
 		Collection<String> possibleValues = get();
 
 		if (!possibleValues.contains(value)) {
-			throw new ParameterException(value + " is not amoung the possible values.");
+			throw new ParameterException(value + " is not among the possible values.");
 		}
 	}
 
