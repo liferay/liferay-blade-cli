@@ -522,9 +522,6 @@ public class BladeCLI {
 				catch (ParameterException pe) {
 					error(_jCommander.getParsedCommand() + ": " + pe.getMessage());
 				}
-				catch (Throwable th) {
-					th.printStackTrace();
-				}
 			}
 		}
 		catch (GradleExecutionException e) {
@@ -1069,7 +1066,6 @@ public class BladeCLI {
 
 				String[] parameterAnnotationNames = parameterAnnotation.names();
 
-				//if (parameterAnnotation.required()) {
 				List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
 
 				StringBuilder sb = null;
@@ -1112,7 +1108,6 @@ public class BladeCLI {
 
 					break;
 				}
-				//}
 			}
 		}
 
