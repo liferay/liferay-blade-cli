@@ -73,7 +73,7 @@ public class PropertiesLocatorTest {
 
 		Assert.assertNotNull(problems);
 
-		Assert.assertEquals(problems.toString(), 627, problems.size());
+		Assert.assertEquals(problems.toString(), 658, problems.size());
 	}
 
 	@Test
