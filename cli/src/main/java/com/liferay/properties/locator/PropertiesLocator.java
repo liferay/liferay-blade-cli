@@ -708,6 +708,8 @@ public class PropertiesLocator {
 				});
 		}
 
+		_removeScope(properties);
+
 		if (properties.isEmpty()) {
 			throw new Exception("File portal.properties does not exist in " + bundlePath);
 		}
@@ -879,6 +881,10 @@ public class PropertiesLocator {
 
 			String key = element.toString();
 
+			if (key.contains("[")) {
+				key = key.substring(0, key.indexOf("["));
+			}
+
 			if (newProperties.getProperty(key) == null) {
 				removedProperties.add(key);
 			}
@@ -1033,6 +1039,18 @@ public class PropertiesLocator {
 		}
 
 		return property;
+	}
+
+	private static void _removeScope(Properties properties) {
+		Set<String> propertiesSet = properties.stringPropertyNames();
+
+		for (String property : propertiesSet) {
+			if (property.contains("[")) {
+				property = property.substring(0, property.indexOf("["));
+			}
+
+			properties.put(property, "");
+		}
 	}
 
 	private static final String[] _COMMON_PREFIXES = {
