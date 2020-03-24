@@ -26,11 +26,13 @@ import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.StringPool;
 import com.liferay.blade.cli.util.StringUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
@@ -631,6 +633,28 @@ public class PropertiesLocator {
 		}
 	}
 
+	private static void _getCommentedPropertiesFromJar(String propertiesJarURL, Properties properties)
+		throws Exception {
+
+		URL url = new URL(propertiesJarURL);
+
+		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+			bufferedReader.lines(
+			).filter(
+				line -> line.matches(".*#[a-zA-Z\\.\\[\\]]+=.*")
+			).map(
+				line -> line.substring(line.indexOf("#") + 1, line.indexOf("="))
+			).forEach(
+				line -> properties.put(line, "")
+			);
+		}
+		catch (Exception e) {
+			System.err.println("Unable to read properties file from jar " + propertiesJarURL);
+
+			throw e;
+		}
+	}
+
 	private static List<Pair<String, String[]>> _getConfigurationProperties(
 		Map<String, ConfigurationClassData> configClassesMap) {
 
@@ -668,12 +692,16 @@ public class PropertiesLocator {
 				path -> {
 					try {
 						_getPropertiesFromJar("jar:file:" + path.toString() + "!/portal.properties", properties);
+						_getCommentedPropertiesFromJar(
+							"jar:file:" + path.toString() + "!/portal.properties", properties);
 					}
 					catch (Exception e) {
 						e.printStackTrace();
 					}
 				});
 		}
+
+		_removeScopedProperties(properties);
 
 		if (properties.isEmpty()) {
 			throw new Exception("File portal.properties does not exist in " + bundlePath);
@@ -758,6 +786,9 @@ public class PropertiesLocator {
 		return numOccurrences;
 	}
 
+	/*
+		We get portlet names from first two words in a property
+	 */
 	private static String _getPortletNameAsProperty(String[] portletNames) {
 		String portletNameAsProperty = StringPool.BLANK;
 
@@ -772,9 +803,6 @@ public class PropertiesLocator {
 		return portletNameAsProperty;
 	}
 
-	/*
-		We get portlet names from first two words in a property
-	 */
 	private static String[] _getPortletNames(String property) {
 		String[] portletNames = new String[0];
 
@@ -824,6 +852,7 @@ public class PropertiesLocator {
 			InputStream is = url.openStream();
 
 			properties.load(is);
+
 			is.close();
 		}
 		catch (Exception e) {
@@ -844,6 +873,10 @@ public class PropertiesLocator {
 			Object element = enuKeys.nextElement();
 
 			String key = element.toString();
+
+			if (key.contains("[")) {
+				key = key.substring(0, key.indexOf("["));
+			}
 
 			if (newProperties.getProperty(key) == null) {
 				removedProperties.add(key);
@@ -999,6 +1032,18 @@ public class PropertiesLocator {
 		}
 
 		return property;
+	}
+
+	private static void _removeScopedProperties(Properties properties) {
+		Set<String> propertiesSet = properties.stringPropertyNames();
+
+		for (String property : propertiesSet) {
+			if (property.contains("[")) {
+				property = property.substring(0, property.indexOf("["));
+			}
+
+			properties.put(property, "");
+		}
 	}
 
 	private static final String[] _COMMON_PREFIXES = {
