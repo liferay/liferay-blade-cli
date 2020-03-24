@@ -27,6 +27,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build
+        env:
+          LIFERAY_NEXUS_USERNAME: ${{ secrets.liferay_nexus_username }}
+          LIFERAY_NEXUS_PASSWORD: ${{ secrets.liferay_nexus_password }}
         shell: bash
         run: |
           ./publish.sh snapshots
