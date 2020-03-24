@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import java.text.MessageFormat;
+
 import java.util.Map;
 
 import org.junit.Assert;
@@ -88,6 +90,22 @@ public class SampleTemplatesTest {
 		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "sample", "foo-sample"};
 
 		_bladeTest.run(args);
+
+		File projectDir = new File(_rootDir, "foo-sample");
+
+		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
+
+		File buildGradle = new File(projectDir, "build.gradle");
+
+		Assert.assertTrue("Expected build.gradle to exist " + buildGradle, buildGradle.exists());
+
+		String contents = new String(Files.readAllBytes(buildGradle.toPath()));
+
+		String line =
+			"compileOnly group: \"com.liferay.portal\", name: \"com.liferay.portal.kernel\", version: \"2.0.0\"";
+
+		Assert.assertTrue(
+			MessageFormat.format("Expected contents to contain {0}\n{1}", line, contents), contents.contains(line));
 	}
 
 	@Rule
