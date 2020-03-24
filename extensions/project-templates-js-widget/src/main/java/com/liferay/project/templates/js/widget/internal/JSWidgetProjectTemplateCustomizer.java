@@ -16,6 +16,8 @@
 
 package com.liferay.project.templates.js.widget.internal;
 
+import com.liferay.blade.cli.util.NodeUtil;
+import com.liferay.blade.cli.util.OSDetector;
 import com.liferay.project.templates.extensions.ProjectTemplateCustomizer;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
