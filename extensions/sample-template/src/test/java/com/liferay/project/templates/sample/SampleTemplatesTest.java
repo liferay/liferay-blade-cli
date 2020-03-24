@@ -38,7 +38,7 @@ import org.junit.rules.TemporaryFolder;
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class TemplatesTest {
+public class SampleTemplatesTest {
 
 	@Before
 	public void setUp() throws Exception {
@@ -57,6 +57,8 @@ public class TemplatesTest {
 		bladeTestBuilder.setExtensionsDir(extensionsDirPath);
 
 		_bladeTest = bladeTestBuilder.build();
+
+		_rootDir = temporaryFolder.getRoot();
 	}
 
 	@Test
@@ -77,6 +79,15 @@ public class TemplatesTest {
 		Assert.assertNotNull(templates);
 
 		Assert.assertEquals(templates.toString(), _NUM_BUILTIN_TEMPLATES + 1, templates.size());
+	}
+
+	@Test
+	public void testSampleProjectTemplate() throws Exception {
+		_setupTestExtensions();
+
+		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "sample", "foo-sample"};
+
+		_bladeTest.run(args);
 	}
 
 	@Rule
@@ -113,5 +124,6 @@ public class TemplatesTest {
 	private static final int _NUM_BUILTIN_TEMPLATES = 32;
 
 	private BladeTest _bladeTest;
+	private File _rootDir;
 
 }
