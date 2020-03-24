@@ -701,7 +701,7 @@ public class PropertiesLocator {
 				});
 		}
 
-		_removeScope(properties);
+		_removeScopedProperties(properties);
 
 		if (properties.isEmpty()) {
 			throw new Exception("File portal.properties does not exist in " + bundlePath);
@@ -1034,7 +1034,7 @@ public class PropertiesLocator {
 		return property;
 	}
 
-	private static void _removeScope(Properties properties) {
+	private static void _removeScopedProperties(Properties properties) {
 		Set<String> propertiesSet = properties.stringPropertyNames();
 
 		for (String property : propertiesSet) {
