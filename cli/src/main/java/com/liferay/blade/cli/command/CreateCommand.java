@@ -213,12 +213,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			thread.setContextClassLoader(oldContextClassLoader);
 		}
 
-		List<File> archetypesDirs = projectTemplatesArgs.getArchetypesDirs();
-
-		Path customTemplatesPath = bladeCLI.getExtensionsPath();
-
-		archetypesDirs.add(customTemplatesPath.toFile());
-
 		execute(projectTemplatesArgs);
 
 		Path path = dir.toPath();
@@ -273,6 +267,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setGradle(true);
 		projectTemplatesArgs.setMaven(false);
+
+		Path extensionsPath = bladeCLI.getExtensionsPath();
+
+		projectTemplatesArgs.setArchetypesDirs(Collections.singletonList(extensionsPath.toFile()));
 
 		projectTemplatesArgs.setClassName(createArgs.getClassname());
 
