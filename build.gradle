@@ -47,6 +47,8 @@ File gradleCredentialsProperties = new File(gradleHome, "gradle.credentials.prop
 
 boolean release = project.hasProperty("release")
 
+boolean localNexus = project.hasProperty("localNexus")
+
 boolean remoteNexus = project.hasProperty("remoteNexus")
 
 boolean skipTests = project.hasProperty("skipTests")
@@ -249,26 +251,28 @@ subprojects { subproject ->
 		}
 
 		publishing {
-			String liferayNexusUsername
-			String liferayNexusPassword
+			String liferayNexusUsername = System.getenv("LIFERAY_NEXUS_USERNAME")
+			String liferayNexusPassword = System.getenv("LIFERAY_NEXUS_PASSWORD")
 
 			String repoName = release ? "liferay-public-releases" : "liferay-public-snapshots"
 			String repoUrl = "https://repository.liferay.com/nexus/content/repositories/" + repoName
 
-			if (remoteNexus) {
-				liferayNexusUsername = credentials.liferayNexusUsername
-				liferayNexusPassword = credentials.liferayNexusPassword
+			if (liferayNexusUsername == null || liferayNexusPassword == null) {
+				if (remoteNexus) {
+					liferayNexusUsername = credentials.liferayNexusUsername
+					liferayNexusPassword = credentials.liferayNexusPassword
+				}
+				else if (localNexus) {
+					liferayNexusUsername = "admin"
+					liferayNexusPassword = "admin123"
+				}
+			}
+
+			if (release) {
+				repoUrl = "http://localhost:8081/nexus/content/repositories/releases/"
 			}
 			else {
-				liferayNexusUsername = "admin"
-				liferayNexusPassword = "admin123"
-
-				if (release) {
-					repoUrl = "http://localhost:8081/nexus/content/repositories/releases/"
-				}
-				else {
-					repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
-				}
+				repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
 			}
 
 			repositories {
