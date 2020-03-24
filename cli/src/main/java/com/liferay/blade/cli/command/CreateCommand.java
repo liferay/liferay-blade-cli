@@ -373,7 +373,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private File _getDefaultExtDir() throws Exception {
+	private File _getDefaultDir(String defaultDirProperty, String defaultDirValue) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs args = bladeCLI.getArgs();
@@ -388,104 +388,46 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		Properties properties = getWorkspaceProperties();
 
-		String extDirProperty = (String)properties.get(WorkspaceConstants.DEFAULT_EXT_DIR_PROPERTY);
+		String dirValue = (String)properties.get(defaultDirProperty);
 
-		if (extDirProperty == null) {
-			extDirProperty = WorkspaceConstants.DEFAULT_EXT_DIR;
+		if (dirValue == null) {
+			dirValue = defaultDirValue;
+		}
+
+		if (dirValue.contains(",")) {
+			bladeCLI.out("WARNING: " + defaultDirProperty + " has multiple values: " + dirValue);
+			dirValue = dirValue.substring(0, dirValue.indexOf(","));
+
+			bladeCLI.out("WARNING: using " + dirValue);
 		}
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
 		File projectDir = workspaceProvider.getWorkspaceDir(baseDir);
 
-		File extDir = new File(projectDir, extDirProperty);
+		File dir = new File(projectDir, dirValue);
 
-		if (_containsDir(baseDir, extDir)) {
+		if (_containsDir(baseDir, dir)) {
 			return baseDir;
 		}
 
-		return extDir;
+		return dir;
+	}
+
+	private File _getDefaultExtDir() throws Exception {
+		return _getDefaultDir(WorkspaceConstants.DEFAULT_EXT_DIR_PROPERTY, WorkspaceConstants.DEFAULT_EXT_DIR);
 	}
 
 	private File _getDefaultModulesDir() throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
+		return _getDefaultDir(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY, WorkspaceConstants.DEFAULT_MODULES_DIR);
+	}
 
-		BaseArgs args = bladeCLI.getArgs();
-
-		File base = new File(args.getBase());
-
-		File baseDir = base.getCanonicalFile();
-
-		if (!isWorkspace(baseDir)) {
-			return baseDir;
-		}
-
-		Properties properties = getWorkspaceProperties();
-
-		String modulesDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
-
-		if (modulesDirValue == null) {
-			modulesDirValue = WorkspaceConstants.DEFAULT_MODULES_DIR;
-		}
-
-		if (modulesDirValue.contains(",")) {
-			bladeCLI.out(
-				"WARNING: " + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY + " has multiple values: " +
-					modulesDirValue);
-			modulesDirValue = modulesDirValue.substring(0, modulesDirValue.indexOf(","));
-
-			bladeCLI.out("WARNING: using " + modulesDirValue);
-		}
-
-		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
-
-		File projectDir = workspaceProvider.getWorkspaceDir(baseDir);
-
-		File modulesDir = new File(projectDir, modulesDirValue);
-
-		if (_containsDir(baseDir, modulesDir)) {
-			return baseDir;
-		}
-
-		return modulesDir;
+	private File _getDefaultThemesDir() throws Exception {
+		return _getDefaultDir(WorkspaceConstants.DEFAULT_THEMES_DIR_PROPERTY, WorkspaceConstants.DEFAULT_THEMES_DIR);
 	}
 
 	private File _getDefaultWarsDir() throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		BaseArgs args = bladeCLI.getArgs();
-
-		File base = new File(args.getBase());
-
-		File baseDir = base.getCanonicalFile();
-
-		if (!isWorkspace(baseDir)) {
-			return baseDir;
-		}
-
-		Properties properties = getWorkspaceProperties();
-
-		String warsDirValue = (String)properties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
-
-		if (warsDirValue == null) {
-			warsDirValue = WorkspaceConstants.DEFAULT_WARS_DIR;
-		}
-
-		if (warsDirValue.contains(",")) {
-			warsDirValue = warsDirValue.split(",")[0];
-		}
-
-		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
-
-		File projectDir = workspaceProvider.getWorkspaceDir(baseDir);
-
-		File warsDir = new File(projectDir, warsDirValue);
-
-		if (_containsDir(baseDir, warsDir)) {
-			return baseDir;
-		}
-
-		return warsDir;
+		return _getDefaultDir(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY, WorkspaceConstants.DEFAULT_WARS_DIR);
 	}
 
 	private String _getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
