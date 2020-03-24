@@ -26,13 +26,13 @@ scanOpt="--scan"
 while [ $# -gt 0 ]; do
 	if [ "$1" = "snapshots" ] || [ "$1" = "release" ]; then
 		releaseType="$1"
-	elif [ "$1" = "--local" ]; then
+	elif [ "$2" = "--local" ]; then
 		nexusOpt="-PlocalNexus"
-	elif [ "$1" = "--remote" ]; then
+	elif [ "$2" = "--remote" ]; then
 		nexusOpt="-PremoteNexus"
-	elif [ "$1" = "--skip-tests" ]; then
+	elif [ "$3" = "--skip-tests" ]; then
 		bladeTestOpt="jar"
-	elif [ "$1" = "--skip-scan" ]; then
+	elif [ "$3" = "--skip-scan" ]; then
 		scanOpt=""
 	fi
 	shift
