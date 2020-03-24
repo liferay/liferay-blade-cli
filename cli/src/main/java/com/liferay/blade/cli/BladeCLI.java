@@ -82,6 +82,8 @@ import org.fusesource.jansi.AnsiConsole;
  */
 public class BladeCLI {
 
+	public static BladeCLI instance;
+
 	public static Map<String, BaseCommand<? extends BaseArgs>> getCommandMapByClassLoader(
 			String profileName, ClassLoader classLoader)
 		throws IllegalAccessException, InstantiationException {
@@ -148,6 +150,7 @@ public class BladeCLI {
 		_out = out;
 		_error = err;
 		_in = in;
+		instance = this;
 	}
 
 	public void addErrors(String prefix, Collection<String> data) {
@@ -211,7 +214,7 @@ public class BladeCLI {
 	}
 
 	public Path getExtensionsPath() {
-		Path userBladePath = _getUserBladePath();
+		Path userBladePath = getUserBladePath();
 
 		Path extensions = userBladePath.resolve("extensions");
 
@@ -228,6 +231,26 @@ public class BladeCLI {
 		}
 
 		return extensions;
+	}
+
+	public Path getUserBladePath() {
+		Path userHomePath = _USER_HOME_DIR.toPath();
+
+		Path userBladePath = userHomePath.resolve(".blade");
+
+		try {
+			if (Files.notExists(userBladePath)) {
+				Files.createDirectories(userBladePath);
+			}
+			else if (!Files.isDirectory(userBladePath)) {
+				throw new IOException(userBladePath + " is not a directory.");
+			}
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+
+		return userBladePath;
 	}
 
 	public WorkspaceProvider getWorkspaceProvider(File dir) {
@@ -888,7 +911,7 @@ public class BladeCLI {
 	}
 
 	private Path _getUpdateCheckPath() throws IOException {
-		Path userBladePath = _getUserBladePath();
+		Path userBladePath = getUserBladePath();
 
 		return userBladePath.resolve("updateCheck.properties");
 	}
@@ -936,26 +959,6 @@ public class BladeCLI {
 		}
 
 		return updateCommand.getReleaseUpdateVersion();
-	}
-
-	private Path _getUserBladePath() {
-		Path userHomePath = _USER_HOME_DIR.toPath();
-
-		Path userBladePath = userHomePath.resolve(".blade");
-
-		try {
-			if (Files.notExists(userBladePath)) {
-				Files.createDirectories(userBladePath);
-			}
-			else if (!Files.isDirectory(userBladePath)) {
-				throw new IOException(userBladePath + " is not a directory.");
-			}
-		}
-		catch (IOException ioe) {
-			throw new RuntimeException(ioe);
-		}
-
-		return userBladePath;
 	}
 
 	private Collection<WorkspaceProvider> _getWorkspaceProviders() throws Exception {

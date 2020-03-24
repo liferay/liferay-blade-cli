@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import java.text.MessageFormat;
+
 import java.util.Map;
 
 import org.junit.Assert;
@@ -38,7 +40,7 @@ import org.junit.rules.TemporaryFolder;
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class TemplatesTest {
+public class SampleTemplatesTest {
 
 	@Before
 	public void setUp() throws Exception {
@@ -57,6 +59,8 @@ public class TemplatesTest {
 		bladeTestBuilder.setExtensionsDir(extensionsDirPath);
 
 		_bladeTest = bladeTestBuilder.build();
+
+		_rootDir = temporaryFolder.getRoot();
 	}
 
 	@Test
@@ -77,6 +81,31 @@ public class TemplatesTest {
 		Assert.assertNotNull(templates);
 
 		Assert.assertEquals(templates.toString(), _NUM_BUILTIN_TEMPLATES + 1, templates.size());
+	}
+
+	@Test
+	public void testSampleProjectTemplate() throws Exception {
+		_setupTestExtensions();
+
+		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "sample", "foo-sample"};
+
+		_bladeTest.run(args);
+
+		File projectDir = new File(_rootDir, "foo-sample");
+
+		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
+
+		File buildGradle = new File(projectDir, "build.gradle");
+
+		Assert.assertTrue("Expected build.gradle to exist " + buildGradle, buildGradle.exists());
+
+		String contents = new String(Files.readAllBytes(buildGradle.toPath()));
+
+		String line =
+			"compileOnly group: \"com.liferay.portal\", name: \"com.liferay.portal.kernel\", version: \"2.0.0\"";
+
+		Assert.assertTrue(
+			MessageFormat.format("Expected contents to contain {0}\n{1}", line, contents), contents.contains(line));
 	}
 
 	@Rule
@@ -113,5 +142,6 @@ public class TemplatesTest {
 	private static final int _NUM_BUILTIN_TEMPLATES = 32;
 
 	private BladeTest _bladeTest;
+	private File _rootDir;
 
 }

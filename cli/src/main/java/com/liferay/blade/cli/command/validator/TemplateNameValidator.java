@@ -33,7 +33,7 @@ public class TemplateNameValidator implements ValidatorSupplier {
 	@Override
 	public Collection<String> get() {
 		try {
-			return new ArrayList<>(BladeUtil.getTemplateNames(new BladeCLI()));
+			return new ArrayList<>(BladeUtil.getTemplateNames(BladeCLI.instance));
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
