@@ -636,27 +636,20 @@ public class PropertiesLocator {
 	private static void _getCommentedPropertiesFromJar(String propertiesJarURL, Properties properties)
 		throws Exception {
 
-		try {
-			URL url = new URL(propertiesJarURL);
+		URL url = new URL(propertiesJarURL);
 
-			InputStream is = url.openStream();
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-			Stream<String> stream = br.lines();
-
-			stream.filter(
+		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+			bufferedReader.lines(
+			).filter(
 				line -> line.matches(".*#[a-zA-Z\\.\\[\\]]+=.*")
 			).map(
 				line -> line.substring(line.indexOf("#") + 1, line.indexOf("="))
 			).forEach(
 				line -> properties.put(line, "")
 			);
-
-			is.close();
 		}
 		catch (Exception e) {
-			System.out.println("Unable to read properties file " + propertiesJarURL);
+			System.err.println("Unable to read properties file from jar " + propertiesJarURL);
 
 			throw e;
 		}
