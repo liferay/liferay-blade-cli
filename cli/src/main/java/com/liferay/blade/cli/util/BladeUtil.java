@@ -150,6 +150,14 @@ public class BladeUtil {
 		return properties;
 	}
 
+	public static Path getBladeCachePath() {
+		File userHome = new File(System.getProperty("user.home"));
+
+		Path userHomePath = userHome.toPath();
+
+		return userHomePath.resolve(".blade" + File.separator + "cache");
+	}
+
 	public static Path getBladeJarPath() {
 		try {
 			ProtectionDomain protectionDomain = BladeCLI.class.getProtectionDomain();
