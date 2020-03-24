@@ -16,9 +16,6 @@
 
 package com.liferay.blade.cli.util;
 
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.FileUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,19 +32,19 @@ import java.util.stream.Stream;
  */
 public class NodeUtil {
 
+	public static final String YO_GENERATOR_8_VERSION = "8.x";
+
+	public static final String YO_GENERATOR_9_VERSION = "9.x";
+
 	public static Path downloadNode() throws IOException {
-		File userHome = new File(System.getProperty("user.home"));
-
-		Path userHomePath = userHome.toPath();
-
-		Path bladeCachePath = userHomePath.resolve(".blade" + File.separator + "cache");
+		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
 		Path nodeCachePath = bladeCachePath.resolve("node");
 
 		if (!Files.exists(nodeCachePath)) {
 			Files.createDirectories(nodeCachePath);
 
-			String nodeURL = getNodeURL();
+			String nodeURL = _getNodeURL();
 
 			Path downloadPath = bladeCachePath.resolve(nodeURL.substring(nodeURL.lastIndexOf("/") + 1));
 
@@ -92,15 +89,15 @@ public class NodeUtil {
 	}
 
 	public static Path downloadYo() throws Exception {
-		File userHome = new File(System.getProperty("user.home"));
+		return downloadYo(YO_GENERATOR_9_VERSION);
+	}
 
-		Path userHomePath = userHome.toPath();
-
-		Path bladeCachePath = userHomePath.resolve(".blade" + File.separator + "cache");
+	public static Path downloadYo(String version) throws Exception {
+		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
 		Path nodeDirPath = bladeCachePath.resolve("node");
 
-		Path yoDirPath = bladeCachePath.resolve("yo");
+		Path yoDirPath = bladeCachePath.resolve("yo-" + version);
 
 		Path nodeModulesDirPath = yoDirPath.resolve("node_modules");
 
@@ -108,13 +105,13 @@ public class NodeUtil {
 			Files.createDirectories(yoDirPath);
 
 			InputStream inputStream = NodeUtil.class.getResourceAsStream(
-				"dependencies" + File.separator + "package.json");
+				"dependencies" + File.separator + "yo-" + version + ".json");
 
 			Path targetPath = yoDirPath.resolve("package.json");
 
 			Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-			File npmDir = getNpmDir(nodeDirPath.toFile());
+			File npmDir = _getNpmDir(nodeDirPath.toFile());
 
 			Process process;
 
@@ -141,8 +138,8 @@ public class NodeUtil {
 		return yoDirPath;
 	}
 
-	public static String getNodeURL() {
-		String nodeVersion = getNodeVersion();
+	private static String _getNodeURL() {
+		String nodeVersion = _getNodeVersion();
 
 		if ((nodeVersion == null) || nodeVersion.equals("")) {
 			return null;
@@ -186,11 +183,11 @@ public class NodeUtil {
 		return sb.toString();
 	}
 
-	public static String getNodeVersion() {
+	private static String _getNodeVersion() {
 		return _nodeVersion;
 	}
 
-	public static File getNpmDir(File nodeDir) {
+	private static File _getNpmDir(File nodeDir) {
 		File nodeModulesDir = new File(nodeDir, "node_modules");
 
 		if (!nodeModulesDir.exists()) {

@@ -53,15 +53,9 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 			ArchetypeGenerationResult archetypeGenerationResult)
 		throws Exception {
 
-		NodeUtil.downloadNode();
+		Path nodeDirPath = NodeUtil.downloadNode();
 
-		NodeUtil.downloadYo();
-
-		File userHome = new File(System.getProperty("user.home"));
-
-		Path userHomePath = userHome.toPath();
-
-		Path bladeCachePath = userHomePath.resolve(".blade/cache");
+		Path yoDirPath = NodeUtil.downloadYo();
 
 		Path configPath = Paths.get(destinationDir.getAbsolutePath(), projectTemplatesArgs.getName() + "/config.json");
 
@@ -140,13 +134,10 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 			commands.add("cmd.exe");
 			commands.add("/c");
 
-			Path nodePath = bladeCachePath.resolve("node");
+			Path nodePath = nodeDirPath.resolve("node.exe");
 
-			nodePath = nodePath.resolve("node.exe");
-
-			Path yoPath = bladeCachePath.resolve(
-				"yo" + File.separator + "node_modules" + File.separator + "yo" + File.separator + "lib" +
-					File.separator + "cli.js");
+			Path yoPath = yoDirPath.resolve(
+				"node_modules" + File.separator + "yo" + File.separator + "lib" + File.separator + "cli.js");
 
 			commands.add(nodePath.toString());
 			commands.add(yoPath.toString());
@@ -157,8 +148,8 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 		else {
 			env.put("PATH", env.get("PATH") + ":/bin:/usr/local/bin");
 
-			Path nodePath = bladeCachePath.resolve("node/bin/node");
-			Path yoPath = bladeCachePath.resolve("yo/node_modules/.bin/yo");
+			Path nodePath = nodeDirPath.resolve("bin/node");
+			Path yoPath = yoDirPath.resolve("node_modules/.bin/yo");
 
 			commands.add("sh");
 			commands.add("-c");
