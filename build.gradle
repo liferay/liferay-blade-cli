@@ -265,14 +265,14 @@ subprojects { subproject ->
 				else if (localNexus) {
 					liferayNexusUsername = "admin"
 					liferayNexusPassword = "admin123"
-				}
-			}
 
-			if (release) {
-				repoUrl = "http://localhost:8081/nexus/content/repositories/releases/"
-			}
-			else {
-				repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
+					if (release) {
+						repoUrl = "http://localhost:8081/nexus/content/repositories/releases/"
+					}
+					else {
+						repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
+					}
+				}
 			}
 
 			repositories {
