@@ -39,6 +39,10 @@ public class BaseArgs {
 		return _help;
 	}
 
+	public boolean isQuiet() {
+		return _quiet;
+	}
+
 	public boolean isTrace() {
 		return _trace;
 	}
@@ -62,6 +66,9 @@ public class BaseArgs {
 		names = {"-b", "--build", "-P", "--profile-name"}
 	)
 	private String _profileName;
+
+	@Parameter(description = "Do not print any optional messages to console.", names = {"-q", "--quiet"})
+	private boolean _quiet;
 
 	@Parameter(description = "Print exception stack traces when they occur.", names = "--trace")
 	private boolean _trace;

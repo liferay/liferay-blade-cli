@@ -1192,6 +1192,12 @@ public class BladeCLI {
 				return false;
 			}
 
+			BaseArgs baseArgs = getArgs();
+
+			if (baseArgs.isQuiet()) {
+				return false;
+			}
+
 			Path updateCheckPath = _getUpdateCheckPath();
 
 			if (!Files.exists(updateCheckPath)) {
