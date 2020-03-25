@@ -43,6 +43,9 @@ if [ "$releaseType" != "release" ] && [ "$releaseType" != "snapshots" ]; then
 	exit 1
 fi
 
+echo "releaseType=$releaseType nexusOpt=$nexusOpt bladeTestOpt=$bladeTestOpt scanOpt=$scanOpt"
+echo "LIFERAY_NEXUS_USERNAME=$LIFERAY_NEXUS_USERNAME"
+
 # Setup a temp directory
 timestamp=$(date +%s)
 tmpDir="/tmp/$timestamp/"
