@@ -29,7 +29,9 @@ public class OverriddenCommand extends BaseCommand<OverriddenArgs> {
 	public void execute() throws Exception {
 		OverriddenArgs args = getArgs();
 
-		getBladeCLI().out("OverriddenCommand says " + args.isWatch());
+		if (!args.isQuiet()) {
+			getBladeCLI().out("OverriddenCommand says " + args.isWatch());
+		}
 	}
 
 	@Override

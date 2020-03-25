@@ -140,10 +140,10 @@ public class GradleExec {
 		File gradlew = BladeUtil.getGradleWrapper(dir);
 		String executable = "gradle";
 
-		if ((gradlew == null) || !gradlew.exists()) {
-			BaseArgs args = _blade.getArgs();
+		BaseArgs baseArgs = _blade.getArgs();
 
-			File baseDir = new File(args.getBase());
+		if ((gradlew == null) || !gradlew.exists()) {
+			File baseDir = new File(baseArgs.getBase());
 
 			gradlew = BladeUtil.getGradleWrapper(baseDir);
 		}
@@ -162,7 +162,9 @@ public class GradleExec {
 
 		if (Objects.equals("gradle", executable)) {
 			if (_isGradleInstalled()) {
-				_blade.out("Could not find gradle wrapper, using gradle");
+				if (!baseArgs.isQuiet()) {
+					_blade.out("Could not find gradle wrapper, using gradle");
+				}
 			}
 			else {
 				throw new NoSuchElementException("Gradle wrapper not found and Gradle is not installed");

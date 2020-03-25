@@ -79,11 +79,13 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 			return;
 		}
 
-		String output = "Gradle \"" + command + "\" task succeeded.";
-
 		BladeCLI bladeCLI = getBladeCLI();
 
-		bladeCLI.out(output);
+		if (!deployArgs.isQuiet()) {
+			String output = "Gradle \"" + command + "\" task succeeded.";
+
+			bladeCLI.out(output);
+		}
 	}
 
 }

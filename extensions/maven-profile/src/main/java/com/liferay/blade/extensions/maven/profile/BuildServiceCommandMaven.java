@@ -50,7 +50,9 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 			File pomXmlFile = MavenUtil.getPomXMLFile(baseDir);
 
 			if (pomXmlFile.exists()) {
-				bladeCLI.out("Identifying Service Builder projects");
+				if (!baseArgs.isQuiet()) {
+					bladeCLI.out("Identifying Service Builder projects");
+				}
 
 				Path baseDirPath = baseDir.toPath();
 
@@ -82,7 +84,9 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 
 						String[] args = {"--projects", sb.toString(), "service-builder:build"};
 
-						bladeCLI.out("Executing " + String.join(" ", args));
+						if (!baseArgs.isQuiet()) {
+							bladeCLI.out("Executing " + String.join(" ", args));
+						}
 
 						execute(baseDir.getAbsolutePath(), args, true);
 					}

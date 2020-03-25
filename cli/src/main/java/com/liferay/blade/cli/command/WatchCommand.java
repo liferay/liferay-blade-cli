@@ -78,7 +78,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 		Map<String, Path> projectPaths = _getProjectPaths(watchPath, watchArgs.getProjectPaths(), ignorePaths);
 
-		bladeCLI.out("Watching projects...");
+		if (!watchArgs.isQuiet()) {
+			bladeCLI.out("Watching projects...");
+		}
 
 		projectPaths.keySet(
 		).stream(
@@ -270,6 +272,8 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			public void run() {
 				BladeCLI bladeCLI = getBladeCLI();
 
+				BaseArgs baseArgs = bladeCLI.getArgs();
+
 				try (final FileSystem fileSystem = FileSystems.getDefault();
 					final WatchService watchService = fileSystem.newWatchService()) {
 
@@ -286,7 +290,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 					final GradleExec gradleExec = new GradleExec(bladeCLI);
 
 					if (deploy) {
-						bladeCLI.out("Deploying...  To skip initial deployment, use `blade watch -s`");
+						if (!baseArgs.isQuiet()) {
+							bladeCLI.out("Deploying...  To skip initial deployment, use `blade watch -s`");
+						}
 
 						gradleExec.executeTask("deploy", false);
 					}
@@ -345,12 +351,16 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 									}
 								}
 
-								bladeCLI.out(resolvedPath + " has been created, deploying...");
+								if (!baseArgs.isQuiet()) {
+									bladeCLI.out(resolvedPath + " has been created, deploying...");
+								}
 
 								gradleExec.executeTask("deploy", projectPath.toFile(), false);
 							}
 							else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
-								bladeCLI.out(resolvedPath + " has been deleted, redeploying...");
+								if (!baseArgs.isQuiet()) {
+									bladeCLI.out(resolvedPath + " has been deleted, redeploying...");
+								}
 
 								gradleExec.executeTask("clean deploy", projectPath.toFile(), false);
 							}
@@ -366,7 +376,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 								}
 
 								if (fastExtension) {
-									bladeCLI.out(resolvedPath + " has changed, fast deploying...");
+									if (!baseArgs.isQuiet()) {
+										bladeCLI.out(resolvedPath + " has changed, fast deploying...");
+									}
 
 									gradleExec.executeTask("deployFast -a", projectPath.toFile(), false);
 								}
@@ -377,7 +389,9 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 								}
 							}
 
-							bladeCLI.out("Watching files in " + watchPath + ". Press Crtl + C to stop.");
+							if (!baseArgs.isQuiet()) {
+								bladeCLI.out("Watching files in " + watchPath + ". Press Crtl + C to stop.");
+							}
 						}
 
 						boolean valid = watchKey.reset();

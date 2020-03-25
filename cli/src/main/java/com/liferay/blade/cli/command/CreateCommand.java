@@ -221,7 +221,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		absolutePath = absolutePath.normalize();
 
-		bladeCLI.out("Successfully created project " + projectTemplatesArgs.getName() + " in " + absolutePath);
+		if (!createArgs.isQuiet()) {
+			bladeCLI.out("Successfully created project " + projectTemplatesArgs.getName() + " in " + absolutePath);
+		}
 	}
 
 	@Override

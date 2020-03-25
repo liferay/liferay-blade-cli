@@ -154,9 +154,11 @@ public class BladeCLI {
 	}
 
 	public void addErrors(String prefix, Collection<String> data) {
-		error().println("Error: " + prefix);
+		PrintStream error = error();
 
-		data.forEach(error()::println);
+		error.println("Error: " + prefix);
+
+		data.forEach(error::println);
 	}
 
 	public PrintStream error() {

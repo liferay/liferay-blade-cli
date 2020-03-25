@@ -29,7 +29,9 @@ public class HelloMaven extends BaseCommand<HelloArgs> {
 	public void execute() throws Exception {
 		HelloArgs helloArgs = getArgs();
 
-		getBladeCLI().out("Hello from maven " + helloArgs.getName());
+		if (!helloArgs.isQuiet()) {
+			getBladeCLI().out("Hello from maven " + helloArgs.getName());
+		}
 	}
 
 	@Override

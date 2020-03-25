@@ -29,7 +29,9 @@ public class NewCommand extends BaseCommand<NewArgs> {
 	public void execute() throws Exception {
 		NewArgs args = getArgs();
 
-		getBladeCLI().out("NewCommand says " + args.getData());
+		if (!args.isQuiet()) {
+			getBladeCLI().out("NewCommand says " + args.getData());
+		}
 	}
 
 	@Override
