@@ -43,7 +43,11 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
 		if (workspaceProvider != null) {
-			bladeCLI.out("Executing gradle task initBundle...\n");
+			boolean quiet = serverInitArgs.isQuiet();
+
+			if (!quiet) {
+				bladeCLI.out("Executing gradle task initBundle...\n");
+			}
 
 			GradleExec gradleExec = new GradleExec(bladeCLI);
 
@@ -60,7 +64,9 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 			ProcessResult processResult = gradleExec.executeTask(command, true);
 
 			if (processResult.getResultCode() == 0) {
-				bladeCLI.out("\nserver init completed successfully.");
+				if (!quiet) {
+					bladeCLI.out("\nserver init completed successfully.");
+				}
 			}
 			else {
 				bladeCLI.error(processResult.getError() + "\nerror: server init failed.  See error output above.");

@@ -61,7 +61,11 @@ public class UninstallExtensionCommand extends BaseCommand<UninstallExtensionArg
 
 		Files.delete(extensionPath);
 
-		getBladeCLI().out("The extension " + name + " has been uninstalled successfully.");
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		if (!baseArgs.isQuiet()) {
+			bladeCLI.out("The extension " + name + " has been uninstalled successfully.");
+		}
 	}
 
 }

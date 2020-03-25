@@ -110,11 +110,17 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 					Path zip = projectPath.resolve("master.zip");
 
-					bladeCLI.out("Downloading github repository " + githubRootUrl);
+					boolean quiet = args.isQuiet();
+
+					if (!quiet) {
+						bladeCLI.out("Downloading github repository " + githubRootUrl);
+					}
 
 					BladeUtil.downloadGithubProject(String.valueOf(githubRootUrl), zip);
 
-					bladeCLI.out("Unzipping github repository to " + projectPath);
+					if (!quiet) {
+						bladeCLI.out("Unzipping github repository to " + projectPath);
+					}
 
 					FileUtil.unzip(zip.toFile(), projectPath.toFile(), null);
 
@@ -140,7 +146,9 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 							BladeUtil.addGradleWrapper(projectSubDir);
 						}
 
-						bladeCLI.out("Building extension...");
+						if (!quiet) {
+							bladeCLI.out("Building extension...");
+						}
 
 						Set<Path> extensionPaths = _gradleAssemble(projectSubPath);
 
@@ -165,11 +173,17 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 						File dir = path.toFile();
 
-						bladeCLI.out("Downloading github repository " + pathArg);
+						boolean quiet = args.isQuiet();
+
+						if (!quiet) {
+							bladeCLI.out("Downloading github repository " + pathArg);
+						}
 
 						BladeUtil.downloadGithubProject(pathArg, zip);
 
-						bladeCLI.out("Unzipping github repository to " + path);
+						if (!quiet) {
+							bladeCLI.out("Unzipping github repository to " + path);
+						}
 
 						FileUtil.unzip(zip.toFile(), dir, null);
 
@@ -179,7 +193,9 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 							Path directory = directories[0].toPath();
 
 							if (_isGradleBuild(directory)) {
-								bladeCLI.out("Building extension...");
+								if (!quiet) {
+									bladeCLI.out("Building extension...");
+								}
 
 								Set<Path> extensionPaths = _gradleAssemble(directory);
 
@@ -368,7 +384,11 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 				extensionPath, extensionInstallPath, StandardCopyOption.REPLACE_EXISTING,
 				StandardCopyOption.COPY_ATTRIBUTES);
 
-			bladeCLI.out(String.format("The extension %s has been installed successfully.", extensionName));
+			BaseArgs baseArgs = bladeCLI.getArgs();
+
+			if (!baseArgs.isQuiet()) {
+				bladeCLI.out(String.format("The extension %s has been installed successfully.", extensionName));
+			}
 		}
 		else {
 			throw new IOException(

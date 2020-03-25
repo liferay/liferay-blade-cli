@@ -165,7 +165,11 @@ public class ConvertThemeCommand implements FilesSupport {
 		int errCode = process.waitFor();
 
 		if ((errCode == 0) && removeSource) {
-			_bladeCLI.out("Theme " + themePath + " migrated successfully");
+			BaseArgs baseArgs = _bladeCLI.getArgs();
+
+			if (!baseArgs.isQuiet()) {
+				_bladeCLI.out("Theme " + themePath + " migrated successfully");
+			}
 
 			File theme = new File(themePath);
 

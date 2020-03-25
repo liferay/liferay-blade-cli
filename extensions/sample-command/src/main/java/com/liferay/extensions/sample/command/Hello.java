@@ -28,7 +28,9 @@ public class Hello extends BaseCommand<HelloArgs> {
 	public void execute() throws Exception {
 		HelloArgs helloArgs = getArgs();
 
-		getBladeCLI().out(HelloUtil.getHello(helloArgs));
+		if (!helloArgs.isQuiet()) {
+			getBladeCLI().out(HelloUtil.getHello(helloArgs));
+		}
 	}
 
 	@Override

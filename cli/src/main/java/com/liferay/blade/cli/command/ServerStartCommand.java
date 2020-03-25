@@ -148,6 +148,8 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 
 		Optional<Path> log = localServer.getLogPath();
 
+		boolean quiet = serverStartArgs.isQuiet();
+
 		if (serverType.equals("tomcat")) {
 			process.waitFor();
 		}
@@ -160,7 +162,9 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 				}
 			}
 
-			bladeCLI.out(serverType + " started.");
+			if (!quiet) {
+				bladeCLI.out(serverType + " started.");
+			}
 		}
 
 		if (serverStartArgs.isTail()) {
@@ -172,7 +176,9 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 			if (log.isPresent()) {
 				Path logPath = log.get();
 
-				bladeCLI.out("To view the log execute 'tail -f " + logPath.toString() + "'");
+				if (!quiet) {
+					bladeCLI.out("To view the log execute 'tail -f " + logPath.toString() + "'");
+				}
 			}
 		}
 	}
