@@ -20,8 +20,8 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
-import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.NodeUtil;
 
 import java.io.File;
 
@@ -148,21 +148,12 @@ public class ConvertThemeCommand implements FilesSupport {
 	}
 
 	public void importTheme(String themePath, boolean removeSource) throws Exception {
-		Process process = BladeUtil.startProcess("node -v", _themesDir);
-
-		int nodeJSInstalledChecker = process.waitFor();
-
-		if (nodeJSInstalledChecker != 0) {
-			_bladeCLI.error("Please check that Node.js properly installed and on the user path.");
-
-			return;
-		}
-
-		process = BladeUtil.startProcess(
-			"yo liferay-theme:import -p \"" + themePath + "\" -c " + _compassSupport(themePath) + " --skip-install",
-			_themesDir, _bladeCLI.out(), _bladeCLI.error());
-
-		int errCode = process.waitFor();
+		int errCode = NodeUtil.runYo(
+			NodeUtil.YO_GENERATOR_8_VERSION, _themesDir,
+			new String[] {
+				"liferay-theme:import", "-p", themePath, "-c", String.valueOf(_compassSupport(themePath)),
+				"--skip-install"
+			});
 
 		if ((errCode == 0) && removeSource) {
 			BaseArgs baseArgs = _bladeCLI.getArgs();

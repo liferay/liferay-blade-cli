@@ -23,15 +23,10 @@ import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.archetype.ArchetypeGenerationRequest;
 import org.apache.maven.archetype.ArchetypeGenerationResult;
@@ -52,10 +47,6 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 			ProjectTemplatesArgs projectTemplatesArgs, File destinationDir,
 			ArchetypeGenerationResult archetypeGenerationResult)
 		throws Exception {
-
-		Path nodeDirPath = NodeUtil.downloadNode();
-
-		Path yoDirPath = NodeUtil.downloadYo();
 
 		Path configPath = Paths.get(destinationDir.getAbsolutePath(), projectTemplatesArgs.getName() + "/config.json");
 
@@ -90,7 +81,7 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 			String modulesLocation = ext.getModulesLocation();
 
 			modulesLocation = new File(
-				ext.getModulesLocation(), projectTemplatesArgs.getName()
+				modulesLocation, projectTemplatesArgs.getName()
 			).getAbsolutePath();
 
 			if (OSDetector.isWindows()) {
@@ -120,53 +111,7 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 		write(configPath, config);
 
-		ProcessBuilder processBuilder = new ProcessBuilder();
-
-		File cwd = new File(System.getProperty("user.dir"));
-
-		processBuilder.directory(cwd);
-
-		Map<String, String> env = processBuilder.environment();
-
-		List<String> commands = new ArrayList<>();
-
-		if (OSDetector.isWindows()) {
-			commands.add("cmd.exe");
-			commands.add("/c");
-
-			Path nodePath = nodeDirPath.resolve("node.exe");
-
-			Path yoPath = yoDirPath.resolve(
-				"node_modules" + File.separator + "yo" + File.separator + "lib" + File.separator + "cli.js");
-
-			commands.add(nodePath.toString());
-			commands.add(yoPath.toString());
-			commands.add("liferay-js");
-			commands.add("--config");
-			commands.add(configPath.toString());
-		}
-		else {
-			env.put("PATH", env.get("PATH") + ":/bin:/usr/local/bin");
-
-			Path nodePath = nodeDirPath.resolve("bin/node");
-			Path yoPath = yoDirPath.resolve("node_modules/.bin/yo");
-
-			commands.add("sh");
-			commands.add("-c");
-			commands.add(
-				nodePath.toString() + " " + yoPath.toString() + " liferay-js --config " + configPath.toString());
-		}
-
-		processBuilder.command(commands);
-		processBuilder.inheritIO();
-
-		Process process = processBuilder.start();
-
-		OutputStream outputStream = process.getOutputStream();
-
-		outputStream.close();
-
-		process.waitFor();
+		NodeUtil.runYo(new String[] {"liferay-js", "--config", configPath.toString()});
 	}
 
 	@Override
