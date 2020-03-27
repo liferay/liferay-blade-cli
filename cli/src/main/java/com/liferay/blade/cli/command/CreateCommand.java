@@ -105,6 +105,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			dir = _getDefaultWarsDir();
 		}
+		else if (template.equals("js-theme")) {
+			dir = _getDefaultThemesDir();
+		}
 		else {
 			dir = _getDefaultModulesDir();
 		}
