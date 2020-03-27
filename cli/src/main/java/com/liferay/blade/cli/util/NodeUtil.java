@@ -19,12 +19,16 @@ package com.liferay.blade.cli.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermissions;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -136,6 +140,69 @@ public class NodeUtil {
 		}
 
 		return yoDirPath;
+	}
+
+	public static int runYo(String version, File dir, String[] args) throws Exception {
+		Path nodeDirPath = downloadNode();
+
+		Path yoDirPath = downloadYo(version);
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+
+		File cwd = new File(System.getProperty("user.dir"));
+
+		processBuilder.directory(cwd);
+
+		Map<String, String> env = processBuilder.environment();
+
+		List<String> commands = new ArrayList<>();
+
+		if (OSDetector.isWindows()) {
+			commands.add("cmd.exe");
+			commands.add("/c");
+
+			Path nodePath = nodeDirPath.resolve("node.exe");
+
+			Path yoPath = yoDirPath.resolve(
+				"node_modules" + File.separator + "yo" + File.separator + "lib" + File.separator + "cli.js");
+
+			commands.add(nodePath.toString());
+			commands.add(yoPath.toString());
+		}
+		else {
+			env.put("PATH", env.get("PATH") + ":/bin:/usr/local/bin");
+
+			Path nodePath = nodeDirPath.resolve("bin/node");
+			Path yoPath = yoDirPath.resolve("node_modules/.bin/yo");
+
+			commands.add("sh");
+			commands.add("-c");
+			commands.add(nodePath.toString());
+			commands.add(yoPath.toString());
+		}
+
+		for (String arg : args) {
+			commands.add(arg);
+		}
+
+		processBuilder.command(commands);
+		processBuilder.inheritIO();
+
+		if ((dir != null) && dir.exists()) {
+			processBuilder.directory(dir);
+		}
+
+		Process process = processBuilder.start();
+
+		OutputStream outputStream = process.getOutputStream();
+
+		outputStream.close();
+
+		return process.waitFor();
+	}
+
+	public static int runYo(String[] args) throws Exception {
+		return runYo(YO_GENERATOR_9_VERSION, null, args);
 	}
 
 	private static String _getNodeURL() {
