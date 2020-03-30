@@ -18,11 +18,6 @@ Private-Package:\
 	\
 	aQute.service.reporter;-split-package:=merge-first,\
 	\
-	com.liferay.blade.cli.*,\
-	com.liferay.blade.gradle.tooling.*,\
-	com.liferay.gogo.shell.client,\
-	com.liferay.properties.locator,\
-	\
 	org.apache.tools.ant;-split-package:=merge-first,\
 	org.apache.tools.ant.filters;-split-package:=merge-first,\
 	org.apache.tools.ant.filters.util;-split-package:=merge-first,\
@@ -92,13 +87,11 @@ Private-Package:\
 	org.gradle.internal.util;-split-package:=merge-first,\
 	org.gradle.scripts;-split-package:=merge-first,\
 	org.gradle.tooling;-split-package:=merge-first,\
-	org.gradle.tooling.connection,\
 	org.gradle.tooling.events;-split-package:=merge-first,\
 	org.gradle.tooling.events.task;-split-package:=merge-first,\
 	org.gradle.tooling.events.test;-split-package:=merge-first,\
 	org.gradle.tooling.exceptions;-split-package:=merge-first,\
 	org.gradle.tooling.internal.adapter;-split-package:=merge-first,\
-	org.gradle.tooling.internal.connection,\
 	org.gradle.tooling.internal.consumer;-split-package:=merge-first,\
 	org.gradle.tooling.internal.consumer.async;-split-package:=merge-first,\
 	org.gradle.tooling.internal.consumer.connection;-split-package:=merge-first,\
@@ -108,11 +101,9 @@ Private-Package:\
 	org.gradle.tooling.internal.consumer.versioning;-split-package:=merge-first,\
 	org.gradle.tooling.internal.gradle;-split-package:=merge-first,\
 	org.gradle.tooling.internal.protocol;-split-package:=merge-first,\
-	org.gradle.tooling.internal.protocol.eclipse,\
 	org.gradle.tooling.internal.protocol.events;-split-package:=merge-first,\
 	org.gradle.tooling.internal.protocol.exceptions;-split-package:=merge-first,\
 	org.gradle.tooling.internal.protocol.test;-split-package:=merge-first,\
-	org.gradle.tooling.internal.provider,\
 	org.gradle.tooling.model;-split-package:=merge-first,\
 	org.gradle.tooling.model.build;-split-package:=merge-first,\
 	org.gradle.tooling.model.cpp;-split-package:=merge-first,\
@@ -121,7 +112,8 @@ Private-Package:\
 	org.gradle.tooling.model.idea;-split-package:=merge-first,\
 	org.gradle.tooling.model.internal;-split-package:=merge-first,\
 	org.gradle.tooling.model.internal.outcomes;-split-package:=merge-first,\
-	org.gradle.tooling.provider,\
+	org.gradle.tooling.provider.model,\
+	org.gradle.tooling.provider.model.internal;-split-package:=merge-first,\
 	org.gradle.util;-split-package:=merge-first,\
 	org.gradle.wrapper;-split-package:=merge-first,\
 	\
@@ -137,10 +129,7 @@ Private-Package:\
 	org.osgi.dto,\
 	org.osgi.framework;-split-package:=merge-first,\
 	org.osgi.framework.dto,\
-	org.osgi.impl.bundle.bindex,\
 	org.osgi.resource;-split-package:=merge-first,\
-	org.osgi.service.bindex,\
-	org.osgi.service.indexer,\
 	org.osgi.service.log,\
 	org.osgi.service.repository;-split-package:=merge-first,\
 	\
