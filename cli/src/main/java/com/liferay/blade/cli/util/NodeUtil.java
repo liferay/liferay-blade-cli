@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package com.liferay.project.templates.js.widget.internal;
-
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.FileUtil;
+package com.liferay.blade.cli.util;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermissions;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -35,19 +36,19 @@ import java.util.stream.Stream;
  */
 public class NodeUtil {
 
+	public static final String YO_GENERATOR_8_VERSION = "8.x";
+
+	public static final String YO_GENERATOR_9_VERSION = "9.x";
+
 	public static Path downloadNode() throws IOException {
-		File userHome = new File(System.getProperty("user.home"));
-
-		Path userHomePath = userHome.toPath();
-
-		Path bladeCachePath = userHomePath.resolve(".blade" + File.separator + "cache");
+		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
 		Path nodeCachePath = bladeCachePath.resolve("node");
 
 		if (!Files.exists(nodeCachePath)) {
 			Files.createDirectories(nodeCachePath);
 
-			String nodeURL = getNodeURL();
+			String nodeURL = _getNodeURL();
 
 			Path downloadPath = bladeCachePath.resolve(nodeURL.substring(nodeURL.lastIndexOf("/") + 1));
 
@@ -92,15 +93,15 @@ public class NodeUtil {
 	}
 
 	public static Path downloadYo() throws Exception {
-		File userHome = new File(System.getProperty("user.home"));
+		return downloadYo(YO_GENERATOR_9_VERSION);
+	}
 
-		Path userHomePath = userHome.toPath();
-
-		Path bladeCachePath = userHomePath.resolve(".blade" + File.separator + "cache");
+	public static Path downloadYo(String version) throws Exception {
+		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
 		Path nodeDirPath = bladeCachePath.resolve("node");
 
-		Path yoDirPath = bladeCachePath.resolve("yo");
+		Path yoDirPath = bladeCachePath.resolve("yo-" + version);
 
 		Path nodeModulesDirPath = yoDirPath.resolve("node_modules");
 
@@ -108,13 +109,13 @@ public class NodeUtil {
 			Files.createDirectories(yoDirPath);
 
 			InputStream inputStream = NodeUtil.class.getResourceAsStream(
-				"dependencies" + File.separator + "package.json");
+				"dependencies" + File.separator + "yo-" + version + ".json");
 
 			Path targetPath = yoDirPath.resolve("package.json");
 
 			Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-			File npmDir = getNpmDir(nodeDirPath.toFile());
+			File npmDir = _getNpmDir(nodeDirPath.toFile());
 
 			Process process;
 
@@ -141,8 +142,71 @@ public class NodeUtil {
 		return yoDirPath;
 	}
 
-	public static String getNodeURL() {
-		String nodeVersion = getNodeVersion();
+	public static int runYo(String version, File dir, String[] args) throws Exception {
+		Path nodeDirPath = downloadNode();
+
+		Path yoDirPath = downloadYo(version);
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+
+		File cwd = new File(System.getProperty("user.dir"));
+
+		processBuilder.directory(cwd);
+
+		Map<String, String> env = processBuilder.environment();
+
+		List<String> commands = new ArrayList<>();
+
+		if (OSDetector.isWindows()) {
+			commands.add("cmd.exe");
+			commands.add("/c");
+
+			Path nodePath = nodeDirPath.resolve("node.exe");
+
+			Path yoPath = yoDirPath.resolve(
+				"node_modules" + File.separator + "yo" + File.separator + "lib" + File.separator + "cli.js");
+
+			commands.add(nodePath.toString());
+			commands.add(yoPath.toString());
+		}
+		else {
+			env.put("PATH", env.get("PATH") + ":/bin:/usr/local/bin");
+
+			Path nodePath = nodeDirPath.resolve("bin/node");
+			Path yoPath = yoDirPath.resolve("node_modules/.bin/yo");
+
+			commands.add("sh");
+			commands.add("-c");
+			commands.add(nodePath.toString());
+			commands.add(yoPath.toString());
+		}
+
+		for (String arg : args) {
+			commands.add(arg);
+		}
+
+		processBuilder.command(commands);
+		processBuilder.inheritIO();
+
+		if ((dir != null) && dir.exists()) {
+			processBuilder.directory(dir);
+		}
+
+		Process process = processBuilder.start();
+
+		OutputStream outputStream = process.getOutputStream();
+
+		outputStream.close();
+
+		return process.waitFor();
+	}
+
+	public static int runYo(String[] args) throws Exception {
+		return runYo(YO_GENERATOR_9_VERSION, null, args);
+	}
+
+	private static String _getNodeURL() {
+		String nodeVersion = _getNodeVersion();
 
 		if ((nodeVersion == null) || nodeVersion.equals("")) {
 			return null;
@@ -186,11 +250,11 @@ public class NodeUtil {
 		return sb.toString();
 	}
 
-	public static String getNodeVersion() {
+	private static String _getNodeVersion() {
 		return _nodeVersion;
 	}
 
-	public static File getNpmDir(File nodeDir) {
+	private static File _getNpmDir(File nodeDir) {
 		File nodeModulesDir = new File(nodeDir, "node_modules");
 
 		if (!nodeModulesDir.exists()) {

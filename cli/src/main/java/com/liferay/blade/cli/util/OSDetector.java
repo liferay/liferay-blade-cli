@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.liferay.project.templates.js.widget.internal;
+package com.liferay.blade.cli.util;
 
 import java.io.File;
 

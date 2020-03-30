@@ -3,36 +3,31 @@ Bundle-Version: ${project.version}.${tstamp}
 JPM-Command: blade
 Main-Class: com.liferay.blade.cli.BladeCLI
 Private-Package:\
-	aQute.bnd.header,\
-	aQute.bnd.maven,\
-	aQute.bnd.osgi,\
-	aQute.bnd.service,\
-	aQute.bnd.version,\
+	aQute.bnd.header;-split-package:=merge-first,\
+	aQute.bnd.maven;-split-package:=merge-first,\
+	aQute.bnd.osgi;-split-package:=merge-first,\
+	aQute.bnd.service;-split-package:=merge-first,\
+	aQute.bnd.version;-split-package:=merge-first,\
 	\
-	aQute.lib.io,\
-	aQute.lib.utf8properties,\
+	aQute.lib.io;-split-package:=merge-first,\
+	aQute.lib.utf8properties;-split-package:=merge-first,\
 	\
-	aQute.libg.generics,\
-	aQute.libg.qtokens,\
-	aQute.libg.reporter,\
+	aQute.libg.generics;-split-package:=merge-first,\
+	aQute.libg.qtokens;-split-package:=merge-first,\
+	aQute.libg.reporter;-split-package:=merge-first,\
 	\
-	aQute.service.reporter,\
+	aQute.service.reporter;-split-package:=merge-first,\
 	\
-	com.liferay.blade.cli.*,\
-	com.liferay.blade.gradle.tooling.*,\
-	com.liferay.gogo.shell.client,\
-	com.liferay.properties.locator,\
-	\
-	org.apache.tools.ant,\
-	org.apache.tools.ant.filters,\
-	org.apache.tools.ant.filters.util,\
-	org.apache.tools.ant.input,\
-	org.apache.tools.ant.property,\
-	org.apache.tools.ant.taskdefs,\
-	org.apache.tools.ant.taskdefs.condition,\
-	org.apache.tools.ant.types,\
-	org.apache.tools.ant.types.resources,\
-	org.apache.tools.ant.util,\
+	org.apache.tools.ant;-split-package:=merge-first,\
+	org.apache.tools.ant.filters;-split-package:=merge-first,\
+	org.apache.tools.ant.filters.util;-split-package:=merge-first,\
+	org.apache.tools.ant.input;-split-package:=merge-first,\
+	org.apache.tools.ant.property;-split-package:=merge-first,\
+	org.apache.tools.ant.taskdefs;-split-package:=merge-first,\
+	org.apache.tools.ant.taskdefs.condition;-split-package:=merge-first,\
+	org.apache.tools.ant.types;-split-package:=merge-first,\
+	org.apache.tools.ant.types.resources;-split-package:=merge-first,\
+	org.apache.tools.ant.util;-split-package:=merge-first,\
 	\
 	org.apache.commons.compress.archivers,\
 	org.apache.commons.compress.archivers.tar,\
@@ -48,82 +43,79 @@ Private-Package:\
 	org.apache.commons.lang3.exception,\
 	org.apache.commons.lang3.text,\
 	\
-	org.gradle,\
-	org.gradle.api,\
-	org.gradle.api.internal,\
-	org.gradle.api.logging,\
-	org.gradle.api.reflect,\
-	org.gradle.api.resources,\
-	org.gradle.api.specs,\
-	org.gradle.groovy.scripts,\
-	org.gradle.initialization,\
-	org.gradle.initialization.layout,\
-	org.gradle.internal,\
-	org.gradle.internal.classloader,\
-	org.gradle.internal.classpath,\
-	org.gradle.internal.concurrent,\
-	org.gradle.internal.dispatch,\
-	org.gradle.internal.event,\
-	org.gradle.internal.exceptions,\
-	org.gradle.internal.impldep.com.google.common.base,\
-	org.gradle.internal.impldep.com.google.common.collect,\
-	org.gradle.internal.impldep.org.apache.commons.io,\
-	org.gradle.internal.io,\
+	org.gradle;-split-package:=merge-first,\
+	org.gradle.api;-split-package:=merge-first,\
+	org.gradle.api.internal;-split-package:=merge-first,\
+	org.gradle.api.logging;-split-package:=merge-first,\
+	org.gradle.api.reflect;-split-package:=merge-first,\
+	org.gradle.api.resources;-split-package:=merge-first,\
+	org.gradle.api.specs;-split-package:=merge-first,\
+	org.gradle.groovy.scripts;-split-package:=merge-first,\
+	org.gradle.initialization;-split-package:=merge-first,\
+	org.gradle.initialization.layout;-split-package:=merge-first,\
+	org.gradle.internal;-split-package:=merge-first,\
+	org.gradle.internal.classloader;-split-package:=merge-first,\
+	org.gradle.internal.classpath;-split-package:=merge-first,\
+	org.gradle.internal.concurrent;-split-package:=merge-first,\
+	org.gradle.internal.dispatch;-split-package:=merge-first,\
+	org.gradle.internal.event;-split-package:=merge-first,\
+	org.gradle.internal.exceptions;-split-package:=merge-first,\
+	org.gradle.internal.impldep.com.google.common.base;-split-package:=merge-first,\
+	org.gradle.internal.impldep.com.google.common.collect;-split-package:=merge-first,\
+	org.gradle.internal.impldep.org.apache.commons.io;-split-package:=merge-first,\
+	org.gradle.internal.io;-split-package:=merge-first,\
 	org.gradle.internal.jvm,\
-	org.gradle.internal.logging,\
+	org.gradle.internal.logging;-split-package:=merge-first,\
 	org.gradle.internal.logging.config,\
 	org.gradle.internal.logging.console,\
-	org.gradle.internal.logging.events,\
-	org.gradle.internal.logging.events.operations,\
+	org.gradle.internal.logging.events;-split-package:=merge-first,\
+	org.gradle.internal.logging.events.operations;-split-package:=merge-first,\
 	org.gradle.internal.logging.format,\
-	org.gradle.internal.logging.progress,\
+	org.gradle.internal.logging.progress;-split-package:=merge-first,\
 	org.gradle.internal.logging.sink,\
 	org.gradle.internal.logging.slf4j,\
 	org.gradle.internal.logging.text,\
 	org.gradle.internal.nativeintegration,\
 	org.gradle.internal.nativeintegration.console,\
-	org.gradle.internal.operations,\
-	org.gradle.internal.reflect,\
+	org.gradle.internal.operations;-split-package:=merge-first,\
+	org.gradle.internal.reflect;-split-package:=merge-first,\
 	org.gradle.internal.resource,\
-	org.gradle.internal.scripts,\
-	org.gradle.internal.service,\
-	org.gradle.internal.time,\
-	org.gradle.internal.typeconversion,\
-	org.gradle.internal.util,\
-	org.gradle.scripts,\
-	org.gradle.tooling,\
-	org.gradle.tooling.connection,\
-	org.gradle.tooling.events,\
-	org.gradle.tooling.events.task,\
-	org.gradle.tooling.events.test,\
-	org.gradle.tooling.exceptions,\
-	org.gradle.tooling.internal.adapter,\
-	org.gradle.tooling.internal.connection,\
-	org.gradle.tooling.internal.consumer,\
-	org.gradle.tooling.internal.consumer.async,\
-	org.gradle.tooling.internal.consumer.connection,\
-	org.gradle.tooling.internal.consumer.converters,\
-	org.gradle.tooling.internal.consumer.loader,\
-	org.gradle.tooling.internal.consumer.parameters,\
-	org.gradle.tooling.internal.consumer.versioning,\
-	org.gradle.tooling.internal.gradle,\
-	org.gradle.tooling.internal.protocol,\
-	org.gradle.tooling.internal.protocol.eclipse,\
-	org.gradle.tooling.internal.protocol.events,\
-	org.gradle.tooling.internal.protocol.exceptions,\
-	org.gradle.tooling.internal.protocol.test,\
-	org.gradle.tooling.internal.provider,\
-	org.gradle.tooling.model,\
-	org.gradle.tooling.model.build,\
-	org.gradle.tooling.model.cpp,\
-	org.gradle.tooling.model.eclipse,\
-	org.gradle.tooling.model.gradle,\
-	org.gradle.tooling.model.idea,\
-	org.gradle.tooling.model.internal,\
-	org.gradle.tooling.model.internal.outcomes,\
-	org.gradle.tooling.provider,\
-	org.gradle.util,\
-	org.gradle.wrapper,\
+	org.gradle.internal.scripts;-split-package:=merge-first,\
+	org.gradle.internal.service;-split-package:=merge-first,\
+	org.gradle.internal.time;-split-package:=merge-first,\
+	org.gradle.internal.typeconversion;-split-package:=merge-first,\
+	org.gradle.internal.util;-split-package:=merge-first,\
+	org.gradle.scripts;-split-package:=merge-first,\
+	org.gradle.tooling;-split-package:=merge-first,\
+	org.gradle.tooling.events;-split-package:=merge-first,\
+	org.gradle.tooling.events.task;-split-package:=merge-first,\
+	org.gradle.tooling.events.test;-split-package:=merge-first,\
+	org.gradle.tooling.exceptions;-split-package:=merge-first,\
+	org.gradle.tooling.internal.adapter;-split-package:=merge-first,\
+	org.gradle.tooling.internal.consumer;-split-package:=merge-first,\
+	org.gradle.tooling.internal.consumer.async;-split-package:=merge-first,\
+	org.gradle.tooling.internal.consumer.connection;-split-package:=merge-first,\
+	org.gradle.tooling.internal.consumer.converters;-split-package:=merge-first,\
+	org.gradle.tooling.internal.consumer.loader;-split-package:=merge-first,\
+	org.gradle.tooling.internal.consumer.parameters;-split-package:=merge-first,\
+	org.gradle.tooling.internal.consumer.versioning;-split-package:=merge-first,\
+	org.gradle.tooling.internal.gradle;-split-package:=merge-first,\
+	org.gradle.tooling.internal.protocol;-split-package:=merge-first,\
+	org.gradle.tooling.internal.protocol.events;-split-package:=merge-first,\
+	org.gradle.tooling.internal.protocol.exceptions;-split-package:=merge-first,\
+	org.gradle.tooling.internal.protocol.test;-split-package:=merge-first,\
+	org.gradle.tooling.model;-split-package:=merge-first,\
+	org.gradle.tooling.model.build;-split-package:=merge-first,\
+	org.gradle.tooling.model.cpp;-split-package:=merge-first,\
+	org.gradle.tooling.model.eclipse;-split-package:=merge-first,\
+	org.gradle.tooling.model.gradle;-split-package:=merge-first,\
+	org.gradle.tooling.model.idea;-split-package:=merge-first,\
+	org.gradle.tooling.model.internal;-split-package:=merge-first,\
+	org.gradle.tooling.model.internal.outcomes;-split-package:=merge-first,\
+	org.gradle.tooling.provider.model,\
+	org.gradle.tooling.provider.model.internal;-split-package:=merge-first,\
+	org.gradle.util;-split-package:=merge-first,\
+	org.gradle.wrapper;-split-package:=merge-first,\
 	\
 	org.jsoup,\
 	org.jsoup.helper,\
@@ -137,12 +129,9 @@ Private-Package:\
 	org.osgi.dto,\
 	org.osgi.framework;-split-package:=merge-first,\
 	org.osgi.framework.dto,\
-	org.osgi.impl.bundle.bindex,\
 	org.osgi.resource;-split-package:=merge-first,\
-	org.osgi.service.bindex,\
-	org.osgi.service.indexer,\
 	org.osgi.service.log,\
-	org.osgi.service.repository,\
+	org.osgi.service.repository;-split-package:=merge-first,\
 	\
 	org.slf4j;-split-package:=merge-first,\
 	org.slf4j.event;-split-package:=merge-first,\
