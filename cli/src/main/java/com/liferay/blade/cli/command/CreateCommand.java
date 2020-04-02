@@ -195,8 +195,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 												sb.append(parameterName);
 											}
 
-											sb.append("]");
-											createField.setAccessible(false);
+											sb.append("] ");
+
+											sb.append(parameterAnnotation.description());
 
 											throw new ParameterException(sb.toString());
 										}
