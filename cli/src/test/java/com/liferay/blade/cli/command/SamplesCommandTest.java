@@ -159,9 +159,7 @@ public class SamplesCommandTest {
 
 		String content = FileUtil.read(mavenBuildFile);
 
-		Assert.assertTrue(
-			content,
-			content.contains("<artifactId>com.liferay.portal.kernel</artifactId>\n\t\t\t<version>4.4.0</version>"));
+		Assert.assertTrue(content, content.contains("<artifactId>com.liferay.portal.kernel</artifactId>"));
 	}
 
 	@Test
