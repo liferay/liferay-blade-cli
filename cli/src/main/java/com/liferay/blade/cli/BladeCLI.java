@@ -68,6 +68,8 @@ import java.util.ServiceLoader;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -448,6 +450,15 @@ public class BladeCLI {
 								parameterMessage = parameterMessage.replace(_MESSAGE_OPTIONS_ARE_REQUIRED, "");
 								parameterMessage = parameterMessage.replace(_MESSAGE_OPTION_IS_REQUIRED, "");
 
+								Matcher matcher = _parameterDescriptionPattern.matcher(parameterMessage);
+
+								String missingParameterDescription = null;
+
+								if (matcher.matches()) {
+									parameterMessage = matcher.group(1);
+									missingParameterDescription = matcher.group(2);
+								}
+
 								String[] missingParameters = parameterMessage.split(", ");
 
 								String value = null;
@@ -456,7 +467,8 @@ public class BladeCLI {
 									missingParameter = _getMissingParameterUnformatted(missingParameter);
 
 									value = _promptForMissingParameter(
-										commandArgs, Optional.of(missingParameter), reader);
+										commandArgs, Optional.of(missingParameter),
+										Optional.ofNullable(missingParameterDescription), reader);
 
 									fixedArgs.add(1, missingParameter);
 
@@ -468,7 +480,8 @@ public class BladeCLI {
 								args = Extensions.sortArgs(_commands, args);
 							}
 							else if (parameterMessage.contains("Main parameters are required")) {
-								String value = _promptForMissingParameter(commandArgs, Optional.empty(), reader);
+								String value = _promptForMissingParameter(
+									commandArgs, Optional.empty(), Optional.empty(), reader);
 
 								fixedArgs.add(value);
 
@@ -1059,7 +1072,8 @@ public class BladeCLI {
 	}
 
 	private String _promptForMissingParameter(
-		Object commandArgs, Optional<String> missingParameterOptional, BufferedReader reader) {
+		Object commandArgs, Optional<String> missingParameterOptional, Optional<String> missingParameterDescription,
+		BufferedReader reader) {
 
 		String value = null;
 
@@ -1087,6 +1101,10 @@ public class BladeCLI {
 					missingParametersFormatted = _getParameterNames(parameterNamesList);
 
 					sb.append(missingParametersFormatted);
+
+					if (missingParameterDescription.isPresent()) {
+						sb.append(" " + missingParameterDescription.get());
+					}
 
 					found = true;
 				}
@@ -1253,6 +1271,7 @@ public class BladeCLI {
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
+	private static final Pattern _parameterDescriptionPattern = Pattern.compile("(.*]) (.*)");
 	private static final Formatter _tracer = new Formatter(System.out);
 
 	private BaseArgs _args = new BaseArgs();
