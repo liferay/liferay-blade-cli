@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.Prompter;
 
 import java.io.File;
@@ -87,7 +88,11 @@ public class BladeSettings {
 					"WARNING: blade commands will not function properly in a Maven workspace unless the blade " +
 						"profile is set to \"maven\". Should the settings for this workspace be updated?";
 
-				if (Prompter.confirm(question, bladeCLI.in(), bladeCLI.out(), Optional.of(true))) {
+				BaseArgs baseArgs = bladeCLI.getArgs();
+
+				if (baseArgs.isQuiet() ||
+					Prompter.confirm(question, bladeCLI.in(), bladeCLI.out(), Optional.of(true))) {
+
 					setProfileName("maven");
 					save();
 				}
