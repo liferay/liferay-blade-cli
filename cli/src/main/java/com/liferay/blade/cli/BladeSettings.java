@@ -16,7 +16,7 @@
 
 package com.liferay.blade.cli;
 
-import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.Prompter;
 
 import java.io.File;
@@ -61,6 +61,10 @@ public class BladeSettings {
 	}
 
 	public void migrateWorkspaceIfNecessary(BladeCLI bladeCLI) throws IOException {
+		migrateWorkspaceIfNecessary(bladeCLI, null);
+	}
+
+	public void migrateWorkspaceIfNecessary(BladeCLI bladeCLI, String profileName) throws IOException {
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(_settingsFile);
 
 		if ((workspaceProvider != null) && workspaceProvider.isWorkspace(bladeCLI)) {
@@ -84,15 +88,18 @@ public class BladeSettings {
 			}
 
 			if (shouldPrompt) {
+				if (!BladeUtil.isEmpty(profileName)) {
+					setProfileName(profileName);
+					save();
+
+					return;
+				}
+
 				String question =
 					"WARNING: blade commands will not function properly in a Maven workspace unless the blade " +
 						"profile is set to \"maven\". Should the settings for this workspace be updated?";
 
-				BaseArgs baseArgs = bladeCLI.getArgs();
-
-				if (baseArgs.isQuiet() ||
-					Prompter.confirm(question, bladeCLI.in(), bladeCLI.out(), Optional.of(true))) {
-
+				if (Prompter.confirm(question, bladeCLI.in(), bladeCLI.out(), Optional.of(true))) {
 					setProfileName("maven");
 					save();
 				}
