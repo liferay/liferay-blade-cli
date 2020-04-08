@@ -359,9 +359,11 @@ public class BladeCLI {
 
 			if (profileName != null) {
 				bladeSettings.setProfileName(profileName);
+				bladeSettings.migrateWorkspaceIfNecessary(this, profileName);
 			}
-
-			bladeSettings.migrateWorkspaceIfNecessary(this);
+			else {
+				bladeSettings.migrateWorkspaceIfNecessary(this);
+			}
 
 			_commands = extensions.getCommands(bladeSettings.getProfileName());
 
