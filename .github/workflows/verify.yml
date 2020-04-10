@@ -1,6 +1,11 @@
 name: CI Build
 
-on: [pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - '*.commits'
+      - '*.markdown'
+      - '**/*.markdown'
 
 env:
   LC_ALL: en_US.UTF-8

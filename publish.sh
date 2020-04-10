@@ -24,25 +24,29 @@ scanOpt="--scan"
 
 # check the arguments first
 while [ $# -gt 0 ]; do
-	if [ "$1" = "snapshots" ] || [ "$1" = "release" ]; then
-		releaseType="$1"
-	elif [ "$2" = "--local" ]; then
+	if [ "$1" = "--local" ]; then
 		nexusOpt="-PlocalNexus"
-	elif [ "$2" = "--remote" ]; then
+	elif [ "$1" = "--remote" ]; then
 		nexusOpt="-PremoteNexus"
-	elif [ "$3" = "--skip-tests" ]; then
+	elif [ "$2" = "--skip-tests" ]; then
 		bladeTestOpt="jar"
-	elif [ "$3" = "--skip-scan" ]; then
+	elif [ "$2" = "--skip-scan" ]; then
 		scanOpt=""
 	fi
 	shift
 done
 
-if [ "$releaseType" != "release" ] && [ "$releaseType" != "snapshots" ]; then
-	echo "Must have one argument, either \"release\" or \"snapshots\"."
-	exit 1
+ISRELEASE=$(cat cli/build.gradle | grep -e "^version = \"[0-9.]*\"$")
+ISSNAPSHOT=$(cat cli/build.gradle | grep -e "^version = \"[0-9.]*-SNAPSHOT\"$")
+
+if [ ! -z "$ISRELEASE" ]; then
+	releaseType="release"
 fi
 
+if [ ! -z "$ISSNAPSHOT" ]; then
+	releaseType="snapshots"
+fi
+		
 # Setup a temp directory
 timestamp=$(date +%s)
 tmpDir="/tmp/$timestamp/"
