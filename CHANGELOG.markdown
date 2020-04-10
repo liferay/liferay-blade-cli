@@ -1,5 +1,83 @@
 # Liferay Blade CLI Change Log
 
+## 3.9.2 - 2020-04-10
+
+### Commits
+- [BLADE-539] Blade should use same way to handle missed .blade.properties
+(6025f503f7)
+- [BLADE-539] automatically migrate maven profile settings if quiet arg is set
+(d595ea8548)
+- [BLADE-537] fix test (6e95f7f7c7)
+- [BLADE-537] show description for commands with missing required parameters
+(d236c738b4)
+- [BLADE-533] remove packages no longer needed (181bd39c6a)
+- [BLADE-533] switch back to binary wrapper (2599d05b7e)
+- [BLADE-533] add check for js-theme (f4f416f62a)
+- [BLADE-533] use runYo (c9087026d1)
+- [BLADE-533] add runYo (f9dfdcb0db)
+- [BLADE-533] reduce duplicate code (40e57380f8)
+- [BLADE-533] support yo generators 8.x and 9.x (d3e27544b2)
+- [BLADE-533] add getBladeCacheDir method (85c52e3b6b)
+- [BLADE-533] move util classes into cli (2e03c9c20c)
+- [BLADE-535] put conditional on job (4c15b0478d)
+- [BLADE-535] only run publish on gamerson/liferay-blade-cli fork (ae9475b6fd)
+- [BLADE-535] debug publish output (ffaf63d1c5)
+- [BLADE-535] check isQuiet for all optional output in commands (fd48b38cd3)
+- [BLADE-535] add a --quiet option (a4ecd6fb9c)
+- [BLADE-533] use global instance for template name validator (a35649ffeb)
+- [BLADE-533] more asserts in test (12f4e39198)
+- [BLADE-533] add blade extensions to project template args earlier (6b668c2966)
+- [BLADE-533] failing test case (05e41910b2)
+- [BLADE-488] rename (11945ee7c4)
+- [BLADE-488] add lines() to allowed chains (fb29d2d72f)
+- [BLADE-488] use try-with-resources (835699b7cd)
+- [BLADE-488] Update java 11 test case (ad1daea23b)
+- [BLADE-488] More problems introduced in upgrading to 7.3 GA1 (6a8a02983d)
+- [BLADE-488] Fix test for removed scopes (300c23d78f)
+- [BLADE-488] Remove scopes from properties (f325810e25)
+- [BLADE-488] No longer needed (fb8945c3c1)
+- [BLADE-488] Update test (385837212a)
+- [BLADE-488] Add more legacy properties in test (5f0b04c91f)
+- [BLADE-488] Match properties with scopes (8b202cc7e0)
+- [BLADE-488] Improve logic (b52f216b3f)
+- [BLADE-534] fix repoUrl (b994b99f8e)
+- [BLADE-534] fix args (def3d59bb6)
+- [BLADE-534] use remote (2e1d0efa74)
+- [BLADE-534] add secrets into ENV (097a8f6e39)
+- [BLADE-534] add publish workflow action on push to master (048e08a0e2)
+- [LPS-105747] If there are more tickets, we should generate the link for each
+of them (970d976cdc)
+- [LPS-105747] Remove colon, since we've already finished referring the link
+(c81368426c)
+- [LPS-105747] Fix Markdown syntax (50b45a0991)
+- [LPS-110131] fix tests (d6528f3eac)
+- [BLADE-503] reenable test (ec1bf9e98f)
+- [BLADE-503] remove catch (cc44bdfaa8)
+- [BLADE-503] remove test (10875bae67)
+- [BLADE-503] Remove unused code (aff13002cf)
+- [BLADE-503] refactor Prompter to not assume System.in and add test for
+interactive mode (086ebd5e18)
+- [BLADE-503] Use reflection to analyze Project Templates Ext for Interactivity
+(b7d816fa98)
+- [LPS-105747] Comment out Markdown Links (d8fef71ac6)
+- [LPS-105747] Use github markdown syntax (c06eee3618)
+- [LPS-105747] Remove unnessesary code (e3d8aa4c01)
+- [LPS-105747] Source formatting (1bc3758ddb)
+- [LPS-105747] Make some changes for the current project (4b6c2431b5)
+- [LPS-105747] Add build-buildscript.gradle (a37257cfc9)
+- [LPS-105747] Copy from liferay-portal (35c1c31b09)
+- [BLADE-532] sort commands by name (d605b88d81)
+- [BLADE-522] Look for both Location and location (d8fdba3cba)
+- [BLADE-522] Fix LinkDownloader for updated Github header (caa014f775)
+
+### Dependencies
+- [] Update the com.liferay.blade.extensions.maven.profile dependency to version
+1.0.16.
+- [LPS-110131] Update the com.liferay.project.templates dependency to version
+5.0.31.
+- [] Update the com.liferay.blade.extensions.maven.profile dependency to version
+1.0.16-SNAPSHOT.
+
 ## 3.9.1 - 2020-02-25
 
 ### Commits
@@ -1227,6 +1305,7 @@ maintainability (7f9bc3f45e)
 [BLADE-483]: https://issues.liferay.com/browse/BLADE-483
 [BLADE-486]: https://issues.liferay.com/browse/BLADE-486
 [BLADE-487]: https://issues.liferay.com/browse/BLADE-487
+[BLADE-488]: https://issues.liferay.com/browse/BLADE-488
 [BLADE-489]: https://issues.liferay.com/browse/BLADE-489
 [BLADE-490]: https://issues.liferay.com/browse/BLADE-490
 [BLADE-493]: https://issues.liferay.com/browse/BLADE-493
@@ -1235,6 +1314,7 @@ maintainability (7f9bc3f45e)
 [BLADE-500]: https://issues.liferay.com/browse/BLADE-500
 [BLADE-501]: https://issues.liferay.com/browse/BLADE-501
 [BLADE-502]: https://issues.liferay.com/browse/BLADE-502
+[BLADE-503]: https://issues.liferay.com/browse/BLADE-503
 [BLADE-504]: https://issues.liferay.com/browse/BLADE-504
 [BLADE-505]: https://issues.liferay.com/browse/BLADE-505
 [BLADE-507]: https://issues.liferay.com/browse/BLADE-507
@@ -1242,6 +1322,13 @@ maintainability (7f9bc3f45e)
 [BLADE-510]: https://issues.liferay.com/browse/BLADE-510
 [BLADE-513]: https://issues.liferay.com/browse/BLADE-513
 [BLADE-520]: https://issues.liferay.com/browse/BLADE-520
+[BLADE-522]: https://issues.liferay.com/browse/BLADE-522
+[BLADE-532]: https://issues.liferay.com/browse/BLADE-532
+[BLADE-533]: https://issues.liferay.com/browse/BLADE-533
+[BLADE-534]: https://issues.liferay.com/browse/BLADE-534
+[BLADE-535]: https://issues.liferay.com/browse/BLADE-535
+[BLADE-537]: https://issues.liferay.com/browse/BLADE-537
+[BLADE-539]: https://issues.liferay.com/browse/BLADE-539
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -1252,7 +1339,9 @@ maintainability (7f9bc3f45e)
 [LPS-67504]: https://issues.liferay.com/browse/LPS-67504
 [LPS-98820]: https://issues.liferay.com/browse/LPS-98820
 [LPS-105502]: https://issues.liferay.com/browse/LPS-105502
+[LPS-105747]: https://issues.liferay.com/browse/LPS-105747
 [LPS-108630]: https://issues.liferay.com/browse/LPS-108630
+[LPS-110131]: https://issues.liferay.com/browse/LPS-110131
 [LRDOCS-3688]: https://issues.liferay.com/browse/LRDOCS-3688
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
