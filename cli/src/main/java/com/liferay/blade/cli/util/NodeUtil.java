@@ -40,6 +40,8 @@ public class NodeUtil {
 
 	public static final String YO_GENERATOR_9_VERSION = "9.x";
 
+	public static final String YO_GENERATOR_10_VERSION = "10.x";
+
 	public static Path downloadNode() throws IOException {
 		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
@@ -93,7 +95,7 @@ public class NodeUtil {
 	}
 
 	public static Path downloadYo() throws Exception {
-		return downloadYo(YO_GENERATOR_9_VERSION);
+		return downloadYo(YO_GENERATOR_10_VERSION);
 	}
 
 	public static Path downloadYo(String version) throws Exception {
@@ -202,7 +204,7 @@ public class NodeUtil {
 	}
 
 	public static int runYo(String[] args) throws Exception {
-		return runYo(YO_GENERATOR_9_VERSION, null, args);
+		return runYo(YO_GENERATOR_10_VERSION, null, args);
 	}
 
 	private static String _getNodeURL() {
