@@ -144,6 +144,10 @@ public class NodeUtil {
 		return yoDirPath;
 	}
 
+	public static int runYo(File dir, String[] args) throws Exception {
+		return runYo(YO_GENERATOR_10_VERSION, dir, args);
+	}
+
 	public static int runYo(String version, File dir, String[] args) throws Exception {
 		Path nodeDirPath = downloadNode();
 
@@ -170,6 +174,10 @@ public class NodeUtil {
 
 			commands.add(nodePath.toString());
 			commands.add(yoPath.toString());
+
+			for (String arg : args) {
+				commands.add(arg);
+			}
 		}
 		else {
 			env.put("PATH", env.get("PATH") + ":/bin:/usr/local/bin");
@@ -179,12 +187,20 @@ public class NodeUtil {
 
 			commands.add("sh");
 			commands.add("-c");
-			commands.add(nodePath.toString());
-			commands.add(yoPath.toString());
-		}
 
-		for (String arg : args) {
-			commands.add(arg);
+			StringBuilder command = new StringBuilder();
+
+			command.append(nodePath.toString());
+			command.append(" ");
+			command.append(yoPath.toString());
+			command.append(" ");
+
+			for (String arg : args) {
+				command.append(arg);
+				command.append(" ");
+			}
+
+			commands.add(command.toString());
 		}
 
 		processBuilder.command(commands);
