@@ -1,0 +1,11 @@
+{
+    "batchMode": true,
+    "answers": {
+        "*": {
+            "themeName": "[$THEME_NAME$]",
+            "themeId": "[$THEME_ID$]",
+            "liferayVersion": "[$LIFERAY_VERSION$]",
+            "fontAwesome": "true"
+        }
+    }
+}
