@@ -108,9 +108,7 @@ public class AetherClient {
 
 		ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
 
-		artifact = artifactResult.getArtifact();
-
-		return artifact;
+		return artifactResult.getArtifact();
 	}
 
 	private static Settings _buildSettings() {

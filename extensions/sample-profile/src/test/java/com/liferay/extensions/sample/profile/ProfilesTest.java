@@ -46,11 +46,11 @@ public class ProfilesTest {
 
 		String[] args = {"--base", workspaceDir.getPath(), "init", "-b", "foo", "-v", "7.3"};
 
-		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "foo", "bar"};
 
-		results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		String output = results.getOutput();
 

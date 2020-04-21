@@ -235,9 +235,7 @@ public class ServerStartCommandMavenTest {
 		serverStartArgsCollection.add("--port");
 		serverStartArgsCollection.add(String.valueOf(_DEBUG_PORT_TOMCAT));
 
-		serverStartArgs = serverStartArgsCollection.toArray(new String[0]);
-
-		return serverStartArgs;
+		return serverStartArgsCollection.toArray(new String[0]);
 	}
 
 	private void _initBladeWorkspace() {

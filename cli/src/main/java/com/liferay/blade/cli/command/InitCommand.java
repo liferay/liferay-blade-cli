@@ -65,8 +65,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		File baseDir = new File(args.getBase());
 
-		final File destDir;
-
 		Path correctPath = baseDir.toPath();
 
 		if (Objects.nonNull(name)) {
@@ -75,7 +73,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		correctPath = correctPath.normalize();
 
-		destDir = correctPath.toFile();
+		File destDir = correctPath.toFile();
 
 		File temp = null;
 
