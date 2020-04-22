@@ -94,16 +94,18 @@ public class NodeUtil {
 		return nodeCachePath;
 	}
 
-	public static Path downloadYo() throws Exception {
-		return downloadYo(YO_GENERATOR_10_VERSION);
-	}
-
-	public static Path downloadYo(String version) throws Exception {
+	public static Path downloadYo(String liferayVersion) throws Exception {
 		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
 		Path nodeDirPath = bladeCachePath.resolve("node");
 
-		Path yoDirPath = bladeCachePath.resolve("yo-" + version);
+		String yoGeneratorVersion = NodeUtil.YO_GENERATOR_10_VERSION;
+
+		if (liferayVersion.equals("7.0") || liferayVersion.equals("7.1")) {
+			yoGeneratorVersion = NodeUtil.YO_GENERATOR_8_VERSION;
+		}
+
+		Path yoDirPath = bladeCachePath.resolve("yo-" + yoGeneratorVersion);
 
 		Path nodeModulesDirPath = yoDirPath.resolve("node_modules");
 
@@ -111,7 +113,7 @@ public class NodeUtil {
 			Files.createDirectories(yoDirPath);
 
 			InputStream inputStream = NodeUtil.class.getResourceAsStream(
-				"dependencies" + File.separator + "yo-" + version + ".json");
+				"dependencies" + File.separator + "yo-" + yoGeneratorVersion + ".json");
 
 			Path targetPath = yoDirPath.resolve("package.json");
 
@@ -144,14 +146,10 @@ public class NodeUtil {
 		return yoDirPath;
 	}
 
-	public static int runYo(File dir, String[] args) throws Exception {
-		return runYo(YO_GENERATOR_10_VERSION, dir, args);
-	}
-
-	public static int runYo(String version, File dir, String[] args) throws Exception {
+	public static int runYo(String liferayVersion, File dir, String[] args) throws Exception {
 		Path nodeDirPath = downloadNode();
 
-		Path yoDirPath = downloadYo(version);
+		Path yoDirPath = downloadYo(liferayVersion);
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
 
@@ -217,10 +215,6 @@ public class NodeUtil {
 		outputStream.close();
 
 		return process.waitFor();
-	}
-
-	public static int runYo(String[] args) throws Exception {
-		return runYo(YO_GENERATOR_10_VERSION, null, args);
 	}
 
 	private static String _getNodeURL() {

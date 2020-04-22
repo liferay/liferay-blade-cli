@@ -67,14 +67,8 @@ public class JSThemeProjectTemplateCustomizer implements ProjectTemplateCustomiz
 
 		write(configPath, config);
 
-		String yoGeneratorVersion = NodeUtil.YO_GENERATOR_10_VERSION;
-
-		if (liferayVersion.equals("7.0") || liferayVersion.equals("7.1")) {
-			yoGeneratorVersion = NodeUtil.YO_GENERATOR_8_VERSION;
-		}
-
 		NodeUtil.runYo(
-			yoGeneratorVersion, new File(basePath),
+			liferayVersion, new File(basePath),
 			new String[] {"liferay-theme", "--config", configPath.toString(), "--skip-install"});
 
 		File liferayThemeJsonFile = new File(projectPath, "liferay-theme.json");
