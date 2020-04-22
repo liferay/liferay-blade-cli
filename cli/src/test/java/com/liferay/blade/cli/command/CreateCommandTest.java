@@ -880,8 +880,8 @@ public class CreateCommandTest {
 		_contains(bnd, ".*Liferay-Theme-Contributor-Type: foobar.*");
 	}
 
-	@Test
 	@Ignore
+	@Test
 	public void testCreateWarCoreExt() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
