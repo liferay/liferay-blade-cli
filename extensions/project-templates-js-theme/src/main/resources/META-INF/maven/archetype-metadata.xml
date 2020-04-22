@@ -17,8 +17,5 @@
 		</requiredProperty>
 		<requiredProperty key="liferayVersion">
 		</requiredProperty>
-		<requiredProperty key="projectType">
-			<defaultValue>standalone</defaultValue>
-		</requiredProperty>
 	</requiredProperties>
 </archetype-descriptor>
