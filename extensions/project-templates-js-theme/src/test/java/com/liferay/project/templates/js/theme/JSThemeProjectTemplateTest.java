@@ -66,15 +66,17 @@ public class JSThemeProjectTemplateTest {
 	public void testJSWidgetProjectTemplate() throws Exception {
 		_setupTestExtensions();
 
-		File workspace = new File(_rootDir, "workspace");
+		File workspaceDir = new File(_rootDir, "workspace");
 
-		_makeWorkspace(workspace);
+		_makeWorkspace(workspaceDir);
 
-		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "js-theme", "js-theme-test"};
+		String[] args = {"create", "--base", workspaceDir.getAbsolutePath(), "-t", "js-theme", "js-theme-test"};
 
 		_bladeTest.run(args);
 
-		File projectDir = new File(_rootDir, "js-theme-test");
+		File themesDir = new File(workspaceDir, "themes");
+
+		File projectDir = new File(themesDir, "js-theme-test");
 
 		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
 	}

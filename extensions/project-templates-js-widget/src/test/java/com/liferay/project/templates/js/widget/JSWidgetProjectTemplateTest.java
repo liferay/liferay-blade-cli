@@ -66,15 +66,17 @@ public class JSWidgetProjectTemplateTest {
 	public void testJSWidgetProjectTemplate() throws Exception {
 		_setupTestExtensions();
 
-		File workspace = new File(_rootDir, "workspace");
+		File workspaceDir = new File(_rootDir, "workspace");
 
-		_makeWorkspace(workspace);
+		_makeWorkspace(workspaceDir);
 
-		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "js-widget", "js-widget-test"};
+		String[] args = {"create", "--base", workspaceDir.getAbsolutePath(), "-t", "js-widget", "js-widget-test"};
 
 		_bladeTest.run(args);
 
-		File projectDir = new File(_rootDir, "js-widget-test");
+		File modulesDir = new File(workspaceDir, "modules");
+
+		File projectDir = new File(modulesDir, "js-widget-test");
 
 		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
 	}
