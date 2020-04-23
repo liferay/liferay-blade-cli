@@ -27,6 +27,7 @@ dependencies {
 
 	testCompile gradleTestKit()
 	testCompile group: "junit", name: "junit", version: "4.12"
+	testCompile project(":cli")
 	testCompile project(path: ":cli", configuration: "testApi")
 }
 
@@ -39,6 +40,14 @@ publishing {
 
 			from components.java
 		}
+	}
+}
+
+test {
+	dependsOn jar
+
+	doFirst {
+		systemProperty 'jsThemeTemplateJarFile', jar.archivePath
 	}
 }
 
