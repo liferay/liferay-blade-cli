@@ -21,7 +21,6 @@ import com.liferay.project.templates.extensions.ProjectTemplateCustomizer;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,7 +53,7 @@ public class JSThemeProjectTemplateCustomizer implements ProjectTemplateCustomiz
 
 		Path configPath = Paths.get(projectPath + "/config.json");
 
-		String config = read(configPath);
+		String config = new String(Files.readAllBytes(configPath));
 
 		String liferayVersion = projectTemplatesArgs.getLiferayVersion();
 
@@ -65,7 +64,7 @@ public class JSThemeProjectTemplateCustomizer implements ProjectTemplateCustomiz
 		config = _replace(config, "[$THEME_ID$]", _getThemeId(name));
 		config = _replace(config, "[$THEME_NAME$]", _getThemeName(name));
 
-		write(configPath, config);
+		Files.write(configPath, config.getBytes());
 
 		NodeUtil.runYo(
 			liferayVersion, new File(basePath),
@@ -82,14 +81,6 @@ public class JSThemeProjectTemplateCustomizer implements ProjectTemplateCustomiz
 	public void onBeforeGenerateProject(
 			ProjectTemplatesArgs projectTemplatesArgs, ArchetypeGenerationRequest archetypeGenerationRequest)
 		throws Exception {
-	}
-
-	public String read(Path path) throws IOException {
-		return new String(Files.readAllBytes(path));
-	}
-
-	public void write(Path destination, String content) throws Exception {
-		Files.write(destination, content.getBytes());
 	}
 
 	private String _getThemeId(String name) {
