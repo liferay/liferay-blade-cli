@@ -49,7 +49,7 @@ public class NodeUtil {
 
 		Path nodeDirPath = bladeCachePath.resolve("node");
 
-		if (!Files.exists(nodeDirPath)) {
+		if (!Files.exists(nodeDirPath) || !_containsFiles(nodeDirPath)) {
 			Files.createDirectories(nodeDirPath);
 
 			String nodeURL = _getNodeURL();
@@ -165,6 +165,16 @@ public class NodeUtil {
 		outputStream.close();
 
 		return process.waitFor();
+	}
+
+	private static boolean _containsFiles(Path path) throws IOException {
+		try (Stream<Path> files = Files.list(path)) {
+			if (files.count() > 0) {
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 	private static boolean _contentEquals(Path path1, Path path2) throws Exception {
