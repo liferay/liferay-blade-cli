@@ -17,6 +17,7 @@ buildscript {
 
 apply plugin: "biz.aQute.bnd.builder"
 apply plugin: "java"
+apply plugin: "maven-publish"
 
 dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.0"
@@ -29,5 +30,15 @@ dependencies {
 }
 
 jar.baseName = "com.liferay.project.templates.js.widget"
+
+publishing {
+	publications {
+		mavenProfileJar(MavenPublication) {
+			artifactId = jar.baseName
+
+			from components.java
+		}
+	}
+}
 
 version = "1.0.0-SNAPSHOT"
