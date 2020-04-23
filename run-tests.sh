@@ -18,6 +18,14 @@ function checkError {
 
 checkError
 
+./gradlew --no-daemon :extensions:project-templates-js-theme:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
+
+checkError
+
+./gradlew --no-daemon :extensions:project-templates-js-widget:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
+
+checkError
+
 ./gradlew --no-daemon -PmavenLocal --continue clean check smokeTests --scan
 
 checkError

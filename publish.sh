@@ -84,6 +84,36 @@ if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
    exit 1
 fi
 
+# Publish the JS Theme Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-js-theme:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/js-theme-template-publish-command.txt
+jsThemeTemplatePublishCommand=$(cat /tmp/$timestamp/js-theme-template-publish-command.txt)
+
+if [ "$?" != "0" ] || [ -z "$jsThemeTemplatePublishCommand" ]; then
+   echo Failed :extensions:project-templates-js-theme:publish
+   rm -rf /tmp/$timestamp
+   exit 1
+fi
+
+# Publish the JS Widget Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-js-widget:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/js-widget-template-publish-command.txt
+jsWidgetTemplatePublishCommand=$(cat /tmp/$timestamp/js-widget-template-publish-command.txt)
+
+if [ "$?" != "0" ] || [ -z "$jsWidgetTemplatePublishCommand" ]; then
+   echo Failed :extensions:project-templates-js-widget:publish
+   rm -rf /tmp/$timestamp
+   exit 1
+fi
+
+# Publish the Maven Profile jar
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/maven-profile-publish-command.txt
+mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
+
+if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
+   echo Failed :extensions:maven-profile:publish
+   rm -rf /tmp/$timestamp
+   exit 1
+fi
+
 # Publish the Maven Profile jar
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/maven-profile-publish-command.txt
 mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
