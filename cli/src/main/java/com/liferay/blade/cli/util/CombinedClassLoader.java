@@ -72,7 +72,7 @@ public class CombinedClassLoader extends ClassLoader implements AutoCloseable {
 		}
 
 		try {
-			ByteBuffer byteCode = _loadResourcFromClasspath(url);
+			ByteBuffer byteCode = _loadResourceFromClasspath(url);
 
 			return defineClass(name, byteCode, null);
 		}
@@ -122,7 +122,7 @@ public class CombinedClassLoader extends ClassLoader implements AutoCloseable {
 		return null;
 	}
 
-	private static ByteBuffer _loadResourcFromClasspath(URL url) throws IOException {
+	private static ByteBuffer _loadResourceFromClasspath(URL url) throws IOException {
 		try (InputStream inputStream = url.openStream()) {
 			byte[] buffer = new byte[1024];
 
