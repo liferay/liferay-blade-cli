@@ -17,14 +17,10 @@
 package com.liferay.blade.cli.util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -36,7 +32,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 /**
  * @author David Truong
@@ -76,15 +71,16 @@ public class NodeUtil {
 				}
 
 				try (Stream<Path> nodePaths = Files.list(nodePath)) {
-					nodePaths.forEach(x -> {
-						try {
-							Files.move(
-								x, nodeDirPath.resolve(x.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-						}
-						catch (IOException ioe) {
-							throw new RuntimeException(ioe);
-						}
-					});
+					nodePaths.forEach(
+						x -> {
+							try {
+								Files.move(
+									x, nodeDirPath.resolve(x.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+							}
+							catch (IOException ioe) {
+								throw new RuntimeException(ioe);
+							}
+						});
 				}
 
 				Files.delete(nodePath);
