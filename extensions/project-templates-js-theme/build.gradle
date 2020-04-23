@@ -31,18 +31,4 @@ dependencies {
 
 jar.baseName = "com.liferay.project.templates.js.theme"
 
-repositories {
-	flatDir {
-		dirs "${rootProject.projectDir}/libs"
-	}
-
-	maven {
-		url "https://repo.gradle.org/gradle/libs-releases/"
-	}
-
-	maven {
-		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
-	}
-}
-
 version = "1.0.0-SNAPSHOT"

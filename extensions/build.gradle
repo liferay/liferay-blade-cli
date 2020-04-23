@@ -7,4 +7,28 @@ subprojects { subproject ->
 
 		clean.dependsOn(cleanDeploy)
 	}
+
+	String repoHost = "repository-cdn.liferay.com"
+
+	if (subproject.hasProperty("release") || subproject.hasProperty("snapshots")) {
+		repoHost = "repository.liferay.com"
+	}
+
+	repositories {
+		flatDir {
+			dirs "${rootProject.projectDir}/libs"
+		}
+
+		maven {
+			url "https://repo.gradle.org/gradle/libs-releases/"
+		}
+
+		maven {
+			url "https://${repoHost}/nexus/content/repositories/liferay-public-releases/"
+		}
+
+		maven {
+			url "https://${repoHost}/nexus/content/repositories/liferay-public-snapshots/"
+		}
+	}
 }
