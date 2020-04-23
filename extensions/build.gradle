@@ -1,5 +1,5 @@
 subprojects { subproject ->
-	plugins.withId("java") {
+	pluginManager.withPlugin("java") {
 		task deploy(type: Copy, dependsOn: jar) {
 			from jar
 			into new File(System.getProperty("user.home") + "/.blade/extensions")
