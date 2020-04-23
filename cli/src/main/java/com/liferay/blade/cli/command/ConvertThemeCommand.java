@@ -149,7 +149,7 @@ public class ConvertThemeCommand implements FilesSupport {
 
 	public void importTheme(String themePath, boolean removeSource) throws Exception {
 		int errCode = NodeUtil.runYo(
-			NodeUtil.YO_GENERATOR_8_VERSION, _themesDir,
+			_liferayVersion70, _themesDir,
 			new String[] {
 				"liferay-theme:import", "-p", themePath, "-c", String.valueOf(_compassSupport(themePath)),
 				"--skip-install"
@@ -192,6 +192,8 @@ public class ConvertThemeCommand implements FilesSupport {
 	}
 
 	private static final Pattern _compassImport = Pattern.compile("@import\\s*['\"]compass['\"];");
+
+	private static final String _liferayVersion70 = "7.0";
 
 	private BladeCLI _bladeCLI;
 	private ConvertArgs _convertArgs;
