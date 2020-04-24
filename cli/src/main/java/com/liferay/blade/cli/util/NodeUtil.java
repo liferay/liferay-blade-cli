@@ -255,8 +255,7 @@ public class NodeUtil {
 
 		Path newPackageJsonPath = yoDirPath.resolve("new_package.json");
 
-		InputStream inputStream = NodeUtil.class.getResourceAsStream(
-			"dependencies" + File.separator + "yo-" + yoGeneratorVersion + ".json");
+		InputStream inputStream = NodeUtil.class.getResourceAsStream("dependencies/yo-" + yoGeneratorVersion + ".json");
 
 		Files.copy(inputStream, newPackageJsonPath, StandardCopyOption.REPLACE_EXISTING);
 
