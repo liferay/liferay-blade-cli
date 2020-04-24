@@ -103,9 +103,7 @@ public class NodeUtil {
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
 
-		File cwd = new File(System.getProperty("user.dir"));
-
-		processBuilder.directory(cwd);
+		processBuilder.directory(dir);
 
 		Map<String, String> env = processBuilder.environment();
 
