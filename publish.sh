@@ -17,7 +17,7 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
-bladeTestOpt="check"
+bladeTask="check"
 nexusOpt=""
 releaseType=""
 scanOpt="--scan"
@@ -28,9 +28,9 @@ while [ $# -gt 0 ]; do
 		nexusOpt="-PlocalNexus"
 	elif [ "$1" = "--remote" ]; then
 		nexusOpt="-PremoteNexus"
-	elif [ "$2" = "--skip-tests" ]; then
-		bladeTestOpt="jar"
-	elif [ "$2" = "--skip-scan" ]; then
+	elif [ "$1" = "--skip-tests" ]; then
+		bladeTask="jar"
+	elif [ "$1" = "--skip-scan" ]; then
 		scanOpt=""
 	fi
 	shift
@@ -148,7 +148,7 @@ fi
 
 # Test the blade cli jar locally, but don't publish.
 
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTestOpt --info ${scanOpt} > /tmp/$timestamp/blade-cli-jar-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTask --info ${scanOpt} > /tmp/$timestamp/blade-cli-jar-command.txt
 
 if [ "$?" != "0" ]; then
    echo Failed :cli:jar
