@@ -6,7 +6,7 @@
 		"generator-liferay-js": "2.18.2",
 		"generator-liferay-theme": "9.5.0",
 		"generator-liferay-theme-themelet": "1.2.0",
-		"yo": "3.1.0"
+		"yo": "3.1.1"
 	},
 	"license": "LGPL",
 	"main": "index.js",

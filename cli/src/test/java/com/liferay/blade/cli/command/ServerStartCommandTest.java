@@ -540,9 +540,7 @@ public class ServerStartCommandTest {
 		serverStartArgsCollection.add("--port");
 		serverStartArgsCollection.add(String.valueOf(_debugPort));
 
-		serverStartArgs = serverStartArgsCollection.toArray(new String[0]);
-
-		return serverStartArgs;
+		return serverStartArgsCollection.toArray(new String[0]);
 	}
 
 	private void _initBladeWorkspace() throws Exception {

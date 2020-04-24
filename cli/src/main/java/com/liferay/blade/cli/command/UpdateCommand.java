@@ -384,9 +384,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	}
 
 	private static Long _getNexusSnapshotVersion(String updateVersion) {
-		Matcher matcher;
-
-		matcher = _nexusSnapshotPattern.matcher(updateVersion);
+		Matcher matcher = _nexusSnapshotPattern.matcher(updateVersion);
 
 		matcher.find();
 

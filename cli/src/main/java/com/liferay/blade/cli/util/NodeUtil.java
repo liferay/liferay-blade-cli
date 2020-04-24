@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
+
 /**
  * @author David Truong
  */
@@ -40,13 +42,15 @@ public class NodeUtil {
 
 	public static final String YO_GENERATOR_9_VERSION = "9.x";
 
+	public static final String YO_GENERATOR_10_VERSION = "10.x";
+
 	public static Path downloadNode() throws IOException {
 		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
-		Path nodeCachePath = bladeCachePath.resolve("node");
+		Path nodeDirPath = bladeCachePath.resolve("node");
 
-		if (!Files.exists(nodeCachePath)) {
-			Files.createDirectories(nodeCachePath);
+		if (!Files.exists(nodeDirPath) || !_containsFiles(nodeDirPath)) {
+			Files.createDirectories(nodeDirPath);
 
 			String nodeURL = _getNodeURL();
 
@@ -56,12 +60,12 @@ public class NodeUtil {
 				BladeUtil.downloadLink(nodeURL, downloadPath);
 			}
 
-			FileUtil.unpack(downloadPath, nodeCachePath, 1);
+			FileUtil.unpack(downloadPath, nodeDirPath, 1);
 
 			if (OSDetector.isWindows()) {
 				Path nodePath;
 
-				try (Stream<Path> paths = Files.list(nodeCachePath)) {
+				try (Stream<Path> paths = Files.list(nodeDirPath)) {
 					nodePath = paths.findFirst(
 					).get();
 				}
@@ -71,7 +75,7 @@ public class NodeUtil {
 						x -> {
 							try {
 								Files.move(
-									x, nodeCachePath.resolve(x.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+									x, nodeDirPath.resolve(x.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
 							catch (IOException ioe) {
 								throw new RuntimeException(ioe);
@@ -83,75 +87,23 @@ public class NodeUtil {
 			}
 			else {
 				Files.setPosixFilePermissions(
-					nodeCachePath.resolve("bin/node"), PosixFilePermissions.fromString("rwxrwxr--"));
+					nodeDirPath.resolve("bin/node"), PosixFilePermissions.fromString("rwxrwxr--"));
 				Files.setPosixFilePermissions(
-					nodeCachePath.resolve("bin/npm"), PosixFilePermissions.fromString("rwxrwxr--"));
+					nodeDirPath.resolve("bin/npm"), PosixFilePermissions.fromString("rwxrwxr--"));
 			}
 		}
 
-		return nodeCachePath;
+		return nodeDirPath;
 	}
 
-	public static Path downloadYo() throws Exception {
-		return downloadYo(YO_GENERATOR_9_VERSION);
-	}
-
-	public static Path downloadYo(String version) throws Exception {
-		Path bladeCachePath = BladeUtil.getBladeCachePath();
-
-		Path nodeDirPath = bladeCachePath.resolve("node");
-
-		Path yoDirPath = bladeCachePath.resolve("yo-" + version);
-
-		Path nodeModulesDirPath = yoDirPath.resolve("node_modules");
-
-		if (!Files.exists(nodeModulesDirPath)) {
-			Files.createDirectories(yoDirPath);
-
-			InputStream inputStream = NodeUtil.class.getResourceAsStream(
-				"dependencies" + File.separator + "yo-" + version + ".json");
-
-			Path targetPath = yoDirPath.resolve("package.json");
-
-			Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-			File npmDir = _getNpmDir(nodeDirPath.toFile());
-
-			Process process;
-
-			if (OSDetector.isWindows()) {
-				process = BladeUtil.startProcess(
-					nodeDirPath.toString() + File.separator + "node.exe " + npmDir + File.separator + "bin" +
-						File.separator + "npm-cli.js install --scripts-prepend-node-path",
-					yoDirPath.toFile());
-			}
-			else {
-				process = BladeUtil.startProcess(
-					nodeDirPath.toString() + File.separator + "bin" + File.separator + "node " + npmDir +
-						File.separator + "bin" + File.separator + "npm-cli.js install",
-					yoDirPath.toFile());
-			}
-
-			int returnCode = process.waitFor();
-
-			if (returnCode != 0) {
-				throw new RuntimeException("Problem occurred while downloading yo");
-			}
-		}
-
-		return yoDirPath;
-	}
-
-	public static int runYo(String version, File dir, String[] args) throws Exception {
+	public static int runYo(String liferayVersion, File dir, String[] args) throws Exception {
 		Path nodeDirPath = downloadNode();
 
-		Path yoDirPath = downloadYo(version);
+		Path yoDirPath = _installYo(liferayVersion);
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
 
-		File cwd = new File(System.getProperty("user.dir"));
-
-		processBuilder.directory(cwd);
+		processBuilder.directory(dir);
 
 		Map<String, String> env = processBuilder.environment();
 
@@ -168,6 +120,10 @@ public class NodeUtil {
 
 			commands.add(nodePath.toString());
 			commands.add(yoPath.toString());
+
+			for (String arg : args) {
+				commands.add(arg);
+			}
 		}
 		else {
 			env.put("PATH", env.get("PATH") + ":/bin:/usr/local/bin");
@@ -177,12 +133,20 @@ public class NodeUtil {
 
 			commands.add("sh");
 			commands.add("-c");
-			commands.add(nodePath.toString());
-			commands.add(yoPath.toString());
-		}
 
-		for (String arg : args) {
-			commands.add(arg);
+			StringBuilder command = new StringBuilder();
+
+			command.append(nodePath.toString());
+			command.append(" ");
+			command.append(yoPath.toString());
+			command.append(" ");
+
+			for (String arg : args) {
+				command.append(arg);
+				command.append(" ");
+			}
+
+			commands.add(command.toString());
 		}
 
 		processBuilder.command(commands);
@@ -201,8 +165,18 @@ public class NodeUtil {
 		return process.waitFor();
 	}
 
-	public static int runYo(String[] args) throws Exception {
-		return runYo(YO_GENERATOR_9_VERSION, null, args);
+	private static boolean _containsFiles(Path path) throws IOException {
+		try (Stream<Path> files = Files.list(path)) {
+			if (files.count() > 0) {
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	private static boolean _contentEquals(Path path1, Path path2) throws Exception {
+		return FileUtils.contentEqualsIgnoreEOL(path1.toFile(), path2.toFile(), "UTF-8");
 	}
 
 	private static String _getNodeURL() {
@@ -262,6 +236,71 @@ public class NodeUtil {
 		}
 
 		return new File(nodeModulesDir, "npm");
+	}
+
+	private static Path _installYo(String liferayVersion) throws Exception {
+		Path bladeCachePath = BladeUtil.getBladeCachePath();
+
+		Path nodeDirPath = bladeCachePath.resolve("node");
+
+		String yoGeneratorVersion = NodeUtil.YO_GENERATOR_10_VERSION;
+
+		if (liferayVersion.equals("7.0") || liferayVersion.equals("7.1")) {
+			yoGeneratorVersion = NodeUtil.YO_GENERATOR_8_VERSION;
+		}
+
+		Path yoDirPath = bladeCachePath.resolve("yo-" + yoGeneratorVersion);
+
+		Files.createDirectories(yoDirPath);
+
+		Path newPackageJsonPath = yoDirPath.resolve("new_package.json");
+
+		InputStream inputStream = NodeUtil.class.getResourceAsStream("dependencies/yo-" + yoGeneratorVersion + ".json");
+
+		Files.copy(inputStream, newPackageJsonPath, StandardCopyOption.REPLACE_EXISTING);
+
+		Path packageJsonPath = yoDirPath.resolve("package.json");
+
+		boolean skipInstall = false;
+
+		if (Files.exists(packageJsonPath)) {
+			skipInstall = _contentEquals(packageJsonPath, newPackageJsonPath);
+		}
+
+		Path nodeModulesDirPath = yoDirPath.resolve("node_modules");
+
+		skipInstall = skipInstall && Files.exists(nodeModulesDirPath);
+
+		if (!skipInstall) {
+			FileUtils.deleteQuietly(nodeModulesDirPath.toFile());
+
+			Files.move(newPackageJsonPath, packageJsonPath, StandardCopyOption.REPLACE_EXISTING);
+
+			File npmDir = _getNpmDir(nodeDirPath.toFile());
+
+			Process process;
+
+			if (OSDetector.isWindows()) {
+				process = BladeUtil.startProcess(
+					nodeDirPath.toString() + File.separator + "node.exe " + npmDir + File.separator + "bin" +
+						File.separator + "npm-cli.js install --scripts-prepend-node-path",
+					yoDirPath.toFile());
+			}
+			else {
+				process = BladeUtil.startProcess(
+					nodeDirPath.toString() + File.separator + "bin" + File.separator + "node " + npmDir +
+						File.separator + "bin" + File.separator + "npm-cli.js install",
+					yoDirPath.toFile());
+			}
+
+			int returnCode = process.waitFor();
+
+			if (returnCode != 0) {
+				throw new RuntimeException("Problem occurred while downloading yo");
+			}
+		}
+
+		return yoDirPath;
 	}
 
 	private static String _nodeVersion = "8.4.0";

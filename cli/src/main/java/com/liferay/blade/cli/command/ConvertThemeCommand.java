@@ -149,7 +149,7 @@ public class ConvertThemeCommand implements FilesSupport {
 
 	public void importTheme(String themePath, boolean removeSource) throws Exception {
 		int errCode = NodeUtil.runYo(
-			NodeUtil.YO_GENERATOR_8_VERSION, _themesDir,
+			_LIFERAY_VERSION_70, _themesDir,
 			new String[] {
 				"liferay-theme:import", "-p", themePath, "-c", String.valueOf(_compassSupport(themePath)),
 				"--skip-install"
@@ -190,6 +190,8 @@ public class ConvertThemeCommand implements FilesSupport {
 
 		return matcher.find();
 	}
+
+	private static final String _LIFERAY_VERSION_70 = "7.0";
 
 	private static final Pattern _compassImport = Pattern.compile("@import\\s*['\"]compass['\"];");
 

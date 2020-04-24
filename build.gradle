@@ -193,7 +193,7 @@ repositories {
 subprojects { subproject ->
 	group = "com.liferay.blade"
 
-	plugins.withId("java") {
+	pluginManager.withPlugin("java") {
 		apply plugin: "com.liferay.source.formatter"
 		apply plugin: "nu.studer.credentials"
 
@@ -209,7 +209,7 @@ subprojects { subproject ->
 		targetCompatibility = "1.8"
 	}
 
-	plugins.withId("maven-publish") {
+	pluginManager.withPlugin("maven-publish") {
 		task prepareRelease
 		task prepareSnapshot
 

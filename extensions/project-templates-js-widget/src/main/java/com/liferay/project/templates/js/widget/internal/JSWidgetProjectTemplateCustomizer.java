@@ -22,7 +22,6 @@ import com.liferay.project.templates.extensions.ProjectTemplateCustomizer;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,7 +49,7 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 		Path configPath = Paths.get(destinationDir.getAbsolutePath(), projectTemplatesArgs.getName() + "/config.json");
 
-		String config = read(configPath);
+		String config = new String(Files.readAllBytes(configPath));
 
 		config = _replace(config, "[$TARGET$]", "react-widget");
 
@@ -61,6 +60,8 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 			(JSWidgetProjectTemplatesArgsExt)projectTemplatesArgs.getProjectTemplatesArgsExt();
 
 		String workspaceLocation = ext.getWorkspaceLocation();
+
+		String modulesLocation = ext.getModulesLocation();
 
 		if (workspaceLocation != null) {
 			Path liferayLocationPath = Paths.get(workspaceLocation);
@@ -78,11 +79,9 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 			config = _replace(config, "[$LIFERAY_DIR$]", liferayLocation);
 			config = _replace(config, "[$LIFERAY_PRESENT$]", "true");
 
-			String modulesLocation = ext.getModulesLocation();
+			File file = new File(modulesLocation, projectTemplatesArgs.getName());
 
-			modulesLocation = new File(
-				modulesLocation, projectTemplatesArgs.getName()
-			).getAbsolutePath();
+			modulesLocation = file.getAbsolutePath();
 
 			if (OSDetector.isWindows()) {
 				modulesLocation = modulesLocation.replace("\\", "\\\\");
@@ -109,23 +108,17 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 			config = _replace(config, "[$LIFERAY_PRESENT$]", "false");
 		}
 
-		write(configPath, config);
+		Files.write(configPath, config.getBytes());
 
-		NodeUtil.runYo(new String[] {"liferay-js", "--config", configPath.toString()});
+		NodeUtil.runYo(
+			projectTemplatesArgs.getLiferayVersion(), new File(workspaceLocation),
+			new String[] {"liferay-js", "--config", configPath.toString(), "--skip-install"});
 	}
 
 	@Override
 	public void onBeforeGenerateProject(
 			ProjectTemplatesArgs projectTemplatesArgs, ArchetypeGenerationRequest archetypeGenerationRequest)
 		throws Exception {
-	}
-
-	public String read(Path path) throws IOException {
-		return new String(Files.readAllBytes(path));
-	}
-
-	public void write(Path destination, String content) throws Exception {
-		Files.write(destination, content.getBytes());
 	}
 
 	private String _replace(String s, String key, Object value) {

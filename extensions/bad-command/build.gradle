@@ -24,25 +24,6 @@ dependencies {
 	compileOnly project(":cli")
 }
 
-repositories {
-	flatDir {
-		dirs "${rootProject.projectDir}/libs"
-	}
-
-	maven {
-		url "https://repo.gradle.org/gradle/libs-releases/"
-	}
-
-	maven {
-		if (project.hasProperty("release")) {
-			url "https://repository.liferay.com/nexus/content/groups/public"
-		}
-		else {
-			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
-		}
-	}
-}
-
 test {
 	dependsOn jar
 
