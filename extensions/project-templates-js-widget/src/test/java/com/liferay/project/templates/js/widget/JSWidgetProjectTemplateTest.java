@@ -17,7 +17,6 @@
 package com.liferay.project.templates.js.widget;
 
 import com.liferay.blade.cli.BladeTest;
-import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -30,8 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import java.util.Properties;
-
-import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -82,10 +79,6 @@ public class JSWidgetProjectTemplateTest {
 		File projectDir = new File(modulesDir, "js-widget-test");
 
 		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
-
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectDir.getAbsolutePath(), "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 	}
 
 	@Rule

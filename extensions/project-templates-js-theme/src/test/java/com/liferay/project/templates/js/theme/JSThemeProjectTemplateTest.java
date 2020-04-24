@@ -79,11 +79,15 @@ public class JSThemeProjectTemplateTest {
 
 		File themesDir = new File(workspaceDir, "themes");
 
-		File projectDir = new File(themesDir, "js-theme-test");
+		File generatedDir = new File(themesDir, "js-theme-test-theme");
 
-		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
+		Assert.assertTrue("Expected generated dir to exist " + generatedDir, generatedDir.exists());
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectDir.getAbsolutePath(), "build");
+		File archetypeDir = new File(themesDir, "js-theme-test");
+
+		Assert.assertFalse("Expected archetytpe dir to not exist " + archetypeDir, archetypeDir.exists());
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(generatedDir.getAbsolutePath(), "build");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 	}

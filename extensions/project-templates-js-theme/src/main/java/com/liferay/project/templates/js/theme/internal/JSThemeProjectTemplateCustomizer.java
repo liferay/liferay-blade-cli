@@ -81,6 +81,18 @@ public class JSThemeProjectTemplateCustomizer implements ProjectTemplateCustomiz
 	public void onBeforeGenerateProject(
 			ProjectTemplatesArgs projectTemplatesArgs, ArchetypeGenerationRequest archetypeGenerationRequest)
 		throws Exception {
+
+		String name = projectTemplatesArgs.getName();
+
+		if (!name.endsWith("-theme")) {
+			projectTemplatesArgs.setName(name + "-theme");
+		}
+
+		String artifactId = archetypeGenerationRequest.getArtifactId();
+
+		if (!artifactId.endsWith("-theme")) {
+			archetypeGenerationRequest.setArtifactId(artifactId + "-theme");
+		}
 	}
 
 	private String _getThemeId(String name) {
