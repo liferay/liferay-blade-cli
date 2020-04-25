@@ -84,9 +84,7 @@ public class AnsiLinePrinter {
 		Pattern.compile("^Error.*"), Pattern.compile(".*ERROR.*"), Pattern.compile(".*FATAL.*")
 	};
 
-	private static final Pattern[] _GREEN_LINE_PATTERNS = {
-		Pattern.compile(".*STARTED.*"), Pattern.compile(".*STOPPED.*")
-	};
+	private static final Pattern[] _GREEN_LINE_PATTERNS = {Pattern.compile(".*STARTED.*")};
 
 	private static final Pattern[] _YELLOW_LINE_PATTERNS = {Pattern.compile(".*WARN.*")};
 
