@@ -146,7 +146,9 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 				for (Object key : keySet) {
 					String extension = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
 
-					if (classLoader.getResource(extension) != null) {
+					if (!extension.startsWith("com.liferay.project.templates") &&
+						(classLoader.getResource(extension) != null)) {
+
 						extensions.add(extension);
 					}
 					else {
