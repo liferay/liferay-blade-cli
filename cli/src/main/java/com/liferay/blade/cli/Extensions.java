@@ -21,8 +21,17 @@ import com.beust.jcommander.Parameters;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
+import com.liferay.blade.cli.util.FileUtil;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
 
 import java.lang.reflect.Field;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +40,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,7 +49,7 @@ import java.util.stream.Stream;
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
-public class Extensions {
+public class Extensions implements Closeable {
 
 	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
 		Stream<Class<? extends BaseArgs>> stream = argsClass.stream();
@@ -192,6 +203,13 @@ public class Extensions {
 		_serviceLoaderClassLoader = classLoader;
 	}
 
+	@Override
+	public void close() throws IOException {
+		if ((_embeddedTemplatesPath != null) && Files.exists(_embeddedTemplatesPath)) {
+			FileUtil.deleteDir(_embeddedTemplatesPath);
+		}
+	}
+
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {
 		return _getCommands(null);
 	}
@@ -202,6 +220,66 @@ public class Extensions {
 		}
 
 		return _getCommands(profileName);
+	}
+
+	public Path getTemplatesPath() throws IOException {
+		if (_embeddedTemplatesPath == null) {
+			_embeddedTemplatesPath = Files.createTempDirectory("templates");
+
+			try (InputStream inputStream = Extensions.class.getResourceAsStream(
+					"/blade-extensions-versions.properties")) {
+
+				if (inputStream != null) {
+					Properties properties = new Properties();
+
+					properties.load(inputStream);
+
+					Set<String> templates = new HashSet<>();
+					ClassLoader classLoader = Extensions.class.getClassLoader();
+
+					for (Object key : properties.keySet()) {
+						String jarResource = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
+
+						if (jarResource.startsWith("com.liferay.project.templates") &&
+							(classLoader.getResource(jarResource) != null)) {
+
+							templates.add(jarResource);
+						}
+					}
+
+					for (String template : templates) {
+						try (InputStream extensionInputStream = classLoader.getResourceAsStream(template)) {
+							Path extensionPath = _embeddedTemplatesPath.resolve(template);
+
+							Files.copy(extensionInputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
+						}
+						catch (Throwable th) {
+							StringBuilder sb = new StringBuilder();
+
+							sb.append("Error encountered while loading embedded custom template.");
+							sb.append(System.lineSeparator());
+							sb.append(th.getMessage());
+							sb.append(System.lineSeparator());
+							sb.append("Not loading template " + template + ".");
+							sb.append(System.lineSeparator());
+
+							String errorString = sb.toString();
+
+							System.err.println(errorString);
+						}
+					}
+				}
+			}
+			catch (Throwable th) {
+				String errorMessage = "Error encountered while loading custom extensions." + System.lineSeparator();
+
+				System.err.println(errorMessage);
+
+				System.err.println(th.getMessage());
+			}
+		}
+
+		return _embeddedTemplatesPath;
 	}
 
 	private static Collection<String> _getFlags(Class<? extends BaseArgs> clazz, boolean withArguments) {
@@ -241,6 +319,7 @@ public class Extensions {
 	}
 
 	private Map<String, BaseCommand<? extends BaseArgs>> _commands;
+	private Path _embeddedTemplatesPath = null;
 	private ClassLoader _serviceLoaderClassLoader = null;
 
 }

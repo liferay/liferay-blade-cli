@@ -574,6 +574,10 @@ public class BladeCLI {
 			if (_extensionsClassLoaderSupplier != null) {
 				_extensionsClassLoaderSupplier.close();
 			}
+
+			if (_extensions != null) {
+				_extensions.close();
+			}
 		}
 	}
 

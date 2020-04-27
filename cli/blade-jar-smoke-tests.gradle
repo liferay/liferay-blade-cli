@@ -28,6 +28,8 @@ testBladeCreateCommand {
 	standardOutput = standardStream
 
 	doLast {
+		assert standardStream.toString().contains("js-theme")
+		assert standardStream.toString().contains("js-widget")
 		assert standardStream.toString().contains("service-builder")
 		assert !errorStream.toString().toLowerCase().contains("error")
 

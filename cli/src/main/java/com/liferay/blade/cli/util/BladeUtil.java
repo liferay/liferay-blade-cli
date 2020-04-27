@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.util;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.command.SamplesCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
@@ -256,11 +257,17 @@ public class BladeUtil {
 	}
 
 	public static Map<String, String> getTemplates(BladeCLI bladeCLI) throws Exception {
-		Path extensions = bladeCLI.getExtensionsPath();
+		Path extensionsPath = bladeCLI.getExtensionsPath();
 
 		Collection<File> templatesFiles = new HashSet<>();
 
-		templatesFiles.add(extensions.toFile());
+		templatesFiles.add(extensionsPath.toFile());
+
+		Extensions extensions = bladeCLI.getExtensions();
+
+		Path extensionTemplates = extensions.getTemplatesPath();
+
+		templatesFiles.add(extensionTemplates.toFile());
 
 		return ProjectTemplates.getTemplates(templatesFiles);
 	}
