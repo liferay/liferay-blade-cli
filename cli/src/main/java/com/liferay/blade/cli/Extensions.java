@@ -205,7 +205,9 @@ public class Extensions implements Closeable {
 
 	@Override
 	public void close() throws IOException {
-		FileUtil.deleteDir(_embeddedTemplatesPath);
+		if ((_embeddedTemplatesPath != null) && Files.exists(_embeddedTemplatesPath)) {
+			FileUtil.deleteDir(_embeddedTemplatesPath);
+		}
 	}
 
 	public Map<String, BaseCommand<? extends BaseArgs>> getCommands() throws Exception {

@@ -139,7 +139,7 @@ public class SampleTemplatesTest {
 		_setupTestExtension(extensionsPath, System.getProperty("sampleTemplateJarFile"));
 	}
 
-	private static final int _NUM_BUILTIN_TEMPLATES = 32;
+	private static final int _NUM_BUILTIN_TEMPLATES = 34;
 
 	private BladeTest _bladeTest;
 	private File _rootDir;
