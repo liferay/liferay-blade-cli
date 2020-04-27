@@ -19,7 +19,6 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
-import com.liferay.blade.cli.gradle.ProcessResult;
 
 import java.io.File;
 
@@ -43,12 +42,6 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
 		if (workspaceProvider != null) {
-			boolean quiet = serverInitArgs.isQuiet();
-
-			if (!quiet) {
-				bladeCLI.out("Executing gradle task initBundle...\n");
-			}
-
 			GradleExec gradleExec = new GradleExec(bladeCLI);
 
 			StringBuilder commandStringBuilder = new StringBuilder(":initBundle");
@@ -61,16 +54,7 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 
 			String command = commandStringBuilder.toString();
 
-			ProcessResult processResult = gradleExec.executeTask(command, true);
-
-			if (processResult.getResultCode() == 0) {
-				if (!quiet) {
-					bladeCLI.out("\nserver init completed successfully.");
-				}
-			}
-			else {
-				bladeCLI.error(processResult.getError() + "\nerror: server init failed.  See error output above.");
-			}
+			gradleExec.executeTask(command, false);
 		}
 		else {
 			bladeCLI.error("'server init' command is only supported inside a Liferay workspace project.");
