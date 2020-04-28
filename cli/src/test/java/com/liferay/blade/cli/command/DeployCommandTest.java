@@ -17,20 +17,10 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
 
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,8 +33,6 @@ public class DeployCommandTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_rootDir = temporaryFolder.getRoot();
-
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 	}
 
@@ -102,60 +90,6 @@ public class DeployCommandTest {
 	}
 
 	@Test
-	public void testInstallJarStandalone() throws Exception {
-		Assume.assumeTrue(!BladeUtil.isWindows());
-
-		File workspaceDir = temporaryFolder.newFolder();
-
-		File standaloneDir = temporaryFolder.newFolder();
-
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-v", "7.3"};
-
-		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
-
-		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
-
-		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
-
-		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
-
-		Assert.assertTrue(bundlesDirectory.exists());
-
-		args = new String[] {"--base", standaloneDir.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo"};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		File projectDirectory = new File(standaloneDir, "foo");
-
-		Assert.assertTrue(projectDirectory.exists());
-
-		Path projectDirectoryPath = projectDirectory.toPath();
-
-		File deployDirectory = new File(bundlesDirectory, "deploy");
-
-		String deployDirectoryString = deployDirectory.getAbsolutePath();
-
-		deployDirectoryString = deployDirectoryString.replace("\\", "\\\\");
-
-		String deployDirectoryGradleString = String.format("    deployDir = '%s'", deployDirectoryString);
-
-		List<String> lines = Arrays.asList("", "liferay {", deployDirectoryGradleString, "}");
-
-		Files.write(
-			projectDirectoryPath.resolve("build.gradle"), lines, Charset.forName("UTF-8"), StandardOpenOption.APPEND);
-
-		args = new String[] {"--base", projectDirectoryPath.toString(), "deploy"};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		String[] deployDirectoryList = deployDirectory.list();
-
-		int filesCount = deployDirectoryList.length;
-
-		Assert.assertEquals(1, filesCount);
-	}
-
-	@Test
 	public void testInstallWar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
@@ -208,6 +142,4 @@ public class DeployCommandTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private File _extensionsDir = null;
-	private File _rootDir = null;
-
 }

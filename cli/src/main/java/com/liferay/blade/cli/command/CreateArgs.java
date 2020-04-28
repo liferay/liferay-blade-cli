@@ -79,10 +79,6 @@ public class CreateArgs extends BaseArgs {
 		return _originalModuleName;
 	}
 
-	public String getOriginalModuleVersion() {
-		return _originalModuleVersion;
-	}
-
 	public String getPackageName() {
 		return _packageName;
 	}
@@ -219,12 +215,6 @@ public class CreateArgs extends BaseArgs {
 		names = {"-m", "--original-module-name"}
 	)
 	private String _originalModuleName;
-
-	@Parameter(
-		description = "Sets the version of the original module when creating a project with modules-ext template.",
-		names = {"-M", "--original-module-version"}
-	)
-	private String _originalModuleVersion;
 
 	@Parameter(description = "The Java package to use when generating Java source.", names = {"-p", "--package-name"})
 	private String _packageName;

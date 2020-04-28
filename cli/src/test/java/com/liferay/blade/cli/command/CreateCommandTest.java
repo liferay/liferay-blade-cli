@@ -111,8 +111,7 @@ public class CreateCommandTest {
 	@Test
 	public void testCreateExtModule() throws Exception {
 		String[] gradleArgs = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "-m", "com.liferay.login.web", "-M",
-			"1.0.0", "loginExt"
+			"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "-m", "com.liferay.login.web", "loginExt"
 		};
 
 		String projectPath = new File(
@@ -123,10 +122,8 @@ public class CreateCommandTest {
 
 		_contains(
 			_checkFileExists(projectPath + "/build.gradle"),
-			new String[] {
-				".*^apply plugin: \"com.liferay.osgi.ext.plugin\".*$",
-				"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\", version: \"1.0.0\".*$"
-			});
+				"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\".*$"
+			);
 	}
 
 	@Test
@@ -140,20 +137,6 @@ public class CreateCommandTest {
 		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, testData, false, args);
 
 		String output = bladeTestResults.getOutput();
-
-		Assert.assertTrue(output, output.contains("Successfully created project"));
-
-		args = new String[] {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "-M", "1.0.0", "loginExt2"
-		};
-
-		data = "foobar" + System.lineSeparator();
-
-		testData = new ByteArrayInputStream(data.getBytes("UTF-8"));
-
-		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, testData, false, args);
-
-		output = results.getOutput();
 
 		Assert.assertTrue(output, output.contains("Successfully created project"));
 	}
@@ -179,8 +162,6 @@ public class CreateCommandTest {
 				".*^Bundle-SymbolicName: loginhook.*$",
 				".*^Fragment-Host: com.liferay.login.web;bundle-version=\"1.0.0\".*$"
 			});
-
-		_contains(_checkFileExists(projectPath + "/build.gradle"), ".*^apply plugin: \"com.liferay.plugin\".*");
 	}
 
 	@Test
@@ -230,12 +211,10 @@ public class CreateCommandTest {
 			_checkFileExists(projectPath + "/src/main/java/com/liferay/test/portlet/FooPortlet.java"),
 			".*^public class FooPortlet extends MVCPortlet.*$");
 
-		_contains(
-			_checkFileExists(
-				new File(
-					projectPath, "build.gradle"
-				).getAbsolutePath()),
-			".*^apply plugin: \"com.liferay.plugin\".*");
+		_checkFileExists(
+			new File(
+				projectPath, "build.gradle"
+			).getAbsolutePath());
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
@@ -260,7 +239,7 @@ public class CreateCommandTest {
 			_checkFileExists(projectPath + "/src/main/java/portlet/portlet/portlet/PortletPortlet.java"),
 			".*^public class PortletPortlet extends MVCPortlet.*$");
 
-		_contains(_checkFileExists(projectPath + "/build.gradle"), ".*^apply plugin: \"com.liferay.plugin\".*");
+		_checkFileExists(projectPath + "/build.gradle");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
@@ -341,99 +320,6 @@ public class CreateCommandTest {
 				writer.write(string + "\n");
 			}
 		}
-	}
-
-	@Test
-	public void testCreateGradleServiceBuilderDashes() throws Exception {
-		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "service-builder", "-p",
-			"com.liferay.backend.integration", "backend-integration"
-		};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		String projectPath = new File(
-			_rootDir, "backend-integration"
-		).getAbsolutePath();
-
-		_contains(
-			_checkFileExists(projectPath + "/settings.gradle"),
-			"include \"backend-integration-api\", \"backend-integration-service\"");
-
-		_contains(
-			_checkFileExists(projectPath + "/backend-integration-api/bnd.bnd"),
-			new String[] {
-				".*Export-Package:\\\\.*", ".*com.liferay.backend.integration.exception,\\\\.*",
-				".*com.liferay.backend.integration.model,\\\\.*", ".*com.liferay.backend.integration.service,\\\\.*",
-				".*com.liferay.backend.integration.service.persistence.*"
-			});
-
-		_contains(_checkFileExists(projectPath + "/backend-integration-service/bnd.bnd"), ".*Liferay-Service: true.*");
-
-		BuildTask buildServiceTask = GradleRunnerUtil.executeGradleRunner(projectPath, "buildService");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildServiceTask);
-
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(
-			projectPath + "/backend-integration-api", "com.liferay.backend.integration.api-1.0.0.jar");
-		GradleRunnerUtil.verifyBuildOutput(
-			projectPath + "/backend-integration-service", "com.liferay.backend.integration.service-1.0.0.jar");
-
-		_verifyImportPackage(
-			new File(
-				projectPath,
-				"backend-integration-service/build/libs/com.liferay.backend.integration.service-1.0.0.jar"));
-	}
-
-	@Test
-	public void testCreateGradleServiceBuilderDots() throws Exception {
-		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "service-builder", "-p", "com.liferay.docs.guestbook",
-			"com.liferay.docs.guestbook"
-		};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		String projectPath = new File(
-			_rootDir, "com.liferay.docs.guestbook"
-		).getAbsolutePath();
-
-		_contains(
-			_checkFileExists(projectPath + "/settings.gradle"),
-			"include \"com.liferay.docs.guestbook-api\", \"com.liferay.docs.guestbook-service\"");
-
-		_contains(
-			_checkFileExists(projectPath + "/com.liferay.docs.guestbook-api/bnd.bnd"),
-			new String[] {
-				".*Export-Package:\\\\.*", ".*com.liferay.docs.guestbook.exception,\\\\.*",
-				".*com.liferay.docs.guestbook.model,\\\\.*", ".*com.liferay.docs.guestbook.service,\\\\.*",
-				".*com.liferay.docs.guestbook.service.persistence.*"
-			});
-
-		_contains(
-			_checkFileExists(projectPath + "/com.liferay.docs.guestbook-service/bnd.bnd"), ".*Liferay-Service: true.*");
-
-		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(projectPath, "buildService");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
-
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		GradleRunnerUtil.verifyBuildOutput(
-			projectPath + "/com.liferay.docs.guestbook-api", "com.liferay.docs.guestbook.api-1.0.0.jar");
-		GradleRunnerUtil.verifyBuildOutput(
-			projectPath + "/com.liferay.docs.guestbook-service", "com.liferay.docs.guestbook.service-1.0.0.jar");
-
-		_verifyImportPackage(
-			new File(
-				projectPath,
-				"com.liferay.docs.guestbook-service/build/libs/com.liferay.docs.guestbook.service-1.0.0.jar"));
 	}
 
 	@Test
@@ -522,7 +408,7 @@ public class CreateCommandTest {
 			_checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
 			".*^public class FooPortlet extends MVCPortlet.*$");
 
-		_contains(_checkFileExists(projectPath + "/build.gradle"), ".*^apply plugin: \"com.liferay.plugin\".*");
+		_checkFileExists(projectPath + "/build.gradle");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
@@ -615,9 +501,7 @@ public class CreateCommandTest {
 		_contains(
 			componentFile, ".*^public class IcontestPortletConfigurationIcon.*extends BasePortletConfigurationIcon.*$");
 
-		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
-
-		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+		_checkFileExists(projectPath + "/build.gradle");
 	}
 
 	@Test
@@ -645,9 +529,7 @@ public class CreateCommandTest {
 			componentFile,
 			".*^public class ToolbartestPortletToolbarContributor.*implements PortletToolbarContributor.*$");
 
-		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
-
-		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+		_checkFileExists(projectPath + "/build.gradle");
 	}
 
 	@Test
@@ -669,9 +551,7 @@ public class CreateCommandTest {
 
 		_contains(portletFile, ".*^public class HelloWorldPortlet extends MVCPortlet.*$");
 
-		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
-
-		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+		_checkFileExists(projectPath + "/build.gradle");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
@@ -697,9 +577,7 @@ public class CreateCommandTest {
 
 		_contains(portletFile, ".*^public class HelloWorldRefreshPortlet extends MVCPortlet.*$");
 
-		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
-
-		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+		_checkFileExists(projectPath + "/build.gradle");
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
 
@@ -771,9 +649,7 @@ public class CreateCommandTest {
 
 		_contains(componentFile, ".*^public class SimulatorSimulationPanelApp.*extends BaseJSPPanelApp.*$");
 
-		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
-
-		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+		_checkFileExists(projectPath + "/build.gradle");
 	}
 
 	@Test
@@ -833,9 +709,7 @@ public class CreateCommandTest {
 			componentFile,
 			".*^public class BladeTestTemplateContextContributor.*implements TemplateContextContributor.*$");
 
-		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
-
-		_contains(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+		_checkFileExists(projectPath + "/build.gradle");
 	}
 
 	@Test
@@ -950,46 +824,6 @@ public class CreateCommandTest {
 
 		Assert.assertFalse(
 			"directory named '" + fooBarDir.getName() + "' should not exist, but it does.", fooBarDir.exists());
-	}
-
-	@Test
-	public void testCreateWorkspaceGradleExtModule() throws Exception {
-		File workspace = new File(_rootDir, "workspace");
-
-		File extDir = new File(workspace, "ext");
-
-		_makeWorkspace(workspace);
-
-		String[] gradleArgs = {
-			"create", "-d", extDir.getAbsolutePath(), "-t", "modules-ext", "-m", "com.liferay.login.web", "-M", "1.0.0",
-			"loginExt"
-		};
-
-		TestUtil.runBlade(workspace, _extensionsDir, gradleArgs);
-
-		String projectPath = extDir.getAbsolutePath();
-
-		_checkFileExists(projectPath + "/loginExt");
-
-		_contains(
-			_checkFileExists(projectPath + "/loginExt/build.gradle"),
-			new String[] {
-				"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\", version: \"1.0.0\".*$"
-			});
-
-		_lacks(
-			_checkFileExists(projectPath + "/loginExt/build.gradle"),
-			".*^apply plugin: \"com.liferay.osgi.ext.plugin\".*$");
-
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
-
-		String extJarName = "com.liferay.login.web-1.0.0.ext.jar";
-
-		GradleRunnerUtil.verifyBuildOutput(projectPath + "/loginExt", extJarName);
-
-		_verifyImportPackage(new File(projectPath, "loginExt/build/libs/" + extJarName));
 	}
 
 	@Test
@@ -1314,7 +1148,7 @@ public class CreateCommandTest {
 		String content = FileUtil.read(buildGradle);
 
 		Assert.assertTrue(content, content.contains("js.loader.modules.extender.api"));
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"2.64.1\""));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\""));
 	}
 
 	@Test
@@ -1336,7 +1170,7 @@ public class CreateCommandTest {
 		String content = FileUtil.read(buildGradle);
 
 		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"3.63.1\""));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\""));
 	}
 
 	@Test
@@ -1355,7 +1189,7 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"5.4.0\""));
+		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\""));
 	}
 
 	@Test
@@ -1602,51 +1436,6 @@ public class CreateCommandTest {
 		Assert.assertEquals(1, StringUtils.countMatches(content, '{'));
 
 		Assert.assertEquals(1, StringUtils.countMatches(content, '}'));
-	}
-
-	@Test
-	public void testLiferayVersion70() throws Exception {
-		String[] sevenZeroArgs = {
-			"--base", _rootDir.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "-v", "7.0", "seven-zero"
-		};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, sevenZeroArgs);
-
-		File buildGradle = new File(_rootDir, "seven-zero/build.gradle");
-
-		String content = FileUtil.read(buildGradle);
-
-		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"2.64.1\""));
-	}
-
-	@Test
-	public void testLiferayVersion71() throws Exception {
-		String[] sevenOneArgs = {
-			"--base", _rootDir.getAbsolutePath(), "create", "-v", "7.1", "-t", "npm-angular-portlet", "seven-one"
-		};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, sevenOneArgs);
-
-		File buildGradle = new File(_rootDir, "seven-one/build.gradle");
-
-		String content = FileUtil.read(buildGradle);
-
-		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"3.63.1\""));
-	}
-
-	@Test
-	public void testLiferayVersionDefault() throws Exception {
-		String[] args = {"--base", _rootDir.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo"};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		File buildGradle = new File(_rootDir, "foo/build.gradle");
-
-		String content = FileUtil.read(buildGradle);
-
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\", version: \"4.4.0\""));
 	}
 
 	@Test
