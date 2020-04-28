@@ -142,4 +142,5 @@ public class DeployCommandTest {
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private File _extensionsDir = null;
+
 }

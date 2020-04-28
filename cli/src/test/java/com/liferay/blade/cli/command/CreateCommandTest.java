@@ -1510,7 +1510,7 @@ public class CreateCommandTest {
 
 		List<String> lines = Files.readAllLines(gradlePath);
 
-		if (!lines.contains("apply plugin: \"war\"")) {
+		if (!lines.contains("war {")) {
 			_checkFileExists(projectPath + "/bnd.bnd");
 		}
 
