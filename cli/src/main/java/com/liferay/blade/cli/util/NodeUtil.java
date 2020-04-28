@@ -136,14 +136,16 @@ public class NodeUtil {
 
 			StringBuilder command = new StringBuilder();
 
+			command.append("\"");
 			command.append(nodePath.toString());
-			command.append(" ");
+			command.append("\" \"");
 			command.append(yoPath.toString());
-			command.append(" ");
+			command.append("\" ");
 
 			for (String arg : args) {
+				command.append("\"");
 				command.append(arg);
-				command.append(" ");
+				command.append("\" ");
 			}
 
 			commands.add(command.toString());
