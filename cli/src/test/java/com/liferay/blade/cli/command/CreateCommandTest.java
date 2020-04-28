@@ -827,6 +827,33 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceFormField72() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		File modulesDir = new File(workspace, "modules");
+
+		String[] args = {
+			"create", "-d", modulesDir.getAbsolutePath(), "-t", "form-field", "sampleFormField", "-v", "7.2"
+		};
+
+		_makeWorkspaceVersion(workspace, "7.2");
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		String projectPath = modulesDir.getAbsolutePath();
+
+		_checkFileExists(projectPath + "/sampleFormField");
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/sampleFormField", "sampleformfield-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "sampleFormField/build/libs/sampleformfield-1.0.0.jar"));
+	}
+
+	@Test
 	public void testCreateWorkspaceGradleExtModuleTargetPlatform() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
