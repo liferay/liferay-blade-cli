@@ -46,8 +46,6 @@ public class TargetPlatformTest {
 
 		_gradleWorkspaceDir = temporaryFolder.newFolder("gradle-workspace");
 
-		_nonGradleWorkspaceDir = temporaryFolder.newFolder("non-gradle-workspace");
-
 		String[] args = {"init", "--base", _gradleWorkspaceDir.getAbsolutePath(), "-v", "7.3"};
 
 		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
@@ -119,7 +117,6 @@ public class TargetPlatformTest {
 	private File _extensionsDir = null;
 	private File _gradlePropertiesFile = null;
 	private File _gradleWorkspaceDir = null;
-	private File _nonGradleWorkspaceDir = null;
 	private File _settingsGradleFile = null;
 
 }
