@@ -195,7 +195,7 @@ public class CreateArgs extends BaseArgs {
 	private String _hostBundleBSN;
 
 	@Parameter(
-		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle version. Required for \"-t fragment\".",
+		description = "If a new jsp hook fragment needs to be created, provide the host bundle version. Required for \"-t fragment\".",
 		names = {"-H", "--host-bundle-version"}
 	)
 	private String _hostBundleVersion;
