@@ -122,8 +122,7 @@ public class CreateCommandTest {
 
 		_contains(
 			_checkFileExists(projectPath + "/build.gradle"),
-				"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\".*$"
-			);
+			"^.*originalModule group: \"com.liferay\", name: \"com.liferay.login.web\".*$");
 	}
 
 	@Test
