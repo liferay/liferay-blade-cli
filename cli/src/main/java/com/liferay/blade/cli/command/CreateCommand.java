@@ -21,6 +21,7 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
+import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
@@ -42,6 +43,7 @@ import java.net.URLClassLoader;
 
 import java.nio.file.Path;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -125,6 +127,12 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		ProjectTemplatesArgs projectTemplatesArgs = getProjectTemplateArgs(createArgs, bladeCLI, template, name, dir);
 
 		File templateFile = ProjectTemplatesUtil.getTemplateFile(projectTemplatesArgs);
+
+		if (templateFile == null) {
+			_addError("Create", "Could not get templateFile for " + template);
+
+			return;
+		}
 
 		Thread thread = Thread.currentThread();
 
@@ -276,7 +284,16 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		Path extensionsPath = bladeCLI.getExtensionsPath();
 
-		projectTemplatesArgs.setArchetypesDirs(Collections.singletonList(extensionsPath.toFile()));
+		Extensions extensions = bladeCLI.getExtensions();
+
+		Path extensionsTemplatesPath = extensions.getTemplatesPath();
+
+		List<File> archetypesDirs = new ArrayList<>();
+
+		archetypesDirs.add(extensionsPath.toFile());
+		archetypesDirs.add(extensionsTemplatesPath.toFile());
+
+		projectTemplatesArgs.setArchetypesDirs(archetypesDirs);
 
 		projectTemplatesArgs.setClassName(createArgs.getClassname());
 

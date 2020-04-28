@@ -1,5 +1,7 @@
 task smokeTests
-task testBladeCreateCommand(type: JavaExec)
+task testBladeCreateCommandJsTheme(type: JavaExec)
+task testBladeCreateCommandListTemplates(type: JavaExec)
+task testBladeCreateCommandMvcPortlet(type: JavaExec)
 task testBladeGwCommand(type: JavaExec)
 task testBladeHelpCommand(type: JavaExec)
 task testBladeInitCommand(type: JavaExec)
@@ -22,7 +24,28 @@ smokeTests.dependsOn testBladeTasks
 ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
 
-testBladeCreateCommand {
+testBladeCreateCommandJsTheme {
+	File testDir = new File(buildDir, "createJsTheme")
+
+	testDir.mkdirs()
+
+	args = [jar.archivePath, 'create', '-t', 'js-theme', 'test-js-theme']
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = testDir
+
+	doLast {
+		File projectDir = new File(testDir, "test-js-theme")
+
+		assert projectDir.exists()
+		assert !errorStream.toString().toLowerCase().contains("error")
+
+		errorStream.reset()
+		standardStream.reset()
+	}
+}
+
+testBladeCreateCommandListTemplates {
 	args = [jar.archivePath, 'create', '-l']
 	errorOutput = errorStream
 	standardOutput = standardStream
@@ -31,6 +54,27 @@ testBladeCreateCommand {
 		assert standardStream.toString().contains("js-theme")
 		assert standardStream.toString().contains("js-widget")
 		assert standardStream.toString().contains("service-builder")
+		assert !errorStream.toString().toLowerCase().contains("error")
+
+		errorStream.reset()
+		standardStream.reset()
+	}
+}
+
+testBladeCreateCommandMvcPortlet {
+	File testDir = new File(buildDir, "createMvcPortlet")
+
+	testDir.mkdirs()
+
+	args = [jar.archivePath, 'create', '-t', 'mvc-portlet', 'test-mvc-portlet']
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = testDir
+
+	doLast {
+		File projectDir = new File(testDir, "test-mvc-portlet")
+
+		assert projectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
 
 		errorStream.reset()
