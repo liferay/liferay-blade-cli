@@ -60,7 +60,7 @@ if [ -z "$repoHost" ]; then
 		repoHost="https://repository.liferay.com"
 	fi
 elif [ "$repoHost" = "http://localhost:8081" ]; then
-    nexusOpt="-PlocalNexus"
+	nexusOpt="-PlocalNexus"
 fi
 
 # First clean local build folder to try to minimize variants
@@ -68,9 +68,8 @@ fi
 ./gradlew -q --no-daemon --console=plain clean
 
 if [ "$?" != "0" ]; then
-   echo Failed clean.
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed clean.
+	exit 1
 fi
 
 # Publish the Remote Deploy Command jar
@@ -79,9 +78,8 @@ fi
 remoteDeployCommandPublishCommand=$(cat /tmp/$timestamp/remote-deploy-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
-   echo Failed :extensions:remote-deploy-command:publish
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed :extensions:remote-deploy-command:publish
+	exit 1
 fi
 
 # Publish the JS Theme Project Template
@@ -89,9 +87,8 @@ fi
 jsThemeTemplatePublishCommand=$(cat /tmp/$timestamp/js-theme-template-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$jsThemeTemplatePublishCommand" ]; then
-   echo Failed :extensions:project-templates-js-theme:publish
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed :extensions:project-templates-js-theme:publish
+	exit 1
 fi
 
 # Publish the JS Widget Project Template
@@ -99,9 +96,8 @@ fi
 jsWidgetTemplatePublishCommand=$(cat /tmp/$timestamp/js-widget-template-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$jsWidgetTemplatePublishCommand" ]; then
-   echo Failed :extensions:project-templates-js-widget:publish
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed :extensions:project-templates-js-widget:publish
+	exit 1
 fi
 
 # Publish the Maven Profile jar
@@ -109,9 +105,8 @@ fi
 mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
-   echo Failed :extensions:maven-profile:publish
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed :extensions:maven-profile:publish
+	exit 1
 fi
 
 # Publish the Maven Profile jar
@@ -119,18 +114,16 @@ fi
 mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
-   echo Failed :extensions:maven-profile:publish
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed :extensions:maven-profile:publish
+	exit 1
 fi
 
 # Grep the output of the previous command to find the url of the published jar
 mavenProfilePublishUrl=$(echo "$mavenProfilePublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f4)
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishUrl" ]; then
-   echo Failed grepping for mavenProfilePublishUrl
-   #rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed grepping for mavenProfilePublishUrl
+	exit 1
 fi
 
 # Download the just published jar in order to later compare it to the embedded maven profile that is in blade jar
@@ -139,11 +132,10 @@ mavenProfileJarUrl="${repoHost}${mavenProfilePublishUrl}"
 curl -s "$mavenProfileJarUrl" -o /tmp/$timestamp/maven_profile.jar
 
 if [ "$?" != "0" ]; then
-   echo Downloading maven.profile jar failed.
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Downloading maven.profile jar failed.
+	exit 1
 else
-   echo "Published $mavenProfileJarUrl"
+	echo "Published $mavenProfileJarUrl"
 fi
 
 # Test the blade cli jar locally, but don't publish.
@@ -151,10 +143,9 @@ fi
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTask --info ${scanOpt} > /tmp/$timestamp/blade-cli-jar-command.txt
 
 if [ "$?" != "0" ]; then
-   echo Failed :cli:jar
-   cat /tmp/$timestamp/blade-cli-jar-command.txt
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed :cli:jar
+	cat /tmp/$timestamp/blade-cli-jar-command.txt
+	exit 1
 fi
 
 # now that we have the blade jar just built, lets extract the embedded maven profile jar and compare to the maven profile downloaded from nexus
@@ -162,9 +153,8 @@ fi
 embeddedMavenProfileJar=$(jar -tf cli/build/libs/blade.jar | grep "maven.profile-")
 
 if [ -z "$embeddedMavenProfileJar" ]; then
-   echo Failed to find embedded maven.profile jar in blade jar
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed to find embedded maven.profile jar in blade jar
+	exit 1
 fi
 
 unzip -p cli/build/libs/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
@@ -172,9 +162,8 @@ unzip -p cli/build/libs/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/m
 diff -s /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
 
 if [ "$?" != "0" ]; then
-   echo Failed local blade.jar diff with downloaded maven profile jar.  The embedded maven profile jar and nexus maven profile jar are not identical
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed local blade.jar diff with downloaded maven profile jar. The embedded maven profile jar and nexus maven profile jar are not identical
+	exit 1
 fi
 
 # Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
@@ -183,9 +172,8 @@ fi
 bladeCliPublishCommand=$(cat /tmp/$timestamp/blade-cli-publish-command.txt)
 
 if [ "$?" != "0" ] || [ -z "$bladeCliPublishCommand" ]; then
-   echo Failed :cli:publish
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed :cli:publish
+	exit 1
 fi
 
 # Grep the output of the blade jar publish to find the url
@@ -197,11 +185,10 @@ bladeCliUrl="${repoHost}${bladeCliJarUrl}"
 curl -s "$bladeCliUrl" -o /tmp/$timestamp/blade.jar
 
 if [ "$?" != "0" ]; then
-   echo Downloading blade jar failed.
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Downloading blade jar failed.
+	exit 1
 else
-   echo "Published $bladeCliUrl"
+	echo "Published $bladeCliUrl"
 fi
 
 unzip -p /tmp/$timestamp/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
@@ -209,9 +196,8 @@ unzip -p /tmp/$timestamp/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/
 diff -s /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
 
 if [ "$?" != "0" ]; then
-   echo Failed local blade.jar diff with downloaded maven profile jar.  The embedded maven profile jar and nexus maven profile jar are not identical
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed local blade.jar diff with downloaded maven profile jar. The embedded maven profile jar and nexus maven profile jar are not identical
+	exit 1
 fi
 
 localBladeVersion=$(java -jar /tmp/$timestamp/blade.jar version)
@@ -222,16 +208,15 @@ localBladeVersion=$(java -jar /tmp/$timestamp/blade.jar version)
 echo "$repoHost/nexus/content/groups/public/com/liferay/blade/com.liferay.blade.cli/" > ~/.blade/update.url
 
 if [ "$releaseType" = "snapshots" ]; then
-    bladeUpdate=$(blade update --snapshots)
+	bladeUpdate=$(blade update --snapshots)
 else
-    bladeUpdate=$(blade update)
+	bladeUpdate=$(blade update)
 fi
 
 if [ "$?" != "0" ]; then
-   echo Failed blade update.
-   echo $bladeUpdate
-   rm -rf /tmp/$timestamp
-   exit 1
+	echo Failed blade update.
+	echo $bladeUpdate
+	exit 1
 fi
 
 updatedBladeVersion=$(blade version)
@@ -244,8 +229,5 @@ if [ "$localBladeVersion" != "$updatedBladeVersion" ]; then
 	echo "After blade updated versions do not match."
 	echo "Built blade version = $localBladeVersion"
 	echo "Updated blade version = $updatedBladeVersion"
-	rm -rf /tmp/$timestamp
 	exit 1
 fi
-
-rm -rf /tmp/$timestamp
