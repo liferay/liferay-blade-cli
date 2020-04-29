@@ -1,7 +1,7 @@
 task smokeTests
+task testBladeCreateCommandFormField(type: JavaExec)
 task testBladeCreateCommandJsTheme(type: JavaExec)
 task testBladeCreateCommandListTemplates(type: JavaExec)
-task testBladeCreateCommandFormField(type: JavaExec)
 task testBladeCreateCommandMvcPortlet(type: JavaExec)
 task testBladeGwCommand(type: JavaExec)
 task testBladeHelpCommand(type: JavaExec)
@@ -24,6 +24,27 @@ smokeTests.dependsOn testBladeTasks
 
 ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
+
+testBladeCreateCommandFormField {
+	File testDir = new File(buildDir, "createFormField")
+
+	testDir.mkdirs()
+
+	args = [jar.archivePath, 'create', '-t', 'form-field', 'test-form-field']
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = testDir
+
+	doLast {
+		File projectDir = new File(testDir, "test-form-field")
+
+		assert projectDir.exists()
+		assert !errorStream.toString().toLowerCase().contains("error")
+
+		errorStream.reset()
+		standardStream.reset()
+	}
+}
 
 testBladeCreateCommandJsTheme {
 	File testDir = new File(buildDir, "createJsTheme")
@@ -55,27 +76,6 @@ testBladeCreateCommandListTemplates {
 		assert standardStream.toString().contains("js-theme")
 		assert standardStream.toString().contains("js-widget")
 		assert standardStream.toString().contains("service-builder")
-		assert !errorStream.toString().toLowerCase().contains("error")
-
-		errorStream.reset()
-		standardStream.reset()
-	}
-}
-
-testBladeCreateCommandFormField {
-	File testDir = new File(buildDir, "createFormField")
-
-	testDir.mkdirs()
-
-	args = [jar.archivePath, 'create', '-t', 'form-field', 'test-form-field']
-	errorOutput = errorStream
-	standardOutput = standardStream
-	workingDir = testDir
-
-	doLast {
-		File projectDir = new File(testDir, "test-form-field")
-
-		assert projectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
 
 		errorStream.reset()
