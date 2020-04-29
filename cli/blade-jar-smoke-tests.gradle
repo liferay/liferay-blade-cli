@@ -1,6 +1,7 @@
 task smokeTests
 task testBladeCreateCommandJsTheme(type: JavaExec)
 task testBladeCreateCommandListTemplates(type: JavaExec)
+task testBladeCreateCommandFormField(type: JavaExec)
 task testBladeCreateCommandMvcPortlet(type: JavaExec)
 task testBladeGwCommand(type: JavaExec)
 task testBladeHelpCommand(type: JavaExec)
