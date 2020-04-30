@@ -24,7 +24,6 @@ import java.nio.file.Path;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -122,15 +121,8 @@ public class TestUtil {
 
 		BladeTest.BladeTestBuilder bladeTestBuilder = BladeTest.builder();
 
-		bladeTestBuilder.setExtensionsDir(extensionsDir.toPath());
-
-		String settingsDirName = settingsDir.getName();
-
-		if (!Objects.equals(".blade", settingsDirName)) {
-			settingsDir = new File(settingsDir, ".blade");
-		}
-
 		bladeTestBuilder.setAssertErrors(assertErrors);
+		bladeTestBuilder.setExtensionsDir(extensionsDir.toPath());
 		bladeTestBuilder.setSettingsDir(settingsDir.toPath());
 		bladeTestBuilder.setStdError(err);
 		bladeTestBuilder.setStdIn(in);
