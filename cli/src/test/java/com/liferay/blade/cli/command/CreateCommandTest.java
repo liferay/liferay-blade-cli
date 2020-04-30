@@ -827,7 +827,7 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceFormField72() throws Exception {
-		File workspace = new File(_rootDir, "workspace");
+		File workspace = new File(System.getProperty("buildDir"), "createTestWorkspace");
 
 		File modulesDir = new File(workspace, "modules");
 
