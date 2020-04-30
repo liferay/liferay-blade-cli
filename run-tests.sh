@@ -2,7 +2,7 @@
 
 function archiveTests {
 	find . -name index.html | grep build/reports/tests | sed 's/\/test\/index\.html//' | xargs zip -o tests.zip -r
-	find . -name "create*" | grep cli/build | xargs zip -our tests.zip
+	find . -name "create*" | grep cli/build | xargs zip -ou tests.zip -r
 }
 
 function checkError {
