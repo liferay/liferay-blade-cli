@@ -30,7 +30,7 @@ testBladeCreateCommandFormField {
 
 	testDir.mkdirs()
 
-	args = [jar.archivePath, 'create', '-t', 'form-field', 'test-form-field']
+	args = [jar.archivePath, 'create', '-t', 'form-field', 'test-form-field', '-v', '7.2']
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = testDir
