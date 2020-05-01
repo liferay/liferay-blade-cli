@@ -33,6 +33,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build
         env:
+          GITHUB_CI: "true"
           LIFERAY_NEXUS_USERNAME: ${{ secrets.liferay_nexus_username }}
           LIFERAY_NEXUS_PASSWORD: ${{ secrets.liferay_nexus_password }}
         shell: bash

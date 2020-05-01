@@ -27,6 +27,6 @@ checkError
 
 checkError
 
-./gradlew --no-daemon -PmavenLocal --continue clean check smokeTests --scan
+GITHUB_CI=true ./gradlew --no-daemon -PmavenLocal --continue clean check smokeTests --scan
 
 checkError
