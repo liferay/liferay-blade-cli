@@ -51,6 +51,8 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build
         shell: bash
+        env:
+          GITHUB_CI: "true"
         run: |
           ./run-tests.sh
       - name: Upload tests zip
@@ -78,6 +80,8 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build
         shell: bash
+        env:
+          GITHUB_CI: "true"
         run: |
           ./run-tests.sh
       - name: Upload tests zip
@@ -105,6 +109,8 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build
         shell: bash
+        env:
+          GITHUB_CI: "true"
         run: |
           ./run-tests.sh
       - name: Upload tests zip
@@ -132,5 +138,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build
         shell: bash
+        env:
+          GITHUB_CI: "true"
         run: |
           ./run-tests.bat

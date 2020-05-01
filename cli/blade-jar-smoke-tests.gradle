@@ -1,4 +1,5 @@
 task smokeTests
+task testBladeCreateCommandFormField(type: JavaExec)
 task testBladeCreateCommandJsTheme(type: JavaExec)
 task testBladeCreateCommandListTemplates(type: JavaExec)
 task testBladeCreateCommandMvcPortlet(type: JavaExec)
@@ -23,6 +24,27 @@ smokeTests.dependsOn testBladeTasks
 
 ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
+
+testBladeCreateCommandFormField {
+	File testDir = new File(buildDir, "createFormField")
+
+	testDir.mkdirs()
+
+	args = [jar.archivePath, 'create', '-t', 'form-field', 'test-form-field', '-v', '7.2']
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = testDir
+
+	doLast {
+		File projectDir = new File(testDir, "test-form-field")
+
+		assert projectDir.exists()
+		assert !errorStream.toString().toLowerCase().contains("error")
+
+		errorStream.reset()
+		standardStream.reset()
+	}
+}
 
 testBladeCreateCommandJsTheme {
 	File testDir = new File(buildDir, "createJsTheme")

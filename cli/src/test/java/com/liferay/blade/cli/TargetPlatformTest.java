@@ -46,8 +46,6 @@ public class TargetPlatformTest {
 
 		_gradleWorkspaceDir = temporaryFolder.newFolder("gradle-workspace");
 
-		_nonGradleWorkspaceDir = temporaryFolder.newFolder("non-gradle-workspace");
-
 		String[] args = {"init", "--base", _gradleWorkspaceDir.getAbsolutePath(), "-v", "7.3"};
 
 		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
@@ -56,26 +54,6 @@ public class TargetPlatformTest {
 
 		_gradlePropertiesFile = workspaceProviderGradle.getGradlePropertiesFile(_gradleWorkspaceDir);
 		_settingsGradleFile = workspaceProviderGradle.getSettingGradleFile(_gradleWorkspaceDir);
-	}
-
-	@Test
-	public void testCreateProjectWithoutWorkspace() throws Exception {
-		String[] args = {
-			"--base", _nonGradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"
-		};
-
-		TestUtil.runBlade(_nonGradleWorkspaceDir, _extensionsDir, args);
-
-		File projectDir = new File(_nonGradleWorkspaceDir, "test-project");
-
-		File buildGradleFile = new File(projectDir, "build.gradle");
-
-		String buildScriptContents = BladeUtil.read(buildGradleFile);
-
-		boolean containsVersion = buildScriptContents.contains(
-			"compileOnly group: \"org.osgi\", name: \"org.osgi.core\", version:");
-
-		Assert.assertTrue("Expected osgi.core dependency to have a version", containsVersion);
 	}
 
 	@Test
@@ -101,51 +79,6 @@ public class TargetPlatformTest {
 			"compileOnly group: \"org.osgi\", name: \"org.osgi.core\", version:");
 
 		Assert.assertFalse("osgi.core dependency should not have a version", containsVersion);
-	}
-
-	@Test
-	public void testWorkspacePluginVersionIncompatibleVersion() throws Exception {
-		_setTargetPlatformVersionProperty("7.1.0");
-		_setWorkspacePluginVersion("1.8.0");
-
-		String[] args = {"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"};
-
-		TestUtil.runBlade(_gradlePropertiesFile, _extensionsDir, args);
-
-		File modulesDir = new File(_gradleWorkspaceDir, "modules");
-
-		File projectDir = new File(modulesDir, "test-project");
-
-		File buildGradleFile = new File(projectDir, "build.gradle");
-
-		String buildScriptContents = BladeUtil.read(buildGradleFile);
-
-		boolean containsVersion = buildScriptContents.contains(
-			"compileOnly group: \"org.osgi\", name: \"org.osgi.core\", version:");
-
-		Assert.assertTrue("Expected osgi.core dependencies to have a version", containsVersion);
-	}
-
-	@Test
-	public void testWorkspaceTargetPlatformDisabled() throws Exception {
-		_setWorkspacePluginVersion("1.10.2");
-
-		String[] args = {"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-project"};
-
-		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
-
-		File modulesDir = new File(_gradleWorkspaceDir, "modules");
-
-		File projectDir = new File(modulesDir, "test-project");
-
-		File buildGradleFile = new File(projectDir, "build.gradle");
-
-		String buildScriptContents = BladeUtil.read(buildGradleFile);
-
-		boolean containsVersion = buildScriptContents.contains(
-			"compileOnly group: \"org.osgi\", name: \"org.osgi.core\", version:");
-
-		Assert.assertTrue("Expected osgi.core dependencies to have a version", containsVersion);
 	}
 
 	@Rule
@@ -184,7 +117,6 @@ public class TargetPlatformTest {
 	private File _extensionsDir = null;
 	private File _gradlePropertiesFile = null;
 	private File _gradleWorkspaceDir = null;
-	private File _nonGradleWorkspaceDir = null;
 	private File _settingsGradleFile = null;
 
 }
