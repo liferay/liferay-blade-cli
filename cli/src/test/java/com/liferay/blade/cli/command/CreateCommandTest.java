@@ -1257,6 +1257,42 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceNpmAngularPortletProject() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		File appsDir = new File(workspace, "modules/apps");
+
+		String projectPath = appsDir.getAbsolutePath();
+
+		String[] args = {"create", "-d", projectPath, "-t", "npm-angular-portlet", "foo"};
+
+		_makeWorkspace(workspace);
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		_checkFileExists(projectPath + "/foo/build.gradle");
+
+		_checkFileDoesNotExists(projectPath + "/foo/gradlew");
+
+		_contains(
+			_checkFileExists(projectPath + "/foo/package.json"),
+			new String[] {
+				".*@angular/animations.*", ".*liferay-npm-bundler\": \"2.18.2.*",
+				".*build\": \"tsc && liferay-npm-bundler.*"
+			});
+
+		_checkFileExists(projectPath + "/foo/src/main/resources/META-INF/resources/lib/angular-loader.ts");
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "foo/build/libs/foo-1.0.0.jar"));
+	}
+
+	@Test
 	public void testCreateWorkspaceProjectAllDefaults() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
