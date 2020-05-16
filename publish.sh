@@ -82,6 +82,21 @@ if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
 	exit 1
 fi
 
+# Publish the Activator Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-activator:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+
+# Publish the Content Targeting Report Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-report:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+
+# Publish the Content Targeting Rule Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-rule:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+
+# Publish the Content Targeting Tracking Action Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-tracking-action:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+
+# Publish the Freemarker Portlet Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-freemarker-portlet:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+
 # Publish the JS Theme Project Template
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-js-theme:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/js-theme-template-publish-command.txt
 jsThemeTemplatePublishCommand=$(cat /tmp/$timestamp/js-theme-template-publish-command.txt)
@@ -109,6 +124,8 @@ if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
 	exit 1
 fi
 
+# Publish the Social Bookmark Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-social-bookmark:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
 # Publish the Maven Profile jar
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/maven-profile-publish-command.txt
 mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
