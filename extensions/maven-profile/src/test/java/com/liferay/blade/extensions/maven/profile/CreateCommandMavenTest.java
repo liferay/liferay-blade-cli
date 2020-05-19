@@ -51,33 +51,6 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	}
 
 	@Test
-	public void testCreateActivator() throws Exception {
-		File tempRoot = temporaryFolder.getRoot();
-
-		String[] mavenArgs = {
-			"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "activator", "bar-activator"
-		};
-
-		String projectPath = new File(
-			tempRoot, "bar-activator"
-		).getAbsolutePath();
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
-
-		_checkMavenBuildFiles(projectPath);
-
-		_contains(
-			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
-			".*^public class BarActivator implements BundleActivator.*$");
-
-		execute(projectPath, new String[] {"clean", "package"});
-
-		MavenTestUtil.verifyBuildOutput(projectPath, "bar-activator-1.0.0.jar");
-
-		_verifyImportPackage(new File(projectPath, "target/bar-activator-1.0.0.jar"));
-	}
-
-	@Test
 	public void testCreateApi() throws Exception {
 		File tempRoot = temporaryFolder.getRoot();
 
