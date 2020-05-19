@@ -61,9 +61,7 @@ public class TargetPlatformTest {
 		_setTargetPlatformVersionProperty("7.1.0");
 		_setWorkspacePluginVersion("1.10.2");
 
-		String[] args = {
-			"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "api", "test-api"
-		};
+		String[] args = {"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "api", "test-api"};
 
 		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
 
