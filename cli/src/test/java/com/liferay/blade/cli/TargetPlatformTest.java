@@ -61,15 +61,13 @@ public class TargetPlatformTest {
 		_setTargetPlatformVersionProperty("7.1.0");
 		_setWorkspacePluginVersion("1.10.2");
 
-		String[] args = {
-			"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "activator", "test-activator"
-		};
+		String[] args = {"--base", _gradleWorkspaceDir.getAbsolutePath(), "create", "-t", "api", "test-api"};
 
 		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
 
 		File modulesDir = new File(_gradleWorkspaceDir, "modules");
 
-		File projectDir = new File(modulesDir, "test-activator");
+		File projectDir = new File(modulesDir, "test-api");
 
 		File buildGradleFile = new File(projectDir, "build.gradle");
 

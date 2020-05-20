@@ -1,0 +1,10 @@
+dependencies {
+	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib"
+	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib.clay"
+	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib.soy"
+	compileOnly group: "com.liferay", name: "com.liferay.social.bookmarks.api"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib"
+	compileOnly (group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1") {force = true}
+	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
+}

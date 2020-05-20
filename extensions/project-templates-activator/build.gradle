@@ -1,0 +1,40 @@
+buildscript {
+	dependencies {
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "4.3.0"
+	}
+
+	repositories {
+		maven {
+			if (project.hasProperty("release")) {
+				url "https://repository.liferay.com/nexus/content/groups/public"
+			}
+			else {
+				url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+			}
+		}
+	}
+}
+
+apply plugin: "biz.aQute.bnd.builder"
+apply plugin: "java"
+apply plugin: "maven-publish"
+
+dependencies {
+	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.16"
+	compileOnly group: "org.apache.maven.archetype", name: "archetype-common", version: "2.4"
+	compileOnly project(":cli")
+}
+
+jar.baseName = "com.liferay.project.templates.activator"
+
+publishing {
+	publications {
+		mavenProfileJar(MavenPublication) {
+			artifactId = jar.baseName
+
+			from components.java
+		}
+	}
+}
+
+version = "1.0.0-SNAPSHOT"

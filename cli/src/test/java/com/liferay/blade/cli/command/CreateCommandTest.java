@@ -76,23 +76,6 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateActivator() throws Exception {
-		String[] gradleArgs = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "activator", "bar-activator"};
-
-		String projectPath = new File(
-			_rootDir, "bar-activator"
-		).getAbsolutePath();
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, gradleArgs);
-
-		_checkGradleBuildFiles(projectPath);
-
-		_contains(
-			_checkFileExists(projectPath + "/src/main/java/bar/activator/BarActivator.java"),
-			".*^public class BarActivator implements BundleActivator.*$");
-	}
-
-	@Test
 	public void testCreateApi() throws Exception {
 		String[] gradleArgs = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "api", "foo"};
 
