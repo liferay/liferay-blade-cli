@@ -57,7 +57,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -824,8 +823,7 @@ public class CreateCommandTest {
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
 		_contains(
-			_checkFileExists(workspace + ".blade.properties"),
-			new String[] {".*liferay.workspace.default=7.2.*"});
+			_checkFileExists(workspace + ".blade.properties"), new String[] {".*liferay.workspace.default=7.2.*"});
 
 		String projectPath = modulesDir.getAbsolutePath();
 
