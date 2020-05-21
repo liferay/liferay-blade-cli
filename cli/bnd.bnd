@@ -246,6 +246,7 @@ Private-Package:\
 	#org.eclipse.aether.util.version,\
 	#org.eclipse.aether.version
 -includeresource:\
+	@com.liferay.gogo.shell.client-1.0.0.jar,\
 	@com.liferay.project.templates-*.jar,\
 	@jansi-*.jar,\
 	${project.buildDir}/tooling.zip,\
