@@ -823,7 +823,7 @@ public class CreateCommandTest {
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
 		_contains(
-			_checkFileExists(workspace + ".blade.properties"), new String[] {".*liferay.workspace.default=7.2.*"});
+			_checkFileExists(workspace + "/.blade.properties"), new String[] {".*liferay.workspace.default=7.2.*"});
 
 		String projectPath = modulesDir.getAbsolutePath();
 
