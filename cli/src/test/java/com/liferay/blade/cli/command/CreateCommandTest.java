@@ -811,8 +811,6 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceFormField72() throws Exception {
-		Assume.assumeTrue(System.getenv("GITHUB_CI") == null);
-
 		File workspace = new File(System.getProperty("buildDir"), "createTestWorkspace");
 
 		File modulesDir = new File(workspace, "modules");
