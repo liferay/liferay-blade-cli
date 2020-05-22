@@ -57,7 +57,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -811,8 +810,6 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceFormField72() throws Exception {
-		Assume.assumeTrue(System.getenv("GITHUB_CI") == null);
-
 		File workspace = new File(System.getProperty("buildDir"), "createTestWorkspace");
 
 		File modulesDir = new File(workspace, "modules");
