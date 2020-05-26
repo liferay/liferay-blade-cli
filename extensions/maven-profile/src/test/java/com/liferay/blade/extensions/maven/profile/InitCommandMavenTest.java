@@ -18,6 +18,7 @@ package com.liferay.blade.extensions.maven.profile;
 
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 
@@ -48,7 +49,10 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testMavenInitProjectCorrectLocation() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v", "7.3"};
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v",
+			BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
 
@@ -71,7 +75,10 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v", "7.3"};
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v",
+			BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		File newproject = new File(_workspaceDir, "newproject");
 
@@ -114,7 +121,10 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v", "7.3"};
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v",
+			BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		File projectDir = new File(_workspaceDir, "newproject");
 
@@ -135,7 +145,10 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testMavenInitWithNameWorkspaceNotExists() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v", "7.3"};
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v",
+			BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		File projectDir = new File(_workspaceDir, "newproject");
 
@@ -154,7 +167,9 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "-v", "7.3"};
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -193,7 +208,9 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFiles() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "-v", "7.3"};
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		Assert.assertTrue(
 			new File(
@@ -210,7 +227,9 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFilesForce() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven", "-v", "7.3"};
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 

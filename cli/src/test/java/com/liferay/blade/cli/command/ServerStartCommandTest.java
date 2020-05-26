@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -544,7 +545,9 @@ public class ServerStartCommandTest {
 	}
 
 	private void _initBladeWorkspace() throws Exception {
-		String[] initArgs = {"--base", _testWorkspacePath.toString(), "init", "-v", "7.1"};
+		String[] initArgs = {
+			"--base", _testWorkspacePath.toString(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_71
+		};
 
 		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, initArgs);
 	}

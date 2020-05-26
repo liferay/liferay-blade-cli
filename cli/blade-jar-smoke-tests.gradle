@@ -137,7 +137,7 @@ testBladeInitCommand {
 
 	initDir.mkdirs()
 
-	args = [jar.archivePath, 'init', "hello world", "-v", "7.2"]
+	args = [jar.archivePath, 'init', "hello world", "-v", "dxp-7.2-ga1"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = initDir

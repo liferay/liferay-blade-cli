@@ -16,11 +16,14 @@
 
 package com.liferay.blade.cli.command;
 
+import aQute.bnd.version.Version;
+
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ProductInfo;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.util.FileUtil;
@@ -47,6 +50,7 @@ import java.util.Set;
 /**
  * @author Gregory Amerson
  * @author Terry Jia
+ * @author Simon Jiang
  */
 public class InitCommand extends BaseCommand<InitArgs> {
 
@@ -179,7 +183,24 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
+
+		Map<String, ProductInfo> productInfos = BladeUtil.getProductInfo();
+
+		ProductInfo productInfo = productInfos.get(initArgs.getLiferayVersion());
+
+		if (productInfo == null) {
+			_addError("Unable to get product info for selected version " + initArgs.getLiferayVersion());
+
+			return;
+		}
+
+		Version targetPlatformVersion = new Version(productInfo.getTargetPlatformVersion());
+
+		initArgs.setLiferayVersion(
+			new String(targetPlatformVersion.getMajor() + "." + targetPlatformVersion.getMinor()));
+
 		projectTemplatesArgs.setLiferayVersion(initArgs.getLiferayVersion());
+
 		projectTemplatesArgs.setMaven(mavenBuild);
 		projectTemplatesArgs.setName(name);
 

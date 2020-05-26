@@ -20,6 +20,10 @@ Private-Package:\
 	\
 	com.liferay.blade.gradle.tooling,\
 	\
+	com.liferay.portal.tools.bundle.support.*,\
+	\
+	com.google.gson.*,\
+	\
 	org.apache.tools.ant;-split-package:=merge-first,\
 	org.apache.tools.ant.filters;-split-package:=merge-first,\
 	org.apache.tools.ant.filters.util;-split-package:=merge-first,\
@@ -44,6 +48,10 @@ Private-Package:\
 	org.apache.commons.lang3,\
 	org.apache.commons.lang3.exception,\
 	org.apache.commons.lang3.text,\
+	\
+	org.apache.commons.logging.*,\
+	\
+	org.apache.http.*,\
 	\
 	org.gradle;-split-package:=merge-first,\
 	org.gradle.api;-split-package:=merge-first,\

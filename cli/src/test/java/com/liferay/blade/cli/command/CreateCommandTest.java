@@ -20,6 +20,7 @@ import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Jar;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
@@ -812,12 +813,13 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceFormField72() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
-		_makeWorkspaceVersion(workspace, "7.2");
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_72, BladeTest.LIFERAY_VERSION_72);
 
 		File modulesDir = new File(workspace, "modules");
 
 		String[] args = {
-			"create", "-d", modulesDir.getAbsolutePath(), "-t", "form-field", "sampleFormField", "-v", "7.2"
+			"create", "-d", modulesDir.getAbsolutePath(), "-t", "form-field", "sampleFormField", "-v",
+			BladeTest.LIFERAY_VERSION_72
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
@@ -1144,7 +1146,7 @@ public class CreateCommandTest {
 
 		File modulesDir = new File(workspace70, "modules");
 
-		_makeWorkspaceVersion(workspace70, "7.0");
+		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70, BladeTest.LIFERAY_VERSION_70);
 
 		String[] sevenZeroArgs = {
 			"--base", workspace70.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-zero"
@@ -1354,7 +1356,7 @@ public class CreateCommandTest {
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		_makeWorkspaceVersion(workspace70, "7.0");
+		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70, BladeTest.LIFERAY_VERSION_70);
 
 		_enableTargetPlatformInWorkspace(workspace70, "7.0.6");
 
@@ -1396,7 +1398,7 @@ public class CreateCommandTest {
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		_makeWorkspaceVersion(workspace71, "7.1");
+		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_PORTAL_71, BladeTest.LIFERAY_VERSION_71);
 
 		_enableTargetPlatformInWorkspace(workspace71, "7.1.3");
 
@@ -1598,7 +1600,9 @@ public class CreateCommandTest {
 	private void _makeWorkspace(File workspace) throws Exception {
 		File parentFile = workspace.getParentFile();
 
-		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", "7.3"};
+		String[] args = {
+			"--base", parentFile.getPath(), "init", workspace.getName(), "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1609,11 +1613,11 @@ public class CreateCommandTest {
 
 			properties.load(inputStream);
 
-			Assert.assertEquals("7.3", properties.getProperty("liferay.version.default"));
+			Assert.assertEquals(BladeTest.LIFERAY_VERSION_73, properties.getProperty("liferay.version.default"));
 		}
 	}
 
-	private void _makeWorkspaceVersion(File workspace, String version) throws Exception {
+	private void _makeWorkspaceVersion(File workspace, String version, String bladeTestVersion) throws Exception {
 		File parentFile = workspace.getParentFile();
 
 		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", version};
@@ -1627,7 +1631,7 @@ public class CreateCommandTest {
 
 			properties.load(inputStream);
 
-			Assert.assertEquals(version, properties.getProperty("liferay.version.default"));
+			Assert.assertEquals(bladeTestVersion, properties.getProperty("liferay.version.default"));
 		}
 	}
 

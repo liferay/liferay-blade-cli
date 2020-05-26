@@ -16,6 +16,7 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.command.JavaProcess;
 import com.liferay.blade.cli.command.JavaProcesses;
@@ -239,7 +240,10 @@ public class ServerStartCommandMavenTest {
 	}
 
 	private void _initBladeWorkspace() {
-		String[] initArgs = {"--base", _testWorkspaceDir.toString(), "init", "-f", "-v", "7.1", "-P", "maven"};
+		String[] initArgs = {
+			"--base", _testWorkspaceDir.toString(), "init", "-f", "-v", BladeTest.PRODUCT_VERSION_PORTAL_71, "-P",
+			"maven"
+		};
 
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
 	}

@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -40,7 +41,7 @@ public class DeployCommandTest {
 	public void testInstallJar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-v", "7.3"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
@@ -93,7 +94,7 @@ public class DeployCommandTest {
 	public void testInstallWar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-v", "7.3"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 

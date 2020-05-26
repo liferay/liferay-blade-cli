@@ -72,21 +72,21 @@ public class ExtensionsTest {
 
 		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
-		Extensions extensions = new Extensions(classLoader);
+		try (Extensions extensions = new Extensions(classLoader)) {
+			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+			String[] sortedArgs = Extensions.sortArgs(commands, args);
 
-		String[] sortedArgs = Extensions.sortArgs(commands, args);
+			boolean correctSort = false;
 
-		boolean correctSort = false;
-
-		for (String arg : sortedArgs) {
-			if (Objects.equals(arg, "extension install")) {
-				correctSort = true;
+			for (String arg : sortedArgs) {
+				if (Objects.equals(arg, "extension install")) {
+					correctSort = true;
+				}
 			}
-		}
 
-		Assert.assertTrue(correctSort);
+			Assert.assertTrue(correctSort);
+		}
 	}
 
 	@Test
@@ -114,13 +114,13 @@ public class ExtensionsTest {
 	public void testLoadCommandsBuiltIn() throws Exception {
 		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
-		Extensions extensions = new Extensions(classLoader);
+		try (Extensions extensions = new Extensions(classLoader)) {
+			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+			Assert.assertNotNull(commands);
 
-		Assert.assertNotNull(commands);
-
-		Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT, commands.size());
+			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT, commands.size());
+		}
 	}
 
 	@Test
@@ -129,13 +129,13 @@ public class ExtensionsTest {
 
 		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
-		Extensions extensions = new Extensions(classLoader);
+		try (Extensions extensions = new Extensions(classLoader)) {
+			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
+			Assert.assertNotNull(commands);
 
-		Assert.assertNotNull(commands);
-
-		Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 1, commands.size());
+			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 1, commands.size());
+		}
 	}
 
 	@Test
@@ -144,7 +144,9 @@ public class ExtensionsTest {
 
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "foo", "-v", "7.3"};
+		String[] args = {
+			"--base", workspaceDir.getPath(), "init", "-P", "foo", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -154,13 +156,13 @@ public class ExtensionsTest {
 
 		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
-		Extensions extensions = new Extensions(classLoader);
+		try (Extensions extensions = new Extensions(classLoader)) {
+			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands("foo");
 
-		Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands("foo");
+			Assert.assertNotNull(commands);
 
-		Assert.assertNotNull(commands);
-
-		Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 2, commands.size());
+			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 2, commands.size());
+		}
 	}
 
 	@Rule

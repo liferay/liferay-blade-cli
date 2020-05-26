@@ -18,18 +18,79 @@ package com.liferay.blade.cli.command.validator;
 
 import com.beust.jcommander.ParameterException;
 
-import java.util.Arrays;
+import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ProductInfo;
+
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
+ * @author Simon Jiang
  */
 public class LiferayVersionValidator implements ValidatorSupplier {
 
 	@Override
 	public Collection<String> get() {
-		return Arrays.asList("7.0", "7.1", "7.2", "7.3");
+		Map<String, ProductInfo> productInfoMap = BladeUtil.getProductInfo();
+
+		List<String> possibleLiferayProducts = new CopyOnWriteArrayList<>();
+
+		productInfoMap.forEach(
+			(productKey, productInfo) -> {
+				if (!BladeUtil.isEmpty(productInfo.getTargetPlatformVersion())) {
+					possibleLiferayProducts.add(productKey);
+				}
+			});
+
+		Collections.sort(possibleLiferayProducts);
+
+		String lastMajorVersion = "";
+		int lastSpVersion = -1;
+		String lastkey = "";
+
+		for (String productKey : possibleLiferayProducts) {
+			String[] productKeyVersions = productKey.split("-");
+
+			if (productKeyVersions.length < 3) {
+				possibleLiferayProducts.remove(productKey);
+
+				continue;
+			}
+
+			if (productKey.contains("ga")) {
+				continue;
+			}
+
+			if (productKey.contains("sp")) {
+				String currentMajorVersion = productKeyVersions[1];
+				String spVersion = productKeyVersions[2].replace("sp", "");
+
+				if (!lastMajorVersion.equals(currentMajorVersion)) {
+					lastMajorVersion = currentMajorVersion;
+					lastSpVersion = Integer.parseInt(spVersion);
+					lastkey = productKey;
+				}
+				else {
+					int currentSpVersion = Integer.parseInt(spVersion);
+
+					if (lastSpVersion < currentSpVersion) {
+						lastSpVersion = currentSpVersion;
+						possibleLiferayProducts.remove(lastkey);
+						lastkey = productKey;
+					}
+					else {
+						possibleLiferayProducts.remove(productKey);
+					}
+				}
+			}
+		}
+
+		return possibleLiferayProducts;
 	}
 
 	@Override
