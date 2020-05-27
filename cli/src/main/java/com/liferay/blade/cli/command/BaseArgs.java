@@ -47,16 +47,18 @@ public class BaseArgs {
 		_base = baseDir.getAbsolutePath();
 	}
 
-	@Parameter(description = "Specify a new base directory (default working directory).", names = "--base")
+	@Parameter(
+		description = "Specify a new base directory (default working directory).", hidden = true, names = "--base"
+	)
 	private String _base = System.getProperty("user.dir");
 
 	@Parameter(description = "Get help on a specific command.", help = true, names = "--help")
 	private boolean _help;
 
-	@Parameter(description = "Do not print any optional messages to console.", names = {"-q", "--quiet"})
+	@Parameter(description = "Do not print any optional messages to console.", hidden = true, names = {"-q", "--quiet"})
 	private boolean _quiet;
 
-	@Parameter(description = "Print exception stack traces when they occur.", names = "--trace")
+	@Parameter(description = "Print exception stack traces when they occur.", hidden = true, names = "--trace")
 	private boolean _trace;
 
 }
