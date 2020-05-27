@@ -35,8 +35,16 @@ public class SamplesArgs extends BaseArgs {
 		return _liferayVersion;
 	}
 
+	public String getProfileName() {
+		return _profileName;
+	}
+
 	public String getSampleName() {
 		return _sampleName;
+	}
+
+	public void setProfileName(String profileName) {
+		_profileName = profileName;
 	}
 
 	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
@@ -47,6 +55,12 @@ public class SamplesArgs extends BaseArgs {
 		names = {"-v", "--liferay-version"}
 	)
 	private String _liferayVersion;
+
+	@Parameter(
+		description = "Specify the profile to use when invoking the command.",
+		names = {"-b", "--build", "-P", "--profile-name"}
+	)
+	private String _profileName = "gradle";
 
 	@Parameter(description = "name")
 	private String _sampleName;
