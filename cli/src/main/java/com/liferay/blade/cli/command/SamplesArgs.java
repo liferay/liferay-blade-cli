@@ -62,7 +62,7 @@ public class SamplesArgs extends BaseArgs {
 	)
 	private String _profileName = "gradle";
 
-	@Parameter(description = "name")
+	@Parameter(description = "[name]")
 	private String _sampleName;
 
 }

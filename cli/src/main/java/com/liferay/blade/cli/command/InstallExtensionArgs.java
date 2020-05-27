@@ -29,7 +29,7 @@ public class InstallExtensionArgs extends BaseArgs {
 		return _path;
 	}
 
-	@Parameter(description = "The path of the extension to install.", required = true)
+	@Parameter(description = "[path]", required = true)
 	private String _path;
 
 }

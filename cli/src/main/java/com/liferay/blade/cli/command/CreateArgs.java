@@ -207,7 +207,7 @@ public class CreateArgs extends BaseArgs {
 	)
 	private boolean _listTemplates;
 
-	@Parameter(description = "The project name", required = true)
+	@Parameter(description = "[name]", required = true)
 	private String _name;
 
 	@Parameter(
