@@ -330,6 +330,8 @@ public class BladeCLI {
 
 		JCommander jCommander = new JCommander();
 
+		jCommander.setProgramName("blade");
+
 		for (String command : _commands.keySet()) {
 			BaseCommand baseCommand = _commands.get(command);
 
@@ -655,6 +657,8 @@ public class BladeCLI {
 
 	private static JCommander _buildJCommanderWithCommandMap(Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
 		JCommander.Builder builder = JCommander.newBuilder();
+
+		builder.programName("blade");
 
 		for (Map.Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
 			BaseCommand<? extends BaseArgs> value = entry.getValue();
