@@ -28,7 +28,7 @@ public interface WorkspaceProvider {
 	public default File getWorkspaceDir(BladeCLI blade) {
 		BaseArgs args = blade.getArgs();
 
-		return getWorkspaceDir(new File(args.getBase()));
+		return getWorkspaceDir(args.getBase());
 	}
 
 	public File getWorkspaceDir(File dir);
@@ -44,7 +44,7 @@ public interface WorkspaceProvider {
 		else {
 			BaseArgs args = blade.getArgs();
 
-			dirToCheck = new File(args.getBase());
+			dirToCheck = args.getBase();
 		}
 
 		return isWorkspace(dirToCheck);

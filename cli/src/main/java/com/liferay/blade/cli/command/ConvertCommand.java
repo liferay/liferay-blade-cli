@@ -80,7 +80,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		ConvertArgs convertArgs = getArgs();
 
-		File baseDir = new File(convertArgs.getBase());
+		File baseDir = convertArgs.getBase();
 
 		GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(
 			baseDir);
@@ -426,7 +426,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), convertArgs.isRemoveSource(),
 				arguments);
 
-			convertServiceBuilderArgs.setBase(new File(convertArgs.getBase()));
+			convertServiceBuilderArgs.setBase(convertArgs.getBase());
 
 			ConvertServiceBuilderCommand command = new ConvertServiceBuilderCommand(
 				bladeCLI, convertServiceBuilderArgs);

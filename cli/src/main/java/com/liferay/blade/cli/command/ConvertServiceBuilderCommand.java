@@ -29,7 +29,6 @@ import java.io.StringReader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import java.util.List;
 import java.util.Properties;
@@ -56,7 +55,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		_convertArgs = convertArgs;
 
-		File baseDir = new File(_convertArgs.getBase());
+		File baseDir = _convertArgs.getBase();
 
 		GradleWorkspaceProvider gradleWorkspaceProvider = (GradleWorkspaceProvider)_bladeCLI.getWorkspaceProvider(
 			baseDir);
@@ -91,9 +90,9 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 	}
 
 	public void execute() throws Exception {
-		Path basePath = Paths.get(_convertArgs.getBase());
+		File baseDir = _convertArgs.getBase();
 
-		WorkspaceProvider workspaceProvider = _bladeCLI.getWorkspaceProvider(basePath.toFile());
+		WorkspaceProvider workspaceProvider = _bladeCLI.getWorkspaceProvider(baseDir);
 
 		if (workspaceProvider == null) {
 			_bladeCLI.error("Please execute command in a Liferay Workspace project");

@@ -35,13 +35,11 @@ public class OpenCommand extends BaseCommand<OpenArgs> {
 	public void execute() throws Exception {
 		OpenArgs openArgs = getArgs();
 
-		String fileName = openArgs.getFile();
+		File file = openArgs.getFile();
 
-		if (fileName == null) {
-			fileName = openArgs.getBase();
+		if (file == null) {
+			file = openArgs.getBase();
 		}
-
-		File file = new File(fileName);
 
 		file = file.getAbsoluteFile();
 

@@ -27,7 +27,7 @@ import java.io.File;
 @Parameters(commandDescription = "Options valid for all commands. Must be given before sub command")
 public class BaseArgs {
 
-	public String getBase() {
+	public File getBase() {
 		return _base;
 	}
 
@@ -44,13 +44,13 @@ public class BaseArgs {
 	}
 
 	public void setBase(File baseDir) {
-		_base = baseDir.getAbsolutePath();
+		_base = baseDir.getAbsoluteFile();
 	}
 
 	@Parameter(
 		description = "Specify a new base directory (default working directory).", hidden = true, names = "--base"
 	)
-	private String _base = System.getProperty("user.dir");
+	private File _base = new File(System.getProperty("user.dir"));
 
 	@Parameter(description = "Get help on a specific command.", help = true, names = "--help")
 	private boolean _help;

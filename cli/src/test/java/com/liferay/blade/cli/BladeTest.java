@@ -206,7 +206,7 @@ public class BladeTest extends BladeCLI {
 	private File _getSettingsBaseDir() {
 		BaseArgs args = getArgs();
 
-		File baseDir = new File(args.getBase());
+		File baseDir = args.getBase();
 
 		File settingsBaseDir;
 

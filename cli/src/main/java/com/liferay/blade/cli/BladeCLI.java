@@ -911,7 +911,7 @@ public class BladeCLI {
 	}
 
 	private File _getSettingsBaseDir() {
-		File baseDir = new File(_args.getBase());
+		File baseDir = _args.getBase();
 
 		File settingsBaseDir;
 

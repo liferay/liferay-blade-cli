@@ -102,7 +102,7 @@ public class LocalServer {
 		else {
 			BaseArgs baseArgs = bladeCLI.getArgs();
 
-			File baseDir = new File(baseArgs.getBase());
+			File baseDir = baseArgs.getBase();
 
 			List<Properties> propertiesList = BladeUtil.getAppServerProperties(baseDir);
 
@@ -215,7 +215,7 @@ public class LocalServer {
 	protected File getWorkspaceDir(BladeCLI bladeCLI) {
 		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = baseArgs.getBase();
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
@@ -225,7 +225,7 @@ public class LocalServer {
 	protected Properties getWorkspaceProperties(BladeCLI bladeCLI) {
 		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = baseArgs.getBase();
 
 		GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(
 			baseDir);
@@ -236,7 +236,7 @@ public class LocalServer {
 	protected boolean isWorkspace(BladeCLI bladeCLI) {
 		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = baseArgs.getBase();
 
 		if (bladeCLI.getWorkspaceProvider(baseDir) != null) {
 			return true;

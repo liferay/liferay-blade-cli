@@ -63,7 +63,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 	public File getWorkspaceDir(BladeCLI blade) {
 		BaseArgs args = blade.getArgs();
 
-		return getWorkspaceDir(new File(args.getBase()));
+		return getWorkspaceDir(args.getBase());
 	}
 
 	public File getWorkspaceDir(File dir) {

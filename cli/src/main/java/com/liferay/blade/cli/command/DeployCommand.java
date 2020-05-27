@@ -41,7 +41,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 
 		DeployArgs deployArgs = getArgs();
 
-		File baseDir = new File(deployArgs.getBase());
+		File baseDir = deployArgs.getBase();
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
@@ -67,7 +67,7 @@ public class DeployCommand extends BaseCommand<DeployArgs> {
 	private void _deploy(GradleExec gradle, String command) throws Exception {
 		DeployArgs deployArgs = getArgs();
 
-		File baseDir = new File(deployArgs.getBase());
+		File baseDir = deployArgs.getBase();
 
 		ProcessResult processResult = gradle.executeTask(command, baseDir, false);
 

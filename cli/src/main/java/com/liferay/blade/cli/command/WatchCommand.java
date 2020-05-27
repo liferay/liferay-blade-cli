@@ -64,7 +64,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 
 		WatchArgs watchArgs = getArgs();
 
-		File base = new File(watchArgs.getBase());
+		File base = watchArgs.getBase();
 
 		Path watchPath = Paths.get(base.getCanonicalPath());
 

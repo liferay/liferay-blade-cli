@@ -47,7 +47,7 @@ public class ConvertThemeCommand implements FilesSupport {
 
 		_convertArgs = convertArgs;
 
-		File baseDir = new File(_convertArgs.getBase());
+		File baseDir = _convertArgs.getBase();
 
 		GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)_bladeCLI.getWorkspaceProvider(
 			baseDir);
@@ -89,7 +89,7 @@ public class ConvertThemeCommand implements FilesSupport {
 	}
 
 	public void execute() throws Exception {
-		File baseDir = new File(_convertArgs.getBase());
+		File baseDir = _convertArgs.getBase();
 
 		WorkspaceProvider workspaceProvider = _bladeCLI.getWorkspaceProvider(baseDir);
 

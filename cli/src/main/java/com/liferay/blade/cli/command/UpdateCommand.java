@@ -788,7 +788,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		BaseArgs args = bladeCLI.getArgs();
 
-		File baseDir = new File(args.getBase());
+		File baseDir = args.getBase();
 
 		try {
 			Process process = BladeUtil.startProcess("jpm install -f " + url, baseDir);

@@ -40,7 +40,7 @@ public class GradleExec {
 	public ProcessResult executeTask(String task) throws Exception {
 		BaseArgs args = _blade.getArgs();
 
-		File baseDir = new File(args.getBase());
+		File baseDir = args.getBase();
 
 		return executeTask(task, baseDir, true);
 	}
@@ -48,7 +48,7 @@ public class GradleExec {
 	public ProcessResult executeTask(String task, boolean captureOutput) throws Exception {
 		BaseArgs args = _blade.getArgs();
 
-		File baseDir = new File(args.getBase());
+		File baseDir = args.getBase();
 
 		return executeTask(task, baseDir, captureOutput);
 	}
@@ -143,7 +143,7 @@ public class GradleExec {
 		BaseArgs baseArgs = _blade.getArgs();
 
 		if ((gradlew == null) || !gradlew.exists()) {
-			File baseDir = new File(baseArgs.getBase());
+			File baseDir = baseArgs.getBase();
 
 			gradlew = BladeUtil.getGradleWrapper(baseDir);
 		}
