@@ -28,6 +28,10 @@ import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 @Parameters(commandDescription = "Initializes a new Liferay workspace", commandNames = "init")
 public class InitArgs extends BaseArgs {
 
+	public CommandType getCommandType() {
+		return CommandType.NON_WORKSPACE;
+	}
+
 	public String getLiferayVersion() {
 		return _liferayVersion;
 	}

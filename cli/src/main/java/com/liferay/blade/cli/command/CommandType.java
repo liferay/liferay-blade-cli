@@ -16,26 +16,11 @@
 
 package com.liferay.blade.cli.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
 /**
- * @author Gregory Amerson
+ * @author David Truong
  */
-@Parameters(commandDescription = "Builds and deploys bundles to the Liferay module framework.", commandNames = "deploy")
-public class DeployArgs extends BaseArgs {
+public enum CommandType {
 
-	public CommandType getCommandType() {
-		return CommandType.WORKSPACE_ONLY;
-	}
-
-	public boolean isWatch() {
-		return _watch;
-	}
-
-	@Parameter(
-		description = "Watches the deployed file for changes and will automatically redeploy", names = {"-w", "--watch"}
-	)
-	private boolean _watch;
+	GLOBAL, HIDDEN, NON_WORKSPACE, WORKSPACE_ONLY
 
 }

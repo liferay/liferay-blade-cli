@@ -23,4 +23,10 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(commandDescription = "Stop server defined by your Liferay project", commandNames = "server stop")
 public class ServerStopArgs extends BaseArgs {
+
+	@Override
+	public CommandType getCommandType() {
+		return CommandType.WORKSPACE_ONLY;
+	}
+
 }

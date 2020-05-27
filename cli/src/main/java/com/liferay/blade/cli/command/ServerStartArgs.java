@@ -27,6 +27,11 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandDescription = "Start server defined by your Liferay project", commandNames = "server start")
 public class ServerStartArgs extends BaseArgs {
 
+	@Override
+	public CommandType getCommandType() {
+		return CommandType.WORKSPACE_ONLY;
+	}
+
 	public int getDebugPort() {
 		return _debugPort;
 	}

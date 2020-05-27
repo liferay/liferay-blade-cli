@@ -31,6 +31,10 @@ public class BaseArgs {
 		return _base;
 	}
 
+	public CommandType getCommandType() {
+		return CommandType.GLOBAL;
+	}
+
 	public boolean isHelp() {
 		return _help;
 	}

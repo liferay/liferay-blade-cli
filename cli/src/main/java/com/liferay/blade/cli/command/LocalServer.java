@@ -41,7 +41,7 @@ import java.util.Properties;
 public class LocalServer {
 
 	public LocalServer(BladeCLI bladeCLI) {
-		if (isWorkspace(bladeCLI)) {
+		if (bladeCLI.isWorkspace()) {
 			Properties properties = getWorkspaceProperties(bladeCLI);
 
 			String liferayHomePath = properties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_HOME_DIR_PROPERTY);
@@ -231,18 +231,6 @@ public class LocalServer {
 			baseDir);
 
 		return workspaceProviderGradle.getGradleProperties(baseDir);
-	}
-
-	protected boolean isWorkspace(BladeCLI bladeCLI) {
-		BaseArgs baseArgs = bladeCLI.getArgs();
-
-		File baseDir = baseArgs.getBase();
-
-		if (bladeCLI.getWorkspaceProvider(baseDir) != null) {
-			return true;
-		}
-
-		return false;
 	}
 
 	private static String _getJBossWildflyExecutable() {

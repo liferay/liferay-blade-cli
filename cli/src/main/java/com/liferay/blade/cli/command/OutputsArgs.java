@@ -23,4 +23,9 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(commandNames = "outputs", hidden = true)
 public class OutputsArgs extends BaseArgs {
+
+	public CommandType getCommandType() {
+		return CommandType.HIDDEN;
+	}
+
 }
