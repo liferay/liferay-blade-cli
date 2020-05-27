@@ -38,7 +38,7 @@ public class LocalServerMaven extends LocalServer {
 	protected File getWorkspaceDir(BladeCLI bladeCLI) {
 		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = baseArgs.getBase();
 
 		return MavenUtil.getWorkspaceDir(baseDir);
 	}
@@ -47,18 +47,9 @@ public class LocalServerMaven extends LocalServer {
 	protected Properties getWorkspaceProperties(BladeCLI bladeCLI) {
 		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = baseArgs.getBase();
 
 		return MavenUtil.getMavenProperties(baseDir);
-	}
-
-	@Override
-	protected boolean isWorkspace(BladeCLI bladeCLI) {
-		BaseArgs baseArgs = bladeCLI.getArgs();
-
-		File baseDir = new File(baseArgs.getBase());
-
-		return MavenUtil.isWorkspace(baseDir);
 	}
 
 }

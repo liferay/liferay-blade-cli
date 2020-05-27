@@ -44,7 +44,7 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 
 		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = baseArgs.getBase();
 
 		if (MavenUtil.isWorkspace(baseDir)) {
 			File pomXmlFile = MavenUtil.getPomXMLFile(baseDir);

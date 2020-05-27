@@ -37,7 +37,7 @@ public class ServerInitCommandMaven extends ServerInitCommand implements MavenEx
 
 		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = baseArgs.getBase();
 
 		if (MavenUtil.isWorkspace(baseDir)) {
 			File pomXmlFile = MavenUtil.getPomXMLFile(baseDir);

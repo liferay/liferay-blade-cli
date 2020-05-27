@@ -40,7 +40,7 @@ public class DeployCommandMaven extends DeployCommand implements MavenExecutor {
 	public void execute() throws Exception {
 		DeployArgs deployArgs = getArgs();
 
-		File baseDir = new File(deployArgs.getBase());
+		File baseDir = deployArgs.getBase();
 
 		File pomXmlFile = MavenUtil.getPomXMLFile(baseDir);
 

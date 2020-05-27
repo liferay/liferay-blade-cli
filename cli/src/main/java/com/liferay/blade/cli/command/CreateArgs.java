@@ -83,6 +83,10 @@ public class CreateArgs extends BaseArgs {
 		return _packageName;
 	}
 
+	public String getProfileName() {
+		return _profileName;
+	}
+
 	public String getService() {
 		return _service;
 	}
@@ -141,6 +145,10 @@ public class CreateArgs extends BaseArgs {
 
 	public void setPackageName(String packageName) {
 		_packageName = packageName;
+	}
+
+	public void setProfileName(String profileName) {
+		_profileName = profileName;
 	}
 
 	public void setService(String service) {
@@ -218,6 +226,12 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(description = "The Java package to use when generating Java source.", names = {"-p", "--package-name"})
 	private String _packageName;
+
+	@Parameter(
+		description = "Specify the profile to use when invoking the command.",
+		names = {"-b", "--build", "-P", "--profile-name"}
+	)
+	private String _profileName = "gradle";
 
 	@Parameter(
 		description = "If a new DS component needs to be created, provides the name of the service to be implemented.",
