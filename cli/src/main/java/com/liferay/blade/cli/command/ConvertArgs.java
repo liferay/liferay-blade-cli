@@ -49,6 +49,10 @@ public class ConvertArgs extends BaseArgs {
 		this(all, list, themeBuilder, false, name);
 	}
 
+	public CommandType getCommandType() {
+		return CommandType.WORKSPACE_ONLY;
+	}
+
 	public List<String> getName() {
 		return _name;
 	}

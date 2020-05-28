@@ -34,6 +34,10 @@ public class UpgradePropsArgs extends BaseArgs {
 		return _bundleDir;
 	}
 
+	public CommandType getCommandType() {
+		return CommandType.WORKSPACE_ONLY;
+	}
+
 	public File getOutputFile() {
 		return _outputFile;
 	}
