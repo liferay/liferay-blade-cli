@@ -163,36 +163,39 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(
 		description = "Used to identify your module as a Theme Contributor. Also, used to add the Liferay-Theme-Contributor-Type and Web-ContextPath bundle headers.",
-		names = {"-C", "--contributor-type"}
+		hidden = true, names = {"-C", "--contributor-type"}
 	)
 	private String _contributorType;
 
 	@Parameter(
 		description = "For Service Builder projects, specify the preferred dependency injection method (ds | spring). Default is DS",
-		names = "--dependency-injector"
+		hidden = true, names = "--dependency-injector"
 	)
 	private String _dependencyInjector = "ds";
 
 	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
 	private File _dir;
 
-	@Parameter(description = "The name of the framework to use in the generated project.", names = "--framework")
+	@Parameter(
+		description = "The name of the framework to use in the generated project.", hidden = true, names = "--framework"
+	)
 	private String _framework;
 
 	@Parameter(
-		description = "The way that the framework dependencies will be configured.", names = "--framework-dependencies"
+		description = "The way that the framework dependencies will be configured.", hidden = true,
+		names = "--framework-dependencies"
 	)
 	private String _frameworkDependencies = "embedded";
 
 	@Parameter(
 		description = "If a new jsp hook fragment needs to be created, provide the name of the host bundle symbolic name. Required for \"-t fragment\".",
-		names = {"-h", "--host-bundle-bsn", "--host-bundle-symbolic-name"}
+		hidden = true, names = {"-h", "--host-bundle-bsn", "--host-bundle-symbolic-name"}
 	)
 	private String _hostBundleBSN;
 
 	@Parameter(
 		description = "If a new jsp hook fragment needs to be created, provide the host bundle version. Required for \"-t fragment\".",
-		names = {"-H", "--host-bundle-version"}
+		hidden = true, names = {"-H", "--host-bundle-version"}
 	)
 	private String _hostBundleVersion;
 
@@ -212,7 +215,7 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(
 		description = "Sets the name of the original module when creating a project with modules-ext template.",
-		names = {"-m", "--original-module-name"}
+		hidden = true, names = {"-m", "--original-module-name"}
 	)
 	private String _originalModuleName;
 
@@ -221,7 +224,7 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(
 		description = "If a new DS component needs to be created, provides the name of the service to be implemented.",
-		names = {"-s", "--service"}
+		hidden = true, names = {"-s", "--service"}
 	)
 	private String _service;
 
@@ -233,7 +236,8 @@ public class CreateArgs extends BaseArgs {
 	private String _template;
 
 	@Parameter(
-		description = "Choose the view technology that will be used in the generated project.", names = "--view-type"
+		description = "Choose the view technology that will be used in the generated project.", hidden = true,
+		names = "--view-type"
 	)
 	private String _viewType;
 
