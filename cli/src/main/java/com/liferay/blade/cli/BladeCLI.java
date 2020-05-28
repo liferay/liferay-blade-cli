@@ -471,6 +471,8 @@ public class BladeCLI {
 
 							_args = (BaseArgs)commandArgs;
 
+							_args.setProfileName(profileName);
+
 							_args.setBase(baseDir);
 
 							try {
@@ -568,6 +570,8 @@ public class BladeCLI {
 								_command = command;
 
 								_args = (BaseArgs)commandArgs;
+
+								_args.setProfileName(profileName);
 
 								_args.setBase(baseDir);
 
@@ -1226,6 +1230,10 @@ public class BladeCLI {
 
 			try {
 				thread.setContextClassLoader(combinedClassLoader);
+
+				if (_args.getProfileName() == null) {
+					_args.setProfileName("gradle");
+				}
 
 				command.execute();
 			}

@@ -40,10 +40,6 @@ public class InitArgs extends BaseArgs {
 		return _name;
 	}
 
-	public String getProfileName() {
-		return _profileName;
-	}
-
 	public boolean isForce() {
 		return _force;
 	}
@@ -68,10 +64,6 @@ public class InitArgs extends BaseArgs {
 		_name = name;
 	}
 
-	public void setProfileName(String profileName) {
-		_profileName = profileName;
-	}
-
 	public void setRefresh(boolean refresh) {
 		_refresh = refresh;
 	}
@@ -92,12 +84,6 @@ public class InitArgs extends BaseArgs {
 
 	@Parameter(description = "[name]")
 	private String _name;
-
-	@Parameter(
-		description = "Specify the profile to use when invoking the command.",
-		names = {"-b", "--build", "-P", "--profile-name"}
-	)
-	private String _profileName = "gradle";
 
 	@Parameter(description = "force to refresh workspace template", names = {"-r", "--refresh"})
 	private boolean _refresh;
