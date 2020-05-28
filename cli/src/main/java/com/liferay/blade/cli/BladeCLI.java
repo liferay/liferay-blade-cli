@@ -289,9 +289,7 @@ public class BladeCLI {
 	public boolean isWorkspace() {
 		BaseArgs baseArgs = getArgs();
 
-		File baseDir = baseArgs.getBase();
-
-		if (getWorkspaceProvider(baseDir) != null) {
+		if (getWorkspaceProvider(baseArgs.getBase()) != null) {
 			return true;
 		}
 
@@ -322,7 +320,7 @@ public class BladeCLI {
 	public void printUsage() {
 		StringBuilder sb = new StringBuilder();
 
-		Enum ignoreCommandType = CommandType.WORKSPACE_ONLY;
+		CommandType ignoreCommandType = CommandType.WORKSPACE_ONLY;
 
 		if (isWorkspace()) {
 			ignoreCommandType = CommandType.NON_WORKSPACE;
@@ -333,7 +331,7 @@ public class BladeCLI {
 		jCommander.setProgramName("blade");
 
 		for (String command : _commands.keySet()) {
-			BaseCommand baseCommand = _commands.get(command);
+			BaseCommand<? extends BaseArgs> baseCommand = _commands.get(command);
 
 			BaseArgs baseArgs = baseCommand.getArgs();
 
