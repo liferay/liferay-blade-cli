@@ -41,7 +41,7 @@ public class OutputsCommand extends BaseCommand<OutputsArgs> {
 
 		BaseArgs args = bladeCLI.getArgs();
 
-		File base = new File(args.getBase());
+		File base = args.getBase();
 
 		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(base.toPath());
 

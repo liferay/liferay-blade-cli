@@ -87,7 +87,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		File workDir = samplesArgs.getDir();
 
 		if (workDir == null) {
-			workDir = new File(samplesArgs.getBase());
+			workDir = samplesArgs.getBase();
 		}
 
 		Path cachePath = _getSamplesCachePath();

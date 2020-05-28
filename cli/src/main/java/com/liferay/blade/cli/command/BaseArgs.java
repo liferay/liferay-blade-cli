@@ -27,8 +27,12 @@ import java.io.File;
 @Parameters(commandDescription = "Options valid for all commands. Must be given before sub command")
 public class BaseArgs {
 
-	public String getBase() {
+	public File getBase() {
 		return _base;
+	}
+
+	public CommandType getCommandType() {
+		return CommandType.GLOBAL;
 	}
 
 	public String getProfileName() {
@@ -48,15 +52,17 @@ public class BaseArgs {
 	}
 
 	public void setBase(File baseDir) {
-		_base = baseDir.getAbsolutePath();
+		_base = baseDir.getAbsoluteFile();
 	}
 
 	public void setProfileName(String profileName) {
 		_profileName = profileName;
 	}
 
-	@Parameter(description = "Specify a new base directory (default working directory).", names = "--base")
-	private String _base = System.getProperty("user.dir");
+	@Parameter(
+		description = "Specify a new base directory (default working directory).", hidden = true, names = "--base"
+	)
+	private File _base = new File(System.getProperty("user.dir"));
 
 	@Parameter(description = "Get help on a specific command.", help = true, names = "--help")
 	private boolean _help;
@@ -67,10 +73,10 @@ public class BaseArgs {
 	)
 	private String _profileName;
 
-	@Parameter(description = "Do not print any optional messages to console.", names = {"-q", "--quiet"})
+	@Parameter(description = "Do not print any optional messages to console.", hidden = true, names = {"-q", "--quiet"})
 	private boolean _quiet;
 
-	@Parameter(description = "Print exception stack traces when they occur.", names = "--trace")
+	@Parameter(description = "Print exception stack traces when they occur.", hidden = true, names = "--trace")
 	private boolean _trace;
 
 }

@@ -37,7 +37,7 @@ public class ServerInitCommand extends BaseCommand<ServerInitArgs> {
 
 		ServerInitArgs serverInitArgs = getArgs();
 
-		File baseDir = new File(serverInitArgs.getBase());
+		File baseDir = serverInitArgs.getBase();
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 

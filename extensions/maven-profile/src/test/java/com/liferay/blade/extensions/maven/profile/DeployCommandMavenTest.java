@@ -40,7 +40,7 @@ public class DeployCommandMavenTest {
 	public void testInstallJar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "-P", "maven", "init", "-v", "7.2"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", "7.2"};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
@@ -93,7 +93,7 @@ public class DeployCommandMavenTest {
 	public void testInstallWar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "-P", "maven", "init", "-v", "7.2"};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", "7.2"};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 

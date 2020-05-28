@@ -27,6 +27,11 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandDescription = "Run server defined by your Liferay project", commandNames = "server run")
 public class ServerRunArgs extends BaseArgs {
 
+	@Override
+	public CommandType getCommandType() {
+		return CommandType.WORKSPACE_ONLY;
+	}
+
 	public int getDebugPort() {
 		return _debugPort;
 	}

@@ -52,7 +52,7 @@ public class CreateCommandMaven extends CreateCommand {
 
 		CreateArgs createArgs = getArgs();
 
-		File baseDir = new File(createArgs.getBase());
+		File baseDir = createArgs.getBase();
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
@@ -91,7 +91,7 @@ public class CreateCommandMaven extends CreateCommand {
 
 		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = new File(baseArgs.getBase());
+		File baseDir = baseArgs.getBase();
 
 		return MavenUtil.getMavenProperties(baseDir);
 	}

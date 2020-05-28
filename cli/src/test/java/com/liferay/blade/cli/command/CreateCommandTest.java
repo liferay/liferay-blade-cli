@@ -810,15 +810,15 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceFormField72() throws Exception {
-		File workspace = new File(System.getProperty("buildDir"), "createTestWorkspace");
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspaceVersion(workspace, "7.2");
 
 		File modulesDir = new File(workspace, "modules");
 
 		String[] args = {
 			"create", "-d", modulesDir.getAbsolutePath(), "-t", "form-field", "sampleFormField", "-v", "7.2"
 		};
-
-		_makeWorkspaceVersion(workspace, "7.2");
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 

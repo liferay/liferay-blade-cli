@@ -28,6 +28,11 @@ import com.beust.jcommander.Parameters;
 )
 public class ServerInitArgs extends BaseArgs {
 
+	@Override
+	public CommandType getCommandType() {
+		return CommandType.WORKSPACE_ONLY;
+	}
+
 	public String getEnvironment() {
 		return _environment;
 	}

@@ -35,7 +35,11 @@ public class GradleWrapperArgs extends BaseArgs {
 		return _args;
 	}
 
-	@Parameter(description = "arguments")
+	public CommandType getCommandType() {
+		return CommandType.WORKSPACE_ONLY;
+	}
+
+	@Parameter(description = "[arguments]")
 	private List<String> _args = new ArrayList<>();
 
 }

@@ -23,4 +23,9 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(commandDescription = "List all available project templates.", commandNames = "create -l", hidden = true)
 public class ListProjectTemplatesArgs extends BaseArgs {
+
+	public CommandType getCommandType() {
+		return CommandType.HIDDEN;
+	}
+
 }

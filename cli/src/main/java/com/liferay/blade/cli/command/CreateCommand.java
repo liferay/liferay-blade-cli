@@ -299,7 +299,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 
-		File baseDir = new File(createArgs.getBase());
+		File baseDir = createArgs.getBase();
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
@@ -333,7 +333,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		properties.put("setService", createArgs.getService());
 		properties.put("setViewType", createArgs.getViewType());
 
-		WorkspaceProvider workspaceProvider = getBladeCLI().getWorkspaceProvider(new File(createArgs.getBase()));
+		WorkspaceProvider workspaceProvider = getBladeCLI().getWorkspaceProvider(createArgs.getBase());
 
 		try {
 			if (workspaceProvider != null) {
@@ -357,7 +357,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		BaseArgs args = bladeCLI.getArgs();
 
-		File baseDir = new File(args.getBase());
+		File baseDir = args.getBase();
 
 		GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(
 			baseDir);
@@ -398,7 +398,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		BaseArgs args = bladeCLI.getArgs();
 
-		File base = new File(args.getBase());
+		File base = args.getBase();
 
 		File baseDir = base.getCanonicalFile();
 

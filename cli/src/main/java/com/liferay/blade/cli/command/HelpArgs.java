@@ -29,7 +29,7 @@ public class HelpArgs extends BaseArgs {
 		return _name;
 	}
 
-	@Parameter(description = "The name of the command.")
+	@Parameter(description = "[name]")
 	private String _name;
 
 }

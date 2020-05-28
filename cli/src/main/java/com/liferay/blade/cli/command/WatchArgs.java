@@ -35,6 +35,10 @@ import java.util.stream.Stream;
 )
 public class WatchArgs extends BaseArgs {
 
+	public CommandType getCommandType() {
+		return CommandType.WORKSPACE_ONLY;
+	}
+
 	public List<String> getFastPaths() {
 		return Stream.concat(
 			_defaultFastPaths.stream(), _fastPaths.stream()

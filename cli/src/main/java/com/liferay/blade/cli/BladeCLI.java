@@ -25,6 +25,7 @@ import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.command.BladeProfile;
+import com.liferay.blade.cli.command.CommandType;
 import com.liferay.blade.cli.command.UpdateArgs;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
@@ -285,6 +286,16 @@ public class BladeCLI {
 		return _in;
 	}
 
+	public boolean isWorkspace() {
+		BaseArgs baseArgs = getArgs();
+
+		if (getWorkspaceProvider(baseArgs.getBase()) != null) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public PrintStream out() {
 		return _out;
 	}
@@ -307,19 +318,49 @@ public class BladeCLI {
 	}
 
 	public void printUsage() {
-		StringBuilder usageString = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
-		_jCommander.usage(usageString);
+		CommandType ignoreCommandType = CommandType.WORKSPACE_ONLY;
 
-		try (Scanner scanner = new Scanner(usageString.toString())) {
+		if (isWorkspace()) {
+			ignoreCommandType = CommandType.NON_WORKSPACE;
+		}
+
+		JCommander jCommander = new JCommander();
+
+		jCommander.setProgramName("blade");
+
+		for (String command : _commands.keySet()) {
+			BaseCommand<? extends BaseArgs> baseCommand = _commands.get(command);
+
+			BaseArgs baseArgs = baseCommand.getArgs();
+
+			CommandType commandType = baseArgs.getCommandType();
+
+			if (commandType.equals(CommandType.GLOBAL) || !commandType.equals(ignoreCommandType)) {
+				jCommander.addCommand(baseArgs);
+			}
+		}
+
+		jCommander.usage(sb);
+
+		try (Scanner scanner = new Scanner(sb.toString())) {
 			StringBuilder simplifiedUsageString = new StringBuilder();
 
 			while (scanner.hasNextLine()) {
-				String oneLine = scanner.nextLine();
+				String line = scanner.nextLine();
 
-				if (!oneLine.startsWith("          ") && !oneLine.contains("Options:")) {
-					simplifiedUsageString.append(oneLine + System.lineSeparator());
+				if (line.contains("Options:")) {
+					while (scanner.hasNextLine()) {
+						line = scanner.nextLine();
+
+						if (line.equals("")) {
+							break;
+						}
+					}
 				}
+
+				simplifiedUsageString.append(line + System.lineSeparator());
 			}
 
 			String output = simplifiedUsageString.toString();
@@ -334,6 +375,7 @@ public class BladeCLI {
 
 	public void printUsage(String command, String message) {
 		out(message);
+
 		_jCommander.usage(command);
 	}
 
@@ -617,6 +659,8 @@ public class BladeCLI {
 
 	private static JCommander _buildJCommanderWithCommandMap(Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
 		JCommander.Builder builder = JCommander.newBuilder();
+
+		builder.programName("blade");
 
 		for (Map.Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
 			BaseCommand<? extends BaseArgs> value = entry.getValue();
@@ -915,7 +959,7 @@ public class BladeCLI {
 	}
 
 	private File _getSettingsBaseDir() {
-		File baseDir = new File(_args.getBase());
+		File baseDir = _args.getBase();
 
 		File settingsBaseDir;
 

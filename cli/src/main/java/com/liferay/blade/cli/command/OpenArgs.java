@@ -27,7 +27,7 @@ import java.io.File;
 @Parameters(commandDescription = "Opens or imports a file or project in Liferay IDE.", commandNames = "open")
 public class OpenArgs extends BaseArgs {
 
-	public String getFile() {
+	public File getFile() {
 		return _file;
 	}
 
@@ -36,11 +36,11 @@ public class OpenArgs extends BaseArgs {
 	}
 
 	public void setFile(File file) {
-		_file = file.getAbsolutePath();
+		_file = file.getAbsoluteFile();
 	}
 
-	@Parameter(description = "file or directory to open/import")
-	private String _file;
+	@Parameter(description = "[file | directory]")
+	private File _file;
 
 	@Parameter(description = "The workspace to open or import this file or project", names = {"-w", "--workspace"})
 	private String _workspace;

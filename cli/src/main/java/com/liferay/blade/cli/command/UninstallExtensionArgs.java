@@ -29,7 +29,7 @@ public class UninstallExtensionArgs extends BaseArgs {
 		return _name;
 	}
 
-	@Parameter(description = "The name of the extension to uninstall")
+	@Parameter(description = "[name]")
 	private String _name;
 
 }
