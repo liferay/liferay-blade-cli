@@ -57,6 +57,7 @@ import java.util.Properties;
  * @author David Truong
  * @author Christopher Bryan Boyd
  * @author Charles Wu
+ * @author Seiphon Wang
  */
 public class CreateCommand extends BaseCommand<CreateArgs> {
 
@@ -95,6 +96,17 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File argsDir = createArgs.getDir();
 
+		File baseDir = createArgs.getBase();
+
+		if (!isWorkspace(baseDir)) {
+			_addError(
+				"Create",
+				"The current directory is not available, please point the directory to a Liferay workspace project," +
+					"or invoke the blade inside a Liferay workspace project.");
+
+			return;
+		}
+
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs baseArgs = bladeCLI.getArgs();
@@ -116,6 +128,17 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		if (argsDir != null) {
 			dir = new File(argsDir.getAbsolutePath());
+
+			Path projectPath = dir.toPath();
+
+			if (Objects.isNull(projectPath) || !projectPath.startsWith(baseDir.toPath())) {
+				_addError(
+					"Create",
+					"The current project location is out off workspace project, please point the directory inside a " +
+						"Liferay workspace project.");
+
+				return;
+			}
 		}
 		else if (template.equals("war-core-ext") || template.startsWith("modules-ext")) {
 			dir = _getDefaultExtDir();
