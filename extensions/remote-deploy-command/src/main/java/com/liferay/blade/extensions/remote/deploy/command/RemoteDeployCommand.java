@@ -65,7 +65,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 		RemoteDeployArgs deployArgs = getArgs();
 
-		File baseDir = new File(deployArgs.getBase());
+		File baseDir = deployArgs.getBase();
 
 		String host = "localhost";
 		int port = 11311;
@@ -311,7 +311,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 		BaseArgs args = bladeCLI.getArgs();
 
-		File baseDir = new File(args.getBase());
+		File baseDir = args.getBase();
 
 		new FileWatcher(baseDir.toPath(), true, consumer);
 	}
