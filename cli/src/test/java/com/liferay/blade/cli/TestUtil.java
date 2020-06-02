@@ -19,9 +19,9 @@ package com.liferay.blade.cli;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
-
+import java.nio.file.Files;
 import java.nio.file.Path;
-
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -167,6 +167,23 @@ public class TestUtil {
 
 		transformer.transform(domSource, streamResult);
 	}
+
+	public static void removeComments(String projectPath) throws Exception{
+		File pomXmlFile = new File(projectPath, "/pom.xml");
+
+		Path pomXmlPath = pomXmlFile.toPath();
+
+		byte[] pomXmlBytes = Files.readAllBytes(pomXmlPath);
+
+		String content = new String(pomXmlBytes);
+
+		content = content.replaceAll("(<!--)|(-->)", "");
+
+		Files.delete(pomXmlPath);
+
+		Files.write(pomXmlPath, content.getBytes(), StandardOpenOption.CREATE_NEW);
+	}
+
 
 	public static void verifyBuild(String projectPath, String outputFileName) throws Exception {
 		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "build");
