@@ -137,10 +137,10 @@ public class CreateCommandMavenTest implements MavenExecutor {
 		String[] mavenArgs = {"create", "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo"};
 
 		String projectPath = new File(
-			workspaceDir, "foo"
+			modulesDir, "foo"
 		).getAbsolutePath();
 
-		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
@@ -172,10 +172,10 @@ public class CreateCommandMavenTest implements MavenExecutor {
 		String[] mavenArgs = {"create", "-d", modulesDir.getAbsolutePath(), "-b", "maven", "-t", "mvc-portlet", "foo"};
 
 		String projectPath = new File(
-			workspaceDir, "foo"
+			modulesDir, "foo"
 		).getAbsolutePath();
 
-		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
+		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
