@@ -98,8 +98,8 @@ public class CreateCommandMavenTest implements MavenExecutor {
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
-			"create", "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t", "fragment", "-h", "com.liferay.login.web",
-			"-H", "1.0.0", "loginHook"
+			"create", "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t", "fragment", "-h",
+			"com.liferay.login.web", "-H", "1.0.0", "loginHook"
 		};
 
 		String projectPath = new File(
@@ -172,7 +172,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 		String[] mavenArgs = {"create", "-d", modulesDir.getAbsolutePath(), "-b", "maven", "-t", "mvc-portlet", "foo"};
 
 		String projectPath = new File(
-				workspaceDir, "foo"
+			workspaceDir, "foo"
 		).getAbsolutePath();
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
