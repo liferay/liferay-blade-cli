@@ -16,12 +16,22 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
+import com.liferay.blade.cli.TestUtil;
+
 import java.io.File;
 
 /**
  * @author Gregory Amerson
  */
 public class MavenTestUtil {
+
+	public static void makeMavenWorkspace(File extensionsDir, File workspace) throws Exception {
+		File parentFile = workspace.getParentFile();
+
+		String[] args = {"--base", parentFile.getPath(), "init", "-P", "maven", workspace.getName(), "-v", "7.3"};
+
+		TestUtil.runBlade(workspace, extensionsDir, args);
+	}
 
 	public static void verifyBuildOutput(String projectPath, String fileName) {
 		File file = new File(projectPath, "/target/" + fileName);
