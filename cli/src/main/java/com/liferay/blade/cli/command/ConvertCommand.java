@@ -259,7 +259,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			}
 		}
 		else if (convertArgs.isList()) {
-			bladeCLI.out("The following is a list of projects available to convert:\n");
+			if (!convertArgs.isQuiet()) {
+				bladeCLI.out("The following is a list of projects available to convert:\n");
+			}
 
 			List<File> plugins = new ArrayList<>();
 
@@ -270,7 +272,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			plugins.addAll(layoutPlugins);
 			plugins.addAll(themePlugins);
 
-			plugins.forEach(plugin -> bladeCLI.out("\t" + plugin.getName()));
+			plugins.forEach(plugin -> bladeCLI.out(plugin.getName()));
 		}
 		else {
 			File pluginDir = _findPluginDir(pluginsSdkDir, pluginName);
@@ -303,10 +305,12 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					_convertToThemeProject(pluginDir);
 				}
 			}
-		}
 
-		bladeCLI.out(
-			"\nConverting is complete.  Please use upgrade tool to scan for breaking changes to continue upgrade.");
+			if (!convertArgs.isQuiet()) {
+				bladeCLI.out(
+					"\nConverting is complete. Please use the upgrade tool to scan for breaking changes to continue.");
+			}
+		}
 	}
 
 	@Override
