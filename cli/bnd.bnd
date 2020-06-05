@@ -90,8 +90,12 @@ Private-Package:\
 	org.gradle.scripts;-split-package:=merge-first,\
 	org.gradle.tooling;-split-package:=merge-first,\
 	org.gradle.tooling.events;-split-package:=merge-first,\
+	org.gradle.tooling.events.configuration;-split-package:=merge-first,\
 	org.gradle.tooling.events.task;-split-package:=merge-first,\
+	org.gradle.tooling.events.task.java;-split-package:=merge-first,\
 	org.gradle.tooling.events.test;-split-package:=merge-first,\
+	org.gradle.tooling.events.transform;-split-package:=merge-first,\
+	org.gradle.tooling.events.work;-split-package:=merge-first,\
 	org.gradle.tooling.exceptions;-split-package:=merge-first,\
 	org.gradle.tooling.internal.adapter;-split-package:=merge-first,\
 	org.gradle.tooling.internal.consumer;-split-package:=merge-first,\
