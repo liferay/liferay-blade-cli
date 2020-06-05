@@ -30,6 +30,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -76,17 +77,17 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		_warsDir = new File(projectDir, warsDirPath);
 
-		String moduleDirPath = null;
+		String modulesDirPath = null;
 
 		if (gradleProperties != null) {
-			moduleDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
+			modulesDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
 		}
 
-		if (moduleDirPath == null) {
-			moduleDirPath = WorkspaceConstants.DEFAULT_MODULES_DIR;
+		if (modulesDirPath == null) {
+			modulesDirPath = WorkspaceConstants.DEFAULT_MODULES_DIR;
 		}
 
-		_moduleDir = new File(projectDir, moduleDirPath);
+		_modulesDir = new File(projectDir, modulesDirPath);
 	}
 
 	public void execute() throws Exception {
@@ -148,7 +149,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 			}
 		}
 
-		Path modulesPath = _moduleDir.toPath();
+		Path modulesPath = _modulesDir.toPath();
 
 		Path sbProjectPath = modulesPath.resolve(sbProjectName);
 
@@ -167,7 +168,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		Path sbProjectFileName = sbProjectPath.getFileName();
 
-		projectTemplatesArgs.setDestinationDir(_moduleDir);
+		projectTemplatesArgs.setDestinationDir(_modulesDir);
 		projectTemplatesArgs.setName(sbProjectFileName.toString());
 		projectTemplatesArgs.setPackageName(oldServiceBuilderXml.getPackagePath());
 		projectTemplatesArgs.setTemplate("service-builder");
@@ -230,6 +231,8 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 				newResourcesSrcFolder.resolve(ServiceBuilder.SERVICE_PROPERTIES));
 		}
 
+		_convertedPaths.add(sbServiceProjectPath);
+
 		Path sbApiProjectPath = sbProjectPath.resolve(sbProjectName + "-api");
 		Path oldApiFolder = projectPath.resolve(Constants.DEFAULT_WEBAPP_SRC + ServiceBuilder.API_62);
 
@@ -252,6 +255,8 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		}
 
 		Files.delete(oldApiFolder);
+
+		_convertedPaths.add(sbApiProjectPath);
 
 		// go through all api folders and make sure to add a packageinfo file
 
@@ -304,6 +309,10 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		Files.write(gradlePath, updatedContent.getBytes());
 	}
 
+	public List<Path> getConvertedPaths() {
+		return _convertedPaths;
+	}
+
 	private static boolean _isInExportedApiFolder(File file) {
 		File dir = file.getParentFile();
 
@@ -330,7 +339,8 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 	private BladeCLI _bladeCLI;
 	private ConvertArgs _convertArgs;
-	private final File _moduleDir;
+	private final List<Path> _convertedPaths = new ArrayList<>();
+	private final File _modulesDir;
 	private final File _warsDir;
 
 	private static class ServiceBuilder {

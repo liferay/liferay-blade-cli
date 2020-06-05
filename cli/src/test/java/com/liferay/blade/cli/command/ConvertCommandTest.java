@@ -183,11 +183,15 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		args = new String[] {"--base", projectDir.getPath(), "convert", "1-2-1-columns-layouttpl"};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "-q", "1-2-1-columns-layouttpl"};
 
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		File layoutWar = new File(projectDir, "wars/1-2-1-columns-layouttpl");
+
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output, output.contains(layoutWar.getAbsolutePath()));
 
 		Assert.assertTrue(layoutWar.exists());
 

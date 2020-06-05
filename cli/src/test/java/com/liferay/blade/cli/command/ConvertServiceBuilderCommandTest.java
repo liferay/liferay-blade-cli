@@ -16,6 +16,7 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
@@ -61,15 +62,19 @@ public class ConvertServiceBuilderCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		args = new String[] {"--base", projectDir.getPath(), "convert", SB_PROJECT_NAME};
+		args = new String[] {"--base", projectDir.getPath(), "convert", "-q", SB_PROJECT_NAME};
 
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		File oldSbProject = new File(pluginsSdkDir, "portlet/sample-service-builder-portlet");
 
 		Assert.assertFalse(oldSbProject.exists());
 
 		File sbWar = new File(projectDir, "wars/sample-service-builder-portlet");
+
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output, output.contains(sbWar.getAbsolutePath()));
 
 		Assert.assertTrue(sbWar.exists());
 
@@ -94,6 +99,9 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(sbServiceDir.exists());
 		Assert.assertTrue(sbApiDir.exists());
+
+		Assert.assertTrue(output, output.contains(sbServiceDir.getAbsolutePath()));
+		Assert.assertTrue(output, output.contains(sbApiDir.getAbsolutePath()));
 
 		File serviceXmlFile = new File(sbServiceDir, "service.xml");
 
