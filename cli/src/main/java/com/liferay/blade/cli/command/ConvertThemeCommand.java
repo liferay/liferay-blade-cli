@@ -26,6 +26,7 @@ import com.liferay.blade.cli.util.NodeUtil;
 import java.io.File;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,7 @@ public class ConvertThemeCommand implements FilesSupport {
 			for (File file : _pluginsSDKThemesDir.listFiles()) {
 				if (file.isDirectory()) {
 					if (_convertArgs.isAll()) {
-						importTheme(file.getCanonicalPath(), removeSource);
+						_convertedPaths.add(importTheme(file.getCanonicalPath(), removeSource));
 					}
 					else {
 						themes.add(file.getName());
@@ -139,7 +140,7 @@ public class ConvertThemeCommand implements FilesSupport {
 			File themeDir = new File(_pluginsSDKThemesDir, themeName);
 
 			if (themeDir.exists()) {
-				importTheme(themeDir.getCanonicalPath(), removeSource);
+				_convertedPaths.add(importTheme(themeDir.getCanonicalPath(), removeSource));
 			}
 			else {
 				_bladeCLI.error("Theme does not exist");
@@ -147,7 +148,11 @@ public class ConvertThemeCommand implements FilesSupport {
 		}
 	}
 
-	public void importTheme(String themePath, boolean removeSource) throws Exception {
+	public List<Path> getConvertedPaths() {
+		return _convertedPaths;
+	}
+
+	public Path importTheme(String themePath, boolean removeSource) throws Exception {
 		int errCode = NodeUtil.runYo(
 			_LIFERAY_VERSION_70, _themesDir,
 			new String[] {
@@ -169,6 +174,8 @@ public class ConvertThemeCommand implements FilesSupport {
 		else {
 			_bladeCLI.error("blade exited with code: " + errCode);
 		}
+
+		return _themesDir.toPath();
 	}
 
 	private static boolean _compassSupport(String themePath) throws Exception {
@@ -197,6 +204,7 @@ public class ConvertThemeCommand implements FilesSupport {
 
 	private BladeCLI _bladeCLI;
 	private ConvertArgs _convertArgs;
+	private final List<Path> _convertedPaths = new ArrayList<>();
 	private File _pluginsSDKThemesDir;
 	private File _themesDir;
 

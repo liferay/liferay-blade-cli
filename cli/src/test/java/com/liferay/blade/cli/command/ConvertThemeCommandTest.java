@@ -62,13 +62,18 @@ public class ConvertThemeCommandTest {
 
 		String[] args = {"--base", workspace.getAbsolutePath(), "convert", "-a"};
 
-		TestUtil.runBlade(workspace, _extensionsDir, System.out, null, System.in, false, args);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(
+			workspace, _extensionsDir, System.out, null, System.in, false, args);
 
 		File oldCompassTheme = new File(workspace, "plugins-sdk/themes/compass-theme");
 
 		Assert.assertTrue(!oldCompassTheme.exists());
 
 		File compassTheme = new File(workspace, "themes/compass-theme");
+
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output, output.contains(compassTheme.getAbsolutePath()));
 
 		Assert.assertTrue(compassTheme.exists());
 
