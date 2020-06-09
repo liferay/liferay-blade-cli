@@ -184,12 +184,33 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
 
+		switch (initArgs.getLiferayVersion()) {
+			case "7.0":
+				initArgs.setLiferayVersion("portal-7.0-ga7");
+
+				break;
+			case "7.1":
+				initArgs.setLiferayVersion("portal-7.1-ga4");
+
+				break;
+			case "7.2":
+				initArgs.setLiferayVersion("portal-7.2-ga2");
+
+				break;
+			case "7.3":
+				initArgs.setLiferayVersion("portal-7.3-ga2");
+
+				break;
+		}
+
+		String workspaceProductKey = initArgs.getLiferayVersion();
+
 		Map<String, ProductInfo> productInfos = BladeUtil.getProductInfo();
 
-		ProductInfo productInfo = productInfos.get(initArgs.getLiferayVersion());
+		ProductInfo productInfo = productInfos.get(workspaceProductKey);
 
 		if (productInfo == null) {
-			_addError("Unable to get product info for selected version " + initArgs.getLiferayVersion());
+			_addError("Unable to get product info for selected version " + workspaceProductKey);
 
 			return;
 		}
@@ -223,6 +244,10 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		if (mavenBuild) {
 			FileUtil.deleteFiles(destDir.toPath(), "gradle.properties", "gradle-local.properties");
+		}
+		else {
+			BladeUtil.writePropertyValue(
+				new File(destDir, "gradle.properties"), "liferay.workspace.product", workspaceProductKey);
 		}
 
 		if (pluginsSDK) {
@@ -258,8 +283,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		settings.setProfileName(profileName);
-
-		settings.setLiferayVersionDefault(initArgs.getLiferayVersion());
 
 		settings.save();
 	}

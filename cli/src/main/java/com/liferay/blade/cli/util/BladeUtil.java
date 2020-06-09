@@ -69,6 +69,13 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
+
 /**
  * @author Gregory Amerson
  * @author David Truong
@@ -258,9 +265,9 @@ public class BladeUtil {
 
 			Path downloadPath = downloadCommand.getDownloadPath();
 
-			try (JsonReader jsonReader = new JsonReader(Files.newBufferedReader(downloadPath))) {
-				Gson gson = new Gson();
+			Gson gson = new Gson();
 
+			try (JsonReader jsonReader = new JsonReader(Files.newBufferedReader(downloadPath))) {
 				TypeToken<Map<String, ProductInfo>> typeToken = new TypeToken<Map<String, ProductInfo>>() {
 				};
 
@@ -530,6 +537,23 @@ public class BladeUtil {
 				}
 			}
 		}
+	}
+
+	public static void writePropertyValue(File propertyFile, String key, String value) throws Exception {
+		FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<>(
+			PropertiesConfiguration.class);
+
+		PropertiesBuilderParameters properties = new Parameters().properties();
+
+		properties.setFile(propertyFile);
+
+		builder.configure(properties);
+
+		Configuration config = builder.getConfiguration();
+
+		config.setProperty(key, value);
+
+		builder.save();
 	}
 
 	private static ProcessBuilder _buildProcessBuilder(

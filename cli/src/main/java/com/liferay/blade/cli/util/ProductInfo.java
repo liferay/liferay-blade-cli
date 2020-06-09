@@ -47,11 +47,18 @@ public class ProductInfo {
 		return _targetPlatformVersion;
 	}
 
+	public Boolean isInitialVersion() {
+		return _initialVersion;
+	}
+
 	@SerializedName("appServerTomcatVersion")
 	private String _appServerTomcatVersion;
 
 	@SerializedName("bundleUrl")
 	private String _bundleUrl;
+
+	@SerializedName("initialVersion")
+	private Boolean _initialVersion = false;
 
 	@SerializedName("liferayDockerImage")
 	private String _liferayDockerImage;

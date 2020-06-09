@@ -35,21 +35,44 @@ Private-Package:\
 	org.apache.tools.ant.types.resources;-split-package:=merge-first,\
 	org.apache.tools.ant.util;-split-package:=merge-first,\
 	\
+	org.apache.commons.beanutils,\
+	org.apache.commons.beanutils.converters,\
+	org.apache.commons.beanutils.expression,\
+	\
 	org.apache.commons.compress.archivers,\
 	org.apache.commons.compress.archivers.tar,\
 	org.apache.commons.compress.archivers.zip,\
 	org.apache.commons.compress.compressors,\
 	org.apache.commons.compress.compressors.gzip,\
 	org.apache.commons.compress.utils,\
+	\
+	org.apache.commons.configuration2,\
+	org.apache.commons.configuration2.beanutils,\
+	org.apache.commons.configuration2.builder,\
+	org.apache.commons.configuration2.builder.fluent,\
+	org.apache.commons.configuration2.convert,\
+	org.apache.commons.configuration2.event,\
+	org.apache.commons.configuration2.ex,\
+	org.apache.commons.configuration2.interpol,\
+	org.apache.commons.configuration2.io,\
+	org.apache.commons.configuration2.sync,\
+	org.apache.commons.configuration2.tree,\
+	\
 	org.apache.commons.io,\
 	org.apache.commons.io.filefilter,\
 	org.apache.commons.io.input,\
 	org.apache.commons.io.output,\
+	\
 	org.apache.commons.lang3,\
 	org.apache.commons.lang3.exception,\
 	org.apache.commons.lang3.text,\
 	\
 	org.apache.commons.logging.*,\
+	\
+	org.apache.commons.text,\
+	org.apache.commons.text.lookup,\
+	org.apache.commons.text.matcher,\
+	org.apache.commons.text.translate,\
 	\
 	org.apache.http.*,\
 	\

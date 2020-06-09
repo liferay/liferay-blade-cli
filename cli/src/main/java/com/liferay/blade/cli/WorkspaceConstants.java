@@ -16,6 +16,9 @@
 
 package com.liferay.blade.cli;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author David Truong
  * @author Gregory Amerson
@@ -51,5 +54,7 @@ public class WorkspaceConstants {
 	public static final String DEFAULT_WARS_DIR = "wars";
 
 	public static final String DEFAULT_WARS_DIR_PROPERTY = "liferay.workspace.wars.dir";
+
+	public static final List<String> originalLiferayVersions = Arrays.asList("7.0", "7.1", "7.2", "7.3");
 
 }

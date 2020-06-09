@@ -25,6 +25,14 @@ import java.util.List;
  */
 public class ListUtil {
 
+	public static boolean contains(List<?> list, Object o) {
+		if ((list == null) || (o == null)) {
+			return false;
+		}
+
+		return list.contains(o);
+	}
+
 	public static <E> List<E> fromArray(E[] array) {
 		if (ArrayUtil.isEmpty(array)) {
 			return new ArrayList<>();

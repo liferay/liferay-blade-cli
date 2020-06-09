@@ -16,8 +16,8 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
 

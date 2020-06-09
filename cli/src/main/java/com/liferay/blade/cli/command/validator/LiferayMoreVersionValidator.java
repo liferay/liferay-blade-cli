@@ -18,6 +18,7 @@ package com.liferay.blade.cli.command.validator;
 
 import com.beust.jcommander.ParameterException;
 
+import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ProductInfo;
 
@@ -28,17 +29,17 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * @author Christopher Bryan Boyd
- * @author Gregory Amerson
  * @author Simon Jiang
  */
-public class LiferayVersionValidator implements ValidatorSupplier {
+public class LiferayMoreVersionValidator extends LiferayDefaultVersionValidator {
 
 	@Override
 	public Collection<String> get() {
 		Map<String, ProductInfo> productInfoMap = BladeUtil.getProductInfo();
 
 		List<String> possibleLiferayProducts = new CopyOnWriteArrayList<>();
+
+		possibleLiferayProducts.addAll(WorkspaceConstants.originalLiferayVersions);
 
 		productInfoMap.forEach(
 			(productKey, productInfo) -> {
@@ -48,47 +49,6 @@ public class LiferayVersionValidator implements ValidatorSupplier {
 			});
 
 		Collections.sort(possibleLiferayProducts);
-
-		String lastMajorVersion = "";
-		int lastSpVersion = -1;
-		String lastkey = "";
-
-		for (String productKey : possibleLiferayProducts) {
-			String[] productKeyVersions = productKey.split("-");
-
-			if (productKeyVersions.length < 3) {
-				possibleLiferayProducts.remove(productKey);
-
-				continue;
-			}
-
-			if (productKey.contains("ga")) {
-				continue;
-			}
-
-			if (productKey.contains("sp")) {
-				String currentMajorVersion = productKeyVersions[1];
-				String spVersion = productKeyVersions[2].replace("sp", "");
-
-				if (!lastMajorVersion.equals(currentMajorVersion)) {
-					lastMajorVersion = currentMajorVersion;
-					lastSpVersion = Integer.parseInt(spVersion);
-					lastkey = productKey;
-				}
-				else {
-					int currentSpVersion = Integer.parseInt(spVersion);
-
-					if (lastSpVersion < currentSpVersion) {
-						lastSpVersion = currentSpVersion;
-						possibleLiferayProducts.remove(lastkey);
-						lastkey = productKey;
-					}
-					else {
-						possibleLiferayProducts.remove(productKey);
-					}
-				}
-			}
-		}
 
 		return possibleLiferayProducts;
 	}
