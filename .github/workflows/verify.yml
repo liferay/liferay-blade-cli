@@ -127,13 +127,6 @@ jobs:
           GITHUB_CI: "true"
         run: |
           ./run-tests.sh
-      - name: Run reporter
-        uses: check-run-reporter/action@v1.1.0
-        if: ${{ always() }}
-        env:
-          CHECK_RUN_REPORTER_LABEL: "MacOS test reports"
-          CHECK_RUN_REPORTER_REPORT: "**/TEST-*.xml"
-          CHECK_RUN_REPORTER_TOKEN: ${{ secrets.check_run_reporter_token }}
       - name: Upload tests zip
         uses: actions/upload-artifact@v1
         if: failure()
@@ -163,10 +156,3 @@ jobs:
           GITHUB_CI: "true"
         run: |
           ./run-tests.bat
-      - name: Run reporter
-        uses: check-run-reporter/action@v1.1.0
-        if: ${{ always() }}
-        env:
-          CHECK_RUN_REPORTER_LABEL: "Windows test results"
-          CHECK_RUN_REPORTER_REPORT: "**/TEST-*.xml"
-          CHECK_RUN_REPORTER_TOKEN: ${{ secrets.check_run_reporter_token }}
