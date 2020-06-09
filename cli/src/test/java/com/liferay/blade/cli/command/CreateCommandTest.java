@@ -30,7 +30,6 @@ import com.liferay.project.templates.ProjectTemplates;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -45,7 +44,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Scanner;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -813,7 +811,7 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceFormField72() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
-		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_72, BladeTest.LIFERAY_VERSION_72);
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_72);
 
 		File modulesDir = new File(workspace, "modules");
 
@@ -1146,7 +1144,7 @@ public class CreateCommandTest {
 
 		File modulesDir = new File(workspace70, "modules");
 
-		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70, BladeTest.LIFERAY_VERSION_70);
+		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70);
 
 		String[] sevenZeroArgs = {
 			"--base", workspace70.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-zero"
@@ -1356,7 +1354,7 @@ public class CreateCommandTest {
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70, BladeTest.LIFERAY_VERSION_70);
+		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70);
 
 		_enableTargetPlatformInWorkspace(workspace70, "7.0.6");
 
@@ -1398,7 +1396,7 @@ public class CreateCommandTest {
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_PORTAL_71, BladeTest.LIFERAY_VERSION_71);
+		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_PORTAL_71);
 
 		_enableTargetPlatformInWorkspace(workspace71, "7.1.3");
 
@@ -1605,34 +1603,14 @@ public class CreateCommandTest {
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
-
-		File bladeSettings = new File(workspace, ".blade.properties");
-
-		try (InputStream inputStream = new FileInputStream(bladeSettings)) {
-			Properties properties = new Properties();
-
-			properties.load(inputStream);
-
-			Assert.assertEquals(BladeTest.LIFERAY_VERSION_73, properties.getProperty("liferay.version.default"));
-		}
 	}
 
-	private void _makeWorkspaceVersion(File workspace, String version, String bladeTestVersion) throws Exception {
+	private void _makeWorkspaceVersion(File workspace, String version) throws Exception {
 		File parentFile = workspace.getParentFile();
 
 		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", version};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
-
-		File bladeSettings = new File(workspace, ".blade.properties");
-
-		try (InputStream inputStream = new FileInputStream(bladeSettings)) {
-			Properties properties = new Properties();
-
-			properties.load(inputStream);
-
-			Assert.assertEquals(bladeTestVersion, properties.getProperty("liferay.version.default"));
-		}
 	}
 
 	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {

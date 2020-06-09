@@ -36,6 +36,7 @@ import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -358,6 +359,7 @@ public class InitCommandTest {
 		Assert.assertTrue(Files.exists(pluginBuildXmlPath));
 	}
 
+	@Ignore
 	@Test
 	public void testInitWithLiferayVersion70() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_70};
@@ -377,6 +379,7 @@ public class InitCommandTest {
 		Assert.assertTrue(properties, properties.contains("liferay.version.default=7.0"));
 	}
 
+	@Ignore
 	@Test
 	public void testInitWithLiferayVersion71() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_71};
