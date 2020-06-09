@@ -23,20 +23,31 @@ import aQute.bnd.osgi.Jar;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.XMLTestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 
 import java.io.File;
-
+import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * @author Gregory Amerson
@@ -220,7 +231,9 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 
-		TestUtil.removeComments(projectPath);
+		File pomXmlFile = _checkFileExists(projectPath + "/pom.xml");
+
+		_enableStandaloneProfile(pomXmlFile);
 
 		execute(projectPath, new String[] {"clean", "package"});
 
@@ -238,6 +251,36 @@ public class CreateCommandMavenTest implements MavenExecutor {
 		Assert.assertTrue(file.exists());
 
 		return file;
+	}
+
+	private void _enableStandaloneProfile(File pomXmlFile) throws Exception {
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+		Document document = documentBuilder.parse(pomXmlFile);
+
+		Element projectElement = document.getDocumentElement();
+
+		Element profilesElement = XMLTestUtil.getChildElement(projectElement, "profiles");
+
+		Element profileElement = XMLTestUtil.getChildElement(profilesElement, "profile");
+
+		Element activationElement = XMLTestUtil.getChildElement(profileElement, "activation");
+
+		Element activeByDefaultElement = XMLTestUtil.getChildElement(activationElement, "activeByDefault");
+
+		activeByDefaultElement.setTextContent("true");
+
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+
+		Transformer transformer = transformerFactory.newTransformer();
+
+		DOMSource domSource = new DOMSource(document);
+
+		StreamResult streamResult = new StreamResult(pomXmlFile);
+
+		transformer.transform(domSource, streamResult);
 	}
 
 	private void _checkMavenBuildFiles(String projectPath) {
