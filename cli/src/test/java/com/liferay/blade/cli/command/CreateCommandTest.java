@@ -75,7 +75,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateApi() throws Exception {
-		String[] gradleArgs = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "api", "foo"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] gradleArgs = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "api", "foo"
+		};
 
 		String projectPath = new File(
 			_rootDir, "foo"
@@ -92,8 +98,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateExtModule() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] gradleArgs = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "-m", "com.liferay.login.web", "loginExt"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext",
+			"-m", "com.liferay.login.web", "loginExt"
 		};
 
 		String projectPath = new File(
@@ -109,7 +120,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateExtModuleWithoutOriginalModuleOptions() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext", "loginExt"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "modules-ext",
+			"loginExt"
+		};
 
 		String data = "foobar" + System.lineSeparator() + "1.0" + System.lineSeparator();
 
@@ -124,9 +142,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateFragment() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] gradleArgs = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "-h", "com.liferay.login.web", "-H", "1.0.0",
-			"loginHook"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "-h",
+			"com.liferay.login.web", "-H", "1.0.0", "loginHook"
 		};
 
 		String projectPath = new File(
@@ -147,7 +169,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateFragmentWithoutHostOptions() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "loginHook"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "fragment",
+			"loginHook"
+		};
 
 		String data = "foobar" + System.lineSeparator() + "1.0" + System.lineSeparator();
 
@@ -159,7 +188,10 @@ public class CreateCommandTest {
 
 		Assert.assertTrue(output, output.contains("Successfully created project"));
 
-		args = new String[] {"create", "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "-H", "1.0.0", "loginHook2"};
+		args = new String[] {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "fragment", "-H",
+			"1.0.0", "loginHook2"
+		};
 
 		data = "foobar" + System.lineSeparator();
 
@@ -174,8 +206,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleMVCPortletProjectWithPackage() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet", "-p", "com.liferay.test", "foo"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet",
+			"-p", "com.liferay.test", "foo"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -204,7 +241,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleMVCPortletProjectWithPortletSuffix() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet", "portlet-portlet"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet",
+			"portlet-portlet"
+		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -229,7 +273,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradlePortletProject() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "portlet", "-c", "Foo", "gradle.test"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "portlet", "-c",
+			"Foo", "gradle.test"
+		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -248,8 +299,12 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleService() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "service", "-s",
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "service", "-s",
 			"com.liferay.portal.kernel.events.LifecycleAction", "-c", "FooAction", "servicepreaction"
 		};
 
@@ -305,9 +360,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleServiceWrapper() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "service-wrapper", "-s",
-			"com.liferay.portal.kernel.service.UserLocalServiceWrapper", "serviceoverride"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "service-wrapper",
+			"-s", "com.liferay.portal.kernel.service.UserLocalServiceWrapper", "serviceoverride"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -331,7 +390,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateGradleSymbolicName() throws Exception {
-		String[] args = {"create", "-t", "mvc-portlet", "-d", _rootDir.getAbsolutePath(), "-p", "foo.bar", "barfoo"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-t", "mvc-portlet", "-d", _rootDir.getAbsolutePath(),
+			"-p", "foo.bar", "barfoo"
+		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -375,7 +441,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateMVCPortlet() throws Exception {
-		String[] gradleArgs = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet", "foo"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] gradleArgs = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet",
+			"foo"
+		};
 
 		String projectPath = new File(
 			_rootDir, "foo"
@@ -398,7 +471,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateMVCPortletInteractive() throws Exception {
-		String[] gradleArgs = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] gradleArgs = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet"
+		};
 
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream("foo\n".getBytes());
 
@@ -411,8 +490,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateNpmAngular71() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_71);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "npm-angular-portlet", "-v", "7.1", "npmangular"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t",
+			"npm-angular-portlet", "-v", "7.1", "npmangular"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -434,7 +518,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateOnExistFolder() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "activator", "exist"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "activator",
+			"exist"
+		};
 
 		File existFile = new File(_rootDir, "exist/file.txt");
 
@@ -461,9 +552,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreatePortletConfigurationIcon() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "portlet-configuration-icon", "-p", "blade.test",
-			"icontest"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t",
+			"portlet-configuration-icon", "-p", "blade.test", "icontest"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -487,9 +582,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreatePortletToolbarContributor() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "portlet-toolbar-contributor", "-p", "blade.test",
-			"toolbartest"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t",
+			"portlet-toolbar-contributor", "-p", "blade.test", "toolbartest"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -515,7 +614,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateProjectAllDefaults() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet", "hello-world-portlet"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet",
+			"hello-world-portlet"
+		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -541,7 +647,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateProjectWithRefresh() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet", "hello-world-refresh"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "mvc-portlet",
+			"hello-world-refresh"
+		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -567,7 +680,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateServiceTemplateServiceParameterRequired() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "service", "foo"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "service", "foo"
+		};
 
 		BladeTestResults bladeTestResults = null;
 
@@ -610,9 +729,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateSimulationPanelEntry() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "simulation-panel-entry", "-p", "test.simulator",
-			"simulator"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t",
+			"simulation-panel-entry", "-p", "test.simulator", "simulator"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -635,9 +758,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateSpringMvcPortlet() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "springtest", "--package-name",
-			"com.test", "--classname", "Sample", "--framework", "springportletmvc", "--view-type", "jsp", "-v", "7.3"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t",
+			"spring-mvc-portlet", "springtest", "--package-name", "com.test", "--classname", "Sample", "--framework",
+			"springportletmvc", "--view-type", "jsp", "-v", "7.3"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -655,7 +783,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateSpringMVCPortletInteractive() throws Exception {
-		String[] gradleArgs = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "spring-mvc-portlet", "foo"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] gradleArgs = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t",
+			"spring-mvc-portlet", "foo"
+		};
 
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
 			("springportletmvc" + System.lineSeparator() + "jsp" + System.lineSeparator()).getBytes());
@@ -669,8 +804,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateTemplateContextContributor() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "template-context-contributor", "blade-test"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t",
+			"template-context-contributor", "blade-test"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -695,7 +835,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateTheme() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "theme", "theme-test"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "theme",
+			"theme-test"
+		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -716,9 +863,13 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateThemeContributor() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
 		String[] args = {
-			"create", "-d", _rootDir.getAbsolutePath(), "-t", "theme-contributor", "-C", "foobar",
-			"theme-contributor-test"
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t",
+			"theme-contributor", "-C", "foobar", "theme-contributor-test"
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -816,8 +967,8 @@ public class CreateCommandTest {
 		File modulesDir = new File(workspace, "modules");
 
 		String[] args = {
-			"create", "-d", modulesDir.getAbsolutePath(), "-t", "form-field", "sampleFormField", "-v",
-			BladeTest.LIFERAY_VERSION_72
+			"create", "--base", workspace.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-t", "form-field",
+			"sampleFormField", "-v", BladeTest.LIFERAY_VERSION_72
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
@@ -908,14 +1059,14 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceGradleFragment() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
+		_makeWorkspace(workspace);
+
 		File extensionsDir = new File(workspace, "modules/extensions");
 
 		String[] args = {
-			"create", "-d", extensionsDir.getAbsolutePath(), "-t", "fragment", "-h", "com.liferay.login.web", "-H",
-			"1.0.0", "loginHook"
+			"create", "--base", workspace.getAbsolutePath(), "-d", extensionsDir.getAbsolutePath(), "-t", "fragment",
+			"-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook"
 		};
-
-		_makeWorkspace(workspace);
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -947,13 +1098,16 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceGradlePortletProject() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
+		_makeWorkspace(workspace);
+
 		File appsDir = new File(workspace, "modules/apps");
 
 		String projectPath = appsDir.getAbsolutePath();
 
-		String[] args = {"create", "-d", projectPath, "-t", "portlet", "-c", "Foo", "gradle.test"};
-
-		_makeWorkspace(workspace);
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", projectPath, "-t", "portlet", "-c", "Foo",
+			"gradle.test"
+		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -977,13 +1131,14 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceGradleServiceBuilderProjectApiPath() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
+		_makeWorkspace(workspace);
+
 		File nestedDir = new File(workspace, "modules/nested/path");
 
 		String[] args = {
-			"create", "-d", nestedDir.getAbsolutePath(), "-t", "service-builder", "-p", "com.liferay.sample", "sample"
+			"create", "--base", workspace.getAbsolutePath(), "-d", nestedDir.getAbsolutePath(), "-t", "service-builder",
+			"-p", "com.liferay.sample", "sample"
 		};
-
-		_makeWorkspace(workspace);
 
 		Assert.assertTrue(nestedDir.mkdirs());
 
@@ -1008,13 +1163,16 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceGradleServiceBuilderProjectDashes() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
+		_makeWorkspace(workspace);
+
 		File modulesDir = new File(workspace, "modules");
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		String[] args = {"create", "-d", projectPath, "-t", "service-builder", "-p", "com.sample", "workspace-sample"};
-
-		_makeWorkspace(workspace);
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", projectPath, "-t", "service-builder", "-p",
+			"com.sample", "workspace-sample"
+		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1047,13 +1205,16 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceGradleServiceBuilderProjectDefault() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
+		_makeWorkspace(workspace);
+
 		File modulesDir = new File(workspace, "modules");
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		String[] args = {"create", "-d", projectPath, "-t", "service-builder", "-p", "com.liferay.sample", "sample"};
-
-		_makeWorkspace(workspace);
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", projectPath, "-t", "service-builder", "-p",
+			"com.liferay.sample", "sample"
+		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1103,13 +1264,16 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceGradleServiceBuilderProjectDots() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
+		_makeWorkspace(workspace);
+
 		File modulesDir = new File(workspace, "modules");
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		String[] args = {"create", "-d", projectPath, "-t", "service-builder", "-p", "com.sample", "workspace.sample"};
-
-		_makeWorkspace(workspace);
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", projectPath, "-t", "service-builder", "-p",
+			"com.sample", "workspace.sample"
+		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1240,13 +1404,15 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceNpmAngularPortletProject() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
+		_makeWorkspace(workspace);
+
 		File appsDir = new File(workspace, "modules/apps");
 
 		String projectPath = appsDir.getAbsolutePath();
 
-		String[] args = {"create", "-d", projectPath, "-t", "npm-angular-portlet", "foo"};
-
-		_makeWorkspace(workspace);
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", projectPath, "-t", "npm-angular-portlet", "foo"
+		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1276,13 +1442,15 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceProjectAllDefaults() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
+		_makeWorkspace(workspace);
+
 		File appsDir = new File(workspace, "modules/apps");
 
 		String projectPath = appsDir.getAbsolutePath();
 
-		String[] args = {"create", "-d", projectPath, "-t", "mvc-portlet", "foo"};
-
-		_makeWorkspace(workspace);
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", projectPath, "-t", "mvc-portlet", "foo"
+		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1311,13 +1479,15 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceProjectWithRefresh() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
+		_makeWorkspace(workspace);
+
 		File appsDir = new File(workspace, "modules/apps");
 
 		String appsPath = appsDir.getAbsolutePath();
 
-		String[] args = {"create", "-d", appsPath, "-t", "mvc-portlet", "foo-refresh"};
-
-		_makeWorkspace(workspace);
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", appsPath, "-t", "mvc-portlet", "foo-refresh"
+		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1502,7 +1672,14 @@ public class CreateCommandTest {
 
 	@Test
 	public void testWrongTemplateTyping() throws Exception {
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "activatorXXX", "wrong-activator"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "activatorXXX",
+			"wrong-activator"
+		};
 
 		try {
 			TestUtil.runBlade(_rootDir, _extensionsDir, false, args);
@@ -1614,7 +1791,7 @@ public class CreateCommandTest {
 	}
 
 	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {
-		String[] args = {"--base", workspace.toString(), "create", "-t", projectType, projectName};
+		String[] args = {"--base", workspace.getAbsolutePath(), "create", "-t", projectType, projectName};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 

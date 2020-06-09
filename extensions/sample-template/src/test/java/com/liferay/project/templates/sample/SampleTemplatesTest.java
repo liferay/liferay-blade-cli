@@ -17,6 +17,7 @@
 package com.liferay.project.templates.sample;
 
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
@@ -87,7 +88,14 @@ public class SampleTemplatesTest {
 	public void testSampleProjectTemplate() throws Exception {
 		_setupTestExtensions();
 
-		String[] args = {"create", "-d", _rootDir.getAbsolutePath(), "-t", "sample", "foo-sample"};
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "sample",
+			"foo-sample"
+		};
 
 		_bladeTest.run(args);
 
@@ -125,6 +133,16 @@ public class SampleTemplatesTest {
 
 	private File _getExtensionsDir() {
 		return new File(temporaryFolder.getRoot(), ".blade/extensions");
+	}
+
+	private void _makeWorkspace(File workspace) throws Exception {
+		File parentFile = workspace.getParentFile();
+
+		String[] args = {
+			"--base", parentFile.getPath(), "init", workspace.getName(), "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
+
+		TestUtil.runBlade(workspace, _getExtensionsDir(), args);
 	}
 
 	private void _setupTestExtensions() throws Exception {

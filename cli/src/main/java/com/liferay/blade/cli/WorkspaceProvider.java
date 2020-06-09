@@ -25,6 +25,8 @@ import java.io.File;
  */
 public interface WorkspaceProvider {
 
+	public String getLiferayVersion(File dir);
+
 	public default File getWorkspaceDir(BladeCLI blade) {
 		BaseArgs args = blade.getArgs();
 
@@ -32,6 +34,8 @@ public interface WorkspaceProvider {
 	}
 
 	public File getWorkspaceDir(File dir);
+
+	public boolean isDependencyManagementEnabled(File dir);
 
 	public default boolean isWorkspace(BladeCLI blade) {
 		File dirToCheck;

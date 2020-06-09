@@ -20,7 +20,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
@@ -303,14 +302,15 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
-		if (workspaceProvider instanceof GradleWorkspaceProvider) {
-			GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)workspaceProvider;
+		projectTemplatesArgs.setDependencyManagementEnabled(workspaceProvider.isDependencyManagementEnabled(baseDir));
 
-			projectTemplatesArgs.setDependencyManagementEnabled(
-				workspaceProviderGradle.isDependencyManagementEnabled(baseDir));
+		String liferayVersion = _getLiferayVersion(workspaceProvider, createArgs);
+
+		if (BladeUtil.isEmpty(liferayVersion)) {
+			throw new IOException("LiferayVersion can not be Empty");
 		}
 
-		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
+		projectTemplatesArgs.setLiferayVersion(liferayVersion);
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
@@ -450,13 +450,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return _getDefaultDir(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY, WorkspaceConstants.DEFAULT_WARS_DIR);
 	}
 
-	private String _getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
-		String liferayVersion = createArgs.getLiferayVersion();
+	private String _getLiferayVersion(WorkspaceProvider workspaceProvider, CreateArgs createArgs) throws IOException {
+		String liferayVersion = workspaceProvider.getLiferayVersion(createArgs.getBase());
 
 		if (liferayVersion == null) {
-			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
-
-			liferayVersion = bladeSettings.getLiferayVersionDefault();
+			return createArgs.getLiferayVersion();
 		}
 
 		return liferayVersion;

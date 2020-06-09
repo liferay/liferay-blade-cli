@@ -497,7 +497,9 @@ public class InitCommandTest {
 	private void _createBundle() throws Exception {
 		Path projectPath = _workspacePath.resolve("modules");
 
-		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath.toString(), "foo"};
+		String[] args = {
+			"create", "--base", _workspacePath.toString(), "-t", "mvc-portlet", "-d", projectPath.toString(), "foo"
+		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 

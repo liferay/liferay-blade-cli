@@ -21,15 +21,11 @@ import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-
-import java.util.Properties;
 
 import org.gradle.testkit.runner.BuildTask;
 
@@ -119,16 +115,6 @@ public class JSThemeProjectTemplateTest {
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDirPath.toFile(), args);
-
-		File bladeSettings = new File(workspace, ".blade.properties");
-
-		try (InputStream inputStream = new FileInputStream(bladeSettings)) {
-			Properties properties = new Properties();
-
-			properties.load(inputStream);
-
-			Assert.assertEquals(BladeTest.LIFERAY_VERSION_73, properties.getProperty("liferay.version.default"));
-		}
 	}
 
 	private void _setupTestExtensions() throws Exception {
