@@ -171,7 +171,7 @@ public class ConvertThemeCommand implements FilesSupport {
 
 			FileUtil.deleteDir(theme.toPath());
 		}
-		else if (errCode != 0){
+		else if (errCode != 0) {
 			_bladeCLI.error("blade exited with code: " + errCode);
 		}
 
