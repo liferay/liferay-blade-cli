@@ -74,11 +74,11 @@ public class InitArgs extends BaseArgs {
 		_upgrade = upgrade;
 	}
 
-	@Parameter(description = "create anyway if there are files located at target folder", names = {"-f", "--force"})
+	@Parameter(description = "Initialize a workspace even if there are files located in target location", names = {"-f", "--force"})
 	private boolean _force;
 
 	@Parameter(
-		description = "The version of Liferay to target for this workspace. Type more can see whole possible values.",
+		description = "The version of Liferay to target for this workspace. Specifying \"more\" will show entire list of possible values.",
 		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayMoreVersionValidator.class
 	)
 	@ParameterPossibleValues(more = LiferayMoreVersionValidator.class, value = LiferayDefaultVersionValidator.class)
