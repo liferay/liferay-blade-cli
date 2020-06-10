@@ -1,3 +1,4 @@
+task buildWorkspace(type: JavaExec)
 task smokeTests
 task testBladeCreateCommandFormField(type: JavaExec)
 task testBladeCreateCommandJsTheme(type: JavaExec)
@@ -26,11 +27,14 @@ ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
 
 testBladeCreateCommandFormField {
+	dependsOn testBladeInitCommand
+
 	File testDir = new File(buildDir, "createFormField")
+	File initDir = new File(buildDir, "initTest")
 
 	testDir.mkdirs()
 
-	args = [jar.archivePath, 'create', '-t', 'form-field', 'test-form-field', '-v', '7.2']
+	args = [jar.archivePath, 'create', '--base', initDir.getAbsolutePath(), '-t', 'form-field', 'test-form-field', '-v', '7.2']
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = testDir
@@ -47,11 +51,14 @@ testBladeCreateCommandFormField {
 }
 
 testBladeCreateCommandJsTheme {
+	dependsOn testBladeInitCommand
+
 	File testDir = new File(buildDir, "createJsTheme")
+	File initDir = new File(buildDir, "initTest")
 
 	testDir.mkdirs()
 
-	args = [jar.archivePath, 'create', '-t', 'js-theme', 'test-js-theme']
+	args = [jar.archivePath, 'create', '--base', initDir.getAbsolutePath(), '-t', 'js-theme', 'test-js-theme']
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = testDir
@@ -84,11 +91,14 @@ testBladeCreateCommandListTemplates {
 }
 
 testBladeCreateCommandMvcPortlet {
+	dependsOn testBladeInitCommand
+
 	File testDir = new File(buildDir, "createMvcPortlet")
+	File initDir = new File(buildDir, "initTest")
 
 	testDir.mkdirs()
 
-	args = [jar.archivePath, 'create', '-t', 'mvc-portlet', 'test-mvc-portlet']
+	args = [jar.archivePath, 'create', '--base', initDir.getAbsolutePath(), '-t', 'mvc-portlet', 'test-mvc-portlet']
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = testDir
@@ -148,7 +158,7 @@ testBladeInitCommand {
 		assert initProjectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
 
-		delete initDir
+		//		delete initDir
 
 		errorStream.reset()
 		standardStream.reset()
