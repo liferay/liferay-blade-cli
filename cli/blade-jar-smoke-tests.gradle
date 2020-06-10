@@ -1,4 +1,3 @@
-task buildWorkspace(type: JavaExec)
 task smokeTests
 task testBladeCreateCommandFormField(type: JavaExec)
 task testBladeCreateCommandJsTheme(type: JavaExec)
@@ -12,7 +11,7 @@ task testBladeReturnCodeFailure(type: Exec)
 task testBladeSamplesCommand(type: JavaExec)
 task testBladeVersionCommand(type: JavaExec)
 
-Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith('testBlade') }
+Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith("testBlade") }
 
 testBladeTasks.each { task ->
 	task.dependsOn jar
@@ -30,18 +29,17 @@ ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
 testBladeCreateCommandFormField {
 	dependsOn testBladeInitCommand
 
-	File testDir = new File(buildDir, "createFormField")
 	File initDir = new File(buildDir, "initTest")
 
 	testDir.mkdirs()
 
-	args = [jar.archivePath, 'create', '--base', initDir.getAbsolutePath(), '-t', 'form-field', 'test-form-field', '-v', '7.2']
+	args = [jar.archivePath, "create", "-t", "form-field", "test-form-field", "-v", "7.2"]
 	errorOutput = errorStream
 	standardOutput = standardStream
-	workingDir = testDir
+	workingDir = initDir
 
 	doLast {
-		File projectDir = new File(testDir, "test-form-field")
+		File projectDir = new File(initDir, "modules/test-form-field")
 
 		assert projectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
@@ -54,15 +52,14 @@ testBladeCreateCommandFormField {
 testBladeCreateCommandJsTheme {
 	dependsOn testBladeInitCommand
 
-	File testDir = new File(buildDir, "createJsTheme")
 	File initDir = new File(buildDir, "initTest")
 
 	testDir.mkdirs()
 
-	args = [jar.archivePath, 'create', '--base', initDir.getAbsolutePath(), '-t', 'js-theme', 'test-js-theme']
+	args = [jar.archivePath, "create", "--base", initDir.getAbsolutePath(), "-t", "js-theme", "test-js-theme"]
 	errorOutput = errorStream
 	standardOutput = standardStream
-	workingDir = testDir
+	workingDir = initDir
 
 	doLast {
 		File projectDir = new File(testDir, "test-js-theme")
@@ -76,7 +73,7 @@ testBladeCreateCommandJsTheme {
 }
 
 testBladeCreateCommandListTemplates {
-	args = [jar.archivePath, 'create', '-l']
+	args = [jar.archivePath, "create", "-l"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 
@@ -99,7 +96,7 @@ testBladeCreateCommandMvcPortlet {
 
 	testDir.mkdirs()
 
-	args = [jar.archivePath, 'create', '--base', initDir.getAbsolutePath(), '-t', 'mvc-portlet', 'test-mvc-portlet']
+	args = [jar.archivePath, "create", "--base", initDir.getAbsolutePath(), "-t", "mvc-portlet", "test-mvc-portlet"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = testDir
@@ -116,7 +113,7 @@ testBladeCreateCommandMvcPortlet {
 }
 
 testBladeGwCommand {
-	args = [jar.archivePath, 'gw']
+	args = [jar.archivePath, "gw"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 
@@ -130,7 +127,7 @@ testBladeGwCommand {
 }
 
 testBladeHelpCommand {
-	args = [jar.archivePath, 'help']
+	args = [jar.archivePath, "help"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 
@@ -148,18 +145,13 @@ testBladeInitCommand {
 
 	initDir.mkdirs()
 
-	args = [jar.archivePath, 'init', "hello world", "-v", "dxp-7.2-ga1"]
+	args = [jar.archivePath, "init", "-v", "dxp-7.2-ga1"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = initDir
 
 	doLast{
-		File initProjectDir = new File(initDir, "hello world")
-
-		assert initProjectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
-
-		//		delete initDir
 
 		errorStream.reset()
 		standardStream.reset()
@@ -206,7 +198,7 @@ testBladeReturnCodeFailure {
 }
 
 testBladeSamplesCommand {
-	args = [jar.archivePath, 'samples', '-v', '7.1']
+	args = [jar.archivePath, "samples", "-v", "7.1"]
 	standardOutput = standardStream
 	errorOutput = errorStream
 
@@ -220,7 +212,7 @@ testBladeSamplesCommand {
 }
 
 testBladeVersionCommand {
-	args = [jar.archivePath, 'version']
+	args = [jar.archivePath, "version"]
 	standardOutput = standardStream
 	errorOutput = errorStream
 
