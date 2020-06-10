@@ -86,21 +86,13 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		TestUtil.runBlade(newproject, _extensionsDir, args);
 
-		Assert.assertTrue(
-			new File(
-				newproject, "pom.xml"
-			).exists());
+		File pomXmlFile = new File(newproject, "pom.xml");
 
-		Assert.assertTrue(
-			new File(
-				newproject, "modules"
-			).exists());
+		Assert.assertTrue(pomXmlFile.exists());
 
-		String contents = new String(
-			Files.readAllBytes(
-				new File(
-					newproject, "pom.xml"
-				).toPath()));
+		_checkExists(new File(newproject, "modules"));
+
+		String contents = new String(Files.readAllBytes(pomXmlFile.toPath()));
 
 		Assert.assertTrue(contents, contents.contains("com.liferay.portal.tools.bundle.support"));
 
@@ -130,17 +122,11 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		Assert.assertTrue(projectDir.mkdirs());
 
-		Assert.assertTrue(
-			new File(
-				_workspaceDir, "newproject/foo"
-			).createNewFile());
+		_checkExists(new File(_workspaceDir, "newproject/foo"));
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "newproject/pom.xml"
-			).exists());
+		_checkNotExists(new File(_workspaceDir, "newproject/pom.xml"));
 	}
 
 	@Test
@@ -154,15 +140,8 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		TestUtil.runBlade(projectDir, _extensionsDir, args);
 
-		Assert.assertTrue(
-			new File(
-				_workspaceDir, "newproject/pom.xml"
-			).exists());
-
-		Assert.assertTrue(
-			new File(
-				_workspaceDir, "newproject/modules"
-			).exists());
+		_checkExists(new File(_workspaceDir, "newproject/pom.xml"));
+		_checkExists(new File(_workspaceDir, "newproject/modules"));
 	}
 
 	@Test
@@ -173,35 +152,12 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		Assert.assertTrue(
-			new File(
-				_workspaceDir, "pom.xml"
-			).exists());
-
-		Assert.assertTrue(
-			new File(
-				_workspaceDir, "modules"
-			).exists());
-
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "build.gradle"
-			).exists());
-
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "gradle.properties"
-			).exists());
-
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "gradle-local.properties"
-			).exists());
-
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "settings.gradle"
-			).exists());
+		_checkExists(new File(_workspaceDir, "pom.xml"));
+		_checkExists(new File(_workspaceDir, "modules"));
+		_checkNotExists(new File(_workspaceDir, "build.gradle"));
+		_checkNotExists(new File(_workspaceDir, "gradle.properties"));
+		_checkNotExists(new File(_workspaceDir, "gradle-local.properties"));
+		_checkNotExists(new File(_workspaceDir, "settings.gradle"));
 
 		_verifyMavenBuild();
 	}
@@ -212,17 +168,11 @@ public class InitCommandMavenTest implements MavenExecutor {
 			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
 		};
 
-		Assert.assertTrue(
-			new File(
-				_workspaceDir, "foo"
-			).createNewFile());
+		_checkExists(new File(_workspaceDir, "foo"));
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "pom.xml"
-			).exists());
+		_checkNotExists(new File(_workspaceDir, "pom.xml"));
 	}
 
 	@Test
@@ -235,35 +185,11 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		Assert.assertTrue(_workspaceDir.exists());
 
-		Assert.assertTrue(
-			new File(
-				_workspaceDir, "pom.xml"
-			).exists());
-
-		Assert.assertTrue(
-			new File(
-				_workspaceDir, "modules"
-			).exists());
-
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "build.gradle"
-			).exists());
-
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "gradle.properties"
-			).exists());
-
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "gradle-local.properties"
-			).exists());
-
-		Assert.assertFalse(
-			new File(
-				_workspaceDir, "settings.gradle"
-			).exists());
+		_checkExists(new File(_workspaceDir, "pom.xml"));
+		_checkExists(new File(_workspaceDir, "modules"));
+		_checkNotExists(new File(_workspaceDir, "build.gradle"));
+		_checkNotExists(new File(_workspaceDir, "gradle.properties"));
+		_checkNotExists(new File(_workspaceDir, "settings.gradle"));
 
 		_verifyMavenBuild();
 	}
@@ -271,10 +197,18 @@ public class InitCommandMavenTest implements MavenExecutor {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private void _checkExists(File file) {
+		Assert.assertTrue(file.exists());
+	}
+
+	private void _checkNotExists(File file) {
+		Assert.assertFalse(file.exists());
+	}
+
 	private void _createMavenBundle() throws Exception {
-		String projectPath = new File(
-			_workspaceDir, "modules"
-		).getAbsolutePath();
+		File projectDir = new File(_workspaceDir, "modules");
+
+		String projectPath = projectDir.getAbsolutePath();
 
 		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "-P", "maven", "foo"};
 

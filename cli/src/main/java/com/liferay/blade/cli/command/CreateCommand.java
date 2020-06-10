@@ -298,11 +298,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 
-		File baseDir = createArgs.getBase();
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(dir);
 
-		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
-
-		projectTemplatesArgs.setDependencyManagementEnabled(workspaceProvider.isDependencyManagementEnabled(baseDir));
+		projectTemplatesArgs.setDependencyManagementEnabled(
+			(workspaceProvider != null) ? workspaceProvider.isDependencyManagementEnabled(dir) : false);
 
 		String liferayVersion = _getLiferayVersion(workspaceProvider, createArgs);
 
@@ -333,11 +332,19 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		properties.put("setService", createArgs.getService());
 		properties.put("setViewType", createArgs.getViewType());
 
-		WorkspaceProvider workspaceProvider = getBladeCLI().getWorkspaceProvider(createArgs.getBase());
+		BladeCLI bladeCLI = getBladeCLI();
+
+		File dir = createArgs.getDir();
+
+		if (dir == null) {
+			dir = createArgs.getBase();
+		}
+
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(dir);
 
 		try {
 			if (workspaceProvider != null) {
-				File workspaceLocation = workspaceProvider.getWorkspaceDir(getBladeCLI());
+				File workspaceLocation = workspaceProvider.getWorkspaceDir(bladeCLI);
 
 				if (workspaceLocation != null) {
 					properties.put("setModulesLocation", _getDefaultModulesDir().toString());
@@ -346,7 +353,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			}
 		}
 		catch (Exception e) {
-			getBladeCLI().error(e);
+			bladeCLI.error(e);
 		}
 
 		return properties;
@@ -451,7 +458,17 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	}
 
 	private String _getLiferayVersion(WorkspaceProvider workspaceProvider, CreateArgs createArgs) throws IOException {
-		String liferayVersion = workspaceProvider.getLiferayVersion(createArgs.getBase());
+		if (workspaceProvider == null) {
+			return createArgs.getLiferayVersion();
+		}
+
+		File dir = createArgs.getDir();
+
+		if (dir == null) {
+			dir = createArgs.getBase();
+		}
+
+		String liferayVersion = workspaceProvider.getLiferayVersion(dir);
 
 		if (liferayVersion == null) {
 			return createArgs.getLiferayVersion();

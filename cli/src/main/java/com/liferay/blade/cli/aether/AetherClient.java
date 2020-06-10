@@ -118,7 +118,9 @@ public class AetherClient {
 		request.setUserSettingsFile(_USER_MAVEN_DEFAULT_USER_SETTINGS_FILE);
 
 		try {
-			DefaultSettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
+			DefaultSettingsBuilderFactory defaultSettingsBuilderFactory = new DefaultSettingsBuilderFactory();
+
+			DefaultSettingsBuilder builder = defaultSettingsBuilderFactory.newInstance();
 
 			return builder.build(
 				request

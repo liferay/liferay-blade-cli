@@ -103,9 +103,9 @@ public class InitCommandTest {
 	public void testBladeInitEmptyDirectoryHandleDot() throws Exception {
 		File emptyDir = temporaryFolder.newFolder();
 
-		String pathStringToTest = new File(
-			emptyDir.getPath(), "."
-		).getAbsolutePath();
+		File dotFile = new File(emptyDir.getPath(), ".");
+
+		String pathStringToTest = dotFile.getAbsolutePath();
 
 		String[] args = {"--base", pathStringToTest, "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
 
@@ -122,9 +122,9 @@ public class InitCommandTest {
 	public void testBladeInitEmptyDirectoryHandleTwoDots() throws Exception {
 		File emptyDir = temporaryFolder.newFolder();
 
-		String pathStringToTest = new File(
-			emptyDir.getPath(), "."
-		).getAbsolutePath();
+		File dotFile = new File(emptyDir.getPath(), ".");
+
+		String pathStringToTest = dotFile.getAbsolutePath();
 
 		String[] args = {"--base", pathStringToTest, "init", ".", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
 
@@ -174,9 +174,9 @@ public class InitCommandTest {
 	public void testBladeInitWithCustomProfile() throws Exception {
 		File tempDir = temporaryFolder.newFolder();
 
-		String basePath = new File(
-			tempDir.getPath()
-		).getAbsolutePath();
+		File base = new File(tempDir.getPath());
+
+		String basePath = base.getAbsolutePath();
 
 		String[] args = {"--base", basePath, "init", "-P", "myprofile", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
 

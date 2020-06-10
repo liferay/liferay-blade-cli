@@ -31,7 +31,7 @@ testBladeCreateCommandFormField {
 
 	File initDir = new File(buildDir, "initTest")
 
-	testDir.mkdirs()
+	initDir.mkdirs()
 
 	args = [jar.archivePath, "create", "-t", "form-field", "test-form-field", "-v", "7.2"]
 	errorOutput = errorStream
@@ -54,15 +54,15 @@ testBladeCreateCommandJsTheme {
 
 	File initDir = new File(buildDir, "initTest")
 
-	testDir.mkdirs()
+	initDir.mkdirs()
 
-	args = [jar.archivePath, "create", "--base", initDir.getAbsolutePath(), "-t", "js-theme", "test-js-theme"]
+	args = [jar.archivePath, "create", "-t", "js-theme", "test-js-theme"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = initDir
 
 	doLast {
-		File projectDir = new File(testDir, "test-js-theme")
+		File projectDir = new File(initDir, "modules/test-js-theme")
 
 		assert projectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
@@ -91,18 +91,17 @@ testBladeCreateCommandListTemplates {
 testBladeCreateCommandMvcPortlet {
 	dependsOn testBladeInitCommand
 
-	File testDir = new File(buildDir, "createMvcPortlet")
 	File initDir = new File(buildDir, "initTest")
 
-	testDir.mkdirs()
+	initDir.mkdirs()
 
-	args = [jar.archivePath, "create", "--base", initDir.getAbsolutePath(), "-t", "mvc-portlet", "test-mvc-portlet"]
+	args = [jar.archivePath, "create", "-t", "mvc-portlet", "test-mvc-portlet"]
 	errorOutput = errorStream
 	standardOutput = standardStream
-	workingDir = testDir
+	workingDir = initDir
 
 	doLast {
-		File projectDir = new File(testDir, "test-mvc-portlet")
+		File projectDir = new File(initDir, "modules/test-mvc-portlet")
 
 		assert projectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")

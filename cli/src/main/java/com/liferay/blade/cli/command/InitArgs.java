@@ -74,7 +74,10 @@ public class InitArgs extends BaseArgs {
 		_upgrade = upgrade;
 	}
 
-	@Parameter(description = "Initialize a workspace even if there are files located in target location", names = {"-f", "--force"})
+	@Parameter(
+		description = "Initialize a workspace even if there are files located in target location",
+		names = {"-f", "--force"}
+	)
 	private boolean _force;
 
 	@Parameter(

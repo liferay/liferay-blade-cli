@@ -317,7 +317,10 @@ public class BladeUtil {
 	}
 
 	public static boolean hasGradleWrapper(File dir) {
-		if (new File(dir, _GRADLEW_UNIX_FILE_NAME).exists() && new File(dir, _GRADLEW_WINDOWS_FILE_NAME).exists()) {
+		File gradlew = new File(dir, _GRADLEW_UNIX_FILE_NAME);
+		File gradlebat = new File(dir, _GRADLEW_WINDOWS_FILE_NAME);
+
+		if (gradlew.exists() && gradlebat.exists()) {
 			return true;
 		}
 
@@ -543,7 +546,9 @@ public class BladeUtil {
 		FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<>(
 			PropertiesConfiguration.class);
 
-		PropertiesBuilderParameters properties = new Parameters().properties();
+		Parameters parameters = new Parameters();
+
+		PropertiesBuilderParameters properties = parameters.properties();
 
 		properties.setFile(propertyFile);
 
