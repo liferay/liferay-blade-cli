@@ -162,15 +162,23 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFiles() throws Exception {
+		File foo = new File(_workspaceDir, "foo");
+
+		foo.mkdirs();
+
+		_checkExists(foo);
+
+		File bar = new File(foo, "bar");
+
+		Assert.assertTrue(bar.getAbsolutePath(), bar.createNewFile());
+
 		String[] args = {
 			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "foo", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
 		};
 
-		_checkExists(new File(_workspaceDir, "foo"));
-
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
-		_checkExists(new File(_workspaceDir, "pom.xml"));
+		_checkNotExists(new File(_workspaceDir, "pom.xml"));
 	}
 
 	@Test
