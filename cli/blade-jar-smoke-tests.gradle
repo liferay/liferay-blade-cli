@@ -62,7 +62,7 @@ testBladeCreateCommandJsTheme {
 	workingDir = initDir
 
 	doLast {
-		File projectDir = new File(initDir, "modules/test-js-theme")
+		File projectDir = new File(initDir, "themes/test-js-theme")
 
 		assert projectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
@@ -172,7 +172,7 @@ testBladeInitCommandLegacy {
 
 		assert initProjectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
-		assert new File(initProjectDir, "gradle.properties").text.contains("portal-7.2-ga3")
+		assert new File(initProjectDir, "gradle.properties").text.contains("portal-7.2-ga2")
 
 		delete initDir
 
