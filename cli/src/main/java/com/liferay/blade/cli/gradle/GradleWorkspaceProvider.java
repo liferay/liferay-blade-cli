@@ -19,13 +19,16 @@ package com.liferay.blade.cli.gradle;
 import aQute.bnd.version.Version;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ProductInfo;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -54,6 +57,54 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 	public File getGradlePropertiesFile(File dir) {
 		return new File(getWorkspaceDir(dir), _GRADLE_PROPERTIES_FILE_NAME);
+	}
+
+	@Override
+	public String getLiferayVersion(File workspaceDir) {
+		try {
+			Properties gradleProperties = getGradleProperties(workspaceDir);
+
+			String targetPlatformVersion = gradleProperties.getProperty(
+				WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY);
+
+			if (BladeUtil.isEmpty(targetPlatformVersion)) {
+				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
+
+				if (BladeUtil.isEmpty(productKey)) {
+					return null;
+				}
+
+				Map<String, ProductInfo> productInfos = BladeUtil.getProductInfo();
+
+				ProductInfo productInfo = productInfos.get(productKey);
+
+				if (productInfo != null) {
+					targetPlatformVersion = productInfo.getTargetPlatformVersion();
+				}
+			}
+
+			if (!BladeUtil.isEmpty(targetPlatformVersion)) {
+				int dashPostion = targetPlatformVersion.indexOf("-");
+
+				Version productTargetPlatformVersion = null;
+
+				if (dashPostion != -1) {
+					productTargetPlatformVersion = Version.parseVersion(
+						targetPlatformVersion.substring(0, dashPostion));
+				}
+				else {
+					productTargetPlatformVersion = Version.parseVersion(targetPlatformVersion);
+				}
+
+				return new String(
+					productTargetPlatformVersion.getMajor() + "." + productTargetPlatformVersion.getMinor());
+			}
+		}
+		catch (Exception exception) {
+			BladeCLI.instance.error(exception);
+		}
+
+		return null;
 	}
 
 	public File getSettingGradleFile(File dir) {
@@ -86,6 +137,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		return null;
 	}
 
+	@Override
 	public boolean isDependencyManagementEnabled(File dir) {
 		if (!isWorkspace(dir)) {
 			return false;

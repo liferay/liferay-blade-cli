@@ -16,6 +16,7 @@
 
 package com.liferay.extensions.sample.profile;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
@@ -44,7 +45,9 @@ public class ProfilesTest {
 	public void testProfileExtension() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-b", "foo", "-v", "7.3"};
+		String[] args = {
+			"--base", workspaceDir.getPath(), "init", "-b", "foo", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 

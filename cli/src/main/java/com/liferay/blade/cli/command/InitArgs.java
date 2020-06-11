@@ -19,11 +19,13 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import com.liferay.blade.cli.command.validator.LiferayVersionValidator;
+import com.liferay.blade.cli.command.validator.LiferayDefaultVersionValidator;
+import com.liferay.blade.cli.command.validator.LiferayMoreVersionValidator;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 
 /**
  * @author Gregory Amerson
+ * @author Simon Jiang
  */
 @Parameters(commandDescription = "Initializes a new Liferay workspace", commandNames = "init")
 public class InitArgs extends BaseArgs {
@@ -72,14 +74,17 @@ public class InitArgs extends BaseArgs {
 		_upgrade = upgrade;
 	}
 
-	@Parameter(description = "create anyway if there are files located at target folder", names = {"-f", "--force"})
+	@Parameter(
+		description = "Initialize a workspace even if there are files located in target location",
+		names = {"-f", "--force"}
+	)
 	private boolean _force;
 
 	@Parameter(
-		description = "The version of Liferay to target for this workspace. Options are 7.0, 7.1, 7.2, 7.3",
-		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayVersionValidator.class
+		description = "The version of Liferay to target for this workspace. Specifying \"more\" will show entire list of possible values.",
+		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayMoreVersionValidator.class
 	)
-	@ParameterPossibleValues(LiferayVersionValidator.class)
+	@ParameterPossibleValues(more = LiferayMoreVersionValidator.class, value = LiferayDefaultVersionValidator.class)
 	private String _liferayVersion;
 
 	@Parameter(description = "[name]")

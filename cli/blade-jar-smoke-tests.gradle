@@ -6,11 +6,12 @@ task testBladeCreateCommandMvcPortlet(type: JavaExec)
 task testBladeGwCommand(type: JavaExec)
 task testBladeHelpCommand(type: JavaExec)
 task testBladeInitCommand(type: JavaExec)
+task testBladeInitCommandLegacy(type: JavaExec)
 task testBladeReturnCodeFailure(type: Exec)
 task testBladeSamplesCommand(type: JavaExec)
 task testBladeVersionCommand(type: JavaExec)
 
-Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith('testBlade') }
+Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith("testBlade") }
 
 testBladeTasks.each { task ->
 	task.dependsOn jar
@@ -26,17 +27,19 @@ ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
 
 testBladeCreateCommandFormField {
-	File testDir = new File(buildDir, "createFormField")
+	dependsOn testBladeInitCommand
 
-	testDir.mkdirs()
+	File initDir = new File(buildDir, "initTest")
 
-	args = [jar.archivePath, 'create', '-t', 'form-field', 'test-form-field', '-v', '7.2']
+	initDir.mkdirs()
+
+	args = [jar.archivePath, "create", "-t", "form-field", "test-form-field", "-v", "7.2"]
 	errorOutput = errorStream
 	standardOutput = standardStream
-	workingDir = testDir
+	workingDir = initDir
 
 	doLast {
-		File projectDir = new File(testDir, "test-form-field")
+		File projectDir = new File(initDir, "modules/test-form-field")
 
 		assert projectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
@@ -47,17 +50,19 @@ testBladeCreateCommandFormField {
 }
 
 testBladeCreateCommandJsTheme {
-	File testDir = new File(buildDir, "createJsTheme")
+	dependsOn testBladeInitCommand
 
-	testDir.mkdirs()
+	File initDir = new File(buildDir, "initTest")
 
-	args = [jar.archivePath, 'create', '-t', 'js-theme', 'test-js-theme']
+	initDir.mkdirs()
+
+	args = [jar.archivePath, "create", "-t", "js-theme", "test-js-theme"]
 	errorOutput = errorStream
 	standardOutput = standardStream
-	workingDir = testDir
+	workingDir = initDir
 
 	doLast {
-		File projectDir = new File(testDir, "test-js-theme")
+		File projectDir = new File(initDir, "modules/test-js-theme")
 
 		assert projectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
@@ -68,7 +73,7 @@ testBladeCreateCommandJsTheme {
 }
 
 testBladeCreateCommandListTemplates {
-	args = [jar.archivePath, 'create', '-l']
+	args = [jar.archivePath, "create", "-l"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 
@@ -84,17 +89,19 @@ testBladeCreateCommandListTemplates {
 }
 
 testBladeCreateCommandMvcPortlet {
-	File testDir = new File(buildDir, "createMvcPortlet")
+	dependsOn testBladeInitCommand
 
-	testDir.mkdirs()
+	File initDir = new File(buildDir, "initTest")
 
-	args = [jar.archivePath, 'create', '-t', 'mvc-portlet', 'test-mvc-portlet']
+	initDir.mkdirs()
+
+	args = [jar.archivePath, "create", "-t", "mvc-portlet", "test-mvc-portlet"]
 	errorOutput = errorStream
 	standardOutput = standardStream
-	workingDir = testDir
+	workingDir = initDir
 
 	doLast {
-		File projectDir = new File(testDir, "test-mvc-portlet")
+		File projectDir = new File(initDir, "modules/test-mvc-portlet")
 
 		assert projectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
@@ -105,7 +112,7 @@ testBladeCreateCommandMvcPortlet {
 }
 
 testBladeGwCommand {
-	args = [jar.archivePath, 'gw']
+	args = [jar.archivePath, "gw"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 
@@ -119,7 +126,7 @@ testBladeGwCommand {
 }
 
 testBladeHelpCommand {
-	args = [jar.archivePath, 'help']
+	args = [jar.archivePath, "help"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 
@@ -137,6 +144,24 @@ testBladeInitCommand {
 
 	initDir.mkdirs()
 
+	args = [jar.archivePath, "init", "-v", "dxp-7.2-ga1"]
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = initDir
+
+	doLast{
+		assert !errorStream.toString().toLowerCase().contains("error")
+
+		errorStream.reset()
+		standardStream.reset()
+	}
+}
+
+testBladeInitCommandLegacy {
+	File initDir = new File(buildDir, "initTestLegacy")
+
+	initDir.mkdirs()
+
 	args = [jar.archivePath, 'init', "hello world", "-v", "7.2"]
 	errorOutput = errorStream
 	standardOutput = standardStream
@@ -147,6 +172,7 @@ testBladeInitCommand {
 
 		assert initProjectDir.exists()
 		assert !errorStream.toString().toLowerCase().contains("error")
+		assert new File(initProjectDir, "gradle.properties").text.contains("portal-7.2-ga3")
 
 		delete initDir
 
@@ -171,7 +197,7 @@ testBladeReturnCodeFailure {
 }
 
 testBladeSamplesCommand {
-	args = [jar.archivePath, 'samples', '-v', '7.1']
+	args = [jar.archivePath, "samples", "-v", "7.1"]
 	standardOutput = standardStream
 	errorOutput = errorStream
 
@@ -185,7 +211,7 @@ testBladeSamplesCommand {
 }
 
 testBladeVersionCommand {
-	args = [jar.archivePath, 'version']
+	args = [jar.archivePath, "version"]
 	standardOutput = standardStream
 	errorOutput = errorStream
 

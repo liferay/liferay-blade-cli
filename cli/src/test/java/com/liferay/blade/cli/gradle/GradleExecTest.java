@@ -18,6 +18,7 @@ package com.liferay.blade.cli.gradle;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.TestUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -49,9 +50,11 @@ public class GradleExecTest {
 
 	@Test
 	public void testGradleWrapper() throws Exception {
-		Path temporaryPath = _rootPath.normalize();
+		File workspace70 = new File(_rootPath.toFile(), "workspace70");
 
-		String[] args = {"--base", temporaryPath.toString(), "create", "-t", "api", "foo"};
+		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70);
+
+		String[] args = {"--base", workspace70.toString(), "create", "-t", "api", "foo"};
 
 		_getBladeTest().run(args);
 
@@ -95,6 +98,14 @@ public class GradleExecTest {
 		bladeTestBuilder.setSettingsDir(_rootPath);
 
 		return bladeTestBuilder.build();
+	}
+
+	private void _makeWorkspaceVersion(File workspace, String version) throws Exception {
+		File parentFile = workspace.getParentFile();
+
+		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", version};
+
+		TestUtil.runBlade(workspace, _extensionsPath.toFile(), args);
 	}
 
 	private Path _extensionsPath = null;

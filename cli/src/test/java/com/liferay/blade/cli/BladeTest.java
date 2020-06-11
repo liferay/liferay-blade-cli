@@ -36,6 +36,22 @@ import java.util.stream.Stream;
  */
 public class BladeTest extends BladeCLI {
 
+	public static final String LIFERAY_VERSION_70 = "7.0";
+
+	public static final String LIFERAY_VERSION_71 = "7.1";
+
+	public static final String LIFERAY_VERSION_72 = "7.2";
+
+	public static final String LIFERAY_VERSION_73 = "7.3";
+
+	public static final String PRODUCT_VERSION_PORTAL_70 = "portal-7.0-ga7";
+
+	public static final String PRODUCT_VERSION_PORTAL_71 = "portal-7.1-ga4";
+
+	public static final String PRODUCT_VERSION_PORTAL_72 = "portal-7.2-ga2";
+
+	public static final String PRODUCT_VERSION_PORTAL_73 = "portal-7.3-ga2";
+
 	public static BladeTestBuilder builder() {
 		return new BladeTestBuilder();
 	}

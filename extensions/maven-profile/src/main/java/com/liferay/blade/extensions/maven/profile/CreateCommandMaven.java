@@ -52,9 +52,13 @@ public class CreateCommandMaven extends CreateCommand {
 
 		CreateArgs createArgs = getArgs();
 
-		File baseDir = createArgs.getBase();
+		File dir = createArgs.getDir();
 
-		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+		if (dir == null) {
+			dir = createArgs.getBase();
+		}
+
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(dir);
 
 		if ((workspaceProvider == null) || (workspaceProvider instanceof MavenWorkspaceProvider)) {
 			createArgs.setProfileName("maven");

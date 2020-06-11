@@ -16,6 +16,7 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -40,7 +41,9 @@ public class DeployCommandMavenTest {
 	public void testInstallJar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", "7.2"};
+		String[] args = {
+			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.PRODUCT_VERSION_PORTAL_72
+		};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
@@ -93,7 +96,9 @@ public class DeployCommandMavenTest {
 	public void testInstallWar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", "7.2"};
+		String[] args = {
+			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.PRODUCT_VERSION_PORTAL_72
+		};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 

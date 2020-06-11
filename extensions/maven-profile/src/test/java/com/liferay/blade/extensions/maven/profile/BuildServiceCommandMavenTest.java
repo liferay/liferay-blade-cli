@@ -16,6 +16,7 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 
@@ -45,7 +46,10 @@ public class BuildServiceCommandMavenTest {
 
 	@Test
 	public void testMavenServiceBuilder() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v", "7.3"};
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v",
+			BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
 
 		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
 

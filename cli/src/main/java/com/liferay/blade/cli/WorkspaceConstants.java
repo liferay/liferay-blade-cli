@@ -16,6 +16,9 @@
 
 package com.liferay.blade.cli;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author David Truong
  * @author Gregory Amerson
@@ -44,6 +47,8 @@ public class WorkspaceConstants {
 
 	public static final String DEFAULT_PLUGINS_SDK_DIR_PROPERTY = "liferay.workspace.plugins.sdk.dir";
 
+	public static final String DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY = "liferay.workspace.target.platform.version";
+
 	public static final String DEFAULT_THEMES_DIR = "themes";
 
 	public static final String DEFAULT_THEMES_DIR_PROPERTY = "liferay.workspace.themes.dir";
@@ -51,5 +56,9 @@ public class WorkspaceConstants {
 	public static final String DEFAULT_WARS_DIR = "wars";
 
 	public static final String DEFAULT_WARS_DIR_PROPERTY = "liferay.workspace.wars.dir";
+
+	public static final String DEFAULT_WORKSPACE_PRODUCT_PROPERTY = "liferay.workspace.product";
+
+	public static final List<String> originalLiferayVersions = Arrays.asList("7.0", "7.1", "7.2", "7.3");
 
 }

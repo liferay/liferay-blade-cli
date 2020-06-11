@@ -148,8 +148,12 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			@Override
 			public boolean accept(File pathname) {
-				if (pathname.isDirectory() && new File(pathname, "docroot").exists()) {
-					return true;
+				if (pathname.isDirectory()) {
+					File docroot = new File(pathname, "docroot");
+
+					if (docroot.exists()) {
+						return true;
+					}
 				}
 
 				return false;

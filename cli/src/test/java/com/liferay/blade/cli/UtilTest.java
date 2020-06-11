@@ -121,7 +121,7 @@ public class UtilTest {
 
 		File extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 
-		String[] args = {"--base", rootWorkspaceDir.getAbsolutePath(), "init", "-f", "foo", "-v", "7.3"};
+		String[] args = {"--base", rootWorkspaceDir.getAbsolutePath(), "init", "-f", "foo", "-v", "dxp-7.2-ga1"};
 
 		File workspaceDirectory = new File(rootWorkspaceDir, "foo");
 
@@ -172,7 +172,7 @@ public class UtilTest {
 
 		File extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 
-		String[] args = {"--base", rootWorkspaceDir.getAbsolutePath(), "init", "-f", "foo", "-v", "7.3"};
+		String[] args = {"--base", rootWorkspaceDir.getAbsolutePath(), "init", "-f", "foo", "-v", "dxp-7.2-ga1"};
 
 		File workspaceDirectory = new File(rootWorkspaceDir, "foo");
 

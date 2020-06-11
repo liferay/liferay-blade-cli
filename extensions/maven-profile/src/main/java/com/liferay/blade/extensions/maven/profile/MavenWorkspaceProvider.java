@@ -17,9 +17,12 @@
 package com.liferay.blade.extensions.maven.profile;
 
 import com.liferay.blade.cli.WorkspaceProvider;
+import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
+
+import java.util.Properties;
 
 /**
  * @author Christopher Bryan Boyd
@@ -27,13 +30,37 @@ import java.io.File;
 public class MavenWorkspaceProvider implements WorkspaceProvider {
 
 	@Override
+	public String getLiferayVersion(File dir) {
+		File workspaceDir = getWorkspaceDir(dir);
+
+		Properties mavenProperties = MavenUtil.getMavenProperties(workspaceDir);
+
+		return mavenProperties.getProperty("liferay.bom.version");
+	}
+
+	@Override
 	public File getWorkspaceDir(File dir) {
 		return MavenUtil.getWorkspaceDir(dir);
 	}
 
 	@Override
+	public boolean isDependencyManagementEnabled(File dir) {
+		File workspaceDir = getWorkspaceDir(dir);
+
+		Properties mavenProperties = MavenUtil.getMavenProperties(workspaceDir);
+
+		return !BladeUtil.isEmpty(mavenProperties.getProperty("liferay.bom.version"));
+	}
+
+	@Override
 	public boolean isWorkspace(File dir) {
-		return MavenUtil.isWorkspace(dir);
+		if (MavenUtil.isWorkspace(dir)) {
+			return true;
+		}
+
+		File workspaceDir = getWorkspaceDir(dir);
+
+		return MavenUtil.isWorkspace(workspaceDir);
 	}
 
 }

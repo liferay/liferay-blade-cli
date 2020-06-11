@@ -16,9 +16,14 @@
 
 package com.liferay.blade.cli.util;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.command.SamplesCommand;
+import com.liferay.portal.tools.bundle.support.commands.DownloadCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
@@ -46,6 +51,7 @@ import java.security.ProtectionDomain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,6 +68,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
 
 /**
  * @author Gregory Amerson
@@ -237,6 +250,37 @@ public class BladeUtil {
 		}
 	}
 
+	public static Map<String, ProductInfo> getProductInfo() {
+		try {
+			DownloadCommand downloadCommand = new DownloadCommand();
+
+			downloadCommand.setCacheDir(_workspaceCacheDir);
+			downloadCommand.setPassword(null);
+			downloadCommand.setToken(false);
+			downloadCommand.setUrl(new URL(_PRODUCT_INFO_URL));
+			downloadCommand.setUserName(null);
+			downloadCommand.setQuiet(true);
+
+			downloadCommand.execute();
+
+			Path downloadPath = downloadCommand.getDownloadPath();
+
+			Gson gson = new Gson();
+
+			try (JsonReader jsonReader = new JsonReader(Files.newBufferedReader(downloadPath))) {
+				TypeToken<Map<String, ProductInfo>> typeToken = new TypeToken<Map<String, ProductInfo>>() {
+				};
+
+				return gson.fromJson(jsonReader, typeToken.getType());
+			}
+		}
+		catch (Exception exception) {
+			exception.printStackTrace();
+		}
+
+		return Collections.emptyMap();
+	}
+
 	public static Properties getProperties(File file) {
 		try (InputStream inputStream = new FileInputStream(file)) {
 			Properties properties = new Properties();
@@ -273,7 +317,10 @@ public class BladeUtil {
 	}
 
 	public static boolean hasGradleWrapper(File dir) {
-		if (new File(dir, _GRADLEW_UNIX_FILE_NAME).exists() && new File(dir, _GRADLEW_WINDOWS_FILE_NAME).exists()) {
+		File gradlew = new File(dir, _GRADLEW_UNIX_FILE_NAME);
+		File gradlebat = new File(dir, _GRADLEW_WINDOWS_FILE_NAME);
+
+		if (gradlew.exists() && gradlebat.exists()) {
 			return true;
 		}
 
@@ -495,6 +542,25 @@ public class BladeUtil {
 		}
 	}
 
+	public static void writePropertyValue(File propertyFile, String key, String value) throws Exception {
+		FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<>(
+			PropertiesConfiguration.class);
+
+		Parameters parameters = new Parameters();
+
+		PropertiesBuilderParameters properties = parameters.properties();
+
+		properties.setFile(propertyFile);
+
+		builder.configure(properties);
+
+		Configuration config = builder.getConfiguration();
+
+		config.setProperty(key, value);
+
+		builder.save();
+	}
+
 	private static ProcessBuilder _buildProcessBuilder(
 		String command, File dir, Map<String, String> environment, boolean inheritIO) {
 
@@ -567,8 +633,15 @@ public class BladeUtil {
 		"build." + System.getenv("HOSTNAME") + ".properties", "build.properties"
 	};
 
+	private static final String _DEFAULT_WORKSPACE_CACHE_DIR_NAME = ".liferay/workspace";
+
 	private static final String _GRADLEW_UNIX_FILE_NAME = "gradlew";
 
 	private static final String _GRADLEW_WINDOWS_FILE_NAME = "gradlew.bat";
+
+	private static final String _PRODUCT_INFO_URL = "https://releases.liferay.com/tools/workspace/.product_info.json";
+
+	private static File _workspaceCacheDir = new File(
+		System.getProperty("user.home"), _DEFAULT_WORKSPACE_CACHE_DIR_NAME);
 
 }

@@ -18,18 +18,39 @@ package com.liferay.blade.cli.command.validator;
 
 import com.beust.jcommander.ParameterException;
 
-import java.util.Arrays;
+import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ProductInfo;
+
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * @author Christopher Bryan Boyd
- * @author Gregory Amerson
+ * @author Simon Jiang
  */
-public class LiferayVersionValidator implements ValidatorSupplier {
+public class LiferayMoreVersionValidator extends LiferayDefaultVersionValidator {
 
 	@Override
 	public Collection<String> get() {
-		return Arrays.asList("7.0", "7.1", "7.2", "7.3");
+		Map<String, ProductInfo> productInfoMap = BladeUtil.getProductInfo();
+
+		List<String> possibleLiferayProducts = new CopyOnWriteArrayList<>();
+
+		possibleLiferayProducts.addAll(WorkspaceConstants.originalLiferayVersions);
+
+		productInfoMap.forEach(
+			(productKey, productInfo) -> {
+				if (!BladeUtil.isEmpty(productInfo.getTargetPlatformVersion())) {
+					possibleLiferayProducts.add(productKey);
+				}
+			});
+
+		Collections.sort(possibleLiferayProducts);
+
+		return possibleLiferayProducts;
 	}
 
 	@Override

@@ -62,9 +62,9 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		String[] mavenArgs = {"create", "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t", "api", "foo"};
 
-		String projectPath = new File(
-			modulesDir, "foo"
-		).getAbsolutePath();
+		File projectDir = new File(modulesDir, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
 
@@ -102,9 +102,9 @@ public class CreateCommandMavenTest implements MavenExecutor {
 			"com.liferay.login.web", "-H", "1.0.0", "loginHook"
 		};
 
-		String projectPath = new File(
-			modulesDir, "loginHook"
-		).getAbsolutePath();
+		File projectDir = new File(modulesDir, "loginHook");
+
+		String projectPath = projectDir.getAbsolutePath();
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
 
@@ -136,9 +136,9 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		String[] mavenArgs = {"create", "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo"};
 
-		String projectPath = new File(
-			modulesDir, "foo"
-		).getAbsolutePath();
+		File projectDir = new File(modulesDir, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
 
@@ -171,9 +171,9 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		String[] mavenArgs = {"create", "-d", modulesDir.getAbsolutePath(), "-b", "maven", "-t", "mvc-portlet", "foo"};
 
-		String projectPath = new File(
-			modulesDir, "foo"
-		).getAbsolutePath();
+		File projectDir = new File(modulesDir, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
 
@@ -200,11 +200,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateMVCPortletStandalone() throws Exception {
 		File tempRoot = temporaryFolder.getRoot();
 
-		String[] mavenArgs = {"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo"};
+		String[] mavenArgs = {
+			"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo", "-v", "7.3"
+		};
 
-		String projectPath = new File(
-			tempRoot, "foo"
-		).getAbsolutePath();
+		File projectDir = new File(tempRoot, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, mavenArgs);
 

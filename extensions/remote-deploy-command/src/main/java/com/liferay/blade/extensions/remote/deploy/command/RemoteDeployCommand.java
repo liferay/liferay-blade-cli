@@ -85,11 +85,9 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 			PrintStream error = bladeCLI.error();
 
-			new ConnectException(
-				sb.toString()
-			).printStackTrace(
-				error
-			);
+			ConnectException connectException = new ConnectException(sb.toString());
+
+			connectException.printStackTrace(error);
 
 			return;
 		}
@@ -137,11 +135,9 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 			_addError(processResult.getError());
 
-			new ConnectException(
-				errorMessage
-			).printStackTrace(
-				err
-			);
+			ConnectException connectException = new ConnectException(errorMessage);
+
+			connectException.printStackTrace(err);
 
 			return;
 		}
@@ -255,7 +251,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 		BladeCLI bladeCLI = getBladeCLI();
 
-		new Thread() {
+		Thread thread = new Thread() {
 
 			@Override
 			public void run() {
@@ -277,7 +273,9 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 				}
 			}
 
-		}.start();
+		};
+
+		thread.start();
 
 		FileWatcher.Consumer<Path> consumer = new FileWatcher.Consumer<Path>() {
 

@@ -16,6 +16,7 @@
 
 package com.liferay.project.templates.sample;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -55,7 +56,7 @@ public class SampleWorkspaceTemplateTest {
 
 		String basePath = tempDir.getAbsolutePath();
 
-		String[] args = {"--base", basePath, "init", "-P", "sample", "-v", "7.3"};
+		String[] args = {"--base", basePath, "init", "-P", "sample", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 

@@ -20,7 +20,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
@@ -299,18 +298,18 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 
-		File baseDir = createArgs.getBase();
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(dir);
 
-		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
+		projectTemplatesArgs.setDependencyManagementEnabled(
+			(workspaceProvider != null) ? workspaceProvider.isDependencyManagementEnabled(dir) : false);
 
-		if (workspaceProvider instanceof GradleWorkspaceProvider) {
-			GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)workspaceProvider;
+		String liferayVersion = _getLiferayVersion(workspaceProvider, createArgs);
 
-			projectTemplatesArgs.setDependencyManagementEnabled(
-				workspaceProviderGradle.isDependencyManagementEnabled(baseDir));
+		if (BladeUtil.isEmpty(liferayVersion)) {
+			throw new IOException("LiferayVersion can not be Empty");
 		}
 
-		projectTemplatesArgs.setLiferayVersion(_getLiferayVersion(bladeCLI, createArgs));
+		projectTemplatesArgs.setLiferayVersion(liferayVersion);
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
@@ -333,11 +332,19 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		properties.put("setService", createArgs.getService());
 		properties.put("setViewType", createArgs.getViewType());
 
-		WorkspaceProvider workspaceProvider = getBladeCLI().getWorkspaceProvider(createArgs.getBase());
+		BladeCLI bladeCLI = getBladeCLI();
+
+		File dir = createArgs.getDir();
+
+		if (dir == null) {
+			dir = createArgs.getBase();
+		}
+
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(dir);
 
 		try {
 			if (workspaceProvider != null) {
-				File workspaceLocation = workspaceProvider.getWorkspaceDir(getBladeCLI());
+				File workspaceLocation = workspaceProvider.getWorkspaceDir(bladeCLI);
 
 				if (workspaceLocation != null) {
 					properties.put("setModulesLocation", _getDefaultModulesDir().toString());
@@ -346,7 +353,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			}
 		}
 		catch (Exception e) {
-			getBladeCLI().error(e);
+			bladeCLI.error(e);
 		}
 
 		return properties;
@@ -450,13 +457,21 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return _getDefaultDir(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY, WorkspaceConstants.DEFAULT_WARS_DIR);
 	}
 
-	private String _getLiferayVersion(BladeCLI bladeCLI, CreateArgs createArgs) throws IOException {
-		String liferayVersion = createArgs.getLiferayVersion();
+	private String _getLiferayVersion(WorkspaceProvider workspaceProvider, CreateArgs createArgs) throws IOException {
+		if (workspaceProvider == null) {
+			return createArgs.getLiferayVersion();
+		}
+
+		File dir = createArgs.getDir();
+
+		if (dir == null) {
+			dir = createArgs.getBase();
+		}
+
+		String liferayVersion = workspaceProvider.getLiferayVersion(dir);
 
 		if (liferayVersion == null) {
-			BladeSettings bladeSettings = bladeCLI.getBladeSettings();
-
-			liferayVersion = bladeSettings.getLiferayVersionDefault();
+			return createArgs.getLiferayVersion();
 		}
 
 		return liferayVersion;

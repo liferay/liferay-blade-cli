@@ -940,13 +940,31 @@ public class BladeCLI {
 		return missingOptionSb.toString();
 	}
 
-	private Map<String, String> _getPossibleValuesMap(Field field, StringBuilder sb) {
+	private Map<String, String> _getPossibleDefaultValuesMap(Field field, StringBuilder sb) {
 		Map<String, String> possibleValuesMap = null;
 
 		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
 
 		if (possibleValuesAnnotation != null) {
 			Class<? extends Supplier<Collection<String>>> possibleValuesSupplier = possibleValuesAnnotation.value();
+
+			if (possibleValuesSupplier != null) {
+				possibleValuesMap = _buildPossibleValuesMap(possibleValuesSupplier);
+
+				sb.append(_getMessageFromPossibleValues(possibleValuesMap));
+			}
+		}
+
+		return possibleValuesMap;
+	}
+
+	private Map<String, String> _getPossibleMoreValuesMap(Field field, StringBuilder sb) {
+		Map<String, String> possibleValuesMap = null;
+
+		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
+
+		if (possibleValuesAnnotation != null) {
+			Class<? extends Supplier<Collection<String>>> possibleValuesSupplier = possibleValuesAnnotation.more();
 
 			if (possibleValuesSupplier != null) {
 				possibleValuesMap = _buildPossibleValuesMap(possibleValuesSupplier);
@@ -1173,11 +1191,12 @@ public class BladeCLI {
 				}
 
 				if (found) {
-					Map<String, String> optionsMap = _getPossibleValuesMap(field, sb);
+					Map<String, String> optionsMap = _getPossibleDefaultValuesMap(field, sb);
 
 					String message = sb.toString();
 
-					value = _promptForValueWithOptions(missingParametersFormatted, optionsMap, message, reader, out());
+					value = _promptForValueWithOptions(
+						field, sb, missingParametersFormatted, optionsMap, message, reader, out());
 
 					break;
 				}
@@ -1188,13 +1207,15 @@ public class BladeCLI {
 	}
 
 	private String _promptForValueWithOptions(
-		String missingParametersFormatted, Map<String, String> optionsMap, String message, BufferedReader reader,
-		PrintStream printStream) {
+		Field field, StringBuilder sb, String missingParametersFormatted, Map<String, String> optionsMap,
+		String message, BufferedReader reader, PrintStream printStream) {
 
 		String value = Prompter.promptString(message, reader, printStream);
 
 		if ((optionsMap != null) && !optionsMap.isEmpty()) {
-			while (!optionsMap.containsKey(value) && !optionsMap.containsValue(value)) {
+			while (!optionsMap.containsKey(value) && !optionsMap.containsValue(value) &&
+				   !Objects.equals(value, "more")) {
+
 				System.out.println("Please enter a valid value for " + missingParametersFormatted);
 
 				value = Prompter.promptString("", reader, printStream);
@@ -1202,6 +1223,14 @@ public class BladeCLI {
 
 			if (optionsMap.containsKey(value)) {
 				value = optionsMap.get(value);
+			}
+			else if (Objects.equals(value, "more")) {
+				Map<String, String> moreOptionsMap = _getPossibleMoreValuesMap(field, sb);
+
+				String moreMessage = sb.toString();
+
+				value = _promptForValueWithOptions(
+					field, sb, missingParametersFormatted, moreOptionsMap, moreMessage, reader, out());
 			}
 		}
 

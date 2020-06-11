@@ -232,7 +232,7 @@ public class CreateArgs extends BaseArgs {
 		description = "The project template to use when creating the project. To see the list of templates available use blade create <-l | --list-templates>",
 		names = {"--template", "-t"}, required = true, validateValueWith = TemplateNameValidator.class
 	)
-	@ParameterPossibleValues(TemplateNameValidator.class)
+	@ParameterPossibleValues(more = TemplateNameValidator.class, value = TemplateNameValidator.class)
 	private String _template;
 
 	@Parameter(

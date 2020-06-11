@@ -26,11 +26,14 @@ import java.util.function.Supplier;
 
 /**
  * @author Christopher Bryan Boyd
+ * @author Simon Jiang
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ParameterPossibleValues {
 
 	Class<? extends Supplier<Collection<String>>> value();
+
+	Class<? extends Supplier<Collection<String>>> more();
 
 }
