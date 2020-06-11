@@ -88,6 +88,8 @@ Private-Package:\
 	\
 	org.apache.http,\
 	org.apache.http.auth,\
+	org.apache.http.client,\
+	org.apache.http.client.credentialsprovider,\
 	org.apache.http.client.config,\
 	org.apache.http.client.entity,\
 	org.apache.http.client.methods,\
