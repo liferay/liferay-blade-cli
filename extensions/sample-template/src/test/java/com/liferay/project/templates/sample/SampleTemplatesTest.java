@@ -92,14 +92,11 @@ public class SampleTemplatesTest {
 
 		_makeWorkspace(workspace);
 
-		String[] args = {
-			"create", "--base", workspace.getAbsolutePath(), "-d", _rootDir.getAbsolutePath(), "-t", "sample",
-			"foo-sample"
-		};
+		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "sample", "foo-sample"};
 
 		_bladeTest.run(args);
 
-		File projectDir = new File(_rootDir, "foo-sample");
+		File projectDir = new File(workspace, "modules/foo-sample");
 
 		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
 
