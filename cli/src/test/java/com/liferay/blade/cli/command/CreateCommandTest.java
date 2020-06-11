@@ -758,7 +758,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, byteArrayInputStream, gradleArgs);
 
-		File project = new File(workspace, "modules/foo");
+		File project = new File(workspace, "wars/foo");
 
 		_checkGradleBuildFiles(project.getAbsolutePath());
 	}

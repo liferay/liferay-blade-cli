@@ -122,11 +122,9 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		Assert.assertTrue(projectDir.mkdirs());
 
-		_checkExists(new File(_workspaceDir, "newproject/foo"));
-
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
-		_checkNotExists(new File(_workspaceDir, "newproject/pom.xml"));
+		_checkExists(new File(_workspaceDir, "newproject/pom.xml"));
 	}
 
 	@Test
@@ -165,14 +163,14 @@ public class InitCommandMavenTest implements MavenExecutor {
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFiles() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "foo", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
 		};
 
 		_checkExists(new File(_workspaceDir, "foo"));
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
-		_checkNotExists(new File(_workspaceDir, "pom.xml"));
+		_checkExists(new File(_workspaceDir, "pom.xml"));
 	}
 
 	@Test
