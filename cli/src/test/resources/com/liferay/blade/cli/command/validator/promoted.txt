@@ -1,0 +1,8 @@
+dxp-7.2-sp1
+dxp-7.1-sp4
+dxp-7.0-sp13
+portal-7.3-ga3
+portal-7.2-ga2
+portal-7.1-ga4
+portal-7.0-ga7
+commerce-2.0.7-7.2
