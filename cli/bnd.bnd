@@ -50,12 +50,12 @@ Private-Package:\
 	org.apache.commons.beanutils.converters,\
 	org.apache.commons.beanutils.expression,\
 	\
-	org.apache.commons.compress.archivers,\
-	org.apache.commons.compress.archivers.tar,\
-	org.apache.commons.compress.archivers.zip,\
-	org.apache.commons.compress.compressors,\
-	org.apache.commons.compress.compressors.gzip,\
-	org.apache.commons.compress.utils,\
+	org.apache.commons.compress.archivers;-split-package:=merge-first,\
+	org.apache.commons.compress.archivers.tar;-split-package:=merge-first,\
+	org.apache.commons.compress.archivers.zip;-split-package:=merge-first,\
+	org.apache.commons.compress.compressors;-split-package:=merge-first,\
+	org.apache.commons.compress.compressors.gzip;-split-package:=merge-first,\
+	org.apache.commons.compress.utils;-split-package:=merge-first,\
 	\
 	org.apache.commons.configuration2,\
 	org.apache.commons.configuration2.beanutils,\
@@ -78,46 +78,46 @@ Private-Package:\
 	org.apache.commons.lang3.exception,\
 	org.apache.commons.lang3.text,\
 	\
-	org.apache.commons.logging,\
-	org.apache.commons.logging.impl,\
+	org.apache.commons.logging;-split-package:=merge-first,\
+	org.apache.commons.logging.impl;-split-package:=merge-first,\
 	\
 	org.apache.commons.text,\
 	org.apache.commons.text.lookup,\
 	org.apache.commons.text.matcher,\
 	org.apache.commons.text.translate,\
 	\
-	org.apache.http,\
-	org.apache.http.auth,\
-	org.apache.http.client,\
-	org.apache.http.client.credentialsprovider,\
-	org.apache.http.client.config,\
-	org.apache.http.client.entity,\
-	org.apache.http.client.methods,\
-	org.apache.http.client.protocol,\
-	org.apache.http.client.utils,\
-	org.apache.http.cookie,\
-	org.apache.http.concurrent,\
-	org.apache.http.config,\
-	org.apache.http.conn,\
-	org.apache.http.conn.routing,\
-	org.apache.http.conn.socket,\
-	org.apache.http.conn.ssl,\
-	org.apache.http.conn.util,\
-	org.apache.http.entity,\
-	org.apache.http.impl,\
-	org.apache.http.impl.auth,\
-	org.apache.http.impl.client,\
-	org.apache.http.impl.cookie,\
-	org.apache.http.impl.conn,\
-	org.apache.http.impl.entity,\
-	org.apache.http.impl.execchain,\
-	org.apache.http.impl.io,\
-	org.apache.http.io,\
-	org.apache.http.message,\
-	org.apache.http.params,\
-	org.apache.http.pool,\
-	org.apache.http.protocol,\
-	org.apache.http.util,\
+	org.apache.http;-split-package:=merge-first,\
+	org.apache.http.auth;-split-package:=merge-first,\
+	org.apache.http.client;-split-package:=merge-first,\
+	org.apache.http.client.credentialsprovider;-split-package:=merge-first,\
+	org.apache.http.client.config;-split-package:=merge-first,\
+	org.apache.http.client.entity;-split-package:=merge-first,\
+	org.apache.http.client.methods;-split-package:=merge-first,\
+	org.apache.http.client.protocol;-split-package:=merge-first,\
+	org.apache.http.client.utils;-split-package:=merge-first,\
+	org.apache.http.cookie;-split-package:=merge-first,\
+	org.apache.http.concurrent;-split-package:=merge-first,\
+	org.apache.http.config;-split-package:=merge-first,\
+	org.apache.http.conn;-split-package:=merge-first,\
+	org.apache.http.conn.routing;-split-package:=merge-first,\
+	org.apache.http.conn.socket;-split-package:=merge-first,\
+	org.apache.http.conn.ssl;-split-package:=merge-first,\
+	org.apache.http.conn.util;-split-package:=merge-first,\
+	org.apache.http.entity;-split-package:=merge-first,\
+	org.apache.http.impl;-split-package:=merge-first,\
+	org.apache.http.impl.auth;-split-package:=merge-first,\
+	org.apache.http.impl.client;-split-package:=merge-first,\
+	org.apache.http.impl.cookie;-split-package:=merge-first,\
+	org.apache.http.impl.conn;-split-package:=merge-first,\
+	org.apache.http.impl.entity;-split-package:=merge-first,\
+	org.apache.http.impl.execchain;-split-package:=merge-first,\
+	org.apache.http.impl.io;-split-package:=merge-first,\
+	org.apache.http.io;-split-package:=merge-first,\
+	org.apache.http.message;-split-package:=merge-first,\
+	org.apache.http.params;-split-package:=merge-first,\
+	org.apache.http.pool;-split-package:=merge-first,\
+	org.apache.http.protocol;-split-package:=merge-first,\
+	org.apache.http.util;-split-package:=merge-first,\
 	\
 	org.gradle;-split-package:=merge-first,\
 	org.gradle.api;-split-package:=merge-first,\
