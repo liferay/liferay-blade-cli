@@ -734,7 +734,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		File projectDir = new File(workspace, "wars/springtest");
+		File projectDir = new File(workspace, "modules/springtest");
 
 		String projectPath = projectDir.getAbsolutePath();
 
@@ -758,7 +758,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, byteArrayInputStream, gradleArgs);
 
-		File project = new File(workspace, "wars/foo");
+		File project = new File(workspace, "modules/foo");
 
 		_checkGradleBuildFiles(project.getAbsolutePath());
 	}
@@ -803,7 +803,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		File projectDir = new File(workspace, "wars/theme-test");
+		File projectDir = new File(workspace, "themes/theme-test");
 
 		String projectPath = projectDir.getAbsolutePath();
 
@@ -1566,7 +1566,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		File projectDir = new File(workspace, "wars/theme-test");
+		File projectDir = new File(workspace, "themes/theme-test");
 
 		String projectPath = projectDir.getAbsolutePath();
 
@@ -1758,7 +1758,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		File projectDir = new File(workspace, "wars/" + projectName);
+		File projectDir = new File(workspace, "modules/" + projectName);
 
 		_checkFileExists(projectDir.getAbsolutePath());
 	}
