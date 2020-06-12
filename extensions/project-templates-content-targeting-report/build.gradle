@@ -16,6 +16,7 @@ buildscript {
 }
 
 apply plugin: "biz.aQute.bnd.builder"
+apply plugin: "eclipse"
 apply plugin: "java"
 apply plugin: "maven-publish"
 
@@ -23,6 +24,16 @@ dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.16"
 	compileOnly group: "org.apache.maven.archetype", name: "archetype-common", version: "2.4"
 	compileOnly project(":cli")
+}
+
+eclipse {
+	classpath {
+		file {
+			whenMerged {
+				entries.removeAll { it.kind == 'src' && it.path == 'src/main/resources' }
+			}
+		}
+	}
 }
 
 jar.baseName = "com.liferay.project.templates.content.targeting.report"
