@@ -20,8 +20,8 @@ import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.gogo.shell.client.GogoShellClient;
 
 import java.util.Collections;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Gregory Amerson
@@ -44,7 +44,12 @@ public class ShellCommand extends BaseCommand<ShellArgs> {
 			return;
 		}
 
-		String gogoCommand = StringUtils.join(shellArgs.getArgs(), " ");
+		List<String> args = shellArgs.getArgs();
+
+		String gogoCommand = args.stream(
+		).collect(
+			Collectors.joining(" ")
+		);
 
 		_executeCommand(gogoCommand, host, port);
 	}

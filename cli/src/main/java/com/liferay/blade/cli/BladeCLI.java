@@ -829,11 +829,9 @@ public class BladeCLI {
 		}
 	}
 
-	private Map<String, String> _buildPossibleValuesMap(
-		Class<? extends Supplier<Collection<String>>> supplierValidator) {
-
+	private Map<String, String> _buildPossibleValuesMap(Class<? extends Supplier<List<String>>> supplierValidator) {
 		try {
-			Supplier<Collection<String>> instance = supplierValidator.newInstance();
+			Supplier<List<String>> instance = supplierValidator.newInstance();
 
 			Collection<String> options = instance.get();
 
@@ -946,7 +944,7 @@ public class BladeCLI {
 		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
 
 		if (possibleValuesAnnotation != null) {
-			Class<? extends Supplier<Collection<String>>> possibleValuesSupplier = possibleValuesAnnotation.value();
+			Class<? extends Supplier<List<String>>> possibleValuesSupplier = possibleValuesAnnotation.value();
 
 			if (possibleValuesSupplier != null) {
 				possibleValuesMap = _buildPossibleValuesMap(possibleValuesSupplier);
@@ -964,7 +962,7 @@ public class BladeCLI {
 		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
 
 		if (possibleValuesAnnotation != null) {
-			Class<? extends Supplier<Collection<String>>> possibleValuesSupplier = possibleValuesAnnotation.more();
+			Class<? extends Supplier<List<String>>> possibleValuesSupplier = possibleValuesAnnotation.more();
 
 			if (possibleValuesSupplier != null) {
 				possibleValuesMap = _buildPossibleValuesMap(possibleValuesSupplier);

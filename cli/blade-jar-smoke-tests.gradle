@@ -25,36 +25,31 @@ smokeTests.dependsOn testBladeTasks
 
 ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
+File initDir = new File(buildDir, "initTest")
 
 testBladeCreateCommandFormField {
 	dependsOn testBladeInitCommand
 
-	File initDir = new File(buildDir, "initTest")
-
-	initDir.mkdirs()
-
-	args = [jar.archivePath, "create", "-t", "form-field", "test-form-field", "-v", "7.2"]
+	args = [jar.archivePath, "create", "-t", "form-field", "test-form-field"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = initDir
 
 	doLast {
+		String error = errorStream.toString().toLowerCase()
 		File projectDir = new File(initDir, "modules/test-form-field")
-
-		assert projectDir.exists()
-		assert !errorStream.toString().toLowerCase().contains("error")
+		boolean projectDirExists = projectDir.exists()
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert projectDirExists
+		assert !error.contains("error")
 	}
 }
 
 testBladeCreateCommandJsTheme {
 	dependsOn testBladeInitCommand
-
-	File initDir = new File(buildDir, "initTest")
-
-	initDir.mkdirs()
 
 	args = [jar.archivePath, "create", "-t", "js-theme", "test-js-theme"]
 	errorOutput = errorStream
@@ -62,13 +57,15 @@ testBladeCreateCommandJsTheme {
 	workingDir = initDir
 
 	doLast {
+		String error = errorStream.toString().toLowerCase()
 		File projectDir = new File(initDir, "themes/test-js-theme")
-
-		assert projectDir.exists()
-		assert !errorStream.toString().toLowerCase().contains("error")
+		boolean projectDirExists = projectDir.exists()
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert projectDirExists
+		assert !error.contains("error")
 	}
 }
 
@@ -78,22 +75,21 @@ testBladeCreateCommandListTemplates {
 	standardOutput = standardStream
 
 	doLast {
-		assert standardStream.toString().contains("js-theme")
-		assert standardStream.toString().contains("js-widget")
-		assert standardStream.toString().contains("service-builder")
-		assert !errorStream.toString().toLowerCase().contains("error")
+		String error = errorStream.toString().toLowerCase()
+		String output = standardStream.toString().toLowerCase()
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert !error.contains("error")
+		assert output.contains("js-theme")
+		assert output.contains("js-widget")
+		assert output.contains("service-builder")
 	}
 }
 
 testBladeCreateCommandMvcPortlet {
 	dependsOn testBladeInitCommand
-
-	File initDir = new File(buildDir, "initTest")
-
-	initDir.mkdirs()
 
 	args = [jar.archivePath, "create", "-t", "mvc-portlet", "test-mvc-portlet"]
 	errorOutput = errorStream
@@ -101,13 +97,15 @@ testBladeCreateCommandMvcPortlet {
 	workingDir = initDir
 
 	doLast {
+		String error = errorStream.toString().toLowerCase()
 		File projectDir = new File(initDir, "modules/test-mvc-portlet")
-
-		assert projectDir.exists()
-		assert !errorStream.toString().toLowerCase().contains("error")
+		boolean projectDirExists = projectDir.exists()
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert projectDirExists
+		assert !error.contains("error")
 	}
 }
 
@@ -117,11 +115,14 @@ testBladeGwCommand {
 	standardOutput = standardStream
 
 	doLast{
-		assert standardStream.toString().contains(gradle.gradleVersion)
-		assert !errorStream.toString().toLowerCase().contains("error")
+		String output = standardStream.toString()
+		String error = errorStream.toString().toLowerCase()
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert output.contains(gradle.gradleVersion)
+		assert !error.contains("error")
 	}
 }
 
@@ -131,18 +132,21 @@ testBladeHelpCommand {
 	standardOutput = standardStream
 
 	doLast{
-		assert standardStream.toString().contains("init")
-		assert !errorStream.toString().toLowerCase().contains("error")
+		String output = standardStream.toString()
+		String error = errorStream.toString().toLowerCase()
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert output.contains("init")
+		assert !error.contains("error")
 	}
 }
 
 testBladeInitCommand {
-	File initDir = new File(buildDir, "initTest")
-
-	initDir.mkdirs()
+	doFirst {
+		initDir.mkdirs()
+	}
 
 	args = [jar.archivePath, "init", "-v", "dxp-7.2-ga1"]
 	errorOutput = errorStream
@@ -150,34 +154,36 @@ testBladeInitCommand {
 	workingDir = initDir
 
 	doLast{
-		assert !errorStream.toString().toLowerCase().contains("error")
+		String error = errorStream.toString().toLowerCase()
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert !error.contains("error")
 	}
 }
 
 testBladeInitCommandLegacy {
-	File initDir = new File(buildDir, "initTestLegacy")
+	File initDirLegacy = new File(buildDir, "initTestLegacy")
 
-	initDir.mkdirs()
+	initDirLegacy.mkdirs()
 
-	args = [jar.archivePath, 'init', "hello world", "-v", "7.2"]
+	args = [jar.archivePath, 'init', "-v", "7.2"]
 	errorOutput = errorStream
 	standardOutput = standardStream
-	workingDir = initDir
+	workingDir = initDirLegacy
 
 	doLast{
-		File initProjectDir = new File(initDir, "hello world")
-
-		assert initProjectDir.exists()
-		assert !errorStream.toString().toLowerCase().contains("error")
-		assert new File(initProjectDir, "gradle.properties").text.contains("portal-7.2-ga2")
-
-		delete initDir
+		String error = errorStream.toString().toLowerCase()
+		boolean projectDirExists = initDirLegacy.exists()
+		boolean containsText = new File(initDirLegacy, "gradle.properties").text.contains("portal-7.2-ga2")
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert projectDirExists
+		assert !error.contains("error")
+		assert containsText
 	}
 }
 
@@ -188,11 +194,13 @@ testBladeReturnCodeFailure {
 	standardOutput = standardStream
 
 	doLast {
-		assert execResult.getExitValue() > 0
-		assert errorStream.toString().toLowerCase().contains("foo")
+		String error = errorStream.toString().toLowerCase()
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert execResult.getExitValue() > 0
+		assert error.contains("foo")
 	}
 }
 
@@ -202,11 +210,14 @@ testBladeSamplesCommand {
 	errorOutput = errorStream
 
 	doLast{
-		assert standardStream.toString().contains("jsp-portlet")
-		assert !errorStream.toString().toLowerCase().contains("error")
+		String output = standardStream.toString()
+		String error = errorStream.toString().toLowerCase()
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert output.contains("jsp-portlet")
+		assert !error.contains("error")
 	}
 }
 
@@ -216,11 +227,14 @@ testBladeVersionCommand {
 	errorOutput = errorStream
 
 	doLast{
+		String output = standardStream.toString()
+		String error = errorStream.toString().toLowerCase()
 		String projectVersion = project.version.replaceFirst("-", ".")
-		assert !errorStream.toString().toLowerCase().contains("error")
-		assert standardStream.toString().contains(projectVersion)
 
 		errorStream.reset()
 		standardStream.reset()
+
+		assert !error.contains("error")
+		assert output.contains(projectVersion)
 	}
 }

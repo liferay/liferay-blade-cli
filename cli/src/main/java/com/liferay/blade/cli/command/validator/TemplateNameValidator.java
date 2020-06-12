@@ -23,6 +23,7 @@ import com.liferay.blade.cli.util.BladeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -31,7 +32,7 @@ import java.util.Objects;
 public class TemplateNameValidator implements ValidatorSupplier {
 
 	@Override
-	public Collection<String> get() {
+	public List<String> get() {
 		try {
 			return new ArrayList<>(BladeUtil.getTemplateNames(BladeCLI.instance));
 		}
