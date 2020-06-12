@@ -16,52 +16,40 @@
 
 package com.liferay.blade.cli.command.validator;
 
-import com.beust.jcommander.ParameterException;
-
-import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductInfo;
-
-import java.util.Collection;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  * @author Simon Jiang
  */
-public class LiferayDefaultVersionValidator implements ValidatorSupplier {
+public class LiferayDefaultVersionValidator extends LiferayMoreVersionValidator {
 
 	@Override
-	public Collection<String> get() {
-		Map<String, ProductInfo> productInfoMap = BladeUtil.getProductInfo();
+	public List<String> get() {
+		List<String> more = super.get();
 
-		List<String> possibleLiferayProducts = new CopyOnWriteArrayList<>();
-
-		possibleLiferayProducts.addAll(WorkspaceConstants.originalLiferayVersions);
-
-		productInfoMap.forEach(
-			(productKey, productInfo) -> {
-				if (!BladeUtil.isEmpty(productInfo.getTargetPlatformVersion()) && productInfo.isInitialVersion()) {
-					possibleLiferayProducts.add(productKey);
-				}
-			});
-
-		Collections.sort(possibleLiferayProducts);
-
-		return possibleLiferayProducts;
+		return more.stream(
+		).filter(
+			_promoted::contains
+		).collect(
+			Collectors.toList()
+		);
 	}
 
-	@Override
-	public void validate(String name, String value) throws ParameterException {
-		Collection<String> possibleValues = get();
+	private static final List<String> _promoted = new ArrayList<>();
 
-		if (!possibleValues.contains(value)) {
-			throw new ParameterException(name + " is not a valid value.");
-		}
+	{
+		_promoted.add("dxp-7.2-sp1");
+		_promoted.add("dxp-7.1-sp4");
+		_promoted.add("dxp-7.0-sp13");
+		_promoted.add("portal-7.3-ga3");
+		_promoted.add("portal-7.2-ga2");
+		_promoted.add("portal-7.1-ga4");
+		_promoted.add("portal-7.0-ga7");
+		_promoted.add("commerce-2.0.7-7.2");
 	}
 
 }
