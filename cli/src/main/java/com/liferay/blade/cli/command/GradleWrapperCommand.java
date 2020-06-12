@@ -19,9 +19,8 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.gradle.GradleExec;
 
-import java.io.File;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author David Truong
@@ -34,17 +33,22 @@ public class GradleWrapperCommand extends BaseCommand<GradleWrapperArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		String gradleCommand = StringUtils.join(getArgs().getArgs(), " ");
+		GradleWrapperArgs gradleWrapperArgs = getArgs();
+
+		List<String> args = gradleWrapperArgs.getArgs();
+
+		String gradleCommand = args.stream(
+		).collect(
+			Collectors.joining(" ")
+		);
 
 		BladeCLI bladeCLI = getBladeCLI();
 
 		GradleExec gradleExec = new GradleExec(bladeCLI);
 
-		BaseArgs args = bladeCLI.getArgs();
+		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File baseDir = args.getBase();
-
-		gradleExec.executeTask(gradleCommand, baseDir, false);
+		gradleExec.executeTask(gradleCommand, baseArgs.getBase(), false);
 	}
 
 	@Override

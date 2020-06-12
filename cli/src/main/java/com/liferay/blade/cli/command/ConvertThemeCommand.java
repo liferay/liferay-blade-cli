@@ -33,9 +33,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
+import java.util.stream.Collectors;
 
 /**
  * @author David Truong
@@ -129,7 +127,11 @@ public class ConvertThemeCommand implements FilesSupport {
 							"\"\n");
 
 					_bladeCLI.out("Currently available themes:");
-					_bladeCLI.out(WordUtils.wrap(StringUtils.join(themes, ", "), 80));
+					_bladeCLI.out(
+						themes.stream(
+						).collect(
+							Collectors.joining(System.lineSeparator())
+						));
 				}
 				else {
 					_bladeCLI.out("Good news! All your themes have already been migrated to " + _themesDir);
