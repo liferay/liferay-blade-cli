@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -32,8 +32,8 @@ import java.util.function.Supplier;
 @Target(ElementType.FIELD)
 public @interface ParameterPossibleValues {
 
-	Class<? extends Supplier<Collection<String>>> value();
+	Class<? extends Supplier<List<String>>> value();
 
-	Class<? extends Supplier<Collection<String>>> more();
+	Class<? extends Supplier<List<String>>> more();
 
 }

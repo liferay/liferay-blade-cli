@@ -18,11 +18,11 @@ package com.liferay.blade.cli.command.validator;
 
 import com.beust.jcommander.IValueValidator;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
  * @author Christopher Bryan Boyd
  */
-public interface ValidatorSupplier extends IValueValidator<String>, Supplier<Collection<String>> {
+public interface ValidatorSupplier extends IValueValidator<String>, Supplier<List<String>> {
 }
