@@ -116,15 +116,15 @@ public class DeployCommandTest {
 
 		Assert.assertEquals(0, filesCount);
 
-		File warsDirectory = new File(workspaceDir, "wars");
+		File modulesDirectory = new File(workspaceDir, "modules");
 
-		Assert.assertTrue(warsDirectory.exists());
+		Assert.assertTrue(modulesDirectory.exists());
 
-		args = new String[] {"--base", warsDirectory.getAbsolutePath(), "create", "-t", "war-mvc-portlet", "foo"};
+		args = new String[] {"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "war-mvc-portlet", "foo"};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
-		File projectDirectory = new File(warsDirectory, "foo");
+		File projectDirectory = new File(modulesDirectory, "foo");
 
 		Assert.assertTrue(projectDirectory.exists());
 
