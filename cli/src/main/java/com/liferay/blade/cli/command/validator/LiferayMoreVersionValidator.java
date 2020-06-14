@@ -23,6 +23,7 @@ import com.beust.jcommander.ParameterException;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,17 +53,41 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 			else if (a.startsWith("commerce") && !b.startsWith("commerce")) {
 				return 1;
 			}
+			else if (!StringUtil.equals(_getProductMainVersion(a), _getProductMainVersion(b))) {
+				Version aProductMainVerson = Version.parseVersion(_getProductMainVersion(a));
+				Version bProductMainVerson = Version.parseVersion(_getProductMainVersion(b));
+
+				return -1 * aProductMainVerson.compareTo(bProductMainVerson);
+			}
 			else {
-				Matcher aMatcher = _versionPattern.matcher(a.substring(a.indexOf('-') + 1));
-				Matcher bMatcher = _versionPattern.matcher(b.substring(b.indexOf('-') + 1));
+				String aProductMicroVersion = _getProductMicroVersion(a);
+				String bProductMicroVersion = _getProductMicroVersion(b);
 
-				aMatcher.find();
-				bMatcher.find();
+				if (BladeUtil.isEmpty(aProductMicroVersion)) {
+					return 1;
+				}
+				else if (BladeUtil.isEmpty(bProductMicroVersion)) {
+					return -1;
+				}
+				else if (Version.isVersion(aProductMicroVersion) && Version.isVersion(bProductMicroVersion)) {
+					Version aMicroVersion = Version.parseVersion(aProductMicroVersion);
+					Version bMicroVersion = Version.parseVersion(bProductMicroVersion);
 
-				Version versionA = new Version(aMatcher.group(1));
-				Version versionB = new Version(bMatcher.group(1));
+					return -1 * aMicroVersion.compareTo(bMicroVersion);
+				}
+				else {
+					String aMicroVersionPrefix = aProductMicroVersion.substring(0, 2);
+					String bMicroVersionPrefix = bProductMicroVersion.substring(0, 2);
 
-				return -1 * versionA.compareTo(versionB);
+					if (!aMicroVersionPrefix.equalsIgnoreCase(bMicroVersionPrefix)) {
+						return -1 * aMicroVersionPrefix.compareTo(bMicroVersionPrefix);
+					}
+
+					String aMicroVersionString = aProductMicroVersion.substring(2);
+					String bMicroVersionString = bProductMicroVersion.substring(2);
+
+					return Integer.parseInt(bMicroVersionString) - Integer.parseInt(aMicroVersionString);
+				}
 			}
 		};
 	}
@@ -98,6 +123,26 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 		if (!possibleValues.contains(value)) {
 			throw new ParameterException(name + " is not a valid value.");
 		}
+	}
+
+	private String _getProductMainVersion(String productKey) {
+		Matcher aMatcher = _versionPattern.matcher(productKey.substring(productKey.indexOf('-') + 1));
+
+		if (aMatcher.find()) {
+			return aMatcher.group(1);
+		}
+
+		return "";
+	}
+
+	private String _getProductMicroVersion(String productKey) {
+		String[] prodcutKeyArrays = StringUtil.split(productKey, "-");
+
+		if (prodcutKeyArrays.length > 2) {
+			return prodcutKeyArrays[2];
+		}
+
+		return null;
 	}
 
 	private static final Pattern _versionPattern = Pattern.compile("([0-9\\.]+).*");

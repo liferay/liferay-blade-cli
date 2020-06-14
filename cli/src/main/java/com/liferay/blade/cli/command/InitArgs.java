@@ -81,6 +81,18 @@ public class InitArgs extends BaseArgs {
 	private boolean _force;
 
 	@Parameter(
+		description = "Show promoted workspace product list.",
+		names = {"-l", "--list"}
+	)
+	private boolean _list;
+	
+	@Parameter(
+		description = "Show promoted workspace product list.",
+		names = {"-", "--list-all"}
+	)
+	private boolean _listAll;
+	
+	@Parameter(
 		description = "The version of Liferay to target for this workspace. Specifying \"more\" will show entire list of possible values.",
 		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayMoreVersionValidator.class
 	)

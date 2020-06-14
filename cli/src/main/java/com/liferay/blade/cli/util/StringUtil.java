@@ -26,6 +26,14 @@ import java.util.Optional;
  */
 public class StringUtil {
 
+	public static boolean equals(String s1, Object o) {
+		if ((s1 == null) || (o == null)) {
+			return false;
+		}
+
+		return s1.equals(o.toString());
+	}
+
 	public static boolean isNullOrEmpty(String arg) {
 		boolean hasContent = Optional.of(
 			arg
