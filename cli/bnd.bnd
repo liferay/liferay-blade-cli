@@ -89,7 +89,6 @@ Private-Package:\
 	org.apache.http;-split-package:=merge-first,\
 	org.apache.http.auth;-split-package:=merge-first,\
 	org.apache.http.client;-split-package:=merge-first,\
-	org.apache.http.client.credentialsprovider;-split-package:=merge-first,\
 	org.apache.http.client.config;-split-package:=merge-first,\
 	org.apache.http.client.entity;-split-package:=merge-first,\
 	org.apache.http.client.methods;-split-package:=merge-first,\

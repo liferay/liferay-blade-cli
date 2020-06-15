@@ -23,6 +23,7 @@ import com.google.gson.stream.JsonReader;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.command.SamplesCommand;
+import com.liferay.blade.cli.command.validator.WorkspaceProductComparator;
 import com.liferay.portal.tools.bundle.support.commands.DownloadCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
@@ -60,6 +61,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -314,6 +316,27 @@ public class BladeUtil {
 		templatesFiles.add(extensionTemplates.toFile());
 
 		return ProjectTemplates.getTemplates(templatesFiles);
+	}
+
+	public static List<String> getWorkspaceProductKey() {
+		Map<String, ProductInfo> productInfoMap = getProductInfo();
+
+		Set<Map.Entry<String, ProductInfo>> entries = productInfoMap.entrySet();
+
+		return entries.stream(
+		).filter(
+			entry -> {
+				ProductInfo productInfo = entry.getValue();
+
+				return productInfo.getTargetPlatformVersion() != null;
+			}
+		).map(
+			Map.Entry::getKey
+		).sorted(
+			new WorkspaceProductComparator()
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	public static boolean hasGradleWrapper(File dir) {
