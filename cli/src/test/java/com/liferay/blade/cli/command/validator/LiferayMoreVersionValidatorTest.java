@@ -72,11 +72,9 @@ public class LiferayMoreVersionValidatorTest {
 			}
 		}
 
-		LiferayMoreVersionValidator lmvv = new LiferayMoreVersionValidator();
-
 		List<String> sorted = randomLines.stream(
 		).sorted(
-			lmvv.comparator()
+			new WorkspaceProductComparator()
 		).collect(
 			Collectors.toList()
 		);

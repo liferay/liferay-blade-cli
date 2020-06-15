@@ -652,9 +652,11 @@ public class BladeCLI {
 	private static void _addCommand(Map<String, BaseCommand<?>> map, BaseCommand<?> baseCommand)
 		throws IllegalAccessException, InstantiationException {
 
-		String[] commandNames = _getCommandNames(baseCommand);
-
-		map.putIfAbsent(commandNames[0], baseCommand);
+		Arrays.stream(
+			_getCommandNames(baseCommand)
+		).forEach(
+			commandName -> map.putIfAbsent(commandName, baseCommand)
+		);
 	}
 
 	private static JCommander _buildJCommanderWithCommandMap(Map<String, BaseCommand<? extends BaseArgs>> commandMap) {

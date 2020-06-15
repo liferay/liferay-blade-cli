@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package com.liferay.blade.cli.command.validator;
+package com.liferay.blade.cli.command;
 
-import com.beust.jcommander.ParameterException;
-
-import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Simon Jiang
  */
-public class LiferayMoreVersionValidator implements ValidatorSupplier {
+public class ListWorkspaceProductAllCommand extends BaseCommand<ListWorkspaceProductAllArgs> {
 
 	@Override
-	public List<String> get() {
-		return BladeUtil.getWorkspaceProductKeys();
+	public void execute() throws Exception {
+		_printAllWorkspaceProducts();
 	}
 
 	@Override
-	public void validate(String name, String value) throws ParameterException {
-		List<String> possibleValues = new ArrayList<>(get());
+	public Class<ListWorkspaceProductAllArgs> getArgsClass() {
+		return ListWorkspaceProductAllArgs.class;
+	}
 
-		possibleValues.addAll(WorkspaceConstants.originalLiferayVersions);
+	private void _printAllWorkspaceProducts() throws Exception {
+		BladeCLI bladeCLI = getBladeCLI();
 
-		if (!possibleValues.contains(value)) {
-			throw new ParameterException(name + " is not a valid value.");
+		List<String> workspaceProductKeys = BladeUtil.getWorkspaceProductKeys();
+
+		for (String productKey : workspaceProductKeys) {
+			bladeCLI.out(productKey);
 		}
 	}
 
