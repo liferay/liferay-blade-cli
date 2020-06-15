@@ -31,7 +31,7 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 
 	@Override
 	public List<String> get() {
-		return BladeUtil.getWorkspaceProductKey();
+		return BladeUtil.getWorkspaceProductKeys();
 	}
 
 	@Override

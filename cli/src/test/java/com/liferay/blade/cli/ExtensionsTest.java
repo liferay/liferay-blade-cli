@@ -27,9 +27,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -117,9 +119,16 @@ public class ExtensionsTest {
 		try (Extensions extensions = new Extensions(classLoader)) {
 			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
-			Assert.assertNotNull(commands);
+			List<BaseCommand<? extends BaseArgs>> values = commands.values(
+			).stream(
+			).distinct(
+			).collect(
+				Collectors.toList()
+			);
 
-			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT, commands.size());
+			Assert.assertNotNull(values);
+
+			Assert.assertEquals(values.toString(), _BUILT_IN_COMMANDS_COUNT, values.size());
 		}
 	}
 
@@ -132,9 +141,16 @@ public class ExtensionsTest {
 		try (Extensions extensions = new Extensions(classLoader)) {
 			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
 
-			Assert.assertNotNull(commands);
+			List<BaseCommand<? extends BaseArgs>> values = commands.values(
+			).stream(
+			).distinct(
+			).collect(
+				Collectors.toList()
+			);
 
-			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 1, commands.size());
+			Assert.assertNotNull(values);
+
+			Assert.assertEquals(values.toString(), _BUILT_IN_COMMANDS_COUNT + 1, values.size());
 		}
 	}
 
@@ -159,9 +175,16 @@ public class ExtensionsTest {
 		try (Extensions extensions = new Extensions(classLoader)) {
 			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands("foo");
 
-			Assert.assertNotNull(commands);
+			List<BaseCommand<? extends BaseArgs>> values = commands.values(
+			).stream(
+			).distinct(
+			).collect(
+				Collectors.toList()
+			);
 
-			Assert.assertEquals(commands.toString(), _BUILT_IN_COMMANDS_COUNT + 2, commands.size());
+			Assert.assertNotNull(values);
+
+			Assert.assertEquals(values.toString(), _BUILT_IN_COMMANDS_COUNT + 2, values.size());
 		}
 	}
 

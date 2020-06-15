@@ -318,7 +318,7 @@ public class BladeUtil {
 		return ProjectTemplates.getTemplates(templatesFiles);
 	}
 
-	public static List<String> getWorkspaceProductKey() {
+	public static List<String> getWorkspaceProductKeys() {
 		Map<String, ProductInfo> productInfoMap = getProductInfo();
 
 		Set<Map.Entry<String, ProductInfo>> entries = productInfoMap.entrySet();

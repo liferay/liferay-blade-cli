@@ -21,7 +21,10 @@ import com.beust.jcommander.Parameters;
 /**
  * @author Simon Jiang
  */
-@Parameters(commandDescription = "List promoted workspace prodcut.", commandNames = "init -l", hidden = true)
+@Parameters(
+	commandDescription = "List Liferay products that can be targeted during initial workspace creation..",
+	commandNames = {"init -l", "init --list"}
+)
 public class ListWorkspaceProductArgs extends BaseArgs {
 
 	public CommandType getCommandType() {

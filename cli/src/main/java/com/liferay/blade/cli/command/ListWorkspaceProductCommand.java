@@ -19,8 +19,6 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
 
-import java.io.PrintStream;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +30,7 @@ public class ListWorkspaceProductCommand extends BaseCommand<ListWorkspaceProduc
 
 	@Override
 	public void execute() throws Exception {
-		printPromotedWorkspaceProducts();
+		_printPromotedWorkspaceProducts();
 	}
 
 	@Override
@@ -40,22 +38,20 @@ public class ListWorkspaceProductCommand extends BaseCommand<ListWorkspaceProduc
 		return ListWorkspaceProductArgs.class;
 	}
 
-	protected void printPromotedWorkspaceProducts() throws Exception {
+	private void _printPromotedWorkspaceProducts() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		List<String> workspaceProductKeys = BladeUtil.getWorkspaceProductKey();
+		List<String> workspaceProductKeys = BladeUtil.getWorkspaceProductKeys();
 
-		List<String> defaultProductKeys = workspaceProductKeys.stream(
+		List<String> promotedProductKeys = workspaceProductKeys.stream(
 		).filter(
 			_promoted::contains
 		).collect(
 			Collectors.toList()
 		);
 
-		for (String productKey : defaultProductKeys) {
-			PrintStream out = bladeCLI.out();
-
-			out.println(productKey);
+		for (String productKey : promotedProductKeys) {
+			bladeCLI.out(productKey);
 		}
 	}
 

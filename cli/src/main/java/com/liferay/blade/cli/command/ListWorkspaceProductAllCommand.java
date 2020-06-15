@@ -19,14 +19,12 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.util.BladeUtil;
 
-import java.io.PrintStream;
-
 import java.util.List;
 
 /**
  * @author Simon Jiang
  */
-public class ListAllWorkspaceProductCommand<T> extends BaseCommand<ListAllWorkspaceProductArgs> {
+public class ListWorkspaceProductAllCommand extends BaseCommand<ListWorkspaceProductAllArgs> {
 
 	@Override
 	public void execute() throws Exception {
@@ -34,19 +32,17 @@ public class ListAllWorkspaceProductCommand<T> extends BaseCommand<ListAllWorksp
 	}
 
 	@Override
-	public Class<ListAllWorkspaceProductArgs> getArgsClass() {
-		return ListAllWorkspaceProductArgs.class;
+	public Class<ListWorkspaceProductAllArgs> getArgsClass() {
+		return ListWorkspaceProductAllArgs.class;
 	}
 
 	private void _printAllWorkspaceProducts() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		List<String> workspaceProductKeys = BladeUtil.getWorkspaceProductKey();
+		List<String> workspaceProductKeys = BladeUtil.getWorkspaceProductKeys();
 
 		for (String productKey : workspaceProductKeys) {
-			PrintStream out = bladeCLI.out();
-
-			out.println(productKey);
+			bladeCLI.out(productKey);
 		}
 	}
 
