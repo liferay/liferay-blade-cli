@@ -803,7 +803,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		File projectDir = new File(workspace, "themes/theme-test");
+		File projectDir = new File(workspace, "modules/theme-test");
 
 		String projectPath = projectDir.getAbsolutePath();
 
@@ -887,6 +887,31 @@ public class CreateCommandTest {
 		_makeWorkspace(workspace);
 
 		_testCreateWar(workspace, "war-mvc-portlet", "war-portlet-test");
+	}
+
+	@Test
+	public void testCreateWarMVCPortletLegacyProperty() throws Exception {
+		String projectName = "war-portlet-legacy-test";
+
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		File gradleProperties = new File(workspace, "gradle.properties");
+
+		Assert.assertTrue(gradleProperties.exists());
+
+		String configLine = System.lineSeparator() + "liferay.workspace.wars.dir=wars";
+
+		Files.write(gradleProperties.toPath(), configLine.getBytes(), StandardOpenOption.APPEND);
+
+		String[] args = {"--base", workspace.getAbsolutePath(), "create", "-t", "war-mvc-portlet", projectName};
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		File projectDir = new File(workspace, "wars/" + projectName);
+
+		_checkFileExists(projectDir.getAbsolutePath());
 	}
 
 	@Test
@@ -1566,7 +1591,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		File projectDir = new File(workspace, "themes/theme-test");
+		File projectDir = new File(workspace, "modules/theme-test");
 
 		String projectPath = projectDir.getAbsolutePath();
 
@@ -1743,6 +1768,22 @@ public class CreateCommandTest {
 		File gradlewFile = new File(workspace, "gradlew");
 
 		_checkFileExists(gradlewFile.getAbsolutePath());
+
+		_addDefaultModulesDir(workspace);
+	}
+
+	private void _addDefaultModulesDir(File workspace) throws Exception {
+		File gradleProperties = new File(
+				workspace, "gradle.properties");
+
+	  		Assert.assertTrue(gradleProperties.exists());
+
+	  		String configLine =
+	 			System.lineSeparator() + "liferay.workspace.modules.dir=modules";
+
+	  		Files.write(
+	 			gradleProperties.toPath(), configLine.getBytes(),
+	 			StandardOpenOption.APPEND);
 	}
 
 	private void _makeWorkspaceVersion(File workspace, String version) throws Exception {
@@ -1751,6 +1792,7 @@ public class CreateCommandTest {
 		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", version};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
+		_addDefaultModulesDir(workspace);
 	}
 
 	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {
