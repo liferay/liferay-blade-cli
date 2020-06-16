@@ -95,6 +95,18 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File argsDir = createArgs.getDir();
 
+		boolean isDefaultModulesDirSet = false;
+		boolean isLegacyDefaultWarsDirSet = false;
+
+		if (profileName.equals("gradle")) {
+			Properties properties = getWorkspaceProperties();
+
+			String defaultModulesDir = (String)properties.get(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
+			String legacyDefaultWarsDir = (String)properties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
+
+			isDefaultModulesDirSet = defaultModulesDir != null && !defaultModulesDir.isEmpty();
+			isLegacyDefaultWarsDirSet = legacyDefaultWarsDir != null && !legacyDefaultWarsDir.isEmpty();
+		}
 		if (argsDir != null) {
 			dir = new File(argsDir.getAbsolutePath());
 		}
