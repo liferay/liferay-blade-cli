@@ -57,11 +57,13 @@ public class BuildServiceCommandMavenTest {
 
 		Assert.assertTrue(mavenworkspace.exists());
 
-		args = new String[] {"--base", mavenworkspace.getPath(), "create", "-t", "service-builder", "sb1"};
+		File modulesDir = new File(mavenworkspace, "modules");
+
+		args = new String[] {"create", "-t", "service-builder", "--dir", modulesDir.getPath(), "sb1"};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
 
-		args = new String[] {"--base", mavenworkspace.getPath(), "create", "-t", "service-builder", "sb2"};
+		args = new String[] {"create", "-t", "service-builder","--dir", modulesDir.getPath(), "sb2"};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
 
