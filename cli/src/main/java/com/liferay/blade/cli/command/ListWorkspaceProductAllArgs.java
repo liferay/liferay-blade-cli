@@ -23,7 +23,7 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
 	commandDescription = "List Liferay products that can be targeted during initial workspace creation..",
-	commandNames = {"initt -l -a", "init --list --all", "init --list -a", "init -l --all"}
+	commandNames = {"init -l -a", "init --list --all", "init --list -a", "init -l --all"}
 )
 public class ListWorkspaceProductAllArgs extends BaseArgs {
 
