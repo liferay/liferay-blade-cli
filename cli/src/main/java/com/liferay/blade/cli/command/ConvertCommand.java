@@ -106,12 +106,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		String warsDirPath = null;
 
-		if (gradleProperties != null) {
-			warsDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
-		}
+		String legacyDefaultWarsDir = (String)gradleProperties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 
-		if (warsDirPath == null) {
-			warsDirPath = WorkspaceConstants.DEFAULT_WARS_DIR;
+		boolean isLegacyDefaultWarsDirSet = legacyDefaultWarsDir != null && !legacyDefaultWarsDir.isEmpty();
+
+		if (gradleProperties != null && isLegacyDefaultWarsDirSet) {
+			warsDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WARS_DIR);
+		}
+		else {
+			warsDirPath = "modules";
 		}
 
 		File warsDir = new File(projectDir, warsDirPath);
