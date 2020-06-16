@@ -46,7 +46,7 @@ public class ConvertThemeCommandTest {
 	public void testListThemes() throws Exception {
 		File workspace = _createWorkspace();
 
-		String[] args = {"--base", workspace.getAbsolutePath(), "convert", "-l"};
+		String[] args = {"convert", "-l", "--base", workspace.getAbsolutePath()};
 
 		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -143,6 +143,12 @@ public class ConvertThemeCommandTest {
 		File settingsFile = new File(workspace, "settings.gradle");
 
 		Files.write(settingsFile.toPath(), settings.getBytes());
+
+		String gradleProperties = "liferay.workspace.wars.dir=wars";
+
+		File gradlePropertiesFile = new File(workspace, "gradle.properties");
+
+		Files.write(gradlePropertiesFile.toPath(), gradleProperties.getBytes());
 
 		_createTheme(workspace, "compass-theme", true);
 

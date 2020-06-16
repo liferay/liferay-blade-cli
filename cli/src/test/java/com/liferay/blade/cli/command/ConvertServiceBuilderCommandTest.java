@@ -71,7 +71,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertFalse(oldSbProject.exists());
 
-		File sbWar = new File(projectDir, "wars/sample-service-builder-portlet");
+		File sbWar = new File(projectDir, "modules/sample-service-builder-portlet");
 
 		String output = bladeTestResults.getOutput();
 
@@ -208,11 +208,11 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(Files.exists(testPath.resolve("modules/tasks/tasks-service/service.xml")));
 
-		Assert.assertFalse(Files.exists(testPath.resolve("wars/tasks-portlet/src/main/webapp/WEB-INF/service.xml")));
+		Assert.assertFalse(Files.exists(testPath.resolve("modules/tasks-portlet/src/main/webapp/WEB-INF/service.xml")));
 
-		Assert.assertTrue(Files.exists(testPath.resolve("wars/tasks-portlet/src/main/webapp/WEB-INF/portlet.xml")));
+		Assert.assertTrue(Files.exists(testPath.resolve("modules/tasks-portlet/src/main/webapp/WEB-INF/portlet.xml")));
 
-		File portletGradleFile = new File(testdir, "wars/tasks-portlet/build.gradle");
+		File portletGradleFile = new File(testdir, "modules/tasks-portlet/build.gradle");
 
 		Assert.assertTrue(portletGradleFile.exists());
 
@@ -247,7 +247,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(oldSbProject.exists());
 
-		File sbWar = new File(projectDir, "wars/sample-service-builder-portlet");
+		File sbWar = new File(projectDir, "modules/sample-service-builder-portlet");
 
 		Assert.assertTrue(sbWar.exists());
 
@@ -288,7 +288,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertFalse(oldSbProject.exists());
 
-		File sbWar = new File(projectDir, "wars/sample-service-builder-portlet");
+		File sbWar = new File(projectDir, "modules/sample-service-builder-portlet");
 
 		Assert.assertTrue(sbWar.exists());
 
