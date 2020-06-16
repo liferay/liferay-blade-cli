@@ -104,7 +104,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		File themesDir = new File(pluginsSdkDir, "themes");
 		File websDir = new File(pluginsSdkDir, "webs");
 
-		String warsDirPath = null;
+		String projectsDirPath;
 
 		String legacyDefaultWarsDir = (String)gradleProperties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 
@@ -115,13 +115,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 
 		if ((gradleProperties != null) && isLegacyDefaultWarsDirSet) {
-			warsDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WARS_DIR);
+			projectsDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 		}
 		else {
-			warsDirPath = "modules";
+			projectsDirPath = "modules";
 		}
 
-		File warsDir = new File(projectDir, warsDirPath);
+		File projectsDir = new File(projectDir, projectsDirPath);
+
+		projectsDir.mkdir();
 
 		if (!pluginsSdkDir.exists()) {
 			bladeCLI.error(
@@ -221,14 +223,14 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			serviceBuilderPluginStream.forEach(
 				serviceBuilderPlugin -> _convertToServiceBuilderWarProject(
-					pluginsSdkDir, warsDir, serviceBuilderPlugin, removeSource));
+					pluginsSdkDir, projectsDir, serviceBuilderPlugin, removeSource));
 
 			Stream<File> portletPluginStream = portletPlugins.stream();
 
 			portletPluginStream.forEach(
 				portalPlugin -> {
 					try {
-						convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, warsDir, portalPlugin, removeSource));
+						convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, portalPlugin, removeSource));
 					}
 					catch (Exception e) {
 						e.printStackTrace(bladeCLI.error());
@@ -240,7 +242,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			hookPluginStream.forEach(
 				hookPlugin -> {
 					try {
-						convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, warsDir, hookPlugin, removeSource));
+						convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, hookPlugin, removeSource));
 					}
 					catch (Exception e) {
 						e.printStackTrace(bladeCLI.error());
@@ -252,7 +254,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			webPluginStream.forEach(
 				webPlugin -> {
 					try {
-						convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, warsDir, webPlugin, removeSource));
+						convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, webPlugin, removeSource));
 					}
 					catch (Exception e) {
 						e.printStackTrace(bladeCLI.error());
@@ -261,13 +263,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			Stream<File> layoutPluginStream = layoutPlugins.stream();
 
-			layoutPluginStream.forEach(layoutPlugin -> _convertToLayoutWarProject(warsDir, layoutPlugin, removeSource));
+			layoutPluginStream.forEach(layoutPlugin -> _convertToLayoutWarProject(projectsDir, layoutPlugin, removeSource));
 
 			Stream<File> themes = themePlugins.stream();
 
 			if (convertArgs.isThemeBuilder()) {
 				themes.forEach(
-					theme -> convertedPaths.addAll(_convertToThemeBuilderWarProject(warsDir, theme, removeSource)));
+					theme -> convertedPaths.addAll(_convertToThemeBuilderWarProject(projectsDir, theme, removeSource)));
 			}
 			else {
 				themes.forEach(theme -> convertedPaths.addAll(_convertToThemeProject(theme)));
@@ -300,22 +302,22 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			if (pluginPath.startsWith(portletsDir.toPath())) {
 				if (_isServiceBuilderPlugin(pluginDir)) {
 					convertedPaths.addAll(
-						_convertToServiceBuilderWarProject(pluginsSdkDir, warsDir, pluginDir, removeSource));
+						_convertToServiceBuilderWarProject(pluginsSdkDir, projectsDir, pluginDir, removeSource));
 				}
 				else {
-					convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, warsDir, pluginDir, removeSource));
+					convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, pluginDir, removeSource));
 				}
 			}
 
 			if (pluginPath.startsWith(hooksDir.toPath()) || pluginPath.startsWith(websDir.toPath())) {
-				convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, warsDir, pluginDir, removeSource));
+				convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, pluginDir, removeSource));
 			}
 			else if (pluginPath.startsWith(layouttplDir.toPath())) {
-				convertedPaths.addAll(_convertToLayoutWarProject(warsDir, pluginDir, removeSource));
+				convertedPaths.addAll(_convertToLayoutWarProject(projectsDir, pluginDir, removeSource));
 			}
 			else if (pluginPath.startsWith(themesDir.toPath())) {
 				if (convertArgs.isThemeBuilder()) {
-					convertedPaths.addAll(_convertToThemeBuilderWarProject(warsDir, pluginDir, removeSource));
+					convertedPaths.addAll(_convertToThemeBuilderWarProject(projectsDir, pluginDir, removeSource));
 				}
 				else {
 					convertedPaths.addAll(_convertToThemeProject(pluginDir));
