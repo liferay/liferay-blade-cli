@@ -881,15 +881,6 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateWarMVCPortletLocation() throws Exception {
-		File workspace = new File(_rootDir, "workspace");
-
-		_makeWorkspace(workspace);
-
-		_testCreateWar(workspace, "war-mvc-portlet", "war-portlet-test");
-	}
-
-	@Test
 	public void testCreateWarMVCPortletLegacyProperty() throws Exception {
 		String projectName = "war-portlet-legacy-test";
 
@@ -912,6 +903,15 @@ public class CreateCommandTest {
 		File projectDir = new File(workspace, "wars/" + projectName);
 
 		_checkFileExists(projectDir.getAbsolutePath());
+	}
+
+	@Test
+	public void testCreateWarMVCPortletLocation() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		_testCreateWar(workspace, "war-mvc-portlet", "war-portlet-test");
 	}
 
 	@Test
@@ -1690,6 +1690,16 @@ public class CreateCommandTest {
 		return gradlePropertiesFile;
 	}
 
+	private void _addDefaultModulesDir(File workspace) throws Exception {
+		File gradleProperties = new File(workspace, "gradle.properties");
+
+		Assert.assertTrue(gradleProperties.exists());
+
+		String configLine = System.lineSeparator() + "liferay.workspace.modules.dir=modules";
+
+		Files.write(gradleProperties.toPath(), configLine.getBytes(), StandardOpenOption.APPEND);
+	}
+
 	private File _checkFileDoesNotExists(String path) {
 		File file = new File(path);
 
@@ -1772,26 +1782,13 @@ public class CreateCommandTest {
 		_addDefaultModulesDir(workspace);
 	}
 
-	private void _addDefaultModulesDir(File workspace) throws Exception {
-		File gradleProperties = new File(
-				workspace, "gradle.properties");
-
-	  		Assert.assertTrue(gradleProperties.exists());
-
-	  		String configLine =
-	 			System.lineSeparator() + "liferay.workspace.modules.dir=modules";
-
-	  		Files.write(
-	 			gradleProperties.toPath(), configLine.getBytes(),
-	 			StandardOpenOption.APPEND);
-	}
-
 	private void _makeWorkspaceVersion(File workspace, String version) throws Exception {
 		File parentFile = workspace.getParentFile();
 
 		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", version};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
+
 		_addDefaultModulesDir(workspace);
 	}
 

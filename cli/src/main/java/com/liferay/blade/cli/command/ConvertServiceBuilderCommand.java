@@ -69,9 +69,13 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		String legacyDefaultWarsDir = (String)gradleProperties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 
-		boolean isLegacyDefaultWarsDirSet = legacyDefaultWarsDir != null && !legacyDefaultWarsDir.isEmpty();
+		boolean isLegacyDefaultWarsDirSet = false;
 
-		if (gradleProperties != null && isLegacyDefaultWarsDirSet) {
+		if ((legacyDefaultWarsDir != null) && !legacyDefaultWarsDir.isEmpty()) {
+			isLegacyDefaultWarsDirSet = true;
+		}
+
+		if ((gradleProperties != null) && isLegacyDefaultWarsDirSet) {
 			warsDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WARS_DIR);
 		}
 		else {

@@ -73,7 +73,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		String template = createArgs.getTemplate();
 
-
 		if (Objects.equals(template, "portlet")) {
 			template = "mvc-portlet";
 		}
@@ -111,8 +110,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			String defaultModulesDir = (String)properties.get(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
 			String legacyDefaultWarsDir = (String)properties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 
-			isDefaultModulesDirSet = defaultModulesDir != null && !defaultModulesDir.isEmpty();
-			isLegacyDefaultWarsDirSet = legacyDefaultWarsDir != null && !legacyDefaultWarsDir.isEmpty();
+			isDefaultModulesDirSet = (defaultModulesDir != null) && !defaultModulesDir.isEmpty();
+			isLegacyDefaultWarsDirSet = (legacyDefaultWarsDir != null) && !legacyDefaultWarsDir.isEmpty();
 		}
 
 		if (argsDir != null) {
@@ -124,8 +123,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		else if (template.equals("js-theme")) {
 			dir = _getDefaultThemesDir();
 		}
-		else if (isLegacyDefaultWarsDirSet && (template.startsWith("war") || template.equals("theme") || template.equals("layout-template") ||
-				 template.equals("spring-mvc-portlet"))) {
+		else if (isLegacyDefaultWarsDirSet &&
+				 (template.startsWith("war") || template.equals("theme") || template.equals("layout-template") ||
+				  template.equals("spring-mvc-portlet"))) {
+
 			dir = _getDefaultWarsDir();
 		}
 		else if (isDefaultModulesDirSet) {

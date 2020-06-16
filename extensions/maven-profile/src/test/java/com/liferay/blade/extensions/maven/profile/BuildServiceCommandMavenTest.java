@@ -63,7 +63,7 @@ public class BuildServiceCommandMavenTest {
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
 
-		args = new String[] {"create", "-t", "service-builder","--dir", modulesDir.getPath(), "sb2"};
+		args = new String[] {"create", "-t", "service-builder", "--dir", modulesDir.getPath(), "sb2"};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
 
