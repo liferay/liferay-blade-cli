@@ -315,6 +315,34 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testInitCommandListAll() throws Exception {
+		String[] args = {"init", "--list", "--all"};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output, output.contains("dxp-7.2-sp2"));
+
+		Assert.assertTrue(output, output.contains("dxp-7.2-sp1"));
+
+		Assert.assertTrue(output, output.contains("portal-7.0-ga7"));
+	}
+
+	@Test
+	public void testInitCommandListPromoted() throws Exception {
+		String[] args = {"init", "--list"};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output, output.contains("dxp-7.2-sp2"));
+
+		Assert.assertFalse(output, output.contains("dxp-7.2-sp1"));
+	}
+
+	@Test
 	public void testInitInPluginsSDKDirectory() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
 
