@@ -663,7 +663,7 @@ public class BladeUtil {
 	private static final String _GRADLEW_WINDOWS_FILE_NAME = "gradlew.bat";
 
 	private static final String _PRODUCT_INFO_URL =
-		"https://releases-cdn.liferay.com/tools/workspace/.product_info.json";
+		"https://releases.liferay.com/tools/workspace/.product_info.json";
 
 	private static File _workspaceCacheDir = new File(
 		System.getProperty("user.home"), _DEFAULT_WORKSPACE_CACHE_DIR_NAME);
