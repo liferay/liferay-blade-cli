@@ -30,7 +30,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 
 import org.gradle.testkit.runner.BuildTask;
 
@@ -327,6 +330,18 @@ public class InitCommandTest {
 		Assert.assertTrue(output, output.contains("dxp-7.2-sp1"));
 
 		Assert.assertTrue(output, output.contains("portal-7.0-ga7"));
+
+		List<String> lines = new ArrayList<>();
+
+		try (Scanner scanner = new Scanner(output)) {
+			while (scanner.hasNextLine()) {
+				lines.add(scanner.nextLine());
+			}
+		}
+
+		String firstLine = lines.get(0);
+
+		Assert.assertEquals("dxp-7.2-sp2", firstLine);
 	}
 
 	@Test
@@ -340,6 +355,18 @@ public class InitCommandTest {
 		Assert.assertTrue(output, output.contains("dxp-7.2-sp2"));
 
 		Assert.assertFalse(output, output.contains("dxp-7.2-sp1"));
+
+		List<String> lines = new ArrayList<>();
+
+		try (Scanner scanner = new Scanner(output)) {
+			while (scanner.hasNextLine()) {
+				lines.add(scanner.nextLine());
+			}
+		}
+
+		String firstLine = lines.get(0);
+
+		Assert.assertEquals("dxp-7.2-sp2", firstLine);
 	}
 
 	@Test
