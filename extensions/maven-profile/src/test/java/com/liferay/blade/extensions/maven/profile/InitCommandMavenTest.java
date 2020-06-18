@@ -60,7 +60,9 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		Assert.assertTrue(mavenworkspace.exists());
 
-		args = new String[] {"--base", mavenworkspace.getPath(), "create", "-t", "portlet", "project1"};
+		File modulesDir = new File(mavenworkspace, "modules");
+
+		args = new String[] {"create", "-t", "portlet", "-d", modulesDir.getAbsolutePath(), "project1"};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
 

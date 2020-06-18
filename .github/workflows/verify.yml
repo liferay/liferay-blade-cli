@@ -55,6 +55,12 @@ jobs:
           GITHUB_CI: "true"
         run: |
           ./run-tests.sh
+      - name: Upload tests zip
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: LinuxJDK8-tests.zip
+          path: tests.zip
       - name: Run reporter
         uses: check-run-reporter/action@v1.1.0
         if: ${{ always() }}
@@ -62,12 +68,6 @@ jobs:
           CHECK_RUN_REPORTER_LABEL: "Linux JDK8 test reports"
           CHECK_RUN_REPORTER_REPORT: "**/TEST-*.xml"
           CHECK_RUN_REPORTER_TOKEN: ${{ secrets.check_run_reporter_token }}
-      - name: Upload tests zip
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: LinuxJDK8-tests.zip
-          path: tests.zip
   LinuxJDK11:
     name: Linux JDK11
     runs-on: ubuntu-18.04
@@ -91,6 +91,12 @@ jobs:
           GITHUB_CI: "true"
         run: |
           ./run-tests.sh
+      - name: Upload tests zip
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: LinuxJDK11-tests.zip
+          path: tests.zip
       - name: Run reporter
         uses: check-run-reporter/action@v1.1.0
         if: ${{ always() }}
@@ -98,12 +104,6 @@ jobs:
           CHECK_RUN_REPORTER_LABEL: "Linux JDK11 test reports"
           CHECK_RUN_REPORTER_REPORT: "**/TEST-*.xml"
           CHECK_RUN_REPORTER_TOKEN: ${{ secrets.check_run_reporter_token }}
-      - name: Upload tests zip
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: LinuxJDK11-tests.zip
-          path: tests.zip
   MacOSJDK8:
     name: MacOS JDK8
     runs-on: macos-latest

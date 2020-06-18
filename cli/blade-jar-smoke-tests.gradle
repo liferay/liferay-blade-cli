@@ -37,7 +37,7 @@ testBladeCreateCommandFormField {
 
 	doLast {
 		String error = errorStream.toString().toLowerCase()
-		File projectDir = new File(initDir, "modules/test-form-field")
+		File projectDir = new File(initDir, "test-form-field")
 		boolean projectDirExists = projectDir.exists()
 
 		errorStream.reset()
@@ -98,7 +98,7 @@ testBladeCreateCommandMvcPortlet {
 
 	doLast {
 		String error = errorStream.toString().toLowerCase()
-		File projectDir = new File(initDir, "modules/test-mvc-portlet")
+		File projectDir = new File(initDir, "test-mvc-portlet")
 		boolean projectDirExists = projectDir.exists()
 
 		errorStream.reset()

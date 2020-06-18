@@ -95,22 +95,45 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File argsDir = createArgs.getDir();
 
+		BladeCLI bladeCLI = getBladeCLI();
+
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		String profileName = baseArgs.getProfileName();
+
+		boolean isDefaultModulesDirSet = false;
+		boolean isLegacyDefaultWarsDirSet = false;
+
+		if (profileName.equals("gradle")) {
+			Properties properties = getWorkspaceProperties();
+
+			String defaultModulesDir = (String)properties.get(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
+			String legacyDefaultWarsDir = (String)properties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
+
+			isDefaultModulesDirSet = (defaultModulesDir != null) && !defaultModulesDir.isEmpty();
+			isLegacyDefaultWarsDirSet = (legacyDefaultWarsDir != null) && !legacyDefaultWarsDir.isEmpty();
+		}
+
 		if (argsDir != null) {
 			dir = new File(argsDir.getAbsolutePath());
 		}
 		else if (template.equals("war-core-ext") || template.startsWith("modules-ext")) {
 			dir = _getDefaultExtDir();
 		}
-		else if (template.startsWith("war") || template.equals("theme") || template.equals("layout-template") ||
-				 template.equals("spring-mvc-portlet")) {
-
-			dir = _getDefaultWarsDir();
-		}
 		else if (template.equals("js-theme")) {
 			dir = _getDefaultThemesDir();
 		}
-		else {
+		else if (isLegacyDefaultWarsDirSet &&
+				 (template.startsWith("war") || template.equals("theme") || template.equals("layout-template") ||
+				  template.equals("spring-mvc-portlet"))) {
+
+			dir = _getDefaultWarsDir();
+		}
+		else if (isDefaultModulesDirSet) {
 			dir = _getDefaultModulesDir();
+		}
+		else {
+			dir = baseArgs.getBase();
 		}
 
 		final File checkDir = new File(dir, name);
@@ -120,8 +143,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			return;
 		}
-
-		BladeCLI bladeCLI = getBladeCLI();
 
 		ProjectTemplatesArgs projectTemplatesArgs = getProjectTemplateArgs(createArgs, bladeCLI, template, name, dir);
 

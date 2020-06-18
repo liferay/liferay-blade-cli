@@ -82,7 +82,7 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(Files.exists(servicePath));
 
-		Path portletPath = projectPath.resolve("wars/sample-service-builder-portlet");
+		Path portletPath = projectPath.resolve("modules/sample-service-builder-portlet");
 
 		Assert.assertTrue(Files.exists(portletPath));
 	}
@@ -122,7 +122,7 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(Files.exists(servicePath));
 
-		Path portletPath = projectPath.resolve("wars/sample-service-builder-portlet");
+		Path portletPath = projectPath.resolve("modules/sample-service-builder-portlet");
 
 		Assert.assertTrue(Files.exists(portletPath));
 
@@ -188,7 +188,7 @@ public class ConvertCommandTest {
 
 		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File layoutWar = new File(projectDir, "wars/1-2-1-columns-layouttpl");
+		File layoutWar = new File(projectDir, "modules/1-2-1-columns-layouttpl");
 
 		String output = bladeTestResults.getOutput();
 
@@ -231,7 +231,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File layoutWar = new File(projectDir, "wars/1-2-1-columns-layouttpl");
+		File layoutWar = new File(projectDir, "modules/1-2-1-columns-layouttpl");
 
 		Assert.assertTrue(layoutWar.exists());
 
@@ -280,7 +280,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		Path sampleExpandoHook = projectDir.resolve("wars/sample-application-adapter-hook");
+		Path sampleExpandoHook = projectDir.resolve("modules/sample-application-adapter-hook");
 
 		Assert.assertTrue(Files.exists(sampleExpandoHook));
 
@@ -292,7 +292,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		Path sampleServletFilterHook = projectDir.resolve("wars/sample-servlet-filter-hook");
+		Path sampleServletFilterHook = projectDir.resolve("modules/sample-servlet-filter-hook");
 
 		Assert.assertTrue(Files.exists(sampleServletFilterHook));
 
@@ -325,7 +325,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		Path sampleExpandoHook = projectDir.resolve("wars/sample-application-adapter-hook");
+		Path sampleExpandoHook = projectDir.resolve("modules/sample-application-adapter-hook");
 
 		Assert.assertTrue(Files.exists(sampleExpandoHook));
 
@@ -337,7 +337,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		Path sampleServletFilterHook = projectDir.resolve("wars/sample-servlet-filter-hook");
+		Path sampleServletFilterHook = projectDir.resolve("modules/sample-servlet-filter-hook");
 
 		Assert.assertTrue(Files.exists(sampleServletFilterHook));
 
@@ -364,7 +364,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
+		File theme = new File(projectDir, "modules/sample-styled-minimal-theme");
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "-r", "sample-styled-minimal-theme"};
 
@@ -400,7 +400,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File advancedTheme = new File(projectDir, "wars/sample-styled-advanced-theme");
+		File advancedTheme = new File(projectDir, "modules/sample-styled-advanced-theme");
 
 		Assert.assertTrue(advancedTheme.exists());
 
@@ -447,7 +447,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File theme = new File(projectDir, "wars/sample-styled-minimal-theme");
+		File theme = new File(projectDir, "modules/sample-styled-minimal-theme");
 
 		args = new String[] {"--base", projectDir.getPath(), "convert", "-t", "sample-styled-minimal-theme"};
 
@@ -483,7 +483,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File advancedTheme = new File(projectDir, "wars/sample-styled-advanced-theme");
+		File advancedTheme = new File(projectDir, "modules/sample-styled-advanced-theme");
 
 		Assert.assertTrue(advancedTheme.exists());
 
@@ -521,7 +521,7 @@ public class ConvertCommandTest {
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		_contains(
-			new File(projectDir, "wars/sample-dao-portlet/build.gradle"),
+			new File(projectDir, "modules/sample-dao-portlet/build.gradle"),
 			".*compile group: \"c3p0\", name: \"c3p0\", version: \"0.9.0.4\".*",
 			".*compile group: \"mysql\", name: \"mysql-connector-java\", version: \"5.0.7\".*");
 
@@ -530,14 +530,14 @@ public class ConvertCommandTest {
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		_contains(
-			new File(projectDir, "wars/sample-tapestry-portlet/build.gradle"),
+			new File(projectDir, "modules/sample-tapestry-portlet/build.gradle"),
 			".*compile group: \"hivemind\", name: \"hivemind\", version: \"1.1\".*",
 			".*compile group: \"hivemind\", name: \"hivemind-lib\", version: \"1.1\".*",
 			".*compile group: \"org.apache.tapestry\", name: \"tapestry-annotations\", version: \"4.1\".*",
 			".*compile group: \"org.apache.tapestry\", name: \"tapestry-framework\", version: \"4.1\".*",
 			".*compile group: \"org.apache.tapestry\", name: \"tapestry-portlet\", version: \"4.1\".*");
 
-		File ivmXmlFile = new File(projectDir, "wars/sample-tapestry-portlet/ivy.xml");
+		File ivmXmlFile = new File(projectDir, "modules/sample-tapestry-portlet/ivy.xml");
 
 		Assert.assertFalse(ivmXmlFile.exists());
 	}
@@ -551,7 +551,7 @@ public class ConvertCommandTest {
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		_contains(
-			new File(projectDir, "wars/sample-hibernate-portlet/build.gradle"),
+			new File(projectDir, "modules/sample-hibernate-portlet/build.gradle"),
 			".*compile group: \"commons-collections\", name: \"commons-collections\", version: \"3.2.2\".*",
 			".*compile group: \"commons-httpclient\", name: \"commons-httpclient\", version: \"3.1\".*",
 			".*compile group: \"dom4j\", name: \"dom4j\", version: \"1.6.1\".*",
@@ -559,7 +559,7 @@ public class ConvertCommandTest {
 			".*compile group: \"org.slf4j\", name: \"slf4j-api\", version: \"1.7.2\".*");
 
 		_notContains(
-			new File(projectDir, "wars/sample-hibernate-portlet/build.gradle"), ".*antlr2.*", ".*hibernate3.*",
+			new File(projectDir, "modules/sample-hibernate-portlet/build.gradle"), ".*antlr2.*", ".*hibernate3.*",
 			".*util-slf4j.*");
 	}
 
@@ -594,7 +594,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File warDir = new File(workspaceDir, "wars/sample-application-adapter-hook");
+		File warDir = new File(workspaceDir, "modules/sample-application-adapter-hook");
 
 		Assert.assertTrue(warDir.exists());
 	}
@@ -607,7 +607,7 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
-		File afile = new File(projectDir, "wars/sample-html4-theme/docroot_backup/other/afile");
+		File afile = new File(projectDir, "modules/sample-html4-theme/docroot_backup/other/afile");
 
 		Assert.assertTrue(afile.exists());
 	}

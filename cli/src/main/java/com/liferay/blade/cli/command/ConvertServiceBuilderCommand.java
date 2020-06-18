@@ -67,12 +67,19 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		String warsDirPath = null;
 
-		if (gradleProperties != null) {
-			warsDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
+		String legacyDefaultWarsDir = (String)gradleProperties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
+
+		boolean isLegacyDefaultWarsDirSet = false;
+
+		if ((legacyDefaultWarsDir != null) && !legacyDefaultWarsDir.isEmpty()) {
+			isLegacyDefaultWarsDirSet = true;
 		}
 
-		if (warsDirPath == null) {
-			warsDirPath = WorkspaceConstants.DEFAULT_WARS_DIR;
+		if ((gradleProperties != null) && isLegacyDefaultWarsDirSet) {
+			warsDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WARS_DIR);
+		}
+		else {
+			warsDirPath = "modules";
 		}
 
 		_warsDir = new File(projectDir, warsDirPath);

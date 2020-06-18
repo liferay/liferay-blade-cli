@@ -96,7 +96,7 @@ public class SampleTemplatesTest {
 
 		_bladeTest.run(args);
 
-		File projectDir = new File(workspace, "modules/foo-sample");
+		File projectDir = new File(workspace, "foo-sample");
 
 		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
 
