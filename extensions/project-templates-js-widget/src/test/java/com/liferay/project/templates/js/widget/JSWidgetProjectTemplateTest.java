@@ -70,9 +70,7 @@ public class JSWidgetProjectTemplateTest {
 
 		_bladeTest.run(args);
 
-		File modulesDir = new File(workspaceDir, "modules");
-
-		File projectDir = new File(modulesDir, "js-widget-test");
+		File projectDir = new File(workspaceDir, "js-widget-test");
 
 		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
 	}
