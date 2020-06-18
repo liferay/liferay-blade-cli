@@ -67,7 +67,7 @@ public class TargetPlatformTest {
 
 		TestUtil.runBlade(_gradleWorkspaceDir, _extensionsDir, args);
 
-		File projectDir = new File(_gradleWorkspaceDir, "test-api");
+		File projectDir = new File(_gradleWorkspaceDir, "modules/test-api");
 
 		File buildGradleFile = new File(projectDir, "build.gradle");
 

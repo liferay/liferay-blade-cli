@@ -122,7 +122,7 @@ public class DeployCommandTest {
 
 		args = new String[] {"create", "--dir", modulesDirectory.getAbsolutePath(), "-t", "war-mvc-portlet", "foo"};
 
-		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
+		TestUtil.runBlade(modulesDirectory, _extensionsDir, args);
 
 		File projectDirectory = new File(modulesDirectory, "foo");
 
