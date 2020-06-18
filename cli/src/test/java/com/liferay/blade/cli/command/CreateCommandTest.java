@@ -1383,6 +1383,43 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceModulesDirNullProject() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		File gradlePropertiesFile = new File(workspace, "gradle.properties");
+
+		String modulesDirNull = "\nliferay.workspace.modules.dir=";
+
+		Files.write(gradlePropertiesFile.toPath(), modulesDirNull.getBytes(), StandardOpenOption.APPEND);
+
+		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "mvc-portlet", "foo"};
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		File projectDir = new File(workspace, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
+
+		_checkFileExists(projectPath);
+
+		_checkFileExists(projectPath + "/bnd.bnd");
+
+		File gradleBuildFile = _checkFileExists(projectPath + "/build.gradle");
+
+		_lacks(gradleBuildFile, ".*^apply plugin: \"com.liferay.plugin\".*");
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "build/libs/foo-1.0.0.jar"));
+	}
+
+	@Test
 	public void testCreateWorkspaceNpmAngularPortletProject() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
