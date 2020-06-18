@@ -248,6 +248,8 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		else {
 			BladeUtil.writePropertyValue(
 				new File(destDir, "gradle.properties"), "liferay.workspace.product", workspaceProductKey);
+
+			_setWorkspacePluginVersion(destDir.toPath(), "2.5.3");
 		}
 
 		if (pluginsSDK) {
@@ -412,6 +414,16 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				}
 
 			});
+	}
+
+	private void _setWorkspacePluginVersion(Path path, String version) throws IOException {
+		Path settingsPath = path.resolve("settings.gradle");
+
+		String content = new String(Files.readAllBytes(settingsPath));
+
+		String updated = content.replaceFirst("2\\.5\\.[0-9]", version);
+
+		Files.write(settingsPath, updated.getBytes());
 	}
 
 	private void _trace(String msg) {
