@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.command.validator.WorkspaceProductComparator;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ProductInfo;
 
@@ -54,6 +55,8 @@ public class ListWorkspaceProductCommand extends BaseCommand<ListWorkspaceProduc
 			}
 		).map(
 			Map.Entry::getKey
+		).sorted(
+			new WorkspaceProductComparator()
 		).collect(
 			Collectors.toList()
 		);
