@@ -20,6 +20,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Simon Jiang
+ * @author Gregory Amerson
  */
 public class ProductInfo {
 
@@ -47,8 +48,8 @@ public class ProductInfo {
 		return _targetPlatformVersion;
 	}
 
-	public Boolean isInitialVersion() {
-		return _initialVersion;
+	public boolean isPromoted() {
+		return _promoted;
 	}
 
 	@SerializedName("appServerTomcatVersion")
@@ -57,14 +58,14 @@ public class ProductInfo {
 	@SerializedName("bundleUrl")
 	private String _bundleUrl;
 
-	@SerializedName("initialVersion")
-	private Boolean _initialVersion = false;
-
 	@SerializedName("liferayDockerImage")
 	private String _liferayDockerImage;
 
 	@SerializedName("liferayProductVersion")
 	private String _liferayProductVersion;
+
+	@SerializedName("promoted")
+	private Boolean _promoted = false;
 
 	@SerializedName("releaseDate")
 	private String _releaseDate;

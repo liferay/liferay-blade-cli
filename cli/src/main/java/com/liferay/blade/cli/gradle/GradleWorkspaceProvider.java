@@ -74,7 +74,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 					return null;
 				}
 
-				Map<String, ProductInfo> productInfos = BladeUtil.getProductInfo();
+				Map<String, ProductInfo> productInfos = BladeUtil.getProductInfos();
 
 				ProductInfo productInfo = productInfos.get(productKey);
 
