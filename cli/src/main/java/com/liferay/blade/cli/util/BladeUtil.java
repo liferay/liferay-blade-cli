@@ -252,7 +252,7 @@ public class BladeUtil {
 		}
 	}
 
-	public static Map<String, ProductInfo> getProductInfo() {
+	public static Map<String, ProductInfo> getProductInfos() {
 		try {
 			DownloadCommand downloadCommand = new DownloadCommand();
 
@@ -319,7 +319,7 @@ public class BladeUtil {
 	}
 
 	public static List<String> getWorkspaceProductKeys() {
-		Map<String, ProductInfo> productInfoMap = getProductInfo();
+		Map<String, ProductInfo> productInfoMap = getProductInfos();
 
 		Set<Map.Entry<String, ProductInfo>> entries = productInfoMap.entrySet();
 

@@ -205,7 +205,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		String workspaceProductKey = initArgs.getLiferayVersion();
 
-		Map<String, ProductInfo> productInfos = BladeUtil.getProductInfo();
+		Map<String, ProductInfo> productInfos = BladeUtil.getProductInfos();
 
 		ProductInfo productInfo = productInfos.get(workspaceProductKey);
 
