@@ -120,9 +120,9 @@ public class DeployCommandTest {
 
 		Assert.assertTrue(modulesDirectory.exists());
 
-		args = new String[] {"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "war-mvc-portlet", "foo"};
+		args = new String[] {"create", "--base", workspaceDir.getAbsolutePath(), "-t", "war-mvc-portlet", "foo"};
 
-		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
+		TestUtil.runBlade(modulesDirectory, _extensionsDir, args);
 
 		File projectDirectory = new File(modulesDirectory, "foo");
 
