@@ -59,7 +59,9 @@ public class TestUtil {
 
 		String content = new String(pomXmlBytes);
 
-		content = content.replaceAll("(<!--)|(-->)", "");
+		content = content.replaceAll("(<!--<)", "<");
+
+		content = content.replaceAll("(>-->)", ">");
 
 		Files.delete(pomXmlPath);
 
