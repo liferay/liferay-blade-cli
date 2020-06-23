@@ -627,7 +627,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		Files.deleteIfExists(warPath.resolve(".project"));
 		FileUtil.deleteDirIfExists(warPath.resolve(".settings"));
 		Files.deleteIfExists(warPath.resolve("ivy.xml.MD5"));
-		Files.deleteIfExists(webappPath.resolve("WEB-INF/service.xml"));
+
+		_deleteServiceBuilderFiles(warPath);
 
 		List<String> dependencies = new ArrayList<>();
 
@@ -836,6 +837,24 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 
 		return convertedDependencies;
+	}
+
+	private void _deleteServiceBuilderFiles(Path warPath) throws IOException {
+		Path metaInfPath = warPath.resolve("src/main/java/META-INF");
+
+		Files.deleteIfExists(metaInfPath.resolve("base-spring.xml"));
+		Files.deleteIfExists(metaInfPath.resolve("cluster-spring.xml"));
+		Files.deleteIfExists(metaInfPath.resolve("hibernate-spring.xml"));
+		Files.deleteIfExists(metaInfPath.resolve("infrastructure-spring.xml"));
+		Files.deleteIfExists(metaInfPath.resolve("portlet-hbm.xml"));
+		//Files.deleteIfExists(metaInfPath.resolve("portlet-model-hints.xml"));
+		Files.deleteIfExists(metaInfPath.resolve("portlet-orm.xml"));
+		Files.deleteIfExists(metaInfPath.resolve("portlet-spring.xml"));
+		Files.deleteIfExists(metaInfPath.resolve("shard-data-source-spring.xml"));
+
+		Path webInfPath = warPath.resolve("src/main/webapp/WEB-INF");
+
+		Files.deleteIfExists(webInfPath.resolve("service.xml"));
 	}
 
 	private File _findPluginDir(File pluginsSdkDir, final String pluginName) throws Exception {
