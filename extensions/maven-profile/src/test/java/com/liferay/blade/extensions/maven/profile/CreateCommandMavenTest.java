@@ -233,6 +233,8 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		File pomXmlFile = _checkFileExists(projectPath + "/pom.xml");
 
+		TestUtil.removeComments(projectPath);
+
 		_enableStandaloneProfile(pomXmlFile);
 
 		execute(projectPath, new String[] {"clean", "package"});
