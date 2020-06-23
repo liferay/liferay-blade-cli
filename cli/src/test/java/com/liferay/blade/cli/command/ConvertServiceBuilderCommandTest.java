@@ -71,7 +71,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertFalse(oldSbProject.exists());
 
-		File sbWar = new File(projectDir, "modules/sample-service-builder-portlet");
+		File sbWar = new File(projectDir, "modules/sample-service-builder/sample-service-builder-portlet");
 
 		String output = bladeTestResults.getOutput();
 
@@ -208,17 +208,19 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(Files.exists(testPath.resolve("modules/tasks/tasks-service/service.xml")));
 
-		Assert.assertFalse(Files.exists(testPath.resolve("modules/tasks-portlet/src/main/webapp/WEB-INF/service.xml")));
+		Assert.assertFalse(
+			Files.exists(testPath.resolve("modules/tasks/tasks-portlet/src/main/webapp/WEB-INF/service.xml")));
 
-		Assert.assertTrue(Files.exists(testPath.resolve("modules/tasks-portlet/src/main/webapp/WEB-INF/portlet.xml")));
+		Assert.assertTrue(
+			Files.exists(testPath.resolve("modules/tasks/tasks-portlet/src/main/webapp/WEB-INF/portlet.xml")));
 
-		File portletGradleFile = new File(testdir, "modules/tasks-portlet/build.gradle");
+		File portletGradleFile = new File(testdir, "modules/tasks/tasks-portlet/build.gradle");
 
 		Assert.assertTrue(portletGradleFile.exists());
 
 		String content = new String(Files.readAllBytes(portletGradleFile.toPath()));
 
-		Assert.assertTrue(content.contains("compileOnly project(\":modules:tasks:tasks-api\")"));
+		Assert.assertTrue(content, content.contains("compileOnly project(\":modules:tasks:tasks-api\")"));
 	}
 
 	@Test
@@ -247,19 +249,17 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(oldSbProject.exists());
 
-		File sbWar = new File(projectDir, "modules/sample-service-builder-portlet");
-
-		Assert.assertTrue(sbWar.exists());
-
 		File moduleDir = new File(projectDir, "modules");
 
 		File newSbDir = new File(moduleDir, "sample-service-builder");
 
 		File sbServiceDir = new File(newSbDir, "sample-service-builder-service");
 		File sbApiDir = new File(newSbDir, "sample-service-builder-api");
+		File sbWar = new File(newSbDir, "sample-service-builder-portlet");
 
-		Assert.assertTrue(sbServiceDir.exists());
-		Assert.assertTrue(sbApiDir.exists());
+		Assert.assertTrue(sbServiceDir.getAbsolutePath(), sbServiceDir.exists());
+		Assert.assertTrue(sbApiDir.getAbsolutePath(), sbApiDir.exists());
+		Assert.assertTrue(sbWar.getAbsolutePath(), sbWar.exists());
 	}
 
 	@Test
@@ -288,19 +288,17 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertFalse(oldSbProject.exists());
 
-		File sbWar = new File(projectDir, "modules/sample-service-builder-portlet");
-
-		Assert.assertTrue(sbWar.exists());
-
 		File moduleDir = new File(projectDir, "modules");
 
 		File newSbDir = new File(moduleDir, "sample-service-builder");
 
 		File sbServiceDir = new File(newSbDir, "sample-service-builder-service");
 		File sbApiDir = new File(newSbDir, "sample-service-builder-api");
+		File sbWar = new File(newSbDir, "sample-service-builder-portlet");
 
-		Assert.assertTrue(sbServiceDir.exists());
-		Assert.assertTrue(sbApiDir.exists());
+		Assert.assertTrue(sbServiceDir.getAbsolutePath(), sbServiceDir.exists());
+		Assert.assertTrue(sbApiDir.getAbsolutePath(), sbApiDir.exists());
+		Assert.assertTrue(sbWar.getAbsolutePath(), sbWar.exists());
 	}
 
 	@Rule

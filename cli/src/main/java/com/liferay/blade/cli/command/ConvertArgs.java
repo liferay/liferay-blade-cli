@@ -37,16 +37,19 @@ public class ConvertArgs extends BaseArgs {
 	public ConvertArgs() {
 	}
 
-	public ConvertArgs(boolean all, boolean list, boolean themeBuilder, boolean removeSource, List<String> name) {
+	public ConvertArgs(
+		boolean all, boolean list, boolean themeBuilder, boolean removeSource, File source, List<String> name) {
+
 		_all = all;
 		_list = list;
 		_themeBuilder = themeBuilder;
 		_removeSource = removeSource;
+		_source = source;
 		_name = name;
 	}
 
-	public ConvertArgs(boolean all, boolean list, boolean themeBuilder, List<String> name) {
-		this(all, list, themeBuilder, false, name);
+	public ConvertArgs(boolean all, boolean list, boolean themeBuilder, File source, List<String> name) {
+		this(all, list, themeBuilder, false, source, name);
 	}
 
 	public CommandType getCommandType() {

@@ -23,6 +23,8 @@ public class Constants {
 
 	public static final String DEFAULT_JAVA_SRC = "src/main/java/";
 
+	public static final String DEFAULT_PLUGINS_SDK_PORTLET_SRC = "docroot/WEB-INF/src/";
+
 	public static final String DEFAULT_RESOURCES_SRC = "src/main/resources/";
 
 	public static final String DEFAULT_WEBAPP_SRC = "src/main/webapp/";

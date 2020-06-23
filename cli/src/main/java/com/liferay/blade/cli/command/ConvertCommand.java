@@ -18,7 +18,6 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
@@ -134,14 +133,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			return;
 		}
 
-		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
-
-		if (workspaceProvider == null) {
-			bladeCLI.error("Please execute this in a Liferay Workspace project");
-
-			return;
-		}
-
 		List<String> name = convertArgs.getName();
 
 		final String pluginName = name.isEmpty() ? null : name.get(0);
@@ -201,9 +192,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<File> portlets = Arrays.asList((portletList != null) ? portletList : new File[0]);
 
-		Stream<File> portletStream = portlets.stream();
-
-		List<File> portletPlugins = portletStream.filter(
+		List<File> portletPlugins = portlets.stream(
+		).filter(
 			portletPlugin -> !serviceBuilderPlugins.contains(portletPlugin)
 		).collect(
 			Collectors.toList()
@@ -219,60 +209,51 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		final List<Path> convertedPaths = new ArrayList<>();
 
 		if (convertArgs.isAll()) {
-			Stream<File> serviceBuilderPluginStream = serviceBuilderPlugins.stream();
-
-			serviceBuilderPluginStream.forEach(
+			serviceBuilderPlugins.forEach(
 				serviceBuilderPlugin -> _convertToServiceBuilderWarProject(
 					pluginsSdkDir, projectsDir, serviceBuilderPlugin, removeSource));
 
-			Stream<File> portletPluginStream = portletPlugins.stream();
-
-			portletPluginStream.forEach(
+			portletPlugins.forEach(
 				portalPlugin -> {
 					try {
-						convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, portalPlugin, removeSource));
+						convertedPaths.addAll(
+							_convertToWarProject(pluginsSdkDir, projectsDir, portalPlugin, null, removeSource));
 					}
 					catch (Exception e) {
 						e.printStackTrace(bladeCLI.error());
 					}
 				});
 
-			Stream<File> hookPluginStream = hookPlugins.stream();
-
-			hookPluginStream.forEach(
+			hookPlugins.forEach(
 				hookPlugin -> {
 					try {
-						convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, hookPlugin, removeSource));
+						convertedPaths.addAll(
+							_convertToWarProject(pluginsSdkDir, projectsDir, hookPlugin, null, removeSource));
 					}
 					catch (Exception e) {
 						e.printStackTrace(bladeCLI.error());
 					}
 				});
 
-			Stream<File> webPluginStream = webPlugins.stream();
-
-			webPluginStream.forEach(
+			webPlugins.forEach(
 				webPlugin -> {
 					try {
-						convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, webPlugin, removeSource));
+						convertedPaths.addAll(
+							_convertToWarProject(pluginsSdkDir, projectsDir, webPlugin, null, removeSource));
 					}
 					catch (Exception e) {
 						e.printStackTrace(bladeCLI.error());
 					}
 				});
 
-			Stream<File> layoutPluginStream = layoutPlugins.stream();
-
-			layoutPluginStream.forEach(layoutPlugin -> _convertToLayoutWarProject(projectsDir, layoutPlugin, removeSource));
-
-			Stream<File> themes = themePlugins.stream();
+			layoutPlugins.forEach(layoutPlugin -> _convertToLayoutWarProject(projectsDir, layoutPlugin, removeSource));
 
 			if (convertArgs.isThemeBuilder()) {
-				themes.forEach(
+				themePlugins.forEach(
 					theme -> convertedPaths.addAll(_convertToThemeBuilderWarProject(projectsDir, theme, removeSource)));
 			}
 			else {
-				themes.forEach(theme -> convertedPaths.addAll(_convertToThemeProject(theme)));
+				themePlugins.forEach(theme -> convertedPaths.addAll(_convertToThemeProject(theme)));
 			}
 		}
 		else if (convertArgs.isList()) {
@@ -305,12 +286,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 						_convertToServiceBuilderWarProject(pluginsSdkDir, projectsDir, pluginDir, removeSource));
 				}
 				else {
-					convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, pluginDir, removeSource));
+					convertedPaths.addAll(
+						_convertToWarProject(pluginsSdkDir, projectsDir, pluginDir, null, removeSource));
 				}
 			}
 
 			if (pluginPath.startsWith(hooksDir.toPath()) || pluginPath.startsWith(websDir.toPath())) {
-				convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, pluginDir, removeSource));
+				convertedPaths.addAll(_convertToWarProject(pluginsSdkDir, projectsDir, pluginDir, null, removeSource));
 			}
 			else if (pluginPath.startsWith(layouttplDir.toPath())) {
 				convertedPaths.addAll(_convertToLayoutWarProject(projectsDir, pluginDir, removeSource));
@@ -409,7 +391,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			Path webappPath = webapp.toPath();
 
 			for (File docrootFile : docroot.listFiles()) {
-				moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
+				copyFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
 
 			Path warPath = warDir.toPath();
@@ -434,7 +416,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 	}
 
 	private List<Path> _convertToServiceBuilderWarProject(
-		File pluginsSdkDir, File warsDir, File pluginDir, boolean removeSource) {
+		File pluginsSdkDir, File projectsDir, File pluginDir, boolean removeSource) {
 
 		ConvertArgs convertArgs = getArgs();
 
@@ -442,31 +424,27 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<Path> convertedPaths = new ArrayList<>();
 
+		List<String> arguments;
+
+		if (convertArgs.isAll()) {
+			arguments = new ArrayList<>();
+
+			String pluginName = pluginDir.getName();
+
+			arguments.add(pluginName);
+
+			if (pluginName.endsWith("-portlet")) {
+				arguments.add(pluginName.replaceAll("-portlet$", ""));
+			}
+		}
+		else {
+			arguments = convertArgs.getName();
+		}
+
 		try {
-			List<Path> warPaths = _convertToWarProject(pluginsSdkDir, warsDir, pluginDir, removeSource);
-
-			convertedPaths.addAll(warPaths);
-
-			List<String> arguments;
-
-			if (convertArgs.isAll()) {
-				arguments = new ArrayList<>();
-
-				String pluginName = pluginDir.getName();
-
-				arguments.add(pluginName);
-
-				if (pluginName.endsWith("-portlet")) {
-					arguments.add(pluginName.replaceAll("-portlet$", ""));
-				}
-			}
-			else {
-				arguments = convertArgs.getName();
-			}
-
 			ConvertArgs convertServiceBuilderArgs = new ConvertArgs(
 				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), convertArgs.isRemoveSource(),
-				arguments);
+				convertArgs.getSource(), arguments);
 
 			convertServiceBuilderArgs.setBase(convertArgs.getBase());
 
@@ -475,7 +453,16 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			command.execute();
 
-			convertedPaths.addAll(command.getConvertedPaths());
+			List<Path> projectPaths = command.getConvertedPaths();
+
+			convertedPaths.addAll(projectPaths);
+
+			Path apiPath = projectPaths.get(0);
+
+			List<Path> warPaths = _convertToWarProject(
+				pluginsSdkDir, projectsDir, pluginDir, apiPath.toFile(), removeSource);
+
+			convertedPaths.addAll(warPaths);
 		}
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + pluginDir.getName() + "\n");
@@ -590,18 +577,21 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return Collections.emptyList();
 	}
 
-	private List<Path> _convertToWarProject(File pluginsSdkDir, File warsDir, File pluginDir, boolean removeSource)
+	private List<Path> _convertToWarProject(
+			File pluginsSdkDir, File projectsDir, File pluginDir, File apiProjectDir, boolean removeSource)
 		throws Exception {
 
 		List<Path> convertedPaths = new ArrayList<>();
 
-		warsDir.mkdirs();
+		File projectParentDir = new File(projectsDir, _getProjectParentName(pluginDir));
 
-		Path warsPath = warsDir.toPath();
+		projectParentDir.mkdirs();
 
-		moveFile(pluginDir.toPath(), warsPath.resolve(pluginDir.getName()), removeSource);
+		Path projectParentPath = projectParentDir.toPath();
 
-		File warDir = new File(warsDir, pluginDir.getName());
+		copyFile(pluginDir.toPath(), projectParentPath.resolve(pluginDir.getName()));
+
+		File warDir = new File(projectParentDir, pluginDir.getName());
 
 		File src = new File(warDir, "src/main/java");
 
@@ -615,8 +605,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			for (File docrootSrcFile : docrootSrc.listFiles()) {
 				moveFile(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
 			}
-
-			docrootSrc.delete();
 		}
 
 		File webapp = new File(warDir, "src/main/webapp");
@@ -699,6 +687,14 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			depsBlock.append("\t" + dependency + System.lineSeparator());
 		}
 
+		depsBlock.append(System.lineSeparator());
+		depsBlock.append("\tcompileOnly project(\":modules:");
+		depsBlock.append(projectParentPath.getFileName());
+		depsBlock.append(":");
+		depsBlock.append(apiProjectDir.getName());
+		depsBlock.append("\")");
+		depsBlock.append(System.lineSeparator());
+
 		depsBlock.append("}");
 
 		File gradleFile = new File(warDir, "build.gradle");
@@ -708,6 +704,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		Files.write(gradleFile.toPath(), content.getBytes());
 
 		convertedPaths.add(warDir.toPath());
+
+		if (removeSource) {
+			FileUtil.deleteDir(pluginDir.toPath());
+		}
 
 		return convertedPaths;
 	}
@@ -889,6 +889,16 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 
 		return pluginsSdkDir;
+	}
+
+	private String _getProjectParentName(File pluginDir) {
+		String parentProjectName = pluginDir.getName();
+
+		if (parentProjectName.endsWith("-portlet")) {
+			parentProjectName = parentProjectName.replaceAll("-portlet$", "");
+		}
+
+		return parentProjectName;
 	}
 
 	private boolean _isValidSDKDir(File pluginsSdkDir) {

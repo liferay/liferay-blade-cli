@@ -18,7 +18,6 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.Constants;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
@@ -65,25 +64,6 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		Properties gradleProperties = gradleWorkspaceProvider.getGradleProperties(projectDir);
 
-		String warsDirPath = null;
-
-		String legacyDefaultWarsDir = (String)gradleProperties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
-
-		boolean isLegacyDefaultWarsDirSet = false;
-
-		if ((legacyDefaultWarsDir != null) && !legacyDefaultWarsDir.isEmpty()) {
-			isLegacyDefaultWarsDirSet = true;
-		}
-
-		if ((gradleProperties != null) && isLegacyDefaultWarsDirSet) {
-			warsDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WARS_DIR);
-		}
-		else {
-			warsDirPath = "modules";
-		}
-
-		_warsDir = new File(projectDir, warsDirPath);
-
 		String modulesDirPath = null;
 
 		if (gradleProperties != null) {
@@ -100,7 +80,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 	public void execute() throws Exception {
 		File baseDir = _convertArgs.getBase();
 
-		WorkspaceProvider workspaceProvider = _bladeCLI.getWorkspaceProvider(baseDir);
+		GradleWorkspaceProvider workspaceProvider = (GradleWorkspaceProvider)_bladeCLI.getWorkspaceProvider(baseDir);
 
 		if (workspaceProvider == null) {
 			_bladeCLI.error("Please execute command in a Liferay Workspace project");
@@ -118,17 +98,19 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 			return;
 		}
 
-		Path warsPath = _warsDir.toPath();
+		File pluginsSDKDir = _getPluginsSdkDir(_convertArgs, baseDir, workspaceProvider.getGradleProperties(baseDir));
 
-		Path projectPath = warsPath.resolve(projectName);
+		Path pluginsSDKPath = pluginsSDKDir.toPath();
 
-		if (Files.notExists(projectPath)) {
-			_bladeCLI.error("The project " + projectName + " does not exist in " + warsPath);
+		Path originalProjectPath = pluginsSDKPath.resolve("portlets/" + projectName);
+
+		if (Files.notExists(originalProjectPath)) {
+			_bladeCLI.error("The project " + projectName + " does not exist in " + originalProjectPath);
 
 			return;
 		}
 
-		Path serviceXmlPath = projectPath.resolve("src/main/webapp/WEB-INF/service.xml");
+		Path serviceXmlPath = originalProjectPath.resolve("docroot/WEB-INF/service.xml");
 
 		if (Files.notExists(serviceXmlPath)) {
 			_bladeCLI.error("There is no service.xml file in " + projectName);
@@ -194,7 +176,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		String packageName = sbPackageName.replaceAll("\\.", "/");
 
-		Path oldSBFolder = projectPath.resolve(Constants.DEFAULT_JAVA_SRC + packageName);
+		Path oldSBFolder = originalProjectPath.resolve(Constants.DEFAULT_PLUGINS_SDK_PORTLET_SRC + packageName);
 
 		Path newSBFolder = sbServiceProjectPath.resolve(Constants.DEFAULT_JAVA_SRC + packageName);
 
@@ -204,7 +186,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		if (Files.exists(oldServiceImplFolder)) {
 			Files.createDirectories(newServiceImplFolder);
 
-			moveFile(oldServiceImplFolder, newServiceImplFolder);
+			copyFile(oldServiceImplFolder, newServiceImplFolder);
 		}
 
 		Path oldModelImplFolder = oldSBFolder.resolve("model");
@@ -213,35 +195,34 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		if (Files.exists(oldModelImplFolder)) {
 			Files.createDirectories(newModelImplFolder);
 
-			moveFile(oldModelImplFolder, newModelImplFolder);
+			copyFile(oldModelImplFolder, newModelImplFolder);
 		}
 
-		Path oldMetaInfFolder = projectPath.resolve(Constants.DEFAULT_JAVA_SRC + ServiceBuilder.META_INF);
+		Path oldMetaInfFolder = originalProjectPath.resolve(
+			Constants.DEFAULT_PLUGINS_SDK_PORTLET_SRC + ServiceBuilder.META_INF);
 		Path newMetaInfFolder = sbServiceProjectPath.resolve(Constants.DEFAULT_RESOURCES_SRC + ServiceBuilder.META_INF);
 
 		if (Files.exists(oldMetaInfFolder)) {
 			Files.createDirectories(newMetaInfFolder);
 
-			moveFile(
+			copyFile(
 				oldMetaInfFolder.resolve(ServiceBuilder.PORTLET_MODEL_HINTS_XML),
 				newMetaInfFolder.resolve(ServiceBuilder.PORTLET_MODEL_HINTS_XML));
 		}
 
-		Path oldSrcFolder = projectPath.resolve(Constants.DEFAULT_JAVA_SRC);
+		Path oldSrcFolder = originalProjectPath.resolve(Constants.DEFAULT_PLUGINS_SDK_PORTLET_SRC);
 		Path newResourcesSrcFolder = sbServiceProjectPath.resolve(Constants.DEFAULT_RESOURCES_SRC);
 
 		if (Files.exists(oldSrcFolder)) {
 			Files.createDirectories(newResourcesSrcFolder);
 
-			moveFile(
+			copyFile(
 				oldSrcFolder.resolve(ServiceBuilder.SERVICE_PROPERTIES),
 				newResourcesSrcFolder.resolve(ServiceBuilder.SERVICE_PROPERTIES));
 		}
 
-		_convertedPaths.add(sbServiceProjectPath);
-
 		Path sbApiProjectPath = sbProjectPath.resolve(sbProjectName + "-api");
-		Path oldApiFolder = projectPath.resolve(Constants.DEFAULT_WEBAPP_SRC + ServiceBuilder.API_62);
+		Path oldApiFolder = originalProjectPath.resolve(ServiceBuilder.API_62);
 
 		if (Files.exists(oldApiFolder)) {
 			Path newApiPath = sbApiProjectPath.resolve(Constants.DEFAULT_JAVA_SRC);
@@ -252,7 +233,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 				files.forEach(
 					oldApiFile -> {
 						try {
-							moveFile(oldApiFile, newApiPath.resolve(oldApiFile.getFileName()));
+							copyFile(oldApiFile, newApiPath.resolve(oldApiFile.getFileName()));
 						}
 						catch (IOException ioe) {
 							ioe.printStackTrace(_bladeCLI.error());
@@ -261,9 +242,10 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 			}
 		}
 
-		Files.delete(oldApiFolder);
+		//Files.delete(oldApiFolder);
 
 		_convertedPaths.add(sbApiProjectPath);
+		_convertedPaths.add(sbServiceProjectPath);
 
 		// go through all api folders and make sure to add a packageinfo file
 
@@ -298,7 +280,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		// add dependency on -api to portlet project
 
-		Path gradlePath = projectPath.resolve("build.gradle");
+		Path gradlePath = sbServiceProjectPath.resolve("build.gradle");
 
 		String gradleContent = new String(Files.readAllBytes(gradlePath));
 
@@ -344,15 +326,35 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		return false;
 	}
 
+	private File _getPluginsSdkDir(ConvertArgs convertArgs, File projectDir, Properties gradleProperties) {
+		File pluginsSdkDir = convertArgs.getSource();
+
+		if (pluginsSdkDir == null) {
+			if (gradleProperties != null) {
+				String pluginsSdkDirValue = gradleProperties.getProperty(
+					WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR_PROPERTY);
+
+				if (pluginsSdkDirValue != null) {
+					pluginsSdkDir = new File(projectDir, pluginsSdkDirValue);
+				}
+			}
+
+			if (pluginsSdkDir == null) {
+				pluginsSdkDir = new File(projectDir, WorkspaceConstants.DEFAULT_PLUGINS_SDK_DIR);
+			}
+		}
+
+		return pluginsSdkDir;
+	}
+
 	private BladeCLI _bladeCLI;
 	private ConvertArgs _convertArgs;
 	private final List<Path> _convertedPaths = new ArrayList<>();
 	private final File _modulesDir;
-	private final File _warsDir;
 
 	private static class ServiceBuilder {
 
-		public static final String API_62 = "WEB-INF/service/";
+		public static final String API_62 = "docroot/WEB-INF/service/";
 
 		public static final String META_INF = "META-INF/";
 
