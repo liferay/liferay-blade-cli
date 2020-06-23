@@ -627,6 +627,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		Files.deleteIfExists(warPath.resolve(".project"));
 		FileUtil.deleteDirIfExists(warPath.resolve(".settings"));
 		Files.deleteIfExists(warPath.resolve("ivy.xml.MD5"));
+		Files.deleteIfExists(webappPath.resolve("WEB-INF/service.xml"));
 
 		List<String> dependencies = new ArrayList<>();
 
