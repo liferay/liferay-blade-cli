@@ -62,12 +62,12 @@ jobs:
           name: LinuxJDK8-tests.zip
           path: tests.zip
       - name: Run reporter
-        uses: check-run-reporter/action@v1.1.0
+        uses: check-run-reporter/action@v1.1.1
         if: ${{ always() }}
         env:
           CHECK_RUN_REPORTER_LABEL: "Linux JDK8 test reports"
           CHECK_RUN_REPORTER_REPORT: "**/TEST-*.xml"
-          CHECK_RUN_REPORTER_TOKEN: ${{ secrets.check_run_reporter_token }}
+          CHECK_RUN_REPORTER_TOKEN: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
   LinuxJDK11:
     name: Linux JDK11
     runs-on: ubuntu-18.04
@@ -98,12 +98,12 @@ jobs:
           name: LinuxJDK11-tests.zip
           path: tests.zip
       - name: Run reporter
-        uses: check-run-reporter/action@v1.1.0
+        uses: check-run-reporter/action@v1.1.1
         if: ${{ always() }}
         env:
           CHECK_RUN_REPORTER_LABEL: "Linux JDK11 test reports"
           CHECK_RUN_REPORTER_REPORT: "**/TEST-*.xml"
-          CHECK_RUN_REPORTER_TOKEN: ${{ secrets.check_run_reporter_token }}
+          CHECK_RUN_REPORTER_TOKEN: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
   MacOSJDK8:
     name: MacOS JDK8
     runs-on: macos-latest
