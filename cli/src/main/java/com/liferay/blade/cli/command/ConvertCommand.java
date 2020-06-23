@@ -687,13 +687,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			depsBlock.append("\t" + dependency + System.lineSeparator());
 		}
 
-		depsBlock.append(System.lineSeparator());
-		depsBlock.append("\tcompileOnly project(\":modules:");
-		depsBlock.append(projectParentPath.getFileName());
-		depsBlock.append(":");
-		depsBlock.append(apiProjectDir.getName());
-		depsBlock.append("\")");
-		depsBlock.append(System.lineSeparator());
+		if (apiProjectDir != null) {
+			depsBlock.append(System.lineSeparator());
+			depsBlock.append("\tcompileOnly project(\":modules:");
+			depsBlock.append(projectParentPath.getFileName());
+			depsBlock.append(":");
+			depsBlock.append(apiProjectDir.getName());
+			depsBlock.append("\")");
+			depsBlock.append(System.lineSeparator());
+		}
 
 		depsBlock.append("}");
 
