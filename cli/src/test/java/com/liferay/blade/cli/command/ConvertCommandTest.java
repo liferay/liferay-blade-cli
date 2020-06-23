@@ -82,7 +82,7 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(Files.exists(servicePath));
 
-		Path portletPath = projectPath.resolve("modules/sample-service-builder-portlet");
+		Path portletPath = projectPath.resolve("modules/sample-service-builder/sample-service-builder-portlet");
 
 		Assert.assertTrue(Files.exists(portletPath));
 	}
@@ -122,7 +122,7 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(Files.exists(servicePath));
 
-		Path portletPath = projectPath.resolve("modules/sample-service-builder-portlet");
+		Path portletPath = projectPath.resolve("modules/sample-service-builder/sample-service-builder-portlet");
 
 		Assert.assertTrue(Files.exists(portletPath));
 
@@ -521,7 +521,7 @@ public class ConvertCommandTest {
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		_contains(
-			new File(projectDir, "modules/sample-dao-portlet/build.gradle"),
+			new File(projectDir, "modules/sample-dao/sample-dao-portlet/build.gradle"),
 			".*compile group: \"c3p0\", name: \"c3p0\", version: \"0.9.0.4\".*",
 			".*compile group: \"mysql\", name: \"mysql-connector-java\", version: \"5.0.7\".*");
 
@@ -530,7 +530,7 @@ public class ConvertCommandTest {
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
 		_contains(
-			new File(projectDir, "modules/sample-tapestry-portlet/build.gradle"),
+			new File(projectDir, "modules/sample-tapestry/sample-tapestry-portlet/build.gradle"),
 			".*compile group: \"hivemind\", name: \"hivemind\", version: \"1.1\".*",
 			".*compile group: \"hivemind\", name: \"hivemind-lib\", version: \"1.1\".*",
 			".*compile group: \"org.apache.tapestry\", name: \"tapestry-annotations\", version: \"4.1\".*",
@@ -550,17 +550,21 @@ public class ConvertCommandTest {
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
+		File warDir = new File(projectDir, "modules/sample-hibernate/sample-hibernate-portlet");
+
+		Assert.assertTrue(warDir.getAbsolutePath(), warDir.exists());
+
+		File buildGradle = new File(warDir, "build.gradle");
+
 		_contains(
-			new File(projectDir, "modules/sample-hibernate-portlet/build.gradle"),
+			buildGradle,
 			".*compile group: \"commons-collections\", name: \"commons-collections\", version: \"3.2.2\".*",
 			".*compile group: \"commons-httpclient\", name: \"commons-httpclient\", version: \"3.1\".*",
 			".*compile group: \"dom4j\", name: \"dom4j\", version: \"1.6.1\".*",
 			".*compile group: \"javax.xml.soap\", name: \"saaj-api\", version: \"1.3\".*",
 			".*compile group: \"org.slf4j\", name: \"slf4j-api\", version: \"1.7.2\".*");
 
-		_notContains(
-			new File(projectDir, "modules/sample-hibernate-portlet/build.gradle"), ".*antlr2.*", ".*hibernate3.*",
-			".*util-slf4j.*");
+		_notContains(buildGradle, ".*antlr2.*", ".*hibernate3.*", ".*util-slf4j.*");
 	}
 
 	@Test

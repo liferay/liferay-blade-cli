@@ -30,6 +30,10 @@ import org.apache.commons.io.FileUtils;
  */
 public interface FilesSupport {
 
+	public default void copyFile(Path sourcePath, Path destinationPath) throws IOException {
+		moveFile(sourcePath, destinationPath, false);
+	}
+
 	public default void moveFile(Path sourcePath, Path destinationPath) throws IOException {
 		if ((sourcePath == null) || (destinationPath == null)) {
 			return;
