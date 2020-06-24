@@ -112,6 +112,10 @@ public class ConvertServiceBuilderCommandTest {
 
 		Assert.assertTrue(servicePropertiesFile.exists());
 
+		File baseSpringXmlFile = new File(sbServiceDir, "src/main/resources/META-INF/base-spring.xml");
+
+		Assert.assertFalse(baseSpringXmlFile.getAbsolutePath(), baseSpringXmlFile.exists());
+
 		File hintsXmlFile = new File(sbServiceDir, "src/main/resources/META-INF/portlet-model-hints.xml");
 
 		Assert.assertTrue(hintsXmlFile.exists());

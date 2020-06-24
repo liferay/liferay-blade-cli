@@ -168,7 +168,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		Path newServiceXmlPath = sbServiceProjectPath.resolve(ServiceBuilder.SERVICE_XML);
 
-		moveFile(serviceXmlPath, newServiceXmlPath);
+		copyFile(serviceXmlPath, newServiceXmlPath);
 
 		ServiceBuilder serviceBuilderXml = new ServiceBuilder(newServiceXmlPath.toFile());
 
