@@ -630,6 +630,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		_deleteServiceBuilderFiles(warPath);
 
+		FileUtil.deleteDirIfExists(webappPath.resolve("WEB-INF/classes"));
+
 		List<String> dependencies = new ArrayList<>();
 
 		dependencies.add(
