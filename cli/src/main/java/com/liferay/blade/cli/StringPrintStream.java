@@ -60,6 +60,12 @@ public class StringPrintStream extends PrintStream implements Supplier<String> {
 		return new StringPrintStream(new ByteArrayOutputStream(), charset);
 	}
 
+	public static String toString(InputStream inputStream) {
+		StringPrintStream stringPrintStream = fromInputStream(inputStream);
+
+		return stringPrintStream.toString();
+	}
+
 	@Override
 	public String get() {
 		return new String(_outputStream.toByteArray(), _charset);

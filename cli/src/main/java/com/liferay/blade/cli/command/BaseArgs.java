@@ -59,6 +59,10 @@ public class BaseArgs {
 		_profileName = profileName;
 	}
 
+	public void setQuiet(boolean quiet) {
+		_quiet = quiet;
+	}
+
 	@Parameter(
 		description = "Specify a new base directory (default working directory).", hidden = true, names = "--base"
 	)

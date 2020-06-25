@@ -21,6 +21,7 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.ide.gradle.core.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
 import java.io.File;
@@ -50,6 +51,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -424,24 +427,20 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<Path> convertedPaths = new ArrayList<>();
 
-		List<String> arguments;
-
-		if (convertArgs.isAll()) {
-			arguments = new ArrayList<>();
-
-			String pluginName = pluginDir.getName();
-
-			arguments.add(pluginName);
-
-			if (pluginName.endsWith("-portlet")) {
-				arguments.add(pluginName.replaceAll("-portlet$", ""));
-			}
-		}
-		else {
-			arguments = convertArgs.getName();
-		}
-
 		try {
+			List<String> arguments;
+
+			if (convertArgs.isAll()) {
+				arguments = new ArrayList<>();
+
+				String pluginName = pluginDir.getName();
+
+				arguments.add(pluginName);
+			}
+			else {
+				arguments = convertArgs.getName();
+			}
+
 			ConvertArgs convertServiceBuilderArgs = new ConvertArgs(
 				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), convertArgs.isRemoveSource(),
 				convertArgs.getSource(), arguments);
@@ -455,14 +454,16 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			List<Path> projectPaths = command.getConvertedPaths();
 
-			convertedPaths.addAll(projectPaths);
+			if (!projectPaths.isEmpty()) {
+				convertedPaths.addAll(projectPaths);
 
-			Path apiPath = projectPaths.get(0);
+				Path apiPath = projectPaths.get(0);
 
-			List<Path> warPaths = _convertToWarProject(
-				pluginsSdkDir, projectsDir, pluginDir, apiPath.toFile(), removeSource);
+				List<Path> warPaths = _convertToWarProject(
+					pluginsSdkDir, projectsDir, pluginDir, apiPath.toFile(), removeSource);
 
-			convertedPaths.addAll(warPaths);
+				convertedPaths.addAll(warPaths);
+			}
 		}
 		catch (Exception e) {
 			bladeCLI.error("Error upgrading project " + pluginDir.getName() + "\n");
@@ -583,15 +584,21 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<Path> convertedPaths = new ArrayList<>();
 
+		Path projectParentPath = projectsDir.toPath();
+
 		File projectParentDir = new File(projectsDir, _getProjectParentName(pluginDir));
 
-		projectParentDir.mkdirs();
+		if (!Objects.equals(projectParentDir.getName(), pluginDir.getName())) {
+			projectParentDir.mkdirs();
 
-		Path projectParentPath = projectParentDir.toPath();
+			projectParentPath = projectParentDir.toPath();
+		}
 
-		copyFile(pluginDir.toPath(), projectParentPath.resolve(pluginDir.getName()));
+		Path warPath = projectParentPath.resolve(pluginDir.getName());
 
-		File warDir = new File(projectParentDir, pluginDir.getName());
+		copyFile(pluginDir.toPath(), warPath);
+
+		File warDir = warPath.toFile();
 
 		File src = new File(warDir, "src/main/java");
 
@@ -619,8 +626,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 		}
 
-		Path warPath = warDir.toPath();
-
 		FileUtil.deleteDir(docroot.toPath());
 		Files.deleteIfExists(warPath.resolve("build.xml"));
 		Files.deleteIfExists(warPath.resolve(".classpath"));
@@ -632,12 +637,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		FileUtil.deleteDirIfExists(webappPath.resolve("WEB-INF/classes"));
 
-		List<String> dependencies = new ArrayList<>();
+		_initBuildGradle(warPath);
 
-		dependencies.add(
-			"compileOnly group: \"com.liferay.portal\", name: \"com.liferay.portal.kernel\", version: \"2.0.0\"");
-		dependencies.add("compileOnly group: \"javax.portlet\", name: \"portlet-api\", version: \"2.0\"");
-		dependencies.add("compileOnly group: \"javax.servlet\", name: \"javax.servlet-api\", version: \"3.0.1\"");
+		List<GradleDependency> convertedDependencies = new ArrayList<>();
 
 		File ivyFile = new File(warDir, "ivy.xml");
 
@@ -663,9 +665,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					String rev = _getAttr(depElement, "rev");
 
 					if ((name != null) && (org != null) && (rev != null)) {
-						dependencies.add(
-							MessageFormat.format(
-								"compile group: \"{0}\", name: \"{1}\", version: \"{2}\"", org, name, rev));
+						GAV gav = new GAV(org, name, rev);
+
+						convertedDependencies.add(new GradleDependency(gav.toCompileDependency()));
 					}
 				}
 			}
@@ -673,43 +675,46 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			ivyFile.delete();
 		}
 
-		List<GAV> convertedDependencies = _convertWarDependencies(pluginsSdkDir, warDir);
+		List<GAV> warDependencies = _convertWarDependencies(pluginsSdkDir, warDir);
 
-		Stream<GAV> stream = convertedDependencies.stream();
-
-		stream.map(
-			gav -> gav.toCompileDependency()
+		warDependencies.stream(
+		).map(
+			gav -> new GradleDependency(gav.toCompileDependency())
 		).forEach(
-			dependencies::add
+			convertedDependencies::add
 		);
 
-		StringBuilder depsBlock = new StringBuilder();
-
-		depsBlock.append("dependencies {" + System.lineSeparator());
-
-		for (String dependency : dependencies) {
-			depsBlock.append("\t" + dependency + System.lineSeparator());
-		}
-
 		if (apiProjectDir != null) {
-			depsBlock.append(System.lineSeparator());
-			depsBlock.append("\tcompileOnly project(\":modules:");
-			depsBlock.append(projectParentPath.getFileName());
-			depsBlock.append(":");
-			depsBlock.append(apiProjectDir.getName());
-			depsBlock.append("\")");
-			depsBlock.append(System.lineSeparator());
+			StringBuilder sb = new StringBuilder("compileOnly project(\":modules:");
+
+			sb.append(projectParentPath.getFileName());
+			sb.append(":");
+			sb.append(apiProjectDir.getName());
+			sb.append("\")");
+
+			convertedDependencies.add(new GradleDependency(sb.toString()));
 		}
 
-		depsBlock.append("}");
+		Path buildGradlePath = warPath.resolve("build.gradle");
 
-		File gradleFile = new File(warDir, "build.gradle");
+		String existingContent = new String(Files.readAllBytes(buildGradlePath));
 
-		String content = depsBlock.toString();
+		StringBuilder dependenciesBlock = new StringBuilder();
 
-		Files.write(gradleFile.toPath(), content.getBytes());
+		convertedDependencies.forEach(dep -> dependenciesBlock.append("\t" + dep.toString()));
 
-		convertedPaths.add(warDir.toPath());
+		dependenciesBlock.append(System.lineSeparator());
+		dependenciesBlock.append("}");
+
+		Matcher matcher = _dependenciesBlockPattern.matcher(existingContent);
+
+		matcher.find();
+
+		String newContent = matcher.group(1) + dependenciesBlock.toString() + matcher.group(2);
+
+		Files.write(buildGradlePath, newContent.getBytes());
+
+		convertedPaths.add(warPath);
 
 		if (removeSource) {
 			FileUtil.deleteDir(pluginDir.toPath());
@@ -925,6 +930,50 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return parentProjectName;
 	}
 
+	private void _initBuildGradle(Path warPath) throws Exception {
+		Path initPath = Files.createTempDirectory("ws");
+
+		BladeCLI bladeCLI = new BladeCLI();
+
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		baseArgs.setProfileName("gradle");
+		baseArgs.setQuiet(true);
+
+		InitArgs initArgs = new InitArgs();
+
+		initArgs.setBase(initPath.toFile());
+		initArgs.setLiferayVersion("7.3");
+
+		InitCommand initCommand = new InitCommand();
+
+		initCommand.setArgs(initArgs);
+		initCommand.setBlade(bladeCLI);
+
+		initCommand.execute();
+
+		Path modulesPath = initPath.resolve("modules");
+
+		CreateArgs createArgs = new CreateArgs();
+
+		createArgs.setBase(modulesPath.toFile());
+		createArgs.setTemplate("war-mvc-portlet");
+		createArgs.setName("war-portlet");
+
+		CreateCommand createCommand = new CreateCommand();
+
+		createCommand.setArgs(createArgs);
+		createCommand.setBlade(bladeCLI);
+
+		createCommand.execute();
+
+		Path tempBuildGradle = modulesPath.resolve("war-portlet/build.gradle");
+
+		copyFile(tempBuildGradle, warPath.resolve("build.gradle"));
+
+		FileUtil.deleteDir(initPath);
+	}
+
 	private boolean _isValidSDKDir(File pluginsSdkDir) {
 		File buildProperties = new File(pluginsSdkDir, "build.properties");
 		File portletsBuildXml = new File(pluginsSdkDir, "portlets/build.xml");
@@ -952,6 +1001,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		bladeCLI.out("WARNING: " + message);
 	}
+
+	private static final Pattern _dependenciesBlockPattern = Pattern.compile(
+		"(.*^dependencies \\{.*)\\}(.*^war \\{.*)", Pattern.MULTILINE | Pattern.DOTALL);
 
 	private static class GAV {
 
