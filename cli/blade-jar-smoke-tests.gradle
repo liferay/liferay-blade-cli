@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 task smokeTests
 task testBladeCreateCommandFormField(type: JavaExec)
 task testBladeCreateCommandJsTheme(type: JavaExec)
@@ -50,6 +52,10 @@ testBladeCreateCommandFormField {
 
 testBladeCreateCommandJsTheme {
 	dependsOn testBladeInitCommand
+
+	onlyIf {
+		!Os.isFamily(Os.FAMILY_WINDOWS)
+	}
 
 	args = [jar.archivePath, "create", "-t", "js-theme", "test-js-theme"]
 	errorOutput = errorStream
