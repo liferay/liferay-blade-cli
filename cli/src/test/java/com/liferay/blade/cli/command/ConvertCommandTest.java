@@ -296,6 +296,10 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(Files.exists(sampleServletFilterHook));
 
+		Path buildGradle = sampleServletFilterHook.resolve("build.gradle");
+
+		_contains(buildGradle.toFile(), ".*war \\{.*");
+
 		Path hookDir = projectDir.resolve("plugins-sdk/hooks/sample-servlet-filter-hook");
 
 		Assert.assertFalse(Files.exists(hookDir));
@@ -537,7 +541,7 @@ public class ConvertCommandTest {
 			".*compile group: \"org.apache.tapestry\", name: \"tapestry-framework\", version: \"4.1\".*",
 			".*compile group: \"org.apache.tapestry\", name: \"tapestry-portlet\", version: \"4.1\".*");
 
-		File ivmXmlFile = new File(projectDir, "modules/sample-tapestry-portlet/ivy.xml");
+		File ivmXmlFile = new File(projectDir, "modules/sample-tapestry/sample-tapestry-portlet/ivy.xml");
 
 		Assert.assertFalse(ivmXmlFile.exists());
 	}

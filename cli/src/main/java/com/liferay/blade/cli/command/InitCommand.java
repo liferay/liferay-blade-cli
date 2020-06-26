@@ -67,7 +67,11 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		String name = initArgs.getName();
 
-		File baseDir = args.getBase();
+		File baseDir = initArgs.getBase();
+
+		if (baseDir == null) {
+			baseDir = args.getBase();
+		}
 
 		Path correctPath = baseDir.toPath();
 

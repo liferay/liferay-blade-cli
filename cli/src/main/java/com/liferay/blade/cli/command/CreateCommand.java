@@ -133,6 +133,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			dir = _getDefaultModulesDir();
 		}
 		else {
+			dir = createArgs.getBase();
+		}
+
+		if (dir == null) {
 			dir = baseArgs.getBase();
 		}
 
