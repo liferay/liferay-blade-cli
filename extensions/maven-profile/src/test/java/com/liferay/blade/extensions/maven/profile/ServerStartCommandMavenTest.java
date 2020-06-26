@@ -130,6 +130,9 @@ public class ServerStartCommandMavenTest {
 	}
 
 	@Rule
+	public RetryRule retryRule = new RetryRule(1);
+
+	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private static boolean _isDebugPortListening(int debugPort) {
