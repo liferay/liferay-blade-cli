@@ -21,6 +21,7 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.ListUtil;
 import com.liferay.ide.gradle.core.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
@@ -45,7 +46,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -355,6 +358,18 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		Path serviceXml = dirPath.resolve("docroot/WEB-INF/service.xml");
 
 		return Files.exists(serviceXml);
+	}
+
+	private static Map<String, String> _intPortalClasspathDependenciesMap() {
+		Map<String, String> convertMap = new HashMap<>();
+
+		convertMap.put(
+			"util-bridges.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.bridges\"");
+		convertMap.put("util-java.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.java\"");
+		convertMap.put(
+			"util-taglib.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.taglib\"");
+
+		return convertMap;
 	}
 
 	private static boolean _isServiceBuilderPlugin(File pluginDir) {
@@ -677,9 +692,17 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<GAV> warDependencies = _convertWarDependencies(pluginsSdkDir, warDir);
 
+		Map<String, String> portalClasspathDependenciesMap = _intPortalClasspathDependenciesMap();
+
 		warDependencies.stream(
 		).map(
-			gav -> new GradleDependency(gav.toCompileDependency())
+			gav -> {
+				if (gav.isUnknown() && ListUtil.contains(portalClasspathDependenciesMap.keySet(), gav.getJarName())) {
+					return new GradleDependency(portalClasspathDependenciesMap.get(gav.getJarName()));
+				}
+
+				return new GradleDependency(gav.toCompileDependency());
+			}
 		).forEach(
 			convertedDependencies::add
 		);
@@ -728,6 +751,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<GAV> convertedDependencies = new ArrayList<>();
 
+		List<String> portalDependencyJars = Arrays.asList(_portalClasspthDependencies);
+
 		File liferayPluginPackageFile = new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
 		if (liferayPluginPackageFile.exists()) {
@@ -736,109 +761,107 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 				String portalJarsValue = liferayPluginPackageProperties.getProperty("portal-dependency-jars");
 
-				if (portalJarsValue != null) {
-					List<String> missingDependencyJars = new ArrayList<>();
+				if (Objects.nonNull(portalJarsValue)) {
+					Collections.addAll(portalDependencyJars, portalJarsValue.split(","));
+				}
 
-					List<String> portalDependencyJars = Arrays.asList(portalJarsValue.split(","));
+				List<String> missingDependencyJars = new ArrayList<>();
 
-					try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(
-							"/portal-dependency-jars-62.properties")) {
+				try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(
+						"/portal-dependency-jars-62.properties")) {
 
-						Properties properties = _loadProperties(inputStream);
+					Properties properties = _loadProperties(inputStream);
 
-						for (String portalDependencyJar : portalDependencyJars) {
-							String newDependency = properties.getProperty(portalDependencyJar);
+					for (String portalDependencyJar : portalDependencyJars) {
+						String newDependency = properties.getProperty(portalDependencyJar);
 
-							if ((newDependency == null) || newDependency.isEmpty()) {
-								missingDependencyJars.add(portalDependencyJar);
+						if ((newDependency == null) || newDependency.isEmpty()) {
+							missingDependencyJars.add(portalDependencyJar);
 
-								continue;
-							}
-
-							String[] coordinates = newDependency.split(":");
-
-							if (coordinates.length != 3) {
-								missingDependencyJars.add(portalDependencyJar);
-
-								continue;
-							}
-
-							convertedDependencies.add(new GAV(coordinates[0], coordinates[1], coordinates[2]));
+							continue;
 						}
+
+						String[] coordinates = newDependency.split(":");
+
+						if (coordinates.length != 3) {
+							missingDependencyJars.add(portalDependencyJar);
+
+							continue;
+						}
+
+						convertedDependencies.add(new GAV(coordinates[0], coordinates[1], coordinates[2]));
 					}
+				}
 
-					if (!missingDependencyJars.isEmpty()) {
-						LoadProperties loadProperties = new LoadProperties();
+				if (!missingDependencyJars.isEmpty()) {
+					LoadProperties loadProperties = new LoadProperties();
 
-						Project project = new Project();
+					Project project = new Project();
 
-						project.setProperty("sdk.dir", pluginsSdkDir.getCanonicalPath());
+					project.setProperty("sdk.dir", pluginsSdkDir.getCanonicalPath());
 
-						loadProperties.setProject(project);
+					loadProperties.setProject(project);
 
-						loadProperties.setSrcFile(new File(pluginsSdkDir, "build.properties"));
-						loadProperties.execute();
+					loadProperties.setSrcFile(new File(pluginsSdkDir, "build.properties"));
+					loadProperties.execute();
 
-						String portalDirValue = project.getProperty(
-							"app.server." + project.getProperty("app.server.type") + ".portal.dir");
+					String portalDirValue = project.getProperty(
+						"app.server." + project.getProperty("app.server.type") + ".portal.dir");
 
-						Optional.ofNullable(
-							portalDirValue
-						).map(
-							File::new
-						).filter(
-							File::exists
-						).ifPresent(
-							portalDir -> {
-								Stream<String> stream = missingDependencyJars.stream();
+					Optional.ofNullable(
+						portalDirValue
+					).map(
+						File::new
+					).filter(
+						File::exists
+					).ifPresent(
+						portalDir -> {
+							Stream<String> stream = missingDependencyJars.stream();
 
-								stream.map(
-									jarName -> new File(portalDirValue, "WEB-INF/lib/" + jarName)
-								).filter(
-									File::exists
-								).map(
-									portalJar -> {
-										try (JarFile jarFile = new JarFile(portalJar)) {
-											Enumeration<JarEntry> jarEntries = jarFile.entries();
+							stream.map(
+								jarName -> new File(portalDirValue, "WEB-INF/lib/" + jarName)
+							).filter(
+								File::exists
+							).map(
+								portalJar -> {
+									try (JarFile jarFile = new JarFile(portalJar)) {
+										Enumeration<JarEntry> jarEntries = jarFile.entries();
 
-											while (jarEntries.hasMoreElements()) {
-												JarEntry jarEntry = jarEntries.nextElement();
+										while (jarEntries.hasMoreElements()) {
+											JarEntry jarEntry = jarEntries.nextElement();
 
-												String name = jarEntry.getName();
+											String name = jarEntry.getName();
 
-												if (name.startsWith("META-INF/maven") &&
-													name.endsWith("pom.properties")) {
+											if (name.startsWith("META-INF/maven") && name.endsWith("pom.properties")) {
+												Properties properties = _loadProperties(
+													jarFile.getInputStream(jarEntry));
 
-													Properties properties = _loadProperties(
-														jarFile.getInputStream(jarEntry));
-
-													return new GAV(
-														properties.get("groupId"), properties.get("artifactId"),
-														properties.get("version"));
-												}
+												return new GAV(
+													properties.get("groupId"), properties.get("artifactId"),
+													properties.get("version"));
 											}
 										}
-										catch (IOException e) {
-										}
-
-										return new GAV(portalJar.getName());
 									}
-								).forEach(
-									gav -> {
-										if (gav.isUnknown()) {
-											_warn(
-												MessageFormat.format(
-													"Found dependency {0} but unable to determine its artifactId. " +
-														"Please resolve manually.",
-													gav.getJarName()));
-										}
-
-										convertedDependencies.add(gav);
+									catch (IOException e) {
 									}
-								);
-							}
-						);
-					}
+
+									return new GAV(portalJar.getName());
+								}
+							).forEach(
+								gav -> {
+									if (gav.isUnknown()) {
+										_warn(
+											MessageFormat.format(
+												"Found dependency {0} but unable to determine its artifactId. Please " +
+													"resolve manually.",
+												gav.getJarName()));
+									}
+
+									convertedDependencies.add(gav);
+								}
+							);
+						}
+					);
 				}
 			}
 		}
@@ -1004,6 +1027,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 	private static final Pattern _dependenciesBlockPattern = Pattern.compile(
 		"(.*^dependencies \\{.*)\\}(.*^war \\{.*)", Pattern.MULTILINE | Pattern.DOTALL);
+	private static String[] _portalClasspthDependencies = {
+		"commons-logging.jar", "log4j.jr", "util-bridges.jar", "util-java.jar", "util-taglib.jar"
+	};
 
 	private static class GAV {
 
