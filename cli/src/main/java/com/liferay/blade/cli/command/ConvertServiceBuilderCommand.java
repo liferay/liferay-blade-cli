@@ -291,7 +291,8 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		sb.append(sbProjectPath.getFileName());
 		sb.append(":");
 		sb.append(sbApiProjectPath.getFileName());
-		sb.append("\")\n");
+		sb.append("\")");
+		sb.append(System.lineSeparator());
 
 		String updatedContent = gradleContent.replaceAll("dependencies \\{", sb.toString());
 
