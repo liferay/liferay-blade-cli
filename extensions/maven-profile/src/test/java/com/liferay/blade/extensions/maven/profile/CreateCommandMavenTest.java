@@ -42,7 +42,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -217,7 +216,6 @@ public class CreateCommandMavenTest implements MavenExecutor {
 		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 	}
 
-	@Ignore
 	@Test
 	public void testCreateMVCPortletStandalone() throws Exception {
 		File tempRoot = temporaryFolder.getRoot();
