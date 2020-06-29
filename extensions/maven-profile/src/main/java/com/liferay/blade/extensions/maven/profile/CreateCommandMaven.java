@@ -71,11 +71,6 @@ public class CreateCommandMaven extends CreateCommand {
 	}
 
 	@Override
-	public boolean isWorkspace(File dir) {
-		return MavenUtil.isWorkspace(dir);
-	}
-
-	@Override
 	protected ProjectTemplatesArgs getProjectTemplateArgs(
 			CreateArgs createArgs, BladeCLI bladeCLI, String template, String name, File dir)
 		throws IOException {
