@@ -389,7 +389,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	protected Properties getWorkspaceProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		CreateArgs args = (CreateArgs)bladeCLI.getArgs();
+		CreateArgs args = getArgs();
 
 		File argsDir = args.getDir();
 
