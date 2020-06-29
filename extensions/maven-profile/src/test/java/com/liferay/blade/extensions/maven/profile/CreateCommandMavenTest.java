@@ -42,6 +42,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -71,7 +72,10 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		File modulesDir = new File(workspaceDir, "modules");
 
-		String[] mavenArgs = {"create", "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t", "api", "foo"};
+		String[] mavenArgs = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
+			"api", "foo"
+		};
 
 		File projectDir = new File(modulesDir, "foo");
 
@@ -109,8 +113,8 @@ public class CreateCommandMavenTest implements MavenExecutor {
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
-			"create", "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t", "fragment", "-h",
-			"com.liferay.login.web", "-H", "1.0.0", "loginHook"
+			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
+			"fragment", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook"
 		};
 
 		File projectDir = new File(modulesDir, "loginHook");
@@ -145,7 +149,10 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		File modulesDir = new File(workspaceDir, "modules");
 
-		String[] mavenArgs = {"create", "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo"};
+		String[] mavenArgs = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
+			"mvc-portlet", "foo"
+		};
 
 		File projectDir = new File(modulesDir, "foo");
 
@@ -180,7 +187,10 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		File modulesDir = new File(workspaceDir, "modules");
 
-		String[] mavenArgs = {"create", "-d", modulesDir.getAbsolutePath(), "-b", "maven", "-t", "mvc-portlet", "foo"};
+		String[] mavenArgs = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-b", "maven", "-t",
+			"mvc-portlet", "foo"
+		};
 
 		File projectDir = new File(modulesDir, "foo");
 
@@ -207,6 +217,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 	}
 
+	@Ignore
 	@Test
 	public void testCreateMVCPortletStandalone() throws Exception {
 		File tempRoot = temporaryFolder.getRoot();
