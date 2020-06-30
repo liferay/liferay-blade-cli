@@ -209,10 +209,6 @@ repositories {
 	}
 
 	maven {
-		url "https://repo.gradle.org/gradle/libs-releases/"
-	}
-
-	maven {
 		url "https://${repoHost}/nexus/content/repositories/liferay-public-releases/"
 	}
 
@@ -220,6 +216,12 @@ repositories {
 		maven {
 			url "https://${repoHost}/nexus/content/repositories/liferay-public-snapshots/"
 		}
+	}
+
+	mavenCentral()
+
+	maven {
+		url "https://repo.gradle.org/gradle/libs-releases/"
 	}
 }
 

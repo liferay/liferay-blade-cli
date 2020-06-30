@@ -57,6 +57,7 @@ import java.util.Properties;
  * @author David Truong
  * @author Christopher Bryan Boyd
  * @author Charles Wu
+ * @author Seiphon Wang
  */
 public class CreateCommand extends BaseCommand<CreateArgs> {
 
@@ -94,6 +95,17 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		File dir;
 
 		File argsDir = createArgs.getDir();
+
+		File baseDir = createArgs.getBase();
+
+		if (!_isWorkspaceDir(argsDir) && !_isWorkspaceDir(baseDir)) {
+			_addError(
+				"Create",
+				"The indicated directory is not a Liferay workspace. Please specify the directory inside a workspace," +
+					"or invoke blade from within a Liferay workspace project.");
+
+			return;
+		}
 
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -267,16 +279,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return CreateArgs.class;
 	}
 
-	public boolean isWorkspace(File file) {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		if (bladeCLI.getWorkspaceProvider(file) != null) {
-			return true;
-		}
-
-		return false;
-	}
-
 	protected void execute(ProjectTemplatesArgs projectTemplatesArgs) throws Exception {
 		File dir = projectTemplatesArgs.getDestinationDir();
 		String name = projectTemplatesArgs.getName();
@@ -387,14 +389,31 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	protected Properties getWorkspaceProperties() {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getArgs();
+		CreateArgs args = getArgs();
+
+		File argsDir = args.getDir();
 
 		File baseDir = args.getBase();
 
-		GradleWorkspaceProvider workspaceProviderGradle = (GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(
-			baseDir);
+		GradleWorkspaceProvider gradleWorkspaceProvider;
 
-		return workspaceProviderGradle.getGradleProperties(baseDir);
+		File workspaceDir;
+
+		if (bladeCLI.isWorkspaceDir(argsDir)) {
+			gradleWorkspaceProvider = (GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(argsDir);
+
+			workspaceDir = gradleWorkspaceProvider.getWorkspaceDir(argsDir);
+		}
+		else if (bladeCLI.isWorkspaceDir(baseDir)) {
+			gradleWorkspaceProvider = (GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(baseDir);
+
+			workspaceDir = gradleWorkspaceProvider.getWorkspaceDir(baseDir);
+		}
+		else {
+			return null;
+		}
+
+		return gradleWorkspaceProvider.getGradleProperties(gradleWorkspaceProvider.getWorkspaceDir(workspaceDir));
 	}
 
 	private static boolean _checkDir(File file) {
@@ -434,7 +453,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File baseDir = base.getCanonicalFile();
 
-		if (!isWorkspace(baseDir)) {
+		if (!_isWorkspaceDir(baseDir)) {
 			return baseDir;
 		}
 
@@ -506,6 +525,12 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		Collection<String> templateNames = BladeUtil.getTemplateNames(getBladeCLI());
 
 		return templateNames.contains(templateName);
+	}
+
+	private boolean _isWorkspaceDir(File dir) {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		return bladeCLI.isWorkspaceDir(dir);
 	}
 
 }

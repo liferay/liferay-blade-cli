@@ -296,6 +296,28 @@ public class BladeCLI {
 		return false;
 	}
 
+	public boolean isWorkspaceDir(File dir) {
+		try {
+			Collection<WorkspaceProvider> providers = _getWorkspaceProviders();
+
+			for (WorkspaceProvider provider : providers) {
+				try {
+					boolean workspace = provider.isWorkspace(dir);
+
+					if (workspace) {
+						return true;
+					}
+				}
+				catch (Throwable t) {
+				}
+			}
+		}
+		catch (Throwable t) {
+		}
+
+		return false;
+	}
+
 	public PrintStream out() {
 		return _out;
 	}

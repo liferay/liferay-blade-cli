@@ -62,6 +62,37 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		File modulesDir = new File(mavenworkspace, "modules");
 
+		args = new String[] {
+			"create", "--base", mavenworkspace.getAbsolutePath(), "-t", "portlet", "-d", modulesDir.getAbsolutePath(),
+			"project1"
+		};
+
+		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
+
+		File projectDirectory = new File(mavenworkspace, "modules/project1");
+
+		Assert.assertTrue(projectDirectory.exists());
+
+		File projectPomFile = new File(projectDirectory, "pom.xml");
+
+		Assert.assertTrue(projectPomFile.exists());
+	}
+
+	@Test
+	public void testMavenInitProjectDirLocation() throws Exception {
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v",
+			BladeTest.PRODUCT_VERSION_PORTAL_73
+		};
+
+		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
+
+		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
+
+		Assert.assertTrue(mavenworkspace.exists());
+
+		File modulesDir = new File(mavenworkspace, "modules");
+
 		args = new String[] {"create", "-t", "portlet", "-d", modulesDir.getAbsolutePath(), "project1"};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
@@ -218,7 +249,10 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		String projectPath = projectDir.getAbsolutePath();
 
-		String[] args = {"create", "-t", "mvc-portlet", "-d", projectPath, "-P", "maven", "foo"};
+		String[] args = {
+			"create", "--base", _workspaceDir.getAbsolutePath(), "-t", "mvc-portlet", "-d", projectPath, "-P", "maven",
+			"foo"
+		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
