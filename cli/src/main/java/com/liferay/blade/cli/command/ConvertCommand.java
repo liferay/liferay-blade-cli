@@ -65,6 +65,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.LoadProperties;
 
+import org.gradle.internal.impldep.com.google.common.collect.Lists;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -719,7 +721,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		StringBuilder dependenciesBlock = new StringBuilder();
 
-		convertedDependencies.forEach(dep -> dependenciesBlock.append("\t" + dep.toString()));
+		convertedDependencies.forEach(dep -> dependenciesBlock.append("\t" + dep.toString() + System.lineSeparator()));
 
 		dependenciesBlock.append(System.lineSeparator());
 		dependenciesBlock.append("}");
@@ -746,7 +748,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<GAV> convertedDependencies = new ArrayList<>();
 
-		List<String> portalDependencyJars = Arrays.asList(_PORTLET_PLUGIN_API_DEPENDENCIES);
+		List<String> portalDependencyJars = Lists.newArrayList(_PORTLET_PLUGIN_API_DEPENDENCIES);
 
 		File liferayPluginPackageFile = new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
@@ -803,60 +805,70 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					String portalDirValue = project.getProperty(
 						"app.server." + project.getProperty("app.server.type") + ".portal.dir");
 
-					Optional.ofNullable(
-						portalDirValue
-					).map(
-						File::new
-					).filter(
-						File::exists
-					).ifPresent(
-						portalDir -> {
-							Stream<String> stream = missingDependencyJars.stream();
+					if (FileUtil.exists(new File(portalDirValue))) {
+						Stream<String> stream = missingDependencyJars.stream();
 
-							stream.map(
-								jarName -> new File(portalDirValue, "WEB-INF/lib/" + jarName)
-							).filter(
-								File::exists
-							).map(
-								portalJar -> {
-									try (JarFile jarFile = new JarFile(portalJar)) {
-										Enumeration<JarEntry> jarEntries = jarFile.entries();
+						stream.map(
+							jarName -> new File(portalDirValue, "WEB-INF/lib/" + jarName)
+						).filter(
+							File::exists
+						).map(
+							portalJar -> {
+								try (JarFile jarFile = new JarFile(portalJar)) {
+									Enumeration<JarEntry> jarEntries = jarFile.entries();
 
-										while (jarEntries.hasMoreElements()) {
-											JarEntry jarEntry = jarEntries.nextElement();
+									while (jarEntries.hasMoreElements()) {
+										JarEntry jarEntry = jarEntries.nextElement();
 
-											String name = jarEntry.getName();
+										String name = jarEntry.getName();
 
-											if (name.startsWith("META-INF/maven") && name.endsWith("pom.properties")) {
-												Properties properties = _loadProperties(
-													jarFile.getInputStream(jarEntry));
+										if (name.startsWith("META-INF/maven") && name.endsWith("pom.properties")) {
+											Properties properties = _loadProperties(jarFile.getInputStream(jarEntry));
 
-												return new GAV(
-													properties.get("groupId"), properties.get("artifactId"),
-													properties.get("version"));
-											}
+											return new GAV(
+												properties.get("groupId"), properties.get("artifactId"),
+												properties.get("version"));
 										}
 									}
-									catch (IOException e) {
-									}
-
-									return new GAV(portalJar.getName());
 								}
-							).forEach(
-								gav -> {
-									if (gav.isUnknown()) {
-										_warn(
-											MessageFormat.format(
-												"Found dependency {0} but unable to determine its artifactId. Please " +
-													"resolve manually.",
-												gav.getJarName()));
-									}
-
-									convertedDependencies.add(gav);
+								catch (IOException e) {
 								}
-							);
-						}
-					);
+
+								return new GAV(portalJar.getName());
+							}
+						).forEach(
+							gav -> {
+								if (gav.isUnknown()) {
+									_warn(
+										MessageFormat.format(
+											"Found dependency {0} but unable to determine its artifactId. Please " +
+												"resolve manually.",
+											gav.getJarName()));
+								}
+
+								convertedDependencies.add(gav);
+							}
+						);
+					}
+					else {
+						Stream<String> stream = missingDependencyJars.stream();
+
+						stream.map(
+							jarName -> new GAV(jarName)
+						).forEach(
+							gav -> {
+								if (gav.isUnknown()) {
+									_warn(
+										MessageFormat.format(
+											"Found dependency {0} but unable to determine its artifactId. Please " +
+												"resolve manually.",
+											gav.getJarName()));
+								}
+
+								convertedDependencies.add(gav);
+							}
+						);
+					}
 				}
 			}
 		}

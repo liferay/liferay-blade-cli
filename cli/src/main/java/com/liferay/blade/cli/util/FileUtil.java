@@ -110,6 +110,14 @@ public class FileUtil {
 		}
 	}
 
+	public static boolean exists(File file) {
+		if ((file != null) && file.exists()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public static String getManifestProperty(File file, String name) throws IOException {
 		try (JarFile jarFile = new JarFile(file)) {
 			Manifest manifest = jarFile.getManifest();

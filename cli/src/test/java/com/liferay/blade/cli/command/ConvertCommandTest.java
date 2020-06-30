@@ -565,10 +565,14 @@ public class ConvertCommandTest {
 			".*compile group: \"commons-collections\", name: \"commons-collections\", version: \"3.2.2\".*",
 			".*compile group: \"commons-httpclient\", name: \"commons-httpclient\", version: \"3.1\".*",
 			".*compile group: \"dom4j\", name: \"dom4j\", version: \"1.6.1\".*",
+			".*compile group: \"antlr\", name: \"antlr\", version: \"2.7.7\".*",
 			".*compile group: \"javax.xml.soap\", name: \"saaj-api\", version: \"1.3\".*",
-			".*compile group: \"org.slf4j\", name: \"slf4j-api\", version: \"1.7.2\".*");
+			".*compile group: \"org.slf4j\", name: \"slf4j-api\", version: \"1.7.2\".*",
+			".*compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.bridges\".*",
+			".*compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.java\".*",
+			".*compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.taglib\".*");
 
-		_notContains(buildGradle, ".*antlr2.*", ".*hibernate3.*", ".*util-slf4j.*");
+		_contains(buildGradle, ".*Unknown dependency.*hibernate3.*", ".*Unknown dependency.*util-slf4j.*");
 	}
 
 	@Test
@@ -637,22 +641,6 @@ public class ConvertCommandTest {
 		Matcher matcher = pattern.matcher(content);
 
 		Assert.assertTrue(matcher.matches());
-	}
-
-	private void _notContains(File file, String... patterns) throws Exception {
-		String content = FileUtil.read(file);
-
-		for (String pattern : patterns) {
-			_notContains(content, pattern);
-		}
-	}
-
-	private void _notContains(String content, String regex) throws Exception {
-		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
-
-		Matcher matcher = pattern.matcher(content);
-
-		Assert.assertFalse(matcher.matches());
 	}
 
 	private File _setupWorkspace(String name) throws Exception {
