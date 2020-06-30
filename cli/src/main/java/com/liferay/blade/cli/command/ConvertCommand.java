@@ -360,20 +360,17 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return Files.exists(serviceXml);
 	}
 
-	private static Map<String, String> _intPortalClasspathDependenciesMap() {
-		Map<String, String> convertMap = new HashMap<>();
-
-		convertMap.put(
-			"util-bridges.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.bridges\"");
-		convertMap.put("util-java.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.java\"");
-		convertMap.put(
-			"util-taglib.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.taglib\"");
-
-		return convertMap;
-	}
-
 	private static boolean _isServiceBuilderPlugin(File pluginDir) {
 		return _hasServiceXmlFile(pluginDir);
+	}
+
+	{
+		_portalClasspathDependenciesMap.put(
+			"util-bridges.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.bridges\"");
+		_portalClasspathDependenciesMap.put(
+			"util-java.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.java\"");
+		_portalClasspathDependenciesMap.put(
+			"util-taglib.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.taglib\"");
 	}
 
 	private void _assertTrue(String message, boolean value) {
@@ -692,13 +689,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<GAV> warDependencies = _convertWarDependencies(pluginsSdkDir, warDir);
 
-		Map<String, String> portalClasspathDependenciesMap = _intPortalClasspathDependenciesMap();
-
 		warDependencies.stream(
 		).map(
 			gav -> {
-				if (gav.isUnknown() && ListUtil.contains(portalClasspathDependenciesMap.keySet(), gav.getJarName())) {
-					return new GradleDependency(portalClasspathDependenciesMap.get(gav.getJarName()));
+				if (gav.isUnknown() && ListUtil.contains(_portalClasspathDependenciesMap.keySet(), gav.getJarName())) {
+					return new GradleDependency(_portalClasspathDependenciesMap.get(gav.getJarName()));
 				}
 
 				return new GradleDependency(gav.toCompileDependency());
@@ -1027,6 +1022,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 	private static final Pattern _dependenciesBlockPattern = Pattern.compile(
 		"(.*^dependencies \\{.*)\\}(.*^war \\{.*)", Pattern.MULTILINE | Pattern.DOTALL);
+	private static final Map<String, String> _portalClasspathDependenciesMap = new HashMap<>();
 	private static String[] _portalClasspthDependencies = {
 		"commons-logging.jar", "log4j.jr", "util-bridges.jar", "util-java.jar", "util-taglib.jar"
 	};
