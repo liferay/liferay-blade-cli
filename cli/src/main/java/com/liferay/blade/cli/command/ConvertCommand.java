@@ -746,7 +746,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<GAV> convertedDependencies = new ArrayList<>();
 
-		List<String> portalDependencyJars = Arrays.asList(_portalClasspthDependencies);
+		List<String> portalDependencyJars = Arrays.asList(_PORTLET_PLUGIN_API_DEPENDENCIES);
 
 		File liferayPluginPackageFile = new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
@@ -1020,12 +1020,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		bladeCLI.out("WARNING: " + message);
 	}
 
+	private static final String[] _PORTLET_PLUGIN_API_DEPENDENCIES = {
+		"commons-logging.jar", "log4j.jar", "util-bridges.jar", "util-java.jar", "util-taglib.jar"
+	};
+
 	private static final Pattern _dependenciesBlockPattern = Pattern.compile(
 		"(.*^dependencies \\{.*)\\}(.*^war \\{.*)", Pattern.MULTILINE | Pattern.DOTALL);
 	private static final Map<String, String> _portalClasspathDependenciesMap = new HashMap<>();
-	private static String[] _portalClasspthDependencies = {
-		"commons-logging.jar", "log4j.jr", "util-bridges.jar", "util-java.jar", "util-taglib.jar"
-	};
 
 	private static class GAV {
 
