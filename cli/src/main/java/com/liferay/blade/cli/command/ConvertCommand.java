@@ -452,7 +452,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 						).filter(
 							File::exists
 						).map(
-							portalJar -> _getConvertDepdency(portalJar)
+							portalJar -> _getGAVFromJarFile(portalJar)
 						).forEach(
 							gav -> {
 								if (gav.isUnknown()) {
@@ -875,22 +875,22 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		).map(
 			workspaceDir -> new File(workspaceDir, "libs")
 		).ifPresent(
-			libFolder -> {
+			libsFolder -> {
 				for (File libFile : webInfLibDir.listFiles((dir, name) -> name.endsWith(".jar"))) {
 					try {
-						GAV webInfLibGav = _getConvertDepdency(libFile);
+						GAV gav = _getGAVFromJarFile(libFile);
 
-						if (webInfLibGav.isUnknown()) {
+						if (gav.isUnknown()) {
 							String noExtensionName = FilenameUtils.removeExtension(libFile.getName());
 
-							boolean foundedDependency = convertDependencies.stream(
+							boolean foundDependency = convertDependencies.stream(
 							).filter(
 								dependency -> StringUtils.contains(dependency.getSingleLine(), noExtensionName)
 							).findAny(
 							).isPresent();
 
-							if (!foundedDependency) {
-								StringBuilder sb = new StringBuilder("compile files(\"libs/");
+							if (!foundDependency) {
+								StringBuilder sb = new StringBuilder("compile rootProject.files(\"libs/");
 
 								sb.append(libFile.getName());
 								sb.append("\")");
@@ -898,10 +898,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 								convertDependencies.add(new GradleDependency(sb.toString()));
 							}
 
-							FileUtils.moveFileToDirectory(libFile, libFolder, true);
+							FileUtils.moveFileToDirectory(libFile, libsFolder, true);
 						}
 						else {
-							convertDependencies.add(new GradleDependency(webInfLibGav.toCompileDependency()));
+							convertDependencies.add(new GradleDependency(gav.toCompileDependency()));
 
 							FileUtils.deleteQuietly(libFile);
 						}
@@ -967,7 +967,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return pluginDir[0];
 	}
 
-	private GAV _getConvertDepdency(File dependencyJarFile) {
+	private GAV _getGAVFromJarFile(File dependencyJarFile) {
 		try (JarFile jarFile = new JarFile(dependencyJarFile)) {
 			Enumeration<JarEntry> jarEntries = jarFile.entries();
 
