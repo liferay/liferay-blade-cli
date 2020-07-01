@@ -175,7 +175,7 @@ public class ConvertCommandTest {
 			buildGradle,
 			".*compile group: \"org.hibernate\", name: \"hibernate-validator\", version: \"5.2.5.Final\".*",
 			".*compile group: \"javax.validation\", name: \"validation-api\", version: \"1.1.0.Final\".*",
-			".*compile files\\(\"libs/groovy-all.jar\"\\).*");
+			".*compile rootProject.files\\(\"libs/org.objectweb.asm-6.0.0.jar\"\\).*");
 	}
 
 	@Test
