@@ -65,8 +65,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.LoadProperties;
 
-import org.gradle.internal.impldep.com.google.common.collect.Lists;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -748,7 +746,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<GAV> convertedDependencies = new ArrayList<>();
 
-		List<String> portalDependencyJars = Lists.newArrayList(_PORTLET_PLUGIN_API_DEPENDENCIES);
+		List<String> portalDependencyJars = new ArrayList<>(Arrays.asList(_PORTLET_PLUGIN_API_DEPENDENCIES));
 
 		File liferayPluginPackageFile = new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
@@ -805,7 +803,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					String portalDirValue = project.getProperty(
 						"app.server." + project.getProperty("app.server.type") + ".portal.dir");
 
-					if (FileUtil.exists(new File(portalDirValue))) {
+					if (FileUtil.exists(portalDirValue)) {
 						Stream<String> stream = missingDependencyJars.stream();
 
 						stream.map(

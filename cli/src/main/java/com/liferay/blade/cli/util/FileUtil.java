@@ -110,12 +110,14 @@ public class FileUtil {
 		}
 	}
 
-	public static boolean exists(File file) {
-		if ((file != null) && file.exists()) {
-			return true;
+	public static boolean exists(String path) {
+		if (path == null) {
+			return false;
 		}
 
-		return false;
+		File file = new File(path);
+
+		return file.exists();
 	}
 
 	public static String getManifestProperty(File file, String name) throws IOException {
