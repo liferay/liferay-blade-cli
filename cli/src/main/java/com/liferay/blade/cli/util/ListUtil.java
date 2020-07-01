@@ -18,6 +18,7 @@ package com.liferay.blade.cli.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,12 +26,12 @@ import java.util.List;
  */
 public class ListUtil {
 
-	public static boolean contains(List<?> list, Object o) {
-		if ((list == null) || (o == null)) {
+	public static boolean contains(Collection<?> collections, Object o) {
+		if ((collections == null) || (o == null)) {
 			return false;
 		}
 
-		return list.contains(o);
+		return collections.contains(o);
 	}
 
 	public static <E> List<E> fromArray(E[] array) {
