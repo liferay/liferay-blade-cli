@@ -382,6 +382,117 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 	}
 
+	private List<GAV> _convertPortalDependencyJarProperty(File pluginsSdkDir, File warDir)
+		throws FileNotFoundException, IOException {
+
+		List<GAV> convertedDependencies = new ArrayList<>();
+
+		List<String> portalDependencyJars = new ArrayList<>(Arrays.asList(_PORTLET_PLUGIN_API_DEPENDENCIES));
+
+		File liferayPluginPackageFile = new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
+
+		if (liferayPluginPackageFile.exists()) {
+			try (InputStream fileInputStream = new FileInputStream(liferayPluginPackageFile)) {
+				Properties liferayPluginPackageProperties = _loadProperties(fileInputStream);
+
+				String portalJarsValue = liferayPluginPackageProperties.getProperty("portal-dependency-jars");
+
+				if (Objects.nonNull(portalJarsValue)) {
+					Collections.addAll(portalDependencyJars, portalJarsValue.split(","));
+				}
+
+				List<String> missingDependencyJars = new ArrayList<>();
+
+				try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(
+						"/portal-dependency-jars-62.properties")) {
+
+					Properties properties = _loadProperties(inputStream);
+
+					for (String portalDependencyJar : portalDependencyJars) {
+						String newDependency = properties.getProperty(portalDependencyJar);
+
+						if ((newDependency == null) || newDependency.isEmpty()) {
+							missingDependencyJars.add(portalDependencyJar);
+
+							continue;
+						}
+
+						String[] coordinates = newDependency.split(":");
+
+						if (coordinates.length != 3) {
+							missingDependencyJars.add(portalDependencyJar);
+
+							continue;
+						}
+
+						convertedDependencies.add(new GAV(coordinates[0], coordinates[1], coordinates[2]));
+					}
+				}
+
+				if (!missingDependencyJars.isEmpty()) {
+					LoadProperties loadProperties = new LoadProperties();
+
+					Project project = new Project();
+
+					project.setProperty("sdk.dir", pluginsSdkDir.getCanonicalPath());
+
+					loadProperties.setProject(project);
+
+					loadProperties.setSrcFile(new File(pluginsSdkDir, "build.properties"));
+					loadProperties.execute();
+
+					String portalDirValue = project.getProperty(
+						"app.server." + project.getProperty("app.server.type") + ".portal.dir");
+
+					if (FileUtil.exists(portalDirValue)) {
+						Stream<String> stream = missingDependencyJars.stream();
+
+						stream.map(
+							jarName -> new File(portalDirValue, "WEB-INF/lib/" + jarName)
+						).filter(
+							File::exists
+						).map(
+							portalJar -> _getConvertDepdency(portalJar)
+						).forEach(
+							gav -> {
+								if (gav.isUnknown()) {
+									_warn(
+										MessageFormat.format(
+											"Found dependency {0} but unable to determine its artifactId. Please " +
+												"resolve manually.",
+											gav.getJarName()));
+								}
+
+								convertedDependencies.add(gav);
+							}
+						);
+					}
+					else {
+						Stream<String> stream = missingDependencyJars.stream();
+
+						stream.map(
+							jarName -> new GAV(jarName)
+						).forEach(
+							gav -> {
+								if (gav.isUnknown()) {
+									_warn(
+										MessageFormat.format(
+											"Found dependency {0} but unable to determine its artifactId. Please " +
+												"resolve manually.",
+											gav.getJarName()));
+								}
+
+								convertedDependencies.add(gav);
+							}
+						);
+					}
+				}
+			}
+		}
+
+		return convertedDependencies;
+	}
+
 	private List<Path> _convertToLayoutWarProject(File warsDir, File layoutPluginDir, boolean removeSource) {
 		try {
 			warsDir.mkdirs();
@@ -690,7 +801,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			ivyFile.delete();
 		}
 
-		List<GAV> warDependencies = _convertWarDependencies(pluginsSdkDir, warDir);
+		List<GAV> warDependencies = _convertPortalDependencyJarProperty(pluginsSdkDir, warDir);
 
 		warDependencies.stream(
 		).map(
@@ -744,117 +855,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 
 		return convertedPaths;
-	}
-
-	private List<GAV> _convertWarDependencies(File pluginsSdkDir, File warDir)
-		throws FileNotFoundException, IOException {
-
-		List<GAV> convertedDependencies = new ArrayList<>();
-
-		List<String> portalDependencyJars = new ArrayList<>(Arrays.asList(_PORTLET_PLUGIN_API_DEPENDENCIES));
-
-		File liferayPluginPackageFile = new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
-
-		if (liferayPluginPackageFile.exists()) {
-			try (InputStream fileInputStream = new FileInputStream(liferayPluginPackageFile)) {
-				Properties liferayPluginPackageProperties = _loadProperties(fileInputStream);
-
-				String portalJarsValue = liferayPluginPackageProperties.getProperty("portal-dependency-jars");
-
-				if (Objects.nonNull(portalJarsValue)) {
-					Collections.addAll(portalDependencyJars, portalJarsValue.split(","));
-				}
-
-				List<String> missingDependencyJars = new ArrayList<>();
-
-				try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(
-						"/portal-dependency-jars-62.properties")) {
-
-					Properties properties = _loadProperties(inputStream);
-
-					for (String portalDependencyJar : portalDependencyJars) {
-						String newDependency = properties.getProperty(portalDependencyJar);
-
-						if ((newDependency == null) || newDependency.isEmpty()) {
-							missingDependencyJars.add(portalDependencyJar);
-
-							continue;
-						}
-
-						String[] coordinates = newDependency.split(":");
-
-						if (coordinates.length != 3) {
-							missingDependencyJars.add(portalDependencyJar);
-
-							continue;
-						}
-
-						convertedDependencies.add(new GAV(coordinates[0], coordinates[1], coordinates[2]));
-					}
-				}
-
-				if (!missingDependencyJars.isEmpty()) {
-					LoadProperties loadProperties = new LoadProperties();
-
-					Project project = new Project();
-
-					project.setProperty("sdk.dir", pluginsSdkDir.getCanonicalPath());
-
-					loadProperties.setProject(project);
-
-					loadProperties.setSrcFile(new File(pluginsSdkDir, "build.properties"));
-					loadProperties.execute();
-
-					String portalDirValue = project.getProperty(
-						"app.server." + project.getProperty("app.server.type") + ".portal.dir");
-
-					if (FileUtil.exists(portalDirValue)) {
-						Stream<String> stream = missingDependencyJars.stream();
-
-						stream.map(
-							jarName -> new File(portalDirValue, "WEB-INF/lib/" + jarName)
-						).filter(
-							File::exists
-						).map(
-							portalJar -> _getConvertDepdency(portalJar)
-						).forEach(
-							gav -> {
-								if (gav.isUnknown()) {
-									_warn(
-										MessageFormat.format(
-											"Found dependency {0} but unable to determine its artifactId. Please " +
-												"resolve manually.",
-											gav.getJarName()));
-								}
-
-								convertedDependencies.add(gav);
-							}
-						);
-					}
-					else {
-						Stream<String> stream = missingDependencyJars.stream();
-
-						stream.map(
-							jarName -> new GAV(jarName)
-						).forEach(
-							gav -> {
-								if (gav.isUnknown()) {
-									_warn(
-										MessageFormat.format(
-											"Found dependency {0} but unable to determine its artifactId. Please " +
-												"resolve manually.",
-											gav.getJarName()));
-								}
-
-								convertedDependencies.add(gav);
-							}
-						);
-					}
-				}
-			}
-		}
-
-		return convertedDependencies;
 	}
 
 	private void _convertWebInfLibNames(File warDir, List<GradleDependency> convertDependencies) {
