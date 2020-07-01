@@ -860,60 +860,58 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 	private void _convertWebInfLibNames(File warDir, List<GradleDependency> convertDependencies) {
 		File webInfLibDir = new File(warDir, "src/main/webapp/WEB-INF/lib");
 
-		FilenameFilter fileNameFilter = new FilenameFilter() {
-
-			public boolean accept(File dir, String name) {
-				if (name.endsWith(".jar")) {
-					return true;
-				}
-
-				return false;
-			}
-
-		};
+		if (!webInfLibDir.exists()) {
+			return;
+		}
 
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs baseArgs = bladeCLI.getArgs();
 
-		File workspaceProjectLibDir = new File(baseArgs.getBase(), "libs");
+		Optional.ofNullable(
+			bladeCLI.getWorkspaceProvider(baseArgs.getBase())
+		).map(
+			wp -> wp.getWorkspaceDir(baseArgs.getBase())
+		).map(
+			workspaceDir -> new File(workspaceDir, "libs")
+		).ifPresent(
+			libFolder -> {
+				for (File libFile : webInfLibDir.listFiles((dir, name) -> name.endsWith(".jar"))) {
+					try {
+						GAV webInfLibGav = _getConvertDepdency(libFile);
 
-		if (webInfLibDir.exists()) {
-			for (File libFile : webInfLibDir.listFiles(fileNameFilter)) {
-				try {
-					GAV webInfLibGav = _getConvertDepdency(libFile);
+						if (webInfLibGav.isUnknown()) {
+							String noExtensionName = FilenameUtils.removeExtension(libFile.getName());
 
-					if (webInfLibGav.isUnknown()) {
-						String noExtensionName = FilenameUtils.removeExtension(libFile.getName());
+							boolean foundedDependency = convertDependencies.stream(
+							).filter(
+								dependency -> StringUtils.contains(dependency.getSingleLine(), noExtensionName)
+							).findAny(
+							).isPresent();
 
-						boolean foundedDependency = convertDependencies.stream(
-						).filter(
-							dependency -> StringUtils.contains(dependency.getSingleLine(), noExtensionName)
-						).findAny(
-						).isPresent();
+							if (!foundedDependency) {
+								StringBuilder sb = new StringBuilder("compile files(\"libs/");
 
-						if (!foundedDependency) {
-							StringBuilder sb = new StringBuilder("compile files(\"libs/");
+								sb.append(libFile.getName());
+								sb.append("\")");
 
-							sb.append(libFile.getName());
-							sb.append("\")");
+								convertDependencies.add(new GradleDependency(sb.toString()));
+							}
 
-							convertDependencies.add(new GradleDependency(sb.toString()));
+							FileUtils.moveFileToDirectory(libFile, libFolder, true);
 						}
+						else {
+							convertDependencies.add(new GradleDependency(webInfLibGav.toCompileDependency()));
 
-						FileUtils.moveFileToDirectory(libFile, workspaceProjectLibDir, true);
+							FileUtils.deleteQuietly(libFile);
+						}
 					}
-					else {
-						convertDependencies.add(new GradleDependency(webInfLibGav.toCompileDependency()));
-
-						FileUtils.deleteQuietly(libFile);
+					catch (Exception e) {
+						bladeCLI.error(e.getMessage());
 					}
-				}
-				catch (Exception exception) {
-					exception.printStackTrace();
 				}
 			}
-		}
+		);
 	}
 
 	private void _deleteServiceBuilderFiles(Path warPath) throws IOException {
@@ -1135,8 +1133,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			}
 
 			return MessageFormat.format(
-				"compile group: \"{0}\", name: \"{1}\", version: \"{2}\"", _getGroupId(),
-				_getArtifactId(), _getVersion());
+				"compile group: \"{0}\", name: \"{1}\", version: \"{2}\"", _getGroupId(), _getArtifactId(),
+				_getVersion());
 		}
 
 		private String _getArtifactId() {
