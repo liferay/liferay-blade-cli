@@ -132,6 +132,45 @@ public class ConvertCommandTest {
 	}
 
 	@Test
+	public void testConvertSpringPortlet() throws Exception {
+		File testdir = new File(_rootDir, "plugins-sdk-spring");
+
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+
+		Assert.assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
+
+		File workspaceParent = new File(_rootDir, "workspace-parent");
+
+		String[] args = {"--base", workspaceParent.getPath(), "init", "ws", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		File workspaceDir = new File(workspaceParent, "ws");
+
+		Assert.assertTrue(workspaceDir.exists());
+
+		args = new String[] {
+			"--base", workspaceDir.getPath(), "convert", "--source", projectDir.getPath(), "my-springportletmvc-portlet"
+		};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		String errors = bladeTestResults.getErrors();
+
+		Assert.assertTrue(errors, errors.isEmpty());
+
+		File portletDir = new File(workspaceDir, "modules/my-springportletmvc/my-springportletmvc-portlet");
+
+		Assert.assertTrue(portletDir.exists());
+	}
+
+	@Test
 	public void testFindPluginsSdkPlugin() throws Exception {
 		Path rootPath = _rootDir.toPath();
 
