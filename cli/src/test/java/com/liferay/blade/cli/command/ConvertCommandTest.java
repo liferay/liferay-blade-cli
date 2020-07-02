@@ -156,7 +156,8 @@ public class ConvertCommandTest {
 		Assert.assertTrue(workspaceDir.exists());
 
 		args = new String[] {
-			"--base", workspaceDir.getPath(), "convert", "--source", projectDir.getPath(), "my-springportletmvc-portlet"
+			"--base", workspaceDir.getPath(), "convert", "--source", projectDir.getPath(), "-v", "7.1",
+			"my-springportletmvc-portlet"
 		};
 
 		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -175,7 +176,12 @@ public class ConvertCommandTest {
 			buildGradle,
 			".*compile group: \"org.hibernate\", name: \"hibernate-validator\", version: \"5.2.5.Final\".*",
 			".*compile group: \"javax.validation\", name: \"validation-api\", version: \"1.1.0.Final\".*",
+			".*compile group: \"org.springframework\", name: \"spring-core\", version: \"4.3.22.RELEASE\".*",
+			".*compile group: \"org.springframework\", name: \"spring-webmvc\", version: \"4.3.22.RELEASE\".*",
+			".*compile group: \"org.springframework\", name: \"spring-webmvc-portlet\", version: \"4.3.22.RELEASE\".*",
 			".*compile rootProject.files\\(\"libs/org.objectweb.asm-6.0.0.jar\"\\).*");
+
+		_notContains(buildGradle, ".*spring-asm\".*");
 	}
 
 	@Test
@@ -688,6 +694,22 @@ public class ConvertCommandTest {
 		Matcher matcher = pattern.matcher(content);
 
 		Assert.assertTrue(matcher.matches());
+	}
+
+	private void _notContains(File file, String... patterns) throws Exception {
+		String content = FileUtil.read(file);
+
+		for (String pattern : patterns) {
+			_notContains(content, pattern);
+		}
+	}
+
+	private void _notContains(String content, String regex) throws Exception {
+		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
+
+		Matcher matcher = pattern.matcher(content);
+
+		Assert.assertFalse(matcher.matches());
 	}
 
 	private File _setupWorkspace(String name) throws Exception {

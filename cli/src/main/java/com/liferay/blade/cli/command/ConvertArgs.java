@@ -56,6 +56,10 @@ public class ConvertArgs extends BaseArgs {
 		return CommandType.WORKSPACE_ONLY;
 	}
 
+	public String getLiferayVersion() {
+		return _liferayVersion;
+	}
+
 	public List<String> getName() {
 		return _name;
 	}
@@ -80,8 +84,18 @@ public class ConvertArgs extends BaseArgs {
 		return _themeBuilder;
 	}
 
+	public void setLiferayVersion(String liferayVersion) {
+		_liferayVersion = liferayVersion;
+	}
+
 	@Parameter(description = "Migrate all plugin projects", names = {"-a", "--all"})
 	private boolean _all;
+
+	@Parameter(
+		description = "The version of Liferay to target when converting the project. Available options are 7.0, 7.1, 7.2, 7.3.",
+		names = {"-v", "--liferay-version"}
+	)
+	private String _liferayVersion;
 
 	@Parameter(description = "List the projects available to be converted", names = {"-l", "--list"})
 	private boolean _list;

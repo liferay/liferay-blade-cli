@@ -22,6 +22,7 @@ import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ListUtil;
+import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.ide.gradle.core.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
@@ -52,6 +53,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -376,6 +379,40 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			"util-taglib.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.taglib\"");
 	}
 
+	private static final void _loadMigratedDependencies(String resource, Map<String, GAV> migratedDependencies) {
+		try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(resource)) {
+			Properties properties = new Properties();
+
+			properties.load(inputStream);
+
+			Set<Map.Entry<Object, Object>> entries = properties.entrySet();
+
+			entries.forEach(
+				entry -> {
+					String key = (String)entry.getKey();
+					String value = (String)entry.getValue();
+
+					GAV gav = null;
+
+					if (Objects.equals("__remove__", value)) {
+						gav = new GAV(key);
+
+						gav.setRemove(true);
+					}
+					else {
+						String[] coords = StringUtil.split(value, ":");
+
+						gav = new GAV(coords[0], coords[1], coords[2]);
+					}
+
+					migratedDependencies.put(key, gav);
+				});
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void _assertTrue(String message, boolean value) {
 		if (!value) {
 			throw new AssertionError(message);
@@ -408,24 +445,34 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 					Properties properties = _loadProperties(inputStream);
 
+					Map<String, GAV> migratedDependencies = _getMigratedDependecies();
+
 					for (String portalDependencyJar : portalDependencyJars) {
-						String newDependency = properties.getProperty(portalDependencyJar);
+						GAV gav = migratedDependencies.get(portalDependencyJar);
 
-						if ((newDependency == null) || newDependency.isEmpty()) {
-							missingDependencyJars.add(portalDependencyJar);
+						if (gav == null) {
+							String newDependency = properties.getProperty(portalDependencyJar);
 
-							continue;
+							if ((newDependency == null) || newDependency.isEmpty()) {
+								missingDependencyJars.add(portalDependencyJar);
+
+								continue;
+							}
+
+							String[] coordinates = newDependency.split(":");
+
+							if (coordinates.length != 3) {
+								missingDependencyJars.add(portalDependencyJar);
+
+								continue;
+							}
+
+							gav = new GAV(coordinates[0], coordinates[1], coordinates[2]);
 						}
 
-						String[] coordinates = newDependency.split(":");
-
-						if (coordinates.length != 3) {
-							missingDependencyJars.add(portalDependencyJar);
-
-							continue;
+						if (!gav.isRemove()) {
+							convertedDependencies.add(gav);
 						}
-
-						convertedDependencies.add(new GAV(coordinates[0], coordinates[1], coordinates[2]));
 					}
 				}
 
@@ -765,7 +812,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		_initBuildGradle(warPath);
 
-		List<GradleDependency> convertedDependencies = new ArrayList<>();
+		List<GAV> convertedGavs = new CopyOnWriteArrayList<>();
 
 		File ivyFile = new File(warDir, "ivy.xml");
 
@@ -782,6 +829,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			NodeList depElements = documentElement.getElementsByTagName("dependency");
 
+			Map<String, GAV> migratedDependencies = _getMigratedDependecies();
+
 			if ((depElements != null) && (depElements.getLength() > 0)) {
 				for (int i = 0; i < depElements.getLength(); i++) {
 					Node depElement = depElements.item(i);
@@ -790,10 +839,23 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					String org = _getAttr(depElement, "org");
 					String rev = _getAttr(depElement, "rev");
 
-					if ((name != null) && (org != null) && (rev != null)) {
+					Set<String> migratedKeys = migratedDependencies.keySet();
+
+					boolean removedGav = false;
+
+					if ((name != null) &&
+						migratedKeys.stream().filter(
+							key -> name.equals(key.replaceAll("\\.jar$", ""))).map(
+								key -> migratedDependencies.get(key)).filter(
+									GAV::isRemove).findFirst().isPresent()) {
+
+						removedGav = true;
+					}
+
+					if ((name != null) && (org != null) && (rev != null) && !removedGav) {
 						GAV gav = new GAV(org, name, rev);
 
-						convertedDependencies.add(new GradleDependency(gav.toCompileDependency()));
+						convertedGavs.add(gav);
 					}
 				}
 			}
@@ -801,9 +863,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			ivyFile.delete();
 		}
 
-		List<GAV> warDependencies = _convertPortalDependencyJarProperty(pluginsSdkDir, warDir);
+		convertedGavs.addAll(_convertPortalDependencyJarProperty(pluginsSdkDir, warDir));
 
-		warDependencies.stream(
+		List<GradleDependency> convertedGradleDependencies = convertedGavs.stream(
 		).map(
 			gav -> {
 				if (gav.isUnknown() && ListUtil.contains(_portalClasspathDependenciesMap.keySet(), gav.getJarName())) {
@@ -812,9 +874,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 				return new GradleDependency(gav.toCompileDependency());
 			}
-		).forEach(
-			convertedDependencies::add
+		).collect(
+			Collectors.toList()
 		);
+
+		_convertWebInfLibNames(warDir, convertedGradleDependencies);
 
 		if (apiProjectDir != null) {
 			StringBuilder sb = new StringBuilder("compileOnly project(\":modules:");
@@ -824,10 +888,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			sb.append(apiProjectDir.getName());
 			sb.append("\")");
 
-			convertedDependencies.add(new GradleDependency(sb.toString()));
+			convertedGradleDependencies.add(new GradleDependency(sb.toString()));
 		}
-
-		_convertWebInfLibNames(warDir, convertedDependencies);
 
 		Path buildGradlePath = warPath.resolve("build.gradle");
 
@@ -835,7 +897,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		StringBuilder dependenciesBlock = new StringBuilder();
 
-		convertedDependencies.forEach(dep -> dependenciesBlock.append("\t" + dep.toString() + System.lineSeparator()));
+		convertedGradleDependencies.forEach(
+			dep -> dependenciesBlock.append("\t" + dep.toString() + System.lineSeparator()));
 
 		dependenciesBlock.append(System.lineSeparator());
 		dependenciesBlock.append("}");
@@ -864,6 +927,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			return;
 		}
 
+		Map<String, GAV> migratedDependencies = _getMigratedDependecies();
+
+		Set<String> jarNames = migratedDependencies.keySet();
+
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs baseArgs = bladeCLI.getArgs();
@@ -878,24 +945,33 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			libsFolder -> {
 				for (File libFile : webInfLibDir.listFiles((dir, name) -> name.endsWith(".jar"))) {
 					try {
-						GAV gav = _getGAVFromJarFile(libFile);
+						GAV gav = migratedDependencies.get(libFile.getName());
 
-						if (gav.isUnknown()) {
-							String noExtensionName = FilenameUtils.removeExtension(libFile.getName());
+						if (gav == null) {
+							gav = _getGAVFromJarFile(libFile);
+						}
 
-							boolean foundDependency = convertDependencies.stream(
-							).filter(
-								dependency -> StringUtils.contains(dependency.getSingleLine(), noExtensionName)
-							).findAny(
-							).isPresent();
+						if (gav.isRemove()) {
+							FileUtils.deleteQuietly(libFile);
+						}
+						else if (gav.isUnknown()) {
+							if (!jarNames.contains(libFile.getName())) {
+								String noExtensionName = FilenameUtils.removeExtension(libFile.getName());
 
-							if (!foundDependency) {
-								StringBuilder sb = new StringBuilder("compile rootProject.files(\"libs/");
+								boolean foundDependency = convertDependencies.stream(
+								).filter(
+									dependency -> StringUtils.contains(dependency.getSingleLine(), noExtensionName)
+								).findAny(
+								).isPresent();
 
-								sb.append(libFile.getName());
-								sb.append("\")");
+								if (!foundDependency) {
+									StringBuilder sb = new StringBuilder("compile rootProject.files(\"libs/");
 
-								convertDependencies.add(new GradleDependency(sb.toString()));
+									sb.append(libFile.getName());
+									sb.append("\")");
+
+									convertDependencies.add(new GradleDependency(sb.toString()));
+								}
 							}
 
 							FileUtils.moveFileToDirectory(libFile, libsFolder, true);
@@ -987,6 +1063,24 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 
 		return new GAV(dependencyJarFile.getName());
+	}
+
+	private Map<String, GAV> _getMigratedDependecies() {
+		ConvertArgs convertArgs = getArgs();
+
+		String liferayVersion = convertArgs.getLiferayVersion();
+
+		if (Objects.equals("7.1", liferayVersion)) {
+			return _migratedDependencies71;
+		}
+		else if (Objects.equals("7.2", liferayVersion)) {
+			return _migratedDependencies72;
+		}
+		else if (Objects.equals("7.3", liferayVersion)) {
+			return _migratedDependencies73;
+		}
+
+		return Collections.emptyMap();
 	}
 
 	private File _getPluginsSdkDir(ConvertArgs convertArgs, File projectDir, Properties gradleProperties) {
@@ -1098,7 +1192,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 	private static final Pattern _dependenciesBlockPattern = Pattern.compile(
 		"(.*^dependencies \\{.*)\\}(.*^war \\{.*)", Pattern.MULTILINE | Pattern.DOTALL);
+	private static final Map<String, GAV> _migratedDependencies71 = new HashMap<>();
+	private static final Map<String, GAV> _migratedDependencies72 = new HashMap<>();
+	private static final Map<String, GAV> _migratedDependencies73 = new HashMap<>();
 	private static final Map<String, String> _portalClasspathDependenciesMap = new HashMap<>();
+	{
+		_loadMigratedDependencies("/migrated-dependencies-7.1.properties", _migratedDependencies71);
+		_loadMigratedDependencies("/migrated-dependencies-7.2.properties", _migratedDependencies72);
+		_loadMigratedDependencies("/migrated-dependencies-7.3.properties", _migratedDependencies73);
+	}
 
 	private static class GAV {
 
@@ -1119,12 +1221,24 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			return _jarName;
 		}
 
+		public boolean isRemove() {
+			return _remove;
+		}
+
 		public boolean isUnknown() {
+			if (isRemove()) {
+				return false;
+			}
+
 			if (!_groupId.isPresent() || !_artifactId.isPresent() || !_version.isPresent()) {
 				return true;
 			}
 
 			return false;
+		}
+
+		public void setRemove(boolean remove) {
+			_remove = remove;
 		}
 
 		public String toCompileDependency() {
@@ -1153,13 +1267,14 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			return object.map(
 				String.class::cast
 			).orElse(
-				"<unkonwn>"
+				"<unknown>"
 			);
 		}
 
 		private Optional<Object> _artifactId;
 		private Optional<Object> _groupId;
 		private String _jarName;
+		private boolean _remove = false;
 		private Optional<Object> _version;
 
 	}
