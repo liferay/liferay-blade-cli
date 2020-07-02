@@ -45,7 +45,6 @@ import java.text.MessageFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -189,15 +188,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			}
 
 		};
-
-		try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(
-				"/ignore-portal-dependencies.properties")) {
-
-			_ignoredDependencyProperties.load(inputStream);
-		}
-		catch (IOException exception) {
-			getBladeCLI().error("Failed to load ignored dependency properties file.");
-		}
 
 		File[] portletList = portletsDir.listFiles(containsDocrootFilter);
 		File[] hookFiles = hooksDir.listFiles(containsDocrootFilter);
@@ -389,6 +379,40 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			"util-taglib.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.taglib\"");
 	}
 
+	private static final void _loadMigratedDependencies(String resource, Map<String, GAV> migratedDependencies) {
+		try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(resource)) {
+			Properties properties = new Properties();
+
+			properties.load(inputStream);
+
+			Set<Map.Entry<Object, Object>> entries = properties.entrySet();
+
+			entries.forEach(
+				entry -> {
+					String key = (String)entry.getKey();
+					String value = (String)entry.getValue();
+
+					GAV gav = null;
+
+					if (Objects.equals("__remove__", value)) {
+						gav = new GAV(key);
+
+						gav.setRemove(true);
+					}
+					else {
+						String[] coords = StringUtil.split(value, ":");
+
+						gav = new GAV(coords[0], coords[1], coords[2]);
+					}
+
+					migratedDependencies.put(key, gav);
+				});
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void _assertTrue(String message, boolean value) {
 		if (!value) {
 			throw new AssertionError(message);
@@ -421,24 +445,34 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 					Properties properties = _loadProperties(inputStream);
 
+					Map<String, GAV> migratedDependencies = _getMigratedDependecies();
+
 					for (String portalDependencyJar : portalDependencyJars) {
-						String newDependency = properties.getProperty(portalDependencyJar);
+						GAV gav = migratedDependencies.get(portalDependencyJar);
 
-						if ((newDependency == null) || newDependency.isEmpty()) {
-							missingDependencyJars.add(portalDependencyJar);
+						if (gav == null) {
+							String newDependency = properties.getProperty(portalDependencyJar);
 
-							continue;
+							if ((newDependency == null) || newDependency.isEmpty()) {
+								missingDependencyJars.add(portalDependencyJar);
+
+								continue;
+							}
+
+							String[] coordinates = newDependency.split(":");
+
+							if (coordinates.length != 3) {
+								missingDependencyJars.add(portalDependencyJar);
+
+								continue;
+							}
+
+							gav = new GAV(coordinates[0], coordinates[1], coordinates[2]);
 						}
 
-						String[] coordinates = newDependency.split(":");
-
-						if (coordinates.length != 3) {
-							missingDependencyJars.add(portalDependencyJar);
-
-							continue;
+						if (!gav.isRemove()) {
+							convertedDependencies.add(gav);
 						}
-
-						convertedDependencies.add(new GAV(coordinates[0], coordinates[1], coordinates[2]));
 					}
 				}
 
@@ -795,6 +829,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			NodeList depElements = documentElement.getElementsByTagName("dependency");
 
+			Map<String, GAV> migratedDependencies = _getMigratedDependecies();
+
 			if ((depElements != null) && (depElements.getLength() > 0)) {
 				for (int i = 0; i < depElements.getLength(); i++) {
 					Node depElement = depElements.item(i);
@@ -803,7 +839,20 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					String org = _getAttr(depElement, "org");
 					String rev = _getAttr(depElement, "rev");
 
-					if ((name != null) && (org != null) && (rev != null)) {
+					Set<String> migratedKeys = migratedDependencies.keySet();
+
+					boolean removedGav = false;
+
+					if ((name != null) &&
+						migratedKeys.stream().filter(
+							key -> name.equals(key.replaceAll("\\.jar$", ""))).map(
+								key -> migratedDependencies.get(key)).filter(
+									GAV::isRemove).findFirst().isPresent()) {
+
+						removedGav = true;
+					}
+
+					if ((name != null) && (org != null) && (rev != null) && !removedGav) {
 						GAV gav = new GAV(org, name, rev);
 
 						convertedGavs.add(gav);
@@ -815,8 +864,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 
 		convertedGavs.addAll(_convertPortalDependencyJarProperty(pluginsSdkDir, warDir));
-
-		_removeIgnorePoratlDependencies(convertedGavs);
 
 		List<GradleDependency> convertedGradleDependencies = convertedGavs.stream(
 		).map(
@@ -880,34 +927,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			return;
 		}
 
-		final Set<Object> ignoreDependencyKeySets = _ignoredDependencyProperties.keySet();
+		Map<String, GAV> migratedDependencies = _getMigratedDependecies();
 
-		Collection<Object> ignoreDependencyValues = _ignoredDependencyProperties.values();
-
-		Set<GAV> ignoreDependencyGavSets = ignoreDependencyValues.stream(
-		).filter(
-			ignoreDependencyValue -> Objects.nonNull(ignoreDependencyValue)
-		).map(
-			ignoreDependencyValue -> String.valueOf(ignoreDependencyValue)
-		).filter(
-			ignoreDependencyValue -> {
-				String[] gavString = StringUtil.split(ignoreDependencyValue, ":");
-
-				if (Objects.nonNull(gavString) && (gavString.length >= 2)) {
-					return true;
-				}
-
-				return false;
-			}
-		).map(
-			ignoreDependencyValue -> {
-				String[] gavString = StringUtil.split(ignoreDependencyValue, ":");
-
-				return new GAV(gavString[0], gavString[1], null);
-			}
-		).collect(
-			Collectors.toSet()
-		);
+		Set<String> jarNames = migratedDependencies.keySet();
 
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -923,10 +945,17 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			libsFolder -> {
 				for (File libFile : webInfLibDir.listFiles((dir, name) -> name.endsWith(".jar"))) {
 					try {
-						GAV gav = _getGAVFromJarFile(libFile);
+						GAV gav = migratedDependencies.get(libFile.getName());
 
-						if (gav.isUnknown()) {
-							if (!ignoreDependencyKeySets.contains(libFile.getName())) {
+						if (gav == null) {
+							gav = _getGAVFromJarFile(libFile);
+						}
+
+						if (gav.isRemove()) {
+							FileUtils.deleteQuietly(libFile);
+						}
+						else if (gav.isUnknown()) {
+							if (!jarNames.contains(libFile.getName())) {
 								String noExtensionName = FilenameUtils.removeExtension(libFile.getName());
 
 								boolean foundDependency = convertDependencies.stream(
@@ -948,17 +977,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 							FileUtils.moveFileToDirectory(libFile, libsFolder, true);
 						}
 						else {
-							boolean containIgnoredDependencyArtifact = ignoreDependencyGavSets.stream(
-							).filter(
-								ignoreDependencyGav ->
-									StringUtil.equals(ignoreDependencyGav._getArtifactId(), gav._getArtifactId()) &&
-									StringUtil.equals(ignoreDependencyGav._getGroupId(), gav._getGroupId())
-							).findAny(
-							).isPresent();
-
-							if (!containIgnoredDependencyArtifact) {
-								convertDependencies.add(new GradleDependency(gav.toCompileDependency()));
-							}
+							convertDependencies.add(new GradleDependency(gav.toCompileDependency()));
 
 							FileUtils.deleteQuietly(libFile);
 						}
@@ -1044,6 +1063,24 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 
 		return new GAV(dependencyJarFile.getName());
+	}
+
+	private Map<String, GAV> _getMigratedDependecies() {
+		ConvertArgs convertArgs = getArgs();
+
+		String liferayVersion = convertArgs.getLiferayVersion();
+
+		if (Objects.equals("7.1", liferayVersion)) {
+			return _migratedDependencies71;
+		}
+		else if (Objects.equals("7.2", liferayVersion)) {
+			return _migratedDependencies72;
+		}
+		else if (Objects.equals("7.3", liferayVersion)) {
+			return _migratedDependencies73;
+		}
+
+		return Collections.emptyMap();
 	}
 
 	private File _getPluginsSdkDir(ConvertArgs convertArgs, File projectDir, Properties gradleProperties) {
@@ -1143,56 +1180,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return properties;
 	}
 
-	private void _removeIgnorePoratlDependencies(List<GAV> convertedDependencies) {
-		final Set<Object> ignoreDependencyKeySets = _ignoredDependencyProperties.keySet();
-
-		Collection<Object> ignoreDependencyValues = _ignoredDependencyProperties.values();
-
-		Set<GAV> ignoreDependencyGAVsets = ignoreDependencyValues.stream(
-		).filter(
-			ignoreDependencyValue -> Objects.nonNull(ignoreDependencyValue)
-		).map(
-			ignoreDependencyValue -> String.valueOf(ignoreDependencyValue)
-		).filter(
-			ignoreDependencyValue -> {
-				String[] gavString = StringUtil.split(ignoreDependencyValue, ":");
-
-				if (Objects.nonNull(gavString) && (gavString.length >= 2)) {
-					return true;
-				}
-
-				return false;
-			}
-		).map(
-			ignoreDependencyValue -> {
-				String[] gavString = StringUtil.split(ignoreDependencyValue, ":");
-
-				return new GAV(gavString[0], gavString[1], null);
-			}
-		).collect(
-			Collectors.toSet()
-		);
-
-		for (GAV gav : convertedDependencies) {
-			if (gav.isUnknown() && ignoreDependencyKeySets.contains(String.valueOf(gav.getJarName()))) {
-				convertedDependencies.remove(gav);
-			}
-			else {
-				boolean containIgnoredDependencyArtifact = ignoreDependencyGAVsets.stream(
-				).filter(
-					ignoreDependencyGav ->
-						StringUtil.equals(ignoreDependencyGav._getArtifactId(), gav._getArtifactId()) &&
-						StringUtil.equals(ignoreDependencyGav._getGroupId(), gav._getGroupId())
-				).findAny(
-				).isPresent();
-
-				if (containIgnoredDependencyArtifact) {
-					convertedDependencies.remove(gav);
-				}
-			}
-		}
-	}
-
 	private void _warn(String message) {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -1205,9 +1192,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 	private static final Pattern _dependenciesBlockPattern = Pattern.compile(
 		"(.*^dependencies \\{.*)\\}(.*^war \\{.*)", Pattern.MULTILINE | Pattern.DOTALL);
+	private static final Map<String, GAV> _migratedDependencies71 = new HashMap<>();
+	private static final Map<String, GAV> _migratedDependencies72 = new HashMap<>();
+	private static final Map<String, GAV> _migratedDependencies73 = new HashMap<>();
 	private static final Map<String, String> _portalClasspathDependenciesMap = new HashMap<>();
-
-	private Properties _ignoredDependencyProperties = new Properties();
+	{
+		_loadMigratedDependencies("/migrated-dependencies-7.1.properties", _migratedDependencies71);
+		_loadMigratedDependencies("/migrated-dependencies-7.2.properties", _migratedDependencies72);
+		_loadMigratedDependencies("/migrated-dependencies-7.3.properties", _migratedDependencies73);
+	}
 
 	private static class GAV {
 
@@ -1228,12 +1221,24 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			return _jarName;
 		}
 
+		public boolean isRemove() {
+			return _remove;
+		}
+
 		public boolean isUnknown() {
+			if (isRemove()) {
+				return false;
+			}
+
 			if (!_groupId.isPresent() || !_artifactId.isPresent() || !_version.isPresent()) {
 				return true;
 			}
 
 			return false;
+		}
+
+		public void setRemove(boolean remove) {
+			_remove = remove;
 		}
 
 		public String toCompileDependency() {
@@ -1262,13 +1267,14 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			return object.map(
 				String.class::cast
 			).orElse(
-				"<unkonwn>"
+				"<unknown>"
 			);
 		}
 
 		private Optional<Object> _artifactId;
 		private Optional<Object> _groupId;
 		private String _jarName;
+		private boolean _remove = false;
 		private Optional<Object> _version;
 
 	}

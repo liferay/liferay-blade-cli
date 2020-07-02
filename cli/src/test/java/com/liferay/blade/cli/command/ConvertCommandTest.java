@@ -156,7 +156,8 @@ public class ConvertCommandTest {
 		Assert.assertTrue(workspaceDir.exists());
 
 		args = new String[] {
-			"--base", workspaceDir.getPath(), "convert", "--source", projectDir.getPath(), "my-springportletmvc-portlet"
+			"--base", workspaceDir.getPath(), "convert", "--source", projectDir.getPath(), "-v", "7.1",
+			"my-springportletmvc-portlet"
 		};
 
 		BladeTestResults bladeTestResults = TestUtil.runBlade(_rootDir, _extensionsDir, args);
@@ -175,9 +176,12 @@ public class ConvertCommandTest {
 			buildGradle,
 			".*compile group: \"org.hibernate\", name: \"hibernate-validator\", version: \"5.2.5.Final\".*",
 			".*compile group: \"javax.validation\", name: \"validation-api\", version: \"1.1.0.Final\".*",
+			".*compile group: \"org.springframework\", name: \"spring-core\", version: \"4.3.22.RELEASE\".*",
+			".*compile group: \"org.springframework\", name: \"spring-webmvc\", version: \"4.3.22.RELEASE\".*",
+			".*compile group: \"org.springframework\", name: \"spring-webmvc-portlet\", version: \"4.3.22.RELEASE\".*",
 			".*compile rootProject.files\\(\"libs/org.objectweb.asm-6.0.0.jar\"\\).*");
 
-		_notContains(buildGradle, ".*compile group: \"org.springframework\", name: \"spring-asm\".*");
+		_notContains(buildGradle, ".*spring-asm\".*");
 	}
 
 	@Test
