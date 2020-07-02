@@ -18,11 +18,12 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.gradle.GradleDependency;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ListUtil;
-import com.liferay.ide.gradle.core.model.GradleDependency;
+import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
 import java.io.File;
@@ -44,6 +45,7 @@ import java.text.MessageFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -52,6 +54,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -185,6 +189,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			}
 
 		};
+
+		try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(
+				"/ignore-portal-dependencies.properties")) {
+
+			_ignoredDependencyProperties.load(inputStream);
+		}
+		catch (IOException exception) {
+			getBladeCLI().error("Failed to load ignored dependency properties file.");
+		}
 
 		File[] portletList = portletsDir.listFiles(containsDocrootFilter);
 		File[] hookFiles = hooksDir.listFiles(containsDocrootFilter);
@@ -765,7 +778,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		_initBuildGradle(warPath);
 
-		List<GradleDependency> convertedDependencies = new ArrayList<>();
+		List<GAV> convertedGavs = new CopyOnWriteArrayList<>();
 
 		File ivyFile = new File(warDir, "ivy.xml");
 
@@ -793,7 +806,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					if ((name != null) && (org != null) && (rev != null)) {
 						GAV gav = new GAV(org, name, rev);
 
-						convertedDependencies.add(new GradleDependency(gav.toCompileDependency()));
+						convertedGavs.add(gav);
 					}
 				}
 			}
@@ -801,9 +814,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			ivyFile.delete();
 		}
 
-		List<GAV> warDependencies = _convertPortalDependencyJarProperty(pluginsSdkDir, warDir);
+		convertedGavs.addAll(_convertPortalDependencyJarProperty(pluginsSdkDir, warDir));
 
-		warDependencies.stream(
+		_removeIgnorePoratlDependencies(convertedGavs);
+
+		List<GradleDependency> convertedGradleDependencies = convertedGavs.stream(
 		).map(
 			gav -> {
 				if (gav.isUnknown() && ListUtil.contains(_portalClasspathDependenciesMap.keySet(), gav.getJarName())) {
@@ -812,9 +827,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 				return new GradleDependency(gav.toCompileDependency());
 			}
-		).forEach(
-			convertedDependencies::add
+		).collect(
+			Collectors.toList()
 		);
+
+		_convertWebInfLibNames(warDir, convertedGradleDependencies);
 
 		if (apiProjectDir != null) {
 			StringBuilder sb = new StringBuilder("compileOnly project(\":modules:");
@@ -824,10 +841,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			sb.append(apiProjectDir.getName());
 			sb.append("\")");
 
-			convertedDependencies.add(new GradleDependency(sb.toString()));
+			convertedGradleDependencies.add(new GradleDependency(sb.toString()));
 		}
-
-		_convertWebInfLibNames(warDir, convertedDependencies);
 
 		Path buildGradlePath = warPath.resolve("build.gradle");
 
@@ -835,7 +850,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		StringBuilder dependenciesBlock = new StringBuilder();
 
-		convertedDependencies.forEach(dep -> dependenciesBlock.append("\t" + dep.toString() + System.lineSeparator()));
+		convertedGradleDependencies.forEach(
+			dep -> dependenciesBlock.append("\t" + dep.toString() + System.lineSeparator()));
 
 		dependenciesBlock.append(System.lineSeparator());
 		dependenciesBlock.append("}");
@@ -864,6 +880,35 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			return;
 		}
 
+		final Set<Object> ignoreDependencyKeySets = _ignoredDependencyProperties.keySet();
+
+		Collection<Object> ignoreDependencyValues = _ignoredDependencyProperties.values();
+
+		Set<GAV> ignoreDependencyGavSets = ignoreDependencyValues.stream(
+		).filter(
+			ignoreDependencyValue -> Objects.nonNull(ignoreDependencyValue)
+		).map(
+			ignoreDependencyValue -> String.valueOf(ignoreDependencyValue)
+		).filter(
+			ignoreDependencyValue -> {
+				String[] gavString = StringUtil.split(ignoreDependencyValue, ":");
+
+				if (Objects.nonNull(gavString) && (gavString.length >= 2)) {
+					return true;
+				}
+
+				return false;
+			}
+		).map(
+			ignoreDependencyValue -> {
+				String[] gavString = StringUtil.split(ignoreDependencyValue, ":");
+
+				return new GAV(gavString[0], gavString[1], null);
+			}
+		).collect(
+			Collectors.toSet()
+		);
+
 		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs baseArgs = bladeCLI.getArgs();
@@ -881,27 +926,39 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 						GAV gav = _getGAVFromJarFile(libFile);
 
 						if (gav.isUnknown()) {
-							String noExtensionName = FilenameUtils.removeExtension(libFile.getName());
+							if (!ignoreDependencyKeySets.contains(libFile.getName())) {
+								String noExtensionName = FilenameUtils.removeExtension(libFile.getName());
 
-							boolean foundDependency = convertDependencies.stream(
-							).filter(
-								dependency -> StringUtils.contains(dependency.getSingleLine(), noExtensionName)
-							).findAny(
-							).isPresent();
+								boolean foundDependency = convertDependencies.stream(
+								).filter(
+									dependency -> StringUtils.contains(dependency.getSingleLine(), noExtensionName)
+								).findAny(
+								).isPresent();
 
-							if (!foundDependency) {
-								StringBuilder sb = new StringBuilder("compile rootProject.files(\"libs/");
+								if (!foundDependency) {
+									StringBuilder sb = new StringBuilder("compile rootProject.files(\"libs/");
 
-								sb.append(libFile.getName());
-								sb.append("\")");
+									sb.append(libFile.getName());
+									sb.append("\")");
 
-								convertDependencies.add(new GradleDependency(sb.toString()));
+									convertDependencies.add(new GradleDependency(sb.toString()));
+								}
 							}
 
 							FileUtils.moveFileToDirectory(libFile, libsFolder, true);
 						}
 						else {
-							convertDependencies.add(new GradleDependency(gav.toCompileDependency()));
+							boolean containIgnoredDependencyArtifact = ignoreDependencyGavSets.stream(
+							).filter(
+								ignoreDependencyGav ->
+									StringUtil.equals(ignoreDependencyGav._getArtifactId(), gav._getArtifactId()) &&
+									StringUtil.equals(ignoreDependencyGav._getGroupId(), gav._getGroupId())
+							).findAny(
+							).isPresent();
+
+							if (!containIgnoredDependencyArtifact) {
+								convertDependencies.add(new GradleDependency(gav.toCompileDependency()));
+							}
 
 							FileUtils.deleteQuietly(libFile);
 						}
@@ -1086,6 +1143,56 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return properties;
 	}
 
+	private void _removeIgnorePoratlDependencies(List<GAV> convertedDependencies) {
+		final Set<Object> ignoreDependencyKeySets = _ignoredDependencyProperties.keySet();
+
+		Collection<Object> ignoreDependencyValues = _ignoredDependencyProperties.values();
+
+		Set<GAV> ignoreDependencyGAVsets = ignoreDependencyValues.stream(
+		).filter(
+			ignoreDependencyValue -> Objects.nonNull(ignoreDependencyValue)
+		).map(
+			ignoreDependencyValue -> String.valueOf(ignoreDependencyValue)
+		).filter(
+			ignoreDependencyValue -> {
+				String[] gavString = StringUtil.split(ignoreDependencyValue, ":");
+
+				if (Objects.nonNull(gavString) && (gavString.length >= 2)) {
+					return true;
+				}
+
+				return false;
+			}
+		).map(
+			ignoreDependencyValue -> {
+				String[] gavString = StringUtil.split(ignoreDependencyValue, ":");
+
+				return new GAV(gavString[0], gavString[1], null);
+			}
+		).collect(
+			Collectors.toSet()
+		);
+
+		for (GAV gav : convertedDependencies) {
+			if (gav.isUnknown() && ignoreDependencyKeySets.contains(String.valueOf(gav.getJarName()))) {
+				convertedDependencies.remove(gav);
+			}
+			else {
+				boolean containIgnoredDependencyArtifact = ignoreDependencyGAVsets.stream(
+				).filter(
+					ignoreDependencyGav ->
+						StringUtil.equals(ignoreDependencyGav._getArtifactId(), gav._getArtifactId()) &&
+						StringUtil.equals(ignoreDependencyGav._getGroupId(), gav._getGroupId())
+				).findAny(
+				).isPresent();
+
+				if (containIgnoredDependencyArtifact) {
+					convertedDependencies.remove(gav);
+				}
+			}
+		}
+	}
+
 	private void _warn(String message) {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -1099,6 +1206,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 	private static final Pattern _dependenciesBlockPattern = Pattern.compile(
 		"(.*^dependencies \\{.*)\\}(.*^war \\{.*)", Pattern.MULTILINE | Pattern.DOTALL);
 	private static final Map<String, String> _portalClasspathDependenciesMap = new HashMap<>();
+
+	private Properties _ignoredDependencyProperties = new Properties();
 
 	private static class GAV {
 

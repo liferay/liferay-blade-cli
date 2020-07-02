@@ -42,4 +42,12 @@ public class ListUtil {
 		return new ArrayList<>(Arrays.asList(array));
 	}
 
+	public static boolean isEmpty(Object[] array) {
+		if ((array == null) || (array.length == 0)) {
+			return true;
+		}
+
+		return false;
+	}
+
 }
