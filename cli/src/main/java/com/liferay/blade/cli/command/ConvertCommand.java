@@ -18,12 +18,12 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.gradle.GradleDependency;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ListUtil;
 import com.liferay.blade.cli.util.StringUtil;
+import com.liferay.ide.gradle.core.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
 import java.io.File;
