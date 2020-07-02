@@ -168,6 +168,14 @@ public class ConvertCommandTest {
 		File portletDir = new File(workspaceDir, "modules/my-springportletmvc/my-springportletmvc-portlet");
 
 		Assert.assertTrue(portletDir.exists());
+
+		File buildGradle = new File(portletDir, "build.gradle");
+
+		_contains(
+			buildGradle,
+			".*compile group: \"org.hibernate\", name: \"hibernate-validator\", version: \"5.2.5.Final\".*",
+			".*compile group: \"javax.validation\", name: \"validation-api\", version: \"1.1.0.Final\".*",
+			".*compile rootProject.files\\(\"libs/org.objectweb.asm-6.0.0.jar\"\\).*");
 	}
 
 	@Test
