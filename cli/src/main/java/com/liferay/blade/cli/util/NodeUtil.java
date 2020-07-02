@@ -190,7 +190,7 @@ public class NodeUtil {
 
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("http://nodejs.org/dist/v");
+		sb.append("https://nodejs.org/dist/v");
 		sb.append(nodeVersion);
 		sb.append("/node-v");
 		sb.append(nodeVersion);

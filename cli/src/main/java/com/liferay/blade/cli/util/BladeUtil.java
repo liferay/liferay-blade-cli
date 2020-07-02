@@ -639,7 +639,9 @@ public class BladeUtil {
 
 		int responseCode = httpURLConnection.getResponseCode();
 
-		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_MOVED_TEMP)) {
+		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_MOVED_PERM) ||
+			(responseCode == HttpURLConnection.HTTP_MOVED_TEMP)) {
+
 			return true;
 		}
 
