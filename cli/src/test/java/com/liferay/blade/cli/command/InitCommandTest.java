@@ -23,6 +23,7 @@ import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.util.FileUtil;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -330,6 +331,34 @@ public class InitCommandTest {
 		Assert.assertTrue(output, output.contains("dxp-7.2-sp1"));
 
 		Assert.assertTrue(output, output.contains("portal-7.0-ga7"));
+
+		List<String> lines = new ArrayList<>();
+
+		try (Scanner scanner = new Scanner(output)) {
+			while (scanner.hasNextLine()) {
+				lines.add(scanner.nextLine());
+			}
+		}
+
+		String firstLine = lines.get(0);
+
+		Assert.assertEquals("dxp-7.2-sp2", firstLine);
+	}
+
+	@Test
+	public void testInitCommandListMoreOptions() throws Exception {
+		String[] args = {"init"};
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream("more\n".getBytes());
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(
+			_workspaceDir, _extensionsDir, byteArrayInputStream, true, args);
+
+		String output = bladeTestResults.getOutput();
+
+		Assert.assertTrue(output, output.contains("dxp-7.2-sp2"));
+
+		Assert.assertFalse(output, output.contains("dxp-7.2-sp1"));
 
 		List<String> lines = new ArrayList<>();
 
