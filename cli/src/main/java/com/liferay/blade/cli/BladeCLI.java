@@ -857,7 +857,7 @@ public class BladeCLI {
 		try {
 			Supplier<List<String>> instance = supplierValidator.newInstance();
 
-			Collection<String> options = instance.get();
+			List<String> options = instance.get();
 
 			Iterator<String> it = options.iterator();
 
@@ -1173,6 +1173,8 @@ public class BladeCLI {
 			if (field.isAnnotationPresent(Parameter.class)) {
 				Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
 
+				String description = parameterAnnotation.description();
+
 				String[] parameterAnnotationNames = parameterAnnotation.names();
 
 				List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
@@ -1194,6 +1196,9 @@ public class BladeCLI {
 
 					if (missingParameterDescription.isPresent()) {
 						sb.append(" " + missingParameterDescription.get());
+					}
+					else if (!description.isEmpty()) {
+						sb.append(" " + description);
 					}
 
 					found = true;
@@ -1247,12 +1252,12 @@ public class BladeCLI {
 				value = optionsMap.get(value);
 			}
 			else if (Objects.equals(value, "more")) {
-				Map<String, String> moreOptionsMap = _getPossibleMoreValuesMap(field, sb);
+				StringBuilder more = new StringBuilder();
 
-				String moreMessage = sb.toString();
+				Map<String, String> moreOptionsMap = _getPossibleMoreValuesMap(field, more);
 
 				value = _promptForValueWithOptions(
-					field, sb, missingParametersFormatted, moreOptionsMap, moreMessage, reader, out());
+					field, sb, missingParametersFormatted, moreOptionsMap, more.toString(), reader, out());
 			}
 		}
 
