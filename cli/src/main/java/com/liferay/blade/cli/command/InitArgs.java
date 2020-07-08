@@ -81,7 +81,7 @@ public class InitArgs extends BaseArgs {
 	private boolean _force;
 
 	@Parameter(
-		description = "The version of Liferay to target for this workspace. Specifying \"more\" will show entire list of possible values.",
+		description = "The Liferay product to target. Typing \"more\" will show all product versions.",
 		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayMoreVersionValidator.class
 	)
 	@ParameterPossibleValues(more = LiferayMoreVersionValidator.class, value = LiferayDefaultVersionValidator.class)
