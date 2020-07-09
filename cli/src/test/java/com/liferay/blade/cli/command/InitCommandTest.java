@@ -349,8 +349,9 @@ public class InitCommandTest {
 	public void testInitCommandListMoreOptions() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "testworkspace"};
 
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-			("more" + System.lineSeparator() + "dxp-7.2-sp2" + System.lineSeparator()).getBytes());
+		String responses = "more" + System.lineSeparator() + "dxp-7.2-sp2" + System.lineSeparator();
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(responses.getBytes());
 
 		BladeTestResults bladeTestResults = TestUtil.runBlade(
 			_workspaceDir, _extensionsDir, byteArrayInputStream, true, args);
@@ -367,9 +368,7 @@ public class InitCommandTest {
 			}
 		}
 
-		String newFirstLine = lines.get(11);
-
-		Assert.assertEquals("1: dxp-7.2-sp2", newFirstLine);
+		Assert.assertEquals("1: dxp-7.2-sp2", lines.get(11));
 	}
 
 	@Test
