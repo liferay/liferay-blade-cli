@@ -1,5 +1,273 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.0 - 2020-07-08
+
+### Commits
+- [BLADE-570] fix the "more" option on init command (92833aede5)
+- [BLADE-519] add support for removing and migrating spring dependencies
+(881021d2ae)
+- [BLADE-518] move back to original package. (16ba3ab688)
+- [BLADE-518] remove unused dependency for convert command (7b009e05af)
+- [BLADE-568] switch to https (8c90a9ee48)
+- [BLADE-568] check for both redirect codes (e856a2a128)
+- [BLADE-564] update test (02a8b27fd8)
+- [BLADE-564] rename and use rootProject.files (c4b9b8137a)
+- [BLADE-564] use optional and lambda (f22aea9b71)
+- [BLADE-564] rename (f98db4bc87)
+- [BLADE-564] blade convert should convert docroot/WEB-INF/lib/*.jar
+dependencies (8484ff870e)
+- [BLADE-517] add test for spring portlet (281fd32e0f)
+- [BLADE-517] use standard List api. (43036cbe34)
+- [BLADE-517] add test for portal classpath depenedencies (314b86ffa0)
+- [BLADE-517] make field final and rename (05ca13a4df)
+- [BLADE-517] use a static final map with a static field initializer section
+(6696cded80)
+- [BLADE-517] should add all portlet plugin API jars to build.gradle
+dependencies (df9fb13540)
+- [BLADE-522] update test (57a88263b6)
+- [BLADE-522] prefer mavenCentral (974154c116)
+- [BLADE-522] fix arg class (b745c50a48)
+- [BLADE-522] remove ignore and then add new init test (db32afa0d7)
+- [BLADE-522] add better checking for workspace directory (9a793eb330)
+- [BLADE-522] resolve the failures of tests (e270f9a90e)
+- [BLADE-552] Check that blade create points to a path inside Liferay Workspace
+(6b17e2d35b)
+- [BLADE-565] use project template build to better initialize war project
+(e05b340c7d)
+- [BLADE-566] Update template count (e679a925f8)
+- [BLADE-566] Integrate new project templates with REST builder (35c7c23bab)
+- [BLADE-548] always remove WEB-INF/classes folder if exists (4356e92a8e)
+- [BLADE-548] also delete generated xml files (79c853daa3)
+- [BLADE-548] delete pre-existing service.xml (3c991a1959)
+- [BLADE-548] don't move but copy instead (17d7577dc9)
+- [BLADE-548] null check (be7180cdd8)
+- [BLADE-548] improve service builder conversion (b7071b277e)
+- [LPS-114909] Only remove comments from actual XML element (2c96f2c4b3)
+- [LPS-114909] Add activation element in comments because Maven model removes
+redundant elements (3de840e510)
+- [BLADE-538] Use base dir to find gradle properties (7bb59826d3)
+- [BLADE-538] Default to modulesDir (44d18e38fd)
+- [BLADE-538] Add test case for null modulesDir (eeade0165b)
+- [BLADE-538] Test using modules instead of wars (42cbcb72eb)
+- [BLADE-538] Use templates with liferay.workspace.product (2130bc5a1b)
+- [LPS-111461] Update tests to check in base workspace dir for default projects
+(0f1d3adff8)
+- [LPS-111461] Rename (145f6a2e81)
+- [LPS-111461] Fix Convert Tests (c7a95aa2fd)
+- [LPS-111461] Support liferay.workspace.wars.dir if set, otherwise use default
+modules dir (5cc515214d)
+- [LPS-111461] Issue with sort command not properly sorting create args first
+(a4111f4f40)
+- [LPS-111461] Update test cases for new behavior (5a5dcd60e9)
+- [LPS-111461] Create command should execute in current dir unless specified
+(7a8076c2b4)
+- [LPS-111461] Support liferay.workspace.wars.dir if already set (cb09aa80af)
+- [LPS-111461] Create run report after tests are archived (6d40bf75ac)
+- [LPS-111461] Fix more tests (6ece0784b4)
+- [LPS-111461] Update Test (2e9ccfbe8e)
+- [LPS-111461] Use templates that remove warsDir in workspace (235fc7a9f8)
+- [BLADE-533] fix sorting for promoted products (03cdaeeb44)
+- [BLADE-533] now that we have promoted field, use it (ed8bb0cec4)
+- [BLADE-553] update to fixed version (2d72e8d7e7)
+- [BLADE-533] switch to non-cdn and add tests (9d92bb9e55)
+- [BLADE-533] Use non-cdn url (fb4463460c)
+- [BLADE-553] rename and add more argument possibilities (dcb274ade8)
+- [BLADE-553] add init -l and init -a -l command to show possible product
+(10a39133fd)
+- [BLADE-553] -fix-sort (2753f53faa)
+- [BLADE-515] improve the coverage of portal-dependency-jars-62.properties
+(2886b8d208)
+- [BLADE-533] switch to CDN url (dbb42d72a4)
+- [BLADE-533] remove deprecated api calls (61c74342cc)
+- [BLADE-533] fix duplicate packages (08cf75cb89)
+- [BLADE-533] smoke tests reset streams before asserts (35050a8823)
+- [BLADE-533] add tests (4335321b26)
+- [BLADE-533] improve default and more version possible versions (3678981659)
+- [BLADE-533] Use List instead of Collection (7a0419c47c)
+- [LPS-111461] Smoke Test fixes (40dff4749b)
+- [LPS-114909] Fix maven standalone test (be617272b2)
+- [LPS-114169] fix tests (5ce0ba2fe3)
+- [LPS-114169] Add liferay.workspace.product to template LPS-114909 Match target
+platform BOM version inside workspace for maven projects (6385e09f6b)
+- [BLADE-553] fix sample test (8cb17e2a10)
+- [BLADE-553] fix maven init test (1eca1de353)
+- [BLADE-553] add http client package in bnd.bnd (19317ed6c6)
+- [BLADE-553] update logic for -d and --base options and fix tests (a173eac8b2)
+- [BLADE-553] update smoke tests (66e5d2a3e9)
+- [BLADE-553] fix smoke test (398208e0ea)
+- [BLADE-553] update messages (6f9ec628f1)
+- [BLADE-553] make new API have defaults to avoid breaking maven profile
+(0439c041fd)
+- [BLADE-553] add smoke test to make sure legacy '7.2' versions work
+(3496d210b0)
+- [BLADE-553] don't glob packages (921b727db7)
+- [BLADE-553] fix smoke test error (22f350b3e2)
+- [BLADE-553] get liferay version from workspace product info (b4b53f9967)
+- [BLADE-553] ignore liferay default version test in .blade.properties
+(6ce71dc044)
+- [BLADE-533] support type more to get entire possbile values (248d466c12)
+- [BLADE-553] Blade init should prompt user for all possible product versions
+(b724476569)
+- [BLADE-558] check run reporter not supported on windows/macos (4a9a8bf75f)
+- [BLADE-558] fix report paths (73bc1106eb)
+- [BLADE-558] give test uploads different names (a3cdbb605b)
+- [BLADE-558] add check-run-reporter github action (981da129aa)
+- [BLADE-558] fix error code (d57f22315d)
+- [BLADE-558] convert command should list the new paths that have been converted
+(2dba49b95f)
+- [BLADE-557] convert list option should support -q option (fafde474c9)
+- [BLADE-554] Wrong directories (e31fc3d0eb)
+- [BLADE-554] Remove comments in pom file (1cc0ebd091)
+- [BLADE-554] Create maven projects in workspace (cd190e54ee)
+- [BLADE-554] Update workspace version (e251fa0702)
+- [BLADE-554] Fix duplicate target platform versions in maven workspaces
+(0f1033a26f)
+- [BLADE-555] getBase returns a File now (5fcf922c31)
+- [BLADE-555] these commands are workspace only (48687abf0a)
+- [BLADE-555] minor changes (73655ff411)
+- [BLADE-555] hide certain create command options (1d2c1f7c78)
+- [BLADE-555] revert profileName change (0204746231)
+- [BLADE-555] update maven profile with getBase/getProfileName changes
+(1cc2a23095)
+- [BLADE-555] set program name (7f6af47165)
+- [BLADE-555] consistent usage messages (7d3f7f9807)
+- [BLADE-555] show the more appropriate help message depending on your cwd
+(553f2e52f6)
+- [BLADE-555] getBase should return a file instead of a string because that's
+what everyone wants (30d13dcd5d)
+- [BLADE-555] hide dev options (3ea7511477)
+- [BLADE-555] profile arg isn't needed by every command (f9ba952f9c)
+- [LPS-114088] not needed (2feac60ef2)
+- [LPS-114088] 5.0.43 has the actual form field fix (cabf56b5d6)
+- [LPS-114088] Fix workspace path (e1271b1f4b)
+- [LPS-114088] Check blade properties (a76c300bed)
+- [LPS-114088] Check test in CI (08ff87603a)
+- [LPS-114088] Fix form field template when using custom package (30d38a4b13)
+- [BLADE-547] add back missing classes (917b070a3c)
+- [BLADE-550] ignore maven profile tests on windows (2bc0731d08)
+- [BLADE-550] Deprecated 6 templates from project templates main (8db18c1d54)
+- [BLADE-550] Update tests (08ea35607b)
+- [BLADE-550] Not needed (47b93b5887)
+- [BLADE-550] Publish snapshots first (755b7aa9e3)
+- [BLADE-550] Integrate Project templates with deprecated templates (49f8a11a1c)
+- [BLADE-550] Duplicate? (95e309c6ce)
+- [BLADE-550] Publish extensions only if version changes (db7115ec43)
+- [BLADE-550] Use version instead of template token (9c2ae9ea74)
+- [BLADE-550] Move deprecated project template archetypes to extensions
+(d141115332)
+- [LPS-112511] Add npm angular test to github actions (9de10f91df)
+- [BLADE-545] add env to github action instead (9ecc964788)
+- [BLADE-545] disable formField for CI (5962aaf334)
+- [BLADE-545] upload regardless (02c5d2c0df)
+- [BLADE-545] always upload tests (75e8fed482)
+- [BLADE-545] remove incorrect .blade settings dir (11c9b721a8)
+- [BLADE-544] Need version for form field smoke test (35affcbe83)
+- [BLADE-544] Separate recursive option (a6915cf571)
+- [BLADE-544] Update existing tests.zip (375d80c1fe)
+- [BLADE-544] buildDir does not include libs (32ff6fc9fd)
+- [BLADE-544] Missing task declaration (1cca187a9b)
+- [BLADE-544] Archive failing test projects (b4592fda74)
+- [BLADE-544] Add form field smoke test (6694bcf0ac)
+- [BLADE-544] Add form field test (ad3b2ad240)
+- [BLADE-544] Simplify tests in project (c7b2733ad0)
+- [BLADE-544] No longer needed (1a0f2bba0c)
+- [BLADE-544] 7.3 is now default (c792f4c157)
+- [BLADE-544] Wordsmith (f44a42e90c)
+- [BLADE-544] TP is now a default setting for Workspace (b4d1380931)
+- [BLADE-544] Updated workspace version (103ce40e27)
+- [BLADE-544] Integrate latest project templates (755b9ef45e)
+- [BLADE-533] try to fix source formatting (3d3c667771)
+- [BLADE-533] quote args (a15597cc70)
+- [BLADE-533] add smoke tests (18b4aab3a6)
+- [BLADE-533] grab embedded extensions during template execution (cceaf944d0)
+- [BLADE-542] hide outputs command (2ab8cf679a)
+- [BLADE-542] just show the gradle output because it is more useful (bedc1b5ed4)
+- [BLADE-542] STOPPED logs were printed twice (0f76d6eb60)
+- [BLADE-533] fix tests (81c8fe4d34)
+- [BLADE-533] fix logic (5ddb199b25)
+- [BLADE-533] embed js-* project templates into blade.jar (e2d4481316)
+- [BLADE-543] fix publish args checking (ad62ec2ec5)
+- [BLADE-543] update to latest jpm snapshot and latest blade release
+(671b112281)
+- [BLADE-543] remove global installers we should only support local (378b158ed1)
+- [BLADE-533] fix resource path (8db39f1ead)
+- [BLADE-533] fix js-theme project generation and test (b89873668d)
+- [BLADE-533] use dir (884bcf8e9f)
+- [BLADE-533] assert build task (cf31c77a2c)
+- [BLADE-533] switched to Liferay version instead of generator version
+(e0f3adc8dd)
+- [BLADE-533] fix tests (54268d8536)
+- [BLADE-533] small fix for case where .blade/cache/node exists but has no files
+(63ece8b5ee)
+- [BLADE-533] js-theme/js-widget test scaffolding (9df0e9f40c)
+- [BLADE-533] we are adding new functionality to lets do minor bump (e2f1dfa07f)
+- [BLADE-533] temporarily remove until first snapshots are available
+(19b8836648)
+- [BLADE-533] add to blade extensions (a6bbeaa274)
+- [BLADE-533] inline methods (274fdea269)
+- [BLADE-533] consolidate repository config (ece087c6b8)
+- [BLADE-533] use pluginManager (cf1b708036)
+- [BLADE-533] remove ignore (90cc1da6fb)
+- [BLADE-533] should automatically reinstall yo generators if package.json
+changes (342fe99df8)
+- [BLADE-533] wrong base dir (2eced4a007)
+- [BLADE-542] fix typo (98ce797c95)
+- [BLADE-533] no longer need projectType (d4da4da1f6)
+- [BLADE-542] fix gradle script (fb0ca91992)
+- [BLADE-533] use liferayVersion instead of generator version (01b4685c06)
+- [BLADE-542] ignore broken test (38e19679bd)
+- [BLADE-533] update to generator-liferay-theme 8.2.0 (79a1ae1b25)
+- [BLADE-542] Ignore broken test (4a4b45b9b9)
+- [BLADE-533] use the right generator based on liferayVersion (97b69c6536)
+- [BLADE-533] skip install (0b09dcd261)
+- [BLADE-533] use yo generator-liferay-theme 10.0.1 (3ca5fdc66c)
+- [BLADE-533] deploy task for extensions (e082621751)
+- [BLADE-533] add project-template-js-theme (bddf84dcdf)
+- [BLADE-533] fix runYo in unix (643f3afd06)
+- [BLADE-533] add generator-liferay-theme 10.x support (1a8bc43f8c)
+
+### Dependencies
+- [] Update the com.liferay.blade.extensions.maven.profile dependency to version
+1.0.17.
+- [BLADE-566] Update the com.liferay.project.templates dependency to version
+5.0.65.
+- [LPS-114909] Update the com.liferay.project.templates dependency to version
+5.0.60.
+- [BLADE-538] Update the com.liferay.project.templates dependency to version
+5.0.56.
+- [LPS-111461] Update the com.liferay.project.templates dependency to version
+5.0.51.
+- [LPS-111461] Update the com.liferay.project.templates dependency to version
+5.0.49.
+- [LPS-114169] Update the com.liferay.project.templates dependency to version
+5.0.47.
+- [BLADE-554] Update the com.liferay.project.templates dependency to version
+5.0.45.
+- [LPS-114088] Update the com.liferay.project.templates dependency to version
+5.0.43.
+- [LPS-114088] Update the com.liferay.project.templates dependency to version
+5.0.42.
+- [BLADE-550] Update the com.liferay.project.templates dependency to version
+5.0.41.
+- [BLADE-549] Update the com.liferay.project.templates dependency to version
+5.0.39.
+- [BLADE-544] Update the com.liferay.project.templates dependency to version
+5.0.37.
+- [BLADE-533] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.0-SNAPSHOT.
+- [BLADE-533] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.0-SNAPSHOT.
+- [BLADE-533] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.0-SNAPSHOT.
+- [BLADE-533] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.0-SNAPSHOT.
+- [BLADE-533] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.0-SNAPSHOT.
+- [BLADE-533] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.0-SNAPSHOT.
+- [] Update the com.liferay.blade.extensions.maven.profile dependency to version
+1.0.17-SNAPSHOT.
+
 ## 3.9.2 - 2020-04-10
 
 ### Commits
@@ -1321,6 +1589,10 @@ maintainability (7f9bc3f45e)
 [BLADE-509]: https://issues.liferay.com/browse/BLADE-509
 [BLADE-510]: https://issues.liferay.com/browse/BLADE-510
 [BLADE-513]: https://issues.liferay.com/browse/BLADE-513
+[BLADE-515]: https://issues.liferay.com/browse/BLADE-515
+[BLADE-517]: https://issues.liferay.com/browse/BLADE-517
+[BLADE-518]: https://issues.liferay.com/browse/BLADE-518
+[BLADE-519]: https://issues.liferay.com/browse/BLADE-519
 [BLADE-520]: https://issues.liferay.com/browse/BLADE-520
 [BLADE-522]: https://issues.liferay.com/browse/BLADE-522
 [BLADE-532]: https://issues.liferay.com/browse/BLADE-532
@@ -1328,7 +1600,27 @@ maintainability (7f9bc3f45e)
 [BLADE-534]: https://issues.liferay.com/browse/BLADE-534
 [BLADE-535]: https://issues.liferay.com/browse/BLADE-535
 [BLADE-537]: https://issues.liferay.com/browse/BLADE-537
+[BLADE-538]: https://issues.liferay.com/browse/BLADE-538
 [BLADE-539]: https://issues.liferay.com/browse/BLADE-539
+[BLADE-542]: https://issues.liferay.com/browse/BLADE-542
+[BLADE-543]: https://issues.liferay.com/browse/BLADE-543
+[BLADE-544]: https://issues.liferay.com/browse/BLADE-544
+[BLADE-545]: https://issues.liferay.com/browse/BLADE-545
+[BLADE-547]: https://issues.liferay.com/browse/BLADE-547
+[BLADE-548]: https://issues.liferay.com/browse/BLADE-548
+[BLADE-549]: https://issues.liferay.com/browse/BLADE-549
+[BLADE-550]: https://issues.liferay.com/browse/BLADE-550
+[BLADE-552]: https://issues.liferay.com/browse/BLADE-552
+[BLADE-553]: https://issues.liferay.com/browse/BLADE-553
+[BLADE-554]: https://issues.liferay.com/browse/BLADE-554
+[BLADE-555]: https://issues.liferay.com/browse/BLADE-555
+[BLADE-557]: https://issues.liferay.com/browse/BLADE-557
+[BLADE-558]: https://issues.liferay.com/browse/BLADE-558
+[BLADE-564]: https://issues.liferay.com/browse/BLADE-564
+[BLADE-565]: https://issues.liferay.com/browse/BLADE-565
+[BLADE-566]: https://issues.liferay.com/browse/BLADE-566
+[BLADE-568]: https://issues.liferay.com/browse/BLADE-568
+[BLADE-570]: https://issues.liferay.com/browse/BLADE-570
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -1342,6 +1634,11 @@ maintainability (7f9bc3f45e)
 [LPS-105747]: https://issues.liferay.com/browse/LPS-105747
 [LPS-108630]: https://issues.liferay.com/browse/LPS-108630
 [LPS-110131]: https://issues.liferay.com/browse/LPS-110131
+[LPS-111461]: https://issues.liferay.com/browse/LPS-111461
+[LPS-112511]: https://issues.liferay.com/browse/LPS-112511
+[LPS-114088]: https://issues.liferay.com/browse/LPS-114088
+[LPS-114169]: https://issues.liferay.com/browse/LPS-114169
+[LPS-114909]: https://issues.liferay.com/browse/LPS-114909
 [LRDOCS-3688]: https://issues.liferay.com/browse/LRDOCS-3688
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
