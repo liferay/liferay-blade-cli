@@ -56,6 +56,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -534,7 +535,7 @@ public class BladeCLI {
 
 									value = _promptForMissingParameter(
 										commandArgs, Optional.of(missingParameter),
-										Optional.ofNullable(missingParameterDescription), reader);
+										Optional.ofNullable(missingParameterDescription), reader, profileName);
 
 									fixedArgs.add(1, missingParameter);
 
@@ -547,7 +548,7 @@ public class BladeCLI {
 							}
 							else if (parameterMessage.contains("Main parameters are required")) {
 								String value = _promptForMissingParameter(
-									commandArgs, Optional.empty(), Optional.empty(), reader);
+									commandArgs, Optional.empty(), Optional.empty(), reader, profileName);
 
 								fixedArgs.add(value);
 
@@ -962,8 +963,16 @@ public class BladeCLI {
 		return missingOptionSb.toString();
 	}
 
-	private Map<String, String> _getPossibleDefaultValuesMap(Field field, StringBuilder sb) {
+	private Map<String, String> _getPossibleDefaultValuesMap(Field field, StringBuilder sb, String profileName) {
 		Map<String, String> possibleValuesMap = null;
+
+		if (Objects.equals(profileName, "maven")) {
+			possibleValuesMap = _mavenLiferayVersionPossibleValuesMap;
+
+			sb.append(_getMessageFromPossibleValues(possibleValuesMap));
+
+			return possibleValuesMap;
+		}
 
 		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
 
@@ -980,8 +989,16 @@ public class BladeCLI {
 		return possibleValuesMap;
 	}
 
-	private Map<String, String> _getPossibleMoreValuesMap(Field field, StringBuilder sb) {
+	private Map<String, String> _getPossibleMoreValuesMap(Field field, StringBuilder sb, String profileName) {
 		Map<String, String> possibleValuesMap = null;
+
+		if (Objects.equals(profileName, "maven")) {
+			possibleValuesMap = _mavenLiferayVersionPossibleValuesMap;
+
+			sb.append(_getMessageFromPossibleValues(possibleValuesMap));
+
+			return possibleValuesMap;
+		}
 
 		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
 
@@ -1163,7 +1180,7 @@ public class BladeCLI {
 
 	private String _promptForMissingParameter(
 		Object commandArgs, Optional<String> missingParameterOptional, Optional<String> missingParameterDescription,
-		BufferedReader reader) {
+		BufferedReader reader, String profileName) {
 
 		String value = null;
 
@@ -1218,12 +1235,12 @@ public class BladeCLI {
 				}
 
 				if (found) {
-					Map<String, String> optionsMap = _getPossibleDefaultValuesMap(field, sb);
+					Map<String, String> optionsMap = _getPossibleDefaultValuesMap(field, sb, profileName);
 
 					String message = sb.toString();
 
 					value = _promptForValueWithOptions(
-						field, sb, missingParametersFormatted, optionsMap, message, reader, out());
+						field, sb, missingParametersFormatted, optionsMap, message, reader, out(), profileName);
 
 					break;
 				}
@@ -1235,7 +1252,7 @@ public class BladeCLI {
 
 	private String _promptForValueWithOptions(
 		Field field, StringBuilder sb, String missingParametersFormatted, Map<String, String> optionsMap,
-		String message, BufferedReader reader, PrintStream printStream) {
+		String message, BufferedReader reader, PrintStream printStream, String profileName) {
 
 		String value = Prompter.promptString(message, reader, printStream);
 
@@ -1254,10 +1271,10 @@ public class BladeCLI {
 			else if (Objects.equals(value, "more")) {
 				StringBuilder more = new StringBuilder();
 
-				Map<String, String> moreOptionsMap = _getPossibleMoreValuesMap(field, more);
+				Map<String, String> moreOptionsMap = _getPossibleMoreValuesMap(field, more, profileName);
 
 				value = _promptForValueWithOptions(
-					field, sb, missingParametersFormatted, moreOptionsMap, more.toString(), reader, out());
+					field, sb, missingParametersFormatted, moreOptionsMap, more.toString(), reader, out(), profileName);
 			}
 		}
 
@@ -1376,6 +1393,18 @@ public class BladeCLI {
 	private static final String _MESSAGE_OPTIONS_ARE_REQUIRED = "The following options are required: ";
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
+
+	private static final Map<String, String> _mavenLiferayVersionPossibleValuesMap = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("1", "7.0");
+			put("2", "7.1");
+			put("3", "7.2");
+			put("4", "7.3");
+		}
+	};
 
 	private static final Pattern _parameterDescriptionPattern = Pattern.compile("(.*]) (.*)");
 	private static final Formatter _tracer = new Formatter(System.out);
