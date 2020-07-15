@@ -148,9 +148,7 @@ public class TestUtil {
 		bladeTestBuilder.setStdIn(in);
 		bladeTestBuilder.setStdOut(out);
 
-		BladeTest bladeTest = bladeTestBuilder.build();
-
-		return runBlade(bladeTest, out, err, assertErrors, args);
+		return runBlade(bladeTestBuilder.build(), out, err, assertErrors, args);
 	}
 
 	public static BladeTestResults runBlade(File settingsDir, File extensionsDir, String... args) {

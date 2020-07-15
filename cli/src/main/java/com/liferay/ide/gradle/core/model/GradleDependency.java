@@ -139,9 +139,9 @@ public class GradleDependency {
 		final int prime = 31;
 		int result = 1;
 
-		result = prime * result + ((_group == null) ? 0 : _group.hashCode());
-		result = prime * result + ((_name == null) ? 0 : _name.hashCode());
-		result = prime * result + ((_version == null) ? 0 : _version.hashCode());
+		result = (prime * result) + ((_group == null) ? 0 : _group.hashCode());
+		result = (prime * result) + ((_name == null) ? 0 : _name.hashCode());
+		result = (prime * result) + ((_version == null) ? 0 : _version.hashCode());
 
 		return result;
 	}

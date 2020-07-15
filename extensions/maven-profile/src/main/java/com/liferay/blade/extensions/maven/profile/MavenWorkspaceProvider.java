@@ -31,9 +31,7 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 
 	@Override
 	public String getLiferayVersion(File dir) {
-		File workspaceDir = getWorkspaceDir(dir);
-
-		Properties mavenProperties = MavenUtil.getMavenProperties(workspaceDir);
+		Properties mavenProperties = MavenUtil.getMavenProperties(getWorkspaceDir(dir));
 
 		return mavenProperties.getProperty("liferay.bom.version");
 	}
@@ -45,9 +43,7 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 
 	@Override
 	public boolean isDependencyManagementEnabled(File dir) {
-		File workspaceDir = getWorkspaceDir(dir);
-
-		Properties mavenProperties = MavenUtil.getMavenProperties(workspaceDir);
+		Properties mavenProperties = MavenUtil.getMavenProperties(getWorkspaceDir(dir));
 
 		return !BladeUtil.isEmpty(mavenProperties.getProperty("liferay.bom.version"));
 	}
@@ -58,9 +54,7 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 			return true;
 		}
 
-		File workspaceDir = getWorkspaceDir(dir);
-
-		return MavenUtil.isWorkspace(workspaceDir);
+		return MavenUtil.isWorkspace(getWorkspaceDir(dir));
 	}
 
 }
