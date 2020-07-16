@@ -59,9 +59,7 @@ public class MavenUtil {
 
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
-			File pomXmlFile = getPomXMLFile(baseDir);
-
-			Document document = documentBuilder.parse(pomXmlFile);
+			Document document = documentBuilder.parse(getPomXMLFile(baseDir));
 
 			Element documentElement = document.getDocumentElement();
 

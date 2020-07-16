@@ -73,9 +73,9 @@ public class Pair<F, S> {
 
 		int result = 1;
 
-		result = prime * result + ((_first == null) ? 0 : _first.hashCode());
+		result = (prime * result) + ((_first == null) ? 0 : _first.hashCode());
 
-		result = prime * result + ((_second == null) ? 0 : _second.hashCode());
+		result = (prime * result) + ((_second == null) ? 0 : _second.hashCode());
 
 		return result;
 	}

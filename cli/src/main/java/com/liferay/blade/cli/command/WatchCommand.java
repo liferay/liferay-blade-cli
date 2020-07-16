@@ -105,9 +105,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 			pattern = pattern.replace("/", "\\\\");
 		}
 
-		PathMatcher pathMatcher = fileSystem.getPathMatcher("glob:" + pattern);
-
-		pathMatchers.add(pathMatcher);
+		pathMatchers.add(fileSystem.getPathMatcher("glob:" + pattern));
 	}
 
 	private String _getGradlePath(Path path, Path basePath) {
