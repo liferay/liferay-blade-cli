@@ -58,6 +58,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -202,22 +203,24 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 				break;
 			case "7.3":
-				initArgs.setLiferayVersion("portal-7.3-ga2");
+				initArgs.setLiferayVersion("portal-7.3-ga4");
 
 				break;
 		}
 
 		String workspaceProductKey = initArgs.getLiferayVersion();
 
-		Map<String, ProductInfo> productInfos = BladeUtil.getProductInfos();
+		Map<String, Object> productInfos = BladeUtil.getProductInfos();
 
-		ProductInfo productInfo = productInfos.get(workspaceProductKey);
+		Object productInfoObject = productInfos.get(workspaceProductKey);
 
-		if (productInfo == null) {
+		if (productInfoObject == null) {
 			_addError("Unable to get product info for selected version " + workspaceProductKey);
 
 			return;
 		}
+
+		ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
 
 		Version targetPlatformVersion = _makeCompatibleVersion(productInfo.getTargetPlatformVersion());
 

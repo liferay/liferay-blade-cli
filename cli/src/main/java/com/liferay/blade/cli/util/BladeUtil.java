@@ -16,10 +16,6 @@
 
 package com.liferay.blade.cli.util;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.command.SamplesCommand;
@@ -27,6 +23,8 @@ import com.liferay.blade.cli.command.validator.WorkspaceProductComparator;
 import com.liferay.portal.tools.bundle.support.commands.DownloadCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
+
+import groovy.json.JsonSlurper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,6 +40,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -71,12 +70,15 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.net.ssl.SSLHandshakeException;
+
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
+import org.apache.http.conn.ConnectTimeoutException;
 
 /**
  * @author Gregory Amerson
@@ -252,7 +254,12 @@ public class BladeUtil {
 		}
 	}
 
-	public static Map<String, ProductInfo> getProductInfos() {
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> getProductInfos() {
+		Map<String, Object> productInfoMap = Collections.emptyMap();
+
+		JsonSlurper jsonSlurper = new JsonSlurper();
+
 		try {
 			DownloadCommand downloadCommand = new DownloadCommand();
 
@@ -262,25 +269,27 @@ public class BladeUtil {
 			downloadCommand.setUrl(new URL(_PRODUCT_INFO_URL));
 			downloadCommand.setUserName(null);
 			downloadCommand.setQuiet(true);
+			downloadCommand.setConnectionTimeout(500);
 
 			downloadCommand.execute();
 
-			Path downloadPath = downloadCommand.getDownloadPath();
-
-			Gson gson = new Gson();
-
-			try (JsonReader jsonReader = new JsonReader(Files.newBufferedReader(downloadPath))) {
-				TypeToken<Map<String, ProductInfo>> typeToken = new TypeToken<Map<String, ProductInfo>>() {
-				};
-
-				return gson.fromJson(jsonReader, typeToken.getType());
+			try (BufferedReader reader = Files.newBufferedReader(downloadCommand.getDownloadPath())) {
+				productInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
+			}
+		}
+		catch (ConnectTimeoutException | SSLHandshakeException | UnknownHostException exception) {
+			try (InputStream resourceAsStream = BladeUtil.class.getResourceAsStream("/product_info.json")) {
+				productInfoMap = (Map<String, Object>)jsonSlurper.parse(resourceAsStream);
+			}
+			catch (Exception ioException) {
+				ioException.printStackTrace();
 			}
 		}
 		catch (Exception exception) {
 			exception.printStackTrace();
 		}
 
-		return Collections.emptyMap();
+		return productInfoMap;
 	}
 
 	public static Properties getProperties(File file) {
@@ -318,15 +327,18 @@ public class BladeUtil {
 		return ProjectTemplates.getTemplates(templatesFiles);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<String> getWorkspaceProductKeys() {
-		Map<String, ProductInfo> productInfoMap = getProductInfos();
+		Map<String, Object> productInfoMap = getProductInfos();
 
-		Set<Map.Entry<String, ProductInfo>> entries = productInfoMap.entrySet();
+		Set<Map.Entry<String, Object>> entries = productInfoMap.entrySet();
 
 		return entries.stream(
 		).filter(
 			entry -> {
-				ProductInfo productInfo = entry.getValue();
+				Object object = entry.getValue();
+
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)object);
 
 				return productInfo.getTargetPlatformVersion() != null;
 			}

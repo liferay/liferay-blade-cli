@@ -16,13 +16,23 @@
 
 package com.liferay.blade.cli.util;
 
-import com.google.gson.annotations.SerializedName;
+import java.util.Map;
 
 /**
  * @author Simon Jiang
  * @author Gregory Amerson
  */
 public class ProductInfo {
+
+	public ProductInfo(Map<String, String> productMap) {
+		_appServerTomcatVersion = productMap.get("appServerTomcatVersion");
+		_bundleUrl = productMap.get("bundleUrl");
+		_liferayDockerImage = productMap.get("liferayDockerImage");
+		_liferayProductVersion = productMap.get("liferayProductVersion");
+		_releaseDate = productMap.get("releaseDate");
+		_targetPlatformVersion = productMap.get("targetPlatformVersion");
+		_promoted = Boolean.parseBoolean(productMap.get("promoted"));
+	}
 
 	public String getAppServerTomcatVersion() {
 		return _appServerTomcatVersion;
@@ -52,25 +62,12 @@ public class ProductInfo {
 		return _promoted;
 	}
 
-	@SerializedName("appServerTomcatVersion")
 	private String _appServerTomcatVersion;
-
-	@SerializedName("bundleUrl")
 	private String _bundleUrl;
-
-	@SerializedName("liferayDockerImage")
-	private String _liferayDockerImage;
-
-	@SerializedName("liferayProductVersion")
-	private String _liferayProductVersion;
-
-	@SerializedName("promoted")
+	private final String _liferayDockerImage;
+	private final String _liferayProductVersion;
 	private Boolean _promoted = false;
-
-	@SerializedName("releaseDate")
-	private String _releaseDate;
-
-	@SerializedName("targetPlatformVersion")
+	private final String _releaseDate;
 	private String _targetPlatformVersion;
 
 }

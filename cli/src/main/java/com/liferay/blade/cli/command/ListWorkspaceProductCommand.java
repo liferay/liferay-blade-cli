@@ -23,6 +23,7 @@ import com.liferay.blade.cli.util.ProductInfo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -40,16 +41,19 @@ public class ListWorkspaceProductCommand extends BaseCommand<ListWorkspaceProduc
 		return ListWorkspaceProductArgs.class;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void _printPromotedWorkspaceProducts() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		Map<String, ProductInfo> productInfos = BladeUtil.getProductInfos();
+		Map<String, Object> productInfos = BladeUtil.getProductInfos();
 
 		List<String> promotedProductKeys = productInfos.entrySet(
 		).stream(
 		).filter(
+			entry -> Objects.nonNull(productInfos.get(entry.getKey()))
+		).filter(
 			entry -> {
-				ProductInfo productInfo = entry.getValue();
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(entry.getKey()));
 
 				return productInfo.isPromoted();
 			}

@@ -27,13 +27,8 @@ Private-Package:\
 	com.liferay.portal.tools.bundle.support.internal.util,\
 	com.liferay.portal.tools.bundle.support.util,\
 	\
-	com.google.gson,\
-	com.google.gson.annotations,\
-	com.google.gson.internal,\
-	com.google.gson.internal.bind,\
-	com.google.gson.internal.reflect,\
-	com.google.gson.reflect,\
-	com.google.gson.stream,\
+	groovy.json,\
+	org.apache.groovy.json.internal,\
 	\
 	org.apache.tools.ant;-split-package:=merge-first,\
 	org.apache.tools.ant.filters;-split-package:=merge-first,\
