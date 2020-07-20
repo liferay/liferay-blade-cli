@@ -11,7 +11,8 @@ task testBladeInitCommand(type: JavaExec)
 task testBladeInitCommandLegacy(type: JavaExec)
 task testBladeReturnCodeFailure(type: Exec)
 task testBladeSamplesCommand(type: JavaExec)
-task testBladeVersionCommand(type: JavaExec)
+
+//task testBladeVersionCommand(type: JavaExec)
 
 Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith("testBlade") }
 
@@ -227,6 +228,7 @@ testBladeSamplesCommand {
 	}
 }
 
+/*
 testBladeVersionCommand {
 	args = [jar.archivePath, "version"]
 	standardOutput = standardStream
@@ -244,3 +246,4 @@ testBladeVersionCommand {
 		assert output.contains(projectVersion)
 	}
 }
+*/
