@@ -1036,7 +1036,7 @@ public class BladeCLI {
 		return userBladePath.resolve("updateCheck.properties");
 	}
 
-	private String _getUpdateVersionIfAvailable(boolean snapshots) {
+	private Optional<String> _getUpdateVersionIfAvailable(boolean snapshots) {
 		UpdateArgs updateArgs = new UpdateArgs();
 
 		updateArgs.setCheckOnly(true);
@@ -1065,17 +1065,19 @@ public class BladeCLI {
 		}
 
 		if (snapshots) {
-			String snapshotUpdateVersion = updateCommand.getSnapshotUpdateVersion();
+			Optional<String> snapshotUpdateVersionOpt = updateCommand.getSnapshotUpdateVersion();
 
-			if (snapshotUpdateVersion == null) {
+			if (!snapshotUpdateVersionOpt.isPresent()) {
 				return null;
 			}
+
+			String snapshotUpdateVersion = snapshotUpdateVersionOpt.get();
 
 			snapshotUpdateVersion = snapshotUpdateVersion.substring(0, 14) + snapshotUpdateVersion.substring(15, 19);
 
 			snapshotUpdateVersion = snapshotUpdateVersion.replace('-', '.');
 
-			return snapshotUpdateVersion.trim();
+			return Optional.of(snapshotUpdateVersion.trim());
 		}
 
 		return updateCommand.getReleaseUpdateVersion();
@@ -1141,7 +1143,7 @@ public class BladeCLI {
 	}
 
 	private void _printUpdateIfAvailable() throws IOException {
-		String releaseUpdateVersion = _getUpdateVersionIfAvailable(false);
+		Optional<String> releaseUpdateVersion = _getUpdateVersionIfAvailable(false);
 
 		String currentVersion = VersionCommand.getBladeCLIVersion();
 
@@ -1154,23 +1156,23 @@ public class BladeCLI {
 		}
 
 		if (currentVersionIsSnapshot) {
-			String snapshotUpdateVersion = _getUpdateVersionIfAvailable(true);
+			Optional<String> snapshotUpdateVersion = _getUpdateVersionIfAvailable(true);
 
-			if ((releaseUpdateVersion != null) && (snapshotUpdateVersion != null)) {
+			if (releaseUpdateVersion.isPresent() && snapshotUpdateVersion.isPresent()) {
 				out("Updates available to the installed version: " + currentVersion);
 				out("-> (Snapshot) " + snapshotUpdateVersion + "\t Run `blade update` to install");
 				out("-> (Release) " + releaseUpdateVersion + "\t\t\t Run `blade update -r` to install");
 			}
-			else if (snapshotUpdateVersion != null) {
+			else if (snapshotUpdateVersion.isPresent()) {
 				out("Update available " + currentVersion + " -> " + snapshotUpdateVersion);
 				out("Run `blade update` to install");
 			}
-			else if (releaseUpdateVersion != null) {
+			else if (releaseUpdateVersion.isPresent()) {
 				out("Update available " + currentVersion + " -> " + releaseUpdateVersion);
 				out("Run `blade update -r` to install");
 			}
 		}
-		else if (releaseUpdateVersion != null) {
+		else if (releaseUpdateVersion.isPresent()) {
 			out("Update available " + currentVersion + " -> " + releaseUpdateVersion);
 			out("Run `blade update` to install");
 		}

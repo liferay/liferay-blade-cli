@@ -43,6 +43,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,7 +76,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		String currentVersion = "0.0.0.0";
 
-		String updateVersion = "0.0.0.0";
+		Optional<String> updateVersion = Optional.empty();
 
 		boolean checkOnly = updateArgs.isCheckOnly();
 
@@ -83,9 +84,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 
 		boolean snapshots = updateArgs.isSnapshots();
 
-		String releaseUpdateVersion = "";
+		Optional<String> releaseUpdateVersion = Optional.empty();
 
-		String snapshotUpdateVersion = "";
+		Optional<String> snapshotUpdateVersion = Optional.empty();
 
 		String updateUrl = null;
 
@@ -241,7 +242,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				}
 				else {
 					if (_equal(currentVersion, updateVersion) || _doesMD5Match(updateArgs)) {
-						if (updateVersion.contains("-")) {
+						String updateVersionValue = updateVersion.get();
+
+						if (updateVersionValue.contains("-")) {
 							bladeCLI.out(
 								"Current blade version " + currentVersion + " is the latest snapshot version.");
 
@@ -286,11 +289,11 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return UpdateArgs.class;
 	}
 
-	public String getReleaseUpdateVersion() {
+	public Optional<String> getReleaseUpdateVersion() {
 		return _releaseUpdateVersion;
 	}
 
-	public String getSnapshotUpdateVersion() {
+	public Optional<String> getSnapshotUpdateVersion() {
 		return _snapshotUpdateVersion;
 	}
 
@@ -330,7 +333,13 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return false;
 	}
 
-	private static boolean _equal(String currentVersion, String updateVersion) {
+	private static boolean _equal(String currentVersion, Optional<String> updateVersionOpt) {
+		if (!updateVersionOpt.isPresent()) {
+			return false;
+		}
+
+		String updateVersion = updateVersionOpt.get();
+
 		if (currentVersion.contains("SNAPSHOT") && updateVersion.contains("-")) {
 			Long currentSnapshot = _getBladeSnapshotVersion(currentVersion);
 
@@ -578,72 +587,78 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return url;
 	}
 
-	private static String _getUpdateVersion(boolean snapshotsArg) throws IOException {
-		String url = _RELEASES_REPO_URL;
+	private static Optional<String> _getUpdateVersion(boolean snapshotsArg) {
+		Optional<String> updateVersion = Optional.empty();
 
-		if (snapshotsArg) {
-			url = _SNAPSHOTS_REPO_URL;
-		}
+		try {
+			String url = _RELEASES_REPO_URL;
 
-		if (_hasUpdateUrlFromBladeDir()) {
-			url = _getUpdateUrlFromBladeDir();
-		}
+			if (snapshotsArg) {
+				url = _SNAPSHOTS_REPO_URL;
+			}
 
-		Connection connection = Jsoup.connect(url + "maven-metadata.xml");
+			if (_hasUpdateUrlFromBladeDir()) {
+				url = _getUpdateUrlFromBladeDir();
+			}
 
-		connection = connection.parser(Parser.xmlParser());
+			Connection connection = Jsoup.connect(url + "maven-metadata.xml");
 
-		Document document = connection.get();
+			connection = connection.parser(Parser.xmlParser());
 
-		Elements versionElements = document.select("version");
+			Document document = connection.get();
 
-		Iterator<Element> it = versionElements.iterator();
+			Elements versionElements = document.select("version");
 
-		Collection<Element> elements = new HashSet<>();
+			Iterator<Element> it = versionElements.iterator();
 
-		while (it.hasNext()) {
-			Element versionElement = it.next();
+			Collection<Element> elements = new HashSet<>();
 
-			Node node = versionElement.childNode(0);
+			while (it.hasNext()) {
+				Element versionElement = it.next();
 
-			String nodeString = node.toString();
+				Node node = versionElement.childNode(0);
 
-			if (nodeString.contains("SNAPSHOT")) {
-				if (!snapshotsArg) {
-					elements.add(versionElement);
+				String nodeString = node.toString();
+
+				if (nodeString.contains("SNAPSHOT")) {
+					if (!snapshotsArg) {
+						elements.add(versionElement);
+					}
+				}
+				else {
+					if (snapshotsArg) {
+						elements.add(versionElement);
+					}
+				}
+			}
+
+			versionElements.removeAll(elements);
+
+			Element lastVersion = versionElements.last();
+
+			updateVersion = null;
+
+			if (snapshotsArg) {
+				if (lastVersion != null) {
+					connection.url(url + lastVersion.text() + "/maven-metadata.xml");
+
+					document = connection.get();
+
+					Elements valueElements = document.select("snapshotVersion > value");
+
+					Element valueElement = valueElements.get(0);
+
+					updateVersion = Optional.of(valueElement.text());
+				}
+				else {
+					return Optional.empty();
 				}
 			}
 			else {
-				if (snapshotsArg) {
-					elements.add(versionElement);
-				}
+				updateVersion = Optional.of(lastVersion.text());
 			}
 		}
-
-		versionElements.removeAll(elements);
-
-		Element lastVersion = versionElements.last();
-
-		String updateVersion = null;
-
-		if (snapshotsArg) {
-			if (lastVersion != null) {
-				connection.url(url + lastVersion.text() + "/maven-metadata.xml");
-
-				document = connection.get();
-
-				Elements valueElements = document.select("snapshotVersion > value");
-
-				Element valueElement = valueElements.get(0);
-
-				updateVersion = valueElement.text();
-			}
-			else {
-				return null;
-			}
-		}
-		else {
-			updateVersion = lastVersion.text();
+		catch (Exception e) {
 		}
 
 		return updateVersion;
@@ -671,12 +686,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			System.err.println("Could not determine current blade version, continuing with update.");
 		}
 
-		try {
-			return new BladeVersions(currentVersion, _getUpdateVersion(false), _getUpdateVersion(true));
-		}
-		catch (IOException ioe) {
-			throw new RuntimeException(ioe);
-		}
+		return new BladeVersions(currentVersion, _getUpdateVersion(false), _getUpdateVersion(true));
 	}
 
 	private static boolean _hasUpdateUrlFromBladeDir() {
@@ -709,10 +719,14 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 	}
 
-	private static boolean _shouldUpdate(String currentVersion, String updateVersion, String url, boolean release) {
-		if (updateVersion == null) {
+	private static boolean _shouldUpdate(
+		String currentVersion, Optional<String> updateVersionOpt, String url, boolean release) {
+
+		if (!updateVersionOpt.isPresent()) {
 			return false;
 		}
+
+		String updateVersion = updateVersionOpt.get();
 
 		boolean updatedVersionIsSnapshot = updateVersion.contains("-");
 
@@ -854,7 +868,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	private static final File _updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
 	private static final Pattern _versionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 
-	private String _releaseUpdateVersion;
-	private String _snapshotUpdateVersion;
+	private Optional<String> _releaseUpdateVersion;
+	private Optional<String> _snapshotUpdateVersion;
 
 }

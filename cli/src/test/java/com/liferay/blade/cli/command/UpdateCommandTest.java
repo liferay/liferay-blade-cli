@@ -27,6 +27,7 @@ import java.io.File;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 import org.easymock.Capture;
@@ -543,7 +544,9 @@ public class UpdateCommandTest {
 
 			IExpectationSetters<Object> andReturn = PowerMock.expectPrivate(UpdateCommand.class, "_getVersions");
 
-			andReturn.andReturn(new BladeVersions(currentVersion, releaseUpdateVersion, snapshotUpdateVersion));
+			andReturn.andReturn(
+				new BladeVersions(
+					currentVersion, Optional.of(releaseUpdateVersion), Optional.of(snapshotUpdateVersion)));
 
 			PowerMock.replayAll();
 		}
