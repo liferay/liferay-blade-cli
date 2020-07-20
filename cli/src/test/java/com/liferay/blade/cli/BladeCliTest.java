@@ -20,7 +20,6 @@ import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -38,7 +37,6 @@ public class BladeCliTest {
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 	}
 
-	@Ignore
 	@Test
 	public void testBladePrintUpdateIfAvailable() throws Exception {
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, "update", "--check");
