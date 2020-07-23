@@ -97,6 +97,10 @@ public class NodeUtil {
 	}
 
 	public static int runYo(String liferayVersion, File dir, String[] args) throws Exception {
+		return runYo(liferayVersion, dir, args, false);
+	}
+
+	public static int runYo(String liferayVersion, File dir, String[] args, boolean isQuiet) throws Exception {
 		Path nodeDirPath = downloadNode();
 
 		Path yoDirPath = _installYo(liferayVersion);
@@ -131,7 +135,7 @@ public class NodeUtil {
 			Path nodePath = nodeDirPath.resolve("bin/node");
 			Path yoPath = yoDirPath.resolve("node_modules/.bin/yo");
 
-			commands.add("sh");
+			commands.add("/bin/sh");
 			commands.add("-c");
 
 			StringBuilder command = new StringBuilder();
@@ -152,7 +156,10 @@ public class NodeUtil {
 		}
 
 		processBuilder.command(commands);
-		processBuilder.inheritIO();
+
+		if (!isQuiet) {
+			processBuilder.inheritIO();
+		}
 
 		if ((dir != null) && dir.exists()) {
 			processBuilder.directory(dir);

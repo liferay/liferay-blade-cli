@@ -160,7 +160,8 @@ public class ConvertThemeCommand implements FilesSupport {
 			new String[] {
 				"liferay-theme:import", "-p", themePath, "-c", String.valueOf(_compassSupport(themePath)),
 				"--skip-install"
-			});
+			},
+			_convertArgs.isQuiet());
 
 		if ((errCode == 0) && removeSource) {
 			BaseArgs baseArgs = _bladeCLI.getArgs();
