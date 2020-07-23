@@ -356,9 +356,11 @@ public class BladeCLI {
 
 			CommandType commandType = baseArgs.getCommandType();
 
-			if (commandType.equals(CommandType.GLOBAL) || !commandType.equals(ignoreCommandType)) {
-				jCommander.addCommand(baseArgs);
+			if (commandType.equals(ignoreCommandType) || commandType.equals(CommandType.HIDDEN)) {
+				continue;
 			}
+
+			jCommander.addCommand(baseArgs);
 		}
 
 		jCommander.usage(sb);
