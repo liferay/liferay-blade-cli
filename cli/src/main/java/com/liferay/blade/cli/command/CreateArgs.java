@@ -39,6 +39,11 @@ public class CreateArgs extends BaseArgs {
 		return _classname;
 	}
 
+	@Override
+	public CommandType getCommandType() {
+		return CommandType.WORKSPACE_ONLY;
+	}
+
 	public String getContributorType() {
 		return _contributorType;
 	}
