@@ -327,12 +327,16 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 				);
 			}
 			else {
-				bladeCLI.out("The following projects were added to the Liferay workspace build:");
+				if (!convertArgs.isQuiet()) {
+					bladeCLI.out("The following projects were added to the Liferay workspace build:");
+				}
 
 				convertedPaths.forEach(path -> bladeCLI.out("\t" + path));
 
-				bladeCLI.out(
-					"\nConversion is complete. Please use the upgrade tool to scan for breaking changes to continue.");
+				if (!convertArgs.isQuiet()) {
+					bladeCLI.out(
+						"\nConversion is complete. Use the upgrade tool to scan for breaking changes to continue.");
+				}
 			}
 		}
 	}
@@ -653,7 +657,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		try {
 			warsDir.mkdirs();
 
+			CreateArgs createArgs = new CreateArgs();
+
+			createArgs.setQuiet(true);
+
 			CreateCommand createCommand = new CreateCommand(bladeCLI);
+
+			createCommand.setArgs(createArgs);
 
 			ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
 
@@ -1128,6 +1138,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		initArgs.setBase(initPath.toFile());
 		initArgs.setLiferayVersion("7.3");
+		initArgs.setQuiet(baseArgs.isQuiet());
 
 		InitCommand initCommand = new InitCommand();
 
@@ -1143,6 +1154,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		createArgs.setBase(modulesPath.toFile());
 		createArgs.setTemplate("war-mvc-portlet");
 		createArgs.setName("war-portlet");
+		createArgs.setQuiet(baseArgs.isQuiet());
 
 		CreateCommand createCommand = new CreateCommand();
 
@@ -1183,7 +1195,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 	private void _warn(String message) {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		bladeCLI.out("WARNING: " + message);
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		if (!baseArgs.isQuiet()) {
+			bladeCLI.out("WARNING: " + message);
+		}
 	}
 
 	private static final String[] _PORTLET_PLUGIN_API_DEPENDENCIES = {
