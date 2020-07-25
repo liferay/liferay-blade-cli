@@ -854,10 +854,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					boolean removedGav = false;
 
 					if ((name != null) &&
-						migratedKeys.stream().filter(
-							key -> name.equals(key.replaceAll("\\.jar$", ""))).map(
-								key -> migratedDependencies.get(key)).filter(
-									GAV::isRemove).findFirst().isPresent()) {
+						migratedKeys.stream(
+						).filter(
+							key -> name.equals(key.replaceAll("\\.jar$", ""))
+						).map(
+							key -> migratedDependencies.get(key)
+						).filter(
+							GAV::isRemove
+						).findFirst(
+						).isPresent()) {
 
 						removedGav = true;
 					}

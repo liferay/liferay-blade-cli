@@ -30,6 +30,7 @@ import java.nio.file.Path;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,6 +86,8 @@ public class ConvertThemeCommand implements FilesSupport {
 		}
 
 		_themesDir = new File(projectDir, themesDirPath);
+
+		_themesDir.mkdirs();
 	}
 
 	public void execute() throws Exception {
@@ -110,7 +113,11 @@ public class ConvertThemeCommand implements FilesSupport {
 			for (File file : _pluginsSDKThemesDir.listFiles()) {
 				if (file.isDirectory()) {
 					if (_convertArgs.isAll()) {
-						_convertedPaths.add(importTheme(file.getCanonicalPath(), removeSource));
+						Optional<Path> themePath = importTheme(file.getCanonicalPath(), removeSource);
+
+						if (themePath.isPresent()) {
+							_convertedPaths.add(themePath.get());
+						}
 					}
 					else {
 						themes.add(file.getName());
@@ -142,7 +149,11 @@ public class ConvertThemeCommand implements FilesSupport {
 			File themeDir = new File(_pluginsSDKThemesDir, themeName);
 
 			if (themeDir.exists()) {
-				_convertedPaths.add(importTheme(themeDir.getCanonicalPath(), removeSource));
+				Optional<Path> importThemePath = importTheme(themeDir.getCanonicalPath(), removeSource);
+
+				if (importThemePath.isPresent()) {
+					_convertedPaths.add(importThemePath.get());
+				}
 			}
 			else {
 				_bladeCLI.error("Theme does not exist");
@@ -154,31 +165,40 @@ public class ConvertThemeCommand implements FilesSupport {
 		return _convertedPaths;
 	}
 
-	public Path importTheme(String themePath, boolean removeSource) throws Exception {
-		int errCode = NodeUtil.runYo(
-			_LIFERAY_VERSION_70, _themesDir,
-			new String[] {
-				"liferay-theme:import", "-p", themePath, "-c", String.valueOf(_compassSupport(themePath)),
-				"--skip-install"
-			},
-			_convertArgs.isQuiet());
+	public Optional<Path> importTheme(String themePath, boolean removeSource) throws Exception {
+		File originalTheme = new File(themePath);
 
-		if ((errCode == 0) && removeSource) {
-			BaseArgs baseArgs = _bladeCLI.getArgs();
+		if (originalTheme.exists()) {
+			int retCode = NodeUtil.runYo(
+				_LIFERAY_VERSION_70, _themesDir,
+				new String[] {
+					"liferay-theme:import", "-p", themePath, "-c", String.valueOf(_compassSupport(themePath)),
+					"--skip-install"
+				},
+				_convertArgs.isQuiet());
 
-			if (!baseArgs.isQuiet()) {
-				_bladeCLI.out("Theme " + themePath + " migrated successfully");
+			if (retCode == 0) {
+				BaseArgs baseArgs = _bladeCLI.getArgs();
+
+				if (!baseArgs.isQuiet()) {
+					_bladeCLI.out("Theme " + themePath + " migrated successfully");
+				}
+
+				if (removeSource) {
+					FileUtil.deleteDir(originalTheme.toPath());
+				}
+
+				return Optional.of(
+					new File(_themesDir, originalTheme.getName())
+				).map(
+					File::toPath
+				);
 			}
 
-			File theme = new File(themePath);
-
-			FileUtil.deleteDir(theme.toPath());
-		}
-		else if (errCode != 0) {
-			_bladeCLI.error("blade exited with code: " + errCode);
+			_bladeCLI.error("blade exited with code: " + retCode);
 		}
 
-		return _themesDir.toPath();
+		return Optional.empty();
 	}
 
 	private static boolean _compassSupport(String themePath) throws Exception {

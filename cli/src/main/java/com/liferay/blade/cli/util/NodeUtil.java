@@ -135,7 +135,7 @@ public class NodeUtil {
 			Path nodePath = nodeDirPath.resolve("bin/node");
 			Path yoPath = yoDirPath.resolve("node_modules/.bin/yo");
 
-			commands.add("/bin/sh");
+			commands.add("sh");
 			commands.add("-c");
 
 			StringBuilder command = new StringBuilder();
