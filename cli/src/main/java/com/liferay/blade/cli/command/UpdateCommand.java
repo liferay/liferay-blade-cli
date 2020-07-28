@@ -193,7 +193,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				else if (snapshotShouldUpdate) {
 					_snapshotUpdateVersion = snapshotUpdateVersion;
 
-					bladeCLI.out("A new snapshot update is available for blade: " + snapshotUpdateVersion);
+					if (snapshotUpdateVersion.isPresent()) {
+						bladeCLI.out("A new snapshot update is available for blade: " + snapshotUpdateVersion.get());
+					}
 
 					if (updateArgs.isSnapshots() && !currentVersion.contains("SNAPSHOT")) {
 						bladeCLI.out("Pass the -s flag to 'blade update' to switch to snapshots branch.");
@@ -248,8 +250,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 							bladeCLI.out(
 								"Current blade version " + currentVersion + " is the latest snapshot version.");
 
-							if (releaseShouldUpdate) {
-								bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
+							if (releaseShouldUpdate && releaseUpdateVersion.isPresent()) {
+								bladeCLI.out(
+									"A new release update is available for blade: " + releaseUpdateVersion.get());
 								bladeCLI.out("Run `blade update -r` to install.");
 							}
 						}
@@ -587,83 +590,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		return url;
 	}
 
-	private static Optional<String> _getUpdateVersion(boolean snapshotsArg) {
-		Optional<String> updateVersion = Optional.empty();
-
-		try {
-			String url = _RELEASES_REPO_URL;
-
-			if (snapshotsArg) {
-				url = _SNAPSHOTS_REPO_URL;
-			}
-
-			if (_hasUpdateUrlFromBladeDir()) {
-				url = _getUpdateUrlFromBladeDir();
-			}
-
-			Connection connection = Jsoup.connect(url + "maven-metadata.xml");
-
-			connection = connection.parser(Parser.xmlParser());
-
-			Document document = connection.get();
-
-			Elements versionElements = document.select("version");
-
-			Iterator<Element> it = versionElements.iterator();
-
-			Collection<Element> elements = new HashSet<>();
-
-			while (it.hasNext()) {
-				Element versionElement = it.next();
-
-				Node node = versionElement.childNode(0);
-
-				String nodeString = node.toString();
-
-				if (nodeString.contains("SNAPSHOT")) {
-					if (!snapshotsArg) {
-						elements.add(versionElement);
-					}
-				}
-				else {
-					if (snapshotsArg) {
-						elements.add(versionElement);
-					}
-				}
-			}
-
-			versionElements.removeAll(elements);
-
-			Element lastVersion = versionElements.last();
-
-			updateVersion = null;
-
-			if (snapshotsArg) {
-				if (lastVersion != null) {
-					connection.url(url + lastVersion.text() + "/maven-metadata.xml");
-
-					document = connection.get();
-
-					Elements valueElements = document.select("snapshotVersion > value");
-
-					Element valueElement = valueElements.get(0);
-
-					updateVersion = Optional.of(valueElement.text());
-				}
-				else {
-					return Optional.empty();
-				}
-			}
-			else {
-				updateVersion = Optional.of(lastVersion.text());
-			}
-		}
-		catch (Exception e) {
-		}
-
-		return updateVersion;
-	}
-
 	private static Version _getVersionObject(String version) {
 		Matcher matcher = _versionPattern.matcher(version);
 
@@ -674,19 +600,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		int currentPatch = Integer.parseInt(matcher.group(3));
 
 		return new Version(currentMajor, currentMinor, currentPatch);
-	}
-
-	private static BladeVersions _getVersions() {
-		String currentVersion = null;
-
-		try {
-			currentVersion = VersionCommand.getBladeCLIVersion();
-		}
-		catch (IOException ioe) {
-			System.err.println("Could not determine current blade version, continuing with update.");
-		}
-
-		return new BladeVersions(currentVersion, _getUpdateVersion(false), _getUpdateVersion(true));
 	}
 
 	private static boolean _hasUpdateUrlFromBladeDir() {
@@ -782,6 +695,115 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 
 		return false;
+	}
+
+	private Optional<String> _getUpdateVersion(boolean snapshotsArg) {
+		Optional<String> updateVersion = Optional.empty();
+
+		UpdateArgs updateArgs = getArgs();
+
+		String url = _RELEASES_REPO_URL;
+
+		if (snapshotsArg) {
+			url = _SNAPSHOTS_REPO_URL;
+		}
+
+		if (_hasUpdateUrlFromBladeDir()) {
+			url = _getUpdateUrlFromBladeDir();
+		}
+
+		URL urlArg = updateArgs.getUrl();
+
+		if (urlArg != null) {
+			url = urlArg.toExternalForm();
+		}
+
+		try {
+			Connection connection = Jsoup.connect(url + "maven-metadata.xml");
+
+			connection = connection.parser(Parser.xmlParser());
+
+			Document document = connection.get();
+
+			Elements versionElements = document.select("version");
+
+			Iterator<Element> it = versionElements.iterator();
+
+			Collection<Element> elements = new HashSet<>();
+
+			while (it.hasNext()) {
+				Element versionElement = it.next();
+
+				Node node = versionElement.childNode(0);
+
+				String nodeString = node.toString();
+
+				if (nodeString.contains("SNAPSHOT")) {
+					if (!snapshotsArg) {
+						elements.add(versionElement);
+					}
+				}
+				else {
+					if (snapshotsArg) {
+						elements.add(versionElement);
+					}
+				}
+			}
+
+			versionElements.removeAll(elements);
+
+			Element lastVersion = versionElements.last();
+
+			updateVersion = null;
+
+			if (snapshotsArg) {
+				if (lastVersion != null) {
+					connection.url(url + lastVersion.text() + "/maven-metadata.xml");
+
+					document = connection.get();
+
+					Elements valueElements = document.select("snapshotVersion > value");
+
+					Element valueElement = valueElements.get(0);
+
+					updateVersion = Optional.ofNullable(valueElement.text());
+				}
+				else {
+					return Optional.empty();
+				}
+			}
+			else {
+				updateVersion = Optional.ofNullable(
+					lastVersion
+				).map(
+					e -> e.text()
+				);
+			}
+		}
+		catch (Exception e) {
+			if (updateArgs.isTrace()) {
+				BladeCLI bladeCLI = getBladeCLI();
+
+				bladeCLI.error("Could not get update information from " + url);
+
+				e.printStackTrace(bladeCLI.error());
+			}
+		}
+
+		return updateVersion;
+	}
+
+	private BladeVersions _getVersions() {
+		String currentVersion = null;
+
+		try {
+			currentVersion = VersionCommand.getBladeCLIVersion();
+		}
+		catch (IOException ioe) {
+			System.err.println("Could not determine current blade version, continuing with update.");
+		}
+
+		return new BladeVersions(currentVersion, _getUpdateVersion(false), _getUpdateVersion(true));
 	}
 
 	private void _performUpdate(String url) throws IOException {
