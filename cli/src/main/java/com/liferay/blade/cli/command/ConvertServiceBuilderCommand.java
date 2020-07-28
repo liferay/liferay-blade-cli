@@ -144,7 +144,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 
 		if (Files.exists(sbProjectPath)) {
 			_bladeCLI.error(
-				"The service builder module project " + sbProjectName + " exist now, please choose another name");
+				"The service builder module project " + sbProjectName + " already exists. Please choose another name");
 
 			return;
 		}
