@@ -219,7 +219,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			return;
 		}
 
-		Version targetPlatformVersion = new Version(productInfo.getTargetPlatformVersion());
+		Version targetPlatformVersion = _makeCompatibleVersion(productInfo.getTargetPlatformVersion());
 
 		initArgs.setLiferayVersion(
 			new String(targetPlatformVersion.getMajor() + "." + targetPlatformVersion.getMinor()));
@@ -353,6 +353,21 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		return false;
+	}
+
+	private Version _makeCompatibleVersion(String targetPlatformVersion) {
+		int dash = targetPlatformVersion.indexOf("-");
+
+		Version productTargetPlatformVersion = null;
+
+		if (dash != -1) {
+			productTargetPlatformVersion = Version.parseVersion(targetPlatformVersion.substring(0, dash));
+		}
+		else {
+			productTargetPlatformVersion = Version.parseVersion(targetPlatformVersion);
+		}
+
+		return productTargetPlatformVersion;
 	}
 
 	private void _moveContentsToDirectory(File src, File dest) throws IOException {
