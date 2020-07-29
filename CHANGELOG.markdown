@@ -1,5 +1,47 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.1 - 2020-07-29
+
+### Commits
+- [BLADE-580] use fixed jpm (77700befb5)
+- [BLADE-582] improve printout (6a2e1b09c2)
+- [BLADE-582] delete test (eaf1eccecb)
+- [BLADE-582] make methods private and better null handling (17b0428509)
+- [BLADE-582] wordsmith (d6a77f9bdf)
+- [BLADE-576] switch to using optional in case of missing remote resources
+(af8e90b0e8)
+- [BLADE-585] make target platform version compatible (6c7189f010)
+- [BLADE-579] make sure and create themes dir (3d495e2f4b)
+- [BLADE-579] better handle quiet mode in convert command (5043feede6)
+- [BLADE-578] show create command only in a workspace (f498ccd074)
+- [BLADE-577] hide commands with CommandType.HIDDEN (85832a2ba3)
+- [BLADE-576] Revert "Merge pull request #1111 from gamerson/BLADE-576-quick"
+(4b13f792ab)
+- [BLADE-576] quick ignore to get a new snapshot published (62eb0c403c)
+- [BLADE-567] Add Liferay version possible value support when init maven
+workspace (b0958f4fc3)
+- [BLADE-570] touch up (0fdec2e670)
+- [BLADE-570] Fix test parameters (d247598f47)
+- [BLADE-570] Add Init More Test (141afd8a15)
+
+### Dependencies
+- [BLADE-587] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.18.
+- [BLADE-587] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.1.
+- [BLADE-587] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.1.
+- [] Update the com.liferay.blade.extensions.maven.profile dependency to version
+1.0.18-SNAPSHOT.
+- [] Update the com.liferay.project.templates.js.theme dependency to version
+1.0.1-SNAPSHOT.
+- [] Update the com.liferay.project.templates.js.widget dependency to version
+1.0.1-SNAPSHOT.
+- [] Update the com.liferay.project.templates.js.theme dependency to version
+1.0.0.
+- [] Update the com.liferay.project.templates.js.widget dependency to version
+1.0.0.
+
 ## 4.0.0 - 2020-07-08
 
 ### Commits
@@ -227,8 +269,8 @@ changes (342fe99df8)
 - [BLADE-533] add generator-liferay-theme 10.x support (1a8bc43f8c)
 
 ### Dependencies
-- [] Update the com.liferay.blade.extensions.maven.profile dependency to version
-1.0.17.
+- [BLADE-573] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.17.
 - [BLADE-566] Update the com.liferay.project.templates dependency to version
 5.0.65.
 - [LPS-114909] Update the com.liferay.project.templates dependency to version
@@ -1619,8 +1661,18 @@ maintainability (7f9bc3f45e)
 [BLADE-564]: https://issues.liferay.com/browse/BLADE-564
 [BLADE-565]: https://issues.liferay.com/browse/BLADE-565
 [BLADE-566]: https://issues.liferay.com/browse/BLADE-566
+[BLADE-567]: https://issues.liferay.com/browse/BLADE-567
 [BLADE-568]: https://issues.liferay.com/browse/BLADE-568
 [BLADE-570]: https://issues.liferay.com/browse/BLADE-570
+[BLADE-573]: https://issues.liferay.com/browse/BLADE-573
+[BLADE-576]: https://issues.liferay.com/browse/BLADE-576
+[BLADE-577]: https://issues.liferay.com/browse/BLADE-577
+[BLADE-578]: https://issues.liferay.com/browse/BLADE-578
+[BLADE-579]: https://issues.liferay.com/browse/BLADE-579
+[BLADE-580]: https://issues.liferay.com/browse/BLADE-580
+[BLADE-582]: https://issues.liferay.com/browse/BLADE-582
+[BLADE-585]: https://issues.liferay.com/browse/BLADE-585
+[BLADE-587]: https://issues.liferay.com/browse/BLADE-587
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
