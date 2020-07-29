@@ -16,12 +16,16 @@
 
 package com.liferay.blade.cli.util;
 
+import java.util.Optional;
+
 /**
  * @author Christopher Bryan Boyd
  */
 public final class BladeVersions {
 
-	public BladeVersions(String currentVersion, String releaseUpdateVersion, String snapshotUpdateVersion) {
+	public BladeVersions(
+		String currentVersion, Optional<String> releaseUpdateVersion, Optional<String> snapshotUpdateVersion) {
+
 		_currentVersion = currentVersion;
 		_releasedUpdateVersion = releaseUpdateVersion;
 		_snapshotUpdateVersion = snapshotUpdateVersion;
@@ -31,16 +35,16 @@ public final class BladeVersions {
 		return _currentVersion;
 	}
 
-	public String getReleasedUpdateVersion() {
+	public Optional<String> getReleasedUpdateVersion() {
 		return _releasedUpdateVersion;
 	}
 
-	public String getSnapshotUpdateVersion() {
+	public Optional<String> getSnapshotUpdateVersion() {
 		return _snapshotUpdateVersion;
 	}
 
 	private final String _currentVersion;
-	private final String _releasedUpdateVersion;
-	private final String _snapshotUpdateVersion;
+	private final Optional<String> _releasedUpdateVersion;
+	private final Optional<String> _snapshotUpdateVersion;
 
 }
