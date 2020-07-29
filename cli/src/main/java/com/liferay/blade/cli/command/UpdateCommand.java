@@ -178,7 +178,9 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				else if (releaseShouldUpdate) {
 					_releaseUpdateVersion = releaseUpdateVersion;
 
-					bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion);
+					if (releaseUpdateVersion.isPresent()) {
+						bladeCLI.out("A new release update is available for blade: " + releaseUpdateVersion.get());
+					}
 
 					if (updateArgs.isRelease() || currentVersion.contains("SNAPSHOT")) {
 						bladeCLI.out("Pass the -r flag to 'blade update' to switch to release branch.");
