@@ -1068,7 +1068,7 @@ public class BladeCLI {
 			Optional<String> snapshotUpdateVersionOpt = updateCommand.getSnapshotUpdateVersion();
 
 			if (!snapshotUpdateVersionOpt.isPresent()) {
-				return null;
+				return Optional.empty();
 			}
 
 			String snapshotUpdateVersion = snapshotUpdateVersionOpt.get();
