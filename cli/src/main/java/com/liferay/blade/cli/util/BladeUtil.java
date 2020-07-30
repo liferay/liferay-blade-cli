@@ -40,7 +40,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -70,15 +69,12 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.net.ssl.SSLHandshakeException;
-
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
-import org.apache.http.conn.ConnectTimeoutException;
 
 /**
  * @author Gregory Amerson
@@ -254,8 +250,12 @@ public class BladeUtil {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static Map<String, Object> getProductInfos() {
+		return getProductInfos(false, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> getProductInfos(boolean trace, PrintStream printStream) {
 		Map<String, Object> productInfoMap = Collections.emptyMap();
 
 		JsonSlurper jsonSlurper = new JsonSlurper();
@@ -264,12 +264,12 @@ public class BladeUtil {
 			DownloadCommand downloadCommand = new DownloadCommand();
 
 			downloadCommand.setCacheDir(_workspaceCacheDir);
+			downloadCommand.setConnectionTimeout(3000);
 			downloadCommand.setPassword(null);
 			downloadCommand.setToken(false);
 			downloadCommand.setUrl(new URL(_PRODUCT_INFO_URL));
 			downloadCommand.setUserName(null);
 			downloadCommand.setQuiet(true);
-			downloadCommand.setConnectionTimeout(500);
 
 			downloadCommand.execute();
 
@@ -277,16 +277,19 @@ public class BladeUtil {
 				productInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
 			}
 		}
-		catch (ConnectTimeoutException | SSLHandshakeException | UnknownHostException exception) {
-			try (InputStream resourceAsStream = BladeUtil.class.getResourceAsStream("/product_info.json")) {
+		catch (Exception exception) {
+			if (trace && (printStream != null)) {
+				exception.printStackTrace(printStream);
+			}
+
+			try (InputStream resourceAsStream = BladeUtil.class.getResourceAsStream("/.product_info.json")) {
 				productInfoMap = (Map<String, Object>)jsonSlurper.parse(resourceAsStream);
 			}
-			catch (Exception ioException) {
-				ioException.printStackTrace();
+			catch (Exception e) {
+				if (trace && (printStream != null)) {
+					exception.printStackTrace(printStream);
+				}
 			}
-		}
-		catch (Exception exception) {
-			exception.printStackTrace();
 		}
 
 		return productInfoMap;

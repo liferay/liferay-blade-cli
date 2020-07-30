@@ -33,7 +33,9 @@ public class ListWorkspaceProductCommand extends BaseCommand<ListWorkspaceProduc
 
 	@Override
 	public void execute() throws Exception {
-		_printPromotedWorkspaceProducts();
+		ListWorkspaceProductArgs listWorkspaceProductArgs = getArgs();
+
+		_printPromotedWorkspaceProducts(listWorkspaceProductArgs.isTrace());
 	}
 
 	@Override
@@ -42,10 +44,10 @@ public class ListWorkspaceProductCommand extends BaseCommand<ListWorkspaceProduc
 	}
 
 	@SuppressWarnings("unchecked")
-	private void _printPromotedWorkspaceProducts() throws Exception {
+	private void _printPromotedWorkspaceProducts(boolean trace) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		Map<String, Object> productInfos = BladeUtil.getProductInfos();
+		Map<String, Object> productInfos = BladeUtil.getProductInfos(trace, bladeCLI.error());
 
 		List<String> promotedProductKeys = productInfos.entrySet(
 		).stream(
