@@ -892,7 +892,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 	private static final File _updateUrlFile = new File(System.getProperty("user.home"), ".blade/update.url");
 	private static final Pattern _versionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
 
-	private Optional<String> _releaseUpdateVersion;
-	private Optional<String> _snapshotUpdateVersion;
+	private Optional<String> _releaseUpdateVersion = Optional.empty();
+	private Optional<String> _snapshotUpdateVersion = Optional.empty();
 
 }
