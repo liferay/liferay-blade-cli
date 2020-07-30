@@ -27,24 +27,7 @@ Private-Package:\
 	com.liferay.portal.tools.bundle.support.internal.util,\
 	com.liferay.portal.tools.bundle.support.util,\
 	\
-	com.google.gson,\
-	com.google.gson.annotations,\
-	com.google.gson.internal,\
-	com.google.gson.internal.bind,\
-	com.google.gson.internal.reflect,\
-	com.google.gson.reflect,\
-	com.google.gson.stream,\
-	\
-	org.apache.tools.ant;-split-package:=merge-first,\
-	org.apache.tools.ant.filters;-split-package:=merge-first,\
-	org.apache.tools.ant.filters.util;-split-package:=merge-first,\
-	org.apache.tools.ant.input;-split-package:=merge-first,\
-	org.apache.tools.ant.property;-split-package:=merge-first,\
-	org.apache.tools.ant.taskdefs;-split-package:=merge-first,\
-	org.apache.tools.ant.taskdefs.condition;-split-package:=merge-first,\
-	org.apache.tools.ant.types;-split-package:=merge-first,\
-	org.apache.tools.ant.types.resources;-split-package:=merge-first,\
-	org.apache.tools.ant.util;-split-package:=merge-first,\
+	groovy.json,\
 	\
 	org.apache.commons.beanutils,\
 	org.apache.commons.beanutils.converters,\
@@ -86,6 +69,8 @@ Private-Package:\
 	org.apache.commons.text.matcher,\
 	org.apache.commons.text.translate,\
 	\
+	org.apache.groovy.json.internal,\
+	\
 	org.apache.http;-split-package:=merge-first,\
 	org.apache.http.auth;-split-package:=merge-first,\
 	org.apache.http.client;-split-package:=merge-first,\
@@ -117,6 +102,17 @@ Private-Package:\
 	org.apache.http.pool;-split-package:=merge-first,\
 	org.apache.http.protocol;-split-package:=merge-first,\
 	org.apache.http.util;-split-package:=merge-first,\
+	\
+	org.apache.tools.ant;-split-package:=merge-first,\
+	org.apache.tools.ant.filters;-split-package:=merge-first,\
+	org.apache.tools.ant.filters.util;-split-package:=merge-first,\
+	org.apache.tools.ant.input;-split-package:=merge-first,\
+	org.apache.tools.ant.property;-split-package:=merge-first,\
+	org.apache.tools.ant.taskdefs;-split-package:=merge-first,\
+	org.apache.tools.ant.taskdefs.condition;-split-package:=merge-first,\
+	org.apache.tools.ant.types;-split-package:=merge-first,\
+	org.apache.tools.ant.types.resources;-split-package:=merge-first,\
+	org.apache.tools.ant.util;-split-package:=merge-first,\
 	\
 	org.gradle;-split-package:=merge-first,\
 	org.gradle.api;-split-package:=merge-first,\
@@ -328,5 +324,6 @@ Private-Package:\
 	@jansi-*.jar,\
 	${project.buildDir}/tooling.zip,\
 	${project.buildDir}/wrapper.zip,\
+	${project.buildDir}/.product_info.json,\
 	mvnw.cmd
 -sources: false

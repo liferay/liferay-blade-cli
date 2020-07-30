@@ -16,10 +16,6 @@
 
 package com.liferay.blade.cli.util;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.command.SamplesCommand;
@@ -27,6 +23,8 @@ import com.liferay.blade.cli.command.validator.WorkspaceProductComparator;
 import com.liferay.portal.tools.bundle.support.commands.DownloadCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
+
+import groovy.json.JsonSlurper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -252,11 +250,21 @@ public class BladeUtil {
 		}
 	}
 
-	public static Map<String, ProductInfo> getProductInfos() {
+	public static Map<String, Object> getProductInfos() {
+		return getProductInfos(false, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> getProductInfos(boolean trace, PrintStream printStream) {
+		Map<String, Object> productInfoMap = Collections.emptyMap();
+
+		JsonSlurper jsonSlurper = new JsonSlurper();
+
 		try {
 			DownloadCommand downloadCommand = new DownloadCommand();
 
 			downloadCommand.setCacheDir(_workspaceCacheDir);
+			downloadCommand.setConnectionTimeout(3000);
 			downloadCommand.setPassword(null);
 			downloadCommand.setToken(false);
 			downloadCommand.setUrl(new URL(_PRODUCT_INFO_URL));
@@ -265,22 +273,26 @@ public class BladeUtil {
 
 			downloadCommand.execute();
 
-			Path downloadPath = downloadCommand.getDownloadPath();
-
-			Gson gson = new Gson();
-
-			try (JsonReader jsonReader = new JsonReader(Files.newBufferedReader(downloadPath))) {
-				TypeToken<Map<String, ProductInfo>> typeToken = new TypeToken<Map<String, ProductInfo>>() {
-				};
-
-				return gson.fromJson(jsonReader, typeToken.getType());
+			try (BufferedReader reader = Files.newBufferedReader(downloadCommand.getDownloadPath())) {
+				productInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
 			}
 		}
 		catch (Exception exception) {
-			exception.printStackTrace();
+			if (trace && (printStream != null)) {
+				exception.printStackTrace(printStream);
+			}
+
+			try (InputStream resourceAsStream = BladeUtil.class.getResourceAsStream("/.product_info.json")) {
+				productInfoMap = (Map<String, Object>)jsonSlurper.parse(resourceAsStream);
+			}
+			catch (Exception e) {
+				if (trace && (printStream != null)) {
+					exception.printStackTrace(printStream);
+				}
+			}
 		}
 
-		return Collections.emptyMap();
+		return productInfoMap;
 	}
 
 	public static Properties getProperties(File file) {
@@ -318,15 +330,18 @@ public class BladeUtil {
 		return ProjectTemplates.getTemplates(templatesFiles);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<String> getWorkspaceProductKeys() {
-		Map<String, ProductInfo> productInfoMap = getProductInfos();
+		Map<String, Object> productInfoMap = getProductInfos();
 
-		Set<Map.Entry<String, ProductInfo>> entries = productInfoMap.entrySet();
+		Set<Map.Entry<String, Object>> entries = productInfoMap.entrySet();
 
 		return entries.stream(
 		).filter(
 			entry -> {
-				ProductInfo productInfo = entry.getValue();
+				Object object = entry.getValue();
+
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)object);
 
 				return productInfo.getTargetPlatformVersion() != null;
 			}

@@ -60,6 +60,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public String getLiferayVersion(File workspaceDir) {
 		try {
 			Properties gradleProperties = getGradleProperties(workspaceDir);
@@ -74,9 +75,9 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 					return null;
 				}
 
-				Map<String, ProductInfo> productInfos = BladeUtil.getProductInfos();
+				Map<String, Object> productInfoMap = BladeUtil.getProductInfos();
 
-				ProductInfo productInfo = productInfos.get(productKey);
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
 
 				if (productInfo != null) {
 					targetPlatformVersion = productInfo.getTargetPlatformVersion();
