@@ -17,6 +17,7 @@
 package com.liferay.blade.cli.util;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Simon Jiang
@@ -25,13 +26,13 @@ import java.util.Map;
 public class ProductInfo {
 
 	public ProductInfo(Map<String, String> productMap) {
-		_appServerTomcatVersion = productMap.get("appServerTomcatVersion");
-		_bundleUrl = productMap.get("bundleUrl");
-		_liferayDockerImage = productMap.get("liferayDockerImage");
-		_liferayProductVersion = productMap.get("liferayProductVersion");
-		_releaseDate = productMap.get("releaseDate");
-		_targetPlatformVersion = productMap.get("targetPlatformVersion");
-		_promoted = Boolean.parseBoolean(productMap.get("promoted"));
+		_appServerTomcatVersion = _safeGet(productMap, "appServerTomcatVersion", "");
+		_bundleUrl = _safeGet(productMap, "bundleUrl", "");
+		_liferayDockerImage = _safeGet(productMap, "liferayDockerImage", "");
+		_liferayProductVersion = _safeGet(productMap, "liferayProductVersion", "");
+		_releaseDate = _safeGet(productMap, "releaseDate", "");
+		_targetPlatformVersion = _safeGet(productMap, "targetPlatformVersion", "");
+		_promoted = Boolean.parseBoolean(_safeGet(productMap, "promoted", "false"));
 	}
 
 	public String getAppServerTomcatVersion() {
@@ -60,6 +61,16 @@ public class ProductInfo {
 
 	public boolean isPromoted() {
 		return _promoted;
+	}
+
+	private static String _safeGet(Map<String, String> map, String key, String defVal) {
+		return Optional.ofNullable(
+			map
+		).map(
+			m -> m.get(key)
+		).orElse(
+			defVal
+		);
 	}
 
 	private String _appServerTomcatVersion;
