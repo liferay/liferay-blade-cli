@@ -29,6 +29,7 @@ task copyMavenProfileJar(type: Copy)
 task createToolingZip(type:Zip)
 task createWrapperZip(type:Zip)
 task downloadPortal(type: Download)
+task downloadProductInfo(type: Download)
 task unzipManifest(type: Copy)
 task unzipPortal(type: Copy)
 
@@ -133,9 +134,15 @@ downloadPortal {
 	onlyIfNewer true
 }
 
+downloadProductInfo {
+	src "https://releases-cdn.liferay.com/tools/workspace/.product_info.json"
+	dest buildDir
+	onlyIfNewer true
+}
+
 jar {
 	archiveName = "blade.jar"
-	from createToolingZip, createWrapperZip
+	from createToolingZip, createWrapperZip, downloadProductInfo
 }
 
 processResources {
