@@ -255,8 +255,10 @@ public class BladeUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Map<String, Object> getProductInfos(boolean trace, PrintStream printStream) {
-		Map<String, Object> productInfoMap = Collections.emptyMap();
+	public static synchronized Map<String, Object> getProductInfos(boolean trace, PrintStream printStream) {
+		if (!_productInfoMap.isEmpty()) {
+			return _productInfoMap;
+		}
 
 		JsonSlurper jsonSlurper = new JsonSlurper();
 
@@ -264,7 +266,7 @@ public class BladeUtil {
 			DownloadCommand downloadCommand = new DownloadCommand();
 
 			downloadCommand.setCacheDir(_workspaceCacheDir);
-			downloadCommand.setConnectionTimeout(3000);
+			downloadCommand.setConnectionTimeout(5000);
 			downloadCommand.setPassword(null);
 			downloadCommand.setToken(false);
 			downloadCommand.setUrl(new URL(_PRODUCT_INFO_URL));
@@ -274,7 +276,7 @@ public class BladeUtil {
 			downloadCommand.execute();
 
 			try (BufferedReader reader = Files.newBufferedReader(downloadCommand.getDownloadPath())) {
-				productInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
+				_productInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
 			}
 		}
 		catch (Exception exception) {
@@ -283,7 +285,7 @@ public class BladeUtil {
 			}
 
 			try (InputStream resourceAsStream = BladeUtil.class.getResourceAsStream("/.product_info.json")) {
-				productInfoMap = (Map<String, Object>)jsonSlurper.parse(resourceAsStream);
+				_productInfoMap = (Map<String, Object>)jsonSlurper.parse(resourceAsStream);
 			}
 			catch (Exception e) {
 				if (trace && (printStream != null)) {
@@ -292,7 +294,7 @@ public class BladeUtil {
 			}
 		}
 
-		return productInfoMap;
+		return _productInfoMap;
 	}
 
 	public static Properties getProperties(File file) {
@@ -331,7 +333,7 @@ public class BladeUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<String> getWorkspaceProductKeys() {
+	public static List<String> getWorkspaceProductKeys(boolean promoted) {
 		Map<String, Object> productInfoMap = getProductInfos();
 
 		Set<Map.Entry<String, Object>> entries = productInfoMap.entrySet();
@@ -342,6 +344,10 @@ public class BladeUtil {
 				Object object = entry.getValue();
 
 				ProductInfo productInfo = new ProductInfo((Map<String, String>)object);
+
+				if (promoted) {
+					return Objects.nonNull(productInfo.getTargetPlatformVersion()) && productInfo.isPromoted();
+				}
 
 				return productInfo.getTargetPlatformVersion() != null;
 			}
@@ -681,6 +687,7 @@ public class BladeUtil {
 
 	private static final String _PRODUCT_INFO_URL = "https://releases.liferay.com/tools/workspace/.product_info.json";
 
+	private static Map<String, Object> _productInfoMap = Collections.emptyMap();
 	private static File _workspaceCacheDir = new File(
 		System.getProperty("user.home"), _DEFAULT_WORKSPACE_CACHE_DIR_NAME);
 

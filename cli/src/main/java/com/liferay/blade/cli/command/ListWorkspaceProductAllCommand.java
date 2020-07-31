@@ -39,7 +39,7 @@ public class ListWorkspaceProductAllCommand extends BaseCommand<ListWorkspacePro
 	private void _printAllWorkspaceProducts() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		List<String> workspaceProductKeys = BladeUtil.getWorkspaceProductKeys();
+		List<String> workspaceProductKeys = BladeUtil.getWorkspaceProductKeys(false);
 
 		for (String productKey : workspaceProductKeys) {
 			bladeCLI.out(productKey);

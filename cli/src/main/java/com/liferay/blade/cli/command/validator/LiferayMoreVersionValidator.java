@@ -31,7 +31,7 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 
 	@Override
 	public List<String> get() {
-		return BladeUtil.getWorkspaceProductKeys();
+		return BladeUtil.getWorkspaceProductKeys(false);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 		possibleValues.addAll(WorkspaceConstants.originalLiferayVersions);
 
 		if (!possibleValues.contains(value)) {
-			throw new ParameterException(name + " is not a valid value.");
+			throw new ParameterException(value + " is not a valid value.");
 		}
 	}
 

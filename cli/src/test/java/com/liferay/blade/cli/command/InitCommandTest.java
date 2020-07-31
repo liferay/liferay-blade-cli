@@ -331,18 +331,6 @@ public class InitCommandTest {
 		Assert.assertTrue(output, output.contains("dxp-7.2-sp1"));
 
 		Assert.assertTrue(output, output.contains("portal-7.0-ga7"));
-
-		List<String> lines = new ArrayList<>();
-
-		try (Scanner scanner = new Scanner(output)) {
-			while (scanner.hasNextLine()) {
-				lines.add(scanner.nextLine());
-			}
-		}
-
-		String firstLine = lines.get(0);
-
-		Assert.assertEquals("dxp-7.2-sp2", firstLine);
 	}
 
 	@Test
@@ -358,17 +346,7 @@ public class InitCommandTest {
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output.contains("dxp-7.2-sp2"));
-
-		List<String> lines = new ArrayList<>();
-
-		try (Scanner scanner = new Scanner(output)) {
-			while (scanner.hasNextLine()) {
-				lines.add(scanner.nextLine());
-			}
-		}
-
-		Assert.assertEquals("1: dxp-7.2-sp2", lines.get(11));
+		Assert.assertTrue(output, output.contains("dxp-7.3-ep4"));
 	}
 
 	@Test
