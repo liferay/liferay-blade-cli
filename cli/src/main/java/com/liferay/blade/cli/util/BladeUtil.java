@@ -331,7 +331,7 @@ public class BladeUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<String> getWorkspaceProductKeys() {
+	public static List<String> getWorkspaceProductKeys(boolean promoted) {
 		Map<String, Object> productInfoMap = getProductInfos();
 
 		Set<Map.Entry<String, Object>> entries = productInfoMap.entrySet();
@@ -342,6 +342,10 @@ public class BladeUtil {
 				Object object = entry.getValue();
 
 				ProductInfo productInfo = new ProductInfo((Map<String, String>)object);
+
+				if (promoted) {
+					return Objects.nonNull(productInfo.getTargetPlatformVersion()) && productInfo.isPromoted();
+				}
 
 				return productInfo.getTargetPlatformVersion() != null;
 			}

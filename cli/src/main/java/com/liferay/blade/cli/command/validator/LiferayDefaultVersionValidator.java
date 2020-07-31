@@ -16,9 +16,9 @@
 
 package com.liferay.blade.cli.command.validator;
 
-import java.util.ArrayList;
+import com.liferay.blade.cli.util.BladeUtil;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Christopher Bryan Boyd
@@ -29,27 +29,7 @@ public class LiferayDefaultVersionValidator extends LiferayMoreVersionValidator 
 
 	@Override
 	public List<String> get() {
-		List<String> more = super.get();
-
-		return more.stream(
-		).filter(
-			_promoted::contains
-		).collect(
-			Collectors.toList()
-		);
-	}
-
-	private static final List<String> _promoted = new ArrayList<>();
-
-	{
-		_promoted.add("dxp-7.2-sp1");
-		_promoted.add("dxp-7.1-sp4");
-		_promoted.add("dxp-7.0-sp13");
-		_promoted.add("portal-7.3-ga4");
-		_promoted.add("portal-7.2-ga2");
-		_promoted.add("portal-7.1-ga4");
-		_promoted.add("portal-7.0-ga7");
-		_promoted.add("commerce-2.0.7-7.2");
+		return BladeUtil.getWorkspaceProductKeys(true);
 	}
 
 }
