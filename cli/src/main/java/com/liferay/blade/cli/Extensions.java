@@ -90,13 +90,12 @@ public class Extensions implements Closeable {
 
 		Stream<BaseArgs> argStream = argList.stream();
 
-		Collection<Class<? extends BaseArgs>> classes = argStream.map(
-			BaseArgs::getClass
-		).collect(
-			Collectors.toSet()
-		);
-
-		Collection<String> commandNames = getCommandNames(classes);
+		Collection<String> commandNames = getCommandNames(
+			argStream.map(
+				BaseArgs::getClass
+			).collect(
+				Collectors.toSet()
+			));
 
 		Stream<String> commandNamesStream = commandNames.stream();
 
