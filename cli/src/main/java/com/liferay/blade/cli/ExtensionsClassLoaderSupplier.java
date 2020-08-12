@@ -107,11 +107,11 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 	private static URL[] _getJarUrls(Path jarsPath) throws IOException {
 		try (Stream<Path> files = Files.list(jarsPath)) {
 			return files.filter(
-				path -> String.valueOf(
-					path
-				).endsWith(
-					".jar"
-				)
+				path -> {
+					String file = path.toString();
+
+					return file.endsWith(".jar");
+				}
 			).map(
 				Path::toUri
 			).map(
