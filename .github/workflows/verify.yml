@@ -62,12 +62,12 @@ jobs:
           name: LinuxJDK8-tests.zip
           path: tests.zip
       - name: Run reporter
-        uses: check-run-reporter/action@v1.1.1
+        uses: check-run-reporter/action@v2.0.0-rc7
         if: ${{ always() }}
-        env:
-          CHECK_RUN_REPORTER_LABEL: "Linux JDK8 test reports"
-          CHECK_RUN_REPORTER_REPORT: "**/TEST-*.xml"
-          CHECK_RUN_REPORTER_TOKEN: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
+        with:
+          label: "Linux JDK8 test reports"
+          report: "**/TEST-*.xml"
+          token: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
   LinuxJDK11:
     name: Linux JDK11
     runs-on: ubuntu-18.04
@@ -98,12 +98,12 @@ jobs:
           name: LinuxJDK11-tests.zip
           path: tests.zip
       - name: Run reporter
-        uses: check-run-reporter/action@v1.1.1
+        uses: check-run-reporter/action@v2.0.0-rc7
         if: ${{ always() }}
-        env:
-          CHECK_RUN_REPORTER_LABEL: "Linux JDK11 test reports"
-          CHECK_RUN_REPORTER_REPORT: "**/TEST-*.xml"
-          CHECK_RUN_REPORTER_TOKEN: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
+        with:
+          label: "Linux JDK11 test reports"
+          report: "**/TEST-*.xml"
+          token: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
   MacOSJDK8:
     name: MacOS JDK8
     runs-on: macos-latest
@@ -133,6 +133,13 @@ jobs:
         with:
           name: MacOSJDK8-tests.zip
           path: tests.zip
+      - name: Run reporter
+        uses: check-run-reporter/action@v2.0.0-rc7
+        if: ${{ always() }}
+        with:
+          label: "MacOS JDK8 test reports"
+          report: "**/TEST-*.xml"
+          token: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
   WindowsJDK8:
     name: Windows JDK8
     runs-on: windows-latest
@@ -156,3 +163,10 @@ jobs:
           GITHUB_CI: "true"
         run: |
           ./run-tests.bat
+      - name: Run reporter
+        uses: check-run-reporter/action@v2.0.0-rc7
+        if: ${{ always() }}
+        with:
+          label: "Windows JDK8 test reports"
+          report: "**/TEST-*.xml"
+          token: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
