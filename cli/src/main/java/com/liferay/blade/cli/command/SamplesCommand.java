@@ -138,9 +138,9 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
 
-		Date now = new Date();
-
 		if (bladeRepoArchive.exists()) {
+			Date now = new Date();
+
 			long diff = now.getTime() - bladeRepoArchive.lastModified();
 
 			boolean old = false;

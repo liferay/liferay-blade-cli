@@ -60,8 +60,6 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 	@Override
 	public void execute() throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
 		InstallExtensionArgs args = getArgs();
 
 		String pathArg = args.getPath();
@@ -87,6 +85,8 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 				).collect(
 					Collectors.toList()
 				);
+
+				BladeCLI bladeCLI = getBladeCLI();
 
 				if (segments.size() > 2) {
 					StringBuilder githubRootUrl = new StringBuilder("https://github.com/");

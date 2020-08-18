@@ -227,11 +227,11 @@ public class FileUtil {
 			ZipEntry zipEntry = null;
 
 			while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-				String entryName = zipEntry.getName();
-
 				if (zipEntry.isDirectory()) {
 					continue;
 				}
+
+				String entryName = zipEntry.getName();
 
 				final File f = new File(destinationDir, entryName);
 
