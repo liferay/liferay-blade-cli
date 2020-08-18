@@ -90,6 +90,10 @@ public class BuildServiceCommandMavenTest {
 
 		Assert.assertFalse(sb1SourceExists && sb2SourceExists);
 
+		String workspacePath = mavenworkspace.getAbsolutePath();
+
+		TestUtil.updateMavenRepositories(workspacePath);
+
 		args = new String[] {"--base", mavenworkspace.getPath(), "buildService"};
 
 		BladeTestResults results = TestUtil.runBlade(mavenworkspace, _extensionsDir, args);

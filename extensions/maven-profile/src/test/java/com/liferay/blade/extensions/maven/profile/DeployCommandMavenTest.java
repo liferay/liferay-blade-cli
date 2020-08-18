@@ -49,6 +49,10 @@ public class DeployCommandMavenTest {
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
+		String workspacePath = workspaceDir.getAbsolutePath();
+
+		TestUtil.updateMavenRepositories(workspacePath);
+
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		File bundlesDirectory = new File(workspaceDir.getPath(), "bundles");
@@ -103,6 +107,10 @@ public class DeployCommandMavenTest {
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
+
+		String workspacePath = workspaceDir.getAbsolutePath();
+
+		TestUtil.updateMavenRepositories(workspacePath);
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 

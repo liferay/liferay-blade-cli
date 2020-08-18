@@ -242,13 +242,17 @@ public class ServerStartCommandMavenTest {
 		return serverStartArgsCollection.toArray(new String[0]);
 	}
 
-	private void _initBladeWorkspace() {
+	private void _initBladeWorkspace() throws Exception {
 		String[] initArgs = {
 			"--base", _testWorkspaceDir.toString(), "init", "-f", "-v", BladeTest.PRODUCT_VERSION_PORTAL_71, "-P",
 			"maven"
 		};
 
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);
+
+		String workspacePath = _testWorkspaceDir.toString();
+
+		TestUtil.updateMavenRepositories(workspacePath);
 	}
 
 	private void _initServerBundle() throws InterruptedException, IOException {
