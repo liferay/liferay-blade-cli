@@ -27,8 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-import org.gradle.testkit.runner.BuildTask;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -62,7 +60,7 @@ public class JSThemeProjectTemplateTest {
 	}
 
 	@Test
-	public void testJSWidgetProjectTemplate() throws Exception {
+	public void testJSThemeProjectTemplate() throws Exception {
 		_setupTestExtensions();
 
 		File workspaceDir = new File(_rootDir, "workspace");
@@ -83,9 +81,11 @@ public class JSThemeProjectTemplateTest {
 
 		Assert.assertFalse("Expected archetytpe dir to not exist " + archetypeDir, archetypeDir.exists());
 
-		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(generatedDir.getAbsolutePath(), "build");
+		GradleRunnerUtil.executeGradleRunner(generatedDir.getAbsolutePath(), "build");
 
-		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+		File buildOutput = new File(generatedDir, "dist/js-theme-test-theme.war");
+
+		Assert.assertTrue("Expected js-theme-test-theme.war, but saw" + buildOutput.toPath(), buildOutput.exists());
 	}
 
 	@Rule

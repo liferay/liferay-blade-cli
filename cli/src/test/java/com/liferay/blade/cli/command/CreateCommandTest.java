@@ -753,8 +753,9 @@ public class CreateCommandTest {
 
 		String[] gradleArgs = {"create", "--base", workspace.getAbsolutePath(), "-t", "spring-mvc-portlet", "foo"};
 
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-			("springportletmvc" + System.lineSeparator() + "jsp" + System.lineSeparator()).getBytes());
+		String interactiveModeInput = "springportletmvc" + System.lineSeparator() + "jsp" + System.lineSeparator();
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(interactiveModeInput.getBytes());
 
 		TestUtil.runBlade(workspace, _extensionsDir, byteArrayInputStream, gradleArgs);
 

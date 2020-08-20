@@ -661,14 +661,14 @@ public class PropertiesLocator {
 		List<Pair<String, String[]>> configurationProperties = new ArrayList<>();
 
 		for (Map.Entry<String, ConfigurationClassData> configClass : configClassesMap.entrySet()) {
-			String className = configClass.getKey();
-
 			ConfigurationClassData configClassData = configClass.getValue();
 
 			String[] allConfigFields = _addConfigurationPropertiesByHeritance(
 				configClassData.getSuperClass(), configClassData.getConfigFields(), configClassesMap);
 
 			if (allConfigFields.length > 0) {
+				String className = configClass.getKey();
+
 				configurationProperties.add(new Pair<>(className, allConfigFields));
 			}
 		}

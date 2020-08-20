@@ -52,6 +52,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
+import org.osgi.framework.Version;
+
 /**
  * @author Gregory Amerson
  * @author David Truong
@@ -513,6 +515,15 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 
 		String liferayVersion = workspaceProvider.getLiferayVersion(dir);
+
+		try {
+			Version version = Version.parseVersion(liferayVersion.replaceAll("-", "."));
+
+			liferayVersion = version.getMajor() + "." + version.getMinor();
+		}
+		catch (Exception exception) {
+			liferayVersion = liferayVersion.substring(0, 3);
+		}
 
 		if (liferayVersion == null) {
 			return createArgs.getLiferayVersion();

@@ -62,7 +62,7 @@ jobs:
           name: LinuxJDK8-tests.zip
           path: tests.zip
       - name: Run reporter
-        uses: check-run-reporter/action@v2.0.0-rc7
+        uses: check-run-reporter/action@v2.0.0-rc8
         if: ${{ always() }}
         with:
           label: "Linux JDK8 test reports"
@@ -98,7 +98,7 @@ jobs:
           name: LinuxJDK11-tests.zip
           path: tests.zip
       - name: Run reporter
-        uses: check-run-reporter/action@v2.0.0-rc7
+        uses: check-run-reporter/action@v2.0.0-rc8
         if: ${{ always() }}
         with:
           label: "Linux JDK11 test reports"
@@ -134,7 +134,7 @@ jobs:
           name: MacOSJDK8-tests.zip
           path: tests.zip
       - name: Run reporter
-        uses: check-run-reporter/action@v2.0.0-rc7
+        uses: check-run-reporter/action@v2.0.0-rc8
         if: ${{ always() }}
         with:
           label: "MacOS JDK8 test reports"
@@ -164,7 +164,7 @@ jobs:
         run: |
           ./run-tests.bat
       - name: Run reporter
-        uses: check-run-reporter/action@v2.0.0-rc7
+        uses: check-run-reporter/action@v2.0.0-rc8
         if: ${{ always() }}
         with:
           label: "Windows JDK8 test reports"

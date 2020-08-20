@@ -77,6 +77,8 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		_contains(_checkFileExists(projectPath + "/src/main/resources/foo/api/packageinfo"), "version 1.0.0");
 
+		TestUtil.updateMavenRepositories(projectPath);
+
 		execute(projectPath, new String[] {"clean", "package"});
 
 		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");

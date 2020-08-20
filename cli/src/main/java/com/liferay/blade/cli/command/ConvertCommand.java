@@ -428,8 +428,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		List<GAV> convertedDependencies = new ArrayList<>();
 
-		List<String> portalDependencyJars = new ArrayList<>(Arrays.asList(_PORTLET_PLUGIN_API_DEPENDENCIES));
-
 		File liferayPluginPackageFile = new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
 
 		if (liferayPluginPackageFile.exists()) {
@@ -437,6 +435,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 				Properties liferayPluginPackageProperties = _loadProperties(fileInputStream);
 
 				String portalJarsValue = liferayPluginPackageProperties.getProperty("portal-dependency-jars");
+
+				List<String> portalDependencyJars = new ArrayList<>(Arrays.asList(_PORTLET_PLUGIN_API_DEPENDENCIES));
 
 				if (Objects.nonNull(portalJarsValue)) {
 					Collections.addAll(portalDependencyJars, portalJarsValue.split(","));
@@ -839,8 +839,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			NodeList depElements = documentElement.getElementsByTagName("dependency");
 
-			Map<String, GAV> migratedDependencies = _getMigratedDependecies();
-
 			if ((depElements != null) && (depElements.getLength() > 0)) {
 				for (int i = 0; i < depElements.getLength(); i++) {
 					Node depElement = depElements.item(i);
@@ -848,6 +846,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					String name = _getAttr(depElement, "name");
 					String org = _getAttr(depElement, "org");
 					String rev = _getAttr(depElement, "rev");
+
+					Map<String, GAV> migratedDependencies = _getMigratedDependecies();
 
 					Set<String> migratedKeys = migratedDependencies.keySet();
 

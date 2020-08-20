@@ -61,8 +61,6 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 		String workspaceLocation = ext.getWorkspaceLocation();
 
-		String modulesLocation = ext.getModulesLocation();
-
 		if (workspaceLocation != null) {
 			Path liferayLocationPath = Paths.get(workspaceLocation);
 
@@ -78,6 +76,8 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 			config = _replace(config, "[$LIFERAY_DIR$]", liferayLocation);
 			config = _replace(config, "[$LIFERAY_PRESENT$]", "true");
+
+			String modulesLocation = ext.getModulesLocation();
 
 			File file = new File(modulesLocation, projectTemplatesArgs.getName());
 

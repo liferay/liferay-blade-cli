@@ -189,21 +189,20 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 					}
 
 					try (Stream<Path> files = Files.list(path)) {
-						boolean projectPathFound = files.map(
-							p -> p.getFileName()
-						).filter(
-							p -> !ignorePathMatchers.stream(
+						if (files.map(
+								p -> p.getFileName()
+							).filter(
+								p -> !ignorePathMatchers.stream(
+								).anyMatch(
+									pathMatcher -> pathMatcher.matches(path.resolve(p))
+								)
 							).anyMatch(
-								pathMatcher -> pathMatcher.matches(path.resolve(p))
-							)
-						).anyMatch(
-							p -> projectPaths.stream(
-							).anyMatch(
-								pp -> Objects.equals(pp, p.toString())
-							)
-						);
+								p -> projectPaths.stream(
+								).anyMatch(
+									pp -> Objects.equals(pp, p.toString())
+								)
+							)) {
 
-						if (projectPathFound) {
 							foundProjectPaths.put(_getGradlePath(path, watchPath), path);
 
 							return FileVisitResult.SKIP_SUBTREE;

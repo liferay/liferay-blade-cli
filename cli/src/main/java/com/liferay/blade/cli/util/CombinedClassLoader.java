@@ -99,17 +99,16 @@ public class CombinedClassLoader extends ClassLoader implements AutoCloseable {
 	protected Enumeration<URL> findResources(String name) throws IOException {
 		Stream<ClassLoader> urlStream = _classLoaders.stream();
 
-		Collection<URL> urlCollection = urlStream.map(
-			c -> _getResources(c, name)
-		).map(
-			Collections::list
-		).flatMap(
-			Collection::stream
-		).collect(
-			Collectors.toList()
-		);
-
-		return Collections.enumeration(urlCollection);
+		return Collections.enumeration(
+			urlStream.map(
+				c -> _getResources(c, name)
+			).map(
+				Collections::list
+			).flatMap(
+				Collection::stream
+			).collect(
+				Collectors.toList()
+			));
 	}
 
 	private static Enumeration<URL> _getResources(ClassLoader classLoader, String name) {

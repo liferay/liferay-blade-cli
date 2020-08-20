@@ -173,12 +173,10 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 			}
 		}
 		else {
-			if (log.isPresent()) {
+			if (log.isPresent() && !quiet) {
 				Path logPath = log.get();
 
-				if (!quiet) {
-					bladeCLI.out("To view the log execute 'tail -f " + logPath.toString() + "'");
-				}
+				bladeCLI.out("To view the log execute 'tail -f " + logPath.toString() + "'");
 			}
 		}
 	}
