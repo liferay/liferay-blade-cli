@@ -62,7 +62,7 @@ public class JSThemeProjectTemplateTest {
 	}
 
 	@Test
-	public void testJSWidgetProjectTemplate() throws Exception {
+	public void testJSThemeProjectTemplate() throws Exception {
 		_setupTestExtensions();
 
 		File workspaceDir = new File(_rootDir, "workspace");
