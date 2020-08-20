@@ -371,7 +371,7 @@ public class InitCommandTest {
 
 		String firstLine = lines.get(0);
 
-		Assert.assertEquals("dxp-7.2-sp2", firstLine);
+		Assert.assertEquals("dxp-7.3-ep5", firstLine);
 	}
 
 	@Test
@@ -647,7 +647,7 @@ public class InitCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath.toString(), "foo-1.0.0.jar");
 	}
 
-	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "3.0.3";
+	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "3.0.7";
 
 	private File _extensionsDir = null;
 	private File _workspaceDir = null;
