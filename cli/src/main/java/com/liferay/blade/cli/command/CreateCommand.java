@@ -521,7 +521,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			liferayVersion = version.getMajor() + "." + version.getMinor();
 		}
-		catch(Exception exception) {
+		catch (Exception exception) {
 			liferayVersion = liferayVersion.substring(0, 3);
 		}
 
