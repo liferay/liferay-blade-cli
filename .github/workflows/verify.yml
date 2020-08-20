@@ -67,7 +67,7 @@ jobs:
         with:
           label: "Linux JDK8 test reports"
           report: "**/TEST-*.xml"
-          token: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
+          token: "7793a209-c075-4644-9bdb-9205dbe5c4e7"
   LinuxJDK11:
     name: Linux JDK11
     runs-on: ubuntu-18.04
@@ -103,7 +103,7 @@ jobs:
         with:
           label: "Linux JDK11 test reports"
           report: "**/TEST-*.xml"
-          token: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
+          token: "7793a209-c075-4644-9bdb-9205dbe5c4e7"
   MacOSJDK8:
     name: MacOS JDK8
     runs-on: macos-latest
@@ -139,7 +139,7 @@ jobs:
         with:
           label: "MacOS JDK8 test reports"
           report: "**/TEST-*.xml"
-          token: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
+          token: "7793a209-c075-4644-9bdb-9205dbe5c4e7"
   WindowsJDK8:
     name: Windows JDK8
     runs-on: windows-latest
@@ -169,4 +169,4 @@ jobs:
         with:
           label: "Windows JDK8 test reports"
           report: "**/TEST-*.xml"
-          token: ${{ secrets.CHECK_RUN_REPORTER_TOKEN_LIFERAY_BLADE_CLI }}
+          token: "7793a209-c075-4644-9bdb-9205dbe5c4e7"
