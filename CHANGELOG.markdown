@@ -1,5 +1,53 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.2 - 2020-08-21
+
+### Commits
+- [LPS-105873] Check file output instead of buildTask outcome (d017cd6202)
+- [LPS-105873] More robust (a4f5d32448)
+- [LPS-105873] Only need major.minor versions for CreateCommand (516498bbdd)
+- [LPS-105873] Updated promoted list (06a8a9e450)
+- [LPS-105873] rc8 (0fad3d44c7)
+- [LPS-105873] Rename confusing test (5d2f4a174d)
+- [LPS-105873] Use fixed version of Project Templates (cedab4aec4)
+- [LPS-105873] GA5 is now promoted (06a814d89a)
+- [LPS-105873] Add Liferay Nexus Repo to tests (0ed324b556)
+- [LPS-105873] fix SF (fb958c7dab)
+- [LPS-105873] Update Test (3d02b98834)
+- [LPS-105873] Add project templates change that supports workspace with yarn
+support (6a588c4d97)
+- [BLADE-589] cache the product_info map (5879c95f71)
+- [BLADE-589] fix error message (37ff8da63a)
+- [BLADE-589] fix tests (f6861c5ebc)
+- [BLADE-589] Remove blade default product key list (6e6526cd9f)
+- [BLADE-563] fix test (48caef6844)
+- [BLADE-563] download product_info.json instead of directly embedding
+(607e375843)
+- [BLADE-563] make safer (be47f8fad3)
+- [BLADE-563] print errors is using --trace for getting product_info
+(ec9bc4e52a)
+- [BLADE-563] sort (afc28349b5)
+- [BLADE-563] Blade init -v should work without internet (7c005c8e49)
+- [BLADE-588] remove possible nulls (c94737a570)
+
+### Dependencies
+- [BLADE-591] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.19.
+- [BLADE-591] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.2.
+- [BLADE-591] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.2.
+- [LPS-105873] Update the com.liferay.project.templates dependency to version
+5.0.77.
+- [LPS-105873] Update the com.liferay.project.templates dependency to version
+5.0.75.
+- [BLADE-587] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.19-SNAPSHOT.
+- [BLADE-587] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.2-SNAPSHOT.
+- [BLADE-587] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.2-SNAPSHOT.
+
 ## 4.0.1 - 2020-07-29
 
 ### Commits
@@ -1658,6 +1706,7 @@ maintainability (7f9bc3f45e)
 [BLADE-555]: https://issues.liferay.com/browse/BLADE-555
 [BLADE-557]: https://issues.liferay.com/browse/BLADE-557
 [BLADE-558]: https://issues.liferay.com/browse/BLADE-558
+[BLADE-563]: https://issues.liferay.com/browse/BLADE-563
 [BLADE-564]: https://issues.liferay.com/browse/BLADE-564
 [BLADE-565]: https://issues.liferay.com/browse/BLADE-565
 [BLADE-566]: https://issues.liferay.com/browse/BLADE-566
@@ -1673,6 +1722,9 @@ maintainability (7f9bc3f45e)
 [BLADE-582]: https://issues.liferay.com/browse/BLADE-582
 [BLADE-585]: https://issues.liferay.com/browse/BLADE-585
 [BLADE-587]: https://issues.liferay.com/browse/BLADE-587
+[BLADE-588]: https://issues.liferay.com/browse/BLADE-588
+[BLADE-589]: https://issues.liferay.com/browse/BLADE-589
+[BLADE-591]: https://issues.liferay.com/browse/BLADE-591
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -1684,6 +1736,7 @@ maintainability (7f9bc3f45e)
 [LPS-98820]: https://issues.liferay.com/browse/LPS-98820
 [LPS-105502]: https://issues.liferay.com/browse/LPS-105502
 [LPS-105747]: https://issues.liferay.com/browse/LPS-105747
+[LPS-105873]: https://issues.liferay.com/browse/LPS-105873
 [LPS-108630]: https://issues.liferay.com/browse/LPS-108630
 [LPS-110131]: https://issues.liferay.com/browse/LPS-110131
 [LPS-111461]: https://issues.liferay.com/browse/LPS-111461
