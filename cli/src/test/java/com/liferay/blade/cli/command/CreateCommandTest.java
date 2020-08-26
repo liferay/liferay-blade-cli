@@ -1303,8 +1303,7 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("js.loader.modules.extender.api"));
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\""));
+		Assert.assertTrue(content, content.contains("release.portal.api"));
 	}
 
 	@Test
@@ -1325,8 +1324,7 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content.contains("js.loader.modules.extender.api"));
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\""));
+		Assert.assertTrue(content, content.contains("release.portal.api"));
 	}
 
 	@Test
@@ -1345,7 +1343,7 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("\"com.liferay.portal.kernel\""));
+		Assert.assertTrue(content, content.contains("release.portal.api"));
 	}
 
 	@Test
@@ -1546,7 +1544,7 @@ public class CreateCommandTest {
 
 		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70);
 
-		_enableTargetPlatformInWorkspace(workspace70, "7.0.6");
+		_enableTargetPlatformInWorkspace(workspace70, "7.0.6-2");
 
 		String[] sevenZeroArgs = {
 			"--base", workspace70.getAbsolutePath(), "create", "-t", "service-builder", "seven-zero"
@@ -1588,7 +1586,7 @@ public class CreateCommandTest {
 
 		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_PORTAL_71);
 
-		_enableTargetPlatformInWorkspace(workspace71, "7.1.3");
+		_enableTargetPlatformInWorkspace(workspace71, "7.1.3-1");
 
 		String[] sevenZeroArgs = {
 			"--base", workspace71.getAbsolutePath(), "create", "-t", "service-builder", "seven-one"
