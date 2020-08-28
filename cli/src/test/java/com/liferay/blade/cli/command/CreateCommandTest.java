@@ -979,7 +979,7 @@ public class CreateCommandTest {
 
 		String[] args = {
 			"create", "--base", workspace.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-t", "form-field",
-			"sampleFormField", "-v", BladeTest.LIFERAY_VERSION_73, "--js-framework", "react"
+			"sampleFormField", "--js-framework", "react", "-v", BladeTest.LIFERAY_VERSION_73
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
