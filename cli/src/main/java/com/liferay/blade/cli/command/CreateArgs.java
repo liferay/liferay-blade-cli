@@ -72,6 +72,10 @@ public class CreateArgs extends BaseArgs {
 		return _hostBundleVersion;
 	}
 
+	public String getJSFramework() {
+		return _jsFramework;
+	}
+
 	public String getLiferayVersion() {
 		return _liferayVersion;
 	}
@@ -130,6 +134,10 @@ public class CreateArgs extends BaseArgs {
 
 	public void setHostBundleVersion(String hostBundleVersion) {
 		_hostBundleVersion = hostBundleVersion;
+	}
+
+	public void setJSFramework(String jsFramework) {
+		_jsFramework = jsFramework;
 	}
 
 	public void setLiferayVersion(String liferayVersion) {
@@ -203,6 +211,12 @@ public class CreateArgs extends BaseArgs {
 		hidden = true, names = {"-H", "--host-bundle-version"}
 	)
 	private String _hostBundleVersion;
+
+	@Parameter(
+		description = "Specify the javascript framework which will be used in the generated project. (metaljs)|(react)",
+		names = "--js-framework"
+	)
+	private String _jsFramework;
 
 	@Parameter(
 		description = "The version of Liferay to target when creating the project. Available options are 7.0, 7.1, 7.2, 7.3.",

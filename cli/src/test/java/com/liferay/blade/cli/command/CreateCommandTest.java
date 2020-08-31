@@ -970,6 +970,34 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceFormField73React() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_73);
+
+		File modulesDir = new File(workspace, "modules");
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-t", "form-field",
+			"sampleFormField", "--js-framework", "react", "-v", BladeTest.LIFERAY_VERSION_73
+		};
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		String projectPath = modulesDir.getAbsolutePath();
+
+		_checkFileExists(projectPath + "/sampleFormField");
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "jar");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/sampleFormField", "sampleformfield-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "sampleFormField/build/libs/sampleformfield-1.0.0.jar"));
+	}
+
+	@Test
 	public void testCreateWorkspaceGradleExtModuleTargetPlatform() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
