@@ -1,5 +1,7 @@
 #!/bin/bash
 
+df -h
+
 bladeInstall=$(curl -L https://raw.githubusercontent.com/liferay/liferay-blade-cli/master/cli/installers/local | sh)
 
 if [ "$?" != "0" ]; then
