@@ -115,6 +115,9 @@ if [ "$?" != "0" ] || [ -z "$jsWidgetTemplatePublishCommand" ]; then
 	exit 1
 fi
 
+# Publish the Social Bookmark Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-social-bookmark:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+
 # Publish the Maven Profile jar
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/maven-profile-publish-command.txt
 mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
@@ -123,9 +126,6 @@ if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
 	echo Failed :extensions:maven-profile:publish
 	exit 1
 fi
-
-# Publish the Social Bookmark Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-social-bookmark:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
 
 # Grep the output of the previous command to find the url of the published jar
 mavenProfilePublishUrl=$(echo "$mavenProfilePublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f4)
