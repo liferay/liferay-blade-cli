@@ -60,7 +60,7 @@ public class GradleExec {
 	public ProcessResult executeTask(String task, File baseDir, boolean captureOutput) throws Exception {
 		String executable = _getGradleExecutable(baseDir);
 
-		System.out.println(">>>Found gradle executable " + executable);
+		System.err.println(">>>Found gradle executable " + executable);
 
 		if (captureOutput) {
 			StringPrintStream outputStream = StringPrintStream.newInstance();
@@ -141,7 +141,7 @@ public class GradleExec {
 	private String _getGradleExecutable(File dir) throws NoSuchElementException {
 		File gradlew = BladeUtil.getGradleWrapper(dir);
 
-		System.out.println(">>>First gradlew " + gradlew);
+		System.err.println(">>>First gradlew " + gradlew);
 
 		String executable = "gradle";
 
@@ -152,7 +152,7 @@ public class GradleExec {
 
 			gradlew = BladeUtil.getGradleWrapper(baseDir);
 
-			System.out.println(">>>Second gradlew " + gradlew);
+			System.err.println(">>>Second gradlew " + gradlew);
 		}
 
 		if (gradlew != null) {
