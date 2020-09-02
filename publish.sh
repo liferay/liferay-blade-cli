@@ -63,6 +63,11 @@ elif [ "$repoHost" = "http://localhost:8081" ]; then
 	nexusOpt="-PlocalNexus"
 fi
 
+# Switch gradle wrapper distributionUrl to use -bin instead of -all. See BLADE-594 for more details
+
+sed "s/all/bin/" gradle/wrapper/gradle-wrapper.properties > gradle-wrapper.properties.edited
+mv gradle-wrapper.properties.edited gradle/wrapper/gradle-wrapper.properties
+
 # First clean local build folder to try to minimize variants
 
 ./gradlew -q --no-daemon --console=plain clean
@@ -146,11 +151,6 @@ if [ "$?" != "0" ]; then
 else
 	echo "Published $mavenProfileJarUrl"
 fi
-
-# Switch gradle wrapper distributionUrl to use -bin instead of -all. See BLADE-594 for more details
-
-sed "s/all/bin/" gradle/wrapper/gradle-wrapper.properties > gradle-wrapper.properties.edited
-mv gradle-wrapper.properties.edited gradle/wrapper/gradle-wrapper.properties
 
 # fix permissions
 
