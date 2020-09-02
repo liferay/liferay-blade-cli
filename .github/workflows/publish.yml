@@ -32,10 +32,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build
-        shell: bash
-        run: |
-          ls -l .gradle/ && rm -rf .gradle/
-      - name: Build
         env:
           GITHUB_CI: "true"
           LIFERAY_NEXUS_USERNAME: ${{ secrets.liferay_nexus_username }}
