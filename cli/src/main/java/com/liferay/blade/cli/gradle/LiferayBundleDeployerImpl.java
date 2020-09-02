@@ -223,9 +223,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 			throw new IllegalArgumentException("Must provide a valid WAR file");
 		}
 
-		Path fileName = path.getFileName();
-
-		String fileNameString = fileName.toString();
+		String fileNameString = String.valueOf(path.getFileName());
 
 		Matcher matcher = _versionPattern.matcher(fileNameString);
 

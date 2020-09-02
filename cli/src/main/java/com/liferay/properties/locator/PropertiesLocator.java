@@ -555,9 +555,7 @@ public class PropertiesLocator {
 				replacement -> {
 					Path modulePath = Paths.get(replacement.first());
 
-					Path relativePath = bundlePath.relativize(modulePath);
-
-					String path = relativePath.toString();
+					String path = String.valueOf(bundlePath.relativize(modulePath));
 
 					path = path.replaceAll("\\\\", "/");
 
@@ -870,9 +868,7 @@ public class PropertiesLocator {
 		Enumeration<Object> enuKeys = oldProperties.keys();
 
 		while (enuKeys.hasMoreElements()) {
-			Object element = enuKeys.nextElement();
-
-			String key = element.toString();
+			String key = String.valueOf(enuKeys.nextElement());
 
 			if (key.contains("[")) {
 				key = key.substring(0, key.indexOf("["));
