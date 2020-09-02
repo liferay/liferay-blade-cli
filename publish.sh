@@ -74,55 +74,55 @@ fi
 
 # Publish the Remote Deploy Command jar
 
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info ${scanOpt} | tee /tmp/$timestamp/remote-deploy-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:remote-deploy-command:publish --info ${scanOpt} > /tmp/$timestamp/remote-deploy-publish-command.txt; retcode=$?
 remoteDeployCommandPublishCommand=$(cat /tmp/$timestamp/remote-deploy-publish-command.txt)
 
-if [ "$?" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
+if [ "$retcode" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
 	echo Failed :extensions:remote-deploy-command:publish
 	exit 1
 fi
 
 # Publish the Activator Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-activator:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-activator:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
 
 # Publish the Content Targeting Report Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-report:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-report:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
 
 # Publish the Content Targeting Rule Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-rule:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-rule:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
 
 # Publish the Content Targeting Tracking Action Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-tracking-action:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-tracking-action:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
 
 # Publish the Freemarker Portlet Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-freemarker-portlet:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-freemarker-portlet:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
+
+# Publish the Social Bookmark Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-social-bookmark:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
 
 # Publish the JS Theme Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-js-theme:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/js-theme-template-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-js-theme:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/js-theme-template-publish-command.txt; retcode=$?
 jsThemeTemplatePublishCommand=$(cat /tmp/$timestamp/js-theme-template-publish-command.txt)
 
-if [ "$?" != "0" ] || [ -z "$jsThemeTemplatePublishCommand" ]; then
+if [ "$retcode" != "0" ] || [ -z "$jsThemeTemplatePublishCommand" ]; then
 	echo Failed :extensions:project-templates-js-theme:publish
 	exit 1
 fi
 
 # Publish the JS Widget Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-js-widget:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/js-widget-template-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-js-widget:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/js-widget-template-publish-command.txt; retcode=$?
 jsWidgetTemplatePublishCommand=$(cat /tmp/$timestamp/js-widget-template-publish-command.txt)
 
-if [ "$?" != "0" ] || [ -z "$jsWidgetTemplatePublishCommand" ]; then
+if [ "$retcode" != "0" ] || [ -z "$jsWidgetTemplatePublishCommand" ]; then
 	echo Failed :extensions:project-templates-js-widget:publish
 	exit 1
 fi
 
-# Publish the Social Bookmark Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-social-bookmark:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
-
 # Publish the Maven Profile jar
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} | tee /tmp/$timestamp/maven-profile-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/maven-profile-publish-command.txt; retcode=$?
 mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
 
-if [ "$?" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
+if [ "$retcode" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
 	echo Failed :extensions:maven-profile:publish
 	exit 1
 fi
@@ -149,9 +149,9 @@ fi
 
 # Test the blade cli jar locally, but don't publish.
 
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTask --info ${scanOpt} > /tmp/$timestamp/blade-cli-jar-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTask --info ${scanOpt} > /tmp/$timestamp/blade-cli-jar-command.txt; retcode=$?
 
-if [ "$?" != "0" ]; then
+if [ "$retcode" != "0" ]; then
 	echo Failed :cli:jar
 	cat /tmp/$timestamp/blade-cli-jar-command.txt
 	exit 1
@@ -177,10 +177,10 @@ fi
 
 # Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
 
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info ${scanOpt} | tee /tmp/$timestamp/blade-cli-publish-command.txt
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info ${scanOpt} > /tmp/$timestamp/blade-cli-publish-command.txt; retcode=$?
 bladeCliPublishCommand=$(cat /tmp/$timestamp/blade-cli-publish-command.txt)
 
-if [ "$?" != "0" ] || [ -z "$bladeCliPublishCommand" ]; then
+if [ "$retcode" != "0" ] || [ -z "$bladeCliPublishCommand" ]; then
 	echo Failed :cli:publish
 	exit 1
 fi
