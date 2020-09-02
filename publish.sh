@@ -149,8 +149,6 @@ fi
 
 # Test the blade cli jar locally, but don't publish.
 ls -l ~/.gradle/wrapper/dists
-ls -l ~/.gradle/wrapper/dists/gradle-5.6.4-bin/
-ls -l ~/.gradle/wrapper/dists/gradle-5.6.4-bin/*
 
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTask --info ${scanOpt} > /tmp/$timestamp/blade-cli-jar-command.txt; retcode=$?
 
