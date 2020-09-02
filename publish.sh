@@ -147,6 +147,11 @@ else
 	echo "Published $mavenProfileJarUrl"
 fi
 
+# Switch gradle wrapper distributionUrl to use -bin instead of -all. See BLADE-594 for more details
+
+sed "s/all/bin/" gradle/wrapper/gradle-wrapper.properties > gradle/wrapper/gradle-wrapper.properties.bak
+mv gradle/wrapper/gradle-wrapper.properties.bak gradle/wrapper/gradle-wrapper.properties
+
 # Test the blade cli jar locally, but don't publish.
 ls -l ~/.gradle/wrapper/dists
 
