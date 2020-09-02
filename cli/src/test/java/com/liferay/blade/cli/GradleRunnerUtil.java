@@ -79,9 +79,7 @@ public class GradleRunnerUtil {
 
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-					Path pathFileName = file.getFileName();
-
-					String pathFileNameString = pathFileName.toString();
+					String pathFileNameString = String.valueOf(file.getFileName());
 
 					if (Objects.equal(pathFileNameString, fileName)) {
 						projectFilePath[0] = file;

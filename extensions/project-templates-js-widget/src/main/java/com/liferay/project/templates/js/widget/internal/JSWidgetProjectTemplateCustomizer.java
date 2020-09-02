@@ -93,9 +93,7 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 			workspacePath = workspacePath.normalize();
 
-			Path relativePath = workspacePath.relativize(modulesPath);
-
-			String relativePathString = relativePath.toString();
+			String relativePathString = String.valueOf(workspacePath.relativize(modulesPath));
 
 			if (OSDetector.isWindows()) {
 				relativePathString = relativePathString.replace("\\", "\\\\");

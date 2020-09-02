@@ -71,9 +71,7 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 						StringBuilder sb = new StringBuilder();
 
 						for (int x = 0; x < paths.size(); x++) {
-							Path path = paths.get(x);
-
-							String pathString = path.toString();
+							String pathString = String.valueOf(paths.get(x));
 
 							sb.append(pathString);
 
@@ -107,9 +105,7 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 	}
 
 	private boolean _pathHasFileName(Path path, String expectedFileName) {
-		Path fileName = path.getFileName();
-
-		String fileNameString = fileName.toString();
+		String fileNameString = String.valueOf(path.getFileName());
 
 		return fileNameString.equals(expectedFileName);
 	}

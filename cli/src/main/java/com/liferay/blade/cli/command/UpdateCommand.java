@@ -52,7 +52,6 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
@@ -100,9 +99,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		}
 
 		if (updateArgs.getUrl() != null) {
-			URL url = updateArgs.getUrl();
-
-			updateUrl = url.toString();
+			updateUrl = String.valueOf(updateArgs.getUrl());
 		}
 
 		try {
@@ -409,9 +406,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		String url = null;
 
 		if (updateArgs.getUrl() != null) {
-			URL updateUrlVar = updateArgs.getUrl();
-
-			url = updateUrlVar.toString();
+			url = String.valueOf(updateArgs.getUrl());
 		}
 
 		boolean release = updateArgs.isRelease();
@@ -448,9 +443,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		while (iterator.hasNext()) {
 			Element versionElement = iterator.next();
 
-			Node node = versionElement.childNode(0);
-
-			String nodeString = node.toString();
+			String nodeString = String.valueOf(versionElement.childNode(0));
 
 			if (nodeString.contains("SNAPSHOT")) {
 				if (!snapshots) {
@@ -491,9 +484,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		String url = null;
 
 		if (updateArgs.getUrl() != null) {
-			URL updateUrlVar = updateArgs.getUrl();
-
-			url = updateUrlVar.toString();
+			url = String.valueOf(updateArgs.getUrl());
 		}
 
 		boolean release = updateArgs.isRelease();
@@ -530,9 +521,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		while (iterator.hasNext()) {
 			Element versionElement = iterator.next();
 
-			Node node = versionElement.childNode(0);
-
-			String nodeString = node.toString();
+			String nodeString = String.valueOf(versionElement.childNode(0));
 
 			if (nodeString.contains("SNAPSHOT")) {
 				if (!snapshots) {
@@ -736,9 +725,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 			while (it.hasNext()) {
 				Element versionElement = it.next();
 
-				Node node = versionElement.childNode(0);
-
-				String nodeString = node.toString();
+				String nodeString = String.valueOf(versionElement.childNode(0));
 
 				if (nodeString.contains("SNAPSHOT")) {
 					if (!snapshotsArg) {

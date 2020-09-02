@@ -109,9 +109,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 	}
 
 	private String _getGradlePath(Path path, Path basePath) {
-		Path relativePath = basePath.relativize(path);
-
-		String gradlePath = ":" + relativePath.toString();
+		String gradlePath = ":" + String.valueOf(basePath.relativize(path));
 
 		return gradlePath.replaceAll(File.separator, ":");
 	}

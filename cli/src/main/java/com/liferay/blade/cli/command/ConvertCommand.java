@@ -1032,9 +1032,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 				@Override
 				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-					Path name = dir.getName(dir.getNameCount() - 1);
-
-					String nameValue = name.toString();
+					String nameValue = String.valueOf(dir.getName(dir.getNameCount() - 1));
 
 					if (nameValue.equals(pluginName)) {
 						Path parent = dir.getParent();
