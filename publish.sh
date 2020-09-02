@@ -152,7 +152,13 @@ fi
 sed "s/all/bin/" gradle/wrapper/gradle-wrapper.properties > gradle-wrapper.properties.edited
 mv gradle-wrapper.properties.edited gradle/wrapper/gradle-wrapper.properties
 
+# fix permissions
+
+mkdir -p ~/.config/configstore
+chmod g+rwx ~/.config ~/.config/configstore
+
 # Test the blade cli jar locally, but don't publish.
+
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTask --info ${scanOpt} > /tmp/$timestamp/blade-cli-jar-command.txt; retcode=$?
 
 if [ "$retcode" != "0" ]; then
