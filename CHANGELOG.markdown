@@ -1,5 +1,43 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.3 - 2020-09-03
+
+### Commits
+- [BLADE-594] Temporarily ignore test (28a92d24b4)
+- [BLADE-594] Fix verify scripts as well (a946f49108)
+- [BLADE-594] move earlier (467276deaa)
+- [BLADE-594] Add timeout for verify job (834fa6d732)
+- [BLADE-594] fix permissions (1e45cd6edd)
+- [BLADE-594] remove debug (09712373b0)
+- [BLADE-594] simplify (55feb88e87)
+- [BLADE-594] Switch to -bin for publish (f8f31b9cd3)
+- [LPS-120193] Add Liferay Nexus to workspace pom (90a789433d)
+- [LPS-119853] Add Extension args to CreateArgs (d9a266733a)
+- [LPS-119853] Add 73 Form Field React Test (aaafadb68e)
+- [LPS-119853] Add 7.3 React option for Form Field template (dd68869956)
+- [BLADE-592] Update Tests (6018647ab4)
+- [BLADE-592] Use release.portal.api in blade (961bb56ac4)
+
+### Dependencies
+- [BLADE-595] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.20.
+- [BLADE-595] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.3.
+- [BLADE-595] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.3.
+- [LPS-120193] Update the com.liferay.project.templates dependency to version
+5.0.85.
+- [LPS-119853] Update the com.liferay.project.templates dependency to version
+5.0.81.
+- [BLADE-592] Update the com.liferay.project.templates dependency to version
+5.0.79.
+- [BLADE-591] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.20-SNAPSHOT.
+- [BLADE-591] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.3-SNAPSHOT.
+- [BLADE-591] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.3-SNAPSHOT.
+
 ## 4.0.2 - 2020-08-21
 
 ### Commits
@@ -1725,6 +1763,9 @@ maintainability (7f9bc3f45e)
 [BLADE-588]: https://issues.liferay.com/browse/BLADE-588
 [BLADE-589]: https://issues.liferay.com/browse/BLADE-589
 [BLADE-591]: https://issues.liferay.com/browse/BLADE-591
+[BLADE-592]: https://issues.liferay.com/browse/BLADE-592
+[BLADE-594]: https://issues.liferay.com/browse/BLADE-594
+[BLADE-595]: https://issues.liferay.com/browse/BLADE-595
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -1744,6 +1785,8 @@ maintainability (7f9bc3f45e)
 [LPS-114088]: https://issues.liferay.com/browse/LPS-114088
 [LPS-114169]: https://issues.liferay.com/browse/LPS-114169
 [LPS-114909]: https://issues.liferay.com/browse/LPS-114909
+[LPS-119853]: https://issues.liferay.com/browse/LPS-119853
+[LPS-120193]: https://issues.liferay.com/browse/LPS-120193
 [LRDOCS-3688]: https://issues.liferay.com/browse/LRDOCS-3688
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
