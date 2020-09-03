@@ -15,6 +15,11 @@ function checkError {
 	fi
 }
 
+# Switch gradle wrapper distributionUrl to use -bin instead of -all. See BLADE-594 for more details
+
+sed "s/all/bin/" gradle/wrapper/gradle-wrapper.properties > gradle-wrapper.properties.edited
+mv gradle-wrapper.properties.edited gradle/wrapper/gradle-wrapper.properties
+
 ./gradlew --no-daemon :extensions:maven-profile:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
 
 checkError
