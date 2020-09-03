@@ -63,6 +63,11 @@ elif [ "$repoHost" = "http://localhost:8081" ]; then
 	nexusOpt="-PlocalNexus"
 fi
 
+# Switch gradle wrapper distributionUrl to use -bin instead of -all. See BLADE-594 for more details
+
+sed "s/all/bin/" gradle/wrapper/gradle-wrapper.properties > gradle-wrapper.properties.edited
+mv gradle-wrapper.properties.edited gradle/wrapper/gradle-wrapper.properties
+
 # First clean local build folder to try to minimize variants
 
 ./gradlew -q --no-daemon --console=plain clean
@@ -147,8 +152,12 @@ else
 	echo "Published $mavenProfileJarUrl"
 fi
 
+# fix permissions
+
+mkdir -p ~/.config/configstore
+chmod g+rwx ~/.config ~/.config/configstore
+
 # Test the blade cli jar locally, but don't publish.
-ls -l ~/.gradle/wrapper/dists
 
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies clean $bladeTask --info ${scanOpt} > /tmp/$timestamp/blade-cli-jar-command.txt; retcode=$?
 
