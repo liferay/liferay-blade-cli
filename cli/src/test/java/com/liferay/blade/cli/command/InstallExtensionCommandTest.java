@@ -49,6 +49,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -85,6 +86,7 @@ public class InstallExtensionCommandTest {
 		Assert.assertTrue(extensionJar.getAbsolutePath() + " does not exist", extensionJar.exists());
 	}
 
+	@Ignore
 	@Test
 	public void testInstallCustomExtensionSubdirectory() throws Exception {
 		Assume.assumeFalse(_isWindows());
