@@ -935,6 +935,15 @@ public class PropertiesLocator {
 
 				updatedProblems.add(problem);
 			}
+			else if (property.startsWith("upgrade.processes")) {
+				PropertyProblem updatedProblem = new PropertyProblem(
+					property, PropertyProblemType.REMOVED, "Upgrade process properties are not longer needed",
+					null);
+
+				informationToPrint.add(updatedProblem);
+
+				updatedProblems.add(updatedProblem);
+			}
 			else {
 				updatedProblems.add(problem);
 			}
