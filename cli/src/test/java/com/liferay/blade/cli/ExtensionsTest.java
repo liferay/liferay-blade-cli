@@ -75,9 +75,7 @@ public class ExtensionsTest {
 		ClassLoader classLoader = _extensionsClassLoaderSupplier.get();
 
 		try (Extensions extensions = new Extensions(classLoader)) {
-			Map<String, BaseCommand<? extends BaseArgs>> commands = extensions.getCommands();
-
-			String[] sortedArgs = Extensions.sortArgs(commands, args);
+			String[] sortedArgs = Extensions.sortArgs(extensions.getCommands(), args);
 
 			boolean correctSort = false;
 
