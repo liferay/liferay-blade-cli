@@ -25,13 +25,19 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.Prompter;
+import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgsExt;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -47,10 +53,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.input.CloseShieldInputStream;
 
 import org.osgi.framework.Version;
 
@@ -448,6 +461,32 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
 	}
 
+	private Map<String, String> _createPossibleWorkspaceValue(List<String> productKeys) {
+		AtomicInteger i = new AtomicInteger(0);
+
+		return productKeys.stream(
+		).collect(
+			Collectors.toMap(n -> String.valueOf(i.incrementAndGet()), s1 -> s1, (x, y) -> y, LinkedHashMap::new)
+		);
+	}
+
+	private String _formatLiferayVersion(String liferayVersion) {
+		try {
+			if (liferayVersion == null) {
+				return null;
+			}
+
+			Version version = Version.parseVersion(liferayVersion.replaceAll("-", "."));
+
+			liferayVersion = version.getMajor() + "." + version.getMinor();
+		}
+		catch (Exception exception) {
+			liferayVersion = liferayVersion.substring(0, 3);
+		}
+
+		return liferayVersion;
+	}
+
 	private File _getDefaultDir(String defaultDirProperty, String defaultDirValue) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -518,20 +557,24 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		String liferayVersion = workspaceProvider.getLiferayVersion(dir);
 
-		try {
-			Version version = Version.parseVersion(liferayVersion.replaceAll("-", "."));
-
-			liferayVersion = version.getMajor() + "." + version.getMinor();
-		}
-		catch (Exception exception) {
-			liferayVersion = liferayVersion.substring(0, 3);
-		}
-
 		if (liferayVersion == null) {
-			return createArgs.getLiferayVersion();
+			return _promptAndAskUserForLiferayVersion(createArgs, dir, workspaceProvider);
 		}
 
-		return liferayVersion;
+		return _formatLiferayVersion(liferayVersion);
+	}
+
+	private String _getMessageFromPossibleValues(Map<String, String> optionsMap) {
+		StringBuilder sb = new StringBuilder();
+
+		for (Map.Entry<String, String> entry : optionsMap.entrySet()) {
+			sb.append(System.lineSeparator());
+			sb.append(entry.getKey());
+			sb.append(": ");
+			sb.append(entry.getValue());
+		}
+
+		return sb.toString();
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
@@ -545,5 +588,100 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		return bladeCLI.isWorkspaceDir(dir);
 	}
+
+	private String _promptAndAskUserForLiferayVersion(
+		CreateArgs createArgs, File dir, WorkspaceProvider workspaceProvider) {
+
+		BladeCLI bladeCLI = getBladeCLI();
+
+		try (CloseShieldInputStream closeShieldInputStream = new CloseShieldInputStream(bladeCLI.in());
+			BufferedReader reader = new BufferedReader(new InputStreamReader(closeShieldInputStream))) {
+
+			System.out.println("WARNING: Missing liferay.workspace.product on gradle.properties");
+
+			Map<String, String> possibleWorkspaceValue = _createPossibleWorkspaceValue(
+				BladeUtil.getWorkspaceProductKeys(true));
+
+			String message =
+				"Please select the Liferay product to target. Typing \"more\" will show all product versions." +
+					_getMessageFromPossibleValues(possibleWorkspaceValue);
+
+			String productKey = _promptSelectLiferayWorkspace(possibleWorkspaceValue, message, reader, bladeCLI.out());
+
+			Map<String, Object> productInfoMap = BladeUtil.getProductInfos();
+
+			ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
+
+			BladeUtil.writePropertyValue(
+				new File(workspaceProvider.getWorkspaceDir(dir), "gradle.properties"), "liferay.workspace.product",
+				productKey);
+
+			String formatedTargetPlatformVersion = _formatLiferayVersion(productInfo.getTargetPlatformVersion());
+
+			_verifyCloudDXPWorkspaceV4(formatedTargetPlatformVersion);
+
+			return formatedTargetPlatformVersion;
+		}
+		catch (Exception exception) {
+			return createArgs.getLiferayVersion();
+		}
+	}
+
+	private String _promptSelectLiferayWorkspace(
+		Map<String, String> moreOptionsMap, String message, BufferedReader reader, PrintStream out) {
+
+		String value = Prompter.promptString(message, reader, out);
+
+		while (!moreOptionsMap.containsKey(value) && !moreOptionsMap.containsValue(value) &&
+			   !Objects.equals(value, "more")) {
+
+			System.out.println("Please enter a valid value for liferay version:");
+
+			value = Prompter.promptString("", reader, out);
+		}
+
+		if (moreOptionsMap.containsKey(value)) {
+			value = moreOptionsMap.get(value);
+		}
+		else if (Objects.equals(value, "more")) {
+			Map<String, String> possibleWorkspaceValue = _createPossibleWorkspaceValue(
+				BladeUtil.getWorkspaceProductKeys(false));
+
+			value = _promptSelectLiferayWorkspace(
+				possibleWorkspaceValue, _getMessageFromPossibleValues(possibleWorkspaceValue), reader, out);
+		}
+
+		return value;
+	}
+
+	private void _verifyCloudDXPWorkspaceV4(String chosenProductKey) {
+		try {
+			Properties workspaceProperties = getWorkspaceProperties();
+
+			String property = workspaceProperties.getProperty("liferay.workspace.docker.image.liferay");
+
+			if (StringUtil.isNullOrEmpty(property)) {
+				return;
+			}
+
+			Matcher matcher = _dxpCloudWorkspaceLiferayVersionV4Pattern.matcher(property);
+
+			if (!matcher.find()) {
+				return;
+			}
+
+			String cloudDxpWorkspaceProductVersion = matcher.group();
+
+			if (!cloudDxpWorkspaceProductVersion.equals(chosenProductKey)) {
+				System.out.println(
+					"WARNING: The version of cloud DXP workspace does not match with your selected version.");
+			}
+		}
+		catch (Exception exception) {
+			System.out.println("WARNING: " + exception.getMessage());
+		}
+	}
+
+	private static final Pattern _dxpCloudWorkspaceLiferayVersionV4Pattern = Pattern.compile("(?<=liferay/dxp:).{3}");
 
 }
