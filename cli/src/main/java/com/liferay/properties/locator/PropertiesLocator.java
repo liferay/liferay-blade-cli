@@ -18,7 +18,6 @@ package com.liferay.properties.locator;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-
 import com.liferay.blade.cli.util.ArrayUtil;
 import com.liferay.blade.cli.util.CamelCaseUtil;
 import com.liferay.blade.cli.util.ListUtil;
@@ -35,17 +34,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-
 import java.net.URL;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -111,9 +106,8 @@ public class PropertiesLocator {
 		_printUnderline(title);
 
 		try {
-			File propertiesFile = propertiesLocatorArgs.getPropertiesFile();
-
-			Properties oldProperties = _getProperties(propertiesFile.toPath());
+			Set<String> oldPropertyKeys =
+				_getPropertyKeys(propertiesLocatorArgs.getPropertiesFile());
 
 			File bundleDir = propertiesLocatorArgs.getBundleDir();
 
@@ -124,7 +118,7 @@ public class PropertiesLocator {
 			SortedSet<String> stilExistsProperties = new TreeSet<>();
 
 			SortedSet<String> missingProperties = _getRemovedProperties(
-				oldProperties, newProperties, stilExistsProperties);
+				oldPropertyKeys, newProperties, stilExistsProperties);
 
 			Stream<String> stream = missingProperties.stream();
 
@@ -826,18 +820,21 @@ public class PropertiesLocator {
 		return portletNames;
 	}
 
-	private static Properties _getProperties(Path propertiesPath) throws Exception {
-		try (FileInputStream fileInput = new FileInputStream(propertiesPath.toFile())) {
-			Properties properties = new Properties();
+	private static Set<String> _getPropertyKeys(File file) throws Exception {
+		try {
+			List<String> lines = Files.readAllLines(file.toPath());
 
-			properties.load(fileInput);
+			Stream<String> stream = lines.stream();
 
-			fileInput.close();
-
-			return properties;
+			return stream.map(String::trim
+			).filter(
+				line -> !line.startsWith("#") && !line.equals(StringPool.BLANK) && line.contains(StringPool.EQUALS)
+			).map(
+				line -> line.substring(0, line.indexOf(StringPool.EQUALS))
+			).collect(Collectors.toSet());
 		}
 		catch (Exception e) {
-			System.out.println("Unable to read properties file " + propertiesPath.toString());
+			System.out.println("Unable to read properties file " + file.getCanonicalPath());
 
 			throw e;
 		}
@@ -861,24 +858,20 @@ public class PropertiesLocator {
 	}
 
 	private static SortedSet<String> _getRemovedProperties(
-		Properties oldProperties, Properties newProperties, SortedSet<String> remainedProperties) {
+		Set<String> oldPropertyKeys, Properties newProperties, SortedSet<String> remainedProperties) {
 
 		SortedSet<String> removedProperties = new TreeSet<>();
 
-		Enumeration<Object> enuKeys = oldProperties.keys();
-
-		while (enuKeys.hasMoreElements()) {
-			String key = String.valueOf(enuKeys.nextElement());
-
-			if (key.contains("[")) {
-				key = key.substring(0, key.indexOf("["));
+		for (String oldPropertyKey : oldPropertyKeys) {
+			if (oldPropertyKey.contains("[")) {
+				oldPropertyKey = oldPropertyKey.substring(0, oldPropertyKey.indexOf("["));
 			}
 
-			if (newProperties.getProperty(key) == null) {
-				removedProperties.add(key);
+			if (newProperties.getProperty(oldPropertyKey) == null) {
+				removedProperties.add(oldPropertyKey);
 			}
 			else {
-				remainedProperties.add(key);
+				remainedProperties.add(oldPropertyKey);
 			}
 		}
 
