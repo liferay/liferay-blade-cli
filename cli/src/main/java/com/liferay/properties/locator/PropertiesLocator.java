@@ -894,51 +894,43 @@ public class PropertiesLocator {
 		for (PropertyProblem problem : problems) {
 			String property = problem.getPropertyName();
 
+			PropertyProblem updatedProblem = null;
+
 			if (property.endsWith("display.templates.config") && !property.equals("blogs.display.templates.config") &&
 				!property.equals("dl.display.templates.config")) {
 
-				PropertyProblem updatedProblem = new PropertyProblem(
+				updatedProblem = new PropertyProblem(
 					property, PropertyProblemType.REMOVED, "Overwrite the method in the ADT handler. See LPS-67466",
 					null);
-
-				informationToPrint.add(updatedProblem);
-
-				updatedProblems.add(updatedProblem);
 			}
 			else if (property.endsWith("breadcrumb.display.style.default")) {
-				PropertyProblem updatedProblem = new PropertyProblem(
+				updatedProblem = new PropertyProblem(
 					property, PropertyProblemType.MODULARIZED,
-					" ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.configuration." +
+					" Use ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.internal.configuration." +
 						"SiteNavigationBreadcrumbWebTemplateConfiguration. More information at Breaking Changes for " +
 							"Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts",
 					null);
-
-				informationToPrint.add(updatedProblem);
-
-				updatedProblems.add(problem);
 			}
 			else if (property.endsWith("breadcrumb.display.style.options")) {
-				PropertyProblem updatedProblem = new PropertyProblem(
+				updatedProblem = new PropertyProblem(
 					property, PropertyProblemType.REMOVED,
 					"Any DDM template as ddmTemplate_BREADCRUMB-HORIZONTAL-FTL can be used. More information at " +
 						"Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts",
 					null);
-
-				informationToPrint.add(updatedProblem);
-
-				updatedProblems.add(problem);
 			}
 			else if (property.startsWith("upgrade.processes")) {
-				PropertyProblem updatedProblem = new PropertyProblem(
+				updatedProblem = new PropertyProblem(
 					property, PropertyProblemType.REMOVED, "Upgrade process properties are not longer needed",
 					null);
+			}
 
+			if (updatedProblem == null) {
+				updatedProblems.add(problem);
+			}
+			else {
 				informationToPrint.add(updatedProblem);
 
 				updatedProblems.add(updatedProblem);
-			}
-			else {
-				updatedProblems.add(problem);
 			}
 		}
 
