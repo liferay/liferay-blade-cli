@@ -1382,7 +1382,7 @@ public class CreateCommandTest {
 
 		_makeWorkspaceVersion(workspaceDXP73, "dxp-7.3-ep5");
 
-		String[] sevenThreeArgs = {"--base", workspaceDXP73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
+		String[] sevenThreeArgs = {"--base", workspaceDXP73.getAbsolutePath(), "create", "-t", "portlet", "seven-three", "--product", "dxp"};
 
 		TestUtil.runBlade(workspaceDXP73, _extensionsDir, sevenThreeArgs);
 
