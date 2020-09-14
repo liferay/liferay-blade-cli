@@ -249,10 +249,7 @@ public class CreateArgs extends BaseArgs {
 	@Parameter(description = "The Java package to use when generating Java source.", names = {"-p", "--package-name"})
 	private String _packageName;
 
-	@Parameter(
-		description = "The option for Liferay Platform product. (portal)|(dxp)",
-		names = "--product"
-	)
+	@Parameter(description = "The option for Liferay Platform product. (portal)|(dxp)", names = "--product")
 	private String _product = "portal";
 
 	@Parameter(

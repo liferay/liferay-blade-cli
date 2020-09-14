@@ -942,6 +942,27 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceDXPVersionDefault() throws Exception {
+		File workspaceDXP73 = new File(_rootDir, "workspace73");
+
+		File modulesDir = new File(workspaceDXP73, "modules");
+
+		_makeWorkspaceVersion(workspaceDXP73, "dxp-7.3-ep5");
+
+		String[] sevenThreeArgs = {
+			"--base", workspaceDXP73.getAbsolutePath(), "create", "-t", "portlet", "seven-three", "--product", "dxp"
+		};
+
+		TestUtil.runBlade(workspaceDXP73, _extensionsDir, sevenThreeArgs);
+
+		File buildGradle = new File(modulesDir, "seven-three/build.gradle");
+
+		String content = FileUtil.read(buildGradle);
+
+		Assert.assertTrue(content, content.contains("release.dxp.api"));
+	}
+
+	@Test
 	public void testCreateWorkspaceFormField72() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
@@ -1372,25 +1393,6 @@ public class CreateCommandTest {
 		String content = FileUtil.read(buildGradle);
 
 		Assert.assertTrue(content, content.contains("release.portal.api"));
-	}
-
-	@Test
-	public void testCreateWorkspaceDXPVersionDefault() throws Exception {
-		File workspaceDXP73 = new File(_rootDir, "workspace73");
-
-		File modulesDir = new File(workspaceDXP73, "modules");
-
-		_makeWorkspaceVersion(workspaceDXP73, "dxp-7.3-ep5");
-
-		String[] sevenThreeArgs = {"--base", workspaceDXP73.getAbsolutePath(), "create", "-t", "portlet", "seven-three", "--product", "dxp"};
-
-		TestUtil.runBlade(workspaceDXP73, _extensionsDir, sevenThreeArgs);
-
-		File buildGradle = new File(modulesDir, "seven-three/build.gradle");
-
-		String content = FileUtil.read(buildGradle);
-
-		Assert.assertTrue(content, content.contains("release.dxp.api"));
 	}
 
 	@Test
