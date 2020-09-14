@@ -1331,7 +1331,7 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("release.portal.api"));
+		Assert.assertTrue(content, content.contains("com.liferay.frontend.js.loader.modules.extender.api"));
 	}
 
 	@Test
@@ -1340,7 +1340,7 @@ public class CreateCommandTest {
 
 		File modulesDir = new File(workspace71, "modules");
 
-		_makeWorkspace(workspace71);
+		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_PORTAL_71);
 
 		String[] sevenOneArgs = {
 			"--base", workspace71.getAbsolutePath(), "create", "-v", "7.1", "-t", "npm-angular-portlet", "seven-one"
@@ -1352,7 +1352,7 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("release.portal.api"));
+		Assert.assertTrue(content, content.contains("com.liferay.frontend.js.loader.modules.extender.api"));
 	}
 
 	@Test
