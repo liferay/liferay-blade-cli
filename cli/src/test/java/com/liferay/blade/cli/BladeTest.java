@@ -56,6 +56,7 @@ public class BladeTest extends BladeCLI {
 		return new BladeTestBuilder();
 	}
 
+	@Override
 	public BladeSettings getBladeSettings() throws IOException {
 		File settingsBaseDir = _getSettingsBaseDir();
 
