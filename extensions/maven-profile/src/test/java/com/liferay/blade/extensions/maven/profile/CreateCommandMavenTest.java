@@ -170,6 +170,30 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	}
 
 	@Test
+	public void testCreateMVCPortletDXP() throws Exception {
+		File workspaceDir = _workspaceDir;
+
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir);
+
+		File modulesDir = new File(workspaceDir, "modules");
+
+		String[] mavenArgs = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
+			"mvc-portlet", "foo", "--product", "dxp"
+		};
+
+		File projectDir = new File(modulesDir, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
+
+		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
+
+		_checkMavenBuildFiles(projectPath);
+
+		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.dxp.api</artifactId>.*");
+	}
+
+	@Test
 	public void testCreateMVCPortletLegacyFlag() throws Exception {
 		File workspaceDir = _workspaceDir;
 

@@ -342,6 +342,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
+		projectTemplatesArgs.setProduct(createArgs.getProduct());
 
 		projectTemplatesArgs.setTemplate(template);
 
