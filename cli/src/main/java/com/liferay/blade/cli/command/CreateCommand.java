@@ -449,27 +449,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private Optional<String> _formatLiferayVersion(Optional<String> liferayVersion) {
-		if (!liferayVersion.isPresent()) {
-			return Optional.empty();
-		}
-
-		Optional<String> formattedLiferayVersion = Optional.empty();
-
-		String versionValue = liferayVersion.get();
-
-		try {
-			Version version = Version.parseVersion(versionValue.replaceAll("-", "."));
-
-			formattedLiferayVersion = Optional.of(version.getMajor() + "." + version.getMinor());
-		}
-		catch (Exception exception) {
-			formattedLiferayVersion = Optional.of(versionValue.substring(0, 3));
-		}
-
-		return formattedLiferayVersion;
-	}
-
 	private File _getDefaultDir(String defaultDirProperty, String defaultDirValue) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -546,7 +525,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			liferayVersion = workspaceProvider.getLiferayVersion(dir);
 		}
 
-		return _formatLiferayVersion(Optional.ofNullable(liferayVersion));
+		return _normalizeLiferayVersion(Optional.ofNullable(liferayVersion));
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
@@ -559,6 +538,27 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		return bladeCLI.isWorkspaceDir(dir);
+	}
+
+	private Optional<String> _normalizeLiferayVersion(Optional<String> liferayVersion) {
+		if (!liferayVersion.isPresent()) {
+			return Optional.empty();
+		}
+
+		Optional<String> formattedLiferayVersion = Optional.empty();
+
+		String versionValue = liferayVersion.get();
+
+		try {
+			Version version = Version.parseVersion(versionValue.replaceAll("-", "."));
+
+			formattedLiferayVersion = Optional.of(version.getMajor() + "." + version.getMinor());
+		}
+		catch (Exception exception) {
+			formattedLiferayVersion = Optional.of(versionValue.substring(0, 3));
+		}
+
+		return formattedLiferayVersion;
 	}
 
 }
