@@ -29,10 +29,6 @@ public interface WorkspaceProvider {
 		return null;
 	}
 
-	public default String getProduct(File dir) {
-		return null;
-	}
-
 	public default File getWorkspaceDir(BladeCLI blade) {
 		BaseArgs args = blade.getArgs();
 
