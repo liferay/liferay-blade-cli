@@ -958,6 +958,8 @@ public class CreateCommandTest {
 		String dockerImageProperty =
 			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "liferay/dxp:7.3.10-ep5-202008181831";
 
+		Files.createFile(gradleProperties.toPath());
+
 		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
 
 		String[] sevenThreeArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
@@ -1570,6 +1572,8 @@ public class CreateCommandTest {
 
 		String dockerImageProperty =
 			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "liferay/portal:7.3.4-ga5-202008131318";
+
+		Files.createFile(gradleProperties.toPath());
 
 		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
 
