@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  */
 public class GradleWorkspaceProvider implements WorkspaceProvider {
 
-	public static final Pattern patternDockerImageLiferayVersion = Pattern.compile("(?<=liferay/(?:dxp|portal)?:).{3}");
+	public static final Pattern patternDockerImageLiferayVersion = Pattern.compile(".*(?<=liferay/(?:dxp|portal):)(.{3}).*", Pattern.DOTALL | Pattern.MULTILINE);
 	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
 	public static final Pattern patternWorkspacePluginLatestRelease = Pattern.compile(
@@ -66,10 +66,10 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		try {
 			Properties gradleProperties = getGradleProperties(workspaceDir);
 
-			String targetPlatformVersion = gradleProperties.getProperty(
+			String baseLiferayVersion = gradleProperties.getProperty(
 				WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY);
 
-			if (BladeUtil.isEmpty(targetPlatformVersion)) {
+			if (BladeUtil.isEmpty(baseLiferayVersion)) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
 				Map<String, Object> productInfoMap = BladeUtil.getProductInfos();
@@ -77,11 +77,11 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
 
 				if (productInfo != null) {
-					targetPlatformVersion = productInfo.getTargetPlatformVersion();
+					baseLiferayVersion = productInfo.getTargetPlatformVersion();
 				}
 			}
 
-			if (BladeUtil.isEmpty(targetPlatformVersion)) {
+			if (BladeUtil.isEmpty(baseLiferayVersion)) {
 				String dockerImageProperty = gradleProperties.getProperty(
 					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
 
@@ -91,24 +91,27 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 				Matcher matcher = patternDockerImageLiferayVersion.matcher(dockerImageProperty);
 
-				targetPlatformVersion = matcher.group();
+				if (matcher.find()) {
+					baseLiferayVersion = matcher.group(1);
+				}
+
 			}
 
-			if (!BladeUtil.isEmpty(targetPlatformVersion)) {
-				int dashPostion = targetPlatformVersion.indexOf("-");
+			if (!BladeUtil.isEmpty(baseLiferayVersion)) {
+				int dashPostion = baseLiferayVersion.indexOf("-");
 
-				Version productTargetPlatformVersion = null;
+				Version liferayVersion = null;
 
 				if (dashPostion != -1) {
-					productTargetPlatformVersion = Version.parseVersion(
-						targetPlatformVersion.substring(0, dashPostion));
+					liferayVersion = Version.parseVersion(
+						baseLiferayVersion.substring(0, dashPostion));
 				}
 				else {
-					productTargetPlatformVersion = Version.parseVersion(targetPlatformVersion);
+					liferayVersion = Version.parseVersion(baseLiferayVersion);
 				}
 
 				return new String(
-					productTargetPlatformVersion.getMajor() + "." + productTargetPlatformVersion.getMinor());
+					liferayVersion.getMajor() + "." + liferayVersion.getMinor());
 			}
 		}
 		catch (Exception exception) {
