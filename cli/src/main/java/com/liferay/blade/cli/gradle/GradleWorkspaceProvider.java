@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
  */
 public class GradleWorkspaceProvider implements WorkspaceProvider {
 
+	public static final Pattern patternDockerImageLiferayVersion = Pattern.compile("(?<=liferay/(dxp|portal):).{3}");
 	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
 	public static final Pattern patternWorkspacePluginLatestRelease = Pattern.compile(
@@ -81,7 +82,8 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			}
 
 			if (BladeUtil.isEmpty(targetPlatformVersion)) {
-				String dockerImageProperty = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE);
+				String dockerImageProperty = gradleProperties.getProperty(
+					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE);
 
 				Matcher matcher = patternDockerImageLiferayVersion.matcher(dockerImageProperty);
 
@@ -111,7 +113,6 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 		return null;
 	}
-
 
 	public File getSettingGradleFile(File dir) {
 		return new File(getWorkspaceDir(dir), _SETTINGS_GRADLE_FILE_NAME);
@@ -224,9 +225,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		catch (Exception e) {
 			return false;
 		}
-
 	}
-	public static final Pattern patternDockerImageLiferayVersion = Pattern.compile("(?<=liferay/(dxp|portal):).{3}");
 
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
 
