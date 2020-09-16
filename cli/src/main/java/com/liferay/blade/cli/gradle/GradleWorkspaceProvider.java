@@ -30,6 +30,7 @@ import java.io.FilenameFilter;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,10 +68,10 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		try {
 			Properties gradleProperties = getGradleProperties(workspaceDir);
 
-			String baseLiferayVersion = gradleProperties.getProperty(
-				WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY);
+			Optional<String> baseLiferayVersion = Optional.ofNullable(
+				gradleProperties.getProperty(WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY));
 
-			if (BladeUtil.isEmpty(baseLiferayVersion)) {
+			if (!baseLiferayVersion.isPresent()) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
 				Map<String, Object> productInfoMap = BladeUtil.getProductInfos();
@@ -78,11 +79,11 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
 
 				if (productInfo != null) {
-					baseLiferayVersion = productInfo.getTargetPlatformVersion();
+					baseLiferayVersion = Optional.ofNullable(productInfo.getTargetPlatformVersion());
 				}
 			}
 
-			if (BladeUtil.isEmpty(baseLiferayVersion)) {
+			if (!baseLiferayVersion.isPresent()) {
 				String dockerImageProperty = gradleProperties.getProperty(
 					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
 
@@ -93,20 +94,22 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 				Matcher matcher = patternDockerImageLiferayVersion.matcher(dockerImageProperty);
 
 				if (matcher.find()) {
-					baseLiferayVersion = matcher.group(1);
+					baseLiferayVersion = Optional.of(matcher.group(1));
 				}
 			}
 
-			if (!BladeUtil.isEmpty(baseLiferayVersion)) {
-				int dashPostion = baseLiferayVersion.indexOf("-");
+			if (baseLiferayVersion.isPresent()) {
+				String presentLiferayVersion = baseLiferayVersion.get();
+
+				int dashPostion = presentLiferayVersion.indexOf("-");
 
 				Version liferayVersion = null;
 
 				if (dashPostion != -1) {
-					liferayVersion = Version.parseVersion(baseLiferayVersion.substring(0, dashPostion));
+					liferayVersion = Version.parseVersion(presentLiferayVersion.substring(0, dashPostion));
 				}
 				else {
-					liferayVersion = Version.parseVersion(baseLiferayVersion);
+					liferayVersion = Version.parseVersion(presentLiferayVersion);
 				}
 
 				return new String(liferayVersion.getMajor() + "." + liferayVersion.getMinor());
