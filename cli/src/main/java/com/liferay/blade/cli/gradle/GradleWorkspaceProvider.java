@@ -83,7 +83,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 			if (BladeUtil.isEmpty(targetPlatformVersion)) {
 				String dockerImageProperty = gradleProperties.getProperty(
-					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE);
+					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
 
 				Matcher matcher = patternDockerImageLiferayVersion.matcher(dockerImageProperty);
 
@@ -123,7 +123,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 			if (productKey == null) {
 				String dockerImageProperty = gradleProperties.getProperty(
-					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE);
+					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
 
 				if (dockerImageProperty.contains("dxp")) {
 					return "dxp";

@@ -956,7 +956,7 @@ public class CreateCommandTest {
 		Files.deleteIfExists(gradleProperties.toPath());
 
 		String dockerImageProperty =
-			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE + "liferay/dxp:7.3.10-ep5-202008181831";
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "liferay/dxp:7.3.10-ep5-202008181831";
 
 		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
 
@@ -1569,7 +1569,7 @@ public class CreateCommandTest {
 		Files.deleteIfExists(gradleProperties.toPath());
 
 		String dockerImageProperty =
-			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE + "liferay/portal:7.3.4-ga5-202008131318";
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "liferay/portal:7.3.4-ga5-202008131318";
 
 		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
 
