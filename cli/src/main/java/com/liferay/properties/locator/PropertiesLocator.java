@@ -47,6 +47,7 @@ import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -114,19 +115,23 @@ public class PropertiesLocator {
 
 			Properties newProperties = _getCurrentPortalProperties();
 
-			SortedSet<PropertyProblem> problems = _getProblems(oldPropertyKeys, newProperties);
+			_problems = _getProblems(oldPropertyKeys, newProperties);
 
-			_manageExceptions(problems);
+			_manageExceptions(_problems);
 
-			_managePortletProperties(problems);
+			_managePortletProperties(_problems);
 
-			_manageConfigurationProperties(problems);
+			_manageConfigurationProperties(_problems);
 
-			_printInfo(outputFile, problems);
+			_printInfo(outputFile, _problems);
 		}
 		finally {
 			outputFile.close();
 		}
+	}
+
+	public SortedSet<PropertyProblem> getProblems() {
+		return _problems;
 	}
 
 	private static String[] _addConfigurationPropertiesByHeritance(
@@ -403,9 +408,6 @@ public class PropertiesLocator {
 		return portletNames;
 	}
 
-	/*
-		We get portlet names from first two words in a property
-	 */
 	private static SortedSet<PropertyProblem> _getProblems(Set<String> oldPropertyKeys, Properties newProperties) {
 		SortedSet<PropertyProblem> problems = new TreeSet<>();
 
@@ -425,6 +427,9 @@ public class PropertiesLocator {
 		return problems;
 	}
 
+	/*
+		We get portlet names from first two words in a property
+	 */
 	private static void _getPropertiesFromJar(String propertiesJarURL, Properties properties) throws Exception {
 		try {
 			URL url = new URL(propertiesJarURL);
@@ -942,5 +947,7 @@ public class PropertiesLocator {
 			put("dl", "document-library");
 		}
 	};
+
+	private SortedSet<PropertyProblem> _problems = Collections.emptySortedSet();
 
 }
