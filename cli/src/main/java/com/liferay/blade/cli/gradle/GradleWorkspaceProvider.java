@@ -39,7 +39,8 @@ import java.util.regex.Pattern;
  */
 public class GradleWorkspaceProvider implements WorkspaceProvider {
 
-	public static final Pattern patternDockerImageLiferayVersion = Pattern.compile(".*(?<=liferay/(?:dxp|portal):)(.{3}).*", Pattern.DOTALL | Pattern.MULTILINE);
+	public static final Pattern patternDockerImageLiferayVersion = Pattern.compile(
+		".*(?<=liferay/(?:dxp|portal):)(.{3}).*", Pattern.DOTALL | Pattern.MULTILINE);
 	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
 	public static final Pattern patternWorkspacePluginLatestRelease = Pattern.compile(
@@ -94,7 +95,6 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 				if (matcher.find()) {
 					baseLiferayVersion = matcher.group(1);
 				}
-
 			}
 
 			if (!BladeUtil.isEmpty(baseLiferayVersion)) {
@@ -103,15 +103,13 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 				Version liferayVersion = null;
 
 				if (dashPostion != -1) {
-					liferayVersion = Version.parseVersion(
-						baseLiferayVersion.substring(0, dashPostion));
+					liferayVersion = Version.parseVersion(baseLiferayVersion.substring(0, dashPostion));
 				}
 				else {
 					liferayVersion = Version.parseVersion(baseLiferayVersion);
 				}
 
-				return new String(
-					liferayVersion.getMajor() + "." + liferayVersion.getMinor());
+				return new String(liferayVersion.getMajor() + "." + liferayVersion.getMinor());
 			}
 		}
 		catch (Exception exception) {
