@@ -947,8 +947,6 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceDXPLiferayVersionFromDocker() throws Exception {
 		File workspace73 = new File(_rootDir, "workspace73");
 
-		File modulesDir = new File(workspace73, "modules");
-
 		_makeWorkspace(workspace73);
 
 		File gradleProperties = new File(workspace73, "gradle.properties");
@@ -966,7 +964,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
 
-		File buildGradle = new File(modulesDir, "seven-three/build.gradle");
+		File buildGradle = new File(workspace73, "seven-three/build.gradle");
 
 		String content = FileUtil.read(buildGradle);
 
@@ -1562,8 +1560,6 @@ public class CreateCommandTest {
 	public void testCreateWorkspacePortalLiferayVersionFromDocker() throws Exception {
 		File workspace73 = new File(_rootDir, "workspace73");
 
-		File modulesDir = new File(workspace73, "modules");
-
 		_makeWorkspace(workspace73);
 
 		File gradleProperties = new File(workspace73, "gradle.properties");
@@ -1581,11 +1577,11 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
 
-		File buildGradle = new File(modulesDir, "seven-three/build.gradle");
+		File buildGradle = new File(workspace73, "seven-three/build.gradle");
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("release.dxp.api"));
+		Assert.assertTrue(content, content.contains("release.portal.api"));
 	}
 
 	@Test
