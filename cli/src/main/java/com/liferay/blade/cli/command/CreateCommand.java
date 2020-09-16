@@ -342,7 +342,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
-		projectTemplatesArgs.setProduct(createArgs.getProduct());
+		projectTemplatesArgs.setProduct(_getProduct(workspaceProvider, createArgs));
 
 		projectTemplatesArgs.setTemplate(template);
 
@@ -536,10 +536,30 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		String liferayVersion = createArgs.getLiferayVersion();
 
 		if (liferayVersion == null) {
-			workspaceProvider.getLiferayVersion(dir);
+			liferayVersion = workspaceProvider.getLiferayVersion(dir);
 		}
 
 		return _formatLiferayVersion(liferayVersion);
+	}
+
+	private String _getProduct(WorkspaceProvider workspaceProvider, CreateArgs createArgs) {
+		if (workspaceProvider == null) {
+			return createArgs.getProduct();
+		}
+
+		File dir = createArgs.getDir();
+
+		if (dir == null) {
+			dir = createArgs.getBase();
+		}
+
+		String product = createArgs.getProduct();
+
+		if (product.equals("portal")) {
+			product = workspaceProvider.getProduct(dir);
+		}
+
+		return product;
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
