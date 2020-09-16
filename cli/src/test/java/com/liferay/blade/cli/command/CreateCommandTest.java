@@ -956,7 +956,7 @@ public class CreateCommandTest {
 		Files.deleteIfExists(gradleProperties.toPath());
 
 		String dockerImageProperty =
-			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "liferay/dxp:7.3.10-ep5-202008181831";
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "=liferay/dxp:7.3.10-ep5-202008181831";
 
 		Files.createFile(gradleProperties.toPath());
 
@@ -1491,7 +1491,7 @@ public class CreateCommandTest {
 
 		File gradlePropertiesFile = new File(workspace, "gradle.properties");
 
-		String modulesDirNull = "\n" + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY;
+		String modulesDirNull = "\n" + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY + "=";
 
 		Files.write(gradlePropertiesFile.toPath(), modulesDirNull.getBytes(), StandardOpenOption.APPEND);
 
@@ -1571,7 +1571,7 @@ public class CreateCommandTest {
 		Files.deleteIfExists(gradleProperties.toPath());
 
 		String dockerImageProperty =
-			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "liferay/portal:7.3.4-ga5-202008131318";
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "=liferay/portal:7.3.4-ga5-202008131318";
 
 		Files.createFile(gradleProperties.toPath());
 
@@ -1880,7 +1880,7 @@ public class CreateCommandTest {
 		File gradlePropertiesFile = new File(workspaceDir, "gradle.properties");
 
 		String targetPlatformVersionProperty =
-			System.lineSeparator() + WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY + liferayVersion;
+			System.lineSeparator() + WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY + "=" + liferayVersion;
 
 		Files.write(gradlePropertiesFile.toPath(), targetPlatformVersionProperty.getBytes(), StandardOpenOption.APPEND);
 
@@ -1893,7 +1893,7 @@ public class CreateCommandTest {
 		Assert.assertTrue(gradleProperties.exists());
 
 		String configLine =
-			System.lineSeparator() + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY +
+			System.lineSeparator() + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY + "=" +
 				WorkspaceConstants.DEFAULT_MODULES_DIR;
 
 		Files.write(gradleProperties.toPath(), configLine.getBytes(), StandardOpenOption.APPEND);
