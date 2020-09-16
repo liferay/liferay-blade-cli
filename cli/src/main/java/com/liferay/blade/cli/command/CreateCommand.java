@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.osgi.framework.Version;
@@ -332,13 +333,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setDependencyManagementEnabled(
 			(workspaceProvider != null) ? workspaceProvider.isDependencyManagementEnabled(dir) : false);
 
-		String liferayVersion = _getLiferayVersion(workspaceProvider, createArgs);
+		Optional<String> liferayVersion = _getLiferayVersion(workspaceProvider, createArgs);
 
-		if (BladeUtil.isEmpty(liferayVersion)) {
+		if (!liferayVersion.isPresent()) {
 			throw new IOException("Cannot determine Liferay Version. Please enter a valid value for Liferay Version.");
 		}
 
-		projectTemplatesArgs.setLiferayVersion(liferayVersion);
+		projectTemplatesArgs.setLiferayVersion(liferayVersion.get());
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
@@ -448,21 +449,25 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
 	}
 
-	private String _formatLiferayVersion(String liferayVersion) {
+	private Optional<String> _formatLiferayVersion(Optional<String> liferayVersion) {
+		if (!liferayVersion.isPresent()) {
+			return Optional.empty();
+		}
+
+		Optional<String> formattedLiferayVersion = Optional.empty();
+
+		String versionValue = liferayVersion.get();
+
 		try {
-			if (liferayVersion == null) {
-				return null;
-			}
+			Version version = Version.parseVersion(versionValue.replaceAll("-", "."));
 
-			Version version = Version.parseVersion(liferayVersion.replaceAll("-", "."));
-
-			liferayVersion = version.getMajor() + "." + version.getMinor();
+			formattedLiferayVersion = Optional.of(version.getMajor() + "." + version.getMinor());
 		}
 		catch (Exception exception) {
-			liferayVersion = liferayVersion.substring(0, 3);
+			formattedLiferayVersion = Optional.of(versionValue.substring(0, 3));
 		}
 
-		return liferayVersion;
+		return formattedLiferayVersion;
 	}
 
 	private File _getDefaultDir(String defaultDirProperty, String defaultDirValue) throws Exception {
@@ -522,9 +527,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return _getDefaultDir(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY, WorkspaceConstants.DEFAULT_WARS_DIR);
 	}
 
-	private String _getLiferayVersion(WorkspaceProvider workspaceProvider, CreateArgs createArgs) throws IOException {
+	private Optional<String> _getLiferayVersion(WorkspaceProvider workspaceProvider, CreateArgs createArgs)
+		throws IOException {
+
 		if (workspaceProvider == null) {
-			return createArgs.getLiferayVersion();
+			return Optional.ofNullable(createArgs.getLiferayVersion());
 		}
 
 		File dir = createArgs.getDir();
@@ -539,7 +546,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			liferayVersion = workspaceProvider.getLiferayVersion(dir);
 		}
 
-		return _formatLiferayVersion(liferayVersion);
+		return _formatLiferayVersion(Optional.ofNullable(liferayVersion));
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
