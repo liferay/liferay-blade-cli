@@ -555,7 +555,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			dir = createArgs.getBase();
 		}
 
-		String liferayVersion = workspaceProvider.getLiferayVersion(dir);
+		String liferayVersion = createArgs.getLiferayVersion();
+
+		if (liferayVersion == null) {
+			workspaceProvider.getLiferayVersion(dir);
+		}
 
 		if (liferayVersion == null) {
 			return _promptAndAskUserForLiferayVersion(createArgs, dir, workspaceProvider);
