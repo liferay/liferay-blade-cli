@@ -944,6 +944,34 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceDXPLiferayVersionFromDocker() throws Exception {
+		File workspace73 = new File(_rootDir, "workspace73");
+
+		File modulesDir = new File(workspace73, "modules");
+
+		_makeWorkspace(workspace73);
+
+		File gradleProperties = new File(workspace73, "gradle.properties");
+
+		Files.deleteIfExists(gradleProperties.toPath());
+
+		String dockerImageProperty =
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE + "liferay/dxp:7.3.10-ep5-202008181831";
+
+		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
+
+		String[] sevenThreeArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
+
+		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
+
+		File buildGradle = new File(modulesDir, "seven-three/build.gradle");
+
+		String content = FileUtil.read(buildGradle);
+
+		Assert.assertTrue(content, content.contains("release.dxp.api"));
+	}
+
+	@Test
 	public void testCreateWorkspaceDXPVersionDefault() throws Exception {
 		File workspaceDXP73 = new File(_rootDir, "workspace73");
 
@@ -1405,7 +1433,9 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace73);
 
-		String[] sevenTwoArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-two", "-v", "7.2"};
+		String[] sevenTwoArgs = {
+			"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-two", "-v", "7.2"
+		};
 
 		TestUtil.runBlade(workspace73, _extensionsDir, sevenTwoArgs);
 
@@ -1414,60 +1444,6 @@ public class CreateCommandTest {
 		String content = FileUtil.read(buildGradle);
 
 		Assert.assertFalse(content, content.contains("release.portal.api"));
-	}
-
-	@Test
-	public void testCreateWorkspaceDXPLiferayVersionFromDocker() throws Exception {
-		File workspace73 = new File(_rootDir, "workspace73");
-
-		File modulesDir = new File(workspace73, "modules");
-
-		_makeWorkspace(workspace73);
-
-		File gradleProperties = new File(workspace73, "gradle.properties");
-
-		Files.deleteIfExists(gradleProperties.toPath());
-
-		String dockerImageProperty = WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE + "liferay/dxp:7.3.10-ep5-202008181831";
-
-		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
-
-		String[] sevenThreeArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
-
-		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
-
-		File buildGradle = new File(modulesDir, "seven-three/build.gradle");
-
-		String content = FileUtil.read(buildGradle);
-
-		Assert.assertTrue(content, content.contains("release.dxp.api"));
-	}
-
-	@Test
-	public void testCreateWorkspacePortalLiferayVersionFromDocker() throws Exception {
-		File workspace73 = new File(_rootDir, "workspace73");
-
-		File modulesDir = new File(workspace73, "modules");
-
-		_makeWorkspace(workspace73);
-
-		File gradleProperties = new File(workspace73, "gradle.properties");
-
-		Files.deleteIfExists(gradleProperties.toPath());
-
-		String dockerImageProperty = WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE + "liferay/portal:7.3.4-ga5-202008131318";
-
-		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
-
-		String[] sevenThreeArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
-
-		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
-
-		File buildGradle = new File(modulesDir, "seven-three/build.gradle");
-
-		String content = FileUtil.read(buildGradle);
-
-		Assert.assertTrue(content, content.contains("release.dxp.api"));
 	}
 
 	@Test
@@ -1578,6 +1554,34 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "foo/build/libs/foo-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateWorkspacePortalLiferayVersionFromDocker() throws Exception {
+		File workspace73 = new File(_rootDir, "workspace73");
+
+		File modulesDir = new File(workspace73, "modules");
+
+		_makeWorkspace(workspace73);
+
+		File gradleProperties = new File(workspace73, "gradle.properties");
+
+		Files.deleteIfExists(gradleProperties.toPath());
+
+		String dockerImageProperty =
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE + "liferay/portal:7.3.4-ga5-202008131318";
+
+		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
+
+		String[] sevenThreeArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
+
+		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
+
+		File buildGradle = new File(modulesDir, "seven-three/build.gradle");
+
+		String content = FileUtil.read(buildGradle);
+
+		Assert.assertTrue(content, content.contains("release.dxp.api"));
 	}
 
 	@Test
