@@ -18,6 +18,7 @@ package com.liferay.properties.locator;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+
 import com.liferay.blade.cli.util.ArrayUtil;
 import com.liferay.blade.cli.util.CamelCaseUtil;
 import com.liferay.blade.cli.util.ListUtil;
@@ -34,13 +35,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+
 import java.net.URL;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -98,77 +103,30 @@ public class PropertiesLocator {
 	}
 
 	public PropertiesLocator(PropertiesLocatorArgs propertiesLocatorArgs) throws Exception {
-		_outputFile = _generateOutputFile(propertiesLocatorArgs);
-
-		String title = "Checking the location for old properties in the new version";
-
-		_outputFile.println(title);
-		_printUnderline(title);
+		PrintWriter outputFile = _generateOutputFile(propertiesLocatorArgs);
 
 		try {
-			Set<String> oldPropertyKeys =
-				_getPropertyKeys(propertiesLocatorArgs.getPropertiesFile());
+			Set<String> oldPropertyKeys = _getPropertyKeys(propertiesLocatorArgs.getPropertiesFile());
 
 			File bundleDir = propertiesLocatorArgs.getBundleDir();
 
-			Path bundlePath = bundleDir.toPath();
+			_bundlePath = bundleDir.toPath();
 
-			Properties newProperties = _getCurrentPortalProperties(bundlePath);
+			Properties newProperties = _getCurrentPortalProperties();
 
-			SortedSet<String> stilExistsProperties = new TreeSet<>();
+			SortedSet<PropertyProblem> problems = _getProblems(oldPropertyKeys, newProperties);
 
-			SortedSet<String> missingProperties = _getRemovedProperties(
-				oldPropertyKeys, newProperties, stilExistsProperties);
+			_manageExceptions(problems);
 
-			Stream<String> stream = missingProperties.stream();
+			_managePortletProperties(problems);
 
-			SortedSet<PropertyProblem> problems = stream.map(
-				PropertyProblem::new
-			).collect(
-				Collectors.toCollection(TreeSet::new)
-			);
+			_manageConfigurationProperties(problems);
 
-			problems = _manageExceptions(problems);
-
-			_outputFile.println();
-
-			problems = _checkPortletProperties(problems, bundlePath);
-
-			_outputFile.println();
-
-			problems = _checkConfigurationProperties(problems, bundlePath);
-
-			_outputFile.println();
-			_outputFile.println(
-				"We have not found a new property for the following old properties (check if you still need them or " +
-					"check the documentation to find a replacement):");
-
-			Stream<PropertyProblem> problemsStream = problems.stream();
-
-			missingProperties = problemsStream.filter(
-				problem -> problem.getType() == PropertyProblemType.MISSING
-			).map(
-				problem -> problem.getPropertyName()
-			).collect(
-				Collectors.toCollection(TreeSet::new)
-			);
-
-			_printProperties(missingProperties);
-
-			_outputFile.println();
-			_outputFile.println("The following properties still exist in the new portal.properties:");
-
-			_printProperties(stilExistsProperties);
-
-			_problems = problems;
+			_printInfo(outputFile, problems);
 		}
 		finally {
-			_outputFile.close();
+			outputFile.close();
 		}
-	}
-
-	public SortedSet<PropertyProblem> getProblems() {
-		return _problems;
 	}
 
 	private static String[] _addConfigurationPropertiesByHeritance(
@@ -188,378 +146,6 @@ public class PropertiesLocator {
 		}
 
 		return configFields;
-	}
-
-	private static SortedSet<PropertyProblem> _checkConfigurationProperties(
-			SortedSet<PropertyProblem> problems, Path searchPathRoot)
-		throws IOException {
-
-		Map<String, ConfigurationClassData> configClassesMap = new TreeMap<>();
-
-		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
-			Stream<File> files = paths.map(path -> path.toFile());
-
-			files.filter(
-				file -> {
-					String absolutePath = file.getAbsolutePath();
-
-					return (absolutePath.endsWith(".jar") || absolutePath.endsWith(".lpkg")) &&
-						   !absolutePath.contains("/osgi/state/");
-				}
-			).forEach(
-				file -> {
-					try {
-						String absolutePath = file.getAbsolutePath();
-
-						if (_isLiferayJar(absolutePath)) {
-							FileInputStream inputStream = new FileInputStream(absolutePath);
-
-							try (JarInputStream jarIs = new JarInputStream(inputStream)) {
-								ZipEntry zipEntryJar = jarIs.getNextEntry();
-
-								while (zipEntryJar != null) {
-									String name = zipEntryJar.getName();
-
-									if (name.endsWith("Configuration.class")) {
-										configClassesMap.put(
-											name.replace(".class", StringPool.BLANK),
-											new ConfigurationClassData(jarIs));
-									}
-
-									zipEntryJar = jarIs.getNextEntry();
-								}
-							}
-							catch (Exception e) {
-								System.out.println("Unable to read the content of " + absolutePath);
-
-								return;
-							}
-						}
-						else if (absolutePath.endsWith(".lpkg")) {
-							try (ZipFile zipFile = new ZipFile(absolutePath)) {
-								Enumeration<?> enu = zipFile.entries();
-
-								while (enu.hasMoreElements()) {
-									ZipEntry zipEntry = (ZipEntry)enu.nextElement();
-
-									if (_isLiferayJar(zipEntry.getName())) {
-										InputStream inputStream = zipFile.getInputStream(zipEntry);
-
-										try (JarInputStream jarIs = new JarInputStream(inputStream)) {
-											ZipEntry zipEntryJar = jarIs.getNextEntry();
-
-											while (zipEntryJar != null) {
-												String name = zipEntryJar.getName();
-
-												if (name.endsWith("Configuration.class")) {
-													configClassesMap.put(
-														name.replace(".class", StringPool.BLANK),
-														new ConfigurationClassData(jarIs));
-												}
-
-												zipEntryJar = jarIs.getNextEntry();
-											}
-										}
-										catch (Exception e) {
-										}
-									}
-								}
-							}
-						}
-					}
-					catch (Exception e) {
-						System.out.println("Unable to get portlet properties");
-
-						e.printStackTrace();
-
-						return;
-					}
-				}
-			);
-		}
-
-		List<Pair<String, String[]>> configurationProperties = _getConfigurationProperties(configClassesMap);
-
-		SortedSet<PropertyProblem> updatedProblems = new TreeSet<>();
-
-		Stream<PropertyProblem> problemsStream = problems.stream();
-
-		problemsStream.filter(
-			problem -> problem.getType() == PropertyProblemType.MISSING
-		).forEach(
-			problem -> {
-				String property = problem.getPropertyName();
-
-				List<Pair<String, String>> mostLikelyMatches = _getMostLikelyMatches(
-					property, configurationProperties, _getPortletNames(property));
-
-				if (!mostLikelyMatches.isEmpty()) {
-					updatedProblems.add(
-						new PropertyProblem(
-							property, PropertyProblemType.OSGI, "This property has been modularized",
-							mostLikelyMatches));
-				}
-				else {
-					updatedProblems.add(problem);
-				}
-			}
-		);
-
-		Stream<PropertyProblem> stream = updatedProblems.stream();
-
-		boolean foundOsgiProblems = stream.filter(
-			problem -> problem.getType() == PropertyProblemType.OSGI
-		).findAny(
-		).isPresent();
-
-		if (foundOsgiProblems) {
-			_outputFile.println("Properties moved to OSGI configuration:");
-
-			stream = updatedProblems.stream();
-
-			stream.filter(
-				problem -> problem.getType() == PropertyProblemType.OSGI
-			).peek(
-				problem -> {
-					String property = problem.getPropertyName();
-
-					_outputFile.print("\t");
-					_outputFile.println(property + " can match with the following OSGI properties:");
-				}
-			).map(
-				problem -> problem.getReplacements()
-			).forEach(
-				replacements -> {
-					Stream<Pair<String, String>> replacementsStream = replacements.stream();
-
-					replacementsStream.sorted(
-						(r1, r2) -> {
-							String r1First = r1.first();
-							String r2First = r2.first();
-
-							return r1First.compareTo(r2First);
-						}
-					).forEach(
-						replacement -> {
-							String path = replacement.first();
-
-							String configFileName = StringUtil.replace(
-								path, StringPool.FORWARD_SLASH.charAt(0), StringPool.PERIOD.charAt(0));
-
-							_outputFile.print("\t\t");
-							_outputFile.println(replacement.second() + " from " + configFileName);
-						}
-					);
-				}
-			);
-		}
-
-		return updatedProblems;
-	}
-
-	private static SortedSet<PropertyProblem> _checkPortletProperties(
-			SortedSet<PropertyProblem> problems, Path bundlePath)
-		throws Exception {
-
-		List<Pair<String, String[]>> portletsProperties = new ArrayList<>();
-
-		// We don't need to analyze war files since, they are still like in previous versions so properties
-		// still remain in the same place
-
-		Predicate<Path> ignoreStateFilter = p -> {
-			String path = p.toString();
-
-			return !path.contains("/osgi/state/");
-		};
-
-		Predicate<Path> lpkgFilter = p -> {
-			String path = p.toString();
-
-			return path.endsWith(".lpkg");
-		};
-
-		Path searchPathRoot = bundlePath.resolve("osgi");
-
-		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
-			Stream<Path> filter = paths.filter(ignoreStateFilter);
-
-			filter.map(
-				jarPath -> jarPath.toAbsolutePath()
-			).map(
-				absolutePath -> absolutePath.toString()
-			).filter(
-				PropertiesLocator::_isLiferayJar
-			).forEach(
-				absolutePath -> {
-					try (JarFile jarFile = new JarFile(absolutePath)) {
-						JarEntry portletPropertiesFile = jarFile.getJarEntry("portlet.properties");
-
-						Properties portletProperties = new Properties();
-
-						if (portletPropertiesFile != null) {
-							_getPropertiesFromJar(
-								"jar:file:" + absolutePath + "!/portlet.properties", portletProperties);
-						}
-
-						Enumeration<Object> enuKeys = portletProperties.keys();
-
-						String[] propertyKeys = new String[0];
-
-						while (enuKeys.hasMoreElements()) {
-							propertyKeys = ArrayUtil.append(propertyKeys, (String)enuKeys.nextElement());
-						}
-
-						if (propertyKeys.length != 0) {
-							portletsProperties.add(
-								new Pair<String, String[]>(absolutePath + "/portlet.properties", propertyKeys));
-						}
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			);
-		}
-
-		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
-			Stream<Path> filter = paths.filter(ignoreStateFilter);
-
-			Stream<Path> filter2 = filter.filter(lpkgFilter);
-
-			filter2.map(
-				lpkgPath -> lpkgPath.toAbsolutePath()
-			).map(
-				absolutePath -> absolutePath.toString()
-			).forEach(
-				lpkgAbsolutePath -> {
-					try (ZipFile zipFile = new ZipFile(lpkgAbsolutePath)) {
-						Enumeration<?> enu = zipFile.entries();
-
-						while (enu.hasMoreElements()) {
-							ZipEntry zipEntry = (ZipEntry)enu.nextElement();
-
-							if (_isLiferayJar(zipEntry.getName())) {
-								InputStream inputStream = zipFile.getInputStream(zipEntry);
-
-								try (JarInputStream jarIs = new JarInputStream(inputStream)) {
-									ZipEntry zipEntryJar = jarIs.getNextEntry();
-
-									while (zipEntryJar != null) {
-										String zipEntryJarName = zipEntryJar.getName();
-
-										if (zipEntryJarName.equals("portlet.properties")) {
-											Properties portletProperties = new Properties();
-
-											portletProperties.load(jarIs);
-
-											Enumeration<Object> enuKeys = portletProperties.keys();
-
-											String[] propertyKeys = new String[0];
-
-											while (enuKeys.hasMoreElements()) {
-												propertyKeys = ArrayUtil.append(
-													propertyKeys, (String)enuKeys.nextElement());
-											}
-
-											if (propertyKeys.length != 0) {
-												String prop =
-													lpkgAbsolutePath + "/" + zipEntry.getName() + "/portlet.properties";
-
-												portletsProperties.add(new Pair<String, String[]>(prop, propertyKeys));
-											}
-
-											break;
-										}
-
-										zipEntryJar = jarIs.getNextEntry();
-									}
-								}
-								catch (Exception e) {
-								}
-							}
-						}
-					}
-					catch (IOException ioe) {
-						ioe.printStackTrace();
-					}
-				}
-			);
-		}
-
-		Stream<PropertyProblem> stream = problems.stream();
-
-		SortedSet<PropertyProblem> updatedProblems = new TreeSet<>();
-
-		stream.forEach(
-			problem -> {
-				String property = problem.getPropertyName();
-
-				List<Pair<String, String>> mostLikelyMatches = _getMostLikelyMatches(
-					property, portletsProperties, _getPortletNames(property));
-
-				if (!mostLikelyMatches.isEmpty()) {
-					PropertyProblem updatedProblem = new PropertyProblem(
-						property, PropertyProblemType.MODULARIZED, null, mostLikelyMatches);
-
-					updatedProblems.add(updatedProblem);
-				}
-				else {
-					updatedProblems.add(problem);
-				}
-			});
-
-		Predicate<? super PropertyProblem> propertyMoved =
-			problem -> problem.getType() == PropertyProblemType.MODULARIZED;
-
-		boolean somePropertiesMoved = false;
-
-		Stream<PropertyProblem> updatedProblemsStream = updatedProblems.stream();
-
-		long count = updatedProblemsStream.filter(
-			propertyMoved
-		).count();
-
-		if (count > 0) {
-			somePropertiesMoved = true;
-		}
-
-		if (somePropertiesMoved) {
-			_outputFile.println("Some properties have been moved to a module portlet.properties:");
-
-			updatedProblemsStream = updatedProblems.stream();
-
-			updatedProblemsStream.filter(
-				propertyMoved
-			).filter(
-				problem -> problem.getReplacements() != null
-			).peek(
-				problem -> {
-					String foundProperty = problem.getPropertyName();
-
-					_outputFile.print("\t");
-					_outputFile.println(foundProperty + " can match with the following portlet properties:");
-				}
-			).flatMap(
-				problem -> {
-					List<Pair<String, String>> replacements = problem.getReplacements();
-
-					return replacements.stream();
-				}
-			).forEach(
-				replacement -> {
-					Path modulePath = Paths.get(replacement.first());
-
-					String path = String.valueOf(bundlePath.relativize(modulePath));
-
-					path = path.replaceAll("\\\\", "/");
-
-					_outputFile.print("\t\t");
-					_outputFile.println(replacement.second() + " from " + path);
-				}
-			);
-		}
-
-		return updatedProblems;
 	}
 
 	private static List<Pair<String, String>> _filterMostLikelyMatches(
@@ -668,7 +254,7 @@ public class PropertiesLocator {
 		return configurationProperties;
 	}
 
-	private static Properties _getCurrentPortalProperties(Path bundlePath) throws Exception {
+	private static Properties _getCurrentPortalProperties() throws Exception {
 		Properties properties = new Properties();
 
 		BiPredicate<Path, BasicFileAttributes> matcher = (path, attrs) -> {
@@ -677,7 +263,7 @@ public class PropertiesLocator {
 			return attrs.isRegularFile() && pathString.endsWith(_PORTAL_IMPL_RELATIVE_PATH);
 		};
 
-		try (Stream<Path> paths = Files.find(bundlePath, Integer.MAX_VALUE, matcher)) {
+		try (Stream<Path> paths = Files.find(_bundlePath, Integer.MAX_VALUE, matcher)) {
 			Stream<Path> singlePath = paths.limit(1);
 
 			singlePath.forEach(
@@ -696,7 +282,7 @@ public class PropertiesLocator {
 		_removeScopedProperties(properties);
 
 		if (properties.isEmpty()) {
-			throw new Exception("File portal.properties does not exist in " + bundlePath);
+			throw new Exception("File portal.properties does not exist in " + _bundlePath);
 		}
 
 		return properties;
@@ -778,9 +364,6 @@ public class PropertiesLocator {
 		return numOccurrences;
 	}
 
-	/*
-		We get portlet names from first two words in a property
-	 */
 	private static String _getPortletNameAsProperty(String[] portletNames) {
 		String portletNameAsProperty = StringPool.BLANK;
 
@@ -820,24 +403,26 @@ public class PropertiesLocator {
 		return portletNames;
 	}
 
-	private static Set<String> _getPropertyKeys(File file) throws Exception {
-		try {
-			List<String> lines = Files.readAllLines(file.toPath());
+	/*
+		We get portlet names from first two words in a property
+	 */
+	private static SortedSet<PropertyProblem> _getProblems(Set<String> oldPropertyKeys, Properties newProperties) {
+		SortedSet<PropertyProblem> problems = new TreeSet<>();
 
-			Stream<String> stream = lines.stream();
+		for (String oldPropertyKey : oldPropertyKeys) {
+			if (oldPropertyKey.contains("[")) {
+				oldPropertyKey = oldPropertyKey.substring(0, oldPropertyKey.indexOf("["));
+			}
 
-			return stream.map(String::trim
-			).filter(
-				line -> !line.startsWith("#") && !line.equals(StringPool.BLANK) && line.contains(StringPool.EQUALS)
-			).map(
-				line -> line.substring(0, line.indexOf(StringPool.EQUALS))
-			).collect(Collectors.toSet());
+			if (newProperties.getProperty(oldPropertyKey) == null) {
+				problems.add(new PropertyProblem(oldPropertyKey, PropertyProblemType.MISSING));
+			}
+			else {
+				problems.add(new PropertyProblem(oldPropertyKey, PropertyProblemType.NONE));
+			}
 		}
-		catch (Exception e) {
-			System.out.println("Unable to read properties file " + file.getCanonicalPath());
 
-			throw e;
-		}
+		return problems;
 	}
 
 	private static void _getPropertiesFromJar(String propertiesJarURL, Properties properties) throws Exception {
@@ -857,25 +442,29 @@ public class PropertiesLocator {
 		}
 	}
 
-	private static SortedSet<String> _getRemovedProperties(
-		Set<String> oldPropertyKeys, Properties newProperties, SortedSet<String> remainedProperties) {
+	private static Set<String> _getPropertyKeys(File file) throws Exception {
+		try {
+			List<String> lines = Files.readAllLines(file.toPath());
 
-		SortedSet<String> removedProperties = new TreeSet<>();
+			Stream<String> stream = lines.stream();
 
-		for (String oldPropertyKey : oldPropertyKeys) {
-			if (oldPropertyKey.contains("[")) {
-				oldPropertyKey = oldPropertyKey.substring(0, oldPropertyKey.indexOf("["));
-			}
-
-			if (newProperties.getProperty(oldPropertyKey) == null) {
-				removedProperties.add(oldPropertyKey);
-			}
-			else {
-				remainedProperties.add(oldPropertyKey);
-			}
+			return stream.map(
+				String::trim
+			).filter(
+				line ->
+					!line.startsWith("#") && !line.equals(StringPool.BLANK) && line.contains(StringPool.EQUALS) &&
+					line.contains(StringPool.PERIOD)
+			).map(
+				line -> line.substring(0, line.indexOf(StringPool.EQUALS))
+			).collect(
+				Collectors.toSet()
+			);
 		}
+		catch (Exception e) {
+			System.out.println("Unable to read properties file " + file.getCanonicalPath());
 
-		return removedProperties;
+			throw e;
+		}
 	}
 
 	private static boolean _isLiferayJar(String path) {
@@ -886,64 +475,291 @@ public class PropertiesLocator {
 		return true;
 	}
 
-	private static SortedSet<PropertyProblem> _manageExceptions(SortedSet<PropertyProblem> problems) {
-		SortedSet<PropertyProblem> informationToPrint = new TreeSet<>();
+	private static void _manageConfigurationProperties(SortedSet<PropertyProblem> problems) throws IOException {
+		Map<String, ConfigurationClassData> configClassesMap = new TreeMap<>();
 
-		SortedSet<PropertyProblem> updatedProblems = new TreeSet<>();
+		try (Stream<Path> paths = Files.walk(_bundlePath)) {
+			Stream<File> files = paths.map(path -> path.toFile());
 
+			files.filter(
+				file -> {
+					String absolutePath = file.getAbsolutePath();
+
+					return (absolutePath.endsWith(".jar") || absolutePath.endsWith(".lpkg")) &&
+						   !absolutePath.contains("/osgi/state/");
+				}
+			).forEach(
+				file -> {
+					try {
+						String absolutePath = file.getAbsolutePath();
+
+						if (_isLiferayJar(absolutePath)) {
+							FileInputStream inputStream = new FileInputStream(absolutePath);
+
+							try (JarInputStream jarIs = new JarInputStream(inputStream)) {
+								ZipEntry zipEntryJar = jarIs.getNextEntry();
+
+								while (zipEntryJar != null) {
+									String name = zipEntryJar.getName();
+
+									if (name.endsWith("Configuration.class")) {
+										configClassesMap.put(
+											name.replace(".class", StringPool.BLANK),
+											new ConfigurationClassData(jarIs));
+									}
+
+									zipEntryJar = jarIs.getNextEntry();
+								}
+							}
+							catch (Exception e) {
+								System.out.println("Unable to read the content of " + absolutePath);
+
+								return;
+							}
+						}
+						else if (absolutePath.endsWith(".lpkg")) {
+							try (ZipFile zipFile = new ZipFile(absolutePath)) {
+								Enumeration<?> enu = zipFile.entries();
+
+								while (enu.hasMoreElements()) {
+									ZipEntry zipEntry = (ZipEntry)enu.nextElement();
+
+									if (_isLiferayJar(zipEntry.getName())) {
+										InputStream inputStream = zipFile.getInputStream(zipEntry);
+
+										try (JarInputStream jarIs = new JarInputStream(inputStream)) {
+											ZipEntry zipEntryJar = jarIs.getNextEntry();
+
+											while (zipEntryJar != null) {
+												String name = zipEntryJar.getName();
+
+												if (name.endsWith("Configuration.class")) {
+													configClassesMap.put(
+														name.replace(".class", StringPool.BLANK),
+														new ConfigurationClassData(jarIs));
+												}
+
+												zipEntryJar = jarIs.getNextEntry();
+											}
+										}
+										catch (Exception e) {
+										}
+									}
+								}
+							}
+						}
+					}
+					catch (Exception e) {
+						System.out.println("Unable to get portlet properties");
+
+						e.printStackTrace();
+
+						return;
+					}
+				}
+			);
+		}
+
+		List<Pair<String, String[]>> configurationProperties = _getConfigurationProperties(configClassesMap);
+
+		Stream<PropertyProblem> problemsStream = problems.stream();
+
+		problemsStream.filter(
+			problem -> problem.getType() == PropertyProblemType.MISSING
+		).forEach(
+			problem -> {
+				String property = problem.getPropertyName();
+
+				List<Pair<String, String>> mostLikelyMatches = _getMostLikelyMatches(
+					property, configurationProperties, _getPortletNames(property));
+
+				if (!mostLikelyMatches.isEmpty()) {
+					problem.setReplacements(mostLikelyMatches);
+					problem.setType(PropertyProblemType.OSGI);
+				}
+			}
+		);
+	}
+
+	private static void _manageExceptions(SortedSet<PropertyProblem> problems) {
 		for (PropertyProblem problem : problems) {
-			String property = problem.getPropertyName();
+			if (problem.getType() != PropertyProblemType.MISSING) {
+				continue;
+			}
 
-			PropertyProblem updatedProblem = null;
+			String property = problem.getPropertyName();
 
 			if (property.endsWith("display.templates.config") && !property.equals("blogs.display.templates.config") &&
 				!property.equals("dl.display.templates.config")) {
 
-				updatedProblem = new PropertyProblem(
-					property, PropertyProblemType.REMOVED, "Overwrite the method in the ADT handler. See LPS-67466",
-					null);
+				problem.setMessage("Overwrite the method in the ADT handler. See LPS-67466");
+				problem.setType(PropertyProblemType.REMOVED);
 			}
 			else if (property.endsWith("breadcrumb.display.style.default")) {
-				updatedProblem = new PropertyProblem(
-					property, PropertyProblemType.MODULARIZED,
-					" Use ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.internal.configuration." +
+				problem.setMessage(
+					"Use ddmTemplateKeyDefault in com.liferay.site.navigation.breadcrumb.web.internal.configuration." +
 						"SiteNavigationBreadcrumbWebTemplateConfiguration. More information at Breaking Changes for " +
-							"Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts",
-					null);
+							"Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts");
+
+				problem.setType(PropertyProblemType.OSGI);
 			}
 			else if (property.endsWith("breadcrumb.display.style.options")) {
-				updatedProblem = new PropertyProblem(
-					property, PropertyProblemType.REMOVED,
+				problem.setMessage(
 					"Any DDM template as ddmTemplate_BREADCRUMB-HORIZONTAL-FTL can be used. More information at " +
-						"Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts",
-					null);
+						"Breaking Changes for Liferay 7: https://dev.liferay.com/develop/reference/-/knowledge_base/7-0/breaking-changes#replaced-the-breadcrumb-portlets-display-styles-with-adts");
+
+				problem.setType(PropertyProblemType.REMOVED);
 			}
 			else if (property.startsWith("upgrade.processes")) {
-				updatedProblem = new PropertyProblem(
-					property, PropertyProblemType.REMOVED, "Upgrade process properties are not longer needed",
-					null);
-			}
-
-			if (updatedProblem == null) {
-				updatedProblems.add(problem);
-			}
-			else {
-				informationToPrint.add(updatedProblem);
-
-				updatedProblems.add(updatedProblem);
+				problem.setMessage("Upgrade process properties are not longer needed");
+				problem.setType(PropertyProblemType.REMOVED);
 			}
 		}
+	}
 
-		if (!informationToPrint.isEmpty()) {
-			_outputFile.println("Following portal properties present an exception:");
+	private static void _managePortletProperties(SortedSet<PropertyProblem> problems) throws Exception {
+		List<Pair<String, String[]>> portletsProperties = new ArrayList<>();
 
-			for (PropertyProblem information : informationToPrint) {
-				_outputFile.print("\t");
-				_outputFile.println(information);
-			}
+		// We don't need to analyze war files since, they are still like in previous versions so properties
+		// still remain in the same place
+
+		Predicate<Path> ignoreStateFilter = p -> {
+			String path = p.toString();
+
+			return !path.contains("/osgi/state/");
+		};
+
+		Predicate<Path> lpkgFilter = p -> {
+			String path = p.toString();
+
+			return path.endsWith(".lpkg");
+		};
+
+		Path searchPathRoot = _bundlePath.resolve("osgi");
+
+		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
+			Stream<Path> filter = paths.filter(ignoreStateFilter);
+
+			filter.map(
+				jarPath -> jarPath.toAbsolutePath()
+			).map(
+				absolutePath -> absolutePath.toString()
+			).filter(
+				PropertiesLocator::_isLiferayJar
+			).forEach(
+				absolutePath -> {
+					try (JarFile jarFile = new JarFile(absolutePath)) {
+						JarEntry portletPropertiesFile = jarFile.getJarEntry("portlet.properties");
+
+						Properties portletProperties = new Properties();
+
+						if (portletPropertiesFile != null) {
+							_getPropertiesFromJar(
+								"jar:file:" + absolutePath + "!/portlet.properties", portletProperties);
+						}
+
+						Enumeration<Object> enuKeys = portletProperties.keys();
+
+						String[] propertyKeys = new String[0];
+
+						while (enuKeys.hasMoreElements()) {
+							propertyKeys = ArrayUtil.append(propertyKeys, (String)enuKeys.nextElement());
+						}
+
+						if (propertyKeys.length != 0) {
+							portletsProperties.add(
+								new Pair<String, String[]>(absolutePath + "/portlet.properties", propertyKeys));
+						}
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			);
 		}
 
-		return updatedProblems;
+		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
+			Stream<Path> filter = paths.filter(ignoreStateFilter);
+
+			Stream<Path> filter2 = filter.filter(lpkgFilter);
+
+			filter2.map(
+				lpkgPath -> lpkgPath.toAbsolutePath()
+			).map(
+				absolutePath -> absolutePath.toString()
+			).forEach(
+				lpkgAbsolutePath -> {
+					try (ZipFile zipFile = new ZipFile(lpkgAbsolutePath)) {
+						Enumeration<?> enu = zipFile.entries();
+
+						while (enu.hasMoreElements()) {
+							ZipEntry zipEntry = (ZipEntry)enu.nextElement();
+
+							if (_isLiferayJar(zipEntry.getName())) {
+								InputStream inputStream = zipFile.getInputStream(zipEntry);
+
+								try (JarInputStream jarIs = new JarInputStream(inputStream)) {
+									ZipEntry zipEntryJar = jarIs.getNextEntry();
+
+									while (zipEntryJar != null) {
+										String zipEntryJarName = zipEntryJar.getName();
+
+										if (zipEntryJarName.equals("portlet.properties")) {
+											Properties portletProperties = new Properties();
+
+											portletProperties.load(jarIs);
+
+											Enumeration<Object> enuKeys = portletProperties.keys();
+
+											String[] propertyKeys = new String[0];
+
+											while (enuKeys.hasMoreElements()) {
+												propertyKeys = ArrayUtil.append(
+													propertyKeys, (String)enuKeys.nextElement());
+											}
+
+											if (propertyKeys.length != 0) {
+												String prop =
+													lpkgAbsolutePath + "/" + zipEntry.getName() + "/portlet.properties";
+
+												portletsProperties.add(new Pair<String, String[]>(prop, propertyKeys));
+											}
+
+											break;
+										}
+
+										zipEntryJar = jarIs.getNextEntry();
+									}
+								}
+								catch (Exception e) {
+								}
+							}
+						}
+					}
+					catch (IOException ioe) {
+						ioe.printStackTrace();
+					}
+				}
+			);
+		}
+
+		Stream<PropertyProblem> problemsStream = problems.stream();
+
+		problemsStream.filter(
+			problem -> problem.getType() == PropertyProblemType.MISSING
+		).forEach(
+			problem -> {
+				String property = problem.getPropertyName();
+
+				List<Pair<String, String>> mostLikelyMatches = _getMostLikelyMatches(
+					property, portletsProperties, _getPortletNames(property));
+
+				if (!mostLikelyMatches.isEmpty()) {
+					problem.setReplacements(mostLikelyMatches);
+					problem.setType(PropertyProblemType.MODULARIZED);
+				}
+			}
+		);
 	}
 
 	private static boolean _match(
@@ -993,21 +809,6 @@ public class PropertiesLocator {
 		return false;
 	}
 
-	private static void _printProperties(Set<String> properties) {
-		for (String property : properties) {
-			_outputFile.print("\t");
-			_outputFile.println(property);
-		}
-	}
-
-	private static void _printUnderline(String text) {
-		for (int i = 0; i < text.length(); i++) {
-			_outputFile.print(StringPool.DASH);
-		}
-
-		_outputFile.println(StringPool.BLANK);
-	}
-
 	private static String _removeCommonPrefix(String property) {
 		for (String prefix : _COMMON_PREFIXES) {
 			if (property.startsWith(prefix)) {
@@ -1036,6 +837,95 @@ public class PropertiesLocator {
 		}
 	}
 
+	private void _printInfo(PrintWriter outputFile, SortedSet<PropertyProblem> problems) {
+		Stream<PropertyProblem> problemsStream = problems.stream();
+
+		problemsStream.forEach(
+			problem -> {
+				outputFile.println(problem.getPropertyName());
+
+				outputFile.print("\t");
+
+				if (problem.getType() == PropertyProblemType.NONE) {
+					outputFile.println("KEEP - This property is still present in the new portal.properties.");
+				}
+				else if (problem.getType() == PropertyProblemType.MISSING) {
+					outputFile.println(
+						"ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement");
+				}
+				else if (problem.getType() == PropertyProblemType.REMOVED) {
+					outputFile.println("REMOVE - " + problem.getMessage());
+				}
+				else if (problem.getType() == PropertyProblemType.OSGI) {
+					outputFile.print("MODULARIZE AS OSGI - ");
+
+					if (problem.getMessage() != null) {
+						outputFile.print(problem.getMessage());
+					}
+					else {
+						outputFile.println(
+							"This property matches with the following OSGI config, select the most appropriate:");
+
+						_printOSGIReplacements(outputFile, problem.getReplacements());
+					}
+				}
+				else if (problem.getType() == PropertyProblemType.MODULARIZED) {
+					outputFile.print("MODULARIZE - ");
+
+					if (problem.getMessage() != null) {
+						outputFile.print(problem.getMessage());
+					}
+					else {
+						outputFile.println(
+							"This property matches with the following portlet properties, select the most appropriate:");
+
+						_printModularizedReplacements(outputFile, problem.getReplacements());
+					}
+				}
+
+				outputFile.println();
+			});
+	}
+
+	private void _printModularizedReplacements(PrintWriter outputFile, List<Pair<String, String>> replacements) {
+		Stream<Pair<String, String>> replacementsStream = replacements.stream();
+
+		replacementsStream.forEach(
+			replacement -> {
+				Path modulePath = Paths.get(replacement.first());
+
+				String path = String.valueOf(_bundlePath.relativize(modulePath));
+
+				path = path.replaceAll("\\\\", "/");
+
+				outputFile.print("\t\t- ");
+				outputFile.println(replacement.second() + " from " + path);
+			});
+	}
+
+	private void _printOSGIReplacements(PrintWriter outputFile, List<Pair<String, String>> replacements) {
+		Stream<Pair<String, String>> replacementsStream = replacements.stream();
+
+		replacementsStream.sorted(
+			(r1, r2) -> {
+				String r1First = r1.first();
+				String r2First = r2.first();
+
+				return r1First.compareTo(r2First);
+			}
+		).forEach(
+			replacement -> {
+				String path = replacement.first();
+
+				String configFileName = StringUtil.replace(
+					path, StringPool.FORWARD_SLASH.charAt(0), StringPool.PERIOD.charAt(0));
+
+				outputFile.print("\t\t- ");
+				outputFile.println(replacement.second() + " from " + configFileName);
+			}
+		);
+	}
+
 	private static final String[] _COMMON_PREFIXES = {
 		"asset", "dynamic.data.lists", "dynamic.data.mapping", "journal", "audit", "auth", "blogs", "bookmarks", "cas",
 		"journal", "wiki"
@@ -1044,7 +934,7 @@ public class PropertiesLocator {
 	private static final String _PORTAL_IMPL_RELATIVE_PATH =
 		File.separator + "WEB-INF" + File.separator + "lib" + File.separator + "portal-impl.jar";
 
-	private static PrintWriter _outputFile;
+	private static Path _bundlePath;
 
 	@SuppressWarnings("serial")
 	private static final Map<String, String> _portletNameEquivalences = new TreeMap<String, String>() {
@@ -1052,7 +942,5 @@ public class PropertiesLocator {
 			put("dl", "document-library");
 		}
 	};
-
-	private SortedSet<PropertyProblem> _problems;
 
 }
