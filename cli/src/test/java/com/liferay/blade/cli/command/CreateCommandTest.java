@@ -25,7 +25,6 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.project.templates.ProjectTemplates;
 
@@ -1820,34 +1819,6 @@ public class CreateCommandTest {
 		for (String templateName : templateNames) {
 			Assert.assertTrue(output.contains(templateName));
 		}
-	}
-
-	@Test
-	public void testWorkspaceWithoutProductVersion() throws Exception {
-		File workspace = new File(_rootDir, "workspace");
-
-		_makeWorkspace(workspace);
-
-		BladeUtil.writePropertyValue(
-			new File(workspace.getAbsolutePath(), "gradle.properties"), "liferay.workspace.product", null);
-
-		File modulesDir = new File(workspace, "modules");
-
-		String[] args = {"--base", modulesDir.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo"};
-
-		InputStream in = new ByteArrayInputStream("1".getBytes());
-
-		TestUtil.runBlade(workspace, _extensionsDir, in, args);
-
-		File buildGradle = new File(modulesDir, "foo/build.gradle");
-
-		_checkFileExists(buildGradle.getAbsolutePath());
-
-		String content = FileUtil.read(buildGradle);
-
-		Assert.assertEquals(1, StringUtils.countMatches(content, '{'));
-
-		Assert.assertEquals(1, StringUtils.countMatches(content, '}'));
 	}
 
 	@Test

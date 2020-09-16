@@ -87,7 +87,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
 
 				if (BladeUtil.isEmpty(dockerImageProperty)) {
-					System.out.println("Please enter a valid value for liferay version:");
+					return null;
 				}
 
 				Matcher matcher = patternDockerImageLiferayVersion.matcher(dockerImageProperty);

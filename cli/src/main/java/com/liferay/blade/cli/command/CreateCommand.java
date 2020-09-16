@@ -335,7 +335,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		String liferayVersion = _getLiferayVersion(workspaceProvider, createArgs);
 
 		if (BladeUtil.isEmpty(liferayVersion)) {
-			throw new IOException("LiferayVersion can not be Empty");
+			throw new IOException("Cannot determine Liferay Version. Please enter a valid value for Liferay Version.");
 		}
 
 		projectTemplatesArgs.setLiferayVersion(liferayVersion);
