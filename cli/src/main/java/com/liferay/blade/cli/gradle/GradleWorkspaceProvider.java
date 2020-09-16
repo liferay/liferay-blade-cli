@@ -83,7 +83,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			if (BladeUtil.isEmpty(targetPlatformVersion)) {
 				String dockerImageProperty = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE);
 
-				Matcher matcher = _dxpCloudWorkspaceLiferayVersionV4Pattern.matcher(dockerImageProperty);
+				Matcher matcher = patternDockerImageLiferayVersion.matcher(dockerImageProperty);
 
 				targetPlatformVersion = matcher.group();
 			}
@@ -226,7 +226,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		}
 
 	}
-	private static final Pattern _dxpCloudWorkspaceLiferayVersionV4Pattern = Pattern.compile("(?<=liferay/dxp:).{3}");
+	public static final Pattern patternDockerImageLiferayVersion = Pattern.compile("(?<=liferay/(dxp|portal):).{3}");
 
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
 
