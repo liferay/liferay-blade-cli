@@ -510,7 +510,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		throws IOException {
 
 		if (workspaceProvider == null) {
-			return Optional.ofNullable(createArgs.getLiferayVersion());
+			return Optional.ofNullable(
+				createArgs.getLiferayVersion()
+			).filter(
+				BladeUtil::isNotEmpty
+			);
 		}
 
 		File dir = createArgs.getDir();
@@ -525,7 +529,12 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			liferayVersion = workspaceProvider.getLiferayVersion(dir);
 		}
 
-		return _normalizeLiferayVersion(Optional.ofNullable(liferayVersion));
+		return _normalizeLiferayVersion(
+			Optional.ofNullable(
+				liferayVersion
+			).filter(
+				BladeUtil::isNotEmpty
+			));
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {

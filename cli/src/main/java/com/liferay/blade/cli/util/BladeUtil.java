@@ -417,6 +417,10 @@ public class BladeUtil {
 		return !isEmpty(array);
 	}
 
+	public static boolean isNotEmpty(String string) {
+		return !isEmpty(string);
+	}
+
 	public static boolean isSafelyRelative(File file, File destDir) {
 		Path destPath = destDir.toPath();
 

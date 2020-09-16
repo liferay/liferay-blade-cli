@@ -69,7 +69,10 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			Properties gradleProperties = getGradleProperties(workspaceDir);
 
 			Optional<String> baseLiferayVersion = Optional.ofNullable(
-				gradleProperties.getProperty(WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY));
+				gradleProperties.getProperty(WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY)
+			).filter(
+				BladeUtil::isNotEmpty
+			);
 
 			if (!baseLiferayVersion.isPresent()) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
@@ -79,7 +82,11 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
 
 				if (productInfo != null) {
-					baseLiferayVersion = Optional.ofNullable(productInfo.getTargetPlatformVersion());
+					baseLiferayVersion = Optional.ofNullable(
+						productInfo.getTargetPlatformVersion()
+					).filter(
+						BladeUtil::isNotEmpty
+					);
 				}
 			}
 
