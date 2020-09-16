@@ -71,10 +71,6 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			if (BladeUtil.isEmpty(targetPlatformVersion)) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
-				if (BladeUtil.isEmpty(productKey)) {
-					return null;
-				}
-
 				Map<String, Object> productInfoMap = BladeUtil.getProductInfos();
 
 				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
@@ -82,6 +78,14 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 				if (productInfo != null) {
 					targetPlatformVersion = productInfo.getTargetPlatformVersion();
 				}
+			}
+
+			if (BladeUtil.isEmpty(targetPlatformVersion)) {
+				String dockerImageProperty = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE);
+
+				Matcher matcher = _dxpCloudWorkspaceLiferayVersionV4Pattern.matcher(dockerImageProperty);
+
+				targetPlatformVersion = matcher.group();
 			}
 
 			if (!BladeUtil.isEmpty(targetPlatformVersion)) {
@@ -108,16 +112,19 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		return null;
 	}
 
+
 	public File getSettingGradleFile(File dir) {
 		return new File(getWorkspaceDir(dir), _SETTINGS_GRADLE_FILE_NAME);
 	}
 
+	@Override
 	public File getWorkspaceDir(BladeCLI blade) {
 		BaseArgs args = blade.getArgs();
 
 		return getWorkspaceDir(args.getBase());
 	}
 
+	@Override
 	public File getWorkspaceDir(File dir) {
 		File gradleParent = BladeUtil.findParentFile(
 			dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
@@ -181,6 +188,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		return false;
 	}
 
+	@Override
 	public boolean isWorkspace(File dir) {
 		File workspaceDir = getWorkspaceDir(dir);
 
@@ -216,7 +224,9 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		catch (Exception e) {
 			return false;
 		}
+
 	}
+	private static final Pattern _dxpCloudWorkspaceLiferayVersionV4Pattern = Pattern.compile("(?<=liferay/dxp:).{3}");
 
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
 
