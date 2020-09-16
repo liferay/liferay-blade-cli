@@ -24,6 +24,7 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.project.templates.ProjectTemplates;
@@ -1512,7 +1513,7 @@ public class CreateCommandTest {
 
 		File gradlePropertiesFile = new File(workspace, "gradle.properties");
 
-		String modulesDirNull = "\nliferay.workspace.modules.dir=";
+		String modulesDirNull = "\n" + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY;
 
 		Files.write(gradlePropertiesFile.toPath(), modulesDirNull.getBytes(), StandardOpenOption.APPEND);
 
@@ -1870,7 +1871,8 @@ public class CreateCommandTest {
 	private static File _enableTargetPlatformInWorkspace(File workspaceDir, String liferayVersion) throws IOException {
 		File gradlePropertiesFile = new File(workspaceDir, "gradle.properties");
 
-		String targetPlatformVersionProperty = "\nliferay.workspace.target.platform.version=" + liferayVersion;
+		String targetPlatformVersionProperty =
+			System.lineSeparator() + WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY + liferayVersion;
 
 		Files.write(gradlePropertiesFile.toPath(), targetPlatformVersionProperty.getBytes(), StandardOpenOption.APPEND);
 
@@ -1882,7 +1884,9 @@ public class CreateCommandTest {
 
 		Assert.assertTrue(gradleProperties.exists());
 
-		String configLine = System.lineSeparator() + "liferay.workspace.modules.dir=modules";
+		String configLine =
+			System.lineSeparator() + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY +
+				WorkspaceConstants.DEFAULT_MODULES_DIR;
 
 		Files.write(gradleProperties.toPath(), configLine.getBytes(), StandardOpenOption.APPEND);
 	}
