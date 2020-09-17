@@ -20,7 +20,6 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.ByteArrayInputStream;
@@ -98,9 +97,7 @@ public class InitCommandTest {
 
 		bladeTest.run(args);
 
-		WorkspaceProvider workspaceProvider = bladeTest.getWorkspaceProvider(emptyDir);
-
-		Assert.assertNotNull(workspaceProvider);
+		Assert.assertNotNull(bladeTest.getWorkspaceProvider(emptyDir));
 	}
 
 	@Test
@@ -117,9 +114,7 @@ public class InitCommandTest {
 
 		bladeTest.run(args);
 
-		WorkspaceProvider workspaceProvider = bladeTest.getWorkspaceProvider(emptyDir);
-
-		Assert.assertNotNull(workspaceProvider);
+		Assert.assertNotNull(bladeTest.getWorkspaceProvider(emptyDir));
 	}
 
 	@Test
@@ -136,9 +131,7 @@ public class InitCommandTest {
 
 		bladeTest.run(args);
 
-		WorkspaceProvider workspaceProvider = bladeTest.getWorkspaceProvider(emptyDir);
-
-		Assert.assertNotNull(workspaceProvider);
+		Assert.assertNotNull(bladeTest.getWorkspaceProvider(emptyDir));
 	}
 
 	@Test

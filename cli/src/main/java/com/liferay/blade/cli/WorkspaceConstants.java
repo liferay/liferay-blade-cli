@@ -35,6 +35,8 @@ public class WorkspaceConstants {
 
 	public static final String DEFAULT_EXT_DIR_PROPERTY = "liferay.workspace.ext.dir";
 
+	public static final String DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY = "liferay.workspace.docker.image.liferay";
+
 	public static final String DEFAULT_LIFERAY_HOME_DIR = "bundles";
 
 	public static final String DEFAULT_LIFERAY_HOME_DIR_PROPERTY = "liferay.workspace.home.dir";

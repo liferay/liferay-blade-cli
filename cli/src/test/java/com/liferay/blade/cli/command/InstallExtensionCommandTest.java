@@ -108,15 +108,15 @@ public class InstallExtensionCommandTest {
 		Path extensionDirPath = rootPath.resolve(Paths.get(".blade", "extensions"));
 
 		try (Stream<Path> extensionStream = Files.list(extensionDirPath)) {
-			boolean pathExists = extensionStream.map(
-				Path::getFileName
-			).map(
-				Object::toString
-			).anyMatch(
-				fileNameString -> fileNameString.startsWith("maven-profile")
-			);
-
-			Assert.assertTrue("maven-profile extension jar does not exist", pathExists);
+			Assert.assertTrue(
+				"maven-profile extension jar does not exist",
+				extensionStream.map(
+					Path::getFileName
+				).map(
+					Object::toString
+				).anyMatch(
+					fileNameString -> fileNameString.startsWith("maven-profile")
+				));
 		}
 	}
 

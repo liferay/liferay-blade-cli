@@ -30,6 +30,7 @@ import java.io.FilenameFilter;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +40,8 @@ import java.util.regex.Pattern;
  */
 public class GradleWorkspaceProvider implements WorkspaceProvider {
 
+	public static final Pattern patternDockerImageLiferayVersion = Pattern.compile(
+		".*(?<=liferay/(?:dxp|portal):)(.{3}).*", Pattern.DOTALL | Pattern.MULTILINE);
 	public static final Pattern patternWorkspacePlugin = Pattern.compile(
 		".*apply\\s*plugin\\s*:\\s*[\'\"]com\\.liferay\\.workspace[\'\"]\\s*$", Pattern.MULTILINE | Pattern.DOTALL);
 	public static final Pattern patternWorkspacePluginLatestRelease = Pattern.compile(
@@ -65,40 +68,58 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		try {
 			Properties gradleProperties = getGradleProperties(workspaceDir);
 
-			String targetPlatformVersion = gradleProperties.getProperty(
-				WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY);
+			Optional<String> baseLiferayVersion = Optional.ofNullable(
+				gradleProperties.getProperty(WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY)
+			).filter(
+				BladeUtil::isNotEmpty
+			);
 
-			if (BladeUtil.isEmpty(targetPlatformVersion)) {
+			if (!baseLiferayVersion.isPresent()) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
-
-				if (BladeUtil.isEmpty(productKey)) {
-					return null;
-				}
 
 				Map<String, Object> productInfoMap = BladeUtil.getProductInfos();
 
 				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
 
 				if (productInfo != null) {
-					targetPlatformVersion = productInfo.getTargetPlatformVersion();
+					baseLiferayVersion = Optional.ofNullable(
+						productInfo.getTargetPlatformVersion()
+					).filter(
+						BladeUtil::isNotEmpty
+					);
 				}
 			}
 
-			if (!BladeUtil.isEmpty(targetPlatformVersion)) {
-				int dashPostion = targetPlatformVersion.indexOf("-");
+			if (!baseLiferayVersion.isPresent()) {
+				String dockerImageProperty = gradleProperties.getProperty(
+					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
 
-				Version productTargetPlatformVersion = null;
+				if (BladeUtil.isEmpty(dockerImageProperty)) {
+					return null;
+				}
+
+				Matcher matcher = patternDockerImageLiferayVersion.matcher(dockerImageProperty);
+
+				if (matcher.find()) {
+					baseLiferayVersion = Optional.of(matcher.group(1));
+				}
+			}
+
+			if (baseLiferayVersion.isPresent()) {
+				String presentLiferayVersion = baseLiferayVersion.get();
+
+				int dashPostion = presentLiferayVersion.indexOf("-");
+
+				Version liferayVersion = null;
 
 				if (dashPostion != -1) {
-					productTargetPlatformVersion = Version.parseVersion(
-						targetPlatformVersion.substring(0, dashPostion));
+					liferayVersion = Version.parseVersion(presentLiferayVersion.substring(0, dashPostion));
 				}
 				else {
-					productTargetPlatformVersion = Version.parseVersion(targetPlatformVersion);
+					liferayVersion = Version.parseVersion(presentLiferayVersion);
 				}
 
-				return new String(
-					productTargetPlatformVersion.getMajor() + "." + productTargetPlatformVersion.getMinor());
+				return new String(liferayVersion.getMajor() + "." + liferayVersion.getMinor());
 			}
 		}
 		catch (Exception exception) {
@@ -112,12 +133,14 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		return new File(getWorkspaceDir(dir), _SETTINGS_GRADLE_FILE_NAME);
 	}
 
+	@Override
 	public File getWorkspaceDir(BladeCLI blade) {
 		BaseArgs args = blade.getArgs();
 
 		return getWorkspaceDir(args.getBase());
 	}
 
+	@Override
 	public File getWorkspaceDir(File dir) {
 		File gradleParent = BladeUtil.findParentFile(
 			dir, new String[] {_SETTINGS_GRADLE_FILE_NAME, _GRADLE_PROPERTIES_FILE_NAME}, true);
@@ -181,6 +204,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		return false;
 	}
 
+	@Override
 	public boolean isWorkspace(File dir) {
 		File workspaceDir = getWorkspaceDir(dir);
 

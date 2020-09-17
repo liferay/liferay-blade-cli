@@ -56,17 +56,14 @@ public class BladeTest extends BladeCLI {
 		return new BladeTestBuilder();
 	}
 
+	@Override
 	public BladeSettings getBladeSettings() throws IOException {
 		File settingsBaseDir = _getSettingsBaseDir();
 
 		File settingsFile = new File(settingsBaseDir, ".blade/settings.properties");
 
-		if (settingsFile.exists()) {
-			String name = settingsFile.getName();
-
-			if (Objects.equals("settings.properties", name)) {
-				_migrateBladeSettingsFile(settingsFile);
-			}
+		if (settingsFile.exists() && Objects.equals("settings.properties", settingsFile.getName())) {
+			_migrateBladeSettingsFile(settingsFile);
 		}
 
 		settingsFile = new File(settingsBaseDir, _BLADE_PROPERTIES);

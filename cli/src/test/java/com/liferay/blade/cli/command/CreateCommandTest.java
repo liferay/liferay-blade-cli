@@ -24,6 +24,7 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.project.templates.ProjectTemplates;
 
@@ -942,6 +943,36 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceDXPLiferayVersionFromDocker() throws Exception {
+		File workspace73 = new File(_rootDir, "workspace73");
+
+		_makeWorkspace(workspace73);
+
+		File gradleProperties = new File(workspace73, "gradle.properties");
+
+		Files.deleteIfExists(gradleProperties.toPath());
+
+		String dockerImageProperty =
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "=liferay/dxp:7.3.10-ep5-202008181831";
+
+		Files.createFile(gradleProperties.toPath());
+
+		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
+
+		String[] sevenThreeArgs = {
+			"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three", "--product", "dxp"
+		};
+
+		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
+
+		File buildGradle = new File(workspace73, "seven-three/build.gradle");
+
+		String content = FileUtil.read(buildGradle);
+
+		Assert.assertTrue(content, content.contains("release.dxp.api"));
+	}
+
+	@Test
 	public void testCreateWorkspaceDXPVersionDefault() throws Exception {
 		File workspaceDXP73 = new File(_rootDir, "workspace73");
 
@@ -1396,6 +1427,27 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceLiferayVersionFromCommandLine() throws Exception {
+		File workspace73 = new File(_rootDir, "workspace73");
+
+		File modulesDir = new File(workspace73, "modules");
+
+		_makeWorkspace(workspace73);
+
+		String[] sevenTwoArgs = {
+			"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-two", "-v", "7.2"
+		};
+
+		TestUtil.runBlade(workspace73, _extensionsDir, sevenTwoArgs);
+
+		File buildGradle = new File(modulesDir, "seven-two/build.gradle");
+
+		String content = FileUtil.read(buildGradle);
+
+		Assert.assertFalse(content, content.contains("release.portal.api"));
+	}
+
+	@Test
 	public void testCreateWorkspaceModuleLocation() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
@@ -1438,7 +1490,7 @@ public class CreateCommandTest {
 
 		File gradlePropertiesFile = new File(workspace, "gradle.properties");
 
-		String modulesDirNull = "\nliferay.workspace.modules.dir=";
+		String modulesDirNull = "\n" + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY + "=";
 
 		Files.write(gradlePropertiesFile.toPath(), modulesDirNull.getBytes(), StandardOpenOption.APPEND);
 
@@ -1503,6 +1555,34 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "foo/build/libs/foo-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateWorkspacePortalLiferayVersionFromDocker() throws Exception {
+		File workspace73 = new File(_rootDir, "workspace73");
+
+		_makeWorkspace(workspace73);
+
+		File gradleProperties = new File(workspace73, "gradle.properties");
+
+		Files.deleteIfExists(gradleProperties.toPath());
+
+		String dockerImageProperty =
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "=liferay/portal:7.3.4-ga5-202008131318";
+
+		Files.createFile(gradleProperties.toPath());
+
+		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
+
+		String[] sevenThreeArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
+
+		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
+
+		File buildGradle = new File(workspace73, "seven-three/build.gradle");
+
+		String content = FileUtil.read(buildGradle);
+
+		Assert.assertTrue(content, content.contains("release.portal.api"));
 	}
 
 	@Test
@@ -1768,7 +1848,8 @@ public class CreateCommandTest {
 	private static File _enableTargetPlatformInWorkspace(File workspaceDir, String liferayVersion) throws IOException {
 		File gradlePropertiesFile = new File(workspaceDir, "gradle.properties");
 
-		String targetPlatformVersionProperty = "\nliferay.workspace.target.platform.version=" + liferayVersion;
+		String targetPlatformVersionProperty =
+			System.lineSeparator() + WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY + "=" + liferayVersion;
 
 		Files.write(gradlePropertiesFile.toPath(), targetPlatformVersionProperty.getBytes(), StandardOpenOption.APPEND);
 
@@ -1780,7 +1861,9 @@ public class CreateCommandTest {
 
 		Assert.assertTrue(gradleProperties.exists());
 
-		String configLine = System.lineSeparator() + "liferay.workspace.modules.dir=modules";
+		String configLine =
+			System.lineSeparator() + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY + "=" +
+				WorkspaceConstants.DEFAULT_MODULES_DIR;
 
 		Files.write(gradleProperties.toPath(), configLine.getBytes(), StandardOpenOption.APPEND);
 	}
