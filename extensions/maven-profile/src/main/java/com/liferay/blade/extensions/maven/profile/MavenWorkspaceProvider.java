@@ -16,13 +16,11 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.WorkspaceConstants;
+import aQute.bnd.version.Version;
+
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
-
-import aQute.bnd.version.Version;
 
 import java.io.File;
 
@@ -42,43 +40,14 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 
 	@Override
 	public String getProduct(File workspaceDir) {
-		try {
-			Properties gradleProperties = getGradleProperties(workspaceDir);
+		String targetPlatformVersion = getLiferayVersion(workspaceDir);
 
-			String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
+		Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
 
-			if (productKey == null) {
-				String product = null;
+		int microVersion = version.getMicro();
 
-				String targetPlatformVersion = gradleProperties.getProperty(
-					WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY);
-
-				Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
-
-				int microVersion = version.getMicro();
-
-				if (microVersion >= 10) {
-					product = "dxp";
-				}
-
-				if (product == null) {
-					String dockerImageProperty = gradleProperties.getProperty(
-						WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
-
-					if (dockerImageProperty.contains("dxp")) {
-						return "dxp";
-					}
-				}
-			}
-			else if (productKey.contains("dxp")) {
-				return "dxp";
-			}
-			else {
-				return "portal";
-			}
-		}
-		catch (Exception exception) {
-			BladeCLI.instance.error(exception);
+		if (microVersion >= 10) {
+			return "dxp";
 		}
 
 		return "portal";
