@@ -56,7 +56,8 @@ public class PropertiesLocatorTest {
 
 		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
 
-		Assert.assertEquals(expectedOutput.replaceAll("\\r", ""), testOutput.replaceAll("\\r", ""));
+		Assert.assertEquals(
+			expectedOutput.replaceAll(System.lineSeparator(), ""), testOutput.replaceAll(System.lineSeparator(), ""));
 	}
 
 	@Test
@@ -73,7 +74,7 @@ public class PropertiesLocatorTest {
 
 		Assert.assertNotNull(problems);
 
-		Assert.assertEquals(problems.toString(), 658, problems.size());
+		Assert.assertEquals(problems.toString(), 1623, problems.size());
 	}
 
 	@Test
@@ -103,7 +104,8 @@ public class PropertiesLocatorTest {
 
 		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
 
-		Assert.assertEquals(expectedOutput.replaceAll("\\r", ""), testOutput.replaceAll("\\r", ""));
+		Assert.assertEquals(
+			expectedOutput.replaceAll(System.lineSeparator(), ""), testOutput.replaceAll(System.lineSeparator(), ""));
 	}
 
 	private static final File _buildDir = new File(System.getProperty("buildDir"));

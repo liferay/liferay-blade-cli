@@ -1,19 +1,27 @@
-Checking the location for old properties in the new version
------------------------------------------------------------
+buffered.increment.enabled
+	KEEP - This property is still present in the new portal.properties.
 
+buffered.increment.standby.queue.threshold
+	KEEP - This property is still present in the new portal.properties.
 
-Properties moved to OSGI configuration:
-	index.search.query.suggestion.dictionary can match with the following OSGI properties:
-		searchQueryResultWindowLimit from com.liferay.portal.search.configuration.DefaultSearchResultPermissionFilterConfiguration
+buffered.increment.standby.time.upper.limit
+	KEEP - This property is still present in the new portal.properties.
 
-We have not found a new property for the following old properties (check if you still need them or check the documentation to find a replacement):
+buffered.increment.threadpool.keep.alive.time
+	KEEP - This property is still present in the new portal.properties.
 
-The following properties still exist in the new portal.properties:
-	buffered.increment.enabled
-	buffered.increment.standby.queue.threshold
-	buffered.increment.standby.time.upper.limit
-	buffered.increment.threadpool.keep.alive.time
-	buffered.increment.threadpool.max.size
-	index.search.spell.checker.dictionary
-	sites.friendly.url.page.not.found
-	web.server.protocol
+buffered.increment.threadpool.max.size
+	KEEP - This property is still present in the new portal.properties.
+
+index.search.query.suggestion.dictionary
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- searchQueryResultWindowLimit from com.liferay.portal.search.configuration.DefaultSearchResultPermissionFilterConfiguration
+
+index.search.spell.checker.dictionary
+	KEEP - This property is still present in the new portal.properties.
+
+sites.friendly.url.page.not.found
+	KEEP - This property is still present in the new portal.properties.
+
+web.server.protocol
+	KEEP - This property is still present in the new portal.properties.
