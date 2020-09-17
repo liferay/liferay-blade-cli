@@ -161,6 +161,7 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		projectTemplatesArgs.setName(sbProjectFileName.toString());
 		projectTemplatesArgs.setPackageName(oldServiceBuilderXml.getPackagePath());
 		projectTemplatesArgs.setTemplate("service-builder");
+		projectTemplatesArgs.setProduct(_convertArgs.getProduct());
 
 		createCommand.execute(projectTemplatesArgs);
 

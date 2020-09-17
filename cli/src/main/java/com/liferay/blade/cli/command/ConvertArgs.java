@@ -38,7 +38,8 @@ public class ConvertArgs extends BaseArgs {
 	}
 
 	public ConvertArgs(
-		boolean all, boolean list, boolean themeBuilder, boolean removeSource, File source, List<String> name) {
+		boolean all, boolean list, boolean themeBuilder, boolean removeSource, File source, List<String> name,
+		String product) {
 
 		_all = all;
 		_list = list;
@@ -46,10 +47,11 @@ public class ConvertArgs extends BaseArgs {
 		_removeSource = removeSource;
 		_source = source;
 		_name = name;
+		_product = product;
 	}
 
 	public ConvertArgs(boolean all, boolean list, boolean themeBuilder, File source, List<String> name) {
-		this(all, list, themeBuilder, false, source, name);
+		this(all, list, themeBuilder, false, source, name, "portal");
 	}
 
 	public CommandType getCommandType() {
@@ -62,6 +64,10 @@ public class ConvertArgs extends BaseArgs {
 
 	public List<String> getName() {
 		return _name;
+	}
+
+	public String getProduct() {
+		return _product;
 	}
 
 	public File getSource() {
@@ -88,6 +94,10 @@ public class ConvertArgs extends BaseArgs {
 		_liferayVersion = liferayVersion;
 	}
 
+	public void setProduct(String product) {
+		_product = product;
+	}
+
 	@Parameter(description = "Migrate all plugin projects", names = {"-a", "--all"})
 	private boolean _all;
 
@@ -102,6 +112,9 @@ public class ConvertArgs extends BaseArgs {
 
 	@Parameter(description = "[name]")
 	private List<String> _name = new ArrayList<>();
+
+	@Parameter(description = "The option for Liferay Platform product. (portal)|(dxp)", names = "--product")
+	private String _product = "portal";
 
 	@Parameter(description = "Remove source plugin projects, default value is true", names = {"-r", "--remove"})
 	private boolean _removeSource = false;
