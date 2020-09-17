@@ -1620,6 +1620,10 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "foo/build/libs/foo-1.0.0.jar"));
+
+		buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "resolve");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 	}
 
 	@Test
@@ -1703,6 +1707,10 @@ public class CreateCommandTest {
 
 		_verifyImportPackage(
 			new File(projectPath, "seven-zero/seven-zero-service/build/libs/seven.zero.service-1.0.0.jar"));
+
+		buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "resolve");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 	}
 
 	@Test
@@ -1744,6 +1752,10 @@ public class CreateCommandTest {
 
 		_verifyImportPackage(
 			new File(projectPath, "seven-one/seven-one-service/build/libs/seven.one.service-1.0.0.jar"));
+
+		buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "resolve");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 	}
 
 	@Test
