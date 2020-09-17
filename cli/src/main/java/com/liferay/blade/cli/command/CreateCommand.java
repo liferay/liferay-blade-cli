@@ -557,26 +557,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return product;
 	}
 
-	private String _getProduct(WorkspaceProvider workspaceProvider, CreateArgs createArgs) {
-		if (workspaceProvider == null) {
-			return createArgs.getProduct();
-		}
-
-		File dir = createArgs.getDir();
-
-		if (dir == null) {
-			dir = createArgs.getBase();
-		}
-
-		String product = createArgs.getProduct();
-
-		if (product.equals("portal")) {
-			product = workspaceProvider.getProduct(dir);
-		}
-
-		return product;
-	}
-
 	private boolean _isExistingTemplate(String templateName) throws Exception {
 		Collection<String> templateNames = BladeUtil.getTemplateNames(getBladeCLI());
 
