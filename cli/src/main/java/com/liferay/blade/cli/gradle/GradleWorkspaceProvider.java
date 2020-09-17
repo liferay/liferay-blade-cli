@@ -129,6 +129,32 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		return null;
 	}
 
+	@Override
+	public String getProduct(File workspaceDir) {
+		try {
+			Properties gradleProperties = getGradleProperties(workspaceDir);
+
+			String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
+
+			if (productKey == null) {
+				String dockerImageProperty = gradleProperties.getProperty(
+					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
+
+				if (dockerImageProperty.contains("dxp")) {
+					return "dxp";
+				}
+			}
+			else if (productKey.contains("dxp")) {
+				return "dxp";
+			}
+		}
+		catch (Exception exception) {
+			BladeCLI.instance.error(exception);
+		}
+
+		return "portal";
+	}
+
 	public File getSettingGradleFile(File dir) {
 		return new File(getWorkspaceDir(dir), _SETTINGS_GRADLE_FILE_NAME);
 	}

@@ -960,9 +960,7 @@ public class CreateCommandTest {
 
 		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
 
-		String[] sevenThreeArgs = {
-			"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three", "--product", "dxp"
-		};
+		String[] sevenThreeArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
 
 		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
 
