@@ -21,6 +21,6 @@ package com.liferay.properties.locator;
  */
 public enum PropertyProblemType {
 
-	MISSING, MODULARIZED, OSGI, REMOVED
+	MISSING, MODULARIZED, NONE, OSGI, REMOVED
 
 }

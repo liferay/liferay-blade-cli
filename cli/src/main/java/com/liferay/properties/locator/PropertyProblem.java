@@ -25,10 +25,9 @@ import java.util.List;
  */
 public class PropertyProblem implements Comparable<PropertyProblem> {
 
-	public PropertyProblem(String propertyName) {
+	public PropertyProblem(String propertyName, PropertyProblemType type) {
 		_propertyName = propertyName;
-
-		_type = PropertyProblemType.MISSING;
+		_type = type;
 	}
 
 	public PropertyProblem(
@@ -40,9 +39,17 @@ public class PropertyProblem implements Comparable<PropertyProblem> {
 		_replacements = replacements;
 	}
 
+	public void appendMessage(String message) {
+		_message += message;
+	}
+
 	@Override
 	public int compareTo(PropertyProblem o) {
 		return _propertyName.compareTo(o.getPropertyName());
+	}
+
+	public String getMessage() {
+		return _message;
 	}
 
 	public String getPropertyName() {
@@ -57,11 +64,22 @@ public class PropertyProblem implements Comparable<PropertyProblem> {
 		return _type;
 	}
 
-	@Override
-	public String toString() {
-		String type = _type.toString();
+	public PropertyProblem setMessage(String message) {
+		_message = message;
 
-		return _propertyName + " has been " + type.toLowerCase() + ".  " + _message;
+		return this;
+	}
+
+	public PropertyProblem setReplacements(List<Pair<String, String>> replacements) {
+		_replacements = replacements;
+
+		return this;
+	}
+
+	public PropertyProblem setType(PropertyProblemType type) {
+		_type = type;
+
+		return this;
 	}
 
 	private String _message;
