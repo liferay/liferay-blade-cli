@@ -57,6 +57,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -1620,6 +1621,8 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath + "/foo", "foo-1.0.0.jar");
 
 		_verifyImportPackage(new File(projectPath, "foo/build/libs/foo-1.0.0.jar"));
+
+		_resolveProject(buildTask, projectPath);
 	}
 
 	@Test
@@ -1687,7 +1690,15 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/seven-zero/seven-zero-api/build.gradle");
 
-		_checkFileExists(projectPath + "/seven-zero/seven-zero-service/build.gradle");
+		File buildGradle = new File(projectPath + "/seven-zero/seven-zero-service/build.gradle");
+
+		Assert.assertTrue(buildGradle.exists());
+
+		String content = FileUtil.read(buildGradle);
+
+		content = content.replaceAll("compileOnly project", "compile project");
+
+		Files.write(buildGradle.toPath(), content.getBytes());
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace70.getPath(), "buildService");
 
@@ -1703,11 +1714,13 @@ public class CreateCommandTest {
 
 		_verifyImportPackage(
 			new File(projectPath, "seven-zero/seven-zero-service/build/libs/seven.zero.service-1.0.0.jar"));
+
+		_resolveProject(buildTask, projectPath);
 	}
 
 	@Test
 	public void testCreateWorkspaceTargetPlatformLiferayVersion71() throws Exception {
-		File workspace71 = new File(_rootDir, "workspace70");
+		File workspace71 = new File(_rootDir, "workspace71");
 
 		File modulesDir = new File(workspace71, "modules");
 
@@ -1717,11 +1730,11 @@ public class CreateCommandTest {
 
 		_enableTargetPlatformInWorkspace(workspace71, "7.1.3-1");
 
-		String[] sevenZeroArgs = {
+		String[] sevenOneArgs = {
 			"--base", workspace71.getAbsolutePath(), "create", "-t", "service-builder", "seven-one"
 		};
 
-		TestUtil.runBlade(workspace71, _extensionsDir, sevenZeroArgs);
+		TestUtil.runBlade(workspace71, _extensionsDir, sevenOneArgs);
 
 		_checkFileExists(projectPath + "/seven-one/build.gradle");
 
@@ -1729,7 +1742,15 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/seven-one/seven-one-api/build.gradle");
 
-		_checkFileExists(projectPath + "/seven-one/seven-one-service/build.gradle");
+		File buildGradle = new File(projectPath + "/seven-one/seven-one-service/build.gradle");
+
+		Assert.assertTrue(buildGradle.exists());
+
+		String content = FileUtil.read(buildGradle);
+
+		content = content.replaceAll("compileOnly project", "compile project");
+
+		Files.write(buildGradle.toPath(), content.getBytes());
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace71.getPath(), "buildService");
 
@@ -1744,6 +1765,59 @@ public class CreateCommandTest {
 
 		_verifyImportPackage(
 			new File(projectPath, "seven-one/seven-one-service/build/libs/seven.one.service-1.0.0.jar"));
+
+		_resolveProject(buildTask, projectPath);
+	}
+
+	@Test
+	public void testCreateWorkspaceTargetPlatformLiferayVersion72() throws Exception {
+		File workspace72 = new File(_rootDir, "workspace72");
+
+		File modulesDir = new File(workspace72, "modules");
+
+		String projectPath = modulesDir.getAbsolutePath();
+
+		_makeWorkspaceVersion(workspace72, BladeTest.PRODUCT_VERSION_PORTAL_72);
+
+		_enableTargetPlatformInWorkspace(workspace72, "7.2.1-1");
+
+		String[] sevenTwoArgs = {
+			"--base", workspace72.getAbsolutePath(), "create", "-t", "service-builder", "seven-two"
+		};
+
+		TestUtil.runBlade(workspace72, _extensionsDir, sevenTwoArgs);
+
+		_checkFileExists(projectPath + "/seven-two/build.gradle");
+
+		_checkFileDoesNotExists(projectPath + "/seven-two/settings.gradle");
+
+		_checkFileExists(projectPath + "/seven-two/seven-two-api/build.gradle");
+
+		File buildGradle = new File(projectPath + "/seven-two/seven-two-service/build.gradle");
+
+		Assert.assertTrue(buildGradle.exists());
+
+		String content = FileUtil.read(buildGradle);
+
+		content = content.replaceAll("compileOnly project", "compile project");
+
+		Files.write(buildGradle.toPath(), content.getBytes());
+
+		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace72.getPath(), "buildService");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
+
+		BuildTask buildTask = GradleRunnerUtil.executeGradleRunner(workspace72.getPath(), "jar");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
+
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/seven-two/seven-two-api", "seven.two.api-1.0.0.jar");
+		GradleRunnerUtil.verifyBuildOutput(projectPath + "/seven-two/seven-two-service", "seven.two.service-1.0.0.jar");
+
+		_verifyImportPackage(
+			new File(projectPath, "seven-two/seven-two-service/build/libs/seven.two.service-1.0.0.jar"));
+
+		_resolveProject(buildTask, projectPath);
 	}
 
 	@Test
@@ -1958,6 +2032,22 @@ public class CreateCommandTest {
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
 		_addDefaultModulesDir(workspace);
+	}
+
+	private void _resolveProject(BuildTask buildTask, String projectPath) throws Exception {
+		String version = System.getProperty("java.specification.version");
+
+		if (version.indexOf('.') > -1) {
+			version = version.substring(version.indexOf('.') + 1);
+		}
+
+		int versionNumber = Integer.parseInt(version);
+
+		Assume.assumeTrue(versionNumber < 9);
+
+		buildTask = GradleRunnerUtil.executeGradleRunner(projectPath, "resolve");
+
+		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 	}
 
 	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {
