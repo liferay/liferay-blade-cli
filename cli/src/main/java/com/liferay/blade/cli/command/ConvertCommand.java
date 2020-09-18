@@ -620,7 +620,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			ConvertArgs convertServiceBuilderArgs = new ConvertArgs(
 				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), convertArgs.isRemoveSource(),
-				convertArgs.getSource(), arguments);
+				convertArgs.getSource(), arguments, convertArgs.getProduct());
 
 			convertServiceBuilderArgs.setBase(convertArgs.getBase());
 
@@ -1159,6 +1159,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		createArgs.setName("war-portlet");
 		createArgs.setQuiet(baseArgs.isQuiet());
 
+		ConvertArgs originalConvertArgs = getArgs();
+
+		createArgs.setProduct(originalConvertArgs.getProduct());
+
 		CreateCommand createCommand = new CreateCommand();
 
 		createCommand.setArgs(createArgs);
@@ -1214,12 +1218,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 	private static final Map<String, GAV> _migratedDependencies71 = new HashMap<>();
 	private static final Map<String, GAV> _migratedDependencies72 = new HashMap<>();
 	private static final Map<String, GAV> _migratedDependencies73 = new HashMap<>();
-	private static final Map<String, String> _portalClasspathDependenciesMap = new HashMap<>();
 	{
 		_loadMigratedDependencies("/migrated-dependencies-7.1.properties", _migratedDependencies71);
 		_loadMigratedDependencies("/migrated-dependencies-7.2.properties", _migratedDependencies72);
 		_loadMigratedDependencies("/migrated-dependencies-7.3.properties", _migratedDependencies73);
 	}
+
+	private static final Map<String, String> _portalClasspathDependenciesMap = new HashMap<>();
 
 	private static class GAV {
 
