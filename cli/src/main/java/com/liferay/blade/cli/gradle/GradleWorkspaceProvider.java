@@ -137,26 +137,24 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
 			if (productKey == null) {
-				String product = null;
-
 				String targetPlatformVersion = gradleProperties.getProperty(
 					WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY);
 
-				Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
+				if (targetPlatformVersion != null) {
+					Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
 
-				int microVersion = version.getMicro();
+					int microVersion = version.getMicro();
 
-				if (microVersion >= 10) {
-					product = "dxp";
-				}
-
-				if (product == null) {
-					String dockerImageProperty = gradleProperties.getProperty(
-						WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
-
-					if (dockerImageProperty.contains("dxp")) {
+					if (microVersion >= 10) {
 						return "dxp";
 					}
+				}
+
+				String dockerImageProperty = gradleProperties.getProperty(
+					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
+
+				if (dockerImageProperty.contains("dxp")) {
+					return "dxp";
 				}
 			}
 			else if (productKey.contains("dxp")) {
