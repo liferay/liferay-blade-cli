@@ -140,7 +140,18 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 				String targetPlatformVersion = gradleProperties.getProperty(
 					WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY);
 
-				if (targetPlatformVersion != null) {
+				if (targetPlatformVersion == null) {
+					String dockerImageProperty = gradleProperties.getProperty(
+						WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
+
+					if (dockerImageProperty == null) {
+						return "portal";
+					}
+					else if (dockerImageProperty.contains("dxp")) {
+						return "dxp";
+					}
+				}
+				else {
 					Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
 
 					int microVersion = version.getMicro();
@@ -149,23 +160,12 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 						return "dxp";
 					}
 				}
-
-				String dockerImageProperty = gradleProperties.getProperty(
-					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
-
-				if (dockerImageProperty.contains("dxp")) {
-					return "dxp";
-				}
 			}
 			else if (productKey.contains("dxp")) {
 				return "dxp";
 			}
-			else {
-				return "portal";
-			}
 		}
 		catch (Exception exception) {
-			BladeCLI.instance.error(exception);
 		}
 
 		return "portal";

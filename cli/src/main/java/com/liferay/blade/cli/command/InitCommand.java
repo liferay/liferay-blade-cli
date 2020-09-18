@@ -310,13 +310,11 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	}
 
 	private String _getProduct(InitArgs initArgs, String liferayVersion) {
-		String product = initArgs.getProduct();
-
-		if (product.equals("portal") && liferayVersion.contains("dxp")) {
+		if (liferayVersion.contains("dxp")) {
 			return "dxp";
 		}
 
-		return product;
+		return initArgs.getProduct();
 	}
 
 	private boolean _isPluginsSDK(File dir) {

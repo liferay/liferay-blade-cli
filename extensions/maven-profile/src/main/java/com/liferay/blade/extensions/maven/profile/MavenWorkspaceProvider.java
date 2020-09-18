@@ -42,12 +42,20 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 	public String getProduct(File workspaceDir) {
 		String targetPlatformVersion = getLiferayVersion(workspaceDir);
 
-		Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
+		if (targetPlatformVersion == null) {
+			return "portal";
+		}
 
-		int microVersion = version.getMicro();
+		try {
+			Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
 
-		if (microVersion >= 10) {
-			return "dxp";
+			int microVersion = version.getMicro();
+
+			if (microVersion >= 10) {
+				return "dxp";
+			}
+		}
+		catch (Exception e) {
 		}
 
 		return "portal";

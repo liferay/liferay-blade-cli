@@ -343,7 +343,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
-		projectTemplatesArgs.setProduct(_getProduct(workspaceProvider, createArgs));
+
+		Optional<String> product = _getProduct(workspaceProvider, createArgs);
+
+		projectTemplatesArgs.setProduct(product.orElse(createArgs.getProduct()));
 
 		projectTemplatesArgs.setTemplate(template);
 
@@ -537,9 +540,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			));
 	}
 
-	private String _getProduct(WorkspaceProvider workspaceProvider, CreateArgs createArgs) {
+	private Optional<String> _getProduct(WorkspaceProvider workspaceProvider, CreateArgs createArgs) {
 		if (workspaceProvider == null) {
-			return createArgs.getProduct();
+			return Optional.empty();
 		}
 
 		File dir = createArgs.getDir();
@@ -548,13 +551,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			dir = createArgs.getBase();
 		}
 
-		String product = createArgs.getProduct();
-
-		if (product.equals("portal")) {
-			product = workspaceProvider.getProduct(dir);
-		}
-
-		return product;
+		return Optional.ofNullable(workspaceProvider.getProduct(dir));
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {
