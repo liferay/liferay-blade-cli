@@ -1690,7 +1690,15 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/seven-zero/seven-zero-api/build.gradle");
 
-		_checkFileExists(projectPath + "/seven-zero/seven-zero-service/build.gradle");
+		File buildGradle = new File(projectPath + "/seven-zero/seven-zero-service/build.gradle");
+
+		Assert.assertTrue(buildGradle.exists());
+
+		String content = FileUtil.read(buildGradle);
+
+		content = content.replaceAll("compileOnly project", "compile project");
+
+		Files.write(buildGradle.toPath(), content.getBytes());
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace70.getPath(), "buildService");
 
@@ -1734,7 +1742,15 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/seven-one/seven-one-api/build.gradle");
 
-		_checkFileExists(projectPath + "/seven-one/seven-one-service/build.gradle");
+		File buildGradle = new File(projectPath + "/seven-one/seven-one-service/build.gradle");
+
+		Assert.assertTrue(buildGradle.exists());
+
+		String content = FileUtil.read(buildGradle);
+
+		content = content.replaceAll("compileOnly project", "compile project");
+
+		Files.write(buildGradle.toPath(), content.getBytes());
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace71.getPath(), "buildService");
 
@@ -1777,7 +1793,15 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/seven-two/seven-two-api/build.gradle");
 
-		_checkFileExists(projectPath + "/seven-two/seven-two-service/build.gradle");
+		File buildGradle = new File(projectPath + "/seven-two/seven-two-service/build.gradle");
+
+		Assert.assertTrue(buildGradle.exists());
+
+		String content = FileUtil.read(buildGradle);
+
+		content = content.replaceAll("compileOnly project", "compile project");
+
+		Files.write(buildGradle.toPath(), content.getBytes());
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace72.getPath(), "buildService");
 
