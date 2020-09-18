@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
@@ -158,9 +159,7 @@ public class PropertiesLocator {
 
 		List<Pair<String, String>> theMostLikelyMatches = new ArrayList<>();
 
-		String[] portletNameAsProperty = new String[1];
-
-		portletNameAsProperty[0] = _getPortletNameAsProperty(portletNames);
+		String[] portletNameAsProperty = {_getPortletNameAsProperty(portletNames)};
 
 		for (Pair<String, String> match : mostLikelyMatches) {
 
@@ -246,9 +245,9 @@ public class PropertiesLocator {
 		};
 
 		try (Stream<Path> paths = Files.find(_bundlePath, Integer.MAX_VALUE, matcher)) {
-			Stream<Path> singlePath = paths.limit(1);
+			Optional<Path> portalImplPath = paths.findFirst();
 
-			singlePath.forEach(
+			portalImplPath.ifPresent(
 				path -> {
 					try {
 						_getPropertiesFromJar("jar:file:" + path.toString() + "!/portal.properties", properties);
@@ -451,9 +450,8 @@ public class PropertiesLocator {
 		try {
 			List<String> lines = Files.readAllLines(file.toPath());
 
-			Stream<String> stream = lines.stream();
-
-			return stream.map(
+			return lines.stream(
+			).map(
 				String::trim
 			).filter(
 				line ->
@@ -567,9 +565,8 @@ public class PropertiesLocator {
 
 		List<Pair<String, String[]>> configurationProperties = _getConfigurationProperties(configClassesMap);
 
-		Stream<PropertyProblem> problemsStream = problems.stream();
-
-		problemsStream.filter(
+		problems.stream(
+		).filter(
 			problem -> problem.getType() == PropertyProblemType.MISSING
 		).forEach(
 			problem -> {
@@ -684,11 +681,11 @@ public class PropertiesLocator {
 		}
 
 		try (Stream<Path> paths = Files.walk(searchPathRoot)) {
-			Stream<Path> filter = paths.filter(ignoreStateFilter);
-
-			Stream<Path> filter2 = filter.filter(lpkgFilter);
-
-			filter2.map(
+			paths.filter(
+				ignoreStateFilter
+			).filter(
+				lpkgFilter
+			).map(
 				lpkgPath -> lpkgPath.toAbsolutePath()
 			).map(
 				absolutePath -> absolutePath.toString()
@@ -748,9 +745,8 @@ public class PropertiesLocator {
 			);
 		}
 
-		Stream<PropertyProblem> problemsStream = problems.stream();
-
-		problemsStream.filter(
+		problems.stream(
+		).filter(
 			problem -> problem.getType() == PropertyProblemType.MISSING
 		).forEach(
 			problem -> {
@@ -843,9 +839,7 @@ public class PropertiesLocator {
 	}
 
 	private void _printInfo(PrintWriter outputFile, SortedSet<PropertyProblem> problems) {
-		Stream<PropertyProblem> problemsStream = problems.stream();
-
-		problemsStream.forEach(
+		problems.forEach(
 			problem -> {
 				outputFile.println(problem.getPropertyName());
 
@@ -893,9 +887,7 @@ public class PropertiesLocator {
 	}
 
 	private void _printModularizedReplacements(PrintWriter outputFile, List<Pair<String, String>> replacements) {
-		Stream<Pair<String, String>> replacementsStream = replacements.stream();
-
-		replacementsStream.forEach(
+		replacements.forEach(
 			replacement -> {
 				Path modulePath = Paths.get(replacement.first());
 
@@ -909,9 +901,8 @@ public class PropertiesLocator {
 	}
 
 	private void _printOSGIReplacements(PrintWriter outputFile, List<Pair<String, String>> replacements) {
-		Stream<Pair<String, String>> replacementsStream = replacements.stream();
-
-		replacementsStream.sorted(
+		replacements.stream(
+		).sorted(
 			(r1, r2) -> {
 				String r1First = r1.first();
 				String r2First = r2.first();
