@@ -104,7 +104,7 @@ public class PropertiesLocator {
 	}
 
 	public PropertiesLocator(PropertiesLocatorArgs propertiesLocatorArgs) throws Exception {
-		PrintWriter outputFile = _generateOutputFile(propertiesLocatorArgs);
+		PrintWriter outputWriter = _getOutputWriter(propertiesLocatorArgs);
 
 		try {
 			Set<String> oldPropertyKeys = _getPropertyKeys(propertiesLocatorArgs.getPropertiesFile());
@@ -123,10 +123,10 @@ public class PropertiesLocator {
 
 			_manageConfigurationProperties(_problems);
 
-			_printInfo(outputFile, _problems);
+			_printInfo(outputWriter, _problems);
 		}
 		finally {
-			outputFile.close();
+			outputWriter.close();
 		}
 	}
 
@@ -134,7 +134,7 @@ public class PropertiesLocator {
 		return _problems;
 	}
 
-	private static String[] _addConfigurationPropertiesByHeritance(
+	private static String[] _addConfigurationPropertiesByInheritance(
 		String superClass, String[] configFields, Map<String, ConfigurationClassData> configClassesMap) {
 
 		if (!superClass.equals("java/lang/Object")) {
@@ -143,7 +143,7 @@ public class PropertiesLocator {
 			String[] superConfigFields = new String[0];
 
 			if (superClassData != null) {
-				superConfigFields = _addConfigurationPropertiesByHeritance(
+				superConfigFields = _addConfigurationPropertiesByInheritance(
 					superClassData.getSuperClass(), superClassData.getConfigFields(), configClassesMap);
 			}
 
@@ -193,29 +193,6 @@ public class PropertiesLocator {
 		return mostLikelyMatches;
 	}
 
-	private static PrintWriter _generateOutputFile(PropertiesLocatorArgs propertiesLocatorArgs)
-		throws FileNotFoundException {
-
-		File outputFile = propertiesLocatorArgs.getOutputFile();
-
-		if (outputFile != null) {
-			return new PrintWriter(outputFile);
-		}
-		else if (propertiesLocatorArgs.isQuiet()) {
-			return new PrintWriter(
-				new OutputStream() {
-
-					@Override
-					public void write(int b) {
-					}
-
-				});
-		}
-		else {
-			return new PrintWriter(System.out);
-		}
-	}
-
 	private static void _getCommentedPropertiesFromJar(String propertiesJarURL, Properties properties)
 		throws Exception {
 
@@ -246,7 +223,7 @@ public class PropertiesLocator {
 		for (Map.Entry<String, ConfigurationClassData> configClass : configClassesMap.entrySet()) {
 			ConfigurationClassData configClassData = configClass.getValue();
 
-			String[] allConfigFields = _addConfigurationPropertiesByHeritance(
+			String[] allConfigFields = _addConfigurationPropertiesByInheritance(
 				configClassData.getSuperClass(), configClassData.getConfigFields(), configClassesMap);
 
 			if (allConfigFields.length > 0) {
@@ -367,6 +344,29 @@ public class PropertiesLocator {
 		}
 
 		return numOccurrences;
+	}
+
+	private static PrintWriter _getOutputWriter(PropertiesLocatorArgs propertiesLocatorArgs)
+		throws FileNotFoundException {
+
+		File outputFile = propertiesLocatorArgs.getOutputFile();
+
+		if (outputFile != null) {
+			return new PrintWriter(outputFile);
+		}
+		else if (propertiesLocatorArgs.isQuiet()) {
+			return new PrintWriter(
+				new OutputStream() {
+
+					@Override
+					public void write(int b) {
+					}
+
+				});
+		}
+		else {
+			return new PrintWriter(System.out);
+		}
 	}
 
 	private static String _getPortletNameAsProperty(String[] portletNames) {
