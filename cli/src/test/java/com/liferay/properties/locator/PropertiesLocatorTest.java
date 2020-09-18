@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.SortedSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Assume;
@@ -100,12 +102,24 @@ public class PropertiesLocatorTest {
 
 		Path propertiesPath = Paths.get("test-resources/checkProperties.out");
 
-		String expectedOutput = new String(Files.readAllBytes(propertiesPath));
+		try (Stream<String> expectedLines = Files.lines(propertiesPath);
+			Stream<String> actualLine = Files.lines(outputFile.toPath())) {
 
-		String testOutput = new String(Files.readAllBytes(outputFile.toPath()));
+			String[] expected = expectedLines.sorted(
+			).collect(
+				Collectors.toList()
+			).toArray(
+				new String[0]
+			);
+			String[] actual = actualLine.sorted(
+			).collect(
+				Collectors.toList()
+			).toArray(
+				new String[0]
+			);
 
-		Assert.assertEquals(
-			expectedOutput.replaceAll(System.lineSeparator(), ""), testOutput.replaceAll(System.lineSeparator(), ""));
+			Assert.assertArrayEquals(expected, actual);
+		}
 	}
 
 	private static final File _buildDir = new File(System.getProperty("buildDir"));
