@@ -16,7 +16,6 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
-import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
@@ -26,13 +25,10 @@ import java.io.File;
  */
 public class MavenTestUtil {
 
-	public static void makeMavenWorkspace(File extensionsDir, File workspace) throws Exception {
+	public static void makeMavenWorkspace(File extensionsDir, File workspace, String version) throws Exception {
 		File parentFile = workspace.getParentFile();
 
-		String[] args = {
-			"--base", parentFile.getPath(), "init", "-P", "maven", workspace.getName(), "-v",
-			BladeTest.PRODUCT_VERSION_PORTAL_73
-		};
+		String[] args = {"--base", parentFile.getPath(), "init", "-P", "maven", workspace.getName(), "-v", version};
 
 		TestUtil.runBlade(workspace, extensionsDir, args);
 	}

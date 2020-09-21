@@ -960,9 +960,7 @@ public class CreateCommandTest {
 
 		Files.write(gradleProperties.toPath(), dockerImageProperty.getBytes(), StandardOpenOption.APPEND);
 
-		String[] sevenThreeArgs = {
-			"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three", "--product", "dxp"
-		};
+		String[] sevenThreeArgs = {"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"};
 
 		TestUtil.runBlade(workspace73, _extensionsDir, sevenThreeArgs);
 
@@ -982,7 +980,7 @@ public class CreateCommandTest {
 		_makeWorkspaceVersion(workspaceDXP73, "dxp-7.3-ep5");
 
 		String[] sevenThreeArgs = {
-			"--base", workspaceDXP73.getAbsolutePath(), "create", "-t", "portlet", "seven-three", "--product", "dxp"
+			"--base", workspaceDXP73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"
 		};
 
 		TestUtil.runBlade(workspaceDXP73, _extensionsDir, sevenThreeArgs);

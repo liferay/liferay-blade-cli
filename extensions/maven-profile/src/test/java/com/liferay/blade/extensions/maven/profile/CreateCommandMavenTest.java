@@ -22,6 +22,7 @@ import aQute.bnd.osgi.Jar;
 
 import aQute.lib.io.IO;
 
+import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 
@@ -56,7 +57,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateApi() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.PRODUCT_VERSION_PORTAL_73);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
@@ -98,7 +99,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateFragment() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.PRODUCT_VERSION_PORTAL_73);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
@@ -135,7 +136,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateMVCPortlet() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.PRODUCT_VERSION_PORTAL_73);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
@@ -170,34 +171,70 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	}
 
 	@Test
-	public void testCreateMVCPortletDXP() throws Exception {
-		File workspaceDir = _workspaceDir;
+	public void testCreateMVCPortletDXP72() throws Exception {
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.2-sp2");
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir);
-
-		File modulesDir = new File(workspaceDir, "modules");
+		File modulesDir = new File(_workspaceDir, "modules");
 
 		String[] mavenArgs = {
-			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
-			"mvc-portlet", "foo", "--product", "dxp"
+			"create", "--base", _workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven",
+			"-t", "mvc-portlet", "foo", "--product", "dxp"
 		};
 
 		File projectDir = new File(modulesDir, "foo");
 
 		String projectPath = projectDir.getAbsolutePath();
 
-		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, mavenArgs);
 
 		_checkMavenBuildFiles(projectPath);
 
-		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.dxp.api</artifactId>.*");
+		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.portal.bom</artifactId>.*");
+
+		TestUtil.updateMavenRepositories(projectPath);
+
+		execute(projectPath, new String[] {"clean", "package"});
+
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateMVCPortletDXP73() throws Exception {
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.3-ep5");
+
+		File modulesDir = new File(_workspaceDir, "modules");
+
+		String[] mavenArgs = {
+			"create", "--base", _workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven",
+			"-t", "mvc-portlet", "foo", "--product", "dxp"
+		};
+
+		File projectDir = new File(modulesDir, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, mavenArgs);
+
+		_checkMavenBuildFiles(projectPath);
+
+		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.portal.api</artifactId>.*");
+
+		TestUtil.updateMavenRepositories(projectPath);
+
+		execute(projectPath, new String[] {"clean", "package"});
+
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 	}
 
 	@Test
 	public void testCreateMVCPortletLegacyFlag() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.PRODUCT_VERSION_PORTAL_73);
 
 		File modulesDir = new File(workspaceDir, "modules");
 

@@ -30,6 +30,7 @@ import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 @Parameters(commandDescription = "Initializes a new Liferay workspace", commandNames = "init")
 public class InitArgs extends BaseArgs {
 
+	@Override
 	public CommandType getCommandType() {
 		return CommandType.NON_WORKSPACE;
 	}
@@ -40,6 +41,10 @@ public class InitArgs extends BaseArgs {
 
 	public String getName() {
 		return _name;
+	}
+
+	public String getProduct() {
+		return _product;
 	}
 
 	public boolean isForce() {
@@ -66,6 +71,10 @@ public class InitArgs extends BaseArgs {
 		_name = name;
 	}
 
+	public void setProduct(String product) {
+		_product = product;
+	}
+
 	public void setRefresh(boolean refresh) {
 		_refresh = refresh;
 	}
@@ -89,6 +98,9 @@ public class InitArgs extends BaseArgs {
 
 	@Parameter(description = "[name]")
 	private String _name;
+
+	@Parameter(description = "The option for Liferay Platform product. (portal)|(dxp)", names = "--product")
+	private String _product = "portal";
 
 	@Parameter(description = "force to refresh workspace template", names = {"-r", "--refresh"})
 	private boolean _refresh;

@@ -343,7 +343,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
-		projectTemplatesArgs.setProduct(createArgs.getProduct());
+
+		Optional<String> product = _getProduct(workspaceProvider, createArgs);
+
+		projectTemplatesArgs.setProduct(product.orElse(createArgs.getProduct()));
 
 		projectTemplatesArgs.setTemplate(template);
 
@@ -535,6 +538,20 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			).filter(
 				BladeUtil::isNotEmpty
 			));
+	}
+
+	private Optional<String> _getProduct(WorkspaceProvider workspaceProvider, CreateArgs createArgs) {
+		if (workspaceProvider == null) {
+			return Optional.empty();
+		}
+
+		File dir = createArgs.getDir();
+
+		if (dir == null) {
+			dir = createArgs.getBase();
+		}
+
+		return Optional.ofNullable(workspaceProvider.getProduct(dir));
 	}
 
 	private boolean _isExistingTemplate(String templateName) throws Exception {

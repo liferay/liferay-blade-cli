@@ -224,13 +224,18 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		Version targetPlatformVersion = _makeCompatibleVersion(productInfo.getTargetPlatformVersion());
 
-		initArgs.setLiferayVersion(
-			new String(targetPlatformVersion.getMajor() + "." + targetPlatformVersion.getMinor()));
+		String liferayVersion = new String(
+			targetPlatformVersion.getMajor() + "." + targetPlatformVersion.getMinor() + "." +
+				targetPlatformVersion.getMicro());
 
-		projectTemplatesArgs.setLiferayVersion(initArgs.getLiferayVersion());
+		projectTemplatesArgs.setLiferayVersion(liferayVersion);
 
 		projectTemplatesArgs.setMaven(mavenBuild);
 		projectTemplatesArgs.setName(name);
+
+		if (mavenBuild) {
+			projectTemplatesArgs.setProduct(initArgs.getProduct());
+		}
 
 		String template = "workspace";
 
