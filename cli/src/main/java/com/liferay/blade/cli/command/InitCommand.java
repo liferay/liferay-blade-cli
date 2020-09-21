@@ -234,7 +234,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		projectTemplatesArgs.setName(name);
 
 		if (mavenBuild) {
-			projectTemplatesArgs.setProduct(_getProduct(initArgs, initArgs.getLiferayVersion()));
+			projectTemplatesArgs.setProduct(initArgs.getProduct());
 		}
 
 		String template = "workspace";
@@ -308,14 +308,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 	private void _addError(String msg) {
 		getBladeCLI().addErrors("init", Collections.singleton(msg));
-	}
-
-	private String _getProduct(InitArgs initArgs, String liferayVersion) {
-		if (liferayVersion.contains("dxp")) {
-			return "dxp";
-		}
-
-		return initArgs.getProduct();
 	}
 
 	private boolean _isPluginsSDK(File dir) {
