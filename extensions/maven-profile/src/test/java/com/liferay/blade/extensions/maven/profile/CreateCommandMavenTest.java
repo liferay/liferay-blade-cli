@@ -171,7 +171,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	}
 
 	@Test
-	public void testCreateMVCPortletDXP() throws Exception {
+	public void testCreateMVCPortletDXP72() throws Exception {
 		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.2-sp2");
 
 		File modulesDir = new File(_workspaceDir, "modules");
@@ -189,7 +189,45 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		_checkMavenBuildFiles(projectPath);
 
-		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.dxp.api</artifactId>.*");
+		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.portal.bom</artifactId>.*");
+
+		TestUtil.updateMavenRepositories(projectPath);
+
+		execute(projectPath, new String[] {"clean", "package"});
+
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateMVCPortletDXP73() throws Exception {
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.3-ep5");
+
+		File modulesDir = new File(_workspaceDir, "modules");
+
+		String[] mavenArgs = {
+			"create", "--base", _workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven",
+			"-t", "mvc-portlet", "foo", "--product", "dxp"
+		};
+
+		File projectDir = new File(modulesDir, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, mavenArgs);
+
+		_checkMavenBuildFiles(projectPath);
+
+		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.portal.api</artifactId>.*");
+
+		TestUtil.updateMavenRepositories(projectPath);
+
+		execute(projectPath, new String[] {"clean", "package"});
+
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
 	}
 
 	@Test
