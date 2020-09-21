@@ -28,22 +28,16 @@ public class ListWorkspaceProductAllCommand extends BaseCommand<ListWorkspacePro
 
 	@Override
 	public void execute() throws Exception {
-		_printAllWorkspaceProducts();
+		BladeCLI bladeCLI = getBladeCLI();
+
+		List<String> workspaceProductKeys = BladeUtil.getWorkspaceProductKeys(false);
+
+		workspaceProductKeys.forEach(bladeCLI::out);
 	}
 
 	@Override
 	public Class<ListWorkspaceProductAllArgs> getArgsClass() {
 		return ListWorkspaceProductAllArgs.class;
-	}
-
-	private void _printAllWorkspaceProducts() throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		List<String> workspaceProductKeys = BladeUtil.getWorkspaceProductKeys(false);
-
-		for (String productKey : workspaceProductKeys) {
-			bladeCLI.out(productKey);
-		}
 	}
 
 }

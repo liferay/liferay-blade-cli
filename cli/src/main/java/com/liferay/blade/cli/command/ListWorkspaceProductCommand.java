@@ -17,14 +17,9 @@
 package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.command.validator.WorkspaceProductComparator;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductInfo;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author Simon Jiang
@@ -33,43 +28,16 @@ public class ListWorkspaceProductCommand extends BaseCommand<ListWorkspaceProduc
 
 	@Override
 	public void execute() throws Exception {
-		ListWorkspaceProductArgs listWorkspaceProductArgs = getArgs();
+		BladeCLI bladeCLI = getBladeCLI();
 
-		_printPromotedWorkspaceProducts(listWorkspaceProductArgs.isTrace());
+		List<String> keys = BladeUtil.getWorkspaceProductKeys(true);
+
+		keys.forEach(bladeCLI::out);
 	}
 
 	@Override
 	public Class<ListWorkspaceProductArgs> getArgsClass() {
 		return ListWorkspaceProductArgs.class;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void _printPromotedWorkspaceProducts(boolean trace) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		Map<String, Object> productInfos = BladeUtil.getProductInfos(trace, bladeCLI.error());
-
-		List<String> promotedProductKeys = productInfos.entrySet(
-		).stream(
-		).filter(
-			entry -> Objects.nonNull(productInfos.get(entry.getKey()))
-		).filter(
-			entry -> {
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(entry.getKey()));
-
-				return productInfo.isPromoted();
-			}
-		).map(
-			Map.Entry::getKey
-		).sorted(
-			new WorkspaceProductComparator()
-		).collect(
-			Collectors.toList()
-		);
-
-		for (String productKey : promotedProductKeys) {
-			bladeCLI.out(productKey);
-		}
 	}
 
 }
