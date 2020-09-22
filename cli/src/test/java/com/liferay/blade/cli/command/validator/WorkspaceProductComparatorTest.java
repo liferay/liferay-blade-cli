@@ -39,13 +39,13 @@ public class WorkspaceProductComparatorTest {
 
 		Map<String, String> map = new HashMap<>();
 
-		map.put("releaseDate", "10/14/2019");
+		map.put("releaseDate", "10/4/2019");
 
 		pairs.add(new Pair<>("dxp-7.2-sp1", new ProductInfo(map)));
 
 		map = new HashMap<>();
 
-		map.put("releaseDate", "12/20/2018");
+		map.put("releaseDate", "12/22/2018");
 
 		pairs.add(new Pair<>("dxp-7.2-sp2", new ProductInfo(map)));
 
@@ -85,7 +85,7 @@ public class WorkspaceProductComparatorTest {
 		);
 
 		String[] expecteds = {
-			"dxp-7.2-sp3", "dxp-7.2-sp1", "dxp-7.2-sp2", "portal-7.3-ga1", "portal-7.1-ga2", "portal-7.1-ga1"
+			"dxp-7.2-sp1", "dxp-7.2-sp3", "dxp-7.2-sp2", "portal-7.3-ga1", "portal-7.1-ga2", "portal-7.1-ga1"
 		};
 
 		Assert.assertArrayEquals(expecteds, actuals);
