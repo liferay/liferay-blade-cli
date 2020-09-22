@@ -1,5 +1,84 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.4 - 2020-09-22
+
+### Commits
+- [BLADE-599] handle single digit dates (c5c457600f)
+- [BLADE-599] sort qualifiers by release date (d9f1c11bb4)
+- [BLADE-597] Add test cases (42e113d009)
+- [BLADE-597] Only support "portal" for product value in maven (cc37775173)
+- [BLADE-597] don't truncate the liferay version (6d8ea1ae14)
+- [BLADE-597] reduce chances of NPE (55d020be39)
+- [BLADE-597] Simplify logic (9666ba500d)
+- [BLADE-597] Add product to MavenWorkspaceProvider (9bc59a7d1f)
+- [BLADE-597] Try to get product value from Target platform (b8b7681d4c)
+- [BLADE-598] Add product to Init command (c673aaf9d7)
+- [BLADE-597] Fix tests (eebe041eca)
+- [BLADE-597] Get product value from properties (5b8385049c)
+- [BLADE-597] Look up product value in gradle.properties (ceac14adbe)
+- [BLADE-598] Add product parameter option for ConvertCommand (73a3be0f55)
+- [LPS-120852] switch to compile configuration (fb96931a5b)
+- [LPS-120852] Add 7.2 test case (1e2cd8b946)
+- [LPS-120852] Does not support jdk 11 (490a91f944)
+- [LPS-120852] Use GA5 in testing (690fe278ba)
+- [LPS-120852] Add tests to verify resolve task in workspace (502d1806d7)
+- [BLADE-596] make test stable on java11 (8dfb4f4daa)
+- [BLADE-596] simplify (ba238acd62)
+- [BLADE-596] rename (4febdba74b)
+- [BLADE-596] Fix propertiesLocator tests (1c34fcc4fd)
+- [BLADE-596] add field back for tests (7451bd3b2b)
+- [BLADE-596] Refactor the output and the code to make them simplier
+(156119df6d)
+- [BLADE-596] Refactor, we do not need to re-evaluate exceptions (989b3210be)
+- [BLADE-596] Normalize the properties to do not load wrong lines as properties
+(09fbd71c85)
+- [BLADE-596] Upgrade Processes properties are not longer needed (7ec1ad3451)
+- [LPS-120852] Add resolve task to workspace projects (632855874a)
+- [BLADE-593] empty string is the same as no value (80771d84fc)
+- [BLADE-593] Use Optional<String> (c33cd727f1)
+- [BLADE-593] Rename method (abb0d20405)
+- [BLADE-593] Use Optional<String> (8a6b87294f)
+- [BLADE-593] Don't prompt for Liferay Version (7ad7b4b426)
+- [BLADE-593] Update Test (8ec2c9a2fd)
+- [BLADE-593] Refactor (2d44491f88)
+- [BLADE-539] Print more helpful message (85e565eb0b)
+- [BLADE-593] Fix test (7acd94f416)
+- [BLADE-593] Out of scope for this pull (7bc0be51d9)
+- [BLADE-539] Fix Test (3c6869bba1)
+- [BLADE-593] Get product value from Workspace Provider (1bb9399829)
+- [BLADE-593] Add Create Tests from docker property (07862548c3)
+- [BLADE-593] Use constants when possible (60290b97ba)
+- [BLADE-593] Add tests (83d5e0fabd)
+- [BLADE-593] Capture dxp and portal images (bb367ca9af)
+- [BLADE-539] Refactor to WorkspaceProvider (1be2aa28ca)
+- [BLADE-539] Always take user input over workspace setting (11874fe6a3)
+- [BLADE-593] : create throws NPE from within a dxpcloud provisioned Liferay
+workspace. Fix NPE, prompt to ask user for selecting the liferay version if
+liferay.workspace.product is missing, and add test case. (f0af778600)
+- [LPS-120734] Set product argument (915fbd5144)
+- [LPS-120734] Add product parameter option (cdf70b8d79)
+- [LPS-120734] Add DXP Default Test (a439d229a6)
+- [LPS-120734] Update test (03132df224)
+- [LPS-120734] Only use release.portal.api >= 7.3 (e7d0ab3602)
+
+### Dependencies
+- [BLADE-600] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.21.
+- [BLADE-600] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.4.
+- [BLADE-600] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.4.
+- [LPS-120852] Update the com.liferay.project.templates dependency to version
+5.0.89.
+- [LPS-120734] Update the com.liferay.project.templates dependency to version
+5.0.87.
+- [BLADE-595] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.21-SNAPSHOT.
+- [BLADE-595] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.4-SNAPSHOT.
+- [BLADE-595] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.4-SNAPSHOT.
+
 ## 4.0.3 - 2020-09-03
 
 ### Commits
@@ -1764,8 +1843,14 @@ maintainability (7f9bc3f45e)
 [BLADE-589]: https://issues.liferay.com/browse/BLADE-589
 [BLADE-591]: https://issues.liferay.com/browse/BLADE-591
 [BLADE-592]: https://issues.liferay.com/browse/BLADE-592
+[BLADE-593]: https://issues.liferay.com/browse/BLADE-593
 [BLADE-594]: https://issues.liferay.com/browse/BLADE-594
 [BLADE-595]: https://issues.liferay.com/browse/BLADE-595
+[BLADE-596]: https://issues.liferay.com/browse/BLADE-596
+[BLADE-597]: https://issues.liferay.com/browse/BLADE-597
+[BLADE-598]: https://issues.liferay.com/browse/BLADE-598
+[BLADE-599]: https://issues.liferay.com/browse/BLADE-599
+[BLADE-600]: https://issues.liferay.com/browse/BLADE-600
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -1787,6 +1872,8 @@ maintainability (7f9bc3f45e)
 [LPS-114909]: https://issues.liferay.com/browse/LPS-114909
 [LPS-119853]: https://issues.liferay.com/browse/LPS-119853
 [LPS-120193]: https://issues.liferay.com/browse/LPS-120193
+[LPS-120734]: https://issues.liferay.com/browse/LPS-120734
+[LPS-120852]: https://issues.liferay.com/browse/LPS-120852
 [LRDOCS-3688]: https://issues.liferay.com/browse/LRDOCS-3688
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
