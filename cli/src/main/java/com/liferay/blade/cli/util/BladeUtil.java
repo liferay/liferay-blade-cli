@@ -59,7 +59,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -334,27 +333,25 @@ public class BladeUtil {
 
 	@SuppressWarnings("unchecked")
 	public static List<String> getWorkspaceProductKeys(boolean promoted) {
-		Map<String, Object> productInfoMap = getProductInfos();
+		Map<String, Object> productInfos = getProductInfos();
 
-		Set<Map.Entry<String, Object>> entries = productInfoMap.entrySet();
-
-		return entries.stream(
+		return productInfos.entrySet(
+		).stream(
 		).filter(
-			entry -> {
-				Object object = entry.getValue();
-
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)object);
-
-				if (promoted) {
-					return Objects.nonNull(productInfo.getTargetPlatformVersion()) && productInfo.isPromoted();
-				}
-
-				return productInfo.getTargetPlatformVersion() != null;
-			}
+			entry -> Objects.nonNull(productInfos.get(entry.getKey()))
 		).map(
-			Map.Entry::getKey
+			entry -> new Pair<>(entry.getKey(), new ProductInfo((Map<String, String>)productInfos.get(entry.getKey())))
+		).filter(
+			pair -> {
+				ProductInfo productInfo = pair.second();
+
+				return Objects.nonNull(productInfo.getTargetPlatformVersion()) &&
+					   (!promoted || (promoted && productInfo.isPromoted()));
+			}
 		).sorted(
 			new WorkspaceProductComparator()
+		).map(
+			Pair::first
 		).collect(
 			Collectors.toList()
 		);

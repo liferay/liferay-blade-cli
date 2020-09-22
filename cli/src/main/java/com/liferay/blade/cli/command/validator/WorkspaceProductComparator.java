@@ -19,40 +19,50 @@ package com.liferay.blade.cli.command.validator;
 import aQute.bnd.version.Version;
 
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.Pair;
+import com.liferay.blade.cli.util.ProductInfo;
 import com.liferay.blade.cli.util.StringUtil;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author Simon Jiang
+ * @author Gregory Amerson
  */
-public class WorkspaceProductComparator implements Comparator<String> {
+public class WorkspaceProductComparator implements Comparator<Pair<String, ProductInfo>> {
 
 	@Override
-	public int compare(String a, String b) {
-		if (a.startsWith("dxp") && !b.startsWith("dxp")) {
+	public int compare(Pair<String, ProductInfo> aPair, Pair<String, ProductInfo> bPair) {
+		String aKey = aPair.first();
+		String bKey = bPair.first();
+
+		if (aKey.startsWith("dxp") && !bKey.startsWith("dxp")) {
 			return -1;
 		}
-		else if (a.startsWith("portal") && b.startsWith("dxp")) {
+		else if (aKey.startsWith("portal") && bKey.startsWith("dxp")) {
 			return 1;
 		}
-		else if (a.startsWith("portal") && b.startsWith("commerce")) {
+		else if (aKey.startsWith("portal") && bKey.startsWith("commerce")) {
 			return -1;
 		}
-		else if (a.startsWith("commerce") && !b.startsWith("commerce")) {
+		else if (aKey.startsWith("commerce") && !bKey.startsWith("commerce")) {
 			return 1;
 		}
-		else if (!StringUtil.equals(_getProductMainVersion(a), _getProductMainVersion(b))) {
-			Version aProductMainVerson = Version.parseVersion(_getProductMainVersion(a));
-			Version bProductMainVerson = Version.parseVersion(_getProductMainVersion(b));
+		else if (!StringUtil.equals(_getProductMainVersion(aKey), _getProductMainVersion(bKey))) {
+			Version aProductMainVerson = Version.parseVersion(_getProductMainVersion(aKey));
+			Version bProductMainVerson = Version.parseVersion(_getProductMainVersion(bKey));
 
 			return -1 * aProductMainVerson.compareTo(bProductMainVerson);
 		}
 		else {
-			String aProductMicroVersion = _getProductMicroVersion(a);
-			String bProductMicroVersion = _getProductMicroVersion(b);
+			String aProductMicroVersion = _getProductMicroVersion(aKey);
+			String bProductMicroVersion = _getProductMicroVersion(bKey);
 
 			if (BladeUtil.isEmpty(aProductMicroVersion)) {
 				return 1;
@@ -67,17 +77,30 @@ public class WorkspaceProductComparator implements Comparator<String> {
 				return -1 * aMicroVersion.compareTo(bMicroVersion);
 			}
 			else {
-				String aMicroVersionPrefix = aProductMicroVersion.substring(0, 2);
-				String bMicroVersionPrefix = bProductMicroVersion.substring(0, 2);
+				ProductInfo aProductInfo = aPair.second();
+				ProductInfo bProductInfo = bPair.second();
 
-				if (!aMicroVersionPrefix.equalsIgnoreCase(bMicroVersionPrefix)) {
-					return -1 * aMicroVersionPrefix.compareTo(bMicroVersionPrefix);
+				try {
+					DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH);
+
+					LocalDate aDate = LocalDate.parse(aProductInfo.getReleaseDate(), dateTimeFormatter);
+					LocalDate bDate = LocalDate.parse(bProductInfo.getReleaseDate(), dateTimeFormatter);
+
+					return bDate.compareTo(aDate);
 				}
+				catch (Exception e) {
+					String aMicroVersionPrefix = aProductMicroVersion.substring(0, 2);
+					String bMicroVersionPrefix = bProductMicroVersion.substring(0, 2);
 
-				String aMicroVersionString = aProductMicroVersion.substring(2);
-				String bMicroVersionString = bProductMicroVersion.substring(2);
+					if (!aMicroVersionPrefix.equalsIgnoreCase(bMicroVersionPrefix)) {
+						return -1 * aMicroVersionPrefix.compareTo(bMicroVersionPrefix);
+					}
 
-				return Integer.parseInt(bMicroVersionString) - Integer.parseInt(aMicroVersionString);
+					String aMicroVersionString = aProductMicroVersion.substring(2);
+					String bMicroVersionString = bProductMicroVersion.substring(2);
+
+					return Integer.parseInt(bMicroVersionString) - Integer.parseInt(aMicroVersionString);
+				}
 			}
 		}
 	}
