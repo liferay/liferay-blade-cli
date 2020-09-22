@@ -350,9 +350,9 @@ public class InitCommandTest {
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output.contains("dxp-7.2-sp2"));
+		Assert.assertTrue(output, output.contains("dxp-7.2-sp3"));
 
-		Assert.assertFalse(output, output.contains("dxp-7.2-sp1"));
+		Assert.assertFalse(output, output.contains("dxp-7.2-sp2"));
 
 		List<String> lines = new ArrayList<>();
 
@@ -364,7 +364,7 @@ public class InitCommandTest {
 
 		String firstLine = lines.get(0);
 
-		Assert.assertEquals("dxp-7.3-ep5", firstLine);
+		Assert.assertTrue(firstLine, firstLine.contains("dxp-7.3-"));
 	}
 
 	@Test

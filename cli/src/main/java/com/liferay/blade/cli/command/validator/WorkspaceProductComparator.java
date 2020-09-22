@@ -81,7 +81,7 @@ public class WorkspaceProductComparator implements Comparator<Pair<String, Produ
 				ProductInfo bProductInfo = bPair.second();
 
 				try {
-					DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH);
+					DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("M/d/yyyy", Locale.ENGLISH);
 
 					LocalDate aDate = LocalDate.parse(aProductInfo.getReleaseDate(), dateTimeFormatter);
 					LocalDate bDate = LocalDate.parse(bProductInfo.getReleaseDate(), dateTimeFormatter);
