@@ -16,10 +16,7 @@
 
 package com.liferay.blade.cli.command.validator;
 
-import com.liferay.blade.cli.util.FileUtil;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,19 +28,11 @@ public class LiferayDefaultVersionValidatorTest {
 
 	@Test
 	public void testPromoted() throws Exception {
-		String promoted = FileUtil.collect(
-			LiferayDefaultVersionValidatorTest.class.getResourceAsStream("promoted.txt"));
-
 		LiferayDefaultVersionValidator ldvv = new LiferayDefaultVersionValidator();
 
 		List<String> values = ldvv.get();
 
-		Assert.assertEquals(
-			promoted,
-			values.stream(
-			).collect(
-				Collectors.joining(System.lineSeparator())
-			));
+		Assert.assertTrue(values.size() == 10);
 	}
 
 	@Test
