@@ -1218,7 +1218,7 @@ public class CreateCommandTest {
 
 		File file = _checkFileExists(projectPath + "/sample/sample-service/build.gradle");
 
-		_contains(file, ".*compileOnly project\\(\":modules:nested:path:sample:sample-api\"\\).*");
+		_contains(file, ".*compile project\\(\":modules:nested:path:sample:sample-api\"\\).*");
 	}
 
 	@Test
@@ -1290,7 +1290,7 @@ public class CreateCommandTest {
 
 		File file = _checkFileExists(projectPath + "/sample/sample-service/build.gradle");
 
-		_contains(file, ".*compileOnly project\\(\":modules:sample:sample-api\"\\).*");
+		_contains(file, ".*compile project\\(\":modules:sample:sample-api\"\\).*");
 
 		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
 

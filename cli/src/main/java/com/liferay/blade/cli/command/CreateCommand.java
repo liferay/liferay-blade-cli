@@ -155,6 +155,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			dir = baseArgs.getBase();
 		}
 
+		dir = new File(dir.getCanonicalPath());
+
 		final File checkDir = new File(dir, name);
 
 		if (!_checkDir(checkDir)) {
