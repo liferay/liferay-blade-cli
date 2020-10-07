@@ -384,6 +384,10 @@ public class BladeCLI {
 				simplifiedUsageString.append(line + System.lineSeparator());
 			}
 
+			if (!isWorkspace()) {
+				simplifiedUsageString.append("To see more command options, run \"blade init\" to create a workspace");
+			}
+
 			String output = simplifiedUsageString.toString();
 
 			out(output);
