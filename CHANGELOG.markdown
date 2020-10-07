@@ -1,5 +1,30 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.5 - 2020-10-07
+
+### Commits
+- [BLADE-607] Print more in help message (b8797757d4)
+- [BLADE-604] Update tests (f92ebd048e)
+- [BLADE-604] inline (f9ee7f8d91)
+- [BLADE-604] Update project templates to fix the path issues (8119794486)
+- [BLADE-604] Fix path issues (54da7c2edb)
+
+### Dependencies
+- [BLADE-605] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.22.
+- [BLADE-605] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.5.
+- [BLADE-605] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.5.
+- [BLADE-604] Update the com.liferay.project.templates dependency to version
+5.0.93.
+- [BLADE-603] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.22-SNAPSHOT.
+- [BLADE-603] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.5-SNAPSHOT.
+- [BLADE-603] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.5-SNAPSHOT.
+
 ## 4.0.4 - 2020-09-22
 
 ### Commits
@@ -1851,6 +1876,10 @@ maintainability (7f9bc3f45e)
 [BLADE-598]: https://issues.liferay.com/browse/BLADE-598
 [BLADE-599]: https://issues.liferay.com/browse/BLADE-599
 [BLADE-600]: https://issues.liferay.com/browse/BLADE-600
+[BLADE-603]: https://issues.liferay.com/browse/BLADE-603
+[BLADE-604]: https://issues.liferay.com/browse/BLADE-604
+[BLADE-605]: https://issues.liferay.com/browse/BLADE-605
+[BLADE-607]: https://issues.liferay.com/browse/BLADE-607
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
