@@ -1323,6 +1323,36 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateWorkspaceGradleServiceBuilderProjectWithAddOns() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		File modulesDir = new File(workspace, "modules");
+
+		String projectPath = modulesDir.getAbsolutePath();
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", projectPath, "-t", "service-builder", "-p",
+			"com.liferay.sample", "sample", "--add-ons", "true"
+		};
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		_checkFileExists(projectPath + "/sample/build.gradle");
+
+		_checkFileDoesNotExists(projectPath + "/sample/settings.gradle");
+
+		_checkFileExists(projectPath + "/sample/sample-api/build.gradle");
+
+		_checkFileExists(projectPath + "/sample/sample-service/build.gradle");
+
+		File file = _checkFileExists(projectPath + "/sample/sample-uad/build.gradle");
+
+		_contains(file, ".*compile project\\(\":modules:sample:sample-api\"\\).*");
+	}
+
+	@Test
 	public void testCreateWorkspaceGradleServiceBuilderProjectDots() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
