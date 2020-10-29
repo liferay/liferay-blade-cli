@@ -76,7 +76,7 @@ dependencies {
 
 	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "4.3.0"
 	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
-	compile group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.93"
+	compile group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.97"
 	compile group: "commons-io", name: "commons-io", version: "2.6"
 	compile group: "org.apache.ant", name: "ant", version: "1.10.7"
 	compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
