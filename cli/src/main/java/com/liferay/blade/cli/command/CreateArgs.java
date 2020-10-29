@@ -35,6 +35,10 @@ import java.io.File;
 )
 public class CreateArgs extends BaseArgs {
 
+	public String getAddOns() {
+		return _addOns;
+	}
+
 	public String getClassname() {
 		return _classname;
 	}
@@ -112,6 +116,10 @@ public class CreateArgs extends BaseArgs {
 		return _listTemplates;
 	}
 
+	public void setAddOns(String addOns) {
+		_addOns = addOns;
+	}
+
 	public void setClassName(String className) {
 		_classname = className;
 	}
@@ -175,6 +183,11 @@ public class CreateArgs extends BaseArgs {
 	public void setViewType(String viewType) {
 		_viewType = viewType;
 	}
+
+	@Parameter(
+		description = "Set to true for add on options.", names = "--add-ons"
+	)
+	private String _addOns = "false";
 
 	@Parameter(
 		description = "If a class is generated in the project, provide the name of the class to be generated. If not provided defaults to project name.",
