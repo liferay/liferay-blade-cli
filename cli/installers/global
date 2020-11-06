@@ -1,4 +1,4 @@
-curl -sL https://oss.sonatype.org/content/repositories/snapshots/biz/aQute/bnd/biz.aQute.jpm.run/4.0.0-SNAPSHOT/biz.aQute.jpm.run-4.0.0-20201026.162724-24.jar > tmp.jar && \
+curl -sL https://raw.githubusercontent.com/liferay/liferay-blade-cli/master/cli/installers/biz.aQute.jpm.run-4.0.0-20201026.162724-24.jar > tmp.jar && \
 JPM_BIN_DIR=`java -jar tmp.jar -g init | grep -e "Bin[ \t]*dir" | awk '{print $3}'` && \
 rm -f tmp.jar && \
 ${JPM_BIN_DIR}/jpm install -f https://repository-cdn.liferay.com/nexus/service/local/repositories/liferay-public-releases/content/com/liferay/blade/com.liferay.blade.cli/4.0.5/com.liferay.blade.cli-4.0.5.jar && \
