@@ -1,5 +1,6 @@
 curl -sL https://raw.githubusercontent.com/liferay/liferay-blade-cli/master/cli/installers/biz.aQute.jpm.run-4.0.0-20201026.162724-24.jar > tmp.jar && \
 JPM_BIN_DIR=`java -jar tmp.jar -g init | grep -e "Bin[ \t]*dir" | awk '{print $3}'` && \
 rm -f tmp.jar && \
-${JPM_BIN_DIR}/jpm install -f https://repository-cdn.liferay.com/nexus/service/local/repositories/liferay-public-releases/content/com/liferay/blade/com.liferay.blade.cli/4.0.5/com.liferay.blade.cli-4.0.5.jar && \
+curl -o bladelatest.jar https://repository.liferay.com/nexus/service/local/artifact/maven/content?r=liferay-public-releases&g=com.liferay.blade&a=com.liferay.blade.cli&v=LATEST && \
+${JPM_BIN_DIR}/jpm install -f bladelatest.jar && \
 echo "blade installed successfully into ${JPM_BIN_DIR}/blade"
