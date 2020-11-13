@@ -184,9 +184,7 @@ public class CreateArgs extends BaseArgs {
 		_viewType = viewType;
 	}
 
-	@Parameter(
-		description = "Set to true for add on options.", names = "--add-ons"
-	)
+	@Parameter(description = "Set to true for add on options.", names = "--add-ons")
 	private String _addOns = "false";
 
 	@Parameter(
