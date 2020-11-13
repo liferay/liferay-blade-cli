@@ -763,7 +763,7 @@ public class CreateCommandTest {
 
 		File project = new File(workspace, "modules/foo");
 
-		_checkGradleBuildFiles(project.getAbsolutePath());
+		_checkGradleBuildFilesInWarProject(project.getAbsolutePath());
 	}
 
 	@Test
@@ -1323,36 +1323,6 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateWorkspaceGradleServiceBuilderProjectWithAddOns() throws Exception {
-		File workspace = new File(_rootDir, "workspace");
-
-		_makeWorkspace(workspace);
-
-		File modulesDir = new File(workspace, "modules");
-
-		String projectPath = modulesDir.getAbsolutePath();
-
-		String[] args = {
-			"create", "--base", workspace.getAbsolutePath(), "-d", projectPath, "-t", "service-builder", "-p",
-			"com.liferay.sample", "sample", "--add-ons", "true"
-		};
-
-		TestUtil.runBlade(workspace, _extensionsDir, args);
-
-		_checkFileExists(projectPath + "/sample/build.gradle");
-
-		_checkFileDoesNotExists(projectPath + "/sample/settings.gradle");
-
-		_checkFileExists(projectPath + "/sample/sample-api/build.gradle");
-
-		_checkFileExists(projectPath + "/sample/sample-service/build.gradle");
-
-		File file = _checkFileExists(projectPath + "/sample/sample-uad/build.gradle");
-
-		_contains(file, ".*compile project\\(\":modules:sample:sample-api\"\\).*");
-	}
-
-	@Test
 	public void testCreateWorkspaceGradleServiceBuilderProjectDots() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
@@ -1392,6 +1362,36 @@ public class CreateCommandTest {
 
 		_verifyImportPackage(
 			new File(projectPath, "workspace.sample/workspace.sample-service/build/libs/com.sample.service-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateWorkspaceGradleServiceBuilderProjectWithAddOns() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		File modulesDir = new File(workspace, "modules");
+
+		String projectPath = modulesDir.getAbsolutePath();
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-d", projectPath, "-t", "service-builder", "-p",
+			"com.liferay.sample", "sample", "--add-ons", "true"
+		};
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		_checkFileExists(projectPath + "/sample/build.gradle");
+
+		_checkFileDoesNotExists(projectPath + "/sample/settings.gradle");
+
+		_checkFileExists(projectPath + "/sample/sample-api/build.gradle");
+
+		_checkFileExists(projectPath + "/sample/sample-service/build.gradle");
+
+		File file = _checkFileExists(projectPath + "/sample/sample-uad/build.gradle");
+
+		_contains(file, ".*compile project\\(\":modules:sample:sample-api\"\\).*");
 	}
 
 	@Test
@@ -1998,6 +1998,16 @@ public class CreateCommandTest {
 		if (!lines.isEmpty() && !lines.contains("war {")) {
 			_checkFileExists(projectPath + "/bnd.bnd");
 		}
+	}
+
+	private void _checkGradleBuildFilesInWarProject(String projectPath) throws IOException {
+		_checkFileExists(projectPath);
+
+		Path gradlePath = Paths.get(projectPath, "build.gradle");
+
+		Assert.assertTrue(gradlePath.toString(), Files.exists(gradlePath));
+
+		_checkFileDoesNotExists(projectPath + "/bnd.bnd");
 	}
 
 	private void _contains(File file, String pattern) throws Exception {
