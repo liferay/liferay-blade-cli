@@ -349,10 +349,6 @@ public class ConvertCommandTest {
 
 		Assert.assertTrue(Files.exists(sampleServletFilterHook));
 
-		Path buildGradle = sampleServletFilterHook.resolve("build.gradle");
-
-		_contains(buildGradle.toFile(), ".*war \\{.*");
-
 		Path hookDir = projectDir.resolve("plugins-sdk/hooks/sample-servlet-filter-hook");
 
 		Assert.assertFalse(Files.exists(hookDir));

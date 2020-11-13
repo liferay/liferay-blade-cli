@@ -922,7 +922,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		matcher.find();
 
-		String newContent = matcher.group(1) + dependenciesBlock.toString() + matcher.group(2);
+		String newContent = matcher.group(1) + dependenciesBlock.toString();
 
 		Files.write(buildGradlePath, newContent.getBytes());
 
@@ -1214,7 +1214,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 	};
 
 	private static final Pattern _dependenciesBlockPattern = Pattern.compile(
-		"(.*^dependencies \\{.*)\\}(.*^war \\{.*)", Pattern.MULTILINE | Pattern.DOTALL);
+		"(.*^dependencies \\{.*)\\}", Pattern.MULTILINE | Pattern.DOTALL);
 	private static final Map<String, GAV> _migratedDependencies71 = new HashMap<>();
 	private static final Map<String, GAV> _migratedDependencies72 = new HashMap<>();
 	private static final Map<String, GAV> _migratedDependencies73 = new HashMap<>();

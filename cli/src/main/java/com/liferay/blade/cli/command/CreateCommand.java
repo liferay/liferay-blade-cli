@@ -358,6 +358,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	protected Map<String, String> getProjectTemplateArgsExtProperties(CreateArgs createArgs) {
 		Map<String, String> properties = new HashMap<>();
 
+		properties.put("setAddOns", createArgs.getAddOns());
 		properties.put("setContributorType", createArgs.getContributorType());
 		properties.put("setDependencyInjector", createArgs.getDependencyInjector());
 		properties.put("setFramework", createArgs.getFramework());
