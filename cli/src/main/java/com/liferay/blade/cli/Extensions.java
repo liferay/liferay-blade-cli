@@ -22,6 +22,7 @@ import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.ProcessesUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -205,7 +206,11 @@ public class Extensions implements Closeable {
 	@Override
 	public void close() throws IOException {
 		if ((_embeddedTemplatesPath != null) && Files.exists(_embeddedTemplatesPath)) {
-			FileUtil.deleteDir(_embeddedTemplatesPath);
+			try {
+				FileUtil.deleteDirIfExists(_embeddedTemplatesPath);
+			}
+			catch (Exception e) {
+			}
 		}
 	}
 
@@ -223,7 +228,9 @@ public class Extensions implements Closeable {
 
 	public Path getTemplatesPath() throws IOException {
 		if (_embeddedTemplatesPath == null) {
-			_embeddedTemplatesPath = Files.createTempDirectory("templates");
+			long pid = ProcessesUtil.getAProcessId();
+
+			_embeddedTemplatesPath = Files.createTempDirectory("templates-" + pid + "-");
 
 			try (InputStream inputStream = Extensions.class.getResourceAsStream(
 					"/blade-extensions-versions.properties")) {
