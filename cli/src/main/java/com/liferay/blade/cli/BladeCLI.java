@@ -1302,17 +1302,31 @@ public class BladeCLI {
 				try {
 					File[] fileList = tmpFile.listFiles();
 
-					for (File file : fileList) {
-						String fileName = file.getName();
+					Stream.of(
+						fileList
+					).filter(
+						file -> {
+							String fileName = file.getName();
 
-						if (fileName.startsWith("extensions") || fileName.startsWith("templates")) {
+							return fileName.startsWith("extensions") || fileName.startsWith("templates");
+						}
+					).filter(
+						filterFile -> {
+							String fileName = filterFile.getName();
+
 							String pid = fileName.substring(fileName.indexOf("-") + 1, fileName.lastIndexOf("-"));
 
-							if (!processIdList.contains(Long.parseLong(pid))) {
+							return !processIdList.contains(Long.parseLong(pid));
+						}
+					).forEach(
+						file -> {
+							try {
 								FileUtil.deleteDirIfExists(file.toPath());
 							}
+							catch (Exception exception) {
+							}
 						}
-					}
+					);
 				}
 				catch (Exception e) {
 				}
