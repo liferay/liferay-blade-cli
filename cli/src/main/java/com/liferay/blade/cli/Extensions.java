@@ -228,9 +228,9 @@ public class Extensions implements Closeable {
 
 	public Path getTemplatesPath() throws IOException {
 		if (_embeddedTemplatesPath == null) {
-			long pid = ProcessesUtil.getAProcessId();
+			long pid = ProcessesUtil.getCurrentProcessId();
 
-			_embeddedTemplatesPath = Files.createTempDirectory("templates-" + pid + "-");
+			_embeddedTemplatesPath = Files.createTempDirectory("blade-templates-" + pid + "-");
 
 			try (InputStream inputStream = Extensions.class.getResourceAsStream(
 					"/blade-extensions-versions.properties")) {

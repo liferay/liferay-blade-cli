@@ -1308,13 +1308,15 @@ public class BladeCLI {
 						file -> {
 							String fileName = file.getName();
 
-							return fileName.startsWith("extensions") || fileName.startsWith("templates");
+							return fileName.startsWith("blade-extensions") || fileName.startsWith("blade-templates");
 						}
 					).filter(
 						filterFile -> {
 							String fileName = filterFile.getName();
 
-							String pid = fileName.substring(fileName.indexOf("-") + 1, fileName.lastIndexOf("-"));
+							String[] segments = fileName.split("-");
+
+							String pid = segments[2];
 
 							return !processIdList.contains(Long.parseLong(pid));
 						}
