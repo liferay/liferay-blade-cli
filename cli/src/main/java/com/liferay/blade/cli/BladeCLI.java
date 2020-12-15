@@ -1306,7 +1306,9 @@ public class BladeCLI {
 						file -> {
 							String fileName = file.getName();
 
-							if (fileName.startsWith("blade-extensions") || fileName.startsWith("blade-templates")) {
+							if (fileName.startsWith(Extensions.TEMP_EXTENSIONS_PREFIX) ||
+								fileName.startsWith(Extensions.TEMP_TEMPLATES_PREFIX)) {
+
 								String[] segments = fileName.split("-");
 
 								String pid = segments[2];

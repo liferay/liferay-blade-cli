@@ -52,6 +52,10 @@ import java.util.stream.Stream;
  */
 public class Extensions implements Closeable {
 
+	public static final String TEMP_EXTENSIONS_PREFIX = "blade-extensions-";
+
+	public static final String TEMP_TEMPLATES_PREFIX = "blade-templates-";
+
 	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
 		Stream<Class<? extends BaseArgs>> stream = argsClass.stream();
 
@@ -230,7 +234,7 @@ public class Extensions implements Closeable {
 		if (_embeddedTemplatesPath == null) {
 			long pid = ProcessesUtil.getCurrentProcessId();
 
-			_embeddedTemplatesPath = Files.createTempDirectory("blade-templates-" + pid + "-");
+			_embeddedTemplatesPath = Files.createTempDirectory(TEMP_TEMPLATES_PREFIX + pid + "-");
 
 			try (InputStream inputStream = Extensions.class.getResourceAsStream(
 					"/blade-extensions-versions.properties")) {
