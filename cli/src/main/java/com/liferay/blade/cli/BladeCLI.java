@@ -1300,25 +1300,21 @@ public class BladeCLI {
 
 			public void run() {
 				try {
-					File[] fileList = tmpFile.listFiles();
-
 					Stream.of(
-						fileList
+						tmpFile.listFiles()
 					).filter(
 						file -> {
 							String fileName = file.getName();
 
-							return fileName.startsWith("blade-extensions") || fileName.startsWith("blade-templates");
-						}
-					).filter(
-						filterFile -> {
-							String fileName = filterFile.getName();
+							if (fileName.startsWith("blade-extensions") || fileName.startsWith("blade-templates")) {
+								String[] segments = fileName.split("-");
 
-							String[] segments = fileName.split("-");
+								String pid = segments[2];
 
-							String pid = segments[2];
+								return !processIdList.contains(Long.parseLong(pid));
+							}
 
-							return !processIdList.contains(Long.parseLong(pid));
+							return false;
 						}
 					).forEach(
 						file -> {
