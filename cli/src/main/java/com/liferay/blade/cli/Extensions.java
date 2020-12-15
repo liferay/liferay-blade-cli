@@ -22,6 +22,7 @@ import com.beust.jcommander.Parameters;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.ProcessesUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -50,6 +51,10 @@ import java.util.stream.Stream;
  * @author Gregory Amerson
  */
 public class Extensions implements Closeable {
+
+	public static final String TEMP_EXTENSIONS_PREFIX = "blade-extensions-";
+
+	public static final String TEMP_TEMPLATES_PREFIX = "blade-templates-";
 
 	public static Collection<String> getCommandNames(Collection<Class<? extends BaseArgs>> argsClass) {
 		Stream<Class<? extends BaseArgs>> stream = argsClass.stream();
@@ -205,7 +210,11 @@ public class Extensions implements Closeable {
 	@Override
 	public void close() throws IOException {
 		if ((_embeddedTemplatesPath != null) && Files.exists(_embeddedTemplatesPath)) {
-			FileUtil.deleteDir(_embeddedTemplatesPath);
+			try {
+				FileUtil.deleteDirIfExists(_embeddedTemplatesPath);
+			}
+			catch (Exception e) {
+			}
 		}
 	}
 
@@ -223,7 +232,9 @@ public class Extensions implements Closeable {
 
 	public Path getTemplatesPath() throws IOException {
 		if (_embeddedTemplatesPath == null) {
-			_embeddedTemplatesPath = Files.createTempDirectory("templates");
+			long pid = ProcessesUtil.getCurrentProcessId();
+
+			_embeddedTemplatesPath = Files.createTempDirectory(TEMP_TEMPLATES_PREFIX + pid + "-");
 
 			try (InputStream inputStream = Extensions.class.getResourceAsStream(
 					"/blade-extensions-versions.properties")) {

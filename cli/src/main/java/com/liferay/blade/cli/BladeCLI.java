@@ -33,6 +33,8 @@ import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.ParametersValidator;
 import com.liferay.blade.cli.gradle.GradleExecutionException;
 import com.liferay.blade.cli.util.CombinedClassLoader;
+import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.ProcessesUtil;
 import com.liferay.blade.cli.util.Prompter;
 
 import java.io.BufferedReader;
@@ -406,6 +408,8 @@ public class BladeCLI {
 
 	public void run(String[] args) throws Exception {
 		try {
+			_removeOutDatedTempDir();
+
 			Extensions extensions = getExtensions();
 
 			String basePath = _extractBasePath(args);
@@ -1283,6 +1287,54 @@ public class BladeCLI {
 		}
 
 		return value;
+	}
+
+	private void _removeOutDatedTempDir() {
+		List<Long> processIdList = ProcessesUtil.getAllProcessIds();
+
+		String tmpdir = System.getProperty("java.io.tmpdir");
+
+		File tmpFile = new File(tmpdir);
+
+		Thread thread = new Thread() {
+
+			public void run() {
+				try {
+					Stream.of(
+						tmpFile.listFiles()
+					).filter(
+						file -> {
+							String fileName = file.getName();
+
+							if (fileName.startsWith(Extensions.TEMP_EXTENSIONS_PREFIX) ||
+								fileName.startsWith(Extensions.TEMP_TEMPLATES_PREFIX)) {
+
+								String[] segments = fileName.split("-");
+
+								String pid = segments[2];
+
+								return !processIdList.contains(Long.parseLong(pid));
+							}
+
+							return false;
+						}
+					).forEach(
+						file -> {
+							try {
+								FileUtil.deleteDirIfExists(file.toPath());
+							}
+							catch (Exception exception) {
+							}
+						}
+					);
+				}
+				catch (Exception e) {
+				}
+			}
+
+		};
+
+		thread.start();
 	}
 
 	private void _runCommand() throws Exception {
