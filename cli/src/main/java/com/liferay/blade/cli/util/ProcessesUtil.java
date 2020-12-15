@@ -29,64 +29,56 @@ import java.util.Scanner;
 public class ProcessesUtil {
 
 	public static List<Long> getAllProcessIds() {
-		List<Long> processIdList = new ArrayList<>();
+		List<Long> processIds = new ArrayList<>();
 
 		try {
 			String os = System.getProperty("os.name");
 
-			Process process = null;
-
 			if (os.startsWith("Win")) {
 				ProcessBuilder processBuilder = new ProcessBuilder("tasklist.exe", "/fo", "csv", "/nh");
 
-				process = processBuilder.start();
+				Process process = processBuilder.start();
 
-				@SuppressWarnings("resource")
-				Scanner scanner = new Scanner(process.getInputStream());
+				try (Scanner scanner = new Scanner(process.getInputStream())) {
+					if (scanner.hasNextLine()) {
+						scanner.nextLine();
+					}
 
-				if (scanner.hasNextLine()) {
-					scanner.nextLine();
-				}
+					while (scanner.hasNextLine()) {
+						String line = scanner.nextLine();
 
-				while (scanner.hasNextLine()) {
-					String line = scanner.nextLine();
+						String[] parts = line.split(",");
 
-					String[] parts = line.split(",");
+						String pid = parts[1].substring(1);
 
-					String pid = parts[1].substring(1);
-
-					pid = pid.replaceFirst(".$", "");
-
-					processIdList.add(Long.parseLong(pid));
+						processIds.add(Long.parseLong(pid.replaceFirst(".$", "")));
+					}
 				}
 			}
 			else {
 				ProcessBuilder processBuilder = new ProcessBuilder("ps", "-e");
 
-				process = processBuilder.start();
+				Process process = processBuilder.start();
 
-				@SuppressWarnings("resource")
-				Scanner scanner = new Scanner(process.getInputStream());
+				try (Scanner scanner = new Scanner(process.getInputStream())) {
+					if (scanner.hasNextLine()) {
+						scanner.nextLine();
+					}
 
-				if (scanner.hasNextLine()) {
-					scanner.nextLine();
-				}
+					while (scanner.hasNextLine()) {
+						String line = scanner.nextLine();
 
-				while (scanner.hasNextLine()) {
-					String line = scanner.nextLine();
+						line = line.trim();
 
-					line = line.trim();
-
-					String pid = line.substring(0, line.indexOf(" "));
-
-					processIdList.add(Long.parseLong(pid));
+						processIds.add(Long.parseLong(line.substring(0, line.indexOf(" "))));
+					}
 				}
 			}
 		}
 		catch (Exception e) {
 		}
 
-		return processIdList;
+		return processIds;
 	}
 
 	public static long getCurrentProcessId() {
@@ -94,9 +86,7 @@ public class ProcessesUtil {
 
 		String vmName = runtimeMXBean.getName();
 
-		String pid = vmName.substring(0, vmName.indexOf("@"));
-
-		return Long.parseLong(pid);
+		return Long.parseLong(vmName.substring(0, vmName.indexOf("@")));
 	}
 
 }
