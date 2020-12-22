@@ -1,5 +1,47 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.6 - 2020-12-22
+
+### Commits
+- [BLADE-617] Update workspace constant (af1ca4ecd2)
+- [BLADE-611] use try/with resources and inline variables (35093f25b7)
+- [BLADE-611] use constant expression (6723c11256)
+- [BLADE-611] combine filter statements (e6b39d9247)
+- [BLADE-611] improve logic (8c90bb2ff8)
+- [BLADE-611] remove outdated temp directory when start blade (4e4ba7ea57)
+- [LPS-122967] Update local install script as well (353a249b5e)
+- [LPS-122967] Don't use multiline (7d809ed917)
+- [LPS-122967] Fix typos in script (35a2fc5ab7)
+- [LPS-122967] Update tests with new war changes (000f495aa1)
+- [LPS-122967] Moved war configuration into workspace plugin (a777da8eac)
+- [LPS-122967] Use simplified workspace template (d05c9340ec)
+- [LPS-106787] Add Test (ad75d3add5)
+- [LPS-106787] Enable options for add ons (f0e0c2b178)
+- [LPS-106787] Add support for UAD Options in service builder template
+(7e1d875ce8)
+- [LPS-106787] download and install latest blade.jar (f8df84c04c)
+
+### Dependencies
+- [BLADE-618] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.23.
+- [BLADE-618] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.6.
+- [BLADE-618] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.6.
+- [BLADE-617] Update the com.liferay.project.templates dependency to version
+5.0.103.
+- [] Update the commons-lang dependency to version 2.6.
+- [LPS-122967] Update the com.liferay.project.templates dependency to version
+5.0.101.
+- [LPS-106787] Update the com.liferay.project.templates dependency to version
+5.0.97.
+- [] Update the com.liferay.blade.extensions.maven.profile dependency to version
+1.0.23-SNAPSHOT.
+- [] Update the com.liferay.project.templates.js.theme dependency to version
+1.0.6-SNAPSHOT.
+- [] Update the com.liferay.project.templates.js.widget dependency to version
+1.0.6-SNAPSHOT.
+
 ## 4.0.5 - 2020-10-07
 
 ### Commits
@@ -1880,6 +1922,9 @@ maintainability (7f9bc3f45e)
 [BLADE-604]: https://issues.liferay.com/browse/BLADE-604
 [BLADE-605]: https://issues.liferay.com/browse/BLADE-605
 [BLADE-607]: https://issues.liferay.com/browse/BLADE-607
+[BLADE-611]: https://issues.liferay.com/browse/BLADE-611
+[BLADE-617]: https://issues.liferay.com/browse/BLADE-617
+[BLADE-618]: https://issues.liferay.com/browse/BLADE-618
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -1892,6 +1937,7 @@ maintainability (7f9bc3f45e)
 [LPS-105502]: https://issues.liferay.com/browse/LPS-105502
 [LPS-105747]: https://issues.liferay.com/browse/LPS-105747
 [LPS-105873]: https://issues.liferay.com/browse/LPS-105873
+[LPS-106787]: https://issues.liferay.com/browse/LPS-106787
 [LPS-108630]: https://issues.liferay.com/browse/LPS-108630
 [LPS-110131]: https://issues.liferay.com/browse/LPS-110131
 [LPS-111461]: https://issues.liferay.com/browse/LPS-111461
@@ -1903,6 +1949,7 @@ maintainability (7f9bc3f45e)
 [LPS-120193]: https://issues.liferay.com/browse/LPS-120193
 [LPS-120734]: https://issues.liferay.com/browse/LPS-120734
 [LPS-120852]: https://issues.liferay.com/browse/LPS-120852
+[LPS-122967]: https://issues.liferay.com/browse/LPS-122967
 [LRDOCS-3688]: https://issues.liferay.com/browse/LRDOCS-3688
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
