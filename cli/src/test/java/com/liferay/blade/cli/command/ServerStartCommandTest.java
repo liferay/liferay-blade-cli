@@ -83,9 +83,7 @@ public class ServerStartCommandTest {
 
 		_initServerBundle("--environment", "prod");
 
-		Path bundleConfigPath = _getBundleConfigPath();
-
-		_validateBundleConfigFile(bundleConfigPath);
+		_validateBundleConfigFile(_getBundleConfigPath());
 	}
 
 	@Test

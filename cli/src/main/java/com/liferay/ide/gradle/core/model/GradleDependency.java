@@ -27,6 +27,7 @@ public class GradleDependency {
 
 	public GradleDependency(String singleLine) {
 		_singleLine = singleLine;
+
 		_configuration = null;
 		_group = null;
 		_name = null;
@@ -44,6 +45,7 @@ public class GradleDependency {
 		_version = version;
 		_lineNumber = lineNumber;
 		_lastLineNumber = lastLineNumber;
+
 		_singleLine = null;
 	}
 
