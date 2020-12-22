@@ -27,8 +27,9 @@ public final class BladeVersions {
 		String currentVersion, Optional<String> releaseUpdateVersion, Optional<String> snapshotUpdateVersion) {
 
 		_currentVersion = currentVersion;
-		_releasedUpdateVersion = releaseUpdateVersion;
 		_snapshotUpdateVersion = snapshotUpdateVersion;
+
+		_releasedUpdateVersion = releaseUpdateVersion;
 	}
 
 	public String getCurrentVersion() {

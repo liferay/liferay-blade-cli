@@ -1235,10 +1235,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 
 		public GAV(String jarName) {
+			_jarName = jarName;
+
 			_groupId = Optional.empty();
 			_artifactId = Optional.empty();
 			_version = Optional.empty();
-			_jarName = jarName;
 		}
 
 		public Object getJarName() {

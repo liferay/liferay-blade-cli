@@ -78,8 +78,9 @@ public class FileWatcher {
 
 		_watcher = fileSystem.newWatchService();
 
-		_keys = new HashMap<>();
 		_recursive = recursive;
+
+		_keys = new HashMap<>();
 
 		System.out.format("Scanning %s\n", baseDir);
 

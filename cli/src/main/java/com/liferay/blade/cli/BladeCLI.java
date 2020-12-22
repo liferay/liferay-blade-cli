@@ -154,8 +154,9 @@ public class BladeCLI {
 		AnsiConsole.systemInstall();
 
 		_out = out;
-		_error = err;
 		_in = in;
+
+		_error = err;
 		instance = this;
 	}
 
@@ -1095,9 +1096,8 @@ public class BladeCLI {
 		if (_workspaceProviders == null) {
 			_workspaceProviders = new ArrayList<>();
 
-			ClassLoader classLoader = _getClassLoader();
-
-			ServiceLoader<WorkspaceProvider> serviceLoader = ServiceLoader.load(WorkspaceProvider.class, classLoader);
+			ServiceLoader<WorkspaceProvider> serviceLoader = ServiceLoader.load(
+				WorkspaceProvider.class, _getClassLoader());
 
 			Iterator<WorkspaceProvider> workspaceProviderIterator = serviceLoader.iterator();
 
@@ -1298,6 +1298,7 @@ public class BladeCLI {
 
 		Thread thread = new Thread() {
 
+			@Override
 			public void run() {
 				try {
 					Stream.of(
