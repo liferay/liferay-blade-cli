@@ -44,6 +44,7 @@ import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -56,6 +57,7 @@ import org.zeroturnaround.process.Processes;
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
+@Ignore
 public class ServerStartCommandMavenTest {
 
 	@Before
