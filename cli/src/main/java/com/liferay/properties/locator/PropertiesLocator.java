@@ -112,6 +112,8 @@ public class PropertiesLocator {
 
 			File bundleDir = propertiesLocatorArgs.getBundleDir();
 
+			bundleDir = bundleDir.getAbsoluteFile();
+
 			_bundlePath = bundleDir.toPath();
 
 			Properties newProperties = _getCurrentPortalProperties();
@@ -889,9 +891,7 @@ public class PropertiesLocator {
 	private void _printModularizedReplacements(PrintWriter outputFile, List<Pair<String, String>> replacements) {
 		replacements.forEach(
 			replacement -> {
-				Path modulePath = Paths.get(replacement.first());
-
-				String path = String.valueOf(_bundlePath.relativize(modulePath));
+				String path = String.valueOf(_bundlePath.relativize(Paths.get(replacement.first())));
 
 				path = path.replaceAll("\\\\", "/");
 
