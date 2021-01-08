@@ -47,8 +47,16 @@ public class InitArgs extends BaseArgs {
 		return _product;
 	}
 
+	public boolean isAll() {
+		return _all;
+	}
+
 	public boolean isForce() {
 		return _force;
+	}
+
+	public boolean isList() {
+		return _list;
 	}
 
 	public boolean isRefresh() {
@@ -59,12 +67,20 @@ public class InitArgs extends BaseArgs {
 		return _upgrade;
 	}
 
+	public void setAll(boolean all) {
+		_all = all;
+	}
+
 	public void setForce(boolean force) {
 		_force = force;
 	}
 
 	public void setLiferayVersion(String liferayVersion) {
 		_liferayVersion = liferayVersion;
+	}
+
+	public void setList(boolean list) {
+		_list = list;
 	}
 
 	public void setName(String name) {
@@ -83,6 +99,9 @@ public class InitArgs extends BaseArgs {
 		_upgrade = upgrade;
 	}
 
+	@Parameter(description = "List all Liferay products keys", names = "--all")
+	private boolean _all;
+
 	@Parameter(
 		description = "Initialize a workspace even if there are files located in target location",
 		names = {"-f", "--force"}
@@ -95,6 +114,12 @@ public class InitArgs extends BaseArgs {
 	)
 	@ParameterPossibleValues(more = LiferayMoreVersionValidator.class, value = LiferayDefaultVersionValidator.class)
 	private String _liferayVersion;
+
+	@Parameter(
+		description = "List Liferay products that can be configured during initial workspace creation",
+		names = {"-l", "--list"}
+	)
+	private boolean _list;
 
 	@Parameter(description = "[name]")
 	private String _name;

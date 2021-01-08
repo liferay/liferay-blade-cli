@@ -6,8 +6,6 @@ com.liferay.blade.cli.command.HelpCommand
 com.liferay.blade.cli.command.InitCommand
 com.liferay.blade.cli.command.InstallExtensionCommand
 com.liferay.blade.cli.command.ListProjectTemplatesCommand
-com.liferay.blade.cli.command.ListWorkspaceProductCommand
-com.liferay.blade.cli.command.ListWorkspaceProductAllCommand
 com.liferay.blade.cli.command.OpenCommand
 com.liferay.blade.cli.command.OutputsCommand
 com.liferay.blade.cli.command.UninstallExtensionCommand

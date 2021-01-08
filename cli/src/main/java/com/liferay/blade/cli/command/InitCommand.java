@@ -62,13 +62,21 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
-		BaseArgs args = bladeCLI.getArgs();
-
 		InitArgs initArgs = getArgs();
+
+		if (initArgs.isList()) {
+			List<String> keys = BladeUtil.getWorkspaceProductKeys(!initArgs.isAll());
+
+			keys.forEach(bladeCLI::out);
+
+			return;
+		}
 
 		String name = initArgs.getName();
 
 		File baseDir = initArgs.getBase();
+
+		BaseArgs args = bladeCLI.getArgs();
 
 		if (baseDir == null) {
 			baseDir = args.getBase();
