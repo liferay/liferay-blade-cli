@@ -9,6 +9,8 @@ task testBladeGwCommand(type: JavaExec)
 task testBladeHelpCommand(type: JavaExec)
 task testBladeInitCommand(type: JavaExec)
 task testBladeInitCommandLegacy(type: JavaExec)
+task testBladeInitCommandList(type: JavaExec)
+task testBladeInitCommandListAll(type: JavaExec)
 task testBladeReturnCodeFailure(type: Exec)
 task testBladeSamplesCommand(type: JavaExec)
 task testBladeVersionCommand(type: JavaExec)
@@ -190,6 +192,51 @@ testBladeInitCommandLegacy {
 		assert projectDirExists
 		assert !error.contains("error")
 		assert containsText
+	}
+}
+
+testBladeInitCommandList {
+	doFirst {
+		initDir.mkdirs()
+	}
+
+	args = [jar.archivePath, "init", "--list"]
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = initDir
+
+	doLast{
+		String error = errorStream.toString().toLowerCase()
+		String output = standardStream.toString()
+
+		errorStream.reset()
+		standardStream.reset()
+
+		assert !error.contains("error")
+		assert !output.contains("dxp-7.2-sp1")
+		assert output.contains("dxp-7.3-ga1")
+	}
+}
+
+testBladeInitCommandListAll {
+	doFirst {
+		initDir.mkdirs()
+	}
+
+	args = [jar.archivePath, "init", "-l", "--all"]
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = initDir
+
+	doLast{
+		String error = errorStream.toString().toLowerCase()
+		String output = standardStream.toString()
+
+		errorStream.reset()
+		standardStream.reset()
+
+		assert !error.contains("error")
+		assert output.contains("dxp-7.2-sp1")
 	}
 }
 
