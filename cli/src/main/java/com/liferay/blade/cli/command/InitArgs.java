@@ -99,7 +99,7 @@ public class InitArgs extends BaseArgs {
 		_upgrade = upgrade;
 	}
 
-	@Parameter(description = "List all Liferay products keys", names = "--all")
+	@Parameter(description = "Only used with (-l|--list) option, list all Liferay products keys", names = "--all")
 	private boolean _all;
 
 	@Parameter(

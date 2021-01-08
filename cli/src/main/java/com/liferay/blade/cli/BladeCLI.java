@@ -441,7 +441,7 @@ public class BladeCLI {
 
 			args = Extensions.sortArgs(_commands, args);
 
-			_jCommander = _buildJCommanderWithCommandMap(_commands);
+			_jCommander = _buildJCommanderWithCommandMap(args, _commands);
 
 			if ((args.length == 1) && args[0].equals("--help")) {
 				printUsage();
@@ -570,7 +570,7 @@ public class BladeCLI {
 							try {
 								parameterException = null;
 
-								_jCommander = _buildJCommanderWithCommandMap(_commands);
+								_jCommander = _buildJCommanderWithCommandMap(args, _commands);
 
 								_jCommander.parse(args);
 							}
@@ -687,25 +687,6 @@ public class BladeCLI {
 		).forEach(
 			commandName -> map.putIfAbsent(commandName, baseCommand)
 		);
-	}
-
-	private static JCommander _buildJCommanderWithCommandMap(Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
-		JCommander.Builder builder = JCommander.newBuilder();
-
-		builder.programName("blade");
-
-		for (Map.Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
-			BaseCommand<? extends BaseArgs> value = entry.getValue();
-
-			try {
-				builder.addCommand(entry.getKey(), value.getArgs());
-			}
-			catch (ParameterException pe) {
-				System.err.println(pe.getMessage());
-			}
-		}
-
-		return builder.build();
 	}
 
 	private static String _extractBasePath(String[] args) {
@@ -859,6 +840,29 @@ public class BladeCLI {
 
 			throw new IllegalArgumentException("Validation failed for " + argsClass.getSimpleName(), e);
 		}
+	}
+
+	private JCommander _buildJCommanderWithCommandMap(
+		String[] args, Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
+
+		JCommander.Builder builder = JCommander.newBuilder();
+
+		builder.programName("blade");
+
+		for (Map.Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
+			BaseCommand<? extends BaseArgs> value = entry.getValue();
+
+			try {
+				builder.addCommand(entry.getKey(), value.getArgs());
+			}
+			catch (ParameterException pe) {
+				System.err.println(pe.getMessage());
+			}
+		}
+
+		builder.defaultProvider(new BladeCLIDefaultProvider(args));
+
+		return builder.build();
 	}
 
 	private Map<String, String> _buildPossibleValuesMap(Class<? extends Supplier<List<String>>> supplierValidator) {
@@ -1172,16 +1176,16 @@ public class BladeCLI {
 				out("-> (Release) " + releaseUpdateVersion + "\t\t\t Run `blade update -r` to install");
 			}
 			else if (snapshotUpdateVersion.isPresent()) {
-				out("Update available " + currentVersion + " -> " + snapshotUpdateVersion);
+				out("Update available " + currentVersion + " -> " + snapshotUpdateVersion.get());
 				out("Run `blade update` to install");
 			}
 			else if (releaseUpdateVersion.isPresent()) {
-				out("Update available " + currentVersion + " -> " + releaseUpdateVersion);
+				out("Update available " + currentVersion + " -> " + releaseUpdateVersion.get());
 				out("Run `blade update -r` to install");
 			}
 		}
 		else if (releaseUpdateVersion.isPresent()) {
-			out("Update available " + currentVersion + " -> " + releaseUpdateVersion);
+			out("Update available " + currentVersion + " -> " + releaseUpdateVersion.get());
 			out("Run `blade update` to install");
 		}
 	}
