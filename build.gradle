@@ -202,6 +202,10 @@ subprojects { subproject ->
 		targetCompatibility = "1.8"
 	}
 
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
+
 	pluginManager.withPlugin("maven-publish") {
 		task prepareRelease
 		task prepareSnapshot
