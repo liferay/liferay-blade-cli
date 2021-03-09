@@ -1,5 +1,52 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.7 - 2021-03-09
+
+### Commits
+- [LPS-128040] Update rest builder template for jdk 11 support (308d97f6f0)
+- [BLADE-627] Disable Gradle module metadata publication (0ce2e9aa32)
+- [IDE-4932] Update gradle-plugins-theme-builder with correct
+gradle-plugins-css-builder dependency for gradle 5.6.4 compatibility
+(3dccf1fae4)
+- [BLADE-622] Update expected workspace version (b53d6cd6bb)
+- [BLADE-622] Update project templates with gradle 6.6.1 (e2fc0488f4)
+- [BLADE-622] Include project templates with service builder to compile with
+java 8 instead of 11 (89fabad0b2)
+- [BLADE-622] update workspace plugin with liferayWorkspace.docker* fix
+(b8be68e6c1)
+- [BLADE-622] Update workspace plugin for gradle 6 (fe49e6eba7)
+- [BLADE-622] Build Scans have been moved to Gradle enterprise plugin
+(81bba0c093)
+- [BLADE-622] Update gradle to 6.6.1 (f7399c4598)
+- [BLADE-621] provide a default value for version with init command (3309cb1a1b)
+- [BLADE-621] update smoke tests (86b5ed2e0e)
+- [BLADE-621] move -l --list --all options to original InitCommand (b473f173df)
+- [BLADE-620] Properly handle relative paths as input (f9d1456227)
+
+### Dependencies
+- [BLADE-628] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.24.
+- [BLADE-628] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.7.
+- [BLADE-628] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.7.
+- [LPS-128040] Update the com.liferay.project.templates dependency to version
+5.0.113.
+- [IDE-4932] Update the com.liferay.project.templates dependency to version
+5.0.111.
+- [BLADE-622] Update the com.liferay.project.templates dependency to version
+5.0.109.
+- [BLADE-622] Update the com.liferay.project.templates dependency to version
+5.0.107.
+- [LPS-125495] Update the com.liferay.project.templates dependency to version
+5.0.105.
+- [BLADE-618] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.24-SNAPSHOT.
+- [BLADE-618] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.7-SNAPSHOT.
+- [BLADE-618] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.7-SNAPSHOT.
+
 ## 4.0.6 - 2020-12-22
 
 ### Commits
@@ -1925,9 +1972,15 @@ maintainability (7f9bc3f45e)
 [BLADE-611]: https://issues.liferay.com/browse/BLADE-611
 [BLADE-617]: https://issues.liferay.com/browse/BLADE-617
 [BLADE-618]: https://issues.liferay.com/browse/BLADE-618
+[BLADE-620]: https://issues.liferay.com/browse/BLADE-620
+[BLADE-621]: https://issues.liferay.com/browse/BLADE-621
+[BLADE-622]: https://issues.liferay.com/browse/BLADE-622
+[BLADE-627]: https://issues.liferay.com/browse/BLADE-627
+[BLADE-628]: https://issues.liferay.com/browse/BLADE-628
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
+[IDE-4932]: https://issues.liferay.com/browse/IDE-4932
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
@@ -1950,6 +2003,8 @@ maintainability (7f9bc3f45e)
 [LPS-120734]: https://issues.liferay.com/browse/LPS-120734
 [LPS-120852]: https://issues.liferay.com/browse/LPS-120852
 [LPS-122967]: https://issues.liferay.com/browse/LPS-122967
+[LPS-125495]: https://issues.liferay.com/browse/LPS-125495
+[LPS-128040]: https://issues.liferay.com/browse/LPS-128040
 [LRDOCS-3688]: https://issues.liferay.com/browse/LRDOCS-3688
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
