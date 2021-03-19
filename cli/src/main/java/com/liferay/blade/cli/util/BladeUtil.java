@@ -44,7 +44,7 @@ import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+import java.nio.file.StandardOpenOption;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
@@ -67,13 +67,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
 
 /**
  * @author Gregory Amerson
@@ -588,22 +581,11 @@ public class BladeUtil {
 	}
 
 	public static void writePropertyValue(File propertyFile, String key, String value) throws Exception {
-		FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<>(
-			PropertiesConfiguration.class);
+		String property = System.lineSeparator() + key + "=" + value;
 
-		Parameters parameters = new Parameters();
-
-		PropertiesBuilderParameters properties = parameters.properties();
-
-		properties.setFile(propertyFile);
-
-		builder.configure(properties);
-
-		Configuration config = builder.getConfiguration();
-
-		config.setProperty(key, value);
-
-		builder.save();
+		Files.write(
+			propertyFile.toPath(), property.getBytes(),
+			StandardOpenOption.APPEND);
 	}
 
 	private static ProcessBuilder _buildProcessBuilder(

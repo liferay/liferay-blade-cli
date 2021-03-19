@@ -421,13 +421,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
-		Assert.assertTrue(contents, contents.contains("portal-7.0-ga7"));
-
-		Path bladePropertiesPath = _workspacePath.resolve(".blade.properties");
-
-		String properties = new String(Files.readAllBytes(bladePropertiesPath));
-
-		Assert.assertTrue(properties, properties.contains("liferay.version.default=7.0"));
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.0-ga7"));
 	}
 
 	@Test
@@ -440,13 +434,33 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
-		Assert.assertTrue(contents, contents.contains("portal-7.1-ga4"));
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.1-ga4"));
+	}
 
-		Path bladePropertiesPath = _workspacePath.resolve(".blade.properties");
+	@Test
+	public void testInitWithLiferayVersion72() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_72};
 
-		String properties = new String(Files.readAllBytes(bladePropertiesPath));
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		Assert.assertTrue(properties, properties.contains("liferay.version.default=7.1"));
+		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
+
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.2-ga2"));
+	}
+
+	@Test
+	public void testInitWithLiferayVersion73() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
+
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.3-ga6"));
 	}
 
 	@Test(expected = AssertionError.class)
