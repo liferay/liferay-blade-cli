@@ -349,9 +349,9 @@ public class InitCommandTest {
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output.contains("dxp-7.2-sp3"));
+		Assert.assertTrue(output, output.contains("dxp-7.2-sp4"));
 
-		Assert.assertFalse(output, output.contains("dxp-7.2-sp2"));
+		Assert.assertFalse(output, output.contains("dxp-7.2-sp3"));
 
 		List<String> lines = new ArrayList<>();
 
