@@ -20,7 +20,6 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.gradle.GradleExecutionException;
 import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.ByteArrayInputStream;
