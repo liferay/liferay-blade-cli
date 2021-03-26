@@ -20,6 +20,7 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.gradle.GradleExecutionException;
 import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.ByteArrayInputStream;
@@ -408,6 +409,13 @@ public class InitCommandTest {
 		Path pluginBuildXmlPath = _workspacePath.resolve("plugins-sdk/build.xml");
 
 		Assert.assertTrue(Files.exists(pluginBuildXmlPath));
+	}
+
+	@Test(expected = AssertionError.class)
+	public void testInitLegacyProductKey() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", "portal-7.0-ga1"};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 	}
 
 	@Test
