@@ -64,7 +64,7 @@ public class BladeTest extends BladeCLI {
 
 	public static final String PRODUCT_VERSION_PORTAL_72 = "portal-7.2-ga2";
 
-	public static final String PRODUCT_VERSION_PORTAL_73 = "portal-7.3-ga6";
+	public static final String PRODUCT_VERSION_PORTAL_73 = "portal-7.3-ga7";
 
 	public static final String PRODUCT_VERSION_PORTAL_74 = "portal-7.4-ga1";
 
