@@ -45,6 +45,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
@@ -583,9 +584,7 @@ public class BladeUtil {
 	public static void writePropertyValue(File propertyFile, String key, String value) throws Exception {
 		String property = System.lineSeparator() + key + "=" + value;
 
-		Files.write(
-			propertyFile.toPath(), property.getBytes(),
-			StandardOpenOption.APPEND);
+		Files.write(propertyFile.toPath(), property.getBytes(), StandardOpenOption.APPEND);
 	}
 
 	private static ProcessBuilder _buildProcessBuilder(

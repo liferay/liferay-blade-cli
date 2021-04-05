@@ -1246,7 +1246,8 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/workspace-sample/workspace-sample-service/build.gradle");
 
-		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
+		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(
+			workspace.getPath(), ":modules:workspace-sample:workspace-sample-service:buildService");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
 
@@ -1292,7 +1293,8 @@ public class CreateCommandTest {
 
 		_contains(file, ".*compile project\\(\":modules:sample:sample-api\"\\).*");
 
-		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
+		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(
+			workspace.getPath(), ":modules:sample:sample-service:buildService");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
 
@@ -1347,7 +1349,8 @@ public class CreateCommandTest {
 
 		_checkFileExists(projectPath + "/workspace.sample/workspace.sample-service/build.gradle");
 
-		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace.getPath(), "buildService");
+		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(
+			workspace.getPath(), ":modules:workspace.sample:workspace.sample-service:buildService");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
 
@@ -1728,7 +1731,8 @@ public class CreateCommandTest {
 
 		Files.write(buildGradle.toPath(), content.getBytes());
 
-		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace70.getPath(), "buildService");
+		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(
+			workspace70.getPath(), ":modules:seven-zero:seven-zero-service:buildService");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
 
@@ -1780,7 +1784,8 @@ public class CreateCommandTest {
 
 		Files.write(buildGradle.toPath(), content.getBytes());
 
-		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace71.getPath(), "buildService");
+		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(
+			workspace71.getPath(), ":modules:seven-one:seven-one-service:buildService");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
 
@@ -1831,7 +1836,8 @@ public class CreateCommandTest {
 
 		Files.write(buildGradle.toPath(), content.getBytes());
 
-		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(workspace72.getPath(), "buildService");
+		BuildTask buildService = GradleRunnerUtil.executeGradleRunner(
+			workspace72.getPath(), ":modules:seven-two:seven-two-service:buildService");
 
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildService);
 
@@ -1996,7 +2002,11 @@ public class CreateCommandTest {
 		List<String> lines = Files.readAllLines(gradlePath);
 
 		if (!lines.isEmpty() && !lines.contains("war {")) {
-			_checkFileExists(projectPath + "/bnd.bnd");
+			String firstLine = lines.get(0);
+
+			if (!firstLine.equals("// Check GETTING_STARTED.markdown for information regarding usage.")) {
+				_checkFileExists(projectPath + "/bnd.bnd");
+			}
 		}
 	}
 
