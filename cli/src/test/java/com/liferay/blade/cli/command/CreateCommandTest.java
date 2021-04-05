@@ -1995,10 +1995,12 @@ public class CreateCommandTest {
 
 		List<String> lines = Files.readAllLines(gradlePath);
 
-		String firstLine = lines.get(0);
+		if (!lines.isEmpty() && !lines.contains("war {")) {
+			String firstLine = lines.get(0);
 
-		if (!lines.isEmpty() && !lines.contains("war {") && !firstLine.startsWith("//")) {
-			_checkFileExists(projectPath + "/bnd.bnd");
+			if (!firstLine.equals("// Check GETTING_STARTED.markdown for information regarding usage.")) {
+				_checkFileExists(projectPath + "/bnd.bnd");
+			}
 		}
 	}
 
