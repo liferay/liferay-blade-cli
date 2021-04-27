@@ -238,7 +238,7 @@ public class CreateArgs extends BaseArgs {
 	private String _jsFramework;
 
 	@Parameter(
-		description = "The version of Liferay to target when creating the project. Available options are 7.0, 7.1, 7.2, 7.3.",
+		description = "The version of Liferay to target when creating the project. Available options are 7.0, 7.1, 7.2, 7.3, 7.4.",
 		names = {"-v", "--liferay-version"}
 	)
 	private String _liferayVersion;

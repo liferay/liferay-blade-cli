@@ -41,7 +41,7 @@ public class BladeCLIDefaultProvider implements IDefaultProvider {
 			).findAny(
 			).isPresent()) {
 
-			return "7.3";
+			return "7.4";
 		}
 
 		return null;

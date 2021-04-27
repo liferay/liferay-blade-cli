@@ -214,6 +214,10 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				initArgs.setLiferayVersion("portal-7.3-ga4");
 
 				break;
+			case "7.4":
+				initArgs.setLiferayVersion("portal-7.4-ga1");
+
+				break;
 		}
 
 		String workspaceProductKey = initArgs.getLiferayVersion();

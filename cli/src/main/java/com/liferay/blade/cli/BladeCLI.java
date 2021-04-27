@@ -1464,6 +1464,7 @@ public class BladeCLI {
 			put("2", "7.1");
 			put("3", "7.2");
 			put("4", "7.3");
+			put("5", "7.4");
 		}
 	};
 
