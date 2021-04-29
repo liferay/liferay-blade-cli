@@ -1,5 +1,41 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.8 - 2021-04-29
+
+### Commits
+- [BLADE-631] fix tests (0a23d70b54)
+- [BLADE-631] support init a liferay 7.4 workspace and make it default
+(9d5f70f802)
+- [LPS-130802] Add compatibility for 7.4 projects (09ccb33b2b)
+- [LPS-130023] Newer 7.3 DXP available (e7ff28635c)
+- [LPS-130023] Fix remaining service builder tests (efb06712dd)
+- [LPS-130023] Improve logic (dae70ec187)
+- [LPS-130023] Fix test (384370873e)
+- [LPS-130023] Update workspace version (414a0713b9)
+- [LPS-130023] Add 7.4 compatibility for project creation (ca96f68e0e)
+- [BLADE-630] Test fix (4b086d8b0c)
+- [BLADE-630] Consistent whitespace for key value pair (d6997a9d18)
+- [BLADE-630] No longer use liferay.version.default (4caf402f7c)
+- [BLADE-628] Prep Next (81e87f6edb)
+
+### Dependencies
+- [BLADE-633] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.25.
+- [BLADE-633] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.8.
+- [BLADE-633] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.8.
+- [LPS-130802] Update the com.liferay.project.templates dependency to version
+5.0.127.
+- [LPS-130023] Update the com.liferay.project.templates dependency to version
+5.0.123.
+- [BLADE-628] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.25-SNAPSHOT.
+- [BLADE-628] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.8-SNAPSHOT.
+- [BLADE-628] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.8-SNAPSHOT.
+
 ## 4.0.7 - 2021-03-09
 
 ### Commits
@@ -1977,6 +2013,9 @@ maintainability (7f9bc3f45e)
 [BLADE-622]: https://issues.liferay.com/browse/BLADE-622
 [BLADE-627]: https://issues.liferay.com/browse/BLADE-627
 [BLADE-628]: https://issues.liferay.com/browse/BLADE-628
+[BLADE-630]: https://issues.liferay.com/browse/BLADE-630
+[BLADE-631]: https://issues.liferay.com/browse/BLADE-631
+[BLADE-633]: https://issues.liferay.com/browse/BLADE-633
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -2005,6 +2044,8 @@ maintainability (7f9bc3f45e)
 [LPS-122967]: https://issues.liferay.com/browse/LPS-122967
 [LPS-125495]: https://issues.liferay.com/browse/LPS-125495
 [LPS-128040]: https://issues.liferay.com/browse/LPS-128040
+[LPS-130023]: https://issues.liferay.com/browse/LPS-130023
+[LPS-130802]: https://issues.liferay.com/browse/LPS-130802
 [LRDOCS-3688]: https://issues.liferay.com/browse/LRDOCS-3688
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
