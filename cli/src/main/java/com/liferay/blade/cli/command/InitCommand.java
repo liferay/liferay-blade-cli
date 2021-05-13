@@ -211,7 +211,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 				break;
 			case "7.3":
-				initArgs.setLiferayVersion("portal-7.3-ga4");
+				initArgs.setLiferayVersion("portal-7.3-ga7");
 
 				break;
 			case "7.4":
