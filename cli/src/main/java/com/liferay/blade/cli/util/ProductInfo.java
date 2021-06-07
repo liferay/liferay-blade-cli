@@ -63,7 +63,7 @@ public class ProductInfo {
 		return _promoted;
 	}
 
-	private static String _safeGet(Map<String, String> map, String key, String defVal) {
+	private String _safeGet(Map<String, String> map, String key, String defVal) {
 		return Optional.ofNullable(
 			map
 		).map(

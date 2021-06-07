@@ -24,7 +24,6 @@ import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -329,7 +328,7 @@ public class SamplesCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static void _deleteSamplesCache() throws IOException {
+	private static void _deleteSamplesCache() throws Exception {
 		Path userHomePath = _USER_HOME_DIR.toPath();
 
 		Path samplesCachePath = userHomePath.resolve(".blade/cache/samples");

@@ -42,9 +42,9 @@ public class DeployCommandMaven extends DeployCommand implements MavenExecutor {
 
 		File baseDir = deployArgs.getBase();
 
-		File pomXmlFile = MavenUtil.getPomXMLFile(baseDir);
+		File pomXMLFile = MavenUtil.getpomXMLFile(baseDir);
 
-		if (pomXmlFile.exists()) {
+		if (pomXMLFile.exists()) {
 			execute(baseDir.getAbsolutePath(), new String[] {"clean", "package", "bundle-support:deploy"}, true);
 		}
 		else {

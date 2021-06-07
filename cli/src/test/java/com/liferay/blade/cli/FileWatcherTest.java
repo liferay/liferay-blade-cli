@@ -95,7 +95,7 @@ public class FileWatcherTest {
 				try {
 					new FileWatcher(_testDir, false, consumer);
 				}
-				catch (IOException ioe) {
+				catch (IOException ioException) {
 				}
 			}
 
@@ -143,7 +143,7 @@ public class FileWatcherTest {
 				try {
 					new FileWatcher(_testDir, _testfile, false, consumer);
 				}
-				catch (IOException ioe) {
+				catch (IOException ioException) {
 				}
 			}
 

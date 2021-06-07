@@ -20,7 +20,6 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.StringPrintStream;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -103,7 +102,7 @@ public class SampleCommandsTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static void _setupTestExtension(Path extensionsPath, String jarPath) throws IOException {
+	private void _setupTestExtension(Path extensionsPath, String jarPath) throws Exception {
 		File sampleJarFile = new File(jarPath);
 
 		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());

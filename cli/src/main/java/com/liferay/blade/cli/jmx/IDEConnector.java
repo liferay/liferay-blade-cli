@@ -17,7 +17,6 @@
 package com.liferay.blade.cli.jmx;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.net.MalformedURLException;
 
@@ -26,7 +25,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.management.MBeanServerConnection;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 /**
@@ -53,9 +51,7 @@ public class IDEConnector extends JMXLocalConnector {
 			workspaceHelper, "openDir", new Object[] {absolutePath}, new String[] {String.class.getName()});
 	}
 
-	private static ObjectName _getWorkspaceHelper(MBeanServerConnection mBeanServerConnection)
-		throws IOException, MalformedObjectNameException {
-
+	private ObjectName _getWorkspaceHelper(MBeanServerConnection mBeanServerConnection) throws Exception {
 		final ObjectName objectName = new ObjectName(_NAME + ":type=" + _TYPE + ",*");
 
 		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);

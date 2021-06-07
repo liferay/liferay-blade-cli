@@ -135,22 +135,22 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 						);
 					}
 
-					Path projectSubPath = Paths.get(subpath.toString());
+					Path projectSubpath = Paths.get(subpath.toString());
 
-					projectSubPath = extractedDirectory.resolve(projectSubPath);
+					projectSubpath = extractedDirectory.resolve(projectSubpath);
 
-					if (Files.exists(projectSubPath) && _isGradleBuild(projectSubPath)) {
-						File projectSubDir = projectSubPath.toFile();
+					if (Files.exists(projectSubpath) && _isGradleBuild(projectSubpath)) {
+						File projectSubdir = projectSubpath.toFile();
 
-						if (!BladeUtil.hasGradleWrapper(projectSubDir)) {
-							BladeUtil.addGradleWrapper(projectSubDir);
+						if (!BladeUtil.hasGradleWrapper(projectSubdir)) {
+							BladeUtil.addGradleWrapper(projectSubdir);
 						}
 
 						if (!quiet) {
 							bladeCLI.out("Building extension...");
 						}
 
-						Set<Path> extensionPaths = _gradleAssemble(projectSubPath);
+						Set<Path> extensionPaths = _gradleAssemble(projectSubpath);
 
 						if (!extensionPaths.isEmpty()) {
 							for (Path extensionPath : extensionPaths) {
@@ -158,11 +158,11 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 							}
 						}
 						else {
-							bladeCLI.error("Unable to get output of gradle build " + projectSubPath);
+							bladeCLI.error("Unable to get output of gradle build " + projectSubpath);
 						}
 					}
 					else {
-						bladeCLI.error("Path not a gradle build " + projectSubPath);
+						bladeCLI.error("Path not a gradle build " + projectSubpath);
 					}
 				}
 				else {
@@ -213,8 +213,8 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 							}
 						}
 					}
-					catch (Exception e) {
-						throw e;
+					catch (Exception exception) {
+						throw exception;
 					}
 					finally {
 						FileUtil.deleteDir(path);
@@ -265,7 +265,15 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		return InstallExtensionArgs.class;
 	}
 
-	private static Set<Path> _getExistingPaths(Map<String, Set<File>> projectOutputFiles) {
+	private static boolean _isGradleBuild(Path path) {
+		if ((path != null) && Files.exists(path.resolve("build.gradle"))) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private Set<Path> _getExistingPaths(Map<String, Set<File>> projectOutputFiles) {
 		Collection<Set<File>> values = projectOutputFiles.values();
 
 		Stream<Set<File>> stream = values.stream();
@@ -281,62 +289,10 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		);
 	}
 
-	private static boolean _isArchetype(Path path) {
-		return BladeUtil.searchZip(path, name -> name.endsWith("archetype-metadata.xml"));
-	}
-
-	private static boolean _isCustomTemplate(Path path) {
-		if (_isTemplateMatch(path) && _isArchetype(path)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private static boolean _isExtension(Path path) {
-		if (_isCustomTemplate(path)) {
-			return true;
-		}
-
-		return BladeUtil.searchZip(
-			path, name -> name.startsWith("META-INF/services/com.liferay.blade.cli.command.BaseCommand"));
-	}
-
-	private static boolean _isGradleBuild(Path path) {
-		if ((path != null) && Files.exists(path.resolve("build.gradle"))) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private static boolean _isTemplateMatch(Path path) {
-		if (Files.exists(path) && (_templatePathMatcher.matches(path) || _isArchetype(path))) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private static boolean _isValidURL(String urlString) {
-		try {
-			URL url = new URL(urlString);
-
-			url.toURI();
-
-			return true;
-		}
-		catch (Exception e) {
-			return false;
-		}
-	}
-
 	private Set<Path> _gradleAssemble(Path projectPath) throws Exception {
 		GradleExec gradleExec = new GradleExec(getBladeCLI());
 
 		ProjectInfo projectInfo = GradleTooling.loadProjectInfo(projectPath);
-
-		Map<String, Set<File>> projectOutputFiles = projectInfo.getProjectOutputFiles();
 
 		ProcessResult processResult = gradleExec.executeTask("assemble -x check", projectPath.toFile());
 
@@ -348,7 +304,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 			throw new Exception("Gradle command returned error code " + resultCode + System.lineSeparator() + output);
 		}
 
-		return _getExistingPaths(projectOutputFiles);
+		return _getExistingPaths(projectInfo.getProjectOutputFiles());
 	}
 
 	private void _installExtension(Path extensionPath) throws IOException {
@@ -393,6 +349,48 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 		else {
 			throw new IOException(
 				String.format("Unable to install. %s is not a valid blade extension.", extensionName));
+		}
+	}
+
+	private boolean _isArchetype(Path path) {
+		return BladeUtil.searchZip(path, name -> name.endsWith("archetype-metadata.xml"));
+	}
+
+	private boolean _isCustomTemplate(Path path) {
+		if (_isTemplateMatch(path) && _isArchetype(path)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isExtension(Path path) {
+		if (_isCustomTemplate(path)) {
+			return true;
+		}
+
+		return BladeUtil.searchZip(
+			path, name -> name.startsWith("META-INF/services/com.liferay.blade.cli.command.BaseCommand"));
+	}
+
+	private boolean _isTemplateMatch(Path path) {
+		if (Files.exists(path) && (_templatePathMatcher.matches(path) || _isArchetype(path))) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isValidURL(String urlString) {
+		try {
+			URL url = new URL(urlString);
+
+			url.toURI();
+
+			return true;
+		}
+		catch (Exception exception) {
+			return false;
 		}
 	}
 

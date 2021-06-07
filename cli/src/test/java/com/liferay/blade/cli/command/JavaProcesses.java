@@ -85,19 +85,19 @@ public class JavaProcesses {
 			else {
 				Thread thread = Thread.currentThread();
 
-				ClassLoader cl = thread.getContextClassLoader();
+				ClassLoader classLoader = thread.getContextClassLoader();
 
-				ClassLoader toolsClassloader = null;
+				ClassLoader toolsClassLoader = null;
 
 				try {
-					toolsClassloader = _getToolsClassLoader(cl);
+					toolsClassLoader = _getToolsClassLoader(classLoader);
 
-					if (toolsClassloader != null) {
-						thread.setContextClassLoader(toolsClassloader);
+					if (toolsClassLoader != null) {
+						thread.setContextClassLoader(toolsClassLoader);
 
 						_log(logger, "Trying to load VirtualMachine class...");
 
-						Class<?> vmClass = toolsClassloader.loadClass("com.sun.tools.attach.VirtualMachine");
+						Class<?> vmClass = toolsClassLoader.loadClass("com.sun.tools.attach.VirtualMachine");
 
 						Method listMethod = vmClass.getMethod("list");
 
@@ -106,7 +106,7 @@ public class JavaProcesses {
 						_log(logger, "Found " + vmds.size() + " vms on this machine.");
 
 						for (Object vmd : vmds) {
-							Class<?> vmdClass = toolsClassloader.loadClass(
+							Class<?> vmdClass = toolsClassLoader.loadClass(
 								"com.sun.tools.attach.VirtualMachineDescriptor");
 
 							Method displayNameMethod = vmdClass.getMethod("displayName");
@@ -124,21 +124,21 @@ public class JavaProcesses {
 						}
 					}
 				}
-				catch (Exception e) {
-					e.printStackTrace();
+				catch (Exception exception) {
+					exception.printStackTrace();
 				}
 				finally {
-					thread.setContextClassLoader(cl);
+					thread.setContextClassLoader(classLoader);
 
 					// try to get custom classloader to unload native libs
 
 					try {
-						if (toolsClassloader != null) {
+						if (toolsClassLoader != null) {
 							Field nl = ClassLoader.class.getDeclaredField("nativeLibraries");
 
 							nl.setAccessible(true);
 
-							Vector<?> nativeLibs = (Vector<?>)nl.get(toolsClassloader);
+							Vector<?> nativeLibs = (Vector<?>)nl.get(toolsClassLoader);
 
 							for (Object nativeLib : nativeLibs) {
 								Class<?> clazz = nativeLib.getClass();
@@ -162,16 +162,16 @@ public class JavaProcesses {
 							}
 						}
 					}
-					catch (Exception e) {
-						throw e;
+					catch (Exception exception) {
+						throw exception;
 					}
 				}
 			}
 
 			return javaProcesses;
 		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
 		}
 	}
 
@@ -231,17 +231,17 @@ public class JavaProcesses {
 		File toolsJar = _findJdkJar("tools.jar");
 
 		if ((toolsJar != null) && toolsJar.exists()) {
-			URL toolsUrl = null;
+			URL toolsURL = null;
 
 			try {
 				URI toolsURI = toolsJar.toURI();
 
-				toolsUrl = toolsURI.toURL();
+				toolsURL = toolsURI.toURL();
 			}
-			catch (MalformedURLException murle) {
+			catch (MalformedURLException malformedURLException) {
 			}
 
-			URL[] urls = {toolsUrl};
+			URL[] urls = {toolsURL};
 
 			return new URLClassLoader(urls, parent);
 		}

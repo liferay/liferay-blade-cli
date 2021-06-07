@@ -345,7 +345,7 @@ public abstract class TasksEntryServiceBaseImpl extends BaseServiceImpl
 
 			sqlUpdate.update();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw new SystemException(e);
 		}
 	}

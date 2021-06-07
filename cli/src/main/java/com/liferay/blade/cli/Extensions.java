@@ -213,7 +213,7 @@ public class Extensions implements Closeable {
 			try {
 				FileUtil.deleteDirIfExists(_embeddedTemplatesPath);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 			}
 		}
 	}

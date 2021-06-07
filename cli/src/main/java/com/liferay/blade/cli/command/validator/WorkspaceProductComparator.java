@@ -88,7 +88,7 @@ public class WorkspaceProductComparator implements Comparator<Pair<String, Produ
 
 					return bDate.compareTo(aDate);
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 					String aMicroVersionPrefix = aProductMicroVersion.substring(0, 2);
 					String bMicroVersionPrefix = bProductMicroVersion.substring(0, 2);
 

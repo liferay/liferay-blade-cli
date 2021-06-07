@@ -62,8 +62,8 @@ public class LinkDownloader implements Runnable {
 
 			Files.copy(httpURLConnection.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
 		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
 		}
 	}
 
@@ -82,8 +82,8 @@ public class LinkDownloader implements Runnable {
 
 				_headers = _httpURLConnection.getHeaderFields();
 			}
-			catch (Exception e) {
-				throw new RuntimeException(e);
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
 			}
 		}
 
@@ -115,8 +115,8 @@ public class LinkDownloader implements Runnable {
 					_headers = _httpURLConnection.getHeaderFields();
 				}
 			}
-			catch (Exception e) {
-				throw new RuntimeException(e);
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
 			}
 		}
 

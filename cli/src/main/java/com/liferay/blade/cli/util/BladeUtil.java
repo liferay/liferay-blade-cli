@@ -121,7 +121,7 @@ public class BladeUtil {
 			try {
 				dir = dir.getCanonicalFile();
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				dir = dir.getAbsoluteFile();
 			}
 		}
@@ -177,8 +177,8 @@ public class BladeUtil {
 
 			return file.toPath();
 		}
-		catch (URISyntaxException urise) {
-			throw new RuntimeException(urise);
+		catch (URISyntaxException uriSyntaxException) {
+			throw new RuntimeException(uriSyntaxException);
 		}
 	}
 
@@ -225,7 +225,7 @@ public class BladeUtil {
 				initTemplates.put(template, bundleDescription);
 			}
 		}
-		catch (IOException ioe) {
+		catch (IOException ioException) {
 		}
 
 		return initTemplates;
@@ -272,17 +272,17 @@ public class BladeUtil {
 				_productInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
 			}
 		}
-		catch (Exception exception) {
+		catch (Exception exception1) {
 			if (trace && (printStream != null)) {
-				exception.printStackTrace(printStream);
+				exception1.printStackTrace(printStream);
 			}
 
 			try (InputStream resourceAsStream = BladeUtil.class.getResourceAsStream("/.product_info.json")) {
 				_productInfoMap = (Map<String, Object>)jsonSlurper.parse(resourceAsStream);
 			}
-			catch (Exception e) {
+			catch (Exception exception2) {
 				if (trace && (printStream != null)) {
-					exception.printStackTrace(printStream);
+					exception2.printStackTrace(printStream);
 				}
 			}
 		}
@@ -298,7 +298,7 @@ public class BladeUtil {
 
 			return properties;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			return null;
 		}
 	}
@@ -440,7 +440,7 @@ public class BladeUtil {
 		try (ZipFile zipFile = new ZipFile(file)) {
 			return true;
 		}
-		catch (IOException ioe) {
+		catch (IOException ioException) {
 			return false;
 		}
 	}
@@ -489,8 +489,8 @@ public class BladeUtil {
 					}
 				}
 			}
-			catch (Exception e) {
-				e.printStackTrace();
+			catch (Exception exception) {
+				exception.printStackTrace();
 			}
 		}
 
@@ -570,7 +570,7 @@ public class BladeUtil {
 				try {
 					Thread.sleep(1000);
 				}
-				catch (InterruptedException ie) {
+				catch (InterruptedException interruptedException) {
 					Thread currentThread = Thread.currentThread();
 
 					currentThread.interrupt();
@@ -621,7 +621,7 @@ public class BladeUtil {
 
 			connected = true;
 		}
-		catch (IOException ioe) {
+		catch (IOException ioException) {
 		}
 
 		if (connected) {

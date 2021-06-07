@@ -93,7 +93,7 @@ public class AetherClient {
 
 			version = versionRangeResult.getHighestVersion();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 
 		if (version == null) {
@@ -126,8 +126,8 @@ public class AetherClient {
 				request
 			).getEffectiveSettings();
 		}
-		catch (SettingsBuildingException sbe) {
-			sbe.printStackTrace();
+		catch (SettingsBuildingException settingsBuildingException) {
+			settingsBuildingException.printStackTrace();
 
 			return null;
 		}
@@ -143,13 +143,13 @@ public class AetherClient {
 		return new File(localRepoPathSetting);
 	}
 
-	private static RemoteRepository _newRemoteRepository(String url) {
+	private RemoteRepository _newRemoteRepository(String url) {
 		return new RemoteRepository.Builder(
 			"blade", "default", url
 		).build();
 	}
 
-	private static RepositorySystem _newRepositorySystem() {
+	private RepositorySystem _newRepositorySystem() {
 		DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
 
 		locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
@@ -170,7 +170,7 @@ public class AetherClient {
 		return locator.getService(RepositorySystem.class);
 	}
 
-	private static DefaultRepositorySystemSession _newRepositorySystemSession(
+	private DefaultRepositorySystemSession _newRepositorySystemSession(
 		RepositorySystem system, String localRepositoryPath) {
 
 		final DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();

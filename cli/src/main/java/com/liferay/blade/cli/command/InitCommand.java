@@ -360,14 +360,14 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				return true;
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 		finally {
 			if (in != null) {
 				try {
 					in.close();
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 				}
 			}
 		}
@@ -390,7 +390,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		return productTargetPlatformVersion;
 	}
 
-	private void _moveContentsToDirectory(File src, File dest) throws IOException {
+	private void _moveContentsToDirectory(File src, File dest) throws Exception {
 		Path srcPath = src.toPath();
 
 		Path source = srcPath.toAbsolutePath();
@@ -404,7 +404,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			new SimpleFileVisitor<Path>() {
 
 				@Override
-				public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				public FileVisitResult postVisitDirectory(Path dir, IOException ioException) throws IOException {
 					File file = dir.toFile();
 
 					String dirName = file.getName();
@@ -417,7 +417,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				}
 
 				@Override
-				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes basicFileAttributes)
+					throws IOException {
+
 					Path targetDir = target.resolve(source.relativize(dir));
 
 					if (!Files.exists(targetDir)) {
@@ -434,7 +436,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				}
 
 				@Override
-				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+				public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes)
+					throws IOException {
+
 					Path targetFile = target.resolve(source.relativize(path));
 
 					if (!Files.exists(targetFile)) {
@@ -455,7 +459,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			});
 	}
 
-	private void _setWorkspacePluginVersion(Path path, String version) throws IOException {
+	private void _setWorkspacePluginVersion(Path path, String version) throws Exception {
 		Path settingsPath = path.resolve("settings.gradle");
 
 		String content = new String(Files.readAllBytes(settingsPath));

@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -137,41 +136,6 @@ public class ServerStartCommandMavenTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static boolean _isDebugPortListening(int debugPort) {
-		InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
-
-		try (Socket socket = new Socket(loopbackAddress, debugPort)) {
-			return true;
-		}
-		catch (IOException ioe) {
-			return false;
-		}
-	}
-
-	private static boolean _isServerRunning() {
-		for (JavaProcess process : JavaProcesses.list()) {
-			String displayName = process.getDisplayName();
-
-			if (displayName.contains("wildfly") || displayName.contains("catalina")) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private static void _terminateProcess(PidProcess tomcatPidProcess)
-		throws InterruptedException, IOException, TimeoutException {
-
-		ProcessUtil.destroyForcefullyAndWait(tomcatPidProcess, 1, TimeUnit.MINUTES);
-
-		String processName = tomcatPidProcess.getDescription();
-
-		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
-
-		Assert.assertFalse(_isServerRunning());
-	}
-
 	private void _findAndTerminateServer(Predicate<JavaProcess> processFilter) throws Exception {
 		PidProcess serverProcess = _findServerProcess(processFilter);
 
@@ -211,9 +175,7 @@ public class ServerStartCommandMavenTest {
 		).findFirst();
 	}
 
-	private PidProcess _findServerProcess(Predicate<JavaProcess> processFilter)
-		throws InterruptedException, IOException {
-
+	private PidProcess _findServerProcess(Predicate<JavaProcess> processFilter) throws Exception {
 		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
 
 		Optional<JavaProcess> optionalProcess = _findProcess(javaProcesses, processFilter);
@@ -257,7 +219,7 @@ public class ServerStartCommandMavenTest {
 		TestUtil.updateMavenRepositories(workspacePath);
 	}
 
-	private void _initServerBundle() throws InterruptedException, IOException {
+	private void _initServerBundle() throws Exception {
 		List<String> commands = new ArrayList<>();
 
 		if (BladeUtil.isWindows()) {
@@ -278,6 +240,29 @@ public class ServerStartCommandMavenTest {
 		Process process = processBuilder.start();
 
 		process.waitFor();
+	}
+
+	private boolean _isDebugPortListening(int debugPort) {
+		InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
+
+		try (Socket socket = new Socket(loopbackAddress, debugPort)) {
+			return true;
+		}
+		catch (IOException ioException) {
+			return false;
+		}
+	}
+
+	private boolean _isServerRunning() {
+		for (JavaProcess process : JavaProcesses.list()) {
+			String displayName = process.getDisplayName();
+
+			if (displayName.contains("wildfly") || displayName.contains("catalina")) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private String _printDisplayNames(Collection<JavaProcess> javaProcesses) {
@@ -328,6 +313,16 @@ public class ServerStartCommandMavenTest {
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, serverStartArgsFinal);
 
 		Thread.sleep(1000);
+	}
+
+	private void _terminateProcess(PidProcess tomcatPidProcess) throws Exception {
+		ProcessUtil.destroyForcefullyAndWait(tomcatPidProcess, 1, TimeUnit.MINUTES);
+
+		String processName = tomcatPidProcess.getDescription();
+
+		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
+
+		Assert.assertFalse(_isServerRunning());
 	}
 
 	private void _verifyMavenFiles() {

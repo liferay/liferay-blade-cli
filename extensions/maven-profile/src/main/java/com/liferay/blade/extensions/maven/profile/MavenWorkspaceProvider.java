@@ -55,7 +55,7 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 				return "dxp";
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 
 		return "portal";

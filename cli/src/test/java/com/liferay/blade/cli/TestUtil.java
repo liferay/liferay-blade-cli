@@ -51,9 +51,9 @@ import org.w3c.dom.Text;
 public class TestUtil {
 
 	public static void removeComments(String projectPath) throws Exception {
-		File pomXmlFile = new File(projectPath, "/pom.xml");
+		File pomXMLFile = new File(projectPath, "/pom.xml");
 
-		Path pomXmlPath = pomXmlFile.toPath();
+		Path pomXmlPath = pomXMLFile.toPath();
 
 		byte[] pomXmlBytes = Files.readAllBytes(pomXmlPath);
 
@@ -79,9 +79,9 @@ public class TestUtil {
 			System.setErr(errorStream);
 			bladeTest.run(args);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			if (assertErrors) {
-				e.printStackTrace(errorStream);
+				exception.printStackTrace(errorStream);
 				Assert.fail("Encountered error: " + errorStream.toString());
 			}
 		}
@@ -164,13 +164,13 @@ public class TestUtil {
 	}
 
 	public static void updateMavenRepositories(String projectPath) throws Exception {
-		File pomXmlFile = new File(projectPath + "/pom.xml");
+		File pomXMLFile = new File(projectPath + "/pom.xml");
 
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
-		Document document = documentBuilder.parse(pomXmlFile);
+		Document document = documentBuilder.parse(pomXMLFile);
 
 		_addNexusRepositoriesElement(document, "repositories", "repository");
 		_addNexusRepositoriesElement(document, "pluginRepositories", "pluginRepository");
@@ -181,7 +181,7 @@ public class TestUtil {
 
 		DOMSource domSource = new DOMSource(document);
 
-		StreamResult streamResult = new StreamResult(pomXmlFile);
+		StreamResult streamResult = new StreamResult(pomXMLFile);
 
 		transformer.transform(domSource, streamResult);
 	}

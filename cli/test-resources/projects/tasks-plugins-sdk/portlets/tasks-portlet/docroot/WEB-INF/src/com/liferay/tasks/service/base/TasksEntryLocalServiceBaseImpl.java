@@ -560,7 +560,7 @@ public abstract class TasksEntryLocalServiceBaseImpl
 
 			sqlUpdate.update();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw new SystemException(e);
 		}
 	}

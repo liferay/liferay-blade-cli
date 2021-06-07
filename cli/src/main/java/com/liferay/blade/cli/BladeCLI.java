@@ -134,8 +134,8 @@ public class BladeCLI {
 		try {
 			bladeCLI.run(args);
 		}
-		catch (GradleExecutionException e) {
-			System.exit(e.getReturnCode());
+		catch (GradleExecutionException gradleExecutionException) {
+			System.exit(gradleExecutionException.getReturnCode());
 		}
 		catch (Throwable th) {
 			bladeCLI.error("Unexpected error occured.");
@@ -150,13 +150,12 @@ public class BladeCLI {
 		this(System.out, System.err, System.in);
 	}
 
-	public BladeCLI(PrintStream out, PrintStream err, InputStream in) {
+	public BladeCLI(PrintStream out, PrintStream error, InputStream in) {
 		AnsiConsole.systemInstall();
 
 		_out = out;
+		_error = error;
 		_in = in;
-
-		_error = err;
 		instance = this;
 	}
 
@@ -172,8 +171,8 @@ public class BladeCLI {
 		return _error;
 	}
 
-	public void error(String msg) {
-		_error.println(msg);
+	public void error(String message) {
+		_error.println(message);
 	}
 
 	public void error(String string, String name, String message) {
@@ -231,8 +230,8 @@ public class BladeCLI {
 				throw new IOException(".blade/extensions is not a directory!");
 			}
 		}
-		catch (IOException ioe) {
-			throw new RuntimeException(ioe);
+		catch (IOException ioException) {
+			throw new RuntimeException(ioException);
 		}
 
 		return extensions;
@@ -251,8 +250,8 @@ public class BladeCLI {
 				throw new IOException(userBladePath + " is not a directory.");
 			}
 		}
-		catch (IOException ioe) {
-			throw new RuntimeException(ioe);
+		catch (IOException ioException) {
+			throw new RuntimeException(ioException);
 		}
 
 		return userBladePath;
@@ -270,13 +269,13 @@ public class BladeCLI {
 						return provider;
 					}
 				}
-				catch (Throwable th) {
-					throw new RuntimeException("_getWorkspaceProvider error", th);
+				catch (Throwable throwable) {
+					throw new RuntimeException("_getWorkspaceProvider error", throwable);
 				}
 			}
 		}
-		catch (Throwable th) {
-			throw new RuntimeException("_getWorkspaceProvider error", th);
+		catch (Throwable throwable) {
+			throw new RuntimeException("_getWorkspaceProvider error", throwable);
 		}
 
 		return null;
@@ -308,11 +307,11 @@ public class BladeCLI {
 						return true;
 					}
 				}
-				catch (Throwable t) {
+				catch (Throwable throwable) {
 				}
 			}
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 		}
 
 		return false;
@@ -333,8 +332,8 @@ public class BladeCLI {
 
 				_printUpdateIfAvailable();
 			}
-			catch (IOException ioe) {
-				error(ioe);
+			catch (IOException ioException) {
+				error(ioException);
 			}
 		}
 	}
@@ -450,19 +449,19 @@ public class BladeCLI {
 				try (CloseShieldInputStream closeShieldInputStream = new CloseShieldInputStream(in());
 					BufferedReader reader = new BufferedReader(new InputStreamReader(closeShieldInputStream))) {
 
-					ParameterException parameterException = null;
+					ParameterException parameterException1 = null;
 
 					try {
 						_jCommander.parse(args);
 					}
-					catch (ParameterException pe) {
-						String parameterExceptionMessage = pe.getMessage();
+					catch (ParameterException parameterException2) {
+						String parameterExceptionMessage = parameterException2.getMessage();
 
 						if (parameterExceptionMessage.contains("Only one main parameter allowed")) {
-							throw pe;
+							throw parameterException2;
 						}
 
-						parameterException = pe;
+						parameterException1 = parameterException2;
 					}
 
 					String command = _jCommander.getParsedCommand();
@@ -480,8 +479,8 @@ public class BladeCLI {
 
 						String parameterMessage = null;
 
-						if (parameterException != null) {
-							parameterMessage = parameterException.getMessage();
+						if (parameterException1 != null) {
+							parameterMessage = parameterException1.getMessage();
 
 							if (parameterMessage.contains("Main parameters are required") ||
 								parameterMessage.contains(_MESSAGE_OPTIONS_ARE_REQUIRED) ||
@@ -491,7 +490,7 @@ public class BladeCLI {
 									"Error: The command " + command + " is missing required parameters.");
 							}
 							else {
-								throw parameterException;
+								throw parameterException1;
 							}
 						}
 						else {
@@ -508,13 +507,13 @@ public class BladeCLI {
 
 								postRunCommand();
 							}
-							catch (ParameterException e) {
-								parameterException = e;
+							catch (ParameterException parameterException2) {
+								parameterException1 = parameterException2;
 							}
 						}
 
-						while (parameterException != null) {
-							parameterMessage = parameterException.getMessage();
+						while (parameterException1 != null) {
+							parameterMessage = parameterException1.getMessage();
 
 							List<String> fixedArgs = new ArrayList<>(Arrays.asList(args));
 
@@ -564,18 +563,18 @@ public class BladeCLI {
 								args = Extensions.sortArgs(_commands, args);
 							}
 							else {
-								throw parameterException;
+								throw parameterException1;
 							}
 
 							try {
-								parameterException = null;
+								parameterException1 = null;
 
 								_jCommander = _buildJCommanderWithCommandMap(args, _commands);
 
 								_jCommander.parse(args);
 							}
-							catch (ParameterException pe) {
-								parameterException = pe;
+							catch (ParameterException parameterException2) {
+								parameterException1 = parameterException2;
 
 								continue;
 							}
@@ -594,7 +593,7 @@ public class BladeCLI {
 
 							commandArgs = objects.get(0);
 
-							if (parameterException == null) {
+							if (parameterException1 == null) {
 								_command = command;
 
 								_args = (BaseArgs)commandArgs;
@@ -608,8 +607,8 @@ public class BladeCLI {
 
 									postRunCommand();
 								}
-								catch (ParameterException e) {
-									parameterException = e;
+								catch (ParameterException parameterException2) {
+									parameterException1 = parameterException2;
 								}
 							}
 						}
@@ -618,7 +617,7 @@ public class BladeCLI {
 						printUsage();
 					}
 				}
-				catch (MissingCommandException mce) {
+				catch (MissingCommandException missingCommandException) {
 					error("Error");
 
 					StringBuilder stringBuilder = new StringBuilder("0. No such command");
@@ -631,16 +630,16 @@ public class BladeCLI {
 
 					printUsage();
 				}
-				catch (ParameterException pe) {
-					error(_jCommander.getParsedCommand() + ": " + pe.getMessage());
+				catch (ParameterException parameterException) {
+					error(_jCommander.getParsedCommand() + ": " + parameterException.getMessage());
 				}
 			}
 		}
-		catch (GradleExecutionException e) {
-			throw e;
+		catch (GradleExecutionException gradleExecutionException) {
+			throw gradleExecutionException;
 		}
-		catch (Throwable e) {
-			error(e);
+		catch (Throwable throwable) {
+			error(throwable);
 		}
 		finally {
 			if (_extensionsClassLoaderSupplier != null) {
@@ -689,25 +688,6 @@ public class BladeCLI {
 		);
 	}
 
-	private static String _extractBasePath(String[] args) {
-		String defaultBasePath = ".";
-
-		if (args.length > 2) {
-			return IntStream.range(
-				0, args.length - 1
-			).filter(
-				i -> args[i].equals("--base") && (args.length > (i + 1))
-			).mapToObj(
-				i -> args[i + 1]
-			).findFirst(
-			).orElse(
-				defaultBasePath
-			);
-		}
-
-		return defaultBasePath;
-	}
-
 	private static Collection<String> _getBladeProfiles(Class<?> commandClass) {
 		return Stream.of(
 			commandClass.getAnnotationsByType(BladeProfile.class)
@@ -739,7 +719,144 @@ public class BladeCLI {
 		return parameters.commandNames();
 	}
 
-	private static String _getCommandProfile(String[] args) throws MissingCommandException {
+	@SuppressWarnings("rawtypes")
+	private static Collection<BaseCommand<?>> _getCommandsByClassLoader(ClassLoader classLoader) {
+		Collection<BaseCommand<?>> allCommands = new ArrayList<>();
+
+		ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, classLoader);
+
+		Iterator<BaseCommand> baseCommandIterator = serviceLoader.iterator();
+
+		while (baseCommandIterator.hasNext()) {
+			try {
+				BaseCommand<?> baseCommand = baseCommandIterator.next();
+
+				baseCommand.setClassLoader(classLoader);
+
+				allCommands.add(baseCommand);
+			}
+			catch (Throwable throwable) {
+				Class<?> throwableClass = throwable.getClass();
+
+				System.err.println(
+					"Exception thrown while loading extension." + System.lineSeparator() + "Exception: " +
+						throwableClass.getName() + ": " + throwable.getMessage() + System.lineSeparator());
+
+				Throwable cause = throwable.getCause();
+
+				if (cause != null) {
+					Class<?> throwableCauseClass = cause.getClass();
+
+					System.err.print(
+						throwableCauseClass.getName() + ": " + cause.getMessage() + System.lineSeparator());
+				}
+			}
+		}
+
+		return allCommands;
+	}
+
+	private JCommander _buildJCommanderWithCommandMap(
+		String[] args, Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
+
+		JCommander.Builder builder = JCommander.newBuilder();
+
+		builder.programName("blade");
+
+		for (Map.Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
+			BaseCommand<? extends BaseArgs> value = entry.getValue();
+
+			try {
+				builder.addCommand(entry.getKey(), value.getArgs());
+			}
+			catch (ParameterException parameterException) {
+				System.err.println(parameterException.getMessage());
+			}
+		}
+
+		builder.defaultProvider(new BladeCLIDefaultProvider(args));
+
+		return builder.build();
+	}
+
+	private Map<String, String> _buildPossibleValuesMap(Class<? extends Supplier<List<String>>> supplierValidator) {
+		try {
+			Supplier<List<String>> instance = supplierValidator.newInstance();
+
+			List<String> options = instance.get();
+
+			Iterator<String> it = options.iterator();
+
+			Map<String, String> optionsMap = new LinkedHashMap<>();
+
+			for (int x = 1; it.hasNext(); x++) {
+				String option = it.next();
+
+				optionsMap.put(String.valueOf(x), option);
+			}
+
+			return optionsMap;
+		}
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
+		}
+	}
+
+	private String _extractBasePath(String[] args) {
+		String defaultBasePath = ".";
+
+		if (args.length > 2) {
+			return IntStream.range(
+				0, args.length - 1
+			).filter(
+				i -> args[i].equals("--base") && (args.length > (i + 1))
+			).mapToObj(
+				i -> args[i + 1]
+			).findFirst(
+			).orElse(
+				defaultBasePath
+			);
+		}
+
+		return defaultBasePath;
+	}
+
+	private String _extractProfileName(String[] args) {
+		List<String> argsList = new ArrayList<>();
+		List<String> originalArgsList = Arrays.asList(args);
+
+		argsList.addAll(originalArgsList);
+
+		for (int x = 0; x < argsList.size(); x++) {
+			String arg = argsList.get(x);
+
+			if (Objects.equals(arg, "--base")) {
+				argsList.remove(x);
+				argsList.remove(x);
+
+				break;
+			}
+		}
+
+		try {
+			return _getCommandProfile(argsList.toArray(new String[0]));
+		}
+		catch (MissingCommandException missingCommandException) {
+			error(missingCommandException);
+		}
+
+		return null;
+	}
+
+	private ClassLoader _getClassLoader() {
+		if (_extensionsClassLoaderSupplier == null) {
+			_extensionsClassLoaderSupplier = new ExtensionsClassLoaderSupplier(getExtensionsPath());
+		}
+
+		return _extensionsClassLoaderSupplier.get();
+	}
+
+	private String _getCommandProfile(String[] args) throws MissingCommandException {
 		final Collection<String> profileFlags = new HashSet<>();
 
 		try {
@@ -749,7 +866,7 @@ public class BladeCLI {
 
 			Collections.addAll(profileFlags, parameters.names());
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 
 		String profile = null;
@@ -777,150 +894,6 @@ public class BladeCLI {
 		}
 
 		return profile;
-	}
-
-	@SuppressWarnings("rawtypes")
-	private static Collection<BaseCommand<?>> _getCommandsByClassLoader(ClassLoader classLoader) {
-		Collection<BaseCommand<?>> allCommands = new ArrayList<>();
-
-		ServiceLoader<BaseCommand> serviceLoader = ServiceLoader.load(BaseCommand.class, classLoader);
-
-		Iterator<BaseCommand> baseCommandIterator = serviceLoader.iterator();
-
-		while (baseCommandIterator.hasNext()) {
-			try {
-				BaseCommand<?> baseCommand = baseCommandIterator.next();
-
-				baseCommand.setClassLoader(classLoader);
-
-				allCommands.add(baseCommand);
-			}
-			catch (Throwable e) {
-				Class<?> throwableClass = e.getClass();
-
-				System.err.println(
-					"Exception thrown while loading extension." + System.lineSeparator() + "Exception: " +
-						throwableClass.getName() + ": " + e.getMessage() + System.lineSeparator());
-
-				Throwable cause = e.getCause();
-
-				if (cause != null) {
-					Class<?> throwableCauseClass = cause.getClass();
-
-					System.err.print(
-						throwableCauseClass.getName() + ": " + cause.getMessage() + System.lineSeparator());
-				}
-			}
-		}
-
-		return allCommands;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T extends BaseArgs> void _validateParameters(T args) throws IllegalArgumentException {
-		try {
-			Class<? extends BaseArgs> argsClass = args.getClass();
-
-			ParametersValidator validateParameters = argsClass.getAnnotation(ParametersValidator.class);
-
-			if (validateParameters != null) {
-				Class<? extends Predicate<?>> predicateClass = validateParameters.value();
-
-				if (predicateClass != null) {
-					Predicate<T> predicate = (Predicate<T>)predicateClass.newInstance();
-
-					if (!predicate.test(args)) {
-						throw new IllegalArgumentException();
-					}
-				}
-			}
-		}
-		catch (Exception e) {
-			Class<?> argsClass = args.getClass();
-
-			throw new IllegalArgumentException("Validation failed for " + argsClass.getSimpleName(), e);
-		}
-	}
-
-	private JCommander _buildJCommanderWithCommandMap(
-		String[] args, Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
-
-		JCommander.Builder builder = JCommander.newBuilder();
-
-		builder.programName("blade");
-
-		for (Map.Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
-			BaseCommand<? extends BaseArgs> value = entry.getValue();
-
-			try {
-				builder.addCommand(entry.getKey(), value.getArgs());
-			}
-			catch (ParameterException pe) {
-				System.err.println(pe.getMessage());
-			}
-		}
-
-		builder.defaultProvider(new BladeCLIDefaultProvider(args));
-
-		return builder.build();
-	}
-
-	private Map<String, String> _buildPossibleValuesMap(Class<? extends Supplier<List<String>>> supplierValidator) {
-		try {
-			Supplier<List<String>> instance = supplierValidator.newInstance();
-
-			List<String> options = instance.get();
-
-			Iterator<String> it = options.iterator();
-
-			Map<String, String> optionsMap = new LinkedHashMap<>();
-
-			for (int x = 1; it.hasNext(); x++) {
-				String option = it.next();
-
-				optionsMap.put(String.valueOf(x), option);
-			}
-
-			return optionsMap;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private String _extractProfileName(String[] args) {
-		List<String> argsList = new ArrayList<>();
-		List<String> originalArgsList = Arrays.asList(args);
-
-		argsList.addAll(originalArgsList);
-
-		for (int x = 0; x < argsList.size(); x++) {
-			String arg = argsList.get(x);
-
-			if (Objects.equals(arg, "--base")) {
-				argsList.remove(x);
-				argsList.remove(x);
-
-				break;
-			}
-		}
-
-		try {
-			return _getCommandProfile(argsList.toArray(new String[0]));
-		}
-		catch (MissingCommandException mce) {
-			error(mce);
-		}
-
-		return null;
-	}
-
-	private ClassLoader _getClassLoader() {
-		if (_extensionsClassLoaderSupplier == null) {
-			_extensionsClassLoaderSupplier = new ExtensionsClassLoaderSupplier(getExtensionsPath());
-		}
-
-		return _extensionsClassLoaderSupplier.get();
 	}
 
 	private String _getMessageFromPossibleValues(Map<String, String> optionsMap) {
@@ -1111,14 +1084,14 @@ public class BladeCLI {
 
 					_workspaceProviders.add(workspaceProvider);
 				}
-				catch (Throwable e) {
-					Class<?> throwableClass = e.getClass();
+				catch (Throwable throwable) {
+					Class<?> throwableClass = throwable.getClass();
 
 					System.err.println(
 						"Exception thrown while loading WorkspaceProvider." + System.lineSeparator() + "Exception: " +
-							throwableClass.getName() + ": " + e.getMessage());
+							throwableClass.getName() + ": " + throwable.getMessage());
 
-					Throwable cause = e.getCause();
+					Throwable cause = throwable.getCause();
 
 					if (cause != null) {
 						Class<?> throwableCauseClass = cause.getClass();
@@ -1333,7 +1306,7 @@ public class BladeCLI {
 						}
 					);
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 				}
 			}
 
@@ -1369,11 +1342,11 @@ public class BladeCLI {
 
 				command.execute();
 			}
-			catch (ParameterException e) {
-				throw e;
+			catch (ParameterException parameterException) {
+				throw parameterException;
 			}
-			catch (Throwable th) {
-				throw th;
+			catch (Throwable throwable) {
+				throw throwable;
 			}
 			finally {
 				if (command instanceof AutoCloseable) {
@@ -1425,10 +1398,36 @@ public class BladeCLI {
 				return true;
 			}
 		}
-		catch (Exception ioe) {
+		catch (Exception exception) {
 		}
 
 		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends BaseArgs> void _validateParameters(T args) throws IllegalArgumentException {
+		try {
+			Class<? extends BaseArgs> argsClass = args.getClass();
+
+			ParametersValidator validateParameters = argsClass.getAnnotation(ParametersValidator.class);
+
+			if (validateParameters != null) {
+				Class<? extends Predicate<?>> predicateClass = validateParameters.value();
+
+				if (predicateClass != null) {
+					Predicate<T> predicate = (Predicate<T>)predicateClass.newInstance();
+
+					if (!predicate.test(args)) {
+						throw new IllegalArgumentException();
+					}
+				}
+			}
+		}
+		catch (Exception exception) {
+			Class<?> argsClass = args.getClass();
+
+			throw new IllegalArgumentException("Validation failed for " + argsClass.getSimpleName(), exception);
+		}
 	}
 
 	private void _writeLastUpdateCheck() throws IOException {

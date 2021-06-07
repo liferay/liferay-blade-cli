@@ -121,8 +121,8 @@ public class Prompter {
 				}
 			}
 		}
-		catch (IllegalStateException ise) {
-			throw new RuntimeException(ise);
+		catch (IllegalStateException illegalStateException) {
+			throw new RuntimeException(illegalStateException);
 		}
 		catch (Exception exception) {
 			if (defaultAnswer.isPresent()) {
@@ -178,8 +178,8 @@ public class Prompter {
 				}
 			}
 		}
-		catch (IllegalStateException ise) {
-			throw new RuntimeException(ise);
+		catch (IllegalStateException illegalStateException) {
+			throw new RuntimeException(illegalStateException);
 		}
 		catch (Exception exception) {
 			if (defaultAnswer.isPresent()) {

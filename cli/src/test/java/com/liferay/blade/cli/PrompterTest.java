@@ -22,7 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -115,9 +114,8 @@ public class PrompterTest {
 		}
 	}
 
-	private static Map.Entry<Boolean, String> _confirm(
-			String question, String answerString, Optional<Boolean> defaultAnswer)
-		throws UnsupportedEncodingException {
+	private Map.Entry<Boolean, String> _confirm(String question, String answerString, Optional<Boolean> defaultAnswer)
+		throws Exception {
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
@@ -133,7 +131,7 @@ public class PrompterTest {
 	}
 
 	private void _testAnswer(String answerString, Boolean correctAnswerValue, Optional<Boolean> defaultAnswer)
-		throws UnsupportedEncodingException {
+		throws Exception {
 
 		Map.Entry<Boolean, String> confirmEntry = _confirm(_question, answerString, defaultAnswer);
 
@@ -144,12 +142,12 @@ public class PrompterTest {
 		Assert.assertTrue(assertBoolean);
 	}
 
-	private void _testAnswers(Map<String, Boolean> correctAnswerTestMap) throws UnsupportedEncodingException {
+	private void _testAnswers(Map<String, Boolean> correctAnswerTestMap) throws Exception {
 		_testAnswers(correctAnswerTestMap, Optional.empty());
 	}
 
 	private void _testAnswers(Map<String, Boolean> correctAnswerTestMap, Optional<Boolean> defaultAnswer)
-		throws UnsupportedEncodingException {
+		throws Exception {
 
 		for (Map.Entry<String, Boolean> entry : correctAnswerTestMap.entrySet()) {
 			String answerString = entry.getKey();

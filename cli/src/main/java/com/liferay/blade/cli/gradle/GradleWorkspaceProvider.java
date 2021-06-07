@@ -240,7 +240,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 				return matcher.find();
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 
 		return false;
@@ -279,7 +279,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 			return matcher.find();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			return false;
 		}
 	}

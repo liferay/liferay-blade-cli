@@ -70,13 +70,13 @@ public class GradleExec {
 
 			int returnCode = process.waitFor();
 
-			String output = outputStream.get();
-
 			String error = errorStream.get();
 
 			if (returnCode > 0) {
 				throw new GradleExecutionException(error, returnCode);
 			}
+
+			String output = outputStream.get();
 
 			return new ProcessResult(returnCode, output, error);
 		}
@@ -93,7 +93,46 @@ public class GradleExec {
 		return new ProcessResult(returnCode, null, null);
 	}
 
-	private static boolean _isGradleInstalled() {
+	private String _getGradleExecutable(File dir) throws Exception {
+		File gradlew = BladeUtil.getGradleWrapper(dir);
+
+		String executable = "gradle";
+
+		BaseArgs baseArgs = _blade.getArgs();
+
+		if ((gradlew == null) || !gradlew.exists()) {
+			File baseDir = baseArgs.getBase();
+
+			gradlew = BladeUtil.getGradleWrapper(baseDir);
+		}
+
+		if (gradlew != null) {
+			try {
+				if (!gradlew.canExecute()) {
+					gradlew.setExecutable(true);
+				}
+
+				executable = gradlew.getCanonicalPath();
+			}
+			catch (Throwable th) {
+			}
+		}
+
+		if (Objects.equals("gradle", executable)) {
+			if (_isGradleInstalled()) {
+				if (!baseArgs.isQuiet()) {
+					_blade.out("Could not find gradle wrapper, using gradle");
+				}
+			}
+			else {
+				throw new NoSuchElementException("Gradle wrapper not found and Gradle is not installed");
+			}
+		}
+
+		return executable;
+	}
+
+	private boolean _isGradleInstalled() {
 		try {
 			ProcessBuilder builder = new ProcessBuilder();
 
@@ -131,48 +170,9 @@ public class GradleExec {
 
 			return false;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			return false;
 		}
-	}
-
-	private String _getGradleExecutable(File dir) throws NoSuchElementException {
-		File gradlew = BladeUtil.getGradleWrapper(dir);
-
-		String executable = "gradle";
-
-		BaseArgs baseArgs = _blade.getArgs();
-
-		if ((gradlew == null) || !gradlew.exists()) {
-			File baseDir = baseArgs.getBase();
-
-			gradlew = BladeUtil.getGradleWrapper(baseDir);
-		}
-
-		if (gradlew != null) {
-			try {
-				if (!gradlew.canExecute()) {
-					gradlew.setExecutable(true);
-				}
-
-				executable = gradlew.getCanonicalPath();
-			}
-			catch (Throwable th) {
-			}
-		}
-
-		if (Objects.equals("gradle", executable)) {
-			if (_isGradleInstalled()) {
-				if (!baseArgs.isQuiet()) {
-					_blade.out("Could not find gradle wrapper, using gradle");
-				}
-			}
-			else {
-				throw new NoSuchElementException("Gradle wrapper not found and Gradle is not installed");
-			}
-		}
-
-		return executable;
 	}
 
 	private BladeCLI _blade;

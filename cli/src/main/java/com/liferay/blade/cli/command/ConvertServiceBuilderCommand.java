@@ -236,8 +236,8 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 						try {
 							copyFile(oldApiFile, newApiPath.resolve(oldApiFile.getFileName()));
 						}
-						catch (IOException ioe) {
-							ioe.printStackTrace(_bladeCLI.error());
+						catch (IOException ioException) {
+							ioException.printStackTrace(_bladeCLI.error());
 						}
 					});
 			}
@@ -271,8 +271,8 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 				try {
 					Files.write(file.toPath(), "version 1.0.0".getBytes());
 				}
-				catch (IOException ioe) {
-					ioe.printStackTrace(_bladeCLI.error());
+				catch (IOException ioException) {
+					ioException.printStackTrace(_bladeCLI.error());
 				}
 			}
 		);
@@ -304,30 +304,6 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		return _convertedPaths;
 	}
 
-	private static boolean _isInExportedApiFolder(File file) {
-		File dir = file.getParentFile();
-
-		String dirName = dir.getName();
-
-		if (dirName.equals("exception") || dirName.equals("model") || dirName.equals("service") ||
-			dirName.equals("persistence")) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private static boolean _isJavaFile(File file) {
-		String name = file.getName();
-
-		if (file.isFile() && name.endsWith(".java")) {
-			return true;
-		}
-
-		return false;
-	}
-
 	private File _getPluginsSdkDir(ConvertArgs convertArgs, File projectDir, Properties gradleProperties) {
 		File pluginsSdkDir = convertArgs.getSource();
 
@@ -347,6 +323,30 @@ public class ConvertServiceBuilderCommand implements FilesSupport {
 		}
 
 		return pluginsSdkDir;
+	}
+
+	private boolean _isInExportedApiFolder(File file) {
+		File dir = file.getParentFile();
+
+		String dirName = dir.getName();
+
+		if (dirName.equals("exception") || dirName.equals("model") || dirName.equals("service") ||
+			dirName.equals("persistence")) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isJavaFile(File file) {
+		String name = file.getName();
+
+		if (file.isFile() && name.endsWith(".java")) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private BladeCLI _bladeCLI;

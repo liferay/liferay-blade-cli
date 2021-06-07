@@ -118,7 +118,7 @@ public class LocalServer {
 						try {
 							rootDirRealPath = rootDirRealPath.toRealPath();
 						}
-						catch (IOException ioe) {
+						catch (IOException ioException) {
 						}
 
 						appServerParentDirTemp = appServerParentDirTemp.replace(
@@ -146,7 +146,7 @@ public class LocalServer {
 				try {
 					rootDirRealPath = rootDirRealPath.toRealPath();
 				}
-				catch (IOException ioe) {
+				catch (IOException ioException) {
 				}
 
 				_liferayHomePath = rootDirRealPath.resolve(appServerParentDir);
@@ -156,7 +156,7 @@ public class LocalServer {
 		try {
 			_appServerPath = ServerUtil.findAppServerPath(_liferayHomePath, _serverType);
 		}
-		catch (IOException ioe) {
+		catch (IOException ioException) {
 			_appServerPath = Optional.empty();
 		}
 	}
@@ -233,26 +233,6 @@ public class LocalServer {
 		return workspaceProviderGradle.getGradleProperties(baseDir);
 	}
 
-	private static String _getJBossWildflyExecutable() {
-		String executable = "./standalone.sh";
-
-		if (BladeUtil.isWindows()) {
-			executable = "standalone.bat";
-		}
-
-		return executable;
-	}
-
-	private static String _getTomcatExecutable() {
-		String executable = "./catalina.sh";
-
-		if (BladeUtil.isWindows()) {
-			executable = "catalina.bat";
-		}
-
-		return executable;
-	}
-
 	private void _buildJbossWildflyProcess(ProcessBuilder processBuilder) {
 		if (BladeUtil.isWindows()) {
 			processBuilder.command("cmd.exe", "/C", _getJBossWildflyExecutable());
@@ -299,6 +279,26 @@ public class LocalServer {
 		else {
 			processBuilder.command(_getTomcatExecutable());
 		}
+	}
+
+	private String _getJBossWildflyExecutable() {
+		String executable = "./standalone.sh";
+
+		if (BladeUtil.isWindows()) {
+			executable = "standalone.bat";
+		}
+
+		return executable;
+	}
+
+	private String _getTomcatExecutable() {
+		String executable = "./catalina.sh";
+
+		if (BladeUtil.isWindows()) {
+			executable = "catalina.bat";
+		}
+
+		return executable;
 	}
 
 	private Optional<Path> _appServerPath;

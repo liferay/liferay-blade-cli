@@ -116,8 +116,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		String profileName = baseArgs.getProfileName();
 
-		boolean isDefaultModulesDirSet = false;
-		boolean isLegacyDefaultWarsDirSet = false;
+		boolean defaultModulesDirSet = false;
+		boolean legacyDefaultWarsDirSet = false;
 
 		if (profileName.equals("gradle")) {
 			Properties properties = getWorkspaceProperties();
@@ -125,8 +125,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			String defaultModulesDir = (String)properties.get(WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY);
 			String legacyDefaultWarsDir = (String)properties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 
-			isDefaultModulesDirSet = (defaultModulesDir != null) && !defaultModulesDir.isEmpty();
-			isLegacyDefaultWarsDirSet = (legacyDefaultWarsDir != null) && !legacyDefaultWarsDir.isEmpty();
+			defaultModulesDirSet = (defaultModulesDir != null) && !defaultModulesDir.isEmpty();
+			legacyDefaultWarsDirSet = (legacyDefaultWarsDir != null) && !legacyDefaultWarsDir.isEmpty();
 		}
 
 		if (argsDir != null) {
@@ -138,13 +138,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		else if (template.equals("js-theme")) {
 			dir = _getDefaultThemesDir();
 		}
-		else if (isLegacyDefaultWarsDirSet &&
+		else if (legacyDefaultWarsDirSet &&
 				 (template.startsWith("war") || template.equals("theme") || template.equals("layout-template") ||
 				  template.equals("spring-mvc-portlet"))) {
 
 			dir = _getDefaultWarsDir();
 		}
-		else if (isDefaultModulesDirSet) {
+		else if (defaultModulesDirSet) {
 			dir = _getDefaultModulesDir();
 		}
 		else {
@@ -268,13 +268,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		execute(projectTemplatesArgs);
 
-		Path path = dir.toPath();
-
-		Path absolutePath = path.toAbsolutePath();
-
-		absolutePath = absolutePath.normalize();
-
 		if (!createArgs.isQuiet()) {
+			Path path = dir.toPath();
+
+			Path absolutePath = path.toAbsolutePath();
+
+			absolutePath = absolutePath.normalize();
+
 			bladeCLI.out("Successfully created project " + projectTemplatesArgs.getName() + " in " + absolutePath);
 		}
 	}
@@ -326,7 +326,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setArchetypesDirs(archetypesDirs);
 
-		projectTemplatesArgs.setClassName(createArgs.getClassname());
+		projectTemplatesArgs.setClassName(createArgs.getClassName());
 
 		projectTemplatesArgs.setDestinationDir(dir.getAbsoluteFile());
 
@@ -390,8 +390,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 				}
 			}
 		}
-		catch (Exception e) {
-			bladeCLI.error(e);
+		catch (Exception exception) {
+			bladeCLI.error(exception);
 		}
 
 		return properties;
@@ -427,7 +427,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return gradleWorkspaceProvider.getGradleProperties(gradleWorkspaceProvider.getWorkspaceDir(workspaceDir));
 	}
 
-	private static boolean _checkDir(File file) {
+	private void _addError(String prefix, String msg) {
+		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
+	}
+
+	private boolean _checkDir(File file) {
 		if (file.exists()) {
 			if (!file.isDirectory()) {
 				return false;
@@ -443,16 +447,12 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return true;
 	}
 
-	private static boolean _containsDir(File currentDir, File parentDir) throws Exception {
+	private boolean _containsDir(File currentDir, File parentDir) throws Exception {
 		String currentPath = currentDir.getCanonicalPath();
 
 		String parentPath = parentDir.getCanonicalPath();
 
 		return currentPath.startsWith(parentPath);
-	}
-
-	private void _addError(String prefix, String msg) {
-		getBladeCLI().addErrors(prefix, Collections.singleton(msg));
 	}
 
 	private File _getDefaultDir(String defaultDirProperty, String defaultDirValue) throws Exception {

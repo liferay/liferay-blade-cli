@@ -47,12 +47,12 @@ public class ServerCommandsMavenTest {
 
 		TestUtil.runBlade(workspaceDir, extensionsDir, args);
 
-		File pomXmlFile = new File(workspaceDir, "pom.xml");
+		File pomXMLFile = new File(workspaceDir, "pom.xml");
 
-		Assert.assertTrue(pomXmlFile.getAbsolutePath() + " does not exist.", pomXmlFile.exists());
+		Assert.assertTrue(pomXMLFile.getAbsolutePath() + " does not exist.", pomXMLFile.exists());
 
 		XMLTestUtil.editXml(
-			pomXmlFile,
+			pomXMLFile,
 			document -> {
 				_addNexusRepositoriesElement(document, "repositories", "repository");
 				_addNexusRepositoriesElement(document, "pluginRepositories", "pluginRepository");
@@ -72,7 +72,7 @@ public class ServerCommandsMavenTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static void _addNexusRepositoriesElement(Document document, String parentElementName, String elementName) {
+	private void _addNexusRepositoriesElement(Document document, String parentElementName, String elementName) {
 		Element projectElement = document.getDocumentElement();
 
 		Element repositoriesElement = XMLTestUtil.getChildElement(projectElement, parentElementName);

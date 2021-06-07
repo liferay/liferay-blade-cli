@@ -79,7 +79,7 @@ public class TasksEntryServiceSoap {
 
 			return com.liferay.tasks.model.TasksEntrySoap.toSoapModel(returnValue);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			_log.error(e, e);
 
 			throw new RemoteException(e.getMessage());
@@ -93,7 +93,7 @@ public class TasksEntryServiceSoap {
 
 			return com.liferay.tasks.model.TasksEntrySoap.toSoapModel(returnValue);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			_log.error(e, e);
 
 			throw new RemoteException(e.getMessage());
@@ -107,7 +107,7 @@ public class TasksEntryServiceSoap {
 
 			return com.liferay.tasks.model.TasksEntrySoap.toSoapModel(returnValue);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			_log.error(e, e);
 
 			throw new RemoteException(e.getMessage());
@@ -129,7 +129,7 @@ public class TasksEntryServiceSoap {
 
 			return com.liferay.tasks.model.TasksEntrySoap.toSoapModel(returnValue);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			_log.error(e, e);
 
 			throw new RemoteException(e.getMessage());
@@ -146,7 +146,7 @@ public class TasksEntryServiceSoap {
 
 			return com.liferay.tasks.model.TasksEntrySoap.toSoapModel(returnValue);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			_log.error(e, e);
 
 			throw new RemoteException(e.getMessage());

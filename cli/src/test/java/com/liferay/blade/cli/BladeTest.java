@@ -76,7 +76,7 @@ public class BladeTest extends BladeCLI {
 		try {
 			Files.createDirectories(_extensionsDir);
 		}
-		catch (IOException ioe) {
+		catch (IOException ioException) {
 		}
 
 		return _extensionsDir;

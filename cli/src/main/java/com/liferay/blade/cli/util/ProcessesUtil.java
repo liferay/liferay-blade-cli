@@ -75,7 +75,7 @@ public class ProcessesUtil {
 				}
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 
 		return processIds;

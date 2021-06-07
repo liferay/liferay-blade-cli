@@ -21,7 +21,6 @@ import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -94,7 +93,7 @@ public class SampleWorkspaceTemplateTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static void _setupTestExtension(Path extensionsPath, String jarPath) throws IOException {
+	private void _setupTestExtension(Path extensionsPath, String jarPath) throws Exception {
 		File sampleJarFile = new File(jarPath);
 
 		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());

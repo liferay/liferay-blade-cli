@@ -64,7 +64,7 @@ public class OpenCommand extends BaseCommand<OpenArgs> {
 				}
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			bladeCLI.error("Unable to connect to IDE to open directory.");
 
 			e.printStackTrace(bladeCLI.error());

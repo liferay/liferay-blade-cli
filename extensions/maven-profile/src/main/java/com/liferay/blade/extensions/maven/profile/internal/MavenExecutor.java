@@ -46,8 +46,8 @@ public interface MavenExecutor {
 		try {
 			projectPath = projectFile.getCanonicalPath();
 		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
 		}
 
 		String os = System.getProperty("os.name");
@@ -104,8 +104,8 @@ public interface MavenExecutor {
 								}
 							}
 						}
-						catch (Exception e) {
-							e.printStackTrace(System.err);
+						catch (Exception exception) {
+							exception.printStackTrace(System.err);
 						}
 						finally {
 							latch.countDown();
@@ -126,8 +126,8 @@ public interface MavenExecutor {
 								}
 							}
 						}
-						catch (Exception e) {
-							e.printStackTrace(System.err);
+						catch (Exception exception) {
+							exception.printStackTrace(System.err);
 						}
 						finally {
 							latch.countDown();
@@ -139,14 +139,14 @@ public interface MavenExecutor {
 				exitValue = process.waitFor();
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			StringBuilder sb = new StringBuilder();
 
 			sb.append("Project path: " + projectPath + "\n");
 			sb.append("maven command failed: " + command);
-			sb.append(e.getMessage());
+			sb.append(exception.getMessage());
 
-			throw new RuntimeException(sb.toString(), e);
+			throw new RuntimeException(sb.toString(), exception);
 		}
 
 		boolean exitValueCorrect = false;

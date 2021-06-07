@@ -130,13 +130,13 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 				try {
 					retval.add(_newFromData(cd));
 				}
-				catch (Exception e) {
-					e.printStackTrace();
+				catch (Exception exception) {
+					exception.printStackTrace();
 				}
 			}
 		}
-		catch (Exception e) {
-			e.printStackTrace();
+		catch (Exception exception) {
+			exception.printStackTrace();
 		}
 
 		return retval.toArray(new BundleDTO[0]);
@@ -180,9 +180,17 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		throw new IllegalStateException("Unable to uninstall " + bsn);
 	}
 
-	private static ObjectName _getFramework(MBeanServerConnection mBeanServerConnection)
-		throws IOException, MalformedObjectNameException {
+	private ObjectName _getBundleState() throws IOException, MalformedObjectNameException {
+		ObjectName objectName = new ObjectName(_NAME + ":type=bundleState,*");
 
+		Set<ObjectName> queryNames = mBeanServerConnection.queryNames(objectName, null);
+
+		Iterator<ObjectName> iterator = queryNames.iterator();
+
+		return iterator.next();
+	}
+
+	private ObjectName _getFramework(MBeanServerConnection mBeanServerConnection) throws Exception {
 		final ObjectName objectName = new ObjectName(_NAME + ":type=" + _TYPE + ",*");
 
 		final Set<ObjectName> objectNames = mBeanServerConnection.queryNames(objectName, null);
@@ -196,7 +204,7 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		return null;
 	}
 
-	private static BundleDTO _newFromData(CompositeData cd) {
+	private BundleDTO _newFromData(CompositeData cd) {
 		final BundleDTO dto = new BundleDTO();
 
 		Object identifier = cd.get("Identifier");
@@ -233,16 +241,6 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 		dto.version = version.toString();
 
 		return dto;
-	}
-
-	private ObjectName _getBundleState() throws IOException, MalformedObjectNameException {
-		ObjectName objectName = new ObjectName(_NAME + ":type=bundleState,*");
-
-		Set<ObjectName> queryNames = mBeanServerConnection.queryNames(objectName, null);
-
-		Iterator<ObjectName> iterator = queryNames.iterator();
-
-		return iterator.next();
 	}
 
 	private static final String _NAME = "osgi.core";

@@ -76,8 +76,8 @@ public class CombinedClassLoader extends ClassLoader implements AutoCloseable {
 
 			return defineClass(name, byteCode, null);
 		}
-		catch (IOException ioe) {
-			throw new ClassNotFoundException(name, ioe);
+		catch (IOException ioException) {
+			throw new ClassNotFoundException(name, ioException);
 		}
 	}
 
@@ -111,17 +111,21 @@ public class CombinedClassLoader extends ClassLoader implements AutoCloseable {
 			));
 	}
 
-	private static Enumeration<URL> _getResources(ClassLoader classLoader, String name) {
+	private void _add(ClassLoader classLoader) {
+		_classLoaders.add(classLoader);
+	}
+
+	private Enumeration<URL> _getResources(ClassLoader classLoader, String name) {
 		try {
 			return classLoader.getResources(name);
 		}
-		catch (IOException ioe) {
+		catch (IOException ioException) {
 		}
 
 		return null;
 	}
 
-	private static ByteBuffer _loadResourceFromClasspath(URL url) throws IOException {
+	private ByteBuffer _loadResourceFromClasspath(URL url) throws IOException {
 		try (InputStream inputStream = url.openStream()) {
 			byte[] buffer = new byte[1024];
 
@@ -137,10 +141,6 @@ public class CombinedClassLoader extends ClassLoader implements AutoCloseable {
 
 			return ByteBuffer.wrap(output);
 		}
-	}
-
-	private void _add(ClassLoader classLoader) {
-		_classLoaders.add(classLoader);
 	}
 
 	private Collection<ClassLoader> _classLoaders = new ArrayList<>();

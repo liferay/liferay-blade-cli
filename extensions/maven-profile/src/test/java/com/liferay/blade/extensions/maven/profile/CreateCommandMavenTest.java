@@ -330,12 +330,12 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	}
 
 	/*
-		private void _enableStandaloneProfile(File pomXmlFile) throws Exception {
+		private void _enableStandaloneProfile(File pomXMLFile) throws Exception {
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
-			Document document = documentBuilder.parse(pomXmlFile);
+			Document document = documentBuilder.parse(pomXMLFile);
 
 			Element projectElement = document.getDocumentElement();
 
@@ -352,7 +352,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource domSource = new DOMSource(document);
-			StreamResult streamResult = new StreamResult(pomXmlFile);
+			StreamResult streamResult = new StreamResult(pomXMLFile);
 
 			transformer.transform(domSource, streamResult);
 		}

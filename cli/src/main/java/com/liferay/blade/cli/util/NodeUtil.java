@@ -77,8 +77,8 @@ public class NodeUtil {
 								Files.move(
 									x, nodeDirPath.resolve(x.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 							}
-							catch (IOException ioe) {
-								throw new RuntimeException(ioe);
+							catch (IOException ioException) {
+								throw new RuntimeException(ioException);
 							}
 						});
 				}
@@ -100,7 +100,7 @@ public class NodeUtil {
 		return runYo(liferayVersion, dir, args, false);
 	}
 
-	public static int runYo(String liferayVersion, File dir, String[] args, boolean isQuiet) throws Exception {
+	public static int runYo(String liferayVersion, File dir, String[] args, boolean quiet) throws Exception {
 		Path nodeDirPath = downloadNode();
 
 		Path yoDirPath = _installYo(liferayVersion);
@@ -157,7 +157,7 @@ public class NodeUtil {
 
 		processBuilder.command(commands);
 
-		if (!isQuiet) {
+		if (!quiet) {
 			processBuilder.inheritIO();
 		}
 
@@ -189,7 +189,7 @@ public class NodeUtil {
 	}
 
 	private static String _getNodeURL() {
-		String nodeVersion = _getNodeVersion();
+		String nodeVersion = _nodeVersion;
 
 		if ((nodeVersion == null) || nodeVersion.equals("")) {
 			return null;
@@ -231,10 +231,6 @@ public class NodeUtil {
 		}
 
 		return sb.toString();
-	}
-
-	private static String _getNodeVersion() {
-		return _nodeVersion;
 	}
 
 	private static File _getNpmDir(File nodeDir) {

@@ -127,7 +127,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 				outputFiles.addAll(files);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 			}
 
 			return new DefaultModel(
@@ -189,7 +189,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 						}
 					}
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 				}
 			}
 

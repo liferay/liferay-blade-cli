@@ -23,7 +23,6 @@ import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -171,7 +170,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		FileUtil.unzip(bladeRepoArchive, samplesCachePath.toFile(), null);
 	}
 
-	private String _getLiferayVersion(BladeCLI bladeCLI, SamplesArgs samplesArgs) throws IOException {
+	private String _getLiferayVersion(BladeCLI bladeCLI, SamplesArgs samplesArgs) throws Exception {
 		String liferayVersion = samplesArgs.getLiferayVersion();
 
 		if (liferayVersion == null) {
@@ -183,7 +182,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return liferayVersion;
 	}
 
-	private Path _getSamplesCachePath() throws IOException {
+	private Path _getSamplesCachePath() throws Exception {
 		Path userHomePath = _USER_HOME_DIR.toPath();
 
 		Path samplesCachePath = userHomePath.resolve(".blade/cache/samples");
@@ -195,7 +194,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return samplesCachePath;
 	}
 
-	private void _listSamples(String bladeRepoName) throws IOException {
+	private void _listSamples(String bladeRepoName) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 		SamplesArgs samplesArgs = getArgs();
 

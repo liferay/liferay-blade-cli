@@ -20,7 +20,6 @@ import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 
 import java.nio.file.Files;
@@ -82,7 +81,7 @@ public class TargetPlatformTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private void _setTargetPlatformVersionProperty(String version) throws IOException {
+	private void _setTargetPlatformVersionProperty(String version) throws Exception {
 		GradleWorkspaceProvider workspaceProviderGradle = new GradleWorkspaceProvider();
 
 		Properties properties = workspaceProviderGradle.getGradleProperties(_gradlePropertiesFile);
@@ -94,7 +93,7 @@ public class TargetPlatformTest {
 		}
 	}
 
-	private void _setWorkspacePluginVersion(String version) throws IOException {
+	private void _setWorkspacePluginVersion(String version) throws Exception {
 		String settingsScript = BladeUtil.read(_settingsGradleFile);
 
 		Matcher matcher = GradleWorkspaceProvider.patternWorkspacePluginVersion.matcher(settingsScript);

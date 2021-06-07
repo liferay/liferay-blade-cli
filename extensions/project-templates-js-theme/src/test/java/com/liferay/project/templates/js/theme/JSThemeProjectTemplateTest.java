@@ -21,7 +21,6 @@ import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -91,18 +90,6 @@ public class JSThemeProjectTemplateTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static void _setupTestExtension(Path extensionsPath, String jarPath) throws IOException {
-		File sampleJarFile = new File(jarPath);
-
-		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
-
-		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
-
-		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
-
-		Assert.assertTrue(Files.exists(sampleJarPath));
-	}
-
 	private File _getExtensionsDir() {
 		return new File(temporaryFolder.getRoot(), ".blade/extensions");
 	}
@@ -115,6 +102,18 @@ public class JSThemeProjectTemplateTest {
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDirPath.toFile(), args);
+	}
+
+	private void _setupTestExtension(Path extensionsPath, String jarPath) throws Exception {
+		File sampleJarFile = new File(jarPath);
+
+		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
+
+		Path sampleJarPath = extensionsPath.resolve(sampleJarFile.getName());
+
+		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
+
+		Assert.assertTrue(Files.exists(sampleJarPath));
 	}
 
 	private void _setupTestExtensions() throws Exception {

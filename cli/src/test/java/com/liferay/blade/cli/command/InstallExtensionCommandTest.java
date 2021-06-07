@@ -27,7 +27,6 @@ import difflib.Patch;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.nio.file.Files;
@@ -220,6 +219,7 @@ public class InstallExtensionCommandTest {
 		_testJarsDiff(sampleCommandFile, extensionJar);
 
 		Assert.assertTrue("Expected output to contain \"Overwrite\"\n" + output, output.contains("Overwrite"));
+
 		boolean assertCorrect = output.contains(" installed successfully");
 
 		if (!assertCorrect) {
@@ -266,8 +266,8 @@ public class InstallExtensionCommandTest {
 		try {
 			bladeTest.run(args);
 		}
-		catch (Exception e) {
-			error = e.getMessage();
+		catch (Exception exception) {
+			error = exception.getMessage();
 		}
 
 		Assert.assertTrue(error, error.contains("Unable to acquire an answer"));
@@ -299,7 +299,30 @@ public class InstallExtensionCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static void _testJarsDiff(File warFile1, File warFile2) throws IOException {
+	private boolean _isWindows() {
+		String osName = System.getProperty("os.name");
+
+		osName = osName.toLowerCase();
+
+		return osName.contains("win");
+	}
+
+	private String _testBladeWithInteractive(File userHomeDir, File extensionsDir, String[] args, String data)
+		throws Exception {
+
+		InputStream in = new ByteArrayInputStream(data.getBytes("UTF-8"));
+
+		try {
+			BladeTestResults bladeTestResults = TestUtil.runBlade(userHomeDir, extensionsDir, in, args);
+
+			return bladeTestResults.getOutput();
+		}
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
+		}
+	}
+
+	private void _testJarsDiff(File warFile1, File warFile2) throws Exception {
 		DifferenceCalculator differenceCalculator = new DifferenceCalculator(warFile1, warFile2);
 
 		differenceCalculator.setFilenameRegexToIgnore(Collections.singleton(".*META-INF.*"));
@@ -397,29 +420,6 @@ public class InstallExtensionCommandTest {
 		}
 
 		Assert.assertFalse(message.toString(), realChange);
-	}
-
-	private boolean _isWindows() {
-		String osName = System.getProperty("os.name");
-
-		osName = osName.toLowerCase();
-
-		return osName.contains("win");
-	}
-
-	private String _testBladeWithInteractive(File userHomeDir, File extensionsDir, String[] args, String data)
-		throws Exception {
-
-		InputStream in = new ByteArrayInputStream(data.getBytes("UTF-8"));
-
-		try {
-			BladeTestResults bladeTestResults = TestUtil.runBlade(userHomeDir, extensionsDir, in, args);
-
-			return bladeTestResults.getOutput();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	private static final String _LINK_TO_DEPLOY_COMMAND =

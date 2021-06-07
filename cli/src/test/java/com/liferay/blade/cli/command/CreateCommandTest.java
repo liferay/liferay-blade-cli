@@ -515,7 +515,7 @@ public class CreateCommandTest {
 		try {
 			TestUtil.runBlade(workspace, _extensionsDir, false, args);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 
 		File projectDir = new File(workspace, "modules/exist");
@@ -1940,7 +1940,7 @@ public class CreateCommandTest {
 		try {
 			TestUtil.runBlade(workspace, _extensionsDir, false, args);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 
 		File projectDir = new File(workspace, "modules/wrong-activator");
@@ -1952,17 +1952,6 @@ public class CreateCommandTest {
 
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-	private static File _enableTargetPlatformInWorkspace(File workspaceDir, String liferayVersion) throws IOException {
-		File gradlePropertiesFile = new File(workspaceDir, "gradle.properties");
-
-		String targetPlatformVersionProperty =
-			System.lineSeparator() + WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY + "=" + liferayVersion;
-
-		Files.write(gradlePropertiesFile.toPath(), targetPlatformVersionProperty.getBytes(), StandardOpenOption.APPEND);
-
-		return gradlePropertiesFile;
-	}
 
 	private void _addDefaultModulesDir(File workspace) throws Exception {
 		File gradleProperties = new File(workspace, "gradle.properties");
@@ -1992,7 +1981,7 @@ public class CreateCommandTest {
 		return file;
 	}
 
-	private void _checkGradleBuildFiles(String projectPath) throws IOException {
+	private void _checkGradleBuildFiles(String projectPath) throws Exception {
 		_checkFileExists(projectPath);
 
 		Path gradlePath = Paths.get(projectPath, "build.gradle");
@@ -2010,7 +1999,7 @@ public class CreateCommandTest {
 		}
 	}
 
-	private void _checkGradleBuildFilesInWarProject(String projectPath) throws IOException {
+	private void _checkGradleBuildFilesInWarProject(String projectPath) throws Exception {
 		_checkFileExists(projectPath);
 
 		Path gradlePath = Paths.get(projectPath, "build.gradle");
@@ -2040,6 +2029,17 @@ public class CreateCommandTest {
 		Matcher matcher = pattern.matcher(content);
 
 		Assert.assertTrue(matcher.matches());
+	}
+
+	private File _enableTargetPlatformInWorkspace(File workspaceDir, String liferayVersion) throws Exception {
+		File gradlePropertiesFile = new File(workspaceDir, "gradle.properties");
+
+		String targetPlatformVersionProperty =
+			System.lineSeparator() + WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY + "=" + liferayVersion;
+
+		Files.write(gradlePropertiesFile.toPath(), targetPlatformVersionProperty.getBytes(), StandardOpenOption.APPEND);
+
+		return gradlePropertiesFile;
 	}
 
 	private void _lacks(File file, String regex) throws Exception {

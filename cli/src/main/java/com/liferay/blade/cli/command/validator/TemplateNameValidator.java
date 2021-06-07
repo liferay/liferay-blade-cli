@@ -36,8 +36,8 @@ public class TemplateNameValidator implements ValidatorSupplier {
 		try {
 			return new ArrayList<>(BladeUtil.getTemplateNames(BladeCLI.instance));
 		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
 		}
 	}
 

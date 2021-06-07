@@ -58,8 +58,8 @@ public class StringConverter {
 				outputStream.write(buffer, 0, length);
 			}
 		}
-		catch (IOException ioe) {
-			throw new RuntimeException(ioe);
+		catch (IOException ioException) {
+			throw new RuntimeException(ioException);
 		}
 	}
 
@@ -77,8 +77,8 @@ public class StringConverter {
 				printStream.append(CharBuffer.wrap(buffer), 0, length);
 			}
 		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
 		}
 	}
 

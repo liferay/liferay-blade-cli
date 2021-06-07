@@ -132,8 +132,8 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 			return Integer.parseInt(matcher.group(1));
 		}
-		catch (Exception e) {
-			throw new Exception("Unable to install bundle.  Unexpected response: \n" + response, e);
+		catch (Exception exception) {
+			throw new Exception("Unable to install bundle.  Unexpected response: \n" + response, exception);
 		}
 	}
 
@@ -177,22 +177,6 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		_sendGogo(installString);
 	}
 
-	private static List<BundleDTO> _getBundles(GogoShellClient client) throws IOException {
-		String response = client.send("lb -s -u");
-
-		String[] lines = _parseGogoResponse(response);
-
-		return Stream.of(
-			lines
-		).skip(
-			3
-		).map(
-			LiferayBundleDeployerImpl::_parseGogoLine
-		).collect(
-			Collectors.toList()
-		);
-	}
-
 	private static final int _getState(String state) {
 		String bundleState = state.toUpperCase();
 
@@ -218,24 +202,6 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		return 0;
 	}
 
-	private static String _getWarString(Path path) throws IllegalArgumentException {
-		if (!_WAR_FILE_GLOB.matches(path)) {
-			throw new IllegalArgumentException("Must provide a valid WAR file");
-		}
-
-		String fileNameString = String.valueOf(path.getFileName());
-
-		Matcher matcher = _versionPattern.matcher(fileNameString);
-
-		if (matcher.find()) {
-			fileNameString = matcher.replaceFirst(".war");
-		}
-
-		URI uri = path.toUri();
-
-		return String.format(_WAR_STRING_TEMPLATE, uri.toASCIIString(), fileNameString, fileNameString);
-	}
-
 	private static final BundleDTO _newBundleDTO(Long id, int state, String symbolicName) {
 		BundleDTO bundle = new BundleDTO();
 
@@ -258,11 +224,49 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 		return _newBundleDTO(id, state, symbolicName);
 	}
 
-	private static final String[] _parseGogoResponse(String response) {
+	private List<BundleDTO> _getBundles(GogoShellClient client) throws Exception {
+		String response = client.send("lb -s -u");
+
+		String[] lines = _parseGogoResponse(response);
+
+		return Stream.of(
+			lines
+		).skip(
+			3
+		).map(
+			LiferayBundleDeployerImpl::_parseGogoLine
+		).collect(
+			Collectors.toList()
+		);
+	}
+
+	private String _getWarString(Path path) throws Exception {
+		if (!_WAR_FILE_GLOB.matches(path)) {
+			throw new IllegalArgumentException("Must provide a valid WAR file");
+		}
+
+		String fileNameString = String.valueOf(path.getFileName());
+
+		Matcher matcher = _versionPattern.matcher(fileNameString);
+
+		if (matcher.find()) {
+			fileNameString = matcher.replaceFirst(".war");
+		}
+
+		URI uri = path.toUri();
+
+		return String.format(_WAR_STRING_TEMPLATE, uri.toASCIIString(), fileNameString, fileNameString);
+	}
+
+	private final String[] _parseGogoResponse(String response) {
 		return response.split("\\r?\\n");
 	}
 
-	private static void _verify(String request, String response) throws Exception {
+	private String _sendGogo(String data) throws Exception {
+		return _client.send(data);
+	}
+
+	private void _verify(String request, String response) throws Exception {
 		Objects.requireNonNull(request, "Request cannot be null");
 		Objects.requireNonNull(request, "Response cannot be null");
 		request = request.trim();
@@ -276,7 +280,7 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 
 		if (requestLineBreakCount != responseLineBreakCount) {
 			String exceptionString =
-				"Unexpected exception encountered while processing command \"" + request + "\":" +
+				"Unexpected Exception exceptionncountered while processing command \"" + request + "\":" +
 					System.lineSeparator() + response;
 
 			throw new Exception(exceptionString);
@@ -302,10 +306,6 @@ public class LiferayBundleDeployerImpl implements LiferayBundleDeployer {
 				throw new Exception(exceptionString);
 			}
 		}
-	}
-
-	private String _sendGogo(String data) throws Exception {
-		return _client.send(data);
 	}
 
 	private static final FileSystem _FILE_SYSTEM = FileSystems.getDefault();

@@ -120,7 +120,7 @@ public class BndProperties extends Properties {
 		try (InputStream in = new FileInputStream(bndFile)) {
 			load(in);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 	}
 

@@ -257,7 +257,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 	private void _watch(
 			Path watchPath, Map<String, Path> projectPaths, List<String> fastPaths, List<String> ignorePaths,
 			boolean deploy)
-		throws InterruptedException {
+		throws Exception {
 
 		Thread watchThread = new Thread() {
 
@@ -296,7 +296,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 						try {
 							watchKey = watchService.take();
 						}
-						catch (InterruptedException ie) {
+						catch (InterruptedException interruptedException) {
 							continue;
 						}
 
@@ -339,7 +339,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 										_walkAndRegisterDirectories(
 											watchService, watchKeys, resolvedPath, ignorePathMatchers);
 									}
-									catch (IOException ioe) {
+									catch (IOException ioException) {
 										bladeCLI.error("Could not register directory:" + resolvedPath);
 									}
 								}
@@ -398,12 +398,12 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 						}
 					}
 				}
-				catch (Exception e) {
-					_addError("watch", e.getMessage());
+				catch (Exception exception) {
+					_addError("watch", exception.getMessage());
 
 					PrintStream error = bladeCLI.error();
 
-					e.printStackTrace(error);
+					exception.printStackTrace(error);
 				}
 			}
 

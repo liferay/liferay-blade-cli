@@ -62,7 +62,7 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 			try {
 				FileUtil.deleteDirIfExists(_tempExtensionsDirectory);
 			}
-			catch (IOException ioe) {
+			catch (IOException ioException) {
 			}
 		}
 	}
@@ -92,8 +92,8 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 
 			return _serviceLoaderClassLoader;
 		}
-		catch (Throwable th) {
-			throw new RuntimeException(th);
+		catch (Throwable throwable) {
+			throw new RuntimeException(throwable);
 		}
 	}
 
@@ -101,32 +101,10 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 		try {
 			return uri.toURL();
 		}
-		catch (MalformedURLException murle) {
+		catch (MalformedURLException malformedURLException) {
 		}
 
 		return null;
-	}
-
-	private static URL[] _getJarUrls(Path jarsPath) throws IOException {
-		try (Stream<Path> files = Files.list(jarsPath)) {
-			return files.filter(
-				path -> {
-					String file = path.toString();
-
-					return file.endsWith(".jar");
-				}
-			).map(
-				Path::toUri
-			).map(
-				ExtensionsClassLoaderSupplier::_convertUriToUrl
-			).filter(
-				url -> url != null
-			).collect(
-				Collectors.toSet()
-			).toArray(
-				new URL[0]
-			);
-		}
 	}
 
 	private void _extractBladeExtensions(Path extensionsDirectory) throws IOException {
@@ -165,12 +143,12 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 
 						Files.copy(extensionInputStream, extensionPath, StandardCopyOption.REPLACE_EXISTING);
 					}
-					catch (Throwable th) {
+					catch (Throwable throwable) {
 						StringBuilder sb = new StringBuilder();
 
 						sb.append("Error encountered while loading custom extensions.");
 						sb.append(System.lineSeparator());
-						sb.append(th.getMessage());
+						sb.append(throwable.getMessage());
 						sb.append(System.lineSeparator());
 						sb.append("Not loading extension " + extension + ".");
 						sb.append(System.lineSeparator());
@@ -181,12 +159,12 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 					}
 				}
 			}
-			catch (NoSuchElementException nsee) {
+			catch (NoSuchElementException noSuchElementException) {
 				StringBuilder sb = new StringBuilder();
 
 				sb.append("Error encountered while loading custom extensions.");
 				sb.append(System.lineSeparator());
-				sb.append(nsee.getMessage());
+				sb.append(noSuchElementException.getMessage());
 				sb.append(System.lineSeparator());
 				sb.append("Only built-in commands will be recognized.");
 				sb.append(System.lineSeparator());
@@ -195,11 +173,33 @@ public class ExtensionsClassLoaderSupplier implements AutoCloseable, Supplier<Cl
 
 				System.err.println(errorString);
 			}
-			catch (Throwable th) {
+			catch (Throwable throwable) {
 				String errorMessage = "Error encountered while loading custom extensions." + System.lineSeparator();
 
-				throw new RuntimeException(errorMessage, th);
+				throw new RuntimeException(errorMessage, throwable);
 			}
+		}
+	}
+
+	private URL[] _getJarUrls(Path jarsPath) throws IOException {
+		try (Stream<Path> files = Files.list(jarsPath)) {
+			return files.filter(
+				path -> {
+					String file = path.toString();
+
+					return file.endsWith(".jar");
+				}
+			).map(
+				Path::toUri
+			).map(
+				ExtensionsClassLoaderSupplier::_convertUriToUrl
+			).filter(
+				url -> url != null
+			).collect(
+				Collectors.toSet()
+			).toArray(
+				new URL[0]
+			);
 		}
 	}
 

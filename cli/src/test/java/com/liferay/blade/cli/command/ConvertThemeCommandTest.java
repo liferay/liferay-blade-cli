@@ -83,11 +83,11 @@ public class ConvertThemeCommandTest {
 
 		Assert.assertTrue(json.contains("\"supportCompass\": true"));
 
-		File nonCompassTheme = new File(workspace, "themes/non-compass-theme");
+		File noncompassTheme = new File(workspace, "themes/non-compass-theme");
 
 		Assert.assertTrue(compassTheme.exists());
 
-		packageJsonFile = new File(nonCompassTheme, "package.json");
+		packageJsonFile = new File(noncompassTheme, "package.json");
 
 		json = new String(Files.readAllBytes(packageJsonFile.toPath()));
 

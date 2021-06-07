@@ -119,13 +119,13 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		TestUtil.runBlade(newproject, _extensionsDir, args);
 
-		File pomXmlFile = new File(newproject, "pom.xml");
+		File pomXMLFile = new File(newproject, "pom.xml");
 
-		Assert.assertTrue(pomXmlFile.exists());
+		Assert.assertTrue(pomXMLFile.exists());
 
 		_checkExists(new File(newproject, "modules"));
 
-		String contents = new String(Files.readAllBytes(pomXmlFile.toPath()));
+		String contents = new String(Files.readAllBytes(pomXMLFile.toPath()));
 
 		Assert.assertTrue(contents, contents.contains("com.liferay.portal.tools.bundle.support"));
 

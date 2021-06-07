@@ -86,7 +86,7 @@ public class FileUtil {
 			new SimpleFileVisitor<Path>() {
 
 				@Override
-				public FileVisitResult postVisitDirectory(Path dirPath, IOException ioe) throws IOException {
+				public FileVisitResult postVisitDirectory(Path dirPath, IOException ioException) throws IOException {
 					Files.delete(dirPath);
 
 					return FileVisitResult.CONTINUE;

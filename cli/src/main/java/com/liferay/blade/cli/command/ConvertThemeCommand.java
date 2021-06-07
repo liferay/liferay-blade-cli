@@ -201,7 +201,7 @@ public class ConvertThemeCommand implements FilesSupport {
 		return Optional.empty();
 	}
 
-	private static boolean _compassSupport(String themePath) throws Exception {
+	private boolean _compassSupport(String themePath) throws Exception {
 		File themeDir = new File(themePath);
 
 		File customCss = new File(themeDir, "docroot/_diffs/css/custom.css");

@@ -20,7 +20,6 @@ import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.nio.file.Files;
@@ -207,7 +206,13 @@ public class ExtensionsTest {
 		}
 	}
 
-	private static void _setupTestExtension(Path extensionsPath, String jarPath) throws IOException {
+	private void _setupBadExtension() throws Exception {
+		Path extensionsPath = _extensionsDir.toPath();
+
+		_setupTestExtension(extensionsPath, System.getProperty("badCommandJarFile"));
+	}
+
+	private void _setupTestExtension(Path extensionsPath, String jarPath) throws Exception {
 		File sampleJarFile = new File(jarPath);
 
 		Assert.assertTrue(sampleJarFile.getAbsolutePath() + " does not exist.", sampleJarFile.exists());
@@ -217,12 +222,6 @@ public class ExtensionsTest {
 		Files.copy(sampleJarFile.toPath(), sampleJarPath, StandardCopyOption.REPLACE_EXISTING);
 
 		Assert.assertTrue(Files.exists(sampleJarPath));
-	}
-
-	private void _setupBadExtension() throws Exception {
-		Path extensionsPath = _extensionsDir.toPath();
-
-		_setupTestExtension(extensionsPath, System.getProperty("badCommandJarFile"));
 	}
 
 	private void _setupTestExtensions() throws Exception {

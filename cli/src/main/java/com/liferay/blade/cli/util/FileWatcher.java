@@ -109,7 +109,7 @@ public class FileWatcher {
 			try {
 				key = _watcher.take();
 			}
-			catch (InterruptedException ie) {
+			catch (InterruptedException interruptedException) {
 				return;
 			}
 
@@ -156,7 +156,7 @@ public class FileWatcher {
 							_registerAll(child);
 						}
 					}
-					catch (IOException ioe) {
+					catch (IOException ioException) {
 
 						// ignore to keep sample readbale
 
@@ -210,7 +210,7 @@ public class FileWatcher {
 
 			modifier = (WatchEvent.Modifier)f.get(c);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 
 		WatchKey key;

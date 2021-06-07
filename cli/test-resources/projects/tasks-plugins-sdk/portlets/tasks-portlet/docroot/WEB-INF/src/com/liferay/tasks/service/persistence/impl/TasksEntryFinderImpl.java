@@ -138,7 +138,7 @@ public class TasksEntryFinderImpl
 
 			return 0;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw new SystemException(e);
 		}
 		finally {
@@ -216,7 +216,7 @@ public class TasksEntryFinderImpl
 			return (List<TasksEntry>)QueryUtil.list(
 				q, getDialect(), start, end);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw new SystemException(e);
 		}
 		finally {

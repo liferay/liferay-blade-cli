@@ -20,7 +20,6 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -329,50 +328,6 @@ public class ServerStartCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private static int _getAvailablePort() {
-		try (ServerSocket serverSocket = new ServerSocket(0)) {
-			serverSocket.setReuseAddress(true);
-
-			return serverSocket.getLocalPort();
-		}
-		catch (IOException ioe) {
-			throw new IllegalStateException("No available ports");
-		}
-	}
-
-	private static boolean _isDebugPortListening(int debugPort) {
-		InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
-
-		try (Socket socket = new Socket(loopbackAddress, debugPort)) {
-			return true;
-		}
-		catch (IOException ioe) {
-			return false;
-		}
-	}
-
-	private static boolean _isServerRunning() {
-		for (JavaProcess process : JavaProcesses.list()) {
-			String displayName = process.getDisplayName();
-
-			if (displayName.contains("wildfly") || displayName.contains("catalina")) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private static void _terminateProcess(PidProcess tomcatPidProcess) throws Exception {
-		ProcessUtil.destroyForcefullyAndWait(tomcatPidProcess, 1, TimeUnit.MINUTES);
-
-		String processName = tomcatPidProcess.getDescription();
-
-		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
-
-		Assert.assertFalse(_isServerRunning());
-	}
-
 	private void _addBundleToGradle(String bundleFileName) throws Exception {
 		Path gradlePropertiesPath = _testWorkspacePath.resolve("gradle.properties");
 
@@ -414,7 +369,7 @@ public class ServerStartCommandTest {
 		return false;
 	}
 
-	private void _customizeProdProperties() throws FileNotFoundException, IOException {
+	private void _customizeProdProperties() throws Exception {
 		Path prodConfigPath = _testWorkspacePath.resolve(Paths.get("configs", "prod", "portal-ext.properties"));
 
 		Properties portalExtProperties = new Properties();
@@ -489,7 +444,7 @@ public class ServerStartCommandTest {
 	}
 
 	private Optional<PidProcess> _findServerProcess(Predicate<JavaProcess> processFilter, boolean assertFound)
-		throws InterruptedException, IOException {
+		throws Exception {
 
 		Collection<JavaProcess> javaProcesses = JavaProcesses.list();
 
@@ -512,6 +467,17 @@ public class ServerStartCommandTest {
 		Assert.assertTrue("Expected " + processName + " process to be alive", pidProcess.isAlive());
 
 		return Optional.of(pidProcess);
+	}
+
+	private int _getAvailablePort() {
+		try (ServerSocket serverSocket = new ServerSocket(0)) {
+			serverSocket.setReuseAddress(true);
+
+			return serverSocket.getLocalPort();
+		}
+		catch (IOException ioException) {
+			throw new IllegalStateException("No available ports");
+		}
 	}
 
 	private Path _getBundleConfigPath() {
@@ -566,6 +532,29 @@ public class ServerStartCommandTest {
 		}
 
 		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, serverInitArgs);
+	}
+
+	private boolean _isDebugPortListening(int debugPort) {
+		InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
+
+		try (Socket socket = new Socket(loopbackAddress, debugPort)) {
+			return true;
+		}
+		catch (IOException ioException) {
+			return false;
+		}
+	}
+
+	private boolean _isServerRunning() {
+		for (JavaProcess process : JavaProcesses.list()) {
+			String displayName = process.getDisplayName();
+
+			if (displayName.contains("wildfly") || displayName.contains("catalina")) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private String _printDisplayNames(Collection<JavaProcess> javaProcesses) {
@@ -697,7 +686,17 @@ public class ServerStartCommandTest {
 		Assert.assertTrue("Expected a new process", _isServerRunning());
 	}
 
-	private void _validateBundleConfigFile(Path bundleConfigPath) throws FileNotFoundException, IOException {
+	private void _terminateProcess(PidProcess tomcatPidProcess) throws Exception {
+		ProcessUtil.destroyForcefullyAndWait(tomcatPidProcess, 1, TimeUnit.MINUTES);
+
+		String processName = tomcatPidProcess.getDescription();
+
+		Assert.assertFalse("Expected " + processName + " process to be destroyed.", tomcatPidProcess.isAlive());
+
+		Assert.assertFalse(_isServerRunning());
+	}
+
+	private void _validateBundleConfigFile(Path bundleConfigPath) throws Exception {
 		Properties runtimePortalExtProperties = new Properties();
 
 		try (InputStream inputStream = Files.newInputStream(bundleConfigPath)) {

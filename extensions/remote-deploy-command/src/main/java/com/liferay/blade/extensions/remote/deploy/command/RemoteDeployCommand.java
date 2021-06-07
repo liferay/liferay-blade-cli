@@ -155,7 +155,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 				try {
 					_installOrUpdate(outputFile, host, port);
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 					String message = e.getMessage();
 
 					Class<?> exceptionClass = e.getClass();
@@ -258,7 +258,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 				try {
 					gradleExec.executeTask("assemble -x check -t");
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 					String message = e.getMessage();
 
 					if (message == null) {
@@ -292,7 +292,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 						_installOrUpdate(modifiedFile, host, port);
 					}
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 					String exceptionMessage = (e.getMessage() == null) ? "" : (System.lineSeparator() + e.getMessage());
 
 					String message = "Error: Bundle Insatllation failed: " + modified + exceptionMessage;
@@ -350,7 +350,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 					}
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				String exceptionMessage = (e.getMessage() == null) ? "" : (System.lineSeparator() + e.getMessage());
 
 				String message = "Error: Bundle Deployment failed: " + bsn + exceptionMessage;

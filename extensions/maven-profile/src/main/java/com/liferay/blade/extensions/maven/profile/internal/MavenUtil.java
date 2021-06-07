@@ -59,7 +59,7 @@ public class MavenUtil {
 
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
-			Document document = documentBuilder.parse(getPomXMLFile(baseDir));
+			Document document = documentBuilder.parse(getpomXMLFile(baseDir));
 
 			Element documentElement = document.getDocumentElement();
 
@@ -88,7 +88,7 @@ public class MavenUtil {
 		}
 	}
 
-	public static File getPomXMLFile(File dir) {
+	public static File getpomXMLFile(File dir) {
 		return new File(getWorkspaceDir(dir), _POM_XML_FILE_NAME);
 	}
 
@@ -132,7 +132,7 @@ public class MavenUtil {
 			try {
 				dir = dir.getCanonicalFile();
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				dir = dir.getAbsoluteFile();
 			}
 		}
@@ -161,7 +161,7 @@ public class MavenUtil {
 					return true;
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 			}
 		}
 

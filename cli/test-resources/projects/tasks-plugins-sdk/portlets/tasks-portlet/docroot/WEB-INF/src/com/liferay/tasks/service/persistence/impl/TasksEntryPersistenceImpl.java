@@ -264,7 +264,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, list);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -414,7 +414,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -643,7 +643,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return (List<TasksEntry>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -688,7 +688,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -888,7 +888,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -941,7 +941,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return count.intValue();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -1124,7 +1124,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, list);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -1274,7 +1274,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -1439,7 +1439,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -1635,7 +1635,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, list);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -1788,7 +1788,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -1953,7 +1953,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -2149,7 +2149,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, list);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -2302,7 +2302,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -2467,7 +2467,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -2670,7 +2670,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, list);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -2834,7 +2834,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -3075,7 +3075,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return (List<TasksEntry>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -3122,7 +3122,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -3332,7 +3332,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -3390,7 +3390,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return count.intValue();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -3590,7 +3590,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, list);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -3754,7 +3754,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -3996,7 +3996,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return (List<TasksEntry>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -4043,7 +4043,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -4253,7 +4253,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -4311,7 +4311,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return count.intValue();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -4511,7 +4511,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, list);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -4675,7 +4675,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -4917,7 +4917,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return (List<TasksEntry>)QueryUtil.list(q, getDialect(), start, end);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -4964,7 +4964,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return array;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -5174,7 +5174,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -5232,7 +5232,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 			return count.intValue();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -5385,7 +5385,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 		catch (NoSuchTasksEntryException nsee) {
 			throw nsee;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -5411,7 +5411,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 				session.delete(tasksEntry);
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -5469,7 +5469,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 				tasksEntry = (TasksEntry)session.merge(tasksEntry);
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -5783,7 +5783,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 						TasksEntryImpl.class, primaryKey, nullModel);
 				}
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				entityCache.removeResult(TasksEntryModelImpl.ENTITY_CACHE_ENABLED,
 					TasksEntryImpl.class, primaryKey);
 
@@ -5892,7 +5892,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 					TasksEntryImpl.class, primaryKey, nullModel);
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			throw processException(e);
 		}
 		finally {
@@ -6032,7 +6032,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 
 				finderCache.putResult(finderPath, finderArgs, list);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
@@ -6079,7 +6079,7 @@ public class TasksEntryPersistenceImpl extends BasePersistenceImpl<TasksEntry>
 				finderCache.putResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY,
 					count);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 				finderCache.removeResult(FINDER_PATH_COUNT_ALL,
 					FINDER_ARGS_EMPTY);
 

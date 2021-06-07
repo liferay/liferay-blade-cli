@@ -39,8 +39,8 @@ public class CreateArgs extends BaseArgs {
 		return _addOns;
 	}
 
-	public String getClassname() {
-		return _classname;
+	public String getClassName() {
+		return _className;
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class CreateArgs extends BaseArgs {
 	}
 
 	public void setClassName(String className) {
-		_classname = className;
+		_className = className;
 	}
 
 	public void setDependencyInjector(String dependencyInjector) {
@@ -191,7 +191,7 @@ public class CreateArgs extends BaseArgs {
 		description = "If a class is generated in the project, provide the name of the class to be generated. If not provided defaults to project name.",
 		names = {"-c", "--classname"}
 	)
-	private String _classname;
+	private String _className;
 
 	@Parameter(
 		description = "Used to identify your module as a Theme Contributor. Also, used to add the Liferay-Theme-Contributor-Type and Web-ContextPath bundle headers.",

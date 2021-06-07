@@ -47,9 +47,9 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 		File baseDir = baseArgs.getBase();
 
 		if (MavenUtil.isWorkspace(baseDir)) {
-			File pomXmlFile = MavenUtil.getPomXMLFile(baseDir);
+			File pomXMLFile = MavenUtil.getpomXMLFile(baseDir);
 
-			if (pomXmlFile.exists()) {
+			if (pomXMLFile.exists()) {
 				if (!baseArgs.isQuiet()) {
 					bladeCLI.out("Identifying Service Builder projects");
 				}

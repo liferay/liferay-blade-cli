@@ -29,7 +29,6 @@ import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,13 +118,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		String legacyDefaultWarsDir = (String)gradleProperties.get(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 
-		boolean isLegacyDefaultWarsDirSet = false;
+		boolean legacyDefaultWarsDirSet = false;
 
 		if ((legacyDefaultWarsDir != null) && !legacyDefaultWarsDir.isEmpty()) {
-			isLegacyDefaultWarsDirSet = true;
+			legacyDefaultWarsDirSet = true;
 		}
 
-		if ((gradleProperties != null) && isLegacyDefaultWarsDirSet) {
+		if ((gradleProperties != null) && legacyDefaultWarsDirSet) {
 			projectsDirPath = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WARS_DIR_PROPERTY);
 		}
 		else {
@@ -159,9 +158,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		final FileFilter containsDocrootFilter = new FileFilter() {
 
 			@Override
-			public boolean accept(File pathname) {
-				if (pathname.isDirectory()) {
-					File docroot = new File(pathname, "docroot");
+			public boolean accept(File pathName) {
+				if (pathName.isDirectory()) {
+					File docroot = new File(pathName, "docroot");
 
 					if (docroot.exists()) {
 						return true;
@@ -176,11 +175,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		final FileFilter serviceBuilderPluginsFilter = new FileFilter() {
 
 			@Override
-			public boolean accept(File pathname) {
-				boolean directory = pathname.isDirectory();
-				File docroot = new File(pathname, "docroot");
+			public boolean accept(File pathName) {
+				boolean directory = pathName.isDirectory();
+				File docroot = new File(pathName, "docroot");
 
-				if (directory && docroot.exists() && _hasServiceXmlFile(pathname)) {
+				if (directory && docroot.exists() && _hasServiceXmlFile(pathName)) {
 					return true;
 				}
 
@@ -231,8 +230,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 						convertedPaths.addAll(
 							_convertToWarProject(pluginsSdkDir, projectsDir, portalPlugin, null, removeSource));
 					}
-					catch (Exception e) {
-						e.printStackTrace(bladeCLI.error());
+					catch (Exception exception) {
+						exception.printStackTrace(bladeCLI.error());
 					}
 				});
 
@@ -242,8 +241,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 						convertedPaths.addAll(
 							_convertToWarProject(pluginsSdkDir, projectsDir, hookPlugin, null, removeSource));
 					}
-					catch (Exception e) {
-						e.printStackTrace(bladeCLI.error());
+					catch (Exception exception) {
+						exception.printStackTrace(bladeCLI.error());
 					}
 				});
 
@@ -253,8 +252,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 						convertedPaths.addAll(
 							_convertToWarProject(pluginsSdkDir, projectsDir, webPlugin, null, removeSource));
 					}
-					catch (Exception e) {
-						e.printStackTrace(bladeCLI.error());
+					catch (Exception exception) {
+						exception.printStackTrace(bladeCLI.error());
 					}
 				});
 
@@ -346,86 +345,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return ConvertArgs.class;
 	}
 
-	private static String _getAttr(Node item, String attrName) {
-		if (item != null) {
-			NamedNodeMap attrs = item.getAttributes();
-
-			if (attrs != null) {
-				Node attr = attrs.getNamedItem(attrName);
-
-				if (attr != null) {
-					return attr.getNodeValue();
-				}
-			}
-		}
-
-		return null;
-	}
-
-	private static boolean _hasServiceXmlFile(File dir) {
-		Path dirPath = dir.toPath();
-
-		Path serviceXml = dirPath.resolve("docroot/WEB-INF/service.xml");
-
-		return Files.exists(serviceXml);
-	}
-
-	private static boolean _isServiceBuilderPlugin(File pluginDir) {
-		return _hasServiceXmlFile(pluginDir);
-	}
-
-	{
-		_portalClasspathDependenciesMap.put(
-			"util-bridges.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.bridges\"");
-		_portalClasspathDependenciesMap.put(
-			"util-java.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.java\"");
-		_portalClasspathDependenciesMap.put(
-			"util-taglib.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.taglib\"");
-	}
-
-	private static final void _loadMigratedDependencies(String resource, Map<String, GAV> migratedDependencies) {
-		try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(resource)) {
-			Properties properties = new Properties();
-
-			properties.load(inputStream);
-
-			Set<Map.Entry<Object, Object>> entries = properties.entrySet();
-
-			entries.forEach(
-				entry -> {
-					String key = (String)entry.getKey();
-					String value = (String)entry.getValue();
-
-					GAV gav = null;
-
-					if (Objects.equals("__remove__", value)) {
-						gav = new GAV(key);
-
-						gav.setRemove(true);
-					}
-					else {
-						String[] coords = StringUtil.split(value, ":");
-
-						gav = new GAV(coords[0], coords[1], coords[2]);
-					}
-
-					migratedDependencies.put(key, gav);
-				});
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private void _assertTrue(String message, boolean value) {
 		if (!value) {
 			throw new AssertionError(message);
 		}
 	}
 
-	private List<GAV> _convertPortalDependencyJarProperty(File pluginsSdkDir, File warDir)
-		throws FileNotFoundException, IOException {
-
+	private List<GAV> _convertPortalDependencyJarProperty(File pluginsSdkDir, File warDir) throws Exception {
 		List<GAV> convertedDependencies = new ArrayList<>();
 
 		File liferayPluginPackageFile = new File(warDir, "src/main/webapp/WEB-INF/liferay-plugin-package.properties");
@@ -584,15 +510,24 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			return Collections.singletonList(warDir.toPath());
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			BladeCLI bladeCLI = getBladeCLI();
 
 			bladeCLI.error("Error upgrading project " + layoutPluginDir.getName() + "\n");
 
-			e.printStackTrace(bladeCLI.error());
+			exception.printStackTrace(bladeCLI.error());
 		}
 
 		return Collections.emptyList();
+	}
+
+	{
+		_portalClasspathDependenciesMap.put(
+			"util-bridges.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.bridges\"");
+		_portalClasspathDependenciesMap.put(
+			"util-java.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.java\"");
+		_portalClasspathDependenciesMap.put(
+			"util-taglib.jar", "compileOnly group: \"com.liferay.portal\", name: \"com.liferay.util.taglib\"");
 	}
 
 	private List<Path> _convertToServiceBuilderWarProject(
@@ -642,10 +577,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 				convertedPaths.addAll(warPaths);
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			bladeCLI.error("Error upgrading project " + pluginDir.getName() + "\n");
 
-			e.printStackTrace(bladeCLI.error());
+			exception.printStackTrace(bladeCLI.error());
 		}
 
 		return convertedPaths;
@@ -733,10 +668,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			return Collections.singletonList(newThemeDir.toPath());
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			bladeCLI.error("Error upgrading project " + themePlugin.getName() + "\n");
 
-			e.printStackTrace(bladeCLI.error());
+			exception.printStackTrace(bladeCLI.error());
 		}
 
 		return Collections.emptyList();
@@ -752,10 +687,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			return convertThemeCommand.getConvertedPaths();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			bladeCLI.error("Error upgrading project " + themePlugin.getName() + "\n");
 
-			e.printStackTrace(bladeCLI.error());
+			exception.printStackTrace(bladeCLI.error());
 		}
 
 		return Collections.emptyList();
@@ -997,15 +932,15 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 							FileUtils.deleteQuietly(libFile);
 						}
 					}
-					catch (Exception e) {
-						bladeCLI.error(e.getMessage());
+					catch (Exception exception) {
+						bladeCLI.error(exception.getMessage());
 					}
 				}
 			}
 		);
 	}
 
-	private void _deleteServiceBuilderFiles(Path warPath) throws IOException {
+	private void _deleteServiceBuilderFiles(Path warPath) throws Exception {
 		Path metaInfPath = warPath.resolve("src/main/java/META-INF");
 
 		Files.deleteIfExists(metaInfPath.resolve("base-spring.xml"));
@@ -1056,6 +991,22 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return pluginDir[0];
 	}
 
+	private String _getAttr(Node item, String attrName) {
+		if (item != null) {
+			NamedNodeMap attrs = item.getAttributes();
+
+			if (attrs != null) {
+				Node attr = attrs.getNamedItem(attrName);
+
+				if (attr != null) {
+					return attr.getNodeValue();
+				}
+			}
+		}
+
+		return null;
+	}
+
 	private GAV _getGAVFromJarFile(File dependencyJarFile) {
 		try (JarFile jarFile = new JarFile(dependencyJarFile)) {
 			Enumeration<JarEntry> jarEntries = jarFile.entries();
@@ -1072,7 +1023,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 				}
 			}
 		}
-		catch (IOException e) {
+		catch (IOException ioException) {
 		}
 
 		return new GAV(dependencyJarFile.getName());
@@ -1127,6 +1078,14 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return parentProjectName;
 	}
 
+	private boolean _hasServiceXmlFile(File dir) {
+		Path dirPath = dir.toPath();
+
+		Path serviceXml = dirPath.resolve("docroot/WEB-INF/service.xml");
+
+		return Files.exists(serviceXml);
+	}
+
 	private void _initBuildGradle(Path warPath) throws Exception {
 		Path initPath = Files.createTempDirectory("ws");
 
@@ -1177,6 +1136,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		FileUtil.deleteDir(initPath);
 	}
 
+	private boolean _isServiceBuilderPlugin(File pluginDir) {
+		return _hasServiceXmlFile(pluginDir);
+	}
+
 	private boolean _isValidSDKDir(File pluginsSdkDir) {
 		File buildProperties = new File(pluginsSdkDir, "build.properties");
 		File portletsBuildXml = new File(pluginsSdkDir, "portlets/build.xml");
@@ -1187,6 +1150,40 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		}
 
 		return false;
+	}
+
+	private final void _loadMigratedDependencies(String resource, Map<String, GAV> migratedDependencies) {
+		try (InputStream inputStream = ConvertCommand.class.getResourceAsStream(resource)) {
+			Properties properties = new Properties();
+
+			properties.load(inputStream);
+
+			Set<Map.Entry<Object, Object>> entries = properties.entrySet();
+
+			entries.forEach(
+				entry -> {
+					String key = (String)entry.getKey();
+					String value = (String)entry.getValue();
+
+					GAV gav = null;
+
+					if (Objects.equals("__remove__", value)) {
+						gav = new GAV(key);
+
+						gav.setRemove(true);
+					}
+					else {
+						String[] coords = StringUtil.split(value, ":");
+
+						gav = new GAV(coords[0], coords[1], coords[2]);
+					}
+
+					migratedDependencies.put(key, gav);
+				});
+		}
+		catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
 	}
 
 	private Properties _loadProperties(InputStream inputStream) throws IOException {
