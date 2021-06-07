@@ -219,7 +219,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		_checkMavenBuildFiles(projectPath);
 
-		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.portal.api</artifactId>.*");
+		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.dxp.api</artifactId>.*");
 
 		TestUtil.updateMavenRepositories(projectPath);
 
