@@ -34,7 +34,6 @@ public class InitCommandMaven extends InitCommand {
 	public void execute() throws Exception {
 		InitArgs initArgs = getArgs();
 
-		initArgs.setProduct("portal");
 		initArgs.setProfileName("maven");
 
 		super.execute();
