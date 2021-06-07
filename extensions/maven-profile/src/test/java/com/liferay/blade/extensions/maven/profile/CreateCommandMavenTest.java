@@ -172,7 +172,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testCreateMVCPortletDXP72() throws Exception {
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.2-sp2");
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.2-sp2", "--product", "dxp");
 
 		File modulesDir = new File(_workspaceDir, "modules");
 
@@ -189,7 +189,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		_checkMavenBuildFiles(projectPath);
 
-		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.portal.bom</artifactId>.*");
+		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.dxp.bom</artifactId>.*");
 
 		TestUtil.updateMavenRepositories(projectPath);
 
@@ -202,7 +202,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testCreateMVCPortletDXP73() throws Exception {
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.3-ep5");
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.3-ep5", "--product", "dxp");
 
 		File modulesDir = new File(_workspaceDir, "modules");
 

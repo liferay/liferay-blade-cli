@@ -28,6 +28,8 @@ import java.io.FileInputStream;
 import java.nio.file.Files;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,6 +47,36 @@ public class InitCommandMavenTest implements MavenExecutor {
 		_workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
+	}
+
+	@Test
+	public void testMavenInitDXPProject() throws Exception {
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v",
+			BladeTest.PRODUCT_VERSION_DXP_73, "--product", "dxp"
+		};
+
+		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
+
+		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
+
+		Assert.assertTrue(mavenworkspace.exists());
+
+		_contains(_checkFileExists(mavenworkspace + "/pom.xml"), ".*<artifactId>release.dxp.bom</artifactId>.*");
+
+		File modulesDir = new File(mavenworkspace, "modules");
+
+		args = new String[] {"create", "-t", "portlet", "-d", modulesDir.getAbsolutePath(), "project1"};
+
+		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
+
+		File projectDirectory = new File(mavenworkspace, "modules/project1");
+
+		Assert.assertTrue(projectDirectory.exists());
+
+		File projectPomFile = new File(projectDirectory, "pom.xml");
+
+		Assert.assertTrue(projectPomFile.exists());
 	}
 
 	@Test
@@ -240,8 +272,30 @@ public class InitCommandMavenTest implements MavenExecutor {
 		Assert.assertTrue(file.exists());
 	}
 
+	private File _checkFileExists(String path) {
+		File file = IO.getFile(path);
+
+		Assert.assertTrue(file.exists());
+
+		return file;
+	}
+
 	private void _checkNotExists(File file) {
 		Assert.assertFalse(file.exists());
+	}
+
+	private void _contains(File file, String pattern) throws Exception {
+		String content = new String(IO.read(file));
+
+		_contains(content, pattern);
+	}
+
+	private void _contains(String content, String regex) throws Exception {
+		Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
+
+		Matcher matcher = pattern.matcher(content);
+
+		Assert.assertTrue(matcher.matches());
 	}
 
 	private void _createMavenBundle() throws Exception {
