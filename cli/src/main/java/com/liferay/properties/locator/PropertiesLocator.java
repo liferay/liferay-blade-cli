@@ -105,9 +105,7 @@ public class PropertiesLocator {
 	}
 
 	public PropertiesLocator(PropertiesLocatorArgs propertiesLocatorArgs) throws Exception {
-		PrintWriter outputWriter = _getOutputWriter(propertiesLocatorArgs);
-
-		try {
+		try (PrintWriter outputWriter = _getOutputWriter(propertiesLocatorArgs)) {
 			Set<String> oldPropertyKeys = _getPropertyKeys(propertiesLocatorArgs.getPropertiesFile());
 
 			File bundleDir = propertiesLocatorArgs.getBundleDir();
@@ -128,8 +126,8 @@ public class PropertiesLocator {
 
 			_printInfo(outputWriter, _problems);
 		}
-		finally {
-			outputWriter.close();
+		catch (Exception exception) {
+			System.err.println(exception.getMessage());
 		}
 	}
 
