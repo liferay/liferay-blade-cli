@@ -977,7 +977,7 @@ public class CreateCommandTest {
 
 		File modulesDir = new File(workspaceDXP73, "modules");
 
-		_makeWorkspaceVersion(workspaceDXP73, "dxp-7.3-ep5");
+		_makeWorkspaceVersion(workspaceDXP73, BladeTest.PRODUCT_VERSION_DXP_73);
 
 		String[] sevenThreeArgs = {
 			"--base", workspaceDXP73.getAbsolutePath(), "create", "-t", "portlet", "seven-three"

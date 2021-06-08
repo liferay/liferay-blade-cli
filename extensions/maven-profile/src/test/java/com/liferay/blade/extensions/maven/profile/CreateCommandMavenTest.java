@@ -202,7 +202,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testCreateMVCPortletDXP73() throws Exception {
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.3-ep5", "--product", "dxp");
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, BladeTest.PRODUCT_VERSION_DXP_73, "--product", "dxp");
 
 		File modulesDir = new File(_workspaceDir, "modules");
 
