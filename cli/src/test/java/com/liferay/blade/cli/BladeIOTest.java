@@ -33,7 +33,7 @@ public class BladeIOTest extends BladeTest {
 			return new BladeIOTest(outputStream, errorStream);
 		}
 		catch (Exception exception) {
-			throw new RuntimeException(e);
+			throw new RuntimeException(exception);
 		}
 	}
 
@@ -83,7 +83,7 @@ public class BladeIOTest extends BladeTest {
 			}
 
 			if (errorMissing) {
-				_error = Optional.ofNullable(e.toString());
+				_error = Optional.ofNullable(exception.toString());
 			}
 
 			return true;
