@@ -293,7 +293,8 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 					}
 				}
 				catch (Exception exception) {
-					String exceptionMessage = (exception.getMessage() == null) ? "" : (System.lineSeparator() + exception.getMessage());
+					String exceptionMessage =
+						(exception.getMessage() == null) ? "" : (System.lineSeparator() + exception.getMessage());
 
 					String message = "Error: Bundle Insatllation failed: " + modified + exceptionMessage;
 
@@ -351,7 +352,8 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 				}
 			}
 			catch (Exception exception) {
-				String exceptionMessage = (exception.getMessage() == null) ? "" : (System.lineSeparator() + exception.getMessage());
+				String exceptionMessage =
+					(exception.getMessage() == null) ? "" : (System.lineSeparator() + exception.getMessage());
 
 				String message = "Error: Bundle Deployment failed: " + bsn + exceptionMessage;
 
