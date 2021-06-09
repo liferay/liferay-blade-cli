@@ -220,25 +220,35 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				break;
 		}
 
-		String workspaceProductKey = initArgs.getLiferayVersion();
+		String liferayVersion;
+		String workspaceProductKey;
 
-		Map<String, Object> productInfos = BladeUtil.getProductInfos(initArgs.isTrace(), bladeCLI.error());
+		if (!mavenBuild) {
+			workspaceProductKey = initArgs.getLiferayVersion();
 
-		Object productInfoObject = productInfos.get(workspaceProductKey);
+			Map<String, Object> productInfos = BladeUtil.getProductInfos(initArgs.isTrace(), bladeCLI.error());
 
-		if (productInfoObject == null) {
-			_addError("Unable to get product info for selected version " + workspaceProductKey);
+			Object productInfoObject = productInfos.get(workspaceProductKey);
 
-			return;
+			if (productInfoObject == null) {
+				_addError("Unable to get product info for selected version " + workspaceProductKey);
+
+				return;
+			}
+
+			ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
+
+			Version targetPlatformVersion = _makeCompatibleVersion(productInfo.getTargetPlatformVersion());
+
+			liferayVersion = new String(
+				targetPlatformVersion.getMajor() + "." + targetPlatformVersion.getMinor() + "." +
+					targetPlatformVersion.getMicro());
 		}
+		else {
+			liferayVersion = initArgs.getLiferayVersion();
 
-		ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
-
-		Version targetPlatformVersion = _makeCompatibleVersion(productInfo.getTargetPlatformVersion());
-
-		String liferayVersion = new String(
-			targetPlatformVersion.getMajor() + "." + targetPlatformVersion.getMinor() + "." +
-				targetPlatformVersion.getMicro());
+			workspaceProductKey = liferayVersion;
+		}
 
 		projectTemplatesArgs.setLiferayVersion(liferayVersion);
 
