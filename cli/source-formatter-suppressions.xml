@@ -4,8 +4,5 @@
 	<source-check>
 		<suppress checks="BNDImportsCheck" files="bnd.bnd" />
 		<suppress checks="CopyrightCheck" files="src/main/java/com/liferay/blade/cli/util/FileWatcher\.java" />
-		<suppress checks="GradleDependencyArtifactsCheck" files="build.gradle" />
-		<suppress checks="VariableNameCheck" files="src/main/java/com/liferay/blade/cli/command/CreateCommand\.java" />
-		<suppress checks="VariableNameCheck" files="src/test/java/com/liferay/blade/cli/TargetPlatformTest\.java" />
 	</source-check>
 </suppressions>

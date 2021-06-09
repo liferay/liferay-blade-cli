@@ -2,7 +2,9 @@
 
 <suppressions>
 	<checkstyle>
-		<suppress checks="VariableNameCheck" />
+		<suppress checks="VariableNameCheck" files="cli/src/main/java/com/liferay/blade/cli/command/CreateCommand.java" />
+		<suppress checks="VariableNameCheck" files="cli/src/test/java/com/liferay/blade/cli/TargetPlatformTest.java" />
+		<suppress checks="VariableNameCheck" files="extensions/maven-profile/src/main/java/com/liferay/blade/extensions/maven/profile/CreateCommandMaven.java" />
 	</checkstyle>
 	<source-check>
 		<suppress checks="BNDDefinitionKeysCheck" files="extensions/maven-profile/bnd\.bnd" />

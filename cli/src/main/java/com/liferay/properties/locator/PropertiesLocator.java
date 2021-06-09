@@ -97,8 +97,8 @@ public class PropertiesLocator {
 				new PropertiesLocator(propertiesLocatorArgs);
 			}
 		}
-		catch (ParameterException pe) {
-			System.err.println(pe.getMessage());
+		catch (ParameterException parameterException) {
+			System.err.println(parameterException.getMessage());
 
 			jCommander.usage();
 		}
@@ -223,10 +223,10 @@ public class PropertiesLocator {
 				line -> properties.put(line, "")
 			);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			System.err.println("Unable to read properties file from jar " + propertiesJarURL);
 
-			throw e;
+			throw exception;
 		}
 	}
 
@@ -270,8 +270,8 @@ public class PropertiesLocator {
 						_getCommentedPropertiesFromJar(
 							"jar:file:" + path.toString() + "!/portal.properties", properties);
 					}
-					catch (Exception e) {
-						e.printStackTrace();
+					catch (Exception exception) {
+						exception.printStackTrace();
 					}
 				});
 		}
@@ -443,10 +443,10 @@ public class PropertiesLocator {
 
 			is.close();
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			System.out.println("Unable to read properties file " + propertiesJarURL);
 
-			throw e;
+			throw exception;
 		}
 	}
 
@@ -467,10 +467,10 @@ public class PropertiesLocator {
 				Collectors.toSet()
 			);
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			System.out.println("Unable to read properties file " + file.getCanonicalPath());
 
-			throw e;
+			throw exception;
 		}
 	}
 
@@ -510,7 +510,7 @@ public class PropertiesLocator {
 									zipEntryJar = jarIs.getNextEntry();
 								}
 							}
-							catch (Exception e) {
+							catch (Exception exception) {
 								System.out.println("Unable to read the content of " + absolutePath);
 
 								return;
@@ -541,17 +541,17 @@ public class PropertiesLocator {
 												zipEntryJar = jarIs.getNextEntry();
 											}
 										}
-										catch (Exception e) {
+										catch (Exception exception) {
 										}
 									}
 								}
 							}
 						}
 					}
-					catch (Exception e) {
+					catch (Exception exception) {
 						System.out.println("Unable to get portlet properties");
 
-						e.printStackTrace();
+						exception.printStackTrace();
 
 						return;
 					}
@@ -669,8 +669,8 @@ public class PropertiesLocator {
 								new Pair<String, String[]>(absolutePath + "/portlet.properties", propertyKeys));
 						}
 					}
-					catch (Exception e) {
-						e.printStackTrace();
+					catch (Exception exception) {
+						exception.printStackTrace();
 					}
 				}
 			);
@@ -729,13 +729,13 @@ public class PropertiesLocator {
 										zipEntryJar = jarIs.getNextEntry();
 									}
 								}
-								catch (Exception e) {
+								catch (Exception exception) {
 								}
 							}
 						}
 					}
-					catch (IOException ioe) {
-						ioe.printStackTrace();
+					catch (IOException ioException) {
+						ioException.printStackTrace();
 					}
 				}
 			);
