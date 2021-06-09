@@ -76,7 +76,7 @@ public class DeployCommandMavenTest {
 		Assert.assertTrue(modulesDirectory.exists());
 
 		args = new String[] {
-			"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo",
+			"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo", "-v",
 			BladeTest.LIFERAY_VERSION_721
 		};
 
