@@ -61,6 +61,6 @@ public class WorkspaceConstants {
 
 	public static final String DEFAULT_WORKSPACE_PRODUCT_PROPERTY = "liferay.workspace.product";
 
-	public static final List<String> originalLiferayVersions = Arrays.asList("7.0", "7.1", "7.2", "7.3", "7.4");
+	public static final List<String> originalLiferayVersions = Arrays.asList("7.0", "7.1", "7.2", "7.3.6", "7.4.0");
 
 }
