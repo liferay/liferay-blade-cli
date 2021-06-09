@@ -947,14 +947,14 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceDXPLiferayVersionFromDocker() throws Exception {
 		File workspace73 = new File(_rootDir, "workspace73");
 
-		_makeWorkspace(workspace73);
+		_makeWorkspaceVersion(workspace73, BladeTest.PRODUCT_VERSION_DXP_73);
 
 		File gradleProperties = new File(workspace73, "gradle.properties");
 
 		Files.deleteIfExists(gradleProperties.toPath());
 
 		String dockerImageProperty =
-			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "=liferay/dxp:7.3.10-ep5-202008181831";
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY + "=liferay/dxp:7.3.10-dxp-1";
 
 		Files.createFile(gradleProperties.toPath());
 
@@ -972,7 +972,7 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateWorkspaceDXPVersionDefault() throws Exception {
+	public void testCreateWorkspaceDXPVersionLatest() throws Exception {
 		File workspaceDXP73 = new File(_rootDir, "workspace73");
 
 		File modulesDir = new File(workspaceDXP73, "modules");
@@ -2059,7 +2059,7 @@ public class CreateCommandTest {
 
 		Assert.assertTrue(workspace.mkdir());
 
-		String[] args = {"--base", workspace.getAbsolutePath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", workspace.getAbsolutePath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
