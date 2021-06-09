@@ -57,13 +57,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateApi() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.PRODUCT_VERSION_PORTAL_73);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_740);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
-			"api", "foo"
+			"api", "foo", "-v", BladeTest.LIFERAY_VERSION_740
 		};
 
 		File projectDir = new File(modulesDir, "foo");
