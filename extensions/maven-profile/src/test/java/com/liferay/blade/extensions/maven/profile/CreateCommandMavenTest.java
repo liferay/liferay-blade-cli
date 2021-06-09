@@ -99,13 +99,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateFragment() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.PRODUCT_VERSION_PORTAL_73);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_740);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
-			"fragment", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook"
+			"fragment", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook", "-v", BladeTest.LIFERAY_VERSION_740
 		};
 
 		File projectDir = new File(modulesDir, "loginHook");
@@ -136,13 +136,51 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateMVCPortlet() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.PRODUCT_VERSION_PORTAL_73);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_740);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
-			"mvc-portlet", "foo"
+			"mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_740
+		};
+
+		File projectDir = new File(modulesDir, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
+
+		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
+
+		_checkMavenBuildFiles(projectPath);
+
+		_contains(
+			_checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
+			".*^public class FooPortlet extends MVCPortlet.*$");
+
+		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
+
+		TestUtil.updateMavenRepositories(projectPath);
+
+		execute(projectPath, new String[] {"clean", "package"});
+
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.jar");
+
+		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.jar"));
+	}
+
+	@Test
+	public void testCreateMVCPortlet72() throws Exception {
+		File workspaceDir = _workspaceDir;
+
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_721);
+
+		File modulesDir = new File(workspaceDir, "modules");
+
+		String[] mavenArgs = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
+			"mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_721
 		};
 
 		File projectDir = new File(modulesDir, "foo");
@@ -172,13 +210,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testCreateMVCPortletDXP72() throws Exception {
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, "dxp-7.2-sp2", "--product", "dxp");
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, BladeTest.LIFERAY_VERSION_72104);
 
 		File modulesDir = new File(_workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", _workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven",
-			"-t", "mvc-portlet", "foo", "--product", "dxp"
+			"-t", "mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_72104
 		};
 
 		File projectDir = new File(modulesDir, "foo");
@@ -189,7 +227,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		_checkMavenBuildFiles(projectPath);
 
-		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.dxp.bom</artifactId>.*");
+		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.portal.bom</artifactId>.*");
 
 		TestUtil.updateMavenRepositories(projectPath);
 
@@ -202,13 +240,14 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 	@Test
 	public void testCreateMVCPortletDXP73() throws Exception {
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, _workspaceDir, BladeTest.PRODUCT_VERSION_DXP_73, "--product", "dxp");
+		MavenTestUtil.makeMavenWorkspace(
+			_extensionsDir, _workspaceDir, BladeTest.LIFERAY_VERSION_73101, "--product", "dxp");
 
 		File modulesDir = new File(_workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", _workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven",
-			"-t", "mvc-portlet", "foo", "--product", "dxp"
+			"-t", "mvc-portlet", "foo", "--product", "dxp", "-v", "7.3.10.1"
 		};
 
 		File projectDir = new File(modulesDir, "foo");
@@ -234,13 +273,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateMVCPortletLegacyFlag() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.PRODUCT_VERSION_PORTAL_73);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_740);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-b", "maven", "-t",
-			"mvc-portlet", "foo"
+			"mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_740
 		};
 
 		File projectDir = new File(modulesDir, "foo");
@@ -273,7 +312,8 @@ public class CreateCommandMavenTest implements MavenExecutor {
 		File tempRoot = temporaryFolder.getRoot();
 
 		String[] mavenArgs = {
-			"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo", "-v", "7.3"
+			"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo", "-v",
+			BladeTest.LIFERAY_VERSION_740
 		};
 
 		try {

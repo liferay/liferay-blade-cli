@@ -41,9 +41,7 @@ public class DeployCommandMavenTest {
 	public void testInstallJar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {
-			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.PRODUCT_VERSION_PORTAL_72
-		};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_721};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
@@ -77,7 +75,10 @@ public class DeployCommandMavenTest {
 
 		Assert.assertTrue(modulesDirectory.exists());
 
-		args = new String[] {"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo"};
+		args = new String[] {
+			"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo",
+			BladeTest.LIFERAY_VERSION_721
+		};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
@@ -100,9 +101,7 @@ public class DeployCommandMavenTest {
 	public void testInstallWar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {
-			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.PRODUCT_VERSION_PORTAL_72
-		};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_721};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
@@ -132,7 +131,10 @@ public class DeployCommandMavenTest {
 
 		Assert.assertTrue(modulesDirectory.exists());
 
-		args = new String[] {"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "war-mvc-portlet", "foo"};
+		args = new String[] {
+			"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "war-mvc-portlet", "foo", "-v",
+			BladeTest.LIFERAY_VERSION_721
+		};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 

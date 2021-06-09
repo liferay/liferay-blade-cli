@@ -48,7 +48,7 @@ public class BuildServiceCommandMavenTest {
 	public void testMavenServiceBuilder() throws Exception {
 		String[] args = {
 			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v",
-			BladeTest.PRODUCT_VERSION_PORTAL_73
+			BladeTest.LIFERAY_VERSION_740
 		};
 
 		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
@@ -61,14 +61,14 @@ public class BuildServiceCommandMavenTest {
 
 		args = new String[] {
 			"create", "-t", "service-builder", "--base", mavenworkspace.getAbsolutePath(), "--dir",
-			modulesDir.getPath(), "sb1"
+			modulesDir.getPath(), "sb1", "-v", BladeTest.LIFERAY_VERSION_740
 		};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
 
 		args = new String[] {
 			"create", "-t", "service-builder", "--base", mavenworkspace.getAbsolutePath(), "--dir",
-			modulesDir.getPath(), "sb2"
+			modulesDir.getPath(), "sb2", "-v", BladeTest.LIFERAY_VERSION_740
 		};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
