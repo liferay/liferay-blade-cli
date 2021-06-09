@@ -80,6 +80,7 @@ public class CreateCommandMaven extends CreateCommand {
 
 		projectTemplatesArgs.setGradle(false);
 		projectTemplatesArgs.setMaven(true);
+		projectTemplatesArgs.setLiferayVersion(createArgs.getLiferayVersion());
 
 		return projectTemplatesArgs;
 	}
