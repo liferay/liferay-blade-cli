@@ -19,6 +19,7 @@ package com.liferay.blade.cli.command;
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Jar;
+import aQute.bnd.version.Version;
 
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
@@ -881,6 +882,29 @@ public class CreateCommandTest {
 		_makeWorkspace(workspace);
 
 		_testCreateWar(workspace, "war-hook", "war-hook-test");
+	}
+
+	@Test
+	public void testCreateWarMVCPortletDTD() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		String liferayVersion = BladeTest.LIFERAY_VERSION_73;
+
+		_makeWorkspaceVersion(workspace, liferayVersion);
+
+		File projectDir = _testCreateWar(workspace, "war-mvc-portlet", "war-portlet-test");
+
+		File liferayPortletXMLFile = new File(projectDir, "src/main/webapp/WEB-INF/liferay-portlet.xml");
+
+		String content = FileUtil.read(liferayPortletXMLFile);
+
+		Version version = Version.parseVersion(liferayVersion);
+
+		int minorVersion = version.getMinor();
+
+		String minorVersionString = String.valueOf(minorVersion);
+
+		Assert.assertTrue(content, content.contains("7_" + minorVersionString + "_0.dtd"));
 	}
 
 	@Test
@@ -2098,7 +2122,7 @@ public class CreateCommandTest {
 		GradleRunnerUtil.verifyGradleRunnerOutput(buildTask);
 	}
 
-	private void _testCreateWar(File workspace, String projectType, String projectName) throws Exception {
+	private File _testCreateWar(File workspace, String projectType, String projectName) throws Exception {
 		String[] args = {"--base", workspace.getAbsolutePath(), "create", "-t", projectType, projectName};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
@@ -2106,6 +2130,8 @@ public class CreateCommandTest {
 		File projectDir = new File(workspace, "modules/" + projectName);
 
 		_checkFileExists(projectDir.getAbsolutePath());
+
+		return projectDir;
 	}
 
 	private void _verifyImportPackage(File serviceJar) throws Exception {

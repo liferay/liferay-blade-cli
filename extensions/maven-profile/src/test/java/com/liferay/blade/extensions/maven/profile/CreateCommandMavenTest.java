@@ -19,6 +19,7 @@ package com.liferay.blade.extensions.maven.profile;
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Jar;
+import aQute.bnd.version.Version;
 
 import aQute.lib.io.IO;
 
@@ -326,6 +327,46 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 			Assert.assertTrue(message, message.contains("The indicated directory is not a Liferay workspace"));
 		}
+	}
+
+	@Test
+	public void testCreateWarMVCPortletDTD() throws Exception {
+		File workspaceDir = _workspaceDir;
+
+		String liferayVersion = BladeTest.LIFERAY_VERSION_740;
+
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, liferayVersion);
+
+		File modulesDir = new File(workspaceDir, "modules");
+
+		String[] mavenArgs = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
+			"war-mvc-portlet", "foo", "-v", liferayVersion
+		};
+
+		File projectDir = new File(modulesDir, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
+
+		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
+
+		Version version = Version.parseVersion(liferayVersion);
+
+		int minorVersion = version.getMinor();
+
+		String minorVersionString = String.valueOf(minorVersion);
+
+		_contains(
+			_checkFileExists(projectPath + "/src/main/webapp/WEB-INF/liferay-portlet.xml"),
+			".*7_" + minorVersionString + "_0.dtd.*");
+
+		TestUtil.updateMavenRepositories(projectPath);
+
+		execute(projectPath, new String[] {"clean", "package"});
+
+		MavenTestUtil.verifyBuildOutput(projectPath, "foo-1.0.0.war");
+
+		_verifyImportPackage(new File(projectPath, "target/foo-1.0.0.war"));
 	}
 
 	@Rule
