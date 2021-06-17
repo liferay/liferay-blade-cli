@@ -19,13 +19,13 @@ package com.liferay.blade.extensions.maven.profile;
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Jar;
-import aQute.bnd.version.Version;
 
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
+import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.io.File;
 
@@ -350,11 +350,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
 
-		Version version = Version.parseVersion(liferayVersion);
-
-		int minorVersion = version.getMinor();
-
-		String minorVersionString = String.valueOf(minorVersion);
+		String minorVersionString = String.valueOf(VersionUtil.getMinorVersion(liferayVersion));
 
 		_contains(
 			_checkFileExists(projectPath + "/src/main/webapp/WEB-INF/liferay-portlet.xml"),

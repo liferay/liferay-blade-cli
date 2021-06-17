@@ -20,7 +20,7 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.VersionUtil;
+import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 
 		possibleValues.addAll(WorkspaceConstants.originalLiferayVersions);
 
-		if (!possibleValues.contains(value) && !VersionUtil.isDXPVersion(value)) {
+		if (!possibleValues.contains(value) && !VersionUtil.isLiferayVersion(value)) {
 			throw new ParameterException(value + " is not a valid value.");
 		}
 	}
