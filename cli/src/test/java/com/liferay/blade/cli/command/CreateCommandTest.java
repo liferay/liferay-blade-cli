@@ -475,7 +475,7 @@ public class CreateCommandTest {
 		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_71);
 
 		String[] args = {
-			"create", "--base", workspace.getAbsolutePath(), "-t", "npm-angular-portlet", "-v", "7.1", "npmangular"
+			"create", "--base", workspace.getAbsolutePath(), "-t", "npm-angular-portlet", "-v", BladeTest.LIFERAY_VERSION_713, "npmangular"
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
@@ -732,7 +732,7 @@ public class CreateCommandTest {
 
 		String[] args = {
 			"create", "--base", workspace.getAbsolutePath(), "-t", "spring-mvc-portlet", "springtest", "--package-name",
-			"com.test", "--classname", "Sample", "--framework", "springportletmvc", "--view-type", "jsp", "-v", "7.3"
+			"com.test", "--classname", "Sample", "--framework", "springportletmvc", "--view-type", "jsp", "-v", BladeTest.LIFERAY_VERSION_736
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
@@ -1026,7 +1026,7 @@ public class CreateCommandTest {
 
 		String[] args = {
 			"create", "--base", workspace.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-t", "form-field",
-			"sampleFormField", "-v", BladeTest.LIFERAY_VERSION_72
+			"sampleFormField", "-v", BladeTest.LIFERAY_VERSION_721
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
@@ -1054,7 +1054,7 @@ public class CreateCommandTest {
 
 		String[] args = {
 			"create", "--base", workspace.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-t", "form-field",
-			"sampleFormField", "--js-framework", "react", "-v", BladeTest.LIFERAY_VERSION_73
+			"sampleFormField", "--js-framework", "react", "-v", BladeTest.LIFERAY_VERSION_736
 		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
@@ -1451,7 +1451,7 @@ public class CreateCommandTest {
 		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_PORTAL_71);
 
 		String[] sevenOneArgs = {
-			"--base", workspace71.getAbsolutePath(), "create", "-v", "7.1", "-t", "npm-angular-portlet", "seven-one"
+			"--base", workspace71.getAbsolutePath(), "create", "-v", BladeTest.LIFERAY_VERSION_713, "-t", "npm-angular-portlet", "seven-one"
 		};
 
 		TestUtil.runBlade(workspace71, _extensionsDir, sevenOneArgs);
@@ -1484,17 +1484,17 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceLiferayVersionFromCommandLine() throws Exception {
-		File workspace73 = new File(_rootDir, "workspace73");
+		File workspace72 = new File(_rootDir, "workspace72");
 
-		File modulesDir = new File(workspace73, "modules");
+		File modulesDir = new File(workspace72, "modules");
 
-		_makeWorkspace(workspace73);
+		_makeWorkspace(workspace72);
 
 		String[] sevenTwoArgs = {
-			"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-two", "-v", "7.2"
+			"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two", "-v", BladeTest.LIFERAY_VERSION_721
 		};
 
-		TestUtil.runBlade(workspace73, _extensionsDir, sevenTwoArgs);
+		TestUtil.runBlade(workspace72, _extensionsDir, sevenTwoArgs);
 
 		File buildGradle = new File(modulesDir, "seven-two/build.gradle");
 
