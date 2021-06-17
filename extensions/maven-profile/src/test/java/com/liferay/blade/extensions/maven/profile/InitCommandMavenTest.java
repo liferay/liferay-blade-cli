@@ -22,6 +22,7 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -208,6 +209,27 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		_checkExists(new File(_workspaceDir, "newproject/pom.xml"));
 		_checkExists(new File(_workspaceDir, "newproject/modules"));
+	}
+
+	@Test
+	public void testMavenInitWithPrompter() throws Exception {
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "--product", "dxp"
+		};
+
+		String responses = "4" + System.lineSeparator();
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(responses.getBytes());
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, byteArrayInputStream, true, args);
+
+		File mavenworkspaceDir = new File(_workspaceDir, "mavenworkspace");
+
+		Assert.assertTrue(mavenworkspaceDir.exists());
+
+		File projectPomFile = new File(mavenworkspaceDir, "pom.xml");
+
+		Assert.assertTrue(projectPomFile.exists());
 	}
 
 	@Test
