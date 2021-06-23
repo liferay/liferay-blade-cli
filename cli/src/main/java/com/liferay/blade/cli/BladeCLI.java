@@ -1459,11 +1459,11 @@ public class BladeCLI {
 		private static final long serialVersionUID = 1L;
 
 		{
-			put("1", "7.0");
-			put("2", "7.1");
-			put("3", "7.2");
-			put("4", "7.3");
-			put("5", "7.4");
+			put("1", "7.0.6-2");
+			put("2", "7.1.3-1");
+			put("3", "7.2.1-1");
+			put("4", "7.3.6");
+			put("5", "7.4.1-1");
 		}
 	};
 

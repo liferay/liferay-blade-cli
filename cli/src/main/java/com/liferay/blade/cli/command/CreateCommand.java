@@ -53,8 +53,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
-import org.osgi.framework.Version;
-
 /**
  * @author Gregory Amerson
  * @author David Truong
@@ -535,12 +533,11 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			liferayVersion = workspaceProvider.getLiferayVersion(dir);
 		}
 
-		return _normalizeLiferayVersion(
-			Optional.ofNullable(
-				liferayVersion
-			).filter(
-				BladeUtil::isNotEmpty
-			));
+		return Optional.ofNullable(
+			liferayVersion
+		).filter(
+			BladeUtil::isNotEmpty
+		);
 	}
 
 	private Optional<String> _getProduct(WorkspaceProvider workspaceProvider, CreateArgs createArgs) {
@@ -567,27 +564,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		return bladeCLI.isWorkspaceDir(dir);
-	}
-
-	private Optional<String> _normalizeLiferayVersion(Optional<String> liferayVersion) {
-		if (!liferayVersion.isPresent()) {
-			return Optional.empty();
-		}
-
-		Optional<String> formattedLiferayVersion = Optional.empty();
-
-		String versionValue = liferayVersion.get();
-
-		try {
-			Version version = Version.parseVersion(versionValue.replaceAll("-", "."));
-
-			formattedLiferayVersion = Optional.of(version.getMajor() + "." + version.getMinor());
-		}
-		catch (Exception exception) {
-			formattedLiferayVersion = Optional.of(versionValue.substring(0, 3));
-		}
-
-		return formattedLiferayVersion;
 	}
 
 }

@@ -1484,17 +1484,17 @@ public class CreateCommandTest {
 
 	@Test
 	public void testCreateWorkspaceLiferayVersionFromCommandLine() throws Exception {
-		File workspace73 = new File(_rootDir, "workspace73");
+		File workspace72 = new File(_rootDir, "workspace72");
 
-		File modulesDir = new File(workspace73, "modules");
+		File modulesDir = new File(workspace72, "modules");
 
-		_makeWorkspace(workspace73);
+		_makeWorkspace(workspace72);
 
 		String[] sevenTwoArgs = {
-			"--base", workspace73.getAbsolutePath(), "create", "-t", "portlet", "seven-two", "-v", "7.2"
+			"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two", "-v", "7.2"
 		};
 
-		TestUtil.runBlade(workspace73, _extensionsDir, sevenTwoArgs);
+		TestUtil.runBlade(workspace72, _extensionsDir, sevenTwoArgs);
 
 		File buildGradle = new File(modulesDir, "seven-two/build.gradle");
 
@@ -1617,7 +1617,7 @@ public class CreateCommandTest {
 	public void testCreateWorkspacePortalLiferayVersionFromDocker() throws Exception {
 		File workspace73 = new File(_rootDir, "workspace73");
 
-		_makeWorkspace(workspace73);
+		_makeWorkspaceVersion(workspace73, BladeTest.LIFERAY_VERSION_73);
 
 		File gradleProperties = new File(workspace73, "gradle.properties");
 

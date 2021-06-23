@@ -24,6 +24,7 @@ import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -102,24 +103,23 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 				if (matcher.find()) {
 					baseLiferayVersion = Optional.of(matcher.group(1));
+
+					if (dockerImageProperty.contains("dxp")) {
+						baseLiferayVersion = Optional.of(baseLiferayVersion.get() + ".10");
+					}
+					else {
+						baseLiferayVersion = Optional.of(baseLiferayVersion.get() + ".0");
+					}
 				}
 			}
 
 			if (baseLiferayVersion.isPresent()) {
 				String presentLiferayVersion = baseLiferayVersion.get();
 
-				int dashPostion = presentLiferayVersion.indexOf("-");
-
-				Version liferayVersion = null;
-
-				if (dashPostion != -1) {
-					liferayVersion = Version.parseVersion(presentLiferayVersion.substring(0, dashPostion));
-				}
-				else {
-					liferayVersion = Version.parseVersion(presentLiferayVersion);
-				}
-
-				return new String(liferayVersion.getMajor() + "." + liferayVersion.getMinor());
+				return new String(
+					String.valueOf(VersionUtil.getMajorVersion(presentLiferayVersion)) + "." +
+						String.valueOf(VersionUtil.getMinorVersion(presentLiferayVersion)) + "." +
+							String.valueOf(VersionUtil.getMicroVersion(presentLiferayVersion)));
 			}
 		}
 		catch (Exception exception) {

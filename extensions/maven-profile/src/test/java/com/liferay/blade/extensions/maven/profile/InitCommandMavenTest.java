@@ -22,6 +22,7 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -86,7 +87,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 	public void testMavenInitProjectCorrectLocation() throws Exception {
 		String[] args = {
 			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v",
-			BladeTest.LIFERAY_VERSION_740
+			BladeTest.LIFERAY_VERSION_741
 		};
 
 		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
@@ -99,7 +100,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		args = new String[] {
 			"create", "--base", mavenworkspace.getAbsolutePath(), "-t", "portlet", "-d", modulesDir.getAbsolutePath(),
-			"project1", "-v", BladeTest.LIFERAY_VERSION_740
+			"project1", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
@@ -117,7 +118,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 	public void testMavenInitProjectDirLocation() throws Exception {
 		String[] args = {
 			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v",
-			BladeTest.LIFERAY_VERSION_740
+			BladeTest.LIFERAY_VERSION_741
 		};
 
 		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
@@ -130,7 +131,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		args = new String[] {
 			"create", "-t", "portlet", "-d", modulesDir.getAbsolutePath(), "project1", "-v",
-			BladeTest.LIFERAY_VERSION_740
+			BladeTest.LIFERAY_VERSION_741
 		};
 
 		TestUtil.runBlade(mavenworkspace, _extensionsDir, args);
@@ -147,7 +148,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v", BladeTest.LIFERAY_VERSION_740
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		File newproject = new File(_workspaceDir, "newproject");
@@ -184,7 +185,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 	@Test
 	public void testMavenInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v", BladeTest.LIFERAY_VERSION_740
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		File projectDir = new File(_workspaceDir, "newproject");
@@ -199,7 +200,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 	@Test
 	public void testMavenInitWithNameWorkspaceNotExists() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v", BladeTest.LIFERAY_VERSION_740
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "newproject", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		File projectDir = new File(_workspaceDir, "newproject");
@@ -211,8 +212,29 @@ public class InitCommandMavenTest implements MavenExecutor {
 	}
 
 	@Test
+	public void testMavenInitWithPrompter() throws Exception {
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "--product", "dxp"
+		};
+
+		String responses = "4" + System.lineSeparator();
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(responses.getBytes());
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, byteArrayInputStream, true, args);
+
+		File mavenworkspaceDir = new File(_workspaceDir, "mavenworkspace");
+
+		Assert.assertTrue(mavenworkspaceDir.exists());
+
+		File projectPomFile = new File(mavenworkspaceDir, "pom.xml");
+
+		Assert.assertTrue(projectPomFile.exists());
+	}
+
+	@Test
 	public void testMavenInitWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_740};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_741};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -239,7 +261,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 		Assert.assertTrue(bar.getAbsolutePath(), bar.createNewFile());
 
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "foo", "-v", BladeTest.LIFERAY_VERSION_740
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "foo", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
@@ -250,7 +272,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 	@Test
 	public void testMavenInitWorkspaceDirectoryHasFilesForce() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_740
+			"--base", _workspaceDir.getPath(), "init", "-f", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
@@ -306,7 +328,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 
 		String[] args = {
 			"create", "--base", _workspaceDir.getAbsolutePath(), "-t", "mvc-portlet", "-d", projectPath, "-P", "maven",
-			"foo", "-v", BladeTest.LIFERAY_VERSION_740
+			"foo", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);

@@ -19,13 +19,13 @@ package com.liferay.blade.extensions.maven.profile;
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Jar;
-import aQute.bnd.version.Version;
 
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
+import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.io.File;
 
@@ -58,13 +58,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateApi() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_740);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_741);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
-			"api", "foo", "-v", BladeTest.LIFERAY_VERSION_740
+			"api", "foo", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		File projectDir = new File(modulesDir, "foo");
@@ -100,13 +100,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateFragment() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_740);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_741);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
-			"fragment", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook", "-v", BladeTest.LIFERAY_VERSION_740
+			"fragment", "-h", "com.liferay.login.web", "-H", "1.0.0", "loginHook", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		File projectDir = new File(modulesDir, "loginHook");
@@ -137,13 +137,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateMVCPortlet() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_740);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_741);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
-			"mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_740
+			"mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		File projectDir = new File(modulesDir, "foo");
@@ -274,13 +274,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateMVCPortletLegacyFlag() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_740);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_741);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-b", "maven", "-t",
-			"mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_740
+			"mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		File projectDir = new File(modulesDir, "foo");
@@ -314,7 +314,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		String[] mavenArgs = {
 			"create", "-d", tempRoot.getAbsolutePath(), "-P", "maven", "-t", "mvc-portlet", "foo", "-v",
-			BladeTest.LIFERAY_VERSION_740
+			BladeTest.LIFERAY_VERSION_741
 		};
 
 		try {
@@ -333,7 +333,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateWarMVCPortletDTD() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		String liferayVersion = BladeTest.LIFERAY_VERSION_740;
+		String liferayVersion = BladeTest.LIFERAY_VERSION_741;
 
 		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, liferayVersion);
 
@@ -350,11 +350,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
 
-		Version version = Version.parseVersion(liferayVersion);
-
-		int minorVersion = version.getMinor();
-
-		String minorVersionString = String.valueOf(minorVersion);
+		String minorVersionString = String.valueOf(VersionUtil.getMinorVersion(liferayVersion));
 
 		_contains(
 			_checkFileExists(projectPath + "/src/main/webapp/WEB-INF/liferay-portlet.xml"),

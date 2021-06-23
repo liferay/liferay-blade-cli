@@ -42,7 +42,7 @@ public class ServerCommandsMavenTest {
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
 		String[] args = {
-			"--base", workspaceDir.getPath(), "init", "-f", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_740
+			"--base", workspaceDir.getPath(), "init", "-f", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_741
 		};
 
 		TestUtil.runBlade(workspaceDir, extensionsDir, args);
