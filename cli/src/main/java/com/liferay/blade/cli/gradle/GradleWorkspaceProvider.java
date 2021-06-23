@@ -103,6 +103,13 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 				if (matcher.find()) {
 					baseLiferayVersion = Optional.of(matcher.group(1));
+
+					if (dockerImageProperty.contains("dxp")) {
+						baseLiferayVersion = Optional.of(baseLiferayVersion.get() + ".10");
+					}
+					else {
+						baseLiferayVersion = Optional.of(baseLiferayVersion.get() + ".0");
+					}
 				}
 			}
 
