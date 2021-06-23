@@ -19,6 +19,7 @@ package com.liferay.project.templates.js.theme.internal;
 import com.liferay.blade.cli.util.NodeUtil;
 import com.liferay.project.templates.extensions.ProjectTemplateCustomizer;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
+import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.io.File;
 
@@ -56,6 +57,10 @@ public class JSThemeProjectTemplateCustomizer implements ProjectTemplateCustomiz
 		String config = new String(Files.readAllBytes(configPath));
 
 		String liferayVersion = projectTemplatesArgs.getLiferayVersion();
+
+		liferayVersion =
+			String.valueOf(VersionUtil.getMajorVersion(liferayVersion)) + "." +
+				String.valueOf(VersionUtil.getMinorVersion(liferayVersion));
 
 		config = _replace(config, "[$LIFERAY_VERSION$]", liferayVersion);
 
