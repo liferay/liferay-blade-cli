@@ -1617,7 +1617,7 @@ public class CreateCommandTest {
 	public void testCreateWorkspacePortalLiferayVersionFromDocker() throws Exception {
 		File workspace73 = new File(_rootDir, "workspace73");
 
-		_makeWorkspace(workspace73);
+		_makeWorkspaceVersion(workspace73, BladeTest.LIFERAY_VERSION_73);
 
 		File gradleProperties = new File(workspace73, "gradle.properties");
 
