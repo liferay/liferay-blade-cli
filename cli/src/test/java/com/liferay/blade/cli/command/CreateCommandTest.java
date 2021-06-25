@@ -846,6 +846,59 @@ public class CreateCommandTest {
 		_contains(bnd, ".*Liferay-Theme-Contributor-Type: foobar.*");
 	}
 
+	@Test(expected = AssertionError.class)
+	public void testCreateVersion62Invalid() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		File modulesDir = new File(workspace, "modules");
+
+		String[] args = {"--base", modulesDir.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo", "-v", "6.2"};
+
+		_makeWorkspace(workspace);
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		File buildGradle = new File(modulesDir, "foo/build.gradle");
+
+		_checkFileDoesNotExists(buildGradle.getAbsolutePath());
+	}
+
+	@Test(expected = AssertionError.class)
+	public void testCreateVersionLeadingZeroInvalid() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		File modulesDir = new File(workspace, "modules");
+
+		String[] args = {"--base", modulesDir.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo", "-v", "07.2.10"};
+
+		_makeWorkspace(workspace);
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		File buildGradle = new File(modulesDir, "foo/build.gradle");
+
+		_checkFileDoesNotExists(buildGradle.getAbsolutePath());
+	}
+
+	@Test(expected = AssertionError.class)
+	public void testCreateVersionTextInvalid() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		File modulesDir = new File(workspace, "modules");
+
+		String[] args = {
+			"--base", modulesDir.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo", "-v", "test.test"
+		};
+
+		_makeWorkspace(workspace);
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		File buildGradle = new File(modulesDir, "foo/build.gradle");
+
+		_checkFileDoesNotExists(buildGradle.getAbsolutePath());
+	}
+
 	@Test
 	public void testCreateWarCoreExt() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
