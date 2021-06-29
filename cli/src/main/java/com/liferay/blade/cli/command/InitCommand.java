@@ -226,6 +226,14 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		if (!mavenBuild) {
 			workspaceProductKey = initArgs.getLiferayVersion();
 
+			if (_legacyProductKeys.contains(workspaceProductKey)) {
+				_addError(
+					"This version of blade does not support " + workspaceProductKey + ". Please use blade 3.9.2 to " +
+						"initialize a workspace with this version. https://bit.ly/3lVgTeH");
+
+				return;
+			}
+
 			Map<String, Object> productInfos = BladeUtil.getProductInfos(initArgs.isTrace(), bladeCLI.error());
 
 			Object productInfoObject = productInfos.get(workspaceProductKey);
@@ -487,5 +495,8 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		"app-servers.gradle", "build.gradle", "build-plugins.gradle", "build-themes.gradle", "sdk.gradle",
 		"settings.gradle", "util.gradle", "versions.gradle"
 	};
+
+	private static List<String> _legacyProductKeys = Arrays.asList(
+		"portal-7.0-ga1", "portal-7.0-ga2", "portal-7.0-ga3", "portal-7.0-ga4", "portal-7.0-ga5", "portal-7.0-ga6");
 
 }

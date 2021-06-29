@@ -410,6 +410,13 @@ public class InitCommandTest {
 		Assert.assertTrue(Files.exists(pluginBuildXmlPath));
 	}
 
+	@Test(expected = AssertionError.class)
+	public void testInitLegacyProductKey() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", "portal-7.0-ga1"};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+	}
+
 	@Test
 	public void testInitWithLiferayVersion70() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_70};
@@ -459,7 +466,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.3-ga6"));
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.3-ga8"));
 	}
 
 	@Test(expected = AssertionError.class)
