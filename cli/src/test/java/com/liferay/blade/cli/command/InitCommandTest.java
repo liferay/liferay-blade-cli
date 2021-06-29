@@ -466,7 +466,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.3-ga6"));
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.3-ga8"));
 	}
 
 	@Test(expected = AssertionError.class)
