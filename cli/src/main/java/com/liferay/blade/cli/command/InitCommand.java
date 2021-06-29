@@ -228,8 +228,8 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 			if (_legacyProductKeys.contains(workspaceProductKey)) {
 				_addError(
-					"This version of blade does not support " + workspaceProductKey + ". Please use blade 3.9.2 to" +
-						" initialize a workspace with this version. https://bit.ly/3lVgTeH");
+					"This version of blade does not support " + workspaceProductKey + ". Please use blade 3.9.2 to " +
+						"initialize a workspace with this version. https://bit.ly/3lVgTeH");
 
 				return;
 			}
