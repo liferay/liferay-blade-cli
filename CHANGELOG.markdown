@@ -1,5 +1,89 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.9 - 2021-07-01
+
+### Commits
+- [LPS-134964] Explicitly list workspace properties (810f39639f)
+- [BLADE-629] Add test (d455ece444)
+- [BLADE-629] Point users to blade 3.9.2 for older Product Keys (01cdb8dd0f)
+- [LPS-134232] Add test cases to catch inadvertent defaults (033666de66)
+- [BLADE-637] Simplify liferayVersion in JS Theme template (4675777dbd)
+- [BLADE-637] Gradle moved to jfrog? (0a86de79f6)
+- [BLADE-637] Fix test (c96a47f76f)
+- [BLADE-637] Add micro version when calculating Liferay version (2667029721)
+- [BLADE-637] Consistent variable naming (3550241957)
+- [BLADE-637] Revert "BLADE-637 Add more version constants for tests"
+(aa14a5cd4c)
+- [BLADE-637] Use updated VersionUtil (45ae432fef)
+- [BLADE-637] Use project-templates-extensions VersionUtil (0efa037c07)
+- [BLADE-637] Add more version constants for tests (5965f53c47)
+- [BLADE-637] Use VersionUtil class to format version (c2c97198e4)
+- [BLADE-637] Update project templates to remove Version usage (101ba247cf)
+- [BLADE-637] Add test case (4fe1cdd17c)
+- [BLADE-637] Give prompter BOM versions for maven init (5d1dc2b35b)
+- [BLADE-637] Update to 7.4.1 patched BOM version (97b88a0a36)
+- [BLADE-637] Allow hyphens in the revision parameter (daef9c1bb2)
+- [LPS-133987] Update workspace version (9575111bb8)
+- [LPS-133987] Update ant-bnd in workspace (e78c451db8)
+- [LPS-133530] Add test case to check generated DTDs (4a54de6f73)
+- [LPS-133530] Fix test case (82360aa4bf)
+- [LPS-133530] Update maven tests to be more explicit with version (db8e03790d)
+- [LPS-133530] Use more complex version matching (27b7bee50e)
+- [LPS-133530] Revert version list (7b1f96f107)
+- [LPS-133530] Fix sample maven test case (b923a670f9)
+- [LPS-133530] Set liferayVersion explicitly in maven builds (ec0a5b9d8a)
+- [LPS-133530] Set liferayVersion manually for create command in maven
+(cb20b8fe06)
+- [LPS-133530] Add latest constants (ae4735814f)
+- [LPS-133530] Update to latest workspace version (4e28fd5684)
+- [LPS-133530] Add new versions of Liferay Portal to tests (7ef9671eb7)
+- [LPS-133530] Don't set product version automatically (94603f688b)
+- [LPS-133530] Add Maven DXP test cases (5c05bf7702)
+- [LPS-133530] Update to correct dependency for DXP (0b8dfde082)
+- [LPS-133530] Use less strict versioning for Project Templates (27a7843bac)
+- [LPS-133530] add code to avoid SF removing (0ae09d94b4)
+- [LPS-133530] Test revert (2c673c1934)
+- [LPS-133530] Fix remaining issues (36a64c5666)
+- [LPS-133530] Temporarily ignore SF checks until bugs are fixed (a63269359c)
+- [LPS-133530] Temporarily ignore these SF checks (d44004c1d1)
+- [LPS-131920] update default 7.3 product key to portal-7.3-ga7 (7ccbad6aaa)
+- [LPS-131071] Update form-field template for 7.4 compatibility (0dc71a23dc)
+- [LPS-130908] Update workspace version for 7.4 (f0cc02076e)
+- [LPS-130908] Fix spring-mvc template (71848a92ec)
+- [BLADE-633] Removed 7.4 DXP EP1 from promoted list (0d0fd8882a)
+
+### Dependencies
+- [BLADE-639] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.26.
+- [BLADE-639] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.9.
+- [BLADE-639] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.9.
+- [LPS-134964] Update the com.liferay.project.templates dependency to version
+5.0.153.
+- [LPS-134232] Update the com.liferay.project.templates dependency to version
+5.0.151.
+- [BLADE-637] Update the com.liferay.project.templates dependency to version
+5.0.149.
+- [BLADE-637] Update the com.liferay.project.templates dependency to version
+5.0.148.
+- [LPS-133987] Update the com.liferay.project.templates dependency to version
+5.0.146.
+- [LPS-133987] Update the com.liferay.project.templates dependency to version
+5.0.144.
+- [LPS-133530] Update the com.liferay.project.templates dependency to version
+5.0.140.
+- [LPS-131071] Update the com.liferay.project.templates dependency to version
+5.0.131.
+- [LPS-130908] Update the com.liferay.project.templates dependency to version
+5.0.129.
+- [BLADE-633] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.26-SNAPSHOT.
+- [BLADE-633] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.9-SNAPSHOT.
+- [BLADE-633] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.9-SNAPSHOT.
+
 ## 4.0.8 - 2021-04-29
 
 ### Commits
@@ -2013,9 +2097,12 @@ maintainability (7f9bc3f45e)
 [BLADE-622]: https://issues.liferay.com/browse/BLADE-622
 [BLADE-627]: https://issues.liferay.com/browse/BLADE-627
 [BLADE-628]: https://issues.liferay.com/browse/BLADE-628
+[BLADE-629]: https://issues.liferay.com/browse/BLADE-629
 [BLADE-630]: https://issues.liferay.com/browse/BLADE-630
 [BLADE-631]: https://issues.liferay.com/browse/BLADE-631
 [BLADE-633]: https://issues.liferay.com/browse/BLADE-633
+[BLADE-637]: https://issues.liferay.com/browse/BLADE-637
+[BLADE-639]: https://issues.liferay.com/browse/BLADE-639
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -2046,6 +2133,13 @@ maintainability (7f9bc3f45e)
 [LPS-128040]: https://issues.liferay.com/browse/LPS-128040
 [LPS-130023]: https://issues.liferay.com/browse/LPS-130023
 [LPS-130802]: https://issues.liferay.com/browse/LPS-130802
+[LPS-130908]: https://issues.liferay.com/browse/LPS-130908
+[LPS-131071]: https://issues.liferay.com/browse/LPS-131071
+[LPS-131920]: https://issues.liferay.com/browse/LPS-131920
+[LPS-133530]: https://issues.liferay.com/browse/LPS-133530
+[LPS-133987]: https://issues.liferay.com/browse/LPS-133987
+[LPS-134232]: https://issues.liferay.com/browse/LPS-134232
+[LPS-134964]: https://issues.liferay.com/browse/LPS-134964
 [LRDOCS-3688]: https://issues.liferay.com/browse/LRDOCS-3688
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
