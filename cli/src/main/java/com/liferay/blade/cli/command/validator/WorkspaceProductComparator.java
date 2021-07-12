@@ -55,10 +55,10 @@ public class WorkspaceProductComparator implements Comparator<Pair<String, Produ
 			return 1;
 		}
 		else if (!StringUtil.equals(_getProductMainVersion(aKey), _getProductMainVersion(bKey))) {
-			Version aProductMainVerson = Version.parseVersion(_getProductMainVersion(aKey));
-			Version bProductMainVerson = Version.parseVersion(_getProductMainVersion(bKey));
+			Version aProductMainVersion = Version.parseVersion(_getProductMainVersion(aKey));
+			Version bProductMainVersion = Version.parseVersion(_getProductMainVersion(bKey));
 
-			return -1 * aProductMainVerson.compareTo(bProductMainVerson);
+			return -1 * aProductMainVersion.compareTo(bProductMainVersion);
 		}
 		else {
 			String aProductMicroVersion = _getProductMicroVersion(aKey);
