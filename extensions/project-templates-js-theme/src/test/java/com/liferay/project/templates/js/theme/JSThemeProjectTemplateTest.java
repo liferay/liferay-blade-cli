@@ -85,6 +85,10 @@ public class JSThemeProjectTemplateTest {
 		File buildOutput = new File(generatedDir, "dist/js-theme-test-theme.war");
 
 		Assert.assertTrue("Expected js-theme-test-theme.war, but saw" + buildOutput.toPath(), buildOutput.exists());
+
+		File configFile = new File(generatedDir, "config.json");
+
+		Assert.assertTrue(!configFile.exists());
 	}
 
 	@Rule

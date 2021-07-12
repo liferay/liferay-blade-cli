@@ -72,6 +72,10 @@ public class JSWidgetProjectTemplateTest {
 		File projectDir = new File(workspaceDir, "modules/js-widget-test");
 
 		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
+
+		File configFile = new File(projectDir, "config.json");
+
+		Assert.assertTrue(!configFile.exists());
 	}
 
 	@Rule

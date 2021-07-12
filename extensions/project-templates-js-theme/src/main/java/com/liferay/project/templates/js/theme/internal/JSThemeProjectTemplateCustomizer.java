@@ -80,6 +80,12 @@ public class JSThemeProjectTemplateCustomizer implements ProjectTemplateCustomiz
 		if (liferayThemeJsonFile.exists()) {
 			liferayThemeJsonFile.delete();
 		}
+
+		File configFile = configPath.toFile();
+
+		if (configFile.exists()) {
+			configFile.delete();
+		}
 	}
 
 	@Override
