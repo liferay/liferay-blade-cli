@@ -1,3 +1,4 @@
+
 #!/bin/bash
 docker stop /local-nexus
 docker rm /local-nexus
