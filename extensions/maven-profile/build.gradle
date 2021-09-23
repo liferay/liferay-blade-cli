@@ -21,7 +21,7 @@ apply plugin: "maven-publish"
 
 dependencies {
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
-	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.84"
 	compileOnly project(":cli")
 
 	testCompile gradleTestKit()
@@ -42,4 +42,4 @@ publishing {
 	}
 }
 
-version = "1.0.27-SNAPSHOT"
+version = "1.0.28-SNAPSHOT"

@@ -28,6 +28,7 @@ import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -80,7 +81,6 @@ public class CreateCommandMaven extends CreateCommand {
 
 		projectTemplatesArgs.setGradle(false);
 		projectTemplatesArgs.setMaven(true);
-		projectTemplatesArgs.setLiferayVersion(createArgs.getLiferayVersion());
 
 		return projectTemplatesArgs;
 	}
