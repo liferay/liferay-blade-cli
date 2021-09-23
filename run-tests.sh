@@ -32,6 +32,7 @@ checkError
 
 checkError
 
+yo --version
 ./gradlew --no-daemon -PmavenLocal --continue clean check smokeTests --scan
 
 checkError
