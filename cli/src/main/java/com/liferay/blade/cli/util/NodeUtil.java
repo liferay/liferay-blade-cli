@@ -308,6 +308,6 @@ public class NodeUtil {
 		return yoDirPath;
 	}
 
-	private static String _nodeVersion = "8.4.0";
+	private static String _nodeVersion = "10.15.3";
 
 }
