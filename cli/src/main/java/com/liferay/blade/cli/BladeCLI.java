@@ -32,9 +32,11 @@ import com.liferay.blade.cli.command.VersionCommand;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.ParametersValidator;
 import com.liferay.blade.cli.gradle.GradleExecutionException;
+import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ProcessesUtil;
+import com.liferay.blade.cli.util.ProductInfo;
 import com.liferay.blade.cli.util.Prompter;
 
 import java.io.BufferedReader;
@@ -58,7 +60,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Formatter;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -779,6 +780,46 @@ public class BladeCLI {
 		return builder.build();
 	}
 
+	@SuppressWarnings("unchecked")
+	private Map<String, String> _buildMavenPossibleValuesMap(
+		Class<? extends Supplier<List<String>>> supplierValidator) {
+
+		try {
+			Supplier<List<String>> instance = supplierValidator.newInstance();
+
+			List<String> options = instance.get();
+
+			Iterator<String> it = options.iterator();
+
+			Map<String, String> optionsMap = new LinkedHashMap<>();
+
+			int x = 1;
+
+			while (it.hasNext()) {
+				String option = it.next();
+
+				if (option.startsWith("portal") || option.startsWith("dxp")) {
+					Map<String, Object> productInfos = BladeUtil.getProductInfos(true, error());
+
+					Object productInfoObject = productInfos.get(option);
+
+					if (productInfoObject != null) {
+						ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
+
+						optionsMap.put(String.valueOf(x), productInfo.getTargetPlatformVersion());
+
+						x++;
+					}
+				}
+			}
+
+			return optionsMap;
+		}
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
+		}
+	}
+
 	private Map<String, String> _buildPossibleValuesMap(Class<? extends Supplier<List<String>>> supplierValidator) {
 		try {
 			Supplier<List<String>> instance = supplierValidator.newInstance();
@@ -950,20 +991,20 @@ public class BladeCLI {
 	private Map<String, String> _getPossibleDefaultValuesMap(Field field, StringBuilder sb, String profileName) {
 		Map<String, String> possibleValuesMap = null;
 
-		if (Objects.equals(profileName, "maven")) {
-			possibleValuesMap = _mavenLiferayVersionPossibleValuesMap;
-
-			sb.append(_getMessageFromPossibleValues(possibleValuesMap));
-
-			return possibleValuesMap;
-		}
-
 		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
 
 		if (possibleValuesAnnotation != null) {
 			Class<? extends Supplier<List<String>>> possibleValuesSupplier = possibleValuesAnnotation.value();
 
 			if (possibleValuesSupplier != null) {
+				if (Objects.equals(profileName, "maven")) {
+					possibleValuesMap = _buildMavenPossibleValuesMap(possibleValuesSupplier);
+
+					sb.append(_getMessageFromPossibleValues(possibleValuesMap));
+
+					return possibleValuesMap;
+				}
+
 				possibleValuesMap = _buildPossibleValuesMap(possibleValuesSupplier);
 
 				sb.append(_getMessageFromPossibleValues(possibleValuesMap));
@@ -976,20 +1017,20 @@ public class BladeCLI {
 	private Map<String, String> _getPossibleMoreValuesMap(Field field, StringBuilder sb, String profileName) {
 		Map<String, String> possibleValuesMap = null;
 
-		if (Objects.equals(profileName, "maven")) {
-			possibleValuesMap = _mavenLiferayVersionPossibleValuesMap;
-
-			sb.append(_getMessageFromPossibleValues(possibleValuesMap));
-
-			return possibleValuesMap;
-		}
-
 		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
 
 		if (possibleValuesAnnotation != null) {
 			Class<? extends Supplier<List<String>>> possibleValuesSupplier = possibleValuesAnnotation.more();
 
 			if (possibleValuesSupplier != null) {
+				if (Objects.equals(profileName, "maven")) {
+					possibleValuesMap = _buildMavenPossibleValuesMap(possibleValuesSupplier);
+
+					sb.append(_getMessageFromPossibleValues(possibleValuesMap));
+
+					return possibleValuesMap;
+				}
+
 				possibleValuesMap = _buildPossibleValuesMap(possibleValuesSupplier);
 
 				sb.append(_getMessageFromPossibleValues(possibleValuesMap));
@@ -1453,19 +1494,6 @@ public class BladeCLI {
 	private static final String _MESSAGE_OPTIONS_ARE_REQUIRED = "The following options are required: ";
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
-
-	private static final Map<String, String> _mavenLiferayVersionPossibleValuesMap = new HashMap<String, String>() {
-
-		private static final long serialVersionUID = 1L;
-
-		{
-			put("1", "7.0.6-2");
-			put("2", "7.1.3-1");
-			put("3", "7.2.1-1");
-			put("4", "7.3.6");
-			put("5", "7.4.1-1");
-		}
-	};
 
 	private static final Pattern _parameterDescriptionPattern = Pattern.compile("(.*]) (.*)");
 	private static final Formatter _tracer = new Formatter(System.out);

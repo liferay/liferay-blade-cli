@@ -21,6 +21,7 @@ import aQute.bnd.version.Version;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceProvider;
+import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ProductInfo;
@@ -33,24 +34,30 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.lang.reflect.Field;
+
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * @author Gregory Amerson
  * @author Terry Jia
  * @author Simon Jiang
+ * @author Seiphon Wang
  */
 public class InitCommand extends BaseCommand<InitArgs> {
 
@@ -197,34 +204,13 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
 
-		switch (initArgs.getLiferayVersion()) {
-			case "7.0":
-				initArgs.setLiferayVersion("portal-7.0-ga7");
-
-				break;
-			case "7.1":
-				initArgs.setLiferayVersion("portal-7.1-ga4");
-
-				break;
-			case "7.2":
-				initArgs.setLiferayVersion("portal-7.2-ga2");
-
-				break;
-			case "7.3":
-				initArgs.setLiferayVersion("portal-7.3-ga8");
-
-				break;
-			case "7.4":
-				initArgs.setLiferayVersion("portal-7.4-ga2");
-
-				break;
-		}
-
 		String liferayVersion;
 		String workspaceProductKey;
 
+		Map<String, Object> productInfos = BladeUtil.getProductInfos(initArgs.isTrace(), bladeCLI.error());
+
 		if (!mavenBuild) {
-			workspaceProductKey = initArgs.getLiferayVersion();
+			workspaceProductKey = _getDefaultProductKey(initArgs);
 
 			if (_legacyProductKeys.contains(workspaceProductKey)) {
 				_addError(
@@ -233,8 +219,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 				return;
 			}
-
-			Map<String, Object> productInfos = BladeUtil.getProductInfos(initArgs.isTrace(), bladeCLI.error());
 
 			Object productInfoObject = productInfos.get(workspaceProductKey);
 
@@ -253,7 +237,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 					targetPlatformVersion.getMicro());
 		}
 		else {
-			liferayVersion = initArgs.getLiferayVersion();
+			liferayVersion = _getDefaultMavenTargetPlatformVersion(productInfos, initArgs);
 
 			workspaceProductKey = liferayVersion;
 		}
@@ -338,6 +322,60 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 	private void _addError(String msg) {
 		getBladeCLI().addErrors("init", Collections.singleton(msg));
+	}
+
+	@SuppressWarnings("unchecked")
+	private String _getDefaultMavenTargetPlatformVersion(Map<String, Object> productInfos, InitArgs initArgs)
+		throws Exception {
+
+		String possibleProductKey = _getDefaultProductKey(initArgs);
+
+		Object productInfoObject = productInfos.get(possibleProductKey);
+
+		if (productInfoObject == null) {
+			return possibleProductKey;
+		}
+
+		ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
+
+		return productInfo.getTargetPlatformVersion();
+	}
+
+	private String _getDefaultProductKey(InitArgs initArgs) throws Exception {
+		Class<?> commandArgsClass = initArgs.getClass();
+
+		Field field = commandArgsClass.getDeclaredField("_liferayVersion");
+
+		List<String> possibleValues = _getPossibleProductVersions(field);
+
+		Optional<String> defaultVersion = possibleValues.stream(
+		).filter(
+			value -> value.startsWith("portal-" + initArgs.getLiferayVersion())
+		).findFirst();
+
+		if (!defaultVersion.isPresent()) {
+			return initArgs.getLiferayVersion();
+		}
+
+		return defaultVersion.get();
+	}
+
+	private List<String> _getPossibleProductVersions(Field field) throws Exception {
+		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
+
+		List<String> possibleValues = new ArrayList<>();
+
+		if (possibleValuesAnnotation != null) {
+			Class<? extends Supplier<List<String>>> possibleValuesSupplier = possibleValuesAnnotation.value();
+
+			if (possibleValuesSupplier != null) {
+				Supplier<List<String>> instance = possibleValuesSupplier.newInstance();
+
+				possibleValues = instance.get();
+			}
+		}
+
+		return possibleValues;
 	}
 
 	private boolean _isPluginsSDK(File dir) {
