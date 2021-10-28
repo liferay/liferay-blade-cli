@@ -47,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 import java.nio.file.Files;
@@ -183,6 +184,7 @@ public class BladeCLI {
 
 	public void error(Throwable error) {
 		error(error.getMessage());
+
 		error.printStackTrace(error());
 	}
 
@@ -785,32 +787,25 @@ public class BladeCLI {
 		Class<? extends Supplier<List<String>>> supplierValidator) {
 
 		try {
-			Supplier<List<String>> instance = supplierValidator.newInstance();
+			Constructor<? extends Supplier<List<String>>> declaredConstructor =
+				supplierValidator.getDeclaredConstructor();
+
+			Supplier<List<String>> instance = declaredConstructor.newInstance();
 
 			List<String> options = instance.get();
 
 			Iterator<String> it = options.iterator();
 
+			Map<String, Object> productInfos = BladeUtil.getProductInfos(true, error());
+
 			Map<String, String> optionsMap = new LinkedHashMap<>();
 
-			int x = 1;
-
-			while (it.hasNext()) {
+			for (int x = 1; it.hasNext(); x++) {
 				String option = it.next();
 
-				if (option.startsWith("portal") || option.startsWith("dxp")) {
-					Map<String, Object> productInfos = BladeUtil.getProductInfos(true, error());
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(option));
 
-					Object productInfoObject = productInfos.get(option);
-
-					if (productInfoObject != null) {
-						ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
-
-						optionsMap.put(String.valueOf(x), productInfo.getTargetPlatformVersion());
-
-						x++;
-					}
-				}
+				optionsMap.put(String.valueOf(x), productInfo.getTargetPlatformVersion());
 			}
 
 			return optionsMap;
@@ -1365,6 +1360,7 @@ public class BladeCLI {
 
 		if (command != null) {
 			_baseCommand = command;
+
 			command.setArgs(_args);
 			command.setBlade(this);
 

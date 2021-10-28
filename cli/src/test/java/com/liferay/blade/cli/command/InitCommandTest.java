@@ -362,7 +362,7 @@ public class InitCommandTest {
 
 		String firstLine = lines.get(0);
 
-		Assert.assertTrue(firstLine, firstLine.contains("dxp-7.3-"));
+		Assert.assertTrue(firstLine, firstLine.contains("dxp-7.4-"));
 	}
 
 	@Test
