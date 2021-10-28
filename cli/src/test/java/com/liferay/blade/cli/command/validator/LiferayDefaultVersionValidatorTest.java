@@ -32,7 +32,7 @@ public class LiferayDefaultVersionValidatorTest {
 
 		List<String> values = ldvv.get();
 
-		Assert.assertEquals(values.toString(), 11, values.size());
+		Assert.assertEquals(values.toString(), 13, values.size());
 	}
 
 	@Test

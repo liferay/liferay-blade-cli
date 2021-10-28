@@ -371,6 +371,7 @@ public class BndProperties extends Properties {
 
 		for (String keyString : _keyList) {
 			_formatForOutput(keyString, s, true);
+
 			s.append(": ");
 
 			Object value = get(keyString);
