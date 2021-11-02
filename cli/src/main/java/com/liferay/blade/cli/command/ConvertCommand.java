@@ -28,6 +28,8 @@ import com.liferay.blade.cli.util.ProductInfo;
 import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.blade.gradle.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
+import com.liferay.project.templates.extensions.util.Validator;
+import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,6 +61,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -1078,14 +1081,34 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 		String liferayVersion = convertArgs.getLiferayVersion();
 
-		if (Objects.equals("7.1", liferayVersion)) {
-			return _migratedDependencies71;
+		if (Validator.isNull(liferayVersion)) {
+			BladeCLI bladeCLI = getBladeCLI();
+
+			BaseArgs baseArgs = bladeCLI.getArgs();
+
+			File baseDir = baseArgs.getBase();
+
+			liferayVersion = Optional.ofNullable(
+				bladeCLI.getWorkspaceProvider(baseDir)
+			).map(
+				wp -> wp.getLiferayVersion(baseDir)
+			).map(
+				version -> new String(String.valueOf(VersionUtil.getMajorVersion(version)) + "." +
+						String.valueOf(VersionUtil.getMinorVersion(version)))
+			).orElse(
+				"0.0"
+			);
 		}
-		else if (Objects.equals("7.2", liferayVersion)) {
-			return _migratedDependencies72;
-		}
-		else if (Objects.equals("7.3", liferayVersion)) {
-			return _migratedDependencies73;
+
+		switch (liferayVersion) {
+			case "7.1":
+				return _migratedDependencies71;
+			case "7.2":
+				return _migratedDependencies72;
+			case "7.3":
+				return _migratedDependencies73;
+			case "7.4":
+				return _migratedDependencies74;
 		}
 
 		return Collections.emptyMap();
@@ -1314,10 +1337,12 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 	private static final Map<String, GAV> _migratedDependencies71 = new HashMap<>();
 	private static final Map<String, GAV> _migratedDependencies72 = new HashMap<>();
 	private static final Map<String, GAV> _migratedDependencies73 = new HashMap<>();
+	private static final Map<String, GAV> _migratedDependencies74 = new HashMap<>();
 	{
 		_loadMigratedDependencies("/migrated-dependencies-7.1.properties", _migratedDependencies71);
 		_loadMigratedDependencies("/migrated-dependencies-7.2.properties", _migratedDependencies72);
 		_loadMigratedDependencies("/migrated-dependencies-7.3.properties", _migratedDependencies73);
+		_loadMigratedDependencies("/migrated-dependencies-7.4.properties", _migratedDependencies74);
 	}
 
 	private static final Map<String, String> _portalClasspathDependenciesMap = new HashMap<>();
