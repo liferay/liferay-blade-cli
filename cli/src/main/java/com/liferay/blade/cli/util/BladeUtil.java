@@ -239,7 +239,7 @@ public class BladeUtil {
 
 			Attributes attributes = manifest.getMainAttributes();
 
-			return attributes.getValue("Bundle-Version");
+			return attributes.getValue(propertyName);
 		}
 	}
 
