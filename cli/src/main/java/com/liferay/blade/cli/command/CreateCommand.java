@@ -16,6 +16,9 @@
 
 package com.liferay.blade.cli.command;
 
+import aQute.bnd.version.Version;
+import aQute.bnd.version.VersionRange;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
@@ -46,12 +49,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 
 /**
  * @author Gregory Amerson
@@ -172,6 +181,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			return;
 		}
+
+		_checkTemplateVersionRange(projectTemplatesArgs);
 
 		Thread thread = Thread.currentThread();
 
@@ -443,6 +454,64 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		}
 
 		return true;
+	}
+
+	private void _checkTemplateVersionRange(ProjectTemplatesArgs projectTemplatesArgs) {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		String template = projectTemplatesArgs.getTemplate();
+
+		String templateJarName = "com.liferay.project.templates." + template.replaceAll("-", ".");
+
+		String bladePath = String.valueOf(BladeUtil.getBladeJarPath());
+
+		bladePath = bladePath.replaceAll("\\\\", "/");
+
+		try (JarFile jarFile = new JarFile(bladePath)) {
+			Enumeration<JarEntry> entries = jarFile.entries();
+
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+
+				String entryName = entry.getName();
+
+				if (entryName.startsWith(templateJarName) && entryName.endsWith(".jar")) {
+					String entryPartName = entryName.split("-")[0];
+
+					if (!entryPartName.equals(templateJarName)) {
+						continue;
+					}
+
+					String version = projectTemplatesArgs.getLiferayVersion();
+
+					URL url = new URL("jar:file:///" + bladePath + "!/" + entryName);
+
+					JarInputStream in = new JarInputStream(url.openStream());
+
+					Manifest manifest = in.getManifest();
+
+					Attributes attributes = manifest.getMainAttributes();
+
+					String versionRangeValue = attributes.getValue("Liferay-Versions");
+
+					VersionRange versionRange = new VersionRange(versionRangeValue);
+
+					if (!versionRange.includes(new Version(version))) {
+						bladeCLI.out(
+							"WARNING: The " + template + " project can only be created in liferay version range: " +
+								versionRange + ", current liferay version is " + version + ".");
+
+						_addError(
+							"Create", "Could not create " + template + " project: " + projectTemplatesArgs.getName());
+
+						System.exit(0);
+					}
+				}
+			}
+		}
+		catch (IOException ioException) {
+			bladeCLI.error(ioException);
+		}
 	}
 
 	private boolean _containsDir(File currentDir, File parentDir) throws Exception {
