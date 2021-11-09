@@ -28,6 +28,7 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgsExt;
@@ -35,6 +36,7 @@ import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -43,13 +45,14 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +60,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
@@ -182,7 +183,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return;
 		}
 
-		_checkTemplateVersionRange(projectTemplatesArgs);
+		String templateValidateStrig = _checkTemplateVersionRange(templateFile, projectTemplatesArgs);
+
+		if (!StringUtil.isNullOrEmpty(templateValidateStrig)) {
+			getBladeCLI().error(templateValidateStrig);
+
+			return;
+		}
 
 		Thread thread = Thread.currentThread();
 
@@ -456,62 +463,32 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return true;
 	}
 
-	private void _checkTemplateVersionRange(ProjectTemplatesArgs projectTemplatesArgs) {
-		BladeCLI bladeCLI = getBladeCLI();
+	private String _checkTemplateVersionRange(File templateFile, ProjectTemplatesArgs projectTemplatesArgs) {
+		try (InputStream fileInputStream = Files.newInputStream(templateFile.toPath(), StandardOpenOption.READ);
+			JarInputStream in = new JarInputStream(fileInputStream)) {
 
-		String template = projectTemplatesArgs.getTemplate();
+			Manifest manifest = in.getManifest();
 
-		String templateJarName = "com.liferay.project.templates." + template.replaceAll("-", ".");
+			Attributes attributes = manifest.getMainAttributes();
 
-		String bladePath = String.valueOf(BladeUtil.getBladeJarPath());
+			String versionRangeValue = attributes.getValue("Liferay-Versions");
 
-		bladePath = bladePath.replaceAll("\\\\", "/");
+			VersionRange versionRange = new VersionRange(versionRangeValue);
 
-		try (JarFile jarFile = new JarFile(bladePath)) {
-			Enumeration<JarEntry> entries = jarFile.entries();
+			String version = projectTemplatesArgs.getLiferayVersion();
 
-			while (entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-
-				String entryName = entry.getName();
-
-				if (entryName.startsWith(templateJarName) && entryName.endsWith(".jar")) {
-					String entryPartName = entryName.split("-")[0];
-
-					if (!entryPartName.equals(templateJarName)) {
-						continue;
-					}
-
-					String version = projectTemplatesArgs.getLiferayVersion();
-
-					URL url = new URL("jar:file:///" + bladePath + "!/" + entryName);
-
-					JarInputStream in = new JarInputStream(url.openStream());
-
-					Manifest manifest = in.getManifest();
-
-					Attributes attributes = manifest.getMainAttributes();
-
-					String versionRangeValue = attributes.getValue("Liferay-Versions");
-
-					VersionRange versionRange = new VersionRange(versionRangeValue);
-
-					if (!versionRange.includes(new Version(version))) {
-						bladeCLI.out(
-							"WARNING: The " + template + " project can only be created in liferay version range: " +
-								versionRange + ", current liferay version is " + version + ".");
-
-						_addError(
-							"Create", "Could not create " + template + " project: " + projectTemplatesArgs.getName());
-
-						System.exit(0);
-					}
-				}
+			if (!versionRange.includes(Version.parseVersion(version))) {
+				return new String(
+					"Error: The " + projectTemplatesArgs.getTemplate() +
+						" project can only be created in liferay version range: " + versionRange +
+							", current liferay version is " + version + ".");
 			}
 		}
 		catch (IOException ioException) {
-			bladeCLI.error(ioException);
+			return ioException.getMessage();
 		}
+
+		return "";
 	}
 
 	private boolean _containsDir(File currentDir, File parentDir) throws Exception {
