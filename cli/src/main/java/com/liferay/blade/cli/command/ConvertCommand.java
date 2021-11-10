@@ -1089,9 +1089,29 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 	private void _initBuildGradle(Path warPath) throws Exception {
 		Path initPath = Files.createTempDirectory("ws");
 
-		BladeCLI bladeCLI = new BladeCLI();
+		BladeCLI bladeCLI = getBladeCLI();
 
 		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = baseArgs.getBase();
+
+		String liferayProduct = Optional.ofNullable(
+			bladeCLI.getWorkspaceProvider(baseDir)
+		).map(
+			wp -> {
+				GradleWorkspaceProvider gradleWorkspaceProvider = (GradleWorkspaceProvider)wp;
+
+				return gradleWorkspaceProvider.getGradleProperties(baseDir);
+			}
+		).map(
+			properties -> properties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY)
+		).orElse(
+			"portal-7.4-ga4"
+		);
+
+		bladeCLI = new BladeCLI();
+
+		baseArgs = bladeCLI.getArgs();
 
 		baseArgs.setProfileName("gradle");
 		baseArgs.setQuiet(true);
@@ -1099,7 +1119,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		InitArgs initArgs = new InitArgs();
 
 		initArgs.setBase(initPath.toFile());
-		initArgs.setLiferayVersion("7.3");
+		initArgs.setLiferayVersion(liferayProduct);
 		initArgs.setQuiet(baseArgs.isQuiet());
 
 		InitCommand initCommand = new InitCommand();
