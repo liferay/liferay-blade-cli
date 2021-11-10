@@ -36,7 +36,6 @@ import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -45,9 +44,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,9 +56,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
 
 /**
  * @author Gregory Amerson
@@ -183,14 +177,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return;
 		}
 
-		String templateValidateStrig = _checkTemplateVersionRange(templateFile, projectTemplatesArgs);
-
-		if (!StringUtil.isNullOrEmpty(templateValidateStrig)) {
-			getBladeCLI().error(templateValidateStrig);
-
-			return;
-		}
-
 		Thread thread = Thread.currentThread();
 
 		ClassLoader oldContextClassLoader = thread.getContextClassLoader();
@@ -280,6 +266,14 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			}
 
 			thread.setContextClassLoader(oldContextClassLoader);
+		}
+
+		String templateValidateStrig = _checkTemplateVersionRange(templateFile, projectTemplatesArgs);
+
+		if (!StringUtil.isNullOrEmpty(templateValidateStrig)) {
+			getBladeCLI().error(templateValidateStrig);
+
+			return;
 		}
 
 		execute(projectTemplatesArgs);
@@ -464,14 +458,8 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	}
 
 	private String _checkTemplateVersionRange(File templateFile, ProjectTemplatesArgs projectTemplatesArgs) {
-		try (InputStream fileInputStream = Files.newInputStream(templateFile.toPath(), StandardOpenOption.READ);
-			JarInputStream in = new JarInputStream(fileInputStream)) {
-
-			Manifest manifest = in.getManifest();
-
-			Attributes attributes = manifest.getMainAttributes();
-
-			String versionRangeValue = attributes.getValue("Liferay-Versions");
+		try {
+			String versionRangeValue = BladeUtil.getManifestProperty(templateFile.toPath(), "Liferay-Versions");
 
 			VersionRange versionRange = new VersionRange(versionRangeValue);
 
