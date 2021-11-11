@@ -33,6 +33,7 @@ import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgsExt;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
+import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -475,17 +476,21 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			VersionRange versionRange = new VersionRange(versionRangeValue);
 
-			String version = projectTemplatesArgs.getLiferayVersion();
+			String versionString = projectTemplatesArgs.getLiferayVersion();
 
-			if (!versionRange.includes(Version.parseVersion(version))) {
+			String liferayVersionString = new String(
+				String.valueOf(VersionUtil.getMajorVersion(versionString)) + "." +
+					String.valueOf(VersionUtil.getMinorVersion(versionString)));
+
+			if (!versionRange.includes(Version.parseVersion(liferayVersionString))) {
 				return new String(
 					"Error: The " + projectTemplatesArgs.getTemplate() +
 						" project can only be created in liferay version range: " + versionRange +
-							", current liferay version is " + version + ".");
+							", current liferay version is " + liferayVersionString + ".");
 			}
 		}
-		catch (IOException ioException) {
-			return ioException.getMessage();
+		catch (Exception exception) {
+			return exception.getMessage();
 		}
 
 		return "";
