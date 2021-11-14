@@ -80,7 +80,7 @@ import org.w3c.dom.NodeList;
  * @author Gregory Amerson
  * @author Terry Jia
  */
-public class ConvertCommand extends BaseCommand<ConvertArgs> {
+public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSupport {
 
 	public ConvertCommand() {
 	}
@@ -264,7 +264,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 					theme -> convertedPaths.addAll(_convertToThemeBuilderWarProject(projectsDir, theme, removeSource)));
 			}
 			else {
-				themePlugins.forEach(theme -> convertedPaths.addAll(_convertToThemeProject(theme, convertArgs)));
+				themePlugins.forEach(theme -> convertedPaths.addAll(_convertToThemeProject(theme)));
 			}
 		}
 		else if (convertArgs.isList()) {
@@ -313,7 +313,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 					convertedPaths.addAll(_convertToThemeBuilderWarProject(projectsDir, pluginDir, removeSource));
 				}
 				else {
-					convertedPaths.addAll(_convertToThemeProject(pluginDir, convertArgs));
+					convertedPaths.addAll(_convertToThemeProject(pluginDir));
 				}
 			}
 
@@ -476,7 +476,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			Path warsPath = warsDir.toPath();
 
-			FileUtil.moveFile(layoutPluginDir.toPath(), warsPath.resolve(layoutPluginDir.getName()), removeSource);
+			moveFile(layoutPluginDir.toPath(), warsPath.resolve(layoutPluginDir.getName()), removeSource);
 
 			File warDir = new File(warsDir, layoutPluginDir.getName());
 
@@ -497,7 +497,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			Path webappPath = webapp.toPath();
 
 			for (File docrootFile : docroot.listFiles()) {
-				FileUtil.copyFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
+				copyFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
 
 			Path warPath = warDir.toPath();
@@ -658,7 +658,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				Path backupPath = backup.toPath();
 
 				for (File other : others) {
-					FileUtil.moveFile(other.toPath(), backupPath.resolve(other.getName()), removeSource);
+					moveFile(other.toPath(), backupPath.resolve(other.getName()), removeSource);
 				}
 			}
 
@@ -677,11 +677,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		return Collections.emptyList();
 	}
 
-	private List<Path> _convertToThemeProject(File themePlugin, ConvertArgs args) {
+	private List<Path> _convertToThemeProject(File themePlugin) {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		try {
-			ConvertThemeCommand convertThemeCommand = new ConvertThemeCommand(bladeCLI, args);
+			ConvertThemeCommand convertThemeCommand = new ConvertThemeCommand(bladeCLI, getArgs());
 
 			convertThemeCommand.execute();
 
@@ -714,9 +714,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 		Path warPath = projectParentPath.resolve(pluginDir.getName());
 
-		_createWarPortlet(projectParentPath, pluginDir.getName());
-
-		FileUtil.copyFile(pluginDir.toPath(), warPath);
+		copyFile(pluginDir.toPath(), warPath);
 
 		File warDir = warPath.toFile();
 
@@ -730,7 +728,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 		if (docrootSrc.exists()) {
 			for (File docrootSrcFile : docrootSrc.listFiles()) {
-				FileUtil.moveFile(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
+				moveFile(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
 			}
 		}
 
@@ -743,7 +741,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		Path webappPath = webapp.toPath();
 
 		for (File docrootFile : docroot.listFiles()) {
-			FileUtil.moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
+			moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 		}
 
 		FileUtil.deleteDir(docroot.toPath());
@@ -756,6 +754,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		_deleteServiceBuilderFiles(warPath);
 
 		FileUtil.deleteDirIfExists(webappPath.resolve("WEB-INF/classes"));
+
+		_initBuildGradle(warPath);
 
 		List<GAV> convertedGavs = new CopyOnWriteArrayList<>();
 
@@ -940,24 +940,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		);
 	}
 
-	private void _createWarPortlet(Path warPortletDirPath, String warPortleName) throws Exception {
-		CreateArgs createArgs = new CreateArgs();
-
-		createArgs.setQuiet(true);
-
-		CreateCommand createCommand = new CreateCommand(getBladeCLI());
-
-		createCommand.setArgs(createArgs);
-
-		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
-
-		projectTemplatesArgs.setDestinationDir(warPortletDirPath.toFile());
-		projectTemplatesArgs.setName(warPortleName);
-		projectTemplatesArgs.setTemplate("war-mvc-portlet");
-
-		createCommand.execute(projectTemplatesArgs);
-	}
-
 	private void _deleteServiceBuilderFiles(Path warPath) throws Exception {
 		Path metaInfPath = warPath.resolve("src/main/java/META-INF");
 
@@ -1102,6 +1084,76 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		Path serviceXml = dirPath.resolve("docroot/WEB-INF/service.xml");
 
 		return Files.exists(serviceXml);
+	}
+
+	private void _initBuildGradle(Path warPath) throws Exception {
+		Path initPath = Files.createTempDirectory("ws");
+
+		BladeCLI bladeCLI = getBladeCLI();
+
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		File baseDir = baseArgs.getBase();
+
+		String liferayProduct = Optional.ofNullable(
+			bladeCLI.getWorkspaceProvider(baseDir)
+		).map(
+			wp -> {
+				GradleWorkspaceProvider gradleWorkspaceProvider = (GradleWorkspaceProvider)wp;
+
+				return gradleWorkspaceProvider.getGradleProperties(baseDir);
+			}
+		).map(
+			properties -> properties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY)
+		).orElse(
+			"portal-7.4-ga4"
+		);
+
+		bladeCLI = new BladeCLI();
+
+		baseArgs = bladeCLI.getArgs();
+
+		baseArgs.setProfileName("gradle");
+		baseArgs.setQuiet(true);
+
+		InitArgs initArgs = new InitArgs();
+
+		initArgs.setBase(initPath.toFile());
+		initArgs.setLiferayVersion(liferayProduct);
+		initArgs.setQuiet(baseArgs.isQuiet());
+
+		InitCommand initCommand = new InitCommand();
+
+		initCommand.setArgs(initArgs);
+		initCommand.setBlade(bladeCLI);
+
+		initCommand.execute();
+
+		Path modulesPath = initPath.resolve("modules");
+
+		CreateArgs createArgs = new CreateArgs();
+
+		createArgs.setBase(modulesPath.toFile());
+		createArgs.setTemplate("war-mvc-portlet");
+		createArgs.setName("war-portlet");
+		createArgs.setQuiet(baseArgs.isQuiet());
+
+		ConvertArgs originalConvertArgs = getArgs();
+
+		createArgs.setProduct(originalConvertArgs.getProduct());
+
+		CreateCommand createCommand = new CreateCommand();
+
+		createCommand.setArgs(createArgs);
+		createCommand.setBlade(bladeCLI);
+
+		createCommand.execute();
+
+		Path tempBuildGradle = modulesPath.resolve("war-portlet/build.gradle");
+
+		copyFile(tempBuildGradle, warPath.resolve("build.gradle"));
+
+		FileUtil.deleteDir(initPath);
 	}
 
 	private boolean _isServiceBuilderPlugin(File pluginDir) {
