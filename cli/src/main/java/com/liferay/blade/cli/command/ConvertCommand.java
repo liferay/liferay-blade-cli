@@ -19,19 +19,23 @@ package com.liferay.blade.cli.command;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
+import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ListUtil;
+import com.liferay.blade.cli.util.ProductInfo;
 import com.liferay.blade.cli.util.StringUtil;
-import com.liferay.ide.gradle.core.model.GradleDependency;
+import com.liferay.blade.gradle.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -70,6 +74,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.LoadProperties;
 
+import org.json.JSONObject;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -79,6 +85,7 @@ import org.w3c.dom.NodeList;
 /**
  * @author Gregory Amerson
  * @author Terry Jia
+ * @author Simon Jiang
  */
 public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
@@ -841,6 +848,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			convertedGradleDependencies.add(new GradleDependency(sb.toString()));
 		}
 
+		List<String> releaseApiDependencies = _getReleaseApirtifactIds();
+
 		Path buildGradlePath = warPath.resolve("build.gradle");
 
 		String existingContent = new String(Files.readAllBytes(buildGradlePath));
@@ -848,7 +857,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		StringBuilder dependenciesBlock = new StringBuilder();
 
 		convertedGradleDependencies.forEach(
-			dep -> dependenciesBlock.append("\t" + dep.toString() + System.lineSeparator()));
+			dep -> {
+				if (!releaseApiDependencies.contains(dep.getGroup() + ":" + dep.getName())) {
+					dependenciesBlock.append("\t" + dep.toString() + System.lineSeparator());
+				}
+			});
 
 		dependenciesBlock.append(System.lineSeparator());
 		dependenciesBlock.append("}");
@@ -954,6 +967,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		projectTemplatesArgs.setDestinationDir(warPortletDirPath.toFile());
 		projectTemplatesArgs.setName(warPortleName);
 		projectTemplatesArgs.setTemplate("war-mvc-portlet");
+		projectTemplatesArgs.setForce(true);
 
 		createCommand.execute(projectTemplatesArgs);
 	}
@@ -1094,6 +1108,111 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 
 		return parentProjectName;
+	}
+
+	private List<String> _getReleaseApirtifactIds() {
+		try {
+			BladeCLI bladeCLI = getBladeCLI();
+
+			BaseArgs baseArgs = bladeCLI.getArgs();
+
+			Optional<String> productKeyOpt = Optional.ofNullable(
+				(GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(baseArgs.getBase())
+			).filter(
+				Objects::nonNull
+			).map(
+				provider -> provider.getGradleProperties(baseArgs.getBase())
+			).filter(
+				Objects::nonNull
+			).map(
+				properties -> properties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY, null)
+			).filter(
+				Objects::nonNull
+			);
+
+			if (!productKeyOpt.isPresent()) {
+				return Collections.emptyList();
+			}
+
+			String productKey = productKeyOpt.get();
+
+			Optional<String> targetPlatformVersionFromProduct = _getTargetPlatformVersionFromProduct(productKey);
+
+			if (!targetPlatformVersionFromProduct.isPresent()) {
+				return Collections.emptyList();
+			}
+
+			String simplifiedVersion = BladeUtil.simplifyTargetPlatformVersion(targetPlatformVersionFromProduct.get());
+
+			String[] versionParts = simplifiedVersion.split("\\.");
+
+			if (productKey.startsWith("dxp")) {
+				simplifiedVersion = versionParts[0] + "." + versionParts[1] + "." + versionParts[2] + ".x";
+			}
+			else if (productKey.startsWith("portal")) {
+				simplifiedVersion = versionParts[0] + "." + versionParts[1] + ".x";
+			}
+
+			Class<?> clazz = ConvertCommand.class;
+
+			try (InputStream inputStream = clazz.getResourceAsStream(
+					"/release-api/" + simplifiedVersion + "-versions.txt");
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+				String dependency = null;
+
+				List<String> allArtifactIds = new ArrayList<>();
+
+				while ((dependency = bufferedReader.readLine()) != null) {
+					allArtifactIds.add(dependency);
+				}
+
+				return allArtifactIds;
+			}
+			catch (Exception exception) {
+			}
+		}
+		catch (Exception exception) {
+		}
+
+		return Collections.emptyList();
+	}
+
+	@SuppressWarnings("unchecked")
+	private Optional<String> _getTargetPlatformVersionFromProduct(String productKey) {
+		try {
+			File userHomeDir = new File(System.getProperty("user.home"));
+
+			userHomeDir = userHomeDir.getCanonicalFile();
+
+			Path userHomePath = userHomeDir.toPath();
+
+			Path productInfoPath = userHomePath.resolve(".liferay/workspace/.product_info.json");
+
+			if (!Files.exists(productInfoPath)) {
+				Map<String, Object> productInfos = BladeUtil.getProductInfos();
+
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(productKey));
+
+				return Optional.of(productInfo.getTargetPlatformVersion());
+			}
+
+			JSONObject jsonObject = new JSONObject(new String(Files.readAllBytes(productInfoPath.normalize())));
+
+			return Optional.ofNullable(
+				jsonObject.get(productKey)
+			).map(
+				JSONObject.class::cast
+			).map(
+				info -> info.get("targetPlatformVersion")
+			).map(
+				Object::toString
+			);
+		}
+		catch (Exception exception) {
+		}
+
+		return Optional.empty();
 	}
 
 	private boolean _hasServiceXmlFile(File dir) {
