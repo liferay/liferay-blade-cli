@@ -192,8 +192,6 @@ Private-Package:\
 	org.gradle.util;-split-package:=merge-first,\
 	org.gradle.wrapper;-split-package:=merge-first,\
 	\
-	org.json,\
-	\
 	org.jsoup,\
 	org.jsoup.helper,\
 	org.jsoup.internal,\
