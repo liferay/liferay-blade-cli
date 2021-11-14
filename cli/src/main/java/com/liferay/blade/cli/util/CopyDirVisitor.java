@@ -25,6 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import org.apache.commons.io.FileUtils;
+
 /**
  * @author Gregory Amerson
  */
@@ -34,6 +36,24 @@ public class CopyDirVisitor extends SimpleFileVisitor<Path> {
 		_fromPath = fromPath;
 		_toPath = toPath;
 		_copyOption = copyOption;
+
+		_deleteSource = false;
+	}
+
+	public CopyDirVisitor(Path fromPath, Path toPath, CopyOption copyOption, boolean deleteSource) {
+		_fromPath = fromPath;
+		_toPath = toPath;
+		_copyOption = copyOption;
+		_deleteSource = deleteSource;
+	}
+
+	@Override
+	public FileVisitResult postVisitDirectory(Path file, IOException ioException) throws IOException {
+		if (_deleteSource) {
+			FileUtils.forceDelete(file.toFile());
+		}
+
+		return FileVisitResult.CONTINUE;
 	}
 
 	@Override
@@ -55,6 +75,7 @@ public class CopyDirVisitor extends SimpleFileVisitor<Path> {
 	}
 
 	private final CopyOption _copyOption;
+	private boolean _deleteSource;
 	private final Path _fromPath;
 	private final Path _toPath;
 
