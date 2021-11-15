@@ -106,6 +106,7 @@ dependencies {
 	compile name: "org.objectweb.asm.commons-6.0.0"
 	compile name: "org.objectweb.asm.tree-6.0.0"
 	compile name: "org.objectweb.asm.util-6.0.0"
+	compile group: 'org.json', name: 'json', version: '20190722'
 
 	compile(group: "com.liferay", name: "com.liferay.portal.tools.bundle.support", version: "3.7.0") {
 		exclude group: "biz.aQute.bnd", module: "biz.aQute.bnd"
