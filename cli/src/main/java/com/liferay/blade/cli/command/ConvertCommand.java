@@ -18,7 +18,6 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CopyDirVisitor;
@@ -561,11 +560,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				arguments = convertArgs.getName();
 			}
 
-			WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(convertArgs.getBase());
-
 			ConvertArgs convertServiceBuilderArgs = new ConvertArgs(
 				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), convertArgs.isRemoveSource(),
-				convertArgs.getSource(), arguments, workspaceProvider.getProduct(convertArgs.getBase()));
+				convertArgs.getSource(), arguments, convertArgs.getProduct());
 
 			convertServiceBuilderArgs.setBase(convertArgs.getBase());
 
@@ -957,14 +954,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 	}
 
 	private void _createWarPortlet(Path warPortletDirPath, String warPortleName) throws Exception {
-		BladeCLI bladeCLI = getBladeCLI();
-
-		BaseArgs baseArgs = bladeCLI.getArgs();
-
 		CreateArgs createArgs = new CreateArgs();
 
 		createArgs.setQuiet(true);
-		createArgs.setBase(baseArgs.getBase());
 
 		CreateCommand createCommand = new CreateCommand(getBladeCLI());
 
@@ -976,10 +968,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		projectTemplatesArgs.setName(warPortleName);
 		projectTemplatesArgs.setTemplate("war-mvc-portlet");
 		projectTemplatesArgs.setForce(true);
-
-		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseArgs.getBase());
-
-		projectTemplatesArgs.setProduct(workspaceProvider.getProduct(createArgs.getBase()));
 
 		createCommand.execute(projectTemplatesArgs);
 	}
