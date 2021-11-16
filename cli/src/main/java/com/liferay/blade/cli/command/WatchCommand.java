@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -111,7 +112,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 	private String _getGradlePath(Path path, Path basePath) {
 		String gradlePath = ":" + String.valueOf(basePath.relativize(path));
 
-		return gradlePath.replaceAll(File.separator, ":");
+		return gradlePath.replaceAll(Matcher.quoteReplacement(File.separator), ":");
 	}
 
 	private Path _getGradleProjectPath(Path basePath, Path path, Map<String, Path> projectPaths) {
