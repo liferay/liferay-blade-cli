@@ -18,20 +18,25 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.WorkspaceConstants;
+import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
+import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ListUtil;
+import com.liferay.blade.cli.util.ProductInfo;
 import com.liferay.blade.cli.util.StringUtil;
-import com.liferay.ide.gradle.core.model.GradleDependency;
+import com.liferay.blade.gradle.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -70,6 +75,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.LoadProperties;
 
+import org.json.JSONObject;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -79,8 +86,9 @@ import org.w3c.dom.NodeList;
 /**
  * @author Gregory Amerson
  * @author Terry Jia
+ * @author Simon Jiang
  */
-public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSupport {
+public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 	public ConvertCommand() {
 	}
@@ -264,7 +272,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					theme -> convertedPaths.addAll(_convertToThemeBuilderWarProject(projectsDir, theme, removeSource)));
 			}
 			else {
-				themePlugins.forEach(theme -> convertedPaths.addAll(_convertToThemeProject(theme)));
+				themePlugins.forEach(theme -> convertedPaths.addAll(_convertToThemeProject(theme, convertArgs)));
 			}
 		}
 		else if (convertArgs.isList()) {
@@ -313,7 +321,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 					convertedPaths.addAll(_convertToThemeBuilderWarProject(projectsDir, pluginDir, removeSource));
 				}
 				else {
-					convertedPaths.addAll(_convertToThemeProject(pluginDir));
+					convertedPaths.addAll(_convertToThemeProject(pluginDir, convertArgs));
 				}
 			}
 
@@ -476,7 +484,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 			Path warsPath = warsDir.toPath();
 
-			moveFile(layoutPluginDir.toPath(), warsPath.resolve(layoutPluginDir.getName()), removeSource);
+			FileUtil.moveFile(layoutPluginDir.toPath(), warsPath.resolve(layoutPluginDir.getName()), removeSource);
 
 			File warDir = new File(warsDir, layoutPluginDir.getName());
 
@@ -497,7 +505,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			Path webappPath = webapp.toPath();
 
 			for (File docrootFile : docroot.listFiles()) {
-				copyFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
+				FileUtil.copyFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 			}
 
 			Path warPath = warDir.toPath();
@@ -553,9 +561,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 				arguments = convertArgs.getName();
 			}
 
+			WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(convertArgs.getBase());
+
 			ConvertArgs convertServiceBuilderArgs = new ConvertArgs(
 				convertArgs.isAll(), convertArgs.isList(), convertArgs.isThemeBuilder(), convertArgs.isRemoveSource(),
-				convertArgs.getSource(), arguments, convertArgs.getProduct());
+				convertArgs.getSource(), arguments, workspaceProvider.getProduct(convertArgs.getBase()));
 
 			convertServiceBuilderArgs.setBase(convertArgs.getBase());
 
@@ -658,7 +668,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 				Path backupPath = backup.toPath();
 
 				for (File other : others) {
-					moveFile(other.toPath(), backupPath.resolve(other.getName()), removeSource);
+					FileUtil.moveFile(other.toPath(), backupPath.resolve(other.getName()), removeSource);
 				}
 			}
 
@@ -677,11 +687,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return Collections.emptyList();
 	}
 
-	private List<Path> _convertToThemeProject(File themePlugin) {
+	private List<Path> _convertToThemeProject(File themePlugin, ConvertArgs args) {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		try {
-			ConvertThemeCommand convertThemeCommand = new ConvertThemeCommand(bladeCLI, getArgs());
+			ConvertThemeCommand convertThemeCommand = new ConvertThemeCommand(bladeCLI, args);
 
 			convertThemeCommand.execute();
 
@@ -714,7 +724,9 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		Path warPath = projectParentPath.resolve(pluginDir.getName());
 
-		copyFile(pluginDir.toPath(), warPath);
+		_createWarPortlet(projectParentPath, pluginDir.getName());
+
+		FileUtil.copyFile(pluginDir.toPath(), warPath);
 
 		File warDir = warPath.toFile();
 
@@ -728,7 +740,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 
 		if (docrootSrc.exists()) {
 			for (File docrootSrcFile : docrootSrc.listFiles()) {
-				moveFile(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
+				FileUtil.moveFile(docrootSrcFile.toPath(), srcPath.resolve(docrootSrcFile.getName()));
 			}
 		}
 
@@ -741,7 +753,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		Path webappPath = webapp.toPath();
 
 		for (File docrootFile : docroot.listFiles()) {
-			moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
+			FileUtil.moveFile(docrootFile.toPath(), webappPath.resolve(docrootFile.getName()));
 		}
 
 		FileUtil.deleteDir(docroot.toPath());
@@ -754,8 +766,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		_deleteServiceBuilderFiles(warPath);
 
 		FileUtil.deleteDirIfExists(webappPath.resolve("WEB-INF/classes"));
-
-		_initBuildGradle(warPath);
 
 		List<GAV> convertedGavs = new CopyOnWriteArrayList<>();
 
@@ -841,6 +851,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 			convertedGradleDependencies.add(new GradleDependency(sb.toString()));
 		}
 
+		List<String> releaseApiDependencies = _getReleaseApirtifactIds();
+
 		Path buildGradlePath = warPath.resolve("build.gradle");
 
 		String existingContent = new String(Files.readAllBytes(buildGradlePath));
@@ -848,7 +860,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		StringBuilder dependenciesBlock = new StringBuilder();
 
 		convertedGradleDependencies.forEach(
-			dep -> dependenciesBlock.append("\t" + dep.toString() + System.lineSeparator()));
+			dep -> {
+				if (!releaseApiDependencies.contains(dep.getGroup() + ":" + dep.getName())) {
+					dependenciesBlock.append("\t" + dep.toString() + System.lineSeparator());
+				}
+			});
 
 		dependenciesBlock.append(System.lineSeparator());
 		dependenciesBlock.append("}");
@@ -938,6 +954,34 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 				}
 			}
 		);
+	}
+
+	private void _createWarPortlet(Path warPortletDirPath, String warPortleName) throws Exception {
+		BladeCLI bladeCLI = getBladeCLI();
+
+		BaseArgs baseArgs = bladeCLI.getArgs();
+
+		CreateArgs createArgs = new CreateArgs();
+
+		createArgs.setQuiet(true);
+		createArgs.setBase(baseArgs.getBase());
+
+		CreateCommand createCommand = new CreateCommand(getBladeCLI());
+
+		createCommand.setArgs(createArgs);
+
+		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
+
+		projectTemplatesArgs.setDestinationDir(warPortletDirPath.toFile());
+		projectTemplatesArgs.setName(warPortleName);
+		projectTemplatesArgs.setTemplate("war-mvc-portlet");
+		projectTemplatesArgs.setForce(true);
+
+		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseArgs.getBase());
+
+		projectTemplatesArgs.setProduct(workspaceProvider.getProduct(createArgs.getBase()));
+
+		createCommand.execute(projectTemplatesArgs);
 	}
 
 	private void _deleteServiceBuilderFiles(Path warPath) throws Exception {
@@ -1078,82 +1122,117 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> implements FilesSup
 		return parentProjectName;
 	}
 
+	private List<String> _getReleaseApirtifactIds() {
+		try {
+			BladeCLI bladeCLI = getBladeCLI();
+
+			BaseArgs baseArgs = bladeCLI.getArgs();
+
+			Optional<String> productKeyOpt = Optional.ofNullable(
+				(GradleWorkspaceProvider)bladeCLI.getWorkspaceProvider(baseArgs.getBase())
+			).filter(
+				Objects::nonNull
+			).map(
+				provider -> provider.getGradleProperties(baseArgs.getBase())
+			).filter(
+				Objects::nonNull
+			).map(
+				properties -> properties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY, null)
+			).filter(
+				Objects::nonNull
+			);
+
+			if (!productKeyOpt.isPresent()) {
+				return Collections.emptyList();
+			}
+
+			String productKey = productKeyOpt.get();
+
+			Optional<String> targetPlatformVersionFromProduct = _getTargetPlatformVersionFromProduct(productKey);
+
+			if (!targetPlatformVersionFromProduct.isPresent()) {
+				return Collections.emptyList();
+			}
+
+			String simplifiedVersion = BladeUtil.simplifyTargetPlatformVersion(targetPlatformVersionFromProduct.get());
+
+			String[] versionParts = simplifiedVersion.split("\\.");
+
+			if (productKey.startsWith("dxp")) {
+				simplifiedVersion = versionParts[0] + "." + versionParts[1] + "." + versionParts[2] + ".x";
+			}
+			else if (productKey.startsWith("portal")) {
+				simplifiedVersion = versionParts[0] + "." + versionParts[1] + ".x";
+			}
+
+			Class<?> clazz = ConvertCommand.class;
+
+			try (InputStream inputStream = clazz.getResourceAsStream(
+					"/release-api/" + simplifiedVersion + "-versions.txt");
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+				String dependency = null;
+
+				List<String> allArtifactIds = new ArrayList<>();
+
+				while ((dependency = bufferedReader.readLine()) != null) {
+					allArtifactIds.add(dependency);
+				}
+
+				return allArtifactIds;
+			}
+			catch (Exception exception) {
+			}
+		}
+		catch (Exception exception) {
+		}
+
+		return Collections.emptyList();
+	}
+
+	@SuppressWarnings("unchecked")
+	private Optional<String> _getTargetPlatformVersionFromProduct(String productKey) {
+		try {
+			File userHomeDir = new File(System.getProperty("user.home"));
+
+			userHomeDir = userHomeDir.getCanonicalFile();
+
+			Path userHomePath = userHomeDir.toPath();
+
+			Path productInfoPath = userHomePath.resolve(".liferay/workspace/.product_info.json");
+
+			if (!Files.exists(productInfoPath)) {
+				Map<String, Object> productInfos = BladeUtil.getProductInfos();
+
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(productKey));
+
+				return Optional.of(productInfo.getTargetPlatformVersion());
+			}
+
+			JSONObject jsonObject = new JSONObject(new String(Files.readAllBytes(productInfoPath.normalize())));
+
+			return Optional.ofNullable(
+				jsonObject.get(productKey)
+			).map(
+				JSONObject.class::cast
+			).map(
+				info -> info.get("targetPlatformVersion")
+			).map(
+				Object::toString
+			);
+		}
+		catch (Exception exception) {
+		}
+
+		return Optional.empty();
+	}
+
 	private boolean _hasServiceXmlFile(File dir) {
 		Path dirPath = dir.toPath();
 
 		Path serviceXml = dirPath.resolve("docroot/WEB-INF/service.xml");
 
 		return Files.exists(serviceXml);
-	}
-
-	private void _initBuildGradle(Path warPath) throws Exception {
-		Path initPath = Files.createTempDirectory("ws");
-
-		BladeCLI bladeCLI = getBladeCLI();
-
-		BaseArgs baseArgs = bladeCLI.getArgs();
-
-		File baseDir = baseArgs.getBase();
-
-		String liferayProduct = Optional.ofNullable(
-			bladeCLI.getWorkspaceProvider(baseDir)
-		).map(
-			wp -> {
-				GradleWorkspaceProvider gradleWorkspaceProvider = (GradleWorkspaceProvider)wp;
-
-				return gradleWorkspaceProvider.getGradleProperties(baseDir);
-			}
-		).map(
-			properties -> properties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY)
-		).orElse(
-			"portal-7.4-ga4"
-		);
-
-		bladeCLI = new BladeCLI();
-
-		baseArgs = bladeCLI.getArgs();
-
-		baseArgs.setProfileName("gradle");
-		baseArgs.setQuiet(true);
-
-		InitArgs initArgs = new InitArgs();
-
-		initArgs.setBase(initPath.toFile());
-		initArgs.setLiferayVersion(liferayProduct);
-		initArgs.setQuiet(baseArgs.isQuiet());
-
-		InitCommand initCommand = new InitCommand();
-
-		initCommand.setArgs(initArgs);
-		initCommand.setBlade(bladeCLI);
-
-		initCommand.execute();
-
-		Path modulesPath = initPath.resolve("modules");
-
-		CreateArgs createArgs = new CreateArgs();
-
-		createArgs.setBase(modulesPath.toFile());
-		createArgs.setTemplate("war-mvc-portlet");
-		createArgs.setName("war-portlet");
-		createArgs.setQuiet(baseArgs.isQuiet());
-
-		ConvertArgs originalConvertArgs = getArgs();
-
-		createArgs.setProduct(originalConvertArgs.getProduct());
-
-		CreateCommand createCommand = new CreateCommand();
-
-		createCommand.setArgs(createArgs);
-		createCommand.setBlade(bladeCLI);
-
-		createCommand.execute();
-
-		Path tempBuildGradle = modulesPath.resolve("war-portlet/build.gradle");
-
-		copyFile(tempBuildGradle, warPath.resolve("build.gradle"));
-
-		FileUtil.deleteDir(initPath);
 	}
 
 	private boolean _isServiceBuilderPlugin(File pluginDir) {
