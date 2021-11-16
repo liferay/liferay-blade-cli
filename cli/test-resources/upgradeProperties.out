@@ -1,5 +1,5 @@
 buffered.increment.enabled
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 buffered.increment.standby.queue.threshold
 	KEEP - This property is still present in the new portal.properties.

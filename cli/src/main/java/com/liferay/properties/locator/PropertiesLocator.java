@@ -922,7 +922,7 @@ public class PropertiesLocator {
 	};
 
 	private static final String _PORTAL_IMPL_RELATIVE_PATH =
-		File.separator + "WEB-INF" + File.separator + "lib" + File.separator + "portal-impl.jar";
+		File.separator + "WEB-INF" + File.separator + "shielded-container-lib" + File.separator + "portal-impl.jar";
 
 	private static Path _bundlePath;
 

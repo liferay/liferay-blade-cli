@@ -76,7 +76,7 @@ dependencies {
 
 	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "4.3.0"
 	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
-	compile group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.161"
+	compile group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.163"
 	compile group: "commons-io", name: "commons-io", version: "2.6"
 	compile group: "org.apache.ant", name: "ant", version: "1.10.7"
 	compile group: "commons-lang", name: "commons-lang", version: "2.6"
@@ -130,8 +130,8 @@ dependencies {
 }
 
 downloadPortal {
-	src "https://releases-cdn.liferay.com/portal/7.3.0-ga1/liferay-ce-portal-tomcat-7.3.0-ga1-20200127150653953.tar.gz"
-	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.3.0-ga1-20200127150653953.tar.gz')
+	src "https://releases-cdn.liferay.com/portal/7.4.3.4-ga4/liferay-ce-portal-tomcat-7.4.3.4-ga4-20211020095956970.tar.gz"
+	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.4.3.4-ga4-20211020095956970.tar.gz')
 	onlyIfNewer true
 }
 
@@ -249,7 +249,7 @@ test {
 
 	systemProperty "bladeJarPath", jar.archivePath
 	systemProperty "buildDir", "${buildDir}"
-	systemProperty "liferay.home", "${buildDir}/liferay-ce-portal-7.3.0-ga1"
+	systemProperty "liferay.home", "${buildDir}/liferay-ce-portal-7.4.3.4-ga4"
 	systemProperty "jna.nosys", "true"
 	systemProperty "testOutputPath", sourceSets.test.output.classesDirs.singleFile.absolutePath
 

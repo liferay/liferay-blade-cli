@@ -114,7 +114,7 @@ application.startup.events
 
 asset.browser.search.with.database
 	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- search.with.database from osgi/marketplace/Liferay CE Web Experience - Liferay CE Asset - Impl.lpkg/com.liferay.asset.browser.web-4.0.4.jar/portlet.properties
+		- search.with.database from osgi/marketplace/Liferay CE Web Experience - Liferay CE Asset - Impl.lpkg/com.liferay.asset.browser.web-5.0.11.jar/portlet.properties
 
 asset.categories.navigation.display.templates.config
 	REMOVE - Overwrite the method in the ADT handler. See LPS-67466
@@ -188,7 +188,7 @@ asset.publisher.query.form.configuration
 
 asset.publisher.search.with.index
 	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- search.with.database from osgi/marketplace/Liferay CE Web Experience - Liferay CE Asset - Impl.lpkg/com.liferay.asset.browser.web-4.0.4.jar/portlet.properties
+		- search.with.database from osgi/marketplace/Liferay CE Web Experience - Liferay CE Asset - Impl.lpkg/com.liferay.asset.browser.web-5.0.11.jar/portlet.properties
 
 asset.tag.permissions.enabled
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -616,7 +616,7 @@ browser.launcher.url
 	KEEP - This property is still present in the new portal.properties.
 
 buffered.increment.enabled
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 buffered.increment.standby.queue.threshold
 	KEEP - This property is still present in the new portal.properties.
@@ -718,36 +718,28 @@ cas.auth.enabled
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 cas.import.from.ldap
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- importFromLDAP from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 cas.login.url
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- loginURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 cas.logout.on.session.expiration
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- logoutOnSessionExpiration from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 cas.logout.url
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- logoutURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 cas.no.such.user.redirect.url
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- noSuchUserRedirectURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 cas.server.name
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- serverName from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 cas.server.url
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- serverURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 cas.service.url
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- serviceURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 cdn.dynamic.resources.enabled
 	KEEP - This property is still present in the new portal.properties.
@@ -793,7 +785,9 @@ clusterable.advice.call.master.timeout
 	KEEP - This property is still present in the new portal.properties.
 
 com.liferay.portal.service.http.TunnelUtil.verify.ssl.hostname
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- httpSSLEnabled from com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration
+		- httpSSLEnabled from com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration
 
 com.liferay.portal.servlet.filters.absoluteredirects.AbsoluteRedirectsFilter
 	KEEP - This property is still present in the new portal.properties.
@@ -856,13 +850,13 @@ com.liferay.portal.servlet.filters.sessionmaxallowed.SessionMaxAllowedFilter
 	KEEP - This property is still present in the new portal.properties.
 
 com.liferay.portal.servlet.filters.sso.cas.CASFilter
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 com.liferay.portal.servlet.filters.sso.ntlm.NtlmFilter
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 com.liferay.portal.servlet.filters.sso.ntlm.NtlmPostFilter
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 com.liferay.portal.servlet.filters.sso.opensso.OpenSSOFilter
 	KEEP - This property is still present in the new portal.properties.
@@ -911,12 +905,16 @@ com.liferay.portal.upload.UploadServletRequestImpl.max.size
 		- imageMaxSize from com.liferay.adaptive.media.image.internal.configuration.AMImageConfiguration
 		- workersMaxSize from com.liferay.adaptive.media.web.internal.configuration.AMConfiguration
 		- imageMaxSize from com.liferay.blogs.configuration.BlogsFileUploadsConfiguration
+		- imageMaxSize from com.liferay.commerce.product.configuration.AttachmentsConfiguration
+		- imageMaxSize from com.liferay.commerce.shop.by.diagram.configuration.CSDiagramSettingImageConfiguration
+		- fileMaxSize from com.liferay.dispatch.configuration.DispatchConfiguration
+		- fileMaxSize from com.liferay.dispatch.talend.web.internal.configuration.DispatchTalendConfiguration
 		- fileMaxSize from com.liferay.document.library.configuration.DLConfiguration
 		- previewableProcessorMaxSize from com.liferay.document.library.configuration.DLFileEntryConfiguration
-		- maxSize from com.liferay.document.library.file.rank.internal.configuration.DLFileRankServiceConfiguration
 		- smallImageMaxSize from com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfiguration
 		- smallImageMaxSize from com.liferay.journal.configuration.JournalFileUploadsConfiguration
 		- workerMaxSize from com.liferay.portal.messaging.internal.configuration.DestinationWorkerConfiguration
+		- asyncRenderThreadPoolMaxSize from com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration
 		- maxSize from com.liferay.portal.upload.internal.configuration.UploadServletRequestConfiguration
 		- imageMaxSize from com.liferay.users.admin.configuration.UserFileUploadsConfiguration
 		- attachmentMaxSize from com.liferay.wiki.configuration.WikiFileUploadConfiguration
@@ -1312,8 +1310,7 @@ dl.file.entry.preview.video.width
 	KEEP - This property is still present in the new portal.properties.
 
 dl.file.entry.previewable.processor.max.size
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- maxSize from com.liferay.document.library.file.rank.internal.configuration.DLFileRankServiceConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 dl.file.entry.processors
 	KEEP - This property is still present in the new portal.properties.
@@ -1364,8 +1361,7 @@ dl.file.indexing.max.size
 	KEEP - This property is still present in the new portal.properties.
 
 dl.file.max.size
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- maxSize from com.liferay.document.library.file.rank.internal.configuration.DLFileRankServiceConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 dl.file.rank.check.interval
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -1374,8 +1370,7 @@ dl.file.rank.enabled
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 dl.file.rank.max.size
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- maxSize from com.liferay.document.library.file.rank.internal.configuration.DLFileRankServiceConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 dl.folder.icon.check.count
 	KEEP - This property is still present in the new portal.properties.
@@ -1400,7 +1395,7 @@ dl.store.antivirus.enabled
 	KEEP - This property is still present in the new portal.properties.
 
 dl.store.antivirus.impl
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 dl.store.cmis.credentials.password
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -1453,6 +1448,7 @@ dl.store.s3.access.key
 
 dl.store.s3.bucket.name
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- bucketName from com.liferay.portal.store.gcs.configuration.GCSStoreConfiguration
 		- bucketName from com.liferay.portal.store.s3.configuration.S3StoreConfiguration
 
 dl.store.s3.jets3t
@@ -1485,12 +1481,12 @@ dynamic.data.lists.error.template
 
 dynamic.data.lists.record.set.force.autogenerate.key
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- autogenerateStructureKey from com.liferay.dynamic.data.mapping.web.internal.configuration.DDMWebConfiguration
-		- autogenerateTemplateKey from com.liferay.dynamic.data.mapping.web.internal.configuration.DDMWebConfiguration
+		- autogenerateStructureKey from com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration
+		- autogenerateTemplateKey from com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration
 
 dynamic.data.lists.storage.type
 	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- dynamic.data.lists.storage.type from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Lists - Impl.lpkg/com.liferay.dynamic.data.lists.web-5.0.4.jar/portlet.properties
+		- dynamic.data.lists.storage.type from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Lists - Impl.lpkg/com.liferay.dynamic.data.lists.web-6.0.15.jar/portlet.properties
 
 dynamic.data.mapping.image.extensions
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
@@ -1502,7 +1498,7 @@ dynamic.data.mapping.image.small.max.size
 
 dynamic.data.mapping.structure.force.autogenerate.key
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- autogenerateStructureKey from com.liferay.dynamic.data.mapping.web.internal.configuration.DDMWebConfiguration
+		- autogenerateStructureKey from com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration
 
 dynamic.data.mapping.structure.private.field.datatype
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -1515,19 +1511,19 @@ dynamic.data.mapping.structure.private.field.repeatable
 
 dynamic.data.mapping.template.force.autogenerate.key
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- autogenerateTemplateKey from com.liferay.dynamic.data.mapping.web.internal.configuration.DDMWebConfiguration
+		- autogenerateTemplateKey from com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration
 
 dynamic.data.mapping.template.language.content
 	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- dynamic.data.mapping.template.language.content[xsl] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-4.0.5.jar/portlet.properties
-		- dynamic.data.mapping.template.language.content[vm] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-4.0.5.jar/portlet.properties
-		- dynamic.data.mapping.template.language.content[ftl] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-4.0.5.jar/portlet.properties
+		- dynamic.data.mapping.template.language.content[ftl] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-5.0.19.jar/portlet.properties
+		- dynamic.data.mapping.template.language.content[vm] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-5.0.19.jar/portlet.properties
+		- dynamic.data.mapping.template.language.content[xsl] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-5.0.19.jar/portlet.properties
 
 dynamic.data.mapping.template.language.default
 	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- dynamic.data.mapping.template.language.content[xsl] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-4.0.5.jar/portlet.properties
-		- dynamic.data.mapping.template.language.content[vm] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-4.0.5.jar/portlet.properties
-		- dynamic.data.mapping.template.language.content[ftl] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-4.0.5.jar/portlet.properties
+		- dynamic.data.mapping.template.language.content[ftl] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-5.0.19.jar/portlet.properties
+		- dynamic.data.mapping.template.language.content[vm] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-5.0.19.jar/portlet.properties
+		- dynamic.data.mapping.template.language.content[xsl] from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Dynamic Data Mapping - Impl.lpkg/com.liferay.dynamic.data.mapping.web-5.0.19.jar/portlet.properties
 
 dynamic.resource.servlet.allowed.paths
 	KEEP - This property is still present in the new portal.properties.
@@ -1596,10 +1592,10 @@ editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.configuration.jsp
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.bb_code.jsp
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.html.jsp
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 editor.wysiwyg.portal-web.docroot.html.portlet.portal_settings.email_notifications.jsp
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -1617,7 +1613,7 @@ editor.wysiwyg.portal-web.docroot.html.portlet.wiki.edit.mediawiki.jsp
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 ehcache.blocking.cache.allowed
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 ehcache.bootstrap.cache.loader.enabled
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -1913,7 +1909,7 @@ index.on.startup.delay
 	KEEP - This property is still present in the new portal.properties.
 
 index.on.upgrade
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 index.permission.filter.search.amplification.factor
 	KEEP - This property is still present in the new portal.properties.
@@ -1922,7 +1918,8 @@ index.portal.field.analyzer.enabled
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 index.read.only
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- suppressIndexReadOnly from com.liferay.portal.search.internal.index.configuration.IndexStatusManagerInternalConfiguration
 
 index.search.collated.spell.check.result.enabled
 	KEEP - This property is still present in the new portal.properties.
@@ -2281,7 +2278,7 @@ journal.char.blacklist
 
 journal.content.publish.to.live.by.default
 	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience - Liferay CE Journal - Impl.lpkg/com.liferay.journal.content.web-5.0.2.jar/portlet.properties
+		- publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience - Liferay CE Journal - Impl.lpkg/com.liferay.journal.content.web-6.0.14.jar/portlet.properties
 
 journal.content.search.show.listed
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
@@ -2379,8 +2376,6 @@ journal.email.from.name
 journal.error.template
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
 		- errorTemplateFTL from com.liferay.journal.configuration.JournalServiceConfiguration
-		- errorTemplateVM from com.liferay.journal.configuration.JournalServiceConfiguration
-		- errorTemplateXSL from com.liferay.journal.configuration.JournalServiceConfiguration
 
 journal.feed.force.autogenerate.id
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
@@ -2402,22 +2397,22 @@ journal.lar.creation.strategy
 
 journal.publish.to.live.by.default
 	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience - Liferay CE Journal - Impl.lpkg/com.liferay.journal.content.web-5.0.2.jar/portlet.properties
+		- publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience - Liferay CE Journal - Impl.lpkg/com.liferay.journal.content.web-6.0.14.jar/portlet.properties
 
 journal.publish.version.history.by.default
 	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience - Liferay CE Journal - Impl.lpkg/com.liferay.journal.content.web-5.0.2.jar/portlet.properties
+		- publish.to.live.by.default from osgi/marketplace/Liferay CE Web Experience - Liferay CE Journal - Impl.lpkg/com.liferay.journal.content.web-6.0.14.jar/portlet.properties
 
 journal.sync.content.search.on.startup
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
 		- syncContentSearchOnStartup from com.liferay.journal.configuration.JournalServiceConfiguration
 
 journal.template.language.content
-	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- journalDDMTemplateLanguageTypes from com.liferay.journal.web.internal.configuration.JournalWebConfiguration
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 journal.transformer.listener
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- enableContentTransformerListener from com.liferay.journal.configuration.JournalServiceConfiguration
 
 jpa.configs
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -2531,25 +2526,27 @@ layout.manage.pages.initial.children
 	KEEP - This property is still present in the new portal.properties.
 
 layout.parallel.render.enable
-	KEEP - This property is still present in the new portal.properties.
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- enableLayoutTranslatedLanguages from com.liferay.layout.seo.internal.configuration.LayoutSEOCompanyConfiguration
+		- enableLayoutTranslatedLanguages from com.liferay.layout.seo.internal.configuration.LayoutSEOGroupConfiguration
 
 layout.parallel.render.thread.pool.allow.core.thread.timeout
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 layout.parallel.render.thread.pool.core.thread.count
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 layout.parallel.render.thread.pool.keep.alive.time
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 layout.parallel.render.thread.pool.max.queue.size
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 layout.parallel.render.thread.pool.max.thread.count
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 layout.parallel.render.timeout
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 layout.parentable
 	KEEP - This property is still present in the new portal.properties.
@@ -2567,8 +2564,8 @@ layout.remember.maximized.window.state
 	KEEP - This property is still present in the new portal.properties.
 
 layout.reset.portlet.ids
-	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- service.configurator.portlet.ids from osgi/marketplace/Liferay CE Web Experience - Liferay CE Layout - Impl.lpkg/com.liferay.layout.seo.service-2.0.4.jar/portlet.properties
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- verifiedLayoutTemplateIds from com.liferay.layout.internal.configuration.LayoutConverterConfiguration
 
 layout.set.form.update
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -2713,7 +2710,7 @@ ldap.import.group.search.filter.enabled
 
 ldap.import.interval
 	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- draft.export.import.configuration.check.interval from osgi/marketplace/Liferay CE Web Experience - Liferay CE Export Import - Impl.lpkg/com.liferay.exportimport.web-4.0.6.jar/portlet.properties
+		- draft.export.import.configuration.check.interval from osgi/marketplace/Liferay CE Web Experience - Liferay CE Export Import - Impl.lpkg/com.liferay.exportimport.web-5.0.16.jar/portlet.properties
 
 ldap.import.lock.expiration.time
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
@@ -2763,10 +2760,12 @@ ldap.user.ignore.attributes
 		- userIgnoreAttributes from com.liferay.portal.security.ldap.configuration.LDAPServerConfiguration
 
 library.download.url.resin.jar
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- nativeLibraryDownloadURL from com.liferay.document.library.asset.auto.tagger.tensorflow.internal.configuration.TensorFlowImageAssetAutoTagProviderDownloadConfiguration
 
 library.download.url.script-10.jar
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- nativeLibraryDownloadURL from com.liferay.document.library.asset.auto.tagger.tensorflow.internal.configuration.TensorFlowImageAssetAutoTagProviderDownloadConfiguration
 
 liferay.home
 	KEEP - This property is still present in the new portal.properties.
@@ -3052,7 +3051,8 @@ message.boards.email.message.added.enabled
 	KEEP - This property is still present in the new portal.properties.
 
 message.boards.email.message.added.signature
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- enableMessageBoardsModeration from com.liferay.message.boards.moderation.configuration.MBModerationGroupConfiguration
 
 message.boards.email.message.added.subject
 	KEEP - This property is still present in the new portal.properties.
@@ -3064,7 +3064,8 @@ message.boards.email.message.updated.enabled
 	KEEP - This property is still present in the new portal.properties.
 
 message.boards.email.message.updated.signature
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- enableMessageBoardsModeration from com.liferay.message.boards.moderation.configuration.MBModerationGroupConfiguration
 
 message.boards.email.message.updated.subject
 	KEEP - This property is still present in the new portal.properties.
@@ -3095,13 +3096,16 @@ message.boards.subscribe.by.default
 	KEEP - This property is still present in the new portal.properties.
 
 message.boards.thread.previous.and.next.navigation.enabled
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- enableMessageBoardsModeration from com.liferay.message.boards.moderation.configuration.MBModerationGroupConfiguration
 
 message.boards.thread.views
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- enableMessageBoardsModeration from com.liferay.message.boards.moderation.configuration.MBModerationGroupConfiguration
 
 message.boards.thread.views.default
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- enableMessageBoardsModeration from com.liferay.message.boards.moderation.configuration.MBModerationGroupConfiguration
 
 microsoft.translator.client.id
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -3167,13 +3171,13 @@ module.framework.portal.dir
 	KEEP - This property is still present in the new portal.properties.
 
 module.framework.properties.felix.fileinstall.bundles.new.start
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 module.framework.properties.felix.fileinstall.bundles.startActivationPolicy
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 module.framework.properties.felix.fileinstall.bundles.startTransient
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 module.framework.properties.gosh.args
 	KEEP - This property is still present in the new portal.properties.
@@ -3271,6 +3275,7 @@ my.sites.show.user.public.sites.with.no.layouts
 navigation.display.style
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
 		- displayStyle from com.liferay.asset.categories.navigation.web.internal.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
+		- displayStyle from com.liferay.commerce.product.asset.categories.navigation.web.internal.configuration.CPAssetCategoriesNavigationPortletInstanceConfiguration
 		- displayStyle from com.liferay.site.navigation.breadcrumb.web.internal.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
 		- displayStyle from com.liferay.site.navigation.directory.web.internal.configuration.SitesDirectoryPortletInstanceConfiguration
 		- displayStyle from com.liferay.site.navigation.language.web.internal.configuration.SiteNavigationLanguagePortletInstanceConfiguration
@@ -3281,6 +3286,8 @@ navigation.display.style.default
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
 		- displayStyleGroupId from com.liferay.asset.categories.navigation.web.internal.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
 		- displayStyle from com.liferay.asset.categories.navigation.web.internal.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
+		- displayStyle from com.liferay.commerce.product.asset.categories.navigation.web.internal.configuration.CPAssetCategoriesNavigationPortletInstanceConfiguration
+		- displayStyleGroupId from com.liferay.commerce.product.asset.categories.navigation.web.internal.configuration.CPAssetCategoriesNavigationPortletInstanceConfiguration
 		- displayStyleGroupId from com.liferay.site.navigation.breadcrumb.web.internal.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
 		- displayStyle from com.liferay.site.navigation.breadcrumb.web.internal.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
 		- displayStyle from com.liferay.site.navigation.directory.web.internal.configuration.SitesDirectoryPortletInstanceConfiguration
@@ -3295,6 +3302,8 @@ navigation.display.style.options
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
 		- displayStyleGroupId from com.liferay.asset.categories.navigation.web.internal.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
 		- displayStyle from com.liferay.asset.categories.navigation.web.internal.configuration.AssetCategoriesNavigationPortletInstanceConfiguration
+		- displayStyle from com.liferay.commerce.product.asset.categories.navigation.web.internal.configuration.CPAssetCategoriesNavigationPortletInstanceConfiguration
+		- displayStyleGroupId from com.liferay.commerce.product.asset.categories.navigation.web.internal.configuration.CPAssetCategoriesNavigationPortletInstanceConfiguration
 		- displayStyleGroupId from com.liferay.site.navigation.breadcrumb.web.internal.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
 		- displayStyle from com.liferay.site.navigation.breadcrumb.web.internal.configuration.SiteNavigationBreadcrumbPortletInstanceConfiguration
 		- displayStyle from com.liferay.site.navigation.directory.web.internal.configuration.SitesDirectoryPortletInstanceConfiguration
@@ -3392,23 +3401,19 @@ open.sso.last.name.attr
 
 open.sso.ldap.import.enabled
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- importFromLDAP from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
 		- importFromLDAP from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 		- importFromLDAP from com.liferay.portal.security.sso.token.configuration.TokenConfiguration
 
 open.sso.login.url
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- loginURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
 		- loginURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 
 open.sso.logout.on.session.expiration
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- logoutOnSessionExpiration from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
 		- logoutOnSessionExpiration from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 
 open.sso.logout.url
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- logoutURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
 		- logoutURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 
 open.sso.screen.name.attr
@@ -3417,7 +3422,6 @@ open.sso.screen.name.attr
 
 open.sso.service.url
 	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
-		- serviceURL from com.liferay.portal.security.sso.cas.configuration.CASConfiguration
 		- serviceURL from com.liferay.portal.security.sso.opensso.configuration.OpenSSOConfiguration
 
 openoffice.cache.enabled
@@ -3631,7 +3635,7 @@ permissions.list.filter
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 permissions.object.blocking.cache
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 permissions.propagation.enabled
 	KEEP - This property is still present in the new portal.properties.
@@ -3715,8 +3719,7 @@ poller.request.timeout
 	KEEP - This property is still present in the new portal.properties.
 
 polls.publish.to.live.by.default
-	MODULARIZE - This property matches with the following portlet properties, select the most appropriate:
-		- publish.to.live.by.default from osgi/marketplace/Liferay CE Forms and Workflow - Liferay CE Polls - Impl.lpkg/com.liferay.polls.service-6.0.3.jar/portlet.properties
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 pop.server.notifications.enabled
 	KEEP - This property is still present in the new portal.properties.
@@ -3734,7 +3737,9 @@ portal.impersonation.enable
 	KEEP - This property is still present in the new portal.properties.
 
 portal.instance.http.port
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- embeddedHttpPort from com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration
+		- sidecarHttpPort from com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration
 
 portal.instance.https.port
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -3758,13 +3763,14 @@ portal.proxy.path
 	KEEP - This property is still present in the new portal.properties.
 
 portal.resiliency.enabled
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 portal.resiliency.portlet.show.footer
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 portal.resiliency.spi.agent.client.pool.max.size
-	KEEP - This property is still present in the new portal.properties.
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- asyncRenderThreadPoolMaxSize from com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration
 
 portal.security.manager.file.checker.default.read.paths
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -3860,13 +3866,15 @@ recent.content.max.display.items
 	KEEP - This property is still present in the new portal.properties.
 
 redirect.url.domains.allowed
-	KEEP - This property is still present in the new portal.properties.
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- allowedDomains from com.liferay.redirect.internal.configuration.RedirectURLConfiguration
 
 redirect.url.ips.allowed
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 redirect.url.security.mode
-	KEEP - This property is still present in the new portal.properties.
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- securityMode from com.liferay.redirect.internal.configuration.RedirectURLConfiguration
 
 request.header.auth.hosts.allowed
 	KEEP - This property is still present in the new portal.properties.
@@ -4054,7 +4062,7 @@ session.cookie.use.full.hostname
 	KEEP - This property is still present in the new portal.properties.
 
 session.disabled
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 session.enable.persistent.cookies
 	KEEP - This property is still present in the new portal.properties.
@@ -4301,10 +4309,14 @@ social.activity.participation.limit.values
 		- participationLimitValues from com.liferay.social.activity.configuration.SocialActivityGroupServiceConfiguration
 
 social.activity.sets.bundling.enabled
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- enableUserSocialActivityTracking from com.liferay.social.activity.internal.configuration.SocialActivityCompanyConfiguration
+		- enableUserSocialActivityTracking from com.liferay.social.activity.internal.configuration.SocialActivitySystemConfiguration
 
 social.activity.sets.enabled
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- enableUserSocialActivityTracking from com.liferay.social.activity.internal.configuration.SocialActivityCompanyConfiguration
+		- enableUserSocialActivityTracking from com.liferay.social.activity.internal.configuration.SocialActivitySystemConfiguration
 
 social.activity.sets.selector
 	KEEP - This property is still present in the new portal.properties.
@@ -4373,10 +4385,12 @@ sql.data.max.parameters
 	KEEP - This property is still present in the new portal.properties.
 
 staging.delete.temp.lar.on.failure
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- stagingDeleteTempLAROnFailure from com.liferay.staging.configuration.StagingConfiguration
 
 staging.delete.temp.lar.on.success
-	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
+	MODULARIZE AS OSGI - This property matches with the following OSGI config, select the most appropriate:
+		- stagingDeleteTempLAROnSuccess from com.liferay.staging.configuration.StagingConfiguration
 
 staging.hibernate.cache.flush.frequency
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -4792,7 +4806,7 @@ vaadin.widgetset
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 value.object.entity.blocking.cache
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 value.object.entity.cache.enabled
 	KEEP - This property is still present in the new portal.properties.
@@ -4813,7 +4827,7 @@ value.object.finder.cache.enabled
 	KEEP - This property is still present in the new portal.properties.
 
 value.object.finder.cache.enabled.Users_Roles
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 value.object.finder.cache.enabled.com.liferay.portal.model.Layout
 	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
@@ -4895,19 +4909,19 @@ velocity.engine.velocimacro.library
 		- velocimacroLibrary from com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration
 
 verify.database.transactions.disabled
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 verify.frequency
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 verify.patch.levels.disabled
 	KEEP - This property is still present in the new portal.properties.
 
 verify.process.concurrency.threshold
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 verify.processes
-	KEEP - This property is still present in the new portal.properties.
+	ANALYZE - This property is not present in thew new portal.properties. Check if you still need it or check the documentation to find a replacement
 
 virtual.hosts.default.site.name
 	KEEP - This property is still present in the new portal.properties.
