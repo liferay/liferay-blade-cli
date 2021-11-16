@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * @author David Truong
  * @author Gregory Amerson
  */
-public class ConvertThemeCommand {
+public class ConvertThemeCommand implements FilesSupport {
 
 	public ConvertThemeCommand(BladeCLI bladeCLI, ConvertArgs convertArgs) throws Exception {
 		_bladeCLI = bladeCLI;

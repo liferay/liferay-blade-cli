@@ -64,16 +64,10 @@ import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.gradle.internal.impldep.com.google.common.base.Strings;
-
-import org.osgi.framework.Version;
 
 /**
  * @author Gregory Amerson
@@ -100,37 +94,6 @@ public class BladeUtil {
 		InetSocketAddress remoteAddress = new InetSocketAddress(host, Integer.valueOf(port));
 
 		return _canConnect(localAddress, remoteAddress);
-	}
-
-	public static int compareVersions(Version v1, Version v2) {
-		if (v2 == v1) {
-
-			// quicktest
-
-			return 0;
-		}
-
-		int result = v1.getMajor() - v2.getMajor();
-
-		if (result != 0) {
-			return result;
-		}
-
-		result = v1.getMinor() - v2.getMinor();
-
-		if (result != 0) {
-			return result;
-		}
-
-		result = v1.getMicro() - v2.getMicro();
-
-		if (result != 0) {
-			return result;
-		}
-
-		String s1 = v1.getQualifier();
-
-		return s1.compareTo(v2.getQualifier());
 	}
 
 	public static void downloadGithubProject(String url, Path target) throws IOException {
@@ -555,55 +518,6 @@ public class BladeUtil {
 		processBuilder.command(commands);
 	}
 
-	public static String simplifyTargetPlatformVersion(String targetPlatformVersion) {
-		if (targetPlatformVersion == null) {
-			return null;
-		}
-
-		String[] segments = targetPlatformVersion.split("\\.");
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(segments[0]);
-		sb.append('.');
-		sb.append(segments[1]);
-		sb.append('.');
-
-		String micro = segments[2];
-
-		int dashPosition = micro.indexOf("-");
-
-		if (dashPosition > 0) {
-			sb.append(micro.substring(0, dashPosition));
-
-			if (segments.length == 3) {
-				sb.append(".");
-				sb.append(micro.substring(dashPosition + 1));
-			}
-		}
-		else {
-			sb.append(micro);
-		}
-
-		if (segments.length > 3) {
-			sb.append(".");
-
-			String qualifier = segments[3];
-
-			Matcher matcher = _microPattern.matcher(qualifier);
-
-			if (matcher.matches() && (matcher.groupCount() >= 5)) {
-				qualifier = matcher.group(5);
-			}
-
-			if (!Strings.isNullOrEmpty(qualifier)) {
-				sb.append(qualifier);
-			}
-		}
-
-		return sb.toString();
-	}
-
 	public static Process startProcess(String command, File workingDir) throws Exception {
 		return startProcess(command, workingDir, null);
 	}
@@ -755,7 +669,6 @@ public class BladeUtil {
 
 	private static final String _PRODUCT_INFO_URL = "https://releases.liferay.com/tools/workspace/.product_info.json";
 
-	private static final Pattern _microPattern = Pattern.compile("(((e|f|s)p)|(ga))([0-9]+)(-[0-9]+)?");
 	private static Map<String, Object> _productInfoMap = Collections.emptyMap();
 	private static File _workspaceCacheDir = new File(
 		System.getProperty("user.home"), _DEFAULT_WORKSPACE_CACHE_DIR_NAME);

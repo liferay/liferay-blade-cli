@@ -80,10 +80,6 @@ public class FileUtil {
 		Files.walkFileTree(source, new CopyDirVisitor(source, target, StandardCopyOption.REPLACE_EXISTING));
 	}
 
-	public static void copyFile(Path sourcePath, Path destinationPath) throws IOException {
-		moveFile(sourcePath, destinationPath, false);
-	}
-
 	public static void deleteDir(Path dirPath) throws IOException {
 		Files.walkFileTree(
 			dirPath,
@@ -132,17 +128,6 @@ public class FileUtil {
 
 			return attributes.getValue(name);
 		}
-	}
-
-	public static void moveFile(Path sourcePath, Path destinationPath) throws IOException {
-		Files.walkFileTree(
-			sourcePath, new CopyDirVisitor(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, false));
-	}
-
-	public static void moveFile(Path sourcePath, Path destinationPath, boolean removeSourceFile) throws IOException {
-		Files.walkFileTree(
-			sourcePath,
-			new CopyDirVisitor(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, removeSourceFile));
 	}
 
 	public static String read(File file) throws IOException {
