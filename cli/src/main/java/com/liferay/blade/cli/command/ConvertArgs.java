@@ -102,7 +102,7 @@ public class ConvertArgs extends BaseArgs {
 	private boolean _all;
 
 	@Parameter(
-		description = "The version of Liferay to target when converting the project. Available options are 7.0, 7.1, 7.2, 7.3.",
+		description = "The version of Liferay to target when converting the project. Available options are 7.0, 7.1, 7.2, 7.3, 7.4.",
 		names = {"-v", "--liferay-version"}
 	)
 	private String _liferayVersion;
