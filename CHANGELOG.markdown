@@ -1,5 +1,60 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.10 - 2021-11-19
+
+### Commits
+- [BLADE-632] Add support to convert to liferay 7.4 (87663eaeb3)
+- [BLADE-657] update tests (148a1f40e6)
+- [BLADE-657] Fix compatibility problem on the coming 7.4 update 1 version
+(caffefca36)
+- [BLADE-646] fix release api setting error (8e9a14fef0)
+- [BLADE-646] improve create project and release api logic (ba6e78df93)
+- [BLADE-646] fix convert command issue (72c28c799d)
+- [BLADE-659] upgrade tempalte and template.extesion (82febf7ff0)
+- [BLADE-508] quote replacement for file seperator in replaceAll method
+(35adc8d152)
+- [BLADE-646] Blade convert should modify all the release api dependencies when
+migrating 62 projects (370d6fe61f)
+- [LPS-141989] fix tests (d8c6a82e80)
+- [LPS-141989] update to latest project templates (bc9da0966f)
+- [BLADE-655] Need to add validation to the creation of rest-builder 70
+(061b84a1c2)
+- [BLADE-649] Fix npe error when creating manve module (019f187edb)
+- [BLADE-651] get default product version dynamically (479f3b4047)
+- [BLADE-643] update project templates to latest 5.0.157 (e60ba1f1ce)
+- [BLADE-643] update node version to 10.15.3 to fix js-theme smoke tests
+(e4ac0c7566)
+- [BLADE-643] fix tests (5a7ce4c183)
+- [LPS-137135] update to latest project templates (55c1cacccb)
+- [BLADE-640] Add test (c72b55610c)
+- [BLADE-640] Remove config.json when after project is created (68bc7e8cf9)
+
+### Dependencies
+- [BLADE-660] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.28.
+- [BLADE-660] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.10.
+- [BLADE-660] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.10.
+- [BLADE-657] Update the com.liferay.project.templates dependency to version
+5.0.165.
+- [BLADE-659] Update the com.liferay.project.templates dependency to version
+5.0.163.
+- [LPS-141989] Update the com.liferay.project.templates dependency to version
+5.0.161.
+- [BLADE-649] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.28-SNAPSHOT.
+- [BLADE-643] Update the com.liferay.project.templates dependency to version
+5.0.157.
+- [LPS-137135] Update the com.liferay.project.templates dependency to version
+5.0.155.
+- [BLADE-639] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.27-SNAPSHOT.
+- [BLADE-639] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.10-SNAPSHOT.
+- [BLADE-639] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.10-SNAPSHOT.
+
 ## 4.0.9 - 2021-07-01
 
 ### Commits
@@ -2027,6 +2082,7 @@ maintainability (7f9bc3f45e)
 [BLADE-504]: https://issues.liferay.com/browse/BLADE-504
 [BLADE-505]: https://issues.liferay.com/browse/BLADE-505
 [BLADE-507]: https://issues.liferay.com/browse/BLADE-507
+[BLADE-508]: https://issues.liferay.com/browse/BLADE-508
 [BLADE-509]: https://issues.liferay.com/browse/BLADE-509
 [BLADE-510]: https://issues.liferay.com/browse/BLADE-510
 [BLADE-513]: https://issues.liferay.com/browse/BLADE-513
@@ -2100,9 +2156,19 @@ maintainability (7f9bc3f45e)
 [BLADE-629]: https://issues.liferay.com/browse/BLADE-629
 [BLADE-630]: https://issues.liferay.com/browse/BLADE-630
 [BLADE-631]: https://issues.liferay.com/browse/BLADE-631
+[BLADE-632]: https://issues.liferay.com/browse/BLADE-632
 [BLADE-633]: https://issues.liferay.com/browse/BLADE-633
 [BLADE-637]: https://issues.liferay.com/browse/BLADE-637
 [BLADE-639]: https://issues.liferay.com/browse/BLADE-639
+[BLADE-640]: https://issues.liferay.com/browse/BLADE-640
+[BLADE-643]: https://issues.liferay.com/browse/BLADE-643
+[BLADE-646]: https://issues.liferay.com/browse/BLADE-646
+[BLADE-649]: https://issues.liferay.com/browse/BLADE-649
+[BLADE-651]: https://issues.liferay.com/browse/BLADE-651
+[BLADE-655]: https://issues.liferay.com/browse/BLADE-655
+[BLADE-657]: https://issues.liferay.com/browse/BLADE-657
+[BLADE-659]: https://issues.liferay.com/browse/BLADE-659
+[BLADE-660]: https://issues.liferay.com/browse/BLADE-660
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -2140,6 +2206,8 @@ maintainability (7f9bc3f45e)
 [LPS-133987]: https://issues.liferay.com/browse/LPS-133987
 [LPS-134232]: https://issues.liferay.com/browse/LPS-134232
 [LPS-134964]: https://issues.liferay.com/browse/LPS-134964
+[LPS-137135]: https://issues.liferay.com/browse/LPS-137135
+[LPS-141989]: https://issues.liferay.com/browse/LPS-141989
 [LRDOCS-3688]: https://issues.liferay.com/browse/LRDOCS-3688
 [LRDOCS-5843]: https://issues.liferay.com/browse/LRDOCS-5843
 [LRDOCS-7448]: https://issues.liferay.com/browse/LRDOCS-7448
