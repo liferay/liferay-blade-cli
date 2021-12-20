@@ -46,7 +46,7 @@ public class ProfilesTest {
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
 		String[] args = {
-			"--base", workspaceDir.getPath(), "init", "-b", "foo", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+			"--base", workspaceDir.getPath(), "init", "-b", "foo", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);

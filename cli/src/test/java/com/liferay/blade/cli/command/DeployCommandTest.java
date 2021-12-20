@@ -41,7 +41,7 @@ public class DeployCommandTest {
 	public void testInstallJar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 
@@ -94,7 +94,7 @@ public class DeployCommandTest {
 	public void testInstallWar() throws Exception {
 		File workspaceDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
 

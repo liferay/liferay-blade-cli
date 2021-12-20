@@ -59,7 +59,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -148,7 +148,7 @@ public class ConvertServiceBuilderCommandTest {
 	public void testConvertServiceBuilderTasksPortletCustomName() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/test-tasks-portlet-conversion");
 
-		String[] args = {"--base", testdir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", testdir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -173,7 +173,7 @@ public class ConvertServiceBuilderCommandTest {
 	public void testConvertServiceBuilderTasksPortletDefaultName() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/test-tasks-portlet-conversion");
 
-		String[] args = {"--base", testdir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", testdir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -241,7 +241,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
@@ -280,7 +280,7 @@ public class ConvertServiceBuilderCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 

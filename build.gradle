@@ -3,7 +3,7 @@ import org.osgi.framework.Version
 buildscript {
 	dependencies {
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.change.log.builder", version: "1.1.1"
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "3.0.19"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "5.1.75"
 		classpath group: "nu.studer", name: "gradle-credentials-plugin", version: "2.1"
 		classpath group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	}

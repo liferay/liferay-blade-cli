@@ -72,7 +72,7 @@ public class InitCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -89,7 +89,7 @@ public class InitCommandTest {
 	public void testBladeInitEmptyDirectory() throws Exception {
 		File emptyDir = temporaryFolder.newFolder();
 
-		String[] args = {"--base", emptyDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", emptyDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		BladeTest bladeTest = _getBladeTestCustomWorkspace(emptyDir);
 
@@ -106,7 +106,7 @@ public class InitCommandTest {
 
 		String pathStringToTest = dotFile.getAbsolutePath();
 
-		String[] args = {"--base", pathStringToTest, "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", pathStringToTest, "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		BladeTest bladeTest = _getBladeTestCustomWorkspace(emptyDir);
 
@@ -123,7 +123,7 @@ public class InitCommandTest {
 
 		String pathStringToTest = dotFile.getAbsolutePath();
 
-		String[] args = {"--base", pathStringToTest, "init", ".", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", pathStringToTest, "init", ".", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		BladeTest bladeTest = _getBladeTestCustomWorkspace(emptyDir);
 
@@ -173,7 +173,7 @@ public class InitCommandTest {
 
 		String basePath = base.getAbsolutePath();
 
-		String[] args = {"--base", basePath, "init", "-P", "myprofile", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", basePath, "init", "-P", "myprofile", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(tempDir, _extensionsDir, args);
 
@@ -192,7 +192,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryEmpty() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -232,7 +232,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryHasFilesForce() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -252,7 +252,7 @@ public class InitCommandTest {
 	@Test
 	public void testDefaultInitWorkspaceDirectoryIsWorkspace() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "firstWorkspace", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+			"--base", _workspaceDir.getPath(), "init", "firstWorkspace", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
@@ -260,7 +260,7 @@ public class InitCommandTest {
 		File firstWorkspace = new File(_workspaceDir, "firstWorkspace");
 
 		String[] moreArgs = {
-			"--base", firstWorkspace.getPath(), "init", "nextWorkspace", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+			"--base", firstWorkspace.getPath(), "init", "nextWorkspace", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
@@ -291,7 +291,7 @@ public class InitCommandTest {
 	public void testInitCommandGradleOption() throws Exception {
 		String[] args = {
 			"--base", _workspaceDir.getPath(), "init", "-b", "gradle", "gradleworkspace", "-v",
-			BladeTest.PRODUCT_VERSION_PORTAL_73
+			BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
@@ -367,7 +367,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitInPluginsSDKDirectory() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		_makeSDK(_workspaceDir);
 
@@ -479,7 +479,7 @@ public class InitCommandTest {
 	@Test
 	public void testInitWithNameWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "newproject", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+			"--base", _workspaceDir.getPath(), "init", "newproject", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		Path newproject = _workspacePath.resolve("newproject");
@@ -522,7 +522,7 @@ public class InitCommandTest {
 	@Test
 	public void testInitWithNameWorkspaceDirectoryHasFiles() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "newproject", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+			"--base", _workspaceDir.getPath(), "init", "newproject", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		Path newProjectPath = _workspacePath.resolve("newproject");
@@ -547,7 +547,7 @@ public class InitCommandTest {
 	@Test
 	public void testInitWithNameWorkspaceNotExists() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "newproject", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+			"--base", _workspaceDir.getPath(), "init", "newproject", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
@@ -657,7 +657,7 @@ public class InitCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath.toString(), "foo-1.0.0.jar");
 	}
 
-	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "3.4.17";
+	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "3.4.21";
 
 	private File _extensionsDir = null;
 	private File _workspaceDir = null;
