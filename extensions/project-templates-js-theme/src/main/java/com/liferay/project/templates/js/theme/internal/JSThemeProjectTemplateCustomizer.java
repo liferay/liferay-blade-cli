@@ -73,7 +73,9 @@ public class JSThemeProjectTemplateCustomizer implements ProjectTemplateCustomiz
 
 		NodeUtil.runYo(
 			liferayVersion, new File(basePath),
-			new String[] {"liferay-theme", "--config", configPath.toString(), "--skip-install"});
+			new String[] {
+				"liferay-theme", "--config", configPath.toString(), "--skip-install", "--scripts-prepend-node-path"
+			});
 
 		File liferayThemeJsonFile = new File(projectPath, "liferay-theme.json");
 
