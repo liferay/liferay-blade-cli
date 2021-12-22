@@ -1101,7 +1101,7 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceFormField73React() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
-		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_73);
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_74);
 
 		File modulesDir = new File(workspace, "modules");
 

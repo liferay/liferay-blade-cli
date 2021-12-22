@@ -28,7 +28,6 @@ import java.nio.file.attribute.PosixFilePermissions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
@@ -57,7 +56,7 @@ public class NodeUtil {
 			Path downloadPath = bladeCachePath.resolve(nodeURL.substring(nodeURL.lastIndexOf("/") + 1));
 
 			if (!Files.exists(downloadPath)) {
-				BladeUtil.downloadLink(nodeURL, downloadPath);
+				BladeUtil.downloadLink(nodeURL, nodeDirPath.toFile(), downloadPath);
 			}
 
 			FileUtil.unpack(downloadPath, nodeDirPath, 1);
@@ -109,8 +108,6 @@ public class NodeUtil {
 
 		processBuilder.directory(dir);
 
-		Map<String, String> env = processBuilder.environment();
-
 		List<String> commands = new ArrayList<>();
 
 		if (OSDetector.isWindows()) {
@@ -130,9 +127,8 @@ public class NodeUtil {
 			}
 		}
 		else {
-			env.put("PATH", env.get("PATH") + ":/bin:/usr/local/bin");
-
 			Path nodePath = nodeDirPath.resolve("bin/node");
+
 			Path yoPath = yoDirPath.resolve("node_modules/.bin/yo");
 
 			commands.add("sh");
@@ -294,7 +290,7 @@ public class NodeUtil {
 			else {
 				process = BladeUtil.startProcess(
 					nodeDirPath.toString() + File.separator + "bin" + File.separator + "node " + npmDir +
-						File.separator + "bin" + File.separator + "npm-cli.js install",
+						File.separator + "bin" + File.separator + "npm-cli.js install --scripts-prepend-node-path",
 					yoDirPath.toFile());
 			}
 

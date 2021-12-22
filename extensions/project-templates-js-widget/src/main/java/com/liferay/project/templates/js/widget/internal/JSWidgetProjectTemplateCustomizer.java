@@ -110,7 +110,9 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 		NodeUtil.runYo(
 			projectTemplatesArgs.getLiferayVersion(), new File(workspaceLocation),
-			new String[] {"liferay-js", "--config", configPath.toString(), "--skip-install"});
+			new String[] {
+				"liferay-js", "--config", configPath.toString(), "--skip-install", "--scripts-prepend-node-path"
+			});
 
 		File configFile = configPath.toFile();
 

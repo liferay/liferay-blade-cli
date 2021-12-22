@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URISyntaxException;
@@ -44,10 +43,13 @@ import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+
+import java.text.MessageFormat;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,6 +80,7 @@ import org.osgi.framework.Version;
 /**
  * @author Gregory Amerson
  * @author David Truong
+ * @author Simon Jiang
  */
 public class BladeUtil {
 
@@ -136,17 +139,28 @@ public class BladeUtil {
 	public static void downloadGithubProject(String url, Path target) throws IOException {
 		String zipUrl = url + "/archive/master.zip";
 
-		downloadLink(zipUrl, target);
+		Path githubCacheDirPath = getBladeCachePath().resolve("github");
+
+		downloadLink(zipUrl, githubCacheDirPath.toFile(), target);
 	}
 
-	public static void downloadLink(String link, Path target) throws IOException {
-		if (_isURLAvailable(link)) {
-			LinkDownloader downloader = new LinkDownloader(link, target);
+	public static void downloadLink(String link, File cacheDir, Path target) throws IOException {
+		try {
+			DownloadCommand downloadCommand = new DownloadCommand();
 
-			downloader.run();
+			downloadCommand.setCacheDir(cacheDir);
+			downloadCommand.setPassword(null);
+			downloadCommand.setToken(false);
+			downloadCommand.setUrl(new URL(link));
+			downloadCommand.setUserName(null);
+			downloadCommand.setQuiet(true);
+
+			downloadCommand.execute();
+
+			Files.move(downloadCommand.getDownloadPath(), target, StandardCopyOption.REPLACE_EXISTING);
 		}
-		else {
-			throw new RuntimeException("url '" + link + "' is not accessible.");
+		catch (Exception exception) {
+			throw new IOException(MessageFormat.format("Can not download for link {0}", link), exception);
 		}
 	}
 
@@ -711,26 +725,6 @@ public class BladeUtil {
 		}
 
 		if (connected) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private static boolean _isURLAvailable(String urlString) throws IOException {
-		URL url = new URL(urlString);
-
-		HttpURLConnection.setFollowRedirects(false);
-
-		HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-
-		httpURLConnection.setRequestMethod("HEAD");
-
-		int responseCode = httpURLConnection.getResponseCode();
-
-		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_MOVED_PERM) ||
-			(responseCode == HttpURLConnection.HTTP_MOVED_TEMP)) {
-
 			return true;
 		}
 

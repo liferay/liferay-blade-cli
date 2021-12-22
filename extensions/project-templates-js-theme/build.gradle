@@ -20,7 +20,7 @@ apply plugin: "java"
 apply plugin: "maven-publish"
 
 dependencies {
-	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.88"
+	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.92"
 	compileOnly group: "org.apache.maven.archetype", name: "archetype-common", version: "2.4"
 	compileOnly project(":cli")
 
@@ -50,4 +50,4 @@ test {
 	}
 }
 
-version = "1.0.11-SNAPSHOT"
+version = "1.0.12-SNAPSHOT"

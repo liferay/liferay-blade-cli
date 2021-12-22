@@ -61,7 +61,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -1093,7 +1092,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 			).map(
 				wp -> wp.getLiferayVersion(baseDir)
 			).map(
-				version -> new String(String.valueOf(VersionUtil.getMajorVersion(version)) + "." +
+				version -> new String(
+					String.valueOf(VersionUtil.getMajorVersion(version)) + "." +
 						String.valueOf(VersionUtil.getMinorVersion(version)))
 			).orElse(
 				"0.0"

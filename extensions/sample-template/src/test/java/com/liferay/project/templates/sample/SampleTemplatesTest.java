@@ -123,7 +123,7 @@ public class SampleTemplatesTest {
 		File parentFile = workspace.getParentFile();
 
 		String[] args = {
-			"--base", parentFile.getPath(), "init", workspace.getName(), "-v", BladeTest.PRODUCT_VERSION_PORTAL_73
+			"--base", parentFile.getPath(), "init", workspace.getName(), "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		TestUtil.runBlade(workspace, _getExtensionsDir(), args);
