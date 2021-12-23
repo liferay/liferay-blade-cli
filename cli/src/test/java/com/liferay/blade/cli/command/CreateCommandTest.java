@@ -900,10 +900,10 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateWarCoreExt() throws Exception {
+	public void testCreateWarCoreExt72() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
-		_makeWorkspace(workspace);
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_72);
 
 		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "war-core-ext", "warCoreExt"};
 
@@ -926,6 +926,27 @@ public class CreateCommandTest {
 		args = new String[] {"gw", "build", "--base", projectDir.getAbsolutePath()};
 
 		TestUtil.runBlade(workspace, _extensionsDir, false, args);
+	}
+
+	@Test
+	public void testCreateWarCoreExt74() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_74);
+
+		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "war-core-ext", "warCoreExt"};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(workspace, _extensionsDir, false, args);
+
+		File projectDir = new File(workspace, "ext/warCoreExt");
+
+		_checkFileDoesNotExists(projectDir.toString());
+
+		String output = bladeTestResults.getErrors();
+
+		output = output.trim();
+
+		Assert.assertTrue(output, output.startsWith("Error"));
 	}
 
 	@Test
