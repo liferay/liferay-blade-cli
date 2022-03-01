@@ -39,7 +39,7 @@ public class OpenArgs extends BaseArgs {
 		_file = file.getAbsoluteFile();
 	}
 
-	@Parameter(description = "[file | directory]")
+	@Parameter(description = "[file|directory]")
 	private File _file;
 
 	@Parameter(description = "The workspace to open or import this file or project", names = {"-w", "--workspace"})

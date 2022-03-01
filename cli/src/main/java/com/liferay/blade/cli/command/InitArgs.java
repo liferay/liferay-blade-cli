@@ -110,7 +110,7 @@ public class InitArgs extends BaseArgs {
 
 	@Parameter(
 		description = "The Liferay product to target. Typing \"more\" will show all product versions.",
-		names = {"--liferay-version", "-v"}, required = true, validateValueWith = LiferayMoreVersionValidator.class
+		names = {"-v", "--liferay-version"}, required = true, validateValueWith = LiferayMoreVersionValidator.class
 	)
 	@ParameterPossibleValues(more = LiferayMoreVersionValidator.class, value = LiferayDefaultVersionValidator.class)
 	private String _liferayVersion;

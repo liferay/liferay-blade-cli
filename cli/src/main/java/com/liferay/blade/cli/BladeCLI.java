@@ -19,8 +19,10 @@ package com.liferay.blade.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterDescription;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.WrappedParameter;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.command.BaseCommand;
@@ -60,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Formatter;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -779,7 +782,73 @@ public class BladeCLI {
 
 		builder.defaultProvider(new BladeCLIDefaultProvider(args));
 
-		return builder.build();
+		JCommander build = builder.build();
+
+		build.setParameterDescriptionComparator(
+			new Comparator<ParameterDescription>() {
+
+				@Override
+				public int compare(
+					ParameterDescription parameterDescription0, ParameterDescription parameterDescription1) {
+
+					Parameter parameterAnnotation0 = parameterDescription0.getParameterAnnotation();
+					Parameter parameterAnnotation1 = parameterDescription1.getParameterAnnotation();
+
+					WrappedParameter wrappedParameter0 = parameterDescription0.getParameter();
+					WrappedParameter wrappedParameter1 = parameterDescription1.getParameter();
+
+					String[] names0 = wrappedParameter0.names();
+					String[] names1 = wrappedParameter1.names();
+
+					String name0 = Arrays.stream(
+						names0
+					).filter(
+						name -> name.startsWith("-") && !name.startsWith("--")
+					).findFirst(
+					).orElse(
+						(names0.length > 0) ? names0[0] : ""
+					).toLowerCase(
+					).replace(
+						"-", ""
+					);
+
+					String name1 = Arrays.stream(
+						names1
+					).filter(
+						name -> name.startsWith("-") && !name.startsWith("--")
+					).findFirst(
+					).orElse(
+						(names1.length > 0) ? names1[0] : ""
+					).toLowerCase(
+					).replace(
+						"-", ""
+					);
+
+					if ((parameterAnnotation0 != null) && (parameterAnnotation0.order() != -1) &&
+						(parameterAnnotation1 != null) && (parameterAnnotation1.order() != -1)) {
+
+						return Integer.compare(parameterAnnotation0.order(), parameterAnnotation1.order());
+					}
+					else if ((parameterAnnotation0 != null) && (parameterAnnotation0.order() != -1)) {
+						return -1;
+					}
+					else if ((parameterAnnotation1 != null) && (parameterAnnotation1.order() != -1)) {
+						return 1;
+					}
+					else if (!name0.isEmpty() || !name1.isEmpty()) {
+						return name0.compareTo(name1);
+					}
+					else {
+						String longestName0 = parameterDescription0.getLongestName();
+						String longestName1 = parameterDescription1.getLongestName();
+
+						return longestName0.compareTo(longestName1);
+					}
+				}
+
+			});
+
+		return build;
 	}
 
 	@SuppressWarnings("unchecked")
