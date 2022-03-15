@@ -200,7 +200,7 @@ public class CreateArgs extends BaseArgs {
 	private String _contributorType;
 
 	@Parameter(
-		description = "For Service Builder projects, specify the preferred dependency injection method (ds | spring). Default is DS",
+		description = "For Service Builder projects, specify the preferred dependency injection method (ds|spring). Default is DS",
 		hidden = true, names = "--dependency-injector"
 	)
 	private String _dependencyInjector = "ds";
@@ -270,8 +270,8 @@ public class CreateArgs extends BaseArgs {
 	private String _service;
 
 	@Parameter(
-		description = "The project template to use when creating the project. To see the list of templates available use blade create <-l | --list-templates>",
-		names = {"--template", "-t"}, required = true, validateValueWith = TemplateNameValidator.class
+		description = "The project template to use when creating the project. To see the list of templates available use blade create <-l|--list-templates>",
+		names = {"-t", "--template"}, required = true, validateValueWith = TemplateNameValidator.class
 	)
 	@ParameterPossibleValues(more = TemplateNameValidator.class, value = TemplateNameValidator.class)
 	private String _template;

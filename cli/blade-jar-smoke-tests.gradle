@@ -214,7 +214,7 @@ testBladeInitCommandList {
 
 		assert !error.contains("error")
 		assert !output.contains("dxp-7.2-sp1")
-		assert output.contains("dxp-7.3-sp1")
+		assert output.contains("dxp-7.3-sp3")
 	}
 }
 

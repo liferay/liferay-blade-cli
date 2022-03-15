@@ -19,11 +19,11 @@ Blade extension from a
 
         blade extension install /path/to/my_extension.JAR
 
-2. Remote JAR file indicated by a URL
+1. Remote JAR file indicated by a URL
 
         blade extension install https://repository.lifera.com/public/group/com/liferay/blade/com.liferay.blade.extension/1.0.0/com.liferay.blade.extension-1.0.0.JAR
 
-3. Github repository that contains an extension
+1. Github repository that contains an extension
 
         $ blade extension install https://github.com/gamerson/blade-sample-command
 
@@ -64,11 +64,11 @@ Pay close attention to a few things in this project:
 1. Registering your command with Blade:
    https://github.com/liferay/liferay-blade-cli/blob/master/extensions/sample-command/src/main/resources/META-INF/services/com.liferay.blade.cli.command.BaseCommand
 
-2. Building your extension against the Blade CLI API (which is not yet
+1. Building your extension against the Blade CLI API (which is not yet
    officially published, but you can use the provisional repo as shown here):
    https://github.com/gamerson/blade-sample-command/blob/master/build.gradle#L18.
 
-3. Authoring your tests for your custom commands:
+1. Authoring your tests for your custom commands:
    https://github.com/liferay/liferay-blade-cli/blob/master/extensions/sample-command/src/test/java/com/liferay/extensions/sample/command/SampleCommandsTest.java.
 
 Once you have your command, build it with Gradle (`gradle build`) to generate
@@ -100,13 +100,13 @@ Here are a few things to notice from the sample:
    archetypes and their features and capabilities
    [here](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html).
 
-2. The `BundleSymbolic` name of your template JAR (see
+1. The `BundleSymbolic` name of your template JAR (see
    [here](https://github.com/liferay/liferay-blade-cli/blob/master/extensions/sample-template/bnd.bnd#L3))
    must have the pattern `*.project.templates.<name>.*`. For example, suppose
    you have a custom template called *mywebapp*. Then the BSN should be
    `org.myorg.project.templates.mywebapp-1.0.0.JAR`.
 
-3. Testing your custom template can be accomplished by following the example
+1. Testing your custom template can be accomplished by following the example
    [here](https://github.com/liferay/liferay-blade-cli/blob/master/extensions/sample-template/src/test/java/com/liferay/project/templates/sample/TemplatesTest.java).
 
 Once you have your custom template, you can install it by copying it to
@@ -131,15 +131,15 @@ that all make sense in the *default* Liferay workspace. For example,
 
 1. `blade init`
 
-2. `blade server init`
+1. `blade server init`
 
-3. `blade server start`
+1. `blade server start`
 
-4. `blade create my-project`
+1. `blade create my-project`
 
-5. `blade deploy`
+1. `blade deploy`
 
-6. `blade customCommand`
+1. `blade customCommand`
 
 But if this workspace wants to support `docker` or another *containerized*
 Liferay environment, all of those commands should do something slightly
