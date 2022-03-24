@@ -93,7 +93,6 @@ public class JMXLocalConnector {
 			}
 		}
 		catch (Exception exception) {
-			exception.printStackTrace();
 		}
 		finally {
 			thread.setContextClassLoader(classLoader);
@@ -131,7 +130,6 @@ public class JMXLocalConnector {
 				}
 			}
 			catch (Exception exception) {
-				exception.printStackTrace();
 			}
 		}
 
@@ -238,7 +236,6 @@ public class JMXLocalConnector {
 				}
 			}
 			catch (Exception exception) {
-				exception.printStackTrace();
 			}
 			finally {
 				Method detachMethod = vmClass.getMethod("detach");
@@ -247,7 +244,6 @@ public class JMXLocalConnector {
 			}
 		}
 		catch (Exception exception) {
-			exception.printStackTrace();
 		}
 
 		return null;

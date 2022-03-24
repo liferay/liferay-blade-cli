@@ -63,6 +63,14 @@ public class CreateCommandMaven extends CreateCommand {
 		if ((workspaceProvider == null) || (workspaceProvider instanceof MavenWorkspaceProvider)) {
 			createArgs.setProfileName("maven");
 
+			String template = createArgs.getTemplate();
+
+			if (template.contains("-ext")) {
+				bladeCLI.error("Cannot create " + template + " project in Liferay Maven Workpspace.");
+
+				return;
+			}
+
 			super.execute();
 		}
 		else {
