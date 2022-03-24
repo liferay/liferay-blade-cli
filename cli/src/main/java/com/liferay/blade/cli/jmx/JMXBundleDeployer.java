@@ -131,12 +131,10 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 					retval.add(_newFromData(cd));
 				}
 				catch (Exception exception) {
-					exception.printStackTrace();
 				}
 			}
 		}
 		catch (Exception exception) {
-			exception.printStackTrace();
 		}
 
 		return retval.toArray(new BundleDTO[0]);

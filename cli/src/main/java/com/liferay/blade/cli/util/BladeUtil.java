@@ -541,7 +541,6 @@ public class BladeUtil {
 				}
 			}
 			catch (Exception exception) {
-				exception.printStackTrace();
 			}
 		}
 

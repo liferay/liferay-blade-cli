@@ -594,7 +594,6 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 				url = lines.get(0);
 			}
 			catch (IOException ioException) {
-				ioException.printStackTrace();
 			}
 		}
 

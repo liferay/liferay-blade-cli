@@ -1304,7 +1304,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 				});
 		}
 		catch (IOException ioException) {
-			ioException.printStackTrace();
 		}
 	}
 

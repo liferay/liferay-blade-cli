@@ -271,7 +271,6 @@ public class PropertiesLocator {
 							"jar:file:" + path.toString() + "!/portal.properties", properties);
 					}
 					catch (Exception exception) {
-						exception.printStackTrace();
 					}
 				});
 		}
@@ -551,8 +550,6 @@ public class PropertiesLocator {
 					catch (Exception exception) {
 						System.out.println("Unable to get portlet properties");
 
-						exception.printStackTrace();
-
 						return;
 					}
 				}
@@ -670,7 +667,6 @@ public class PropertiesLocator {
 						}
 					}
 					catch (Exception exception) {
-						exception.printStackTrace();
 					}
 				}
 			);
@@ -735,7 +731,6 @@ public class PropertiesLocator {
 						}
 					}
 					catch (IOException ioException) {
-						ioException.printStackTrace();
 					}
 				}
 			);

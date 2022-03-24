@@ -127,8 +127,6 @@ public class AetherClient {
 			).getEffectiveSettings();
 		}
 		catch (SettingsBuildingException settingsBuildingException) {
-			settingsBuildingException.printStackTrace();
-
 			return null;
 		}
 	}
