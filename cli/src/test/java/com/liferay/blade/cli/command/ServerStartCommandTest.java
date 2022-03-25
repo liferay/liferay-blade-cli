@@ -18,6 +18,7 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -331,8 +332,9 @@ public class ServerStartCommandTest {
 	private void _addBundleToGradle(String bundleFileName) throws Exception {
 		Path gradlePropertiesPath = _testWorkspacePath.resolve("gradle.properties");
 
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(FileUtil.read(gradlePropertiesPath.toFile()));
 
+		sb.append(System.lineSeparator());
 		sb.append(_LIFERAY_WORKSPACE_BUNDLE_KEY);
 		sb.append("=");
 		sb.append(_LIFERAY_WORKSPACE_BUNDLE_URL);
