@@ -1,5 +1,41 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.11 - 2022-03-25
+
+### Commits
+- [BLADE-664] -1 Add validation for creating war-core-ext project (2583ddae2f)
+- [BLADE-664] Add validation for creating war-core-ext project on liferay 73 and
+greater (954c88ee80)
+- [BLADE-532] Sort commands for help (ca69ed538e)
+- [BLADE-664] Add validation for creating war-core-ext project on liferay 73 and
+greater (273843ade6)
+- [BLADE-644] use same version node in nodeUtil (4fcb55708b)
+- [BLADE-644] Theme is not displayed on the portal 7.4 webpage (cf6223f102)
+
+### Dependencies
+- [BLADE-673] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.30.
+- [BLADE-673] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.12.
+- [BLADE-673] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.12.
+- [BLADE-664] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.30-SNAPSHOT.
+- [BLADE-664] Update the com.liferay.project.templates dependency to version
+5.0.179.
+- [BLADE-644] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.12-SNAPSHOT.
+- [BLADE-644] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.12-SNAPSHOT.
+- [BLADE-644] Update the com.liferay.project.templates dependency to version
+5.0.177.
+- [BLADE-663] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.29-SNAPSHOT.
+- [BLADE-663] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.11-SNAPSHOT.
+- [BLADE-663] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.11-SNAPSHOT.
+
 ## 4.0.10 - 2021-11-19
 
 ### Commits
@@ -2162,6 +2198,7 @@ maintainability (7f9bc3f45e)
 [BLADE-639]: https://issues.liferay.com/browse/BLADE-639
 [BLADE-640]: https://issues.liferay.com/browse/BLADE-640
 [BLADE-643]: https://issues.liferay.com/browse/BLADE-643
+[BLADE-644]: https://issues.liferay.com/browse/BLADE-644
 [BLADE-646]: https://issues.liferay.com/browse/BLADE-646
 [BLADE-649]: https://issues.liferay.com/browse/BLADE-649
 [BLADE-651]: https://issues.liferay.com/browse/BLADE-651
@@ -2169,6 +2206,9 @@ maintainability (7f9bc3f45e)
 [BLADE-657]: https://issues.liferay.com/browse/BLADE-657
 [BLADE-659]: https://issues.liferay.com/browse/BLADE-659
 [BLADE-660]: https://issues.liferay.com/browse/BLADE-660
+[BLADE-663]: https://issues.liferay.com/browse/BLADE-663
+[BLADE-664]: https://issues.liferay.com/browse/BLADE-664
+[BLADE-673]: https://issues.liferay.com/browse/BLADE-673
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
