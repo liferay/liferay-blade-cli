@@ -1,5 +1,27 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.12 - 2022-03-25
+
+### Commits
+- [BLADE-672] (6a5cb179a1)
+- [BLADE-664] Update project templates (894c346aa0)
+
+### Dependencies
+- [BLADE-673] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.31.
+- [BLADE-673] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.13.
+- [BLADE-673] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.13.
+- [BLADE-673] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.31-SNAPSHOT.
+- [BLADE-673] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.13-SNAPSHOT.
+- [BLADE-673] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.13-SNAPSHOT.
+- [BLADE-664] Update the com.liferay.project.templates dependency to version
+5.0.189.
+
 ## 4.0.11 - 2022-03-25
 
 ### Commits
@@ -2208,6 +2230,7 @@ maintainability (7f9bc3f45e)
 [BLADE-660]: https://issues.liferay.com/browse/BLADE-660
 [BLADE-663]: https://issues.liferay.com/browse/BLADE-663
 [BLADE-664]: https://issues.liferay.com/browse/BLADE-664
+[BLADE-672]: https://issues.liferay.com/browse/BLADE-672
 [BLADE-673]: https://issues.liferay.com/browse/BLADE-673
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
