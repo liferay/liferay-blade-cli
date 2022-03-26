@@ -1,5 +1,32 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.12 - 2022-03-26
+
+### Commits
+- [BLADE-572] fix test failure (d1db6b9226)
+- [BLADE-672] (6a5cb179a1)
+- [BLADE-664] Update project templates (894c346aa0)
+
+### Dependencies
+- [BLADE-673] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.31.
+- [BLADE-673] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.14.
+- [BLADE-673] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.14.
+- [BLADE-572] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.14-SNAPSHOT.
+- [BLADE-572] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.14-SNAPSHOT.
+- [BLADE-673] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.31-SNAPSHOT.
+- [BLADE-673] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.13-SNAPSHOT.
+- [BLADE-673] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.13-SNAPSHOT.
+- [BLADE-664] Update the com.liferay.project.templates dependency to version
+5.0.189.
+
 ## 4.0.11 - 2022-03-25
 
 ### Commits
@@ -2156,6 +2183,7 @@ maintainability (7f9bc3f45e)
 [BLADE-567]: https://issues.liferay.com/browse/BLADE-567
 [BLADE-568]: https://issues.liferay.com/browse/BLADE-568
 [BLADE-570]: https://issues.liferay.com/browse/BLADE-570
+[BLADE-572]: https://issues.liferay.com/browse/BLADE-572
 [BLADE-573]: https://issues.liferay.com/browse/BLADE-573
 [BLADE-576]: https://issues.liferay.com/browse/BLADE-576
 [BLADE-577]: https://issues.liferay.com/browse/BLADE-577
@@ -2208,6 +2236,7 @@ maintainability (7f9bc3f45e)
 [BLADE-660]: https://issues.liferay.com/browse/BLADE-660
 [BLADE-663]: https://issues.liferay.com/browse/BLADE-663
 [BLADE-664]: https://issues.liferay.com/browse/BLADE-664
+[BLADE-672]: https://issues.liferay.com/browse/BLADE-672
 [BLADE-673]: https://issues.liferay.com/browse/BLADE-673
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
