@@ -17,4 +17,4 @@ publishing {
 }
 */
 
-version = "1.2.15-SNAPSHOT"
+version = "1.2.15"
