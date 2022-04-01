@@ -257,7 +257,9 @@ public class PropertiesLocator {
 		BiPredicate<Path, BasicFileAttributes> matcher = (path, attrs) -> {
 			String pathString = path.toString();
 
-			return attrs.isRegularFile() && pathString.endsWith(_PORTAL_IMPL_RELATIVE_PATH);
+			return attrs.isRegularFile() &&
+				   (pathString.endsWith(_PORTAL_IMPL_SHIELDED_LIB_RELATIVE_PATH) ||
+					pathString.endsWith(_PORTAL_IMPL_LEGACY_RELATIVE_PATH));
 		};
 
 		try (Stream<Path> paths = Files.find(_bundlePath, Integer.MAX_VALUE, matcher)) {
@@ -916,7 +918,10 @@ public class PropertiesLocator {
 		"journal", "wiki"
 	};
 
-	private static final String _PORTAL_IMPL_RELATIVE_PATH =
+	private static final String _PORTAL_IMPL_LEGACY_RELATIVE_PATH =
+		File.separator + "WEB-INF" + File.separator + "lib" + File.separator + "portal-impl.jar";
+
+	private static final String _PORTAL_IMPL_SHIELDED_LIB_RELATIVE_PATH =
 		File.separator + "WEB-INF" + File.separator + "shielded-container-lib" + File.separator + "portal-impl.jar";
 
 	private static Path _bundlePath;
