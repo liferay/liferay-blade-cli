@@ -30,7 +30,9 @@ eclipse {
 	classpath {
 		file {
 			whenMerged {
-				entries.removeAll { it.kind == 'src' && it.path == 'src/main/resources' }
+				entries.removeAll {
+					it.kind == 'src' && it.path == 'src/main/resources'
+				}
 			}
 		}
 	}

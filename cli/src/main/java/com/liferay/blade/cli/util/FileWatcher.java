@@ -170,7 +170,9 @@ public class FileWatcher {
 						consumer.consume(modified);
 					}
 					catch (Throwable t) {
-						//ignore
+
+						// ignore
+
 					}
 				}
 			}

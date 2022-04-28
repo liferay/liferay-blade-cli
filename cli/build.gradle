@@ -170,7 +170,8 @@ bladeExtensionsVersions {
 	}
 }
 
-project(":gradle-tooling").afterEvaluate { tooling ->
+project(":gradle-tooling").afterEvaluate {
+	tooling ->
 	createToolingZip {
 		archiveName = "tooling.zip"
 		dependsOn ":gradle-tooling:jar"
@@ -253,22 +254,26 @@ test {
 	systemProperty "jna.nosys", "true"
 	systemProperty "testOutputPath", sourceSets.test.output.classesDirs.singleFile.absolutePath
 
-	project(":extensions:bad-command").afterEvaluate { project ->
+	project(":extensions:bad-command").afterEvaluate {
+		project ->
 		dependsOn project.jar
 		systemProperty "badCommandJarFile", project.jar.archivePath
 	}
 
-	project(":extensions:sample-command").afterEvaluate { project ->
+	project(":extensions:sample-command").afterEvaluate {
+		project ->
 		dependsOn project.jar
 		systemProperty "sampleCommandJarFile", project.jar.archivePath
 	}
 
-	project(":extensions:sample-profile").afterEvaluate { project ->
+	project(":extensions:sample-profile").afterEvaluate {
+		project ->
 		dependsOn project.jar
 		systemProperty "sampleProfileJarFile", project.jar.archivePath
 	}
 
-	project(":extensions:sample-template").afterEvaluate { project ->
+	project(":extensions:sample-template").afterEvaluate {
+		project ->
 		dependsOn project.jar
 		systemProperty "sampleTemplateJarFile", project.jar.archivePath
 	}
