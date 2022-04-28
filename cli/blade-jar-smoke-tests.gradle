@@ -15,9 +15,12 @@ task testBladeReturnCodeFailure(type: Exec)
 task testBladeSamplesCommand(type: JavaExec)
 task testBladeVersionCommand(type: JavaExec)
 
-Set<Task> testBladeTasks = tasks.findAll { task -> task.name.startsWith("testBlade") }
+Set<Task> testBladeTasks = tasks.findAll {
+	task -> task.name.startsWith("testBlade")
+}
 
-testBladeTasks.each { task ->
+testBladeTasks.each {
+	task ->
 	task.dependsOn jar
 
 	if (task instanceof JavaExec) {

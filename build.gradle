@@ -183,7 +183,8 @@ repositories {
 	}
 }
 
-subprojects { subproject ->
+subprojects {
+	subproject ->
 	group = "com.liferay.blade"
 
 	pluginManager.withPlugin("java") {
@@ -214,19 +215,23 @@ subprojects { subproject ->
 			doLast {
 				File buildGradle = subproject.file("build.gradle")
 
-				buildGradle.text = buildGradle.text.replaceAll(/version = "(.*)-SNAPSHOT"/) { all, version ->
+				buildGradle.text = buildGradle.text.replaceAll(/version = "(.*)-SNAPSHOT"/) {
+					all, version ->
 					"version = \"$version\""
 				}
 
-				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.blade.extensions.maven.profile", version: "(.*)-SNAPSHOT"/) { all, version ->
+				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.blade.extensions.maven.profile", version: "(.*)-SNAPSHOT"/) {
+					all, version ->
 					"name: \"com.liferay.blade.extensions.maven.profile\", version: \"$version\""
 				}
 
-				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.theme", version: "(.*)-SNAPSHOT"/) { all, version ->
+				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.theme", version: "(.*)-SNAPSHOT"/) {
+					all, version ->
 					"name: \"com.liferay.project.templates.js.theme\", version: \"$version\""
 				}
 
-				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.widget", version: "(.*)-SNAPSHOT"/) { all, version ->
+				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.widget", version: "(.*)-SNAPSHOT"/) {
+					all, version ->
 					"name: \"com.liferay.project.templates.js.widget\", version: \"$version\""
 				}
 
@@ -237,7 +242,8 @@ subprojects { subproject ->
 			doLast {
 				File buildGradle = subproject.file("build.gradle")
 
-				buildGradle.text = buildGradle.text.replaceAll(/version = "(.*)"/) { all, version ->
+				buildGradle.text = buildGradle.text.replaceAll(/version = "(.*)"/) {
+					all, version ->
 					Version currentVersion = new Version(version)
 
 					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)
@@ -245,7 +251,8 @@ subprojects { subproject ->
 					"version = \"$newVersion-SNAPSHOT\""
 				}
 
-				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.blade.extensions.maven.profile", version: "(.*)"/) { all, version ->
+				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.blade.extensions.maven.profile", version: "(.*)"/) {
+					all, version ->
 					Version currentVersion = new Version(version)
 
 					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)
@@ -253,7 +260,8 @@ subprojects { subproject ->
 					"name: \"com.liferay.blade.extensions.maven.profile\", version: \"${newVersion}-SNAPSHOT\""
 				}
 
-				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.theme", version: "(.*)"/) { all, version ->
+				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.theme", version: "(.*)"/) {
+					all, version ->
 					Version currentVersion = new Version(version)
 
 					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)
@@ -261,7 +269,8 @@ subprojects { subproject ->
 					"name: \"com.liferay.project.templates.js.theme\", version: \"${newVersion}-SNAPSHOT\""
 				}
 
-				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.widget", version: "(.*)"/) { all, version ->
+				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.widget", version: "(.*)"/) {
+					all, version ->
 					Version currentVersion = new Version(version)
 
 					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)

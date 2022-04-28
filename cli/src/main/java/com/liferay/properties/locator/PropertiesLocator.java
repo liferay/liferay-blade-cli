@@ -301,7 +301,8 @@ public class PropertiesLocator {
 
 		List<Pair<String, String>> mostLikelyMatches = new ArrayList<>();
 
-		//Default min occurrences to match
+		// Default min occurrences to match
+
 		int maxOccurrences = 2;
 
 		for (Pair<String, String[]> match : matches) {
@@ -331,7 +332,9 @@ public class PropertiesLocator {
 		String originalPropertyWithoutPrefix = _removeCommonPrefix(originalProperty);
 
 		if (!property.contains(StringPool.PERIOD)) {
-			//Camel case property
+
+			// Camel case property
+
 			property = CamelCaseUtil.fromCamelCase(property, StringPool.PERIOD.charAt(0));
 		}
 
@@ -775,7 +778,9 @@ public class PropertiesLocator {
 
 	private boolean _matchSuffix(String originalProperty, String property) {
 		if (!property.contains(StringPool.PERIOD)) {
-			//Camel case property
+
+			// Camel case property
+
 			property = CamelCaseUtil.fromCamelCase(property, StringPool.PERIOD.charAt(0));
 		}
 
