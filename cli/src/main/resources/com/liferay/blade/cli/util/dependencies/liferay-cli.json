@@ -1,0 +1,14 @@
+{
+	"author": "Simon Jiang",
+	"description": "",
+	"devDependencies": {
+		"@liferay/cli": "1.1.0"
+	},
+	"license": "LGPL",
+	"main": "liferay.js",
+	"name": "liferay-blade-js-cli",
+	"scripts": {
+		"build-project": "liferay new"
+	},
+	"version": "1.0.0"
+}

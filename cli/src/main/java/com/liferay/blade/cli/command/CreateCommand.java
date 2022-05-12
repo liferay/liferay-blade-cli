@@ -387,6 +387,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		properties.put("setService", createArgs.getService());
 		properties.put("setViewType", createArgs.getViewType());
 
+		properties.put("setBatchModel", Boolean.toString(createArgs.isJsBatchModel()));
+		properties.put("setPlatform", createArgs.getJsProjectPlatform());
+		properties.put("setProjectType", createArgs.getJsProjectType());
+		properties.put("setTarget", createArgs.getJsProjectTarget());
+
+		properties.put("setViewType", createArgs.getViewType());
+
 		BladeCLI bladeCLI = getBladeCLI();
 
 		File dir = createArgs.getDir();

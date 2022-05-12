@@ -16,23 +16,32 @@
 
 package com.liferay.project.templates.js.widget.internal;
 
+import com.liferay.blade.cli.util.Constants;
+import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.NodeUtil;
-import com.liferay.blade.cli.util.OSDetector;
 import com.liferay.project.templates.extensions.ProjectTemplateCustomizer;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
+import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
 import java.io.File;
+import java.io.InputStream;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.apache.maven.archetype.ArchetypeGenerationRequest;
 import org.apache.maven.archetype.ArchetypeGenerationResult;
 
+import org.gradle.internal.impldep.com.google.common.base.Objects;
+
+import org.json.JSONObject;
+
 /**
  * @author David Truong
  * @author Christopher Bryan Boyd
+ * @author Simon Jiang
  */
 public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomizer {
 
@@ -46,85 +55,75 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 			ProjectTemplatesArgs projectTemplatesArgs, File destinationDir,
 			ArchetypeGenerationResult archetypeGenerationResult)
 		throws Exception {
-
-		Path configPath = Paths.get(destinationDir.getAbsolutePath(), projectTemplatesArgs.getName() + "/config.json");
-
-		String config = new String(Files.readAllBytes(configPath));
-
-		config = _replace(config, "[$TARGET$]", "react-widget");
-
-		config = _replace(config, "[$OUTPUT_PATH$]", projectTemplatesArgs.getName());
-		config = _replace(config, "[$DESCRIPTION$]", projectTemplatesArgs.getName());
-
-		JSWidgetProjectTemplatesArgsExt ext =
-			(JSWidgetProjectTemplatesArgsExt)projectTemplatesArgs.getProjectTemplatesArgsExt();
-
-		String workspaceLocation = ext.getWorkspaceLocation();
-
-		if (workspaceLocation != null) {
-			Path liferayLocationPath = Paths.get(workspaceLocation);
-
-			liferayLocationPath = liferayLocationPath.resolve("bundles");
-
-			liferayLocationPath = liferayLocationPath.normalize();
-
-			String liferayLocation = liferayLocationPath.toString();
-
-			if (OSDetector.isWindows()) {
-				liferayLocation = liferayLocation.replace("\\", "\\\\");
-			}
-
-			config = _replace(config, "[$LIFERAY_DIR$]", liferayLocation);
-			config = _replace(config, "[$LIFERAY_PRESENT$]", "true");
-
-			String modulesLocation = ext.getModulesLocation();
-
-			File file = new File(modulesLocation, projectTemplatesArgs.getName());
-
-			modulesLocation = file.getAbsolutePath();
-
-			if (OSDetector.isWindows()) {
-				modulesLocation = modulesLocation.replace("\\", "\\\\");
-			}
-
-			Path modulesPath = Paths.get(modulesLocation);
-
-			Path workspacePath = Paths.get(workspaceLocation);
-
-			workspacePath = workspacePath.normalize();
-
-			String relativePathString = String.valueOf(workspacePath.relativize(modulesPath));
-
-			if (OSDetector.isWindows()) {
-				relativePathString = relativePathString.replace("\\", "\\\\");
-			}
-
-			config = _replace(config, "[$FOLDER$]", relativePathString);
-		}
-		else {
-			config = _replace(config, "[$LIFERAY_DIR$]", "/liferay");
-			config = _replace(config, "[$LIFERAY_PRESENT$]", "false");
-		}
-
-		Files.write(configPath, config.getBytes());
-
-		NodeUtil.runYo(
-			projectTemplatesArgs.getLiferayVersion(), new File(workspaceLocation),
-			new String[] {
-				"liferay-js", "--config", configPath.toString(), "--skip-install", "--scripts-prepend-node-path"
-			});
-
-		File configFile = configPath.toFile();
-
-		if (configFile.exists()) {
-			configFile.delete();
-		}
 	}
 
 	@Override
 	public void onBeforeGenerateProject(
 			ProjectTemplatesArgs projectTemplatesArgs, ArchetypeGenerationRequest archetypeGenerationRequest)
 		throws Exception {
+
+		File destinationDir = projectTemplatesArgs.getDestinationDir();
+
+		String projectName = projectTemplatesArgs.getName();
+
+		JSWidgetProjectTemplatesArgsExt jsWidgetTemplateExt =
+			(JSWidgetProjectTemplatesArgsExt)projectTemplatesArgs.getProjectTemplatesArgsExt();
+
+		if (jsWidgetTemplateExt.isBatchModel()) {
+			File batchConfigFile = File.createTempFile("config_batch", ".json");
+
+			File templateFile = ProjectTemplatesUtil.getTemplateFile(projectTemplatesArgs);
+
+			try (JarFile jarFile = new JarFile(templateFile)) {
+				JarEntry entry = jarFile.getJarEntry("config.json");
+
+				try (InputStream input = jarFile.getInputStream(entry)) {
+					String config = FileUtil.readStreamToString(input);
+
+					config = _replace(config, "[$TARGET$]", jsWidgetTemplateExt.getTarget());
+					config = _replace(config, "[$PLATFORM$]", jsWidgetTemplateExt.getPlatform());
+					config = _replace(config, "[$PROJECT_TYPE$]", jsWidgetTemplateExt.getProjectType());
+					config = _replace(config, "[$DESCRIPTION$]", projectName);
+					config = _replace(config, "[$CATEGORY$]", "category.sample");
+					config = _replace(config, "[$ADD_CONFIGURATION_SUPPORT$]", "true");
+					config = _replace(config, "[$ADD_LOCALIZATION_SUPPORT$]", "true");
+					config = _replace(config, "[$CUSTOM_ELEMENT_NAME$]", projectName);
+					config = _replace(config, "[$USE_SHADOW_DOM$]", "true");
+					config = _replace(config, "[$CREATE_INITIALIZER$]", "true");
+
+					JSONObject packageJSONObject = new JSONObject(config);
+
+					if (!Objects.equal(
+							jsWidgetTemplateExt.getProjectType(), Constants.DEFAULT_POSSIBLE_PROJECT_TYPE_VALUES[3])) {
+
+						packageJSONObject.remove("addLocalizationSupport");
+						packageJSONObject.remove("addConfigurationSupport");
+						packageJSONObject.remove("createInitializer");
+					}
+
+					if (!Objects.equal(jsWidgetTemplateExt.getTarget(), Constants.DEFAULT_POSSIBLE_TARGET_VALUES[0])) {
+						packageJSONObject.remove("category");
+					}
+
+					if (!Objects.equal(jsWidgetTemplateExt.getTarget(), Constants.DEFAULT_POSSIBLE_TARGET_VALUES[1])) {
+						packageJSONObject.remove("customElementName");
+						packageJSONObject.remove("useShadowDOM");
+					}
+
+					String newConfigValue = packageJSONObject.toString();
+
+					Files.write(batchConfigFile.toPath(), newConfigValue.getBytes());
+
+					NodeUtil.runLiferayCli(
+						projectTemplatesArgs.getLiferayVersion(), destinationDir,
+						new String[] {"new", projectName, "--batch", "--options", batchConfigFile.toString()});
+				}
+			}
+		}
+		else {
+			NodeUtil.runLiferayCli(
+				projectTemplatesArgs.getLiferayVersion(), destinationDir, new String[] {"new", projectName});
+		}
 	}
 
 	private String _replace(String s, String key, Object value) {

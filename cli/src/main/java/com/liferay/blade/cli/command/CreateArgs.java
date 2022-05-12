@@ -19,6 +19,10 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import com.liferay.blade.cli.command.validator.JsProjectPlatformValidator;
+import com.liferay.blade.cli.command.validator.JsProjectTargetValidator;
+import com.liferay.blade.cli.command.validator.JsProjectTypeValidator;
+import com.liferay.blade.cli.command.validator.ParameterDepdendencyValidator;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.TemplateNameValidator;
 
@@ -80,6 +84,18 @@ public class CreateArgs extends BaseArgs {
 		return _jsFramework;
 	}
 
+	public String getJsProjectPlatform() {
+		return _jsProjectPlatform;
+	}
+
+	public String getJsProjectTarget() {
+		return _jsProjectTarget;
+	}
+
+	public String getJsProjectType() {
+		return _jsProjectType;
+	}
+
 	public String getLiferayVersion() {
 		return _liferayVersion;
 	}
@@ -110,6 +126,10 @@ public class CreateArgs extends BaseArgs {
 
 	public String getViewType() {
 		return _viewType;
+	}
+
+	public boolean isJsBatchModel() {
+		return _jsBatchModel;
 	}
 
 	public boolean isListTemplates() {
@@ -148,8 +168,24 @@ public class CreateArgs extends BaseArgs {
 		_hostBundleVersion = hostBundleVersion;
 	}
 
+	public void setJsBatchModel(boolean jsBatchModel) {
+		_jsBatchModel = jsBatchModel;
+	}
+
 	public void setJSFramework(String jsFramework) {
 		_jsFramework = jsFramework;
+	}
+
+	public void setJsProjectPlatform(String jsProjectPlatform) {
+		_jsProjectPlatform = jsProjectPlatform;
+	}
+
+	public void setJSProjectTarget(String jsProjectTarget) {
+		_jsProjectTarget = jsProjectTarget;
+	}
+
+	public void setJSProjectType(String jsProjectType) {
+		_jsProjectType = jsProjectType;
 	}
 
 	public void setLiferayVersion(String liferayVersion) {
@@ -231,11 +267,26 @@ public class CreateArgs extends BaseArgs {
 	)
 	private String _hostBundleVersion;
 
+	@Parameter(description = "Batch mode without user interaction", hidden = true, names = "--jsBatch")
+	private boolean _jsBatchModel;
+
 	@Parameter(
 		description = "Specify the javascript framework which will be used in the generated project. (metaljs)|(react)",
 		names = "--js-framework"
 	)
 	private String _jsFramework;
+
+	@Parameter(description = "The js project platform to use when creating js project.", names = "--jsPlatform")
+	@ParameterDepdendencyValidator(order = 2, value = JsProjectPlatformValidator.class)
+	private String _jsProjectPlatform;
+
+	@Parameter(description = "The js project target to use when creating js project.", names = "--jsTarget")
+	@ParameterDepdendencyValidator(order = 1, value = JsProjectTargetValidator.class)
+	private String _jsProjectTarget;
+
+	@Parameter(description = "The js project type to use when creating js project.", names = "--jsType")
+	@ParameterDepdendencyValidator(order = 3, value = JsProjectTypeValidator.class)
+	private String _jsProjectType;
 
 	@Parameter(
 		description = "The version of Liferay to target when creating the project. Available options are 7.0, 7.1, 7.2, 7.3, 7.4.",

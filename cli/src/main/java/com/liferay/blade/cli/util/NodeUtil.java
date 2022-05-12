@@ -95,6 +95,82 @@ public class NodeUtil {
 		return nodeDirPath;
 	}
 
+	public static int runLiferayCli(String liferayVersion, File dir, String[] args) throws Exception {
+		return runLiferayCli(liferayVersion, dir, args, false);
+	}
+
+	public static int runLiferayCli(String liferayVersion, File dir, String[] args, boolean quiet) throws Exception {
+		Path nodeDirPath = downloadNode();
+
+		Path liferayCliDirPath = _installJs("liferay-cli");
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+
+		processBuilder.directory(dir);
+
+		List<String> commands = new ArrayList<>();
+
+		if (OSDetector.isWindows()) {
+			commands.add("cmd.exe");
+			commands.add("/c");
+
+			Path nodePath = nodeDirPath.resolve("node.exe");
+
+			Path liferayPath = liferayCliDirPath.resolve(
+				"node_modules" + File.separator + "@liferay" + File.separator + "cli" + File.separator + "bin" +
+					File.separator + "liferay.js");
+
+			commands.add(nodePath.toString());
+			commands.add(liferayPath.toString());
+
+			for (String arg : args) {
+				commands.add(arg);
+			}
+		}
+		else {
+			Path nodePath = nodeDirPath.resolve("bin/node");
+
+			Path liferayPath = liferayCliDirPath.resolve("node_modules/.bin/liferay");
+
+			commands.add("sh");
+			commands.add("-c");
+
+			StringBuilder command = new StringBuilder();
+
+			command.append("\"");
+			command.append(nodePath.toString());
+			command.append("\" \"");
+			command.append(liferayPath.toString());
+			command.append("\" ");
+
+			for (String arg : args) {
+				command.append("\"");
+				command.append(arg);
+				command.append("\" ");
+			}
+
+			commands.add(command.toString());
+		}
+
+		processBuilder.command(commands);
+
+		if (!quiet) {
+			processBuilder.inheritIO();
+		}
+
+		if ((dir != null) && dir.exists()) {
+			processBuilder.directory(dir);
+		}
+
+		Process process = processBuilder.start();
+
+		OutputStream outputStream = process.getOutputStream();
+
+		outputStream.close();
+
+		return process.waitFor();
+	}
+
 	public static int runYo(String liferayVersion, File dir, String[] args) throws Exception {
 		return runYo(liferayVersion, dir, args, false);
 	}
@@ -102,7 +178,13 @@ public class NodeUtil {
 	public static int runYo(String liferayVersion, File dir, String[] args, boolean quiet) throws Exception {
 		Path nodeDirPath = downloadNode();
 
-		Path yoDirPath = _installYo(liferayVersion);
+		String yoGeneratorVersion = NodeUtil.YO_GENERATOR_10_VERSION;
+
+		if (liferayVersion.equals("7.0") || liferayVersion.equals("7.1")) {
+			yoGeneratorVersion = NodeUtil.YO_GENERATOR_8_VERSION;
+		}
+
+		Path yoDirPath = _installJs("yo-" + yoGeneratorVersion);
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
 
@@ -239,28 +321,22 @@ public class NodeUtil {
 		return new File(nodeModulesDir, "npm");
 	}
 
-	private static Path _installYo(String liferayVersion) throws Exception {
+	private static Path _installJs(String scripName) throws Exception {
 		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
 		Path nodeDirPath = bladeCachePath.resolve("node");
 
-		String yoGeneratorVersion = NodeUtil.YO_GENERATOR_10_VERSION;
+		Path scriptDirPath = bladeCachePath.resolve(scripName);
 
-		if (liferayVersion.equals("7.0") || liferayVersion.equals("7.1")) {
-			yoGeneratorVersion = NodeUtil.YO_GENERATOR_8_VERSION;
-		}
+		Files.createDirectories(scriptDirPath);
 
-		Path yoDirPath = bladeCachePath.resolve("yo-" + yoGeneratorVersion);
+		Path newPackageJsonPath = scriptDirPath.resolve("new_package.json");
 
-		Files.createDirectories(yoDirPath);
-
-		Path newPackageJsonPath = yoDirPath.resolve("new_package.json");
-
-		InputStream inputStream = NodeUtil.class.getResourceAsStream("dependencies/yo-" + yoGeneratorVersion + ".json");
+		InputStream inputStream = NodeUtil.class.getResourceAsStream("dependencies/" + scripName + ".json");
 
 		Files.copy(inputStream, newPackageJsonPath, StandardCopyOption.REPLACE_EXISTING);
 
-		Path packageJsonPath = yoDirPath.resolve("package.json");
+		Path packageJsonPath = scriptDirPath.resolve("package.json");
 
 		boolean skipInstall = false;
 
@@ -268,7 +344,7 @@ public class NodeUtil {
 			skipInstall = _contentEquals(packageJsonPath, newPackageJsonPath);
 		}
 
-		Path nodeModulesDirPath = yoDirPath.resolve("node_modules");
+		Path nodeModulesDirPath = scriptDirPath.resolve("node_modules");
 
 		skipInstall = skipInstall && Files.exists(nodeModulesDirPath);
 
@@ -285,23 +361,23 @@ public class NodeUtil {
 				process = BladeUtil.startProcess(
 					nodeDirPath.toString() + File.separator + "node.exe " + npmDir + File.separator + "bin" +
 						File.separator + "npm-cli.js install --scripts-prepend-node-path",
-					yoDirPath.toFile());
+					scriptDirPath.toFile());
 			}
 			else {
 				process = BladeUtil.startProcess(
 					nodeDirPath.toString() + File.separator + "bin" + File.separator + "node " + npmDir +
 						File.separator + "bin" + File.separator + "npm-cli.js install --scripts-prepend-node-path",
-					yoDirPath.toFile());
+					scriptDirPath.toFile());
 			}
 
 			int returnCode = process.waitFor();
 
 			if (returnCode != 0) {
-				throw new RuntimeException("Problem occurred while downloading yo");
+				throw new RuntimeException("Problem occurred while downloading " + scripName);
 			}
 		}
 
-		return yoDirPath;
+		return scriptDirPath;
 	}
 
 	private static String _nodeVersion = "10.15.3";
