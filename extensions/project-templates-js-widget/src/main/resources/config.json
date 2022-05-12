@@ -1,0 +1,12 @@
+{
+	"addConfigurationSupport": "[$ADD_CONFIGURATION_SUPPORT$]",
+	"addLocalizationSupport": "[$ADD_LOCALIZATION_SUPPORT$]",
+	"category": "[$CATEGORY$]",
+	"createInitializer": "[$CREATE_INITIALIZER$]",
+	"customElementName": "[$CUSTOM_ELEMENT_NAME$]",
+	"description": "[$DESCRIPTION$]",
+	"platform": "[$PLATFORM$]",
+	"projectType": "[$PROJECT_TYPE$]",
+	"target": "[$TARGET$]",
+	"useShadowDOM": "[$USE_SHADOW_DOM$]"
+}

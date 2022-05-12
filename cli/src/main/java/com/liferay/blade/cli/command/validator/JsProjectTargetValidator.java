@@ -16,18 +16,38 @@
 
 package com.liferay.blade.cli.command.validator;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.liferay.blade.cli.command.CreateArgs;
+import com.liferay.blade.cli.util.Constants;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Simon Jiang
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ParametersValidator {
+public class JsProjectTargetValidator implements ValidatorFunctionPredicate<CreateArgs> {
 
-	ParameterValidator[] value();
+	@Override
+	public List<String> apply(CreateArgs t) {
+		return Arrays.asList(Constants.DEFAULT_POSSIBLE_TARGET_VALUES);
+	}
+
+	@Override
+	public boolean test(CreateArgs createArgs) {
+		if (Objects.equals(createArgs.getTemplate(), "js-widget")) {
+			boolean jsBatchModel = createArgs.isJsBatchModel();
+
+			if (!jsBatchModel) {
+				return true;
+			}
+
+			if (Objects.isNull(createArgs.getJsProjectTarget())) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 }
