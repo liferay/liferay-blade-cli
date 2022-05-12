@@ -31,12 +31,15 @@ import com.liferay.blade.cli.command.CommandType;
 import com.liferay.blade.cli.command.UpdateArgs;
 import com.liferay.blade.cli.command.UpdateCommand;
 import com.liferay.blade.cli.command.VersionCommand;
+import com.liferay.blade.cli.command.validator.ParameterDepdendencyValidator;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
-import com.liferay.blade.cli.command.validator.ParametersValidator;
+import com.liferay.blade.cli.command.validator.ParameterValidator;
+import com.liferay.blade.cli.command.validator.ValidatorFunctionPredicate;
 import com.liferay.blade.cli.gradle.GradleExecutionException;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
 import com.liferay.blade.cli.util.ProductInfo;
 import com.liferay.blade.cli.util.Prompter;
@@ -84,6 +87,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.input.CloseShieldInputStream;
+import org.apache.commons.lang3.StringUtils;
 
 import org.fusesource.jansi.AnsiConsole;
 
@@ -482,6 +486,8 @@ public class BladeCLI {
 						Object commandArgs = objects.get(0);
 
 						_validateParameters((BaseArgs)commandArgs);
+
+						_validateParameterDependency((BaseArgs)commandArgs);
 
 						String parameterMessage = null;
 
@@ -1511,14 +1517,89 @@ public class BladeCLI {
 	}
 
 	@SuppressWarnings("unchecked")
+	private <T extends BaseArgs> void _validateParameterDependency(T args) throws IllegalArgumentException {
+		try {
+			Class<? extends BaseArgs> argsClass = args.getClass();
+
+			Field[] classFields = argsClass.getDeclaredFields();
+
+			List<Pair<ParameterDepdendencyValidator, Field>> validatorPairs = new ArrayList<>();
+
+			for (Field field : classFields) {
+				ParameterDepdendencyValidator validator = field.getAnnotation(ParameterDepdendencyValidator.class);
+
+				if (Objects.isNull(validator)) {
+					continue;
+				}
+
+				validatorPairs.add(new Pair<>(validator, field));
+			}
+
+			Collections.sort(
+				validatorPairs,
+				new Comparator<Pair<ParameterDepdendencyValidator, Field>>() {
+
+					@Override
+					public int compare(
+						Pair<ParameterDepdendencyValidator, Field> pair1,
+						Pair<ParameterDepdendencyValidator, Field> pair2) {
+
+						ParameterDepdendencyValidator firstValidator = pair1.first();
+
+						ParameterDepdendencyValidator secondeValidator = pair2.first();
+
+						return firstValidator.order() - secondeValidator.order();
+					}
+
+				});
+
+			for (Pair<ParameterDepdendencyValidator, Field> validatorPair : validatorPairs) {
+				ParameterDepdendencyValidator validator = validatorPair.first();
+
+				Class<? extends Predicate<?>> predicateClass = validator.value();
+
+				if (predicateClass != null) {
+					ValidatorFunctionPredicate<T> validatorFunction =
+						(ValidatorFunctionPredicate<T>)predicateClass.newInstance();
+
+					if (!validatorFunction.test(args)) {
+						Field field = validatorPair.second();
+
+						List<String> possibleValues = validatorFunction.apply(args);
+
+						String possibleValueString = StringUtils.join(possibleValues, "|");
+
+						Parameter parameterAnnotation = field.getAnnotation(Parameter.class);
+
+						if (!possibleValues.isEmpty()) {
+							throw new IllegalArgumentException(
+								"Parameter validataion failed for " + parameterAnnotation.names()[0] +
+									", possible value are " + possibleValueString);
+						}
+
+						throw new IllegalArgumentException(
+							"Parameter validataion failed for " + parameterAnnotation.names()[0]);
+					}
+				}
+			}
+		}
+		catch (Exception exception) {
+			Class<?> argsClass = args.getClass();
+
+			throw new IllegalArgumentException(
+				"Parameter's depdendency Validation failed for " + argsClass.getSimpleName(), exception);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	private <T extends BaseArgs> void _validateParameters(T args) throws IllegalArgumentException {
 		try {
 			Class<? extends BaseArgs> argsClass = args.getClass();
 
-			ParametersValidator validateParameters = argsClass.getAnnotation(ParametersValidator.class);
+			ParameterValidator[] validateParameters = argsClass.getAnnotationsByType(ParameterValidator.class);
 
-			if (validateParameters != null) {
-				Class<? extends Predicate<?>> predicateClass = validateParameters.value();
+			for (ParameterValidator parameterValidator : validateParameters) {
+				Class<? extends Predicate<?>> predicateClass = parameterValidator.value();
 
 				if (predicateClass != null) {
 					Predicate<T> predicate = (Predicate<T>)predicateClass.newInstance();

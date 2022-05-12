@@ -65,17 +65,16 @@ public class JSWidgetProjectTemplateTest {
 
 		_makeWorkspace(workspaceDir);
 
-		String[] args = {"create", "--base", workspaceDir.getAbsolutePath(), "-t", "js-widget", "js-widget-test"};
+		String[] args = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-t", "js-widget", "js-widget-test", "--jsBatch",
+			"--jsTarget", "Liferay Platform Project", "--jsPlatform", "dxp-7.4", "--jsType", "Shared bundle"
+		};
 
 		_bladeTest.run(args);
 
 		File projectDir = new File(workspaceDir, "modules/js-widget-test");
 
 		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
-
-		File configFile = new File(projectDir, "config.json");
-
-		Assert.assertTrue(!configFile.exists());
 	}
 
 	@Rule

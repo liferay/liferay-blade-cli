@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
  * @author Simon Jiang
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ParametersValidator {
+@Target({ElementType.FIELD, ElementType.METHOD})
+public @interface ParameterDependenciesValidator {
 
-	ParameterValidator[] value();
+	ParameterDepdendencyValidator[] value();
 
 }
