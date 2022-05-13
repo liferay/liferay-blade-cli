@@ -34,6 +34,7 @@ import org.apache.commons.io.FileUtils;
 
 /**
  * @author David Truong
+ * @author Simon Jiang
  */
 public class NodeUtil {
 
