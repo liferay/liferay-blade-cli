@@ -487,8 +487,6 @@ public class BladeCLI {
 
 						_validateParameters((BaseArgs)commandArgs);
 
-						_validateParameterDependency((BaseArgs)commandArgs);
-
 						String parameterMessage = null;
 
 						if (parameterException1 != null) {
@@ -506,6 +504,8 @@ public class BladeCLI {
 							}
 						}
 						else {
+							_validateParameterDependency((BaseArgs)commandArgs);
+
 							_command = command;
 
 							_args = (BaseArgs)commandArgs;
@@ -615,6 +615,8 @@ public class BladeCLI {
 								_args.setBase(baseDir);
 
 								try {
+									_validateParameterDependency(_args);
+
 									runCommand();
 
 									postRunCommand();

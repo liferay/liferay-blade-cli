@@ -66,8 +66,8 @@ public class JSWidgetProjectTemplateTest {
 		_makeWorkspace(workspaceDir);
 
 		String[] args = {
-			"create", "--base", workspaceDir.getAbsolutePath(), "-t", "js-widget", "js-widget-test", "--jsBatch",
-			"--jsTarget", "Liferay Platform Project", "--jsPlatform", "dxp-7.4", "--jsType", "Shared bundle"
+			"create", "--base", workspaceDir.getAbsolutePath(), "-t", "js-widget", "js-widget-test", "--jsTarget",
+			"Liferay Platform Project", "--jsType", "Shared bundle"
 		};
 
 		_bladeTest.run(args);

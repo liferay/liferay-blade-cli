@@ -272,7 +272,7 @@ public class CreateArgs extends BaseArgs {
 	private String _jsProjectTarget;
 
 	@Parameter(description = "The js project type to use when creating js project.", names = "--jsType")
-	@ParameterDepdendencyValidator(order = 3, value = JsProjectTypeValidator.class)
+	@ParameterDepdendencyValidator(order = 2, value = JsProjectTypeValidator.class)
 	private String _jsProjectType;
 
 	@Parameter(
