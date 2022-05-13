@@ -19,7 +19,6 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import com.liferay.blade.cli.command.validator.JsProjectPlatformValidator;
 import com.liferay.blade.cli.command.validator.JsProjectTargetValidator;
 import com.liferay.blade.cli.command.validator.JsProjectTypeValidator;
 import com.liferay.blade.cli.command.validator.ParameterDepdendencyValidator;
@@ -84,10 +83,6 @@ public class CreateArgs extends BaseArgs {
 		return _jsFramework;
 	}
 
-	public String getJsProjectPlatform() {
-		return _jsProjectPlatform;
-	}
-
 	public String getJsProjectTarget() {
 		return _jsProjectTarget;
 	}
@@ -128,8 +123,8 @@ public class CreateArgs extends BaseArgs {
 		return _viewType;
 	}
 
-	public boolean isJsBatchModel() {
-		return _jsBatchModel;
+	public boolean isJsInteractiveModel() {
+		return _jsInteractiveModel;
 	}
 
 	public boolean isListTemplates() {
@@ -168,16 +163,12 @@ public class CreateArgs extends BaseArgs {
 		_hostBundleVersion = hostBundleVersion;
 	}
 
-	public void setJsBatchModel(boolean jsBatchModel) {
-		_jsBatchModel = jsBatchModel;
-	}
-
 	public void setJSFramework(String jsFramework) {
 		_jsFramework = jsFramework;
 	}
 
-	public void setJsProjectPlatform(String jsProjectPlatform) {
-		_jsProjectPlatform = jsProjectPlatform;
+	public void setJsInteractiveModel(boolean jsInteractiveModel) {
+		_jsInteractiveModel = jsInteractiveModel;
 	}
 
 	public void setJSProjectTarget(String jsProjectTarget) {
@@ -267,18 +258,14 @@ public class CreateArgs extends BaseArgs {
 	)
 	private String _hostBundleVersion;
 
-	@Parameter(description = "Batch mode without user interaction", hidden = true, names = "--jsBatch")
-	private boolean _jsBatchModel;
-
 	@Parameter(
 		description = "Specify the javascript framework which will be used in the generated project. (metaljs)|(react)",
 		names = "--js-framework"
 	)
 	private String _jsFramework;
 
-	@Parameter(description = "The js project platform to use when creating js project.", names = "--jsPlatform")
-	@ParameterDepdendencyValidator(order = 2, value = JsProjectPlatformValidator.class)
-	private String _jsProjectPlatform;
+	@Parameter(description = "use interactive mode to create js project", hidden = true, names = "--jsInteractive")
+	private boolean _jsInteractiveModel;
 
 	@Parameter(description = "The js project target to use when creating js project.", names = "--jsTarget")
 	@ParameterDepdendencyValidator(order = 1, value = JsProjectTargetValidator.class)

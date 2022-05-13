@@ -26,8 +26,7 @@ public class Constants {
 	public static final String DEFAULT_PLUGINS_SDK_PORTLET_SRC = "docroot/WEB-INF/src/";
 
 	public static final String[] DEFAULT_POSSIBLE_PLATFORM_VALUES = {
-		"portal-agnostic", "portal-7.4", "dxp-7.4", "portal-7.3", "dxp-7.3", "portal-7.2", "dxp-7.2", "portal-7.1",
-		"dxp-7.1"
+		"portal-7.4", "dxp-7.4", "portal-7.3", "dxp-7.3", "portal-7.2", "dxp-7.2", "portal-7.1", "dxp-7.1"
 	};
 
 	public static final String[] DEFAULT_POSSIBLE_PROJECT_TYPE_VALUES = {

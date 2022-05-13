@@ -74,10 +74,14 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 
 			File templateFile = ProjectTemplatesUtil.getTemplateFile(projectTemplatesArgs);
 
-			try (JarFile jarFile = new JarFile(templateFile)) {
-				JarEntry entry = jarFile.getJarEntry("config.json");
+			if (!FileUtil.exists(templateFile.toString())) {
+				throw new Exception("Can not find JS widget project template");
+			}
 
-				try (InputStream input = jarFile.getInputStream(entry)) {
+			try (JarFile templateJarFile = new JarFile(templateFile)) {
+				JarEntry entry = templateJarFile.getJarEntry("config.json");
+
+				try (InputStream input = templateJarFile.getInputStream(entry)) {
 					String config = FileUtil.readStreamToString(input);
 
 					config = _replace(config, "[$TARGET$]", jsWidgetTemplateExt.getTarget());
@@ -110,9 +114,9 @@ public class JSWidgetProjectTemplateCustomizer implements ProjectTemplateCustomi
 						packageJSONObject.remove("useShadowDOM");
 					}
 
-					String newConfigValue = packageJSONObject.toString();
+					String newConfig = packageJSONObject.toString();
 
-					Files.write(batchConfigFile.toPath(), newConfigValue.getBytes());
+					Files.write(batchConfigFile.toPath(), newConfig.getBytes());
 
 					NodeUtil.runLiferayCli(
 						projectTemplatesArgs.getLiferayVersion(), destinationDir,

@@ -41,9 +41,9 @@ public class JsProjectTypeValidator implements ValidatorFunctionPredicate<Create
 	@Override
 	public boolean test(CreateArgs createArgs) {
 		if (Objects.equals(createArgs.getTemplate(), "js-widget")) {
-			boolean jsBatchModel = createArgs.isJsBatchModel();
+			boolean jsInteractiveModel = createArgs.isJsInteractiveModel();
 
-			if (!jsBatchModel) {
+			if (jsInteractiveModel) {
 				return true;
 			}
 
