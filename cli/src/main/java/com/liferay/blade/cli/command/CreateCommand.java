@@ -387,11 +387,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		properties.put("setService", createArgs.getService());
 		properties.put("setViewType", createArgs.getViewType());
 
-		properties.put("setBatchModel", Boolean.toString(createArgs.isJsBatchModel()));
-		properties.put("setPlatform", createArgs.getJsProjectPlatform());
-		properties.put("setProjectType", createArgs.getJsProjectType());
-		properties.put("setTarget", createArgs.getJsProjectTarget());
-
 		properties.put("setViewType", createArgs.getViewType());
 
 		BladeCLI bladeCLI = getBladeCLI();
@@ -406,6 +401,16 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		try {
 			if (workspaceProvider != null) {
+				properties.put("setBatchModel", Boolean.toString(!createArgs.isJsInteractiveModel()));
+
+				String product = workspaceProvider.getProduct(dir);
+				String liferayVersion = workspaceProvider.getLiferayVersion(dir);
+
+				properties.put("setPlatform", product + "-" + liferayVersion.substring(0, 3));
+
+				properties.put("setProjectType", createArgs.getJsProjectType());
+				properties.put("setTarget", createArgs.getJsProjectTarget());
+
 				File workspaceLocation = workspaceProvider.getWorkspaceDir(bladeCLI);
 
 				if (workspaceLocation != null) {
