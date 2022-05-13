@@ -126,7 +126,7 @@ testBladeCreateCommandMvcPortlet {
 testBladeCreateCommandReactJsWidget {
 	dependsOn testBladeInitCommand
 
-	args = [jar.archivePath, "create", "-t", "js-widget", "testJsWidgetReact", "--jsBatch", "--jsTarget", "Liferay Platform Project", "--jsPlatform", "dxp-7.4", "--jsType", "React"]
+	args = [jar.archivePath, "create", "-t", "js-widget", "testJsWidgetReact", "--jsTarget", "Liferay Platform Project", "--jsType", "React"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = initDir
@@ -147,7 +147,7 @@ testBladeCreateCommandReactJsWidget {
 testBladeCreateCommandSharedBundleJsWidget {
 	dependsOn testBladeInitCommand
 
-	args = [jar.archivePath, "create", "-t", "js-widget", "testJsWidgetSharedBundle", "--jsBatch", "--jsTarget", "Liferay Platform Project", "--jsPlatform", "dxp-7.4", "--jsType", "Shared bundle"]
+	args = [jar.archivePath, "create", "-t", "js-widget", "testJsWidgetSharedBundle", "--jsTarget", "Liferay Platform Project", "--jsType", "Shared bundle"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = initDir
@@ -168,7 +168,7 @@ testBladeCreateCommandSharedBundleJsWidget {
 testBladeCreateCommandVueJsWidget {
 	dependsOn testBladeInitCommand
 
-	args = [jar.archivePath, "create", "-t", "js-widget", "testJsWidgetVue", "--jsBatch", "--jsTarget", "Liferay Platform Project", "--jsPlatform", "dxp-7.4", "--jsType", "Vue.js"]
+	args = [jar.archivePath, "create", "-t", "js-widget", "testJsWidgetVue", "--jsTarget", "Liferay Platform Project", "--jsType", "Vue.js"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = initDir
