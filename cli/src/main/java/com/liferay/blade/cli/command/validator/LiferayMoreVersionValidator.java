@@ -24,6 +24,7 @@ import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Simon Jiang
@@ -39,9 +40,13 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 	public void validate(String name, String value) throws ParameterException {
 		List<String> possibleValues = new ArrayList<>(get());
 
+		Set<String> allTargetPlatformVersions = BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
+
 		possibleValues.addAll(WorkspaceConstants.originalLiferayVersions);
 
-		if (!possibleValues.contains(value) && !VersionUtil.isLiferayVersion(value)) {
+		if ((!possibleValues.contains(value) && !allTargetPlatformVersions.contains(value)) ||
+			(!BladeUtil.verifyWorkspaceProduct(value) && !VersionUtil.isLiferayVersion(value))) {
+
 			throw new ParameterException(value + " is not a valid value.");
 		}
 	}
