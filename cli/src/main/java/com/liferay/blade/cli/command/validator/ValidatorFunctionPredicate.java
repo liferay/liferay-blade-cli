@@ -16,18 +16,12 @@
 
 package com.liferay.blade.cli.command.validator;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * @author Simon Jiang
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ParametersValidator {
-
-	ParameterValidator[] value();
-
+public interface ValidatorFunctionPredicate<T> extends Function<T, List<String>>, Predicate<T> {
 }

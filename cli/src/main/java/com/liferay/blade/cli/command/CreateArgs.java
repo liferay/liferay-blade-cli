@@ -19,6 +19,9 @@ package com.liferay.blade.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import com.liferay.blade.cli.command.validator.JsProjectTargetValidator;
+import com.liferay.blade.cli.command.validator.JsProjectTypeValidator;
+import com.liferay.blade.cli.command.validator.ParameterDepdendencyValidator;
 import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.TemplateNameValidator;
 
@@ -80,6 +83,14 @@ public class CreateArgs extends BaseArgs {
 		return _jsFramework;
 	}
 
+	public String getJsProjectTarget() {
+		return _jsProjectTarget;
+	}
+
+	public String getJsProjectType() {
+		return _jsProjectType;
+	}
+
 	public String getLiferayVersion() {
 		return _liferayVersion;
 	}
@@ -110,6 +121,10 @@ public class CreateArgs extends BaseArgs {
 
 	public String getViewType() {
 		return _viewType;
+	}
+
+	public boolean isJsInteractiveModel() {
+		return _jsInteractiveModel;
 	}
 
 	public boolean isListTemplates() {
@@ -150,6 +165,18 @@ public class CreateArgs extends BaseArgs {
 
 	public void setJSFramework(String jsFramework) {
 		_jsFramework = jsFramework;
+	}
+
+	public void setJsInteractiveModel(boolean jsInteractiveModel) {
+		_jsInteractiveModel = jsInteractiveModel;
+	}
+
+	public void setJSProjectTarget(String jsProjectTarget) {
+		_jsProjectTarget = jsProjectTarget;
+	}
+
+	public void setJSProjectType(String jsProjectType) {
+		_jsProjectType = jsProjectType;
 	}
 
 	public void setLiferayVersion(String liferayVersion) {
@@ -236,6 +263,17 @@ public class CreateArgs extends BaseArgs {
 		names = "--js-framework"
 	)
 	private String _jsFramework;
+
+	@Parameter(description = "use interactive mode to create js project", hidden = true, names = "--jsInteractive")
+	private boolean _jsInteractiveModel;
+
+	@Parameter(description = "The js project target to use when creating js project.", names = "--jsTarget")
+	@ParameterDepdendencyValidator(order = 1, value = JsProjectTargetValidator.class)
+	private String _jsProjectTarget;
+
+	@Parameter(description = "The js project type to use when creating js project.", names = "--jsType")
+	@ParameterDepdendencyValidator(order = 2, value = JsProjectTypeValidator.class)
+	private String _jsProjectType;
 
 	@Parameter(
 		description = "The version of Liferay to target when creating the project. Available options are 7.0, 7.1, 7.2, 7.3, 7.4.",

@@ -2,6 +2,7 @@
 	"author": "David Truong",
 	"description": "",
 	"devDependencies": {
+		"@liferay/cli": "1.1.0",
 		"generator-liferay-fragments": "1.2.1",
 		"generator-liferay-js": "2.28.3",
 		"generator-liferay-theme": "10.2.0",

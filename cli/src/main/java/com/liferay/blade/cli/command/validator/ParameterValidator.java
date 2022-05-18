@@ -17,17 +17,22 @@
 package com.liferay.blade.cli.command.validator;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import java.util.function.Predicate;
+
 /**
+ * @author Christopher Bryan Boyd
  * @author Simon Jiang
  */
+@Repeatable(ParametersValidator.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ParametersValidator {
+public @interface ParameterValidator {
 
-	ParameterValidator[] value();
+	Class<? extends Predicate<?>> value();
 
 }

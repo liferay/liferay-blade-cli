@@ -5,6 +5,9 @@ task testBladeCreateCommandFormField(type: JavaExec)
 task testBladeCreateCommandJsTheme(type: JavaExec)
 task testBladeCreateCommandListTemplates(type: JavaExec)
 task testBladeCreateCommandMvcPortlet(type: JavaExec)
+task testBladeCreateCommandReactJsWidget(type: JavaExec)
+task testBladeCreateCommandSharedBundleJsWidget(type: JavaExec)
+task testBladeCreateCommandVueJsWidget(type: JavaExec)
 task testBladeGwCommand(type: JavaExec)
 task testBladeHelpCommand(type: JavaExec)
 task testBladeInitCommand(type: JavaExec)
@@ -110,6 +113,69 @@ testBladeCreateCommandMvcPortlet {
 	doLast {
 		String error = errorStream.toString().toLowerCase()
 		File projectDir = new File(initDir, "modules/test-mvc-portlet")
+		boolean projectDirExists = projectDir.exists()
+
+		errorStream.reset()
+		standardStream.reset()
+
+		assert projectDirExists
+		assert !error.contains("error")
+	}
+}
+
+testBladeCreateCommandReactJsWidget {
+	dependsOn testBladeInitCommand
+
+	args = [jar.archivePath, "create", "-t", "js-widget", "testJsWidgetReact", "--jsTarget", "Liferay Platform Project", "--jsType", "React"]
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = initDir
+
+	doLast {
+		String error = errorStream.toString().toLowerCase()
+		File projectDir = new File(initDir, "modules/testJsWidgetReact")
+		boolean projectDirExists = projectDir.exists()
+
+		errorStream.reset()
+		standardStream.reset()
+
+		assert projectDirExists
+		assert !error.contains("error")
+	}
+}
+
+testBladeCreateCommandSharedBundleJsWidget {
+	dependsOn testBladeInitCommand
+
+	args = [jar.archivePath, "create", "-t", "js-widget", "testJsWidgetSharedBundle", "--jsTarget", "Liferay Platform Project", "--jsType", "Shared bundle"]
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = initDir
+
+	doLast {
+		String error = errorStream.toString().toLowerCase()
+		File projectDir = new File(initDir, "modules/testJsWidgetSharedBundle")
+		boolean projectDirExists = projectDir.exists()
+
+		errorStream.reset()
+		standardStream.reset()
+
+		assert projectDirExists
+		assert !error.contains("error")
+	}
+}
+
+testBladeCreateCommandVueJsWidget {
+	dependsOn testBladeInitCommand
+
+	args = [jar.archivePath, "create", "-t", "js-widget", "testJsWidgetVue", "--jsTarget", "Liferay Platform Project", "--jsType", "Vue.js"]
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = initDir
+
+	doLast {
+		String error = errorStream.toString().toLowerCase()
+		File projectDir = new File(initDir, "modules/testJsWidgetVue")
 		boolean projectDirExists = projectDir.exists()
 
 		errorStream.reset()
