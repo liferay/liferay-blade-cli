@@ -1,9 +1,53 @@
 # Liferay Blade CLI Change Log
 
+## 4.0.13 - 2022-05-18
+
+### Commits
+- [BLADE-635] (74f7cf9d17)
+- [BLADE-668] simplify js-widget parameter (92e8e38bcc)
+- [BLADE-668] add liferay cli to support create js project (64b2128ff5)
+- [BLADE-635] Add validation for modules name (4833a9a2f0)
+- [BLADE-677] Blade did not correctly verify product key in
+LiferayMoreVersionValidator (8add80b301)
+- [BLADE-674] fix init command test error (c444717692)
+- [BLADE-674] (bb5c0ade5c)
+- [BLADE-674] It's not possible to execute the option upgradeProperties with
+blade (caf45f9e60)
+- [BLADE-675] upgrade liferay-js-widget version (2294394d30)
+- [BLADE-572] fix test failure (d1db6b9226)
+
+### Dependencies
+- [BLADE-678] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.32.
+- [BLADE-678] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.15.
+- [BLADE-678] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.16.
+- [BLADE-678] Update the com.liferay.project.templates dependency to version
+5.0.205.
+- [BLADE-668] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.16-SNAPSHOT.
+- [BLADE-673] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.32-SNAPSHOT.
+- [BLADE-673] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.15-SNAPSHOT.
+- [BLADE-673] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.15-SNAPSHOT.
+- [BLADE-673] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.31.
+- [BLADE-673] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.14.
+- [BLADE-673] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.14.
+- [BLADE-572] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.14-SNAPSHOT.
+- [BLADE-572] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.14-SNAPSHOT.
+
 ## 4.0.12 - 2022-03-26
 
 ### Commits
-- [BLADE-572] fix test failure (d1db6b9226)
+- [BLADE-672] fix test failure (b8a0fe9867)
 - [BLADE-672] (6a5cb179a1)
 - [BLADE-664] Update project templates (894c346aa0)
 
@@ -14,9 +58,9 @@ to version 1.0.31.
 version 1.0.14.
 - [BLADE-673] Update the com.liferay.project.templates.js.widget dependency to
 version 1.0.14.
-- [BLADE-572] Update the com.liferay.project.templates.js.theme dependency to
+- [BLADE-672] Update the com.liferay.project.templates.js.theme dependency to
 version 1.0.14-SNAPSHOT.
-- [BLADE-572] Update the com.liferay.project.templates.js.widget dependency to
+- [BLADE-672] Update the com.liferay.project.templates.js.widget dependency to
 version 1.0.14-SNAPSHOT.
 - [BLADE-673] Update the com.liferay.blade.extensions.maven.profile dependency
 to version 1.0.31-SNAPSHOT.
@@ -2222,6 +2266,7 @@ maintainability (7f9bc3f45e)
 [BLADE-631]: https://issues.liferay.com/browse/BLADE-631
 [BLADE-632]: https://issues.liferay.com/browse/BLADE-632
 [BLADE-633]: https://issues.liferay.com/browse/BLADE-633
+[BLADE-635]: https://issues.liferay.com/browse/BLADE-635
 [BLADE-637]: https://issues.liferay.com/browse/BLADE-637
 [BLADE-639]: https://issues.liferay.com/browse/BLADE-639
 [BLADE-640]: https://issues.liferay.com/browse/BLADE-640
@@ -2236,8 +2281,13 @@ maintainability (7f9bc3f45e)
 [BLADE-660]: https://issues.liferay.com/browse/BLADE-660
 [BLADE-663]: https://issues.liferay.com/browse/BLADE-663
 [BLADE-664]: https://issues.liferay.com/browse/BLADE-664
+[BLADE-668]: https://issues.liferay.com/browse/BLADE-668
 [BLADE-672]: https://issues.liferay.com/browse/BLADE-672
 [BLADE-673]: https://issues.liferay.com/browse/BLADE-673
+[BLADE-674]: https://issues.liferay.com/browse/BLADE-674
+[BLADE-675]: https://issues.liferay.com/browse/BLADE-675
+[BLADE-677]: https://issues.liferay.com/browse/BLADE-677
+[BLADE-678]: https://issues.liferay.com/browse/BLADE-678
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
