@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -402,6 +403,26 @@ public class BladeUtil {
 		);
 	}
 
+	@SuppressWarnings("unchecked")
+	public static Set<String> getWorkspaceProductTargetPlatformVersions(boolean promoted) {
+		Map<String, Object> productInfos = getProductInfos();
+
+		return productInfos.entrySet(
+		).stream(
+		).filter(
+			entry -> Objects.nonNull(productInfos.get(entry.getKey()))
+		).map(
+			entry -> new ProductInfo((Map<String, String>)productInfos.get(entry.getKey()))
+		).filter(
+			product ->
+				Objects.nonNull(product.getTargetPlatformVersion()) && (!promoted || (promoted && product.isPromoted()))
+		).map(
+			product -> product.getTargetPlatformVersion()
+		).collect(
+			Collectors.toSet()
+		);
+	}
+
 	public static boolean hasGradleWrapper(File dir) {
 		File gradlew = new File(dir, _GRADLEW_UNIX_FILE_NAME);
 		File gradlebat = new File(dir, _GRADLEW_WINDOWS_FILE_NAME);
@@ -680,6 +701,12 @@ public class BladeUtil {
 		}
 	}
 
+	public static boolean verifyWorkspaceProduct(String product) {
+		Matcher matcher = _productVersionPattern.matcher(product);
+
+		return matcher.matches();
+	}
+
 	public static void writePropertyValue(File propertyFile, String key, String value) throws Exception {
 		String property = System.lineSeparator() + key + "=" + value;
 
@@ -748,8 +775,10 @@ public class BladeUtil {
 
 	private static final String _PRODUCT_INFO_URL = "https://releases.liferay.com/tools/workspace/.product_info.json";
 
-	private static final Pattern _microPattern = Pattern.compile("(((e|f|s)p)|(ga))([0-9]+)(-[0-9]+)?");
+	private static final Pattern _microPattern = Pattern.compile("(((e|f|s)p)|(ga)|(u))([0-9]+)(-[0-9]+)?");
 	private static Map<String, Object> _productInfoMap = Collections.emptyMap();
+	private static final Pattern _productVersionPattern = Pattern.compile(
+		"^(portal|dxp)-([1-9]\\d|[0-9])\\.([0-9]\\d|\\d)-((((e|f|s|d)(p|e))|u|ga)([0-9]\\d*)$)+");
 	private static File _workspaceCacheDir = new File(
 		System.getProperty("user.home"), _DEFAULT_WORKSPACE_CACHE_DIR_NAME);
 
