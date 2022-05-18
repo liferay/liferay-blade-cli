@@ -63,6 +63,8 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Gregory Amerson
@@ -92,9 +94,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		String name = createArgs.getName();
 
-		if (BladeUtil.isEmpty(name)) {
-			_addError("Create", "SYNOPSIS\n\t create [options] <[name]>");
-
+		if (!_isValidName(name)) {
 			return;
 		}
 
@@ -623,10 +623,32 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		return templateNames.contains(templateName);
 	}
 
+	private boolean _isValidName(String name) {
+		if (BladeUtil.isEmpty(name)) {
+			_addError("Create", "SYNOPSIS\n\t create [options] <[name]>");
+
+			return false;
+		}
+
+		Matcher matcher = _inValidNamePattern.matcher(name);
+
+		if (matcher.find()) {
+			_addError(
+				"Create",
+				"SYNOPSIS\n\t invalid module name [" + name + "], do not use more than one hyphen for module name.");
+
+			return false;
+		}
+
+		return true;
+	}
+
 	private boolean _isWorkspaceDir(File dir) {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		return bladeCLI.isWorkspaceDir(dir);
 	}
+
+	private Pattern _inValidNamePattern = Pattern.compile("((-)\\2+)");
 
 }
