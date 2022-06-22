@@ -24,6 +24,10 @@ mv gradle-wrapper.properties.edited gradle/wrapper/gradle-wrapper.properties
 
 checkError
 
+./gradlew --no-daemon :extensions:project-templates-client-extension:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
+
+checkError
+
 ./gradlew --no-daemon :extensions:project-templates-js-theme:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
 
 checkError

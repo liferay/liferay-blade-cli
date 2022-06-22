@@ -123,6 +123,15 @@ if [ "$retcode" != "0" ] || [ -z "$jsWidgetTemplatePublishCommand" ]; then
 	exit 1
 fi
 
+# Publish the Client Extension Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-client-extension:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/client-extension-template-publish-command.txt; retcode=$?
+clientExtensionTemplatePublishCommand=$(cat /tmp/$timestamp/client-extension-template-publish-command.txt)
+
+if [ "$retcode" != "0" ] || [ -z "$clientExtensionTemplatePublishCommand" ]; then
+	echo Failed :extensions:project-templates-client-extension:publish
+	exit 1
+fi
+
 # Publish the Maven Profile jar
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:maven-profile:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/maven-profile-publish-command.txt; retcode=$?
 mavenProfilePublishCommand=$(cat /tmp/$timestamp/maven-profile-publish-command.txt)
