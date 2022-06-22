@@ -71,6 +71,7 @@ createWrapperZip {
 
 dependencies {
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.33-SNAPSHOT", changing: true
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.client.extension", version: "1.0.0-SNAPSHOT", changing: true
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.16-SNAPSHOT", changing: true
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.17-SNAPSHOT", changing: true
 
