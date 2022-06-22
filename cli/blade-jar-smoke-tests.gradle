@@ -1,6 +1,7 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
 task smokeTests
+task testBladeCreateCommandClientExtension(type: JavaExec)
 task testBladeCreateCommandFormField(type: JavaExec)
 task testBladeCreateCommandJsTheme(type: JavaExec)
 task testBladeCreateCommandListTemplates(type: JavaExec)
@@ -36,6 +37,31 @@ smokeTests.dependsOn testBladeTasks
 ByteArrayOutputStream errorStream = new ByteArrayOutputStream()
 ByteArrayOutputStream standardStream = new ByteArrayOutputStream()
 File initDir = new File(buildDir, "initTest")
+
+testBladeCreateCommandClientExtension {
+	dependsOn testBladeInitCommand
+
+	onlyIf {
+		!Os.isFamily(Os.FAMILY_WINDOWS)
+	}
+
+	args = [jar.archivePath, "create", "-t", "client-extension", "--extension-name", "test123", "--extension-type", "customElement", "-d", initDir.path, "customelementtest"]
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = initDir
+
+	doLast {
+		String error = errorStream.toString().toLowerCase()
+		File projectDir = new File(initDir, "customelementtest")
+		boolean projectDirExists = projectDir.exists()
+
+		errorStream.reset()
+		standardStream.reset()
+
+		assert projectDirExists
+		assert !error.contains("error")
+	}
+}
 
 testBladeCreateCommandFormField {
 	dependsOn testBladeInitCommand
