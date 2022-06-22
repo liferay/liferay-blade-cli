@@ -653,7 +653,7 @@ public class InitCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath.toString(), "foo-1.0.0.jar");
 	}
 
-	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "3.4.38";
+	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "4.0.0";
 
 	private File _extensionsDir = null;
 	private File _workspaceDir = null;
