@@ -1,0 +1,9 @@
+Bundle-Description: Creates a Client Extension project
+Bundle-Name: Liferay Project Templates Client Extension
+Bundle-SymbolicName: com.liferay.project.templates.client.extension
+Bundle-Version: ${project.version}
+Liferay-Versions: [7,8)
+-removeheaders:\
+	Import-Package,\
+	Private-Package,\
+	Require-Capability
