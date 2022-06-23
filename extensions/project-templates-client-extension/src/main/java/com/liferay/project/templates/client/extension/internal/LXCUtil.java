@@ -37,6 +37,7 @@ import java.security.MessageDigest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -119,7 +120,7 @@ public class LXCUtil {
 		return lxcDirPath.resolve("lxc");
 	}
 
-	public static int run(Path dir, String[] args, boolean quiet) throws Exception {
+	public static int run(Path dir, String[] args, Map<String, String> env, boolean quiet) throws Exception {
 		Path lxcPath = downloadLxc();
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
@@ -165,6 +166,8 @@ public class LXCUtil {
 		if ((dir != null) && Files.exists(dir)) {
 			processBuilder.directory(dir.toFile());
 		}
+
+		env.forEach(processBuilder.environment()::put);
 
 		Process process = processBuilder.start();
 
