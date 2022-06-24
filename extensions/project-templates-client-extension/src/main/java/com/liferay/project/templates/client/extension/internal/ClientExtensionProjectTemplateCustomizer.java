@@ -22,7 +22,9 @@ import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import java.io.File;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.archetype.ArchetypeGenerationRequest;
 import org.apache.maven.archetype.ArchetypeGenerationResult;
@@ -76,7 +78,12 @@ public class ClientExtensionProjectTemplateCustomizer implements ProjectTemplate
 			args.add(extensionType);
 		}
 
-		LXCUtil.run(destinationDir.toPath(), args.toArray(new String[0]), false);
+		Map<String, String> env = Collections.singletonMap(
+			"EXTENSION_METADATA_FILE",
+			"https://github.com/gamerson/liferay-portal/raw/1ffe92d4a987ad90f1faf6cb042567077240b8b5/modules/apps" +
+				"/client-extension/client-extension-type-api/com.liferay.client.extension.type.api-5.0.1.jar");
+
+		LXCUtil.run(destinationDir.toPath(), args.toArray(new String[0]), env, false);
 	}
 
 }

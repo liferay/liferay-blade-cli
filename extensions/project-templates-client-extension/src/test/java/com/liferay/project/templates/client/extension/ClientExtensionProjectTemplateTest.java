@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -86,6 +88,35 @@ public class ClientExtensionProjectTemplateTest {
 		String content = FileUtil.read(clientExtensionFile);
 
 		Assert.assertTrue("Expected client-extension.yaml to contain test123\n" + content, content.contains("test123"));
+	}
+
+	@Test
+	public void testClientExtensionMetadataURL() throws Exception {
+		_setupTestExtensions();
+
+		File workspaceDir = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspaceDir);
+
+		String[] args = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-t", "client-extension", "-d",
+			workspaceDir.getAbsolutePath(), "--extension-name", "test456", "--extension-type", "themeCSS", "test456"
+		};
+
+		_bladeTest.run(args);
+
+		File projectDir = new File(workspaceDir, "test456");
+
+		Assert.assertTrue("Expected project dir to exist " + projectDir, projectDir.exists());
+
+		File clientExtensionFile = new File(projectDir, "client-extension.yaml");
+
+		Assert.assertTrue(
+			"Expected client-extension.yaml file to exist " + clientExtensionFile, clientExtensionFile.exists());
+
+		List<String> lines = Files.readAllLines(clientExtensionFile.toPath());
+
+		Assert.assertEquals("  clayURL: css/clay.css", lines.get(1));
 	}
 
 	@Rule
