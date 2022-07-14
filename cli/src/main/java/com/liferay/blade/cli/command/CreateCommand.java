@@ -108,6 +108,12 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		File argsDir = createArgs.getDir();
 
+		if (Objects.equals(template, "client-extension") && Objects.isNull(argsDir)) {
+			Path destinationPath = BladeUtil.getCurrentPath();
+
+			argsDir = destinationPath.toFile();
+		}
+
 		File baseDir = createArgs.getBase();
 
 		if (!_isWorkspaceDir(argsDir) && !_isWorkspaceDir(baseDir)) {

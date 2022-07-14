@@ -43,6 +43,7 @@ import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 
@@ -236,6 +237,14 @@ public class BladeUtil {
 
 	public static String getBundleVersion(Path pathToJar) throws IOException {
 		return getManifestProperty(pathToJar, "Bundle-Version");
+	}
+
+	public static Path getCurrentPath() {
+		Path currentPath = Paths.get("");
+
+		Path destinationNormalizePath = currentPath.normalize();
+
+		return destinationNormalizePath.toAbsolutePath();
 	}
 
 	public static File getGradleWrapper(File dir) {
