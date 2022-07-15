@@ -116,7 +116,7 @@ public class ClientExtensionProjectTemplateTest {
 
 		List<String> lines = Files.readAllLines(clientExtensionFile.toPath());
 
-		Assert.assertEquals("  clayURL: css/clay.css", lines.get(1));
+		Assert.assertEquals("    clayURL: css/clay.css", lines.get(1));
 	}
 
 	@Rule

@@ -249,6 +249,6 @@ public class LXCUtil {
 		return checksum.equals(sha256);
 	}
 
-	private static String _lxcVersion = "0.0.4";
+	private static String _lxcVersion = "0.0.6";
 
 }
