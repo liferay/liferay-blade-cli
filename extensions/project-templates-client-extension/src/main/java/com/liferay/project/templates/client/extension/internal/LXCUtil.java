@@ -47,14 +47,22 @@ import java.util.stream.Stream;
 public class LXCUtil {
 
 	public static Path downloadLxc() throws Exception {
-		String lxcChecksumURL = _getLxcURL() + ".checksum";
-		String lxcURL = _getLxcURL();
-
 		Path bladeCachePath = BladeUtil.getBladeCachePath();
+		String lxcChecksumURL = _getLxcURL() + ".checksum";
 
 		Path checksumPath = bladeCachePath.resolve(lxcChecksumURL.substring(lxcChecksumURL.lastIndexOf("/") + 1));
+
+		String lxcURL = _getLxcURL();
+
 		Path downloadPath = bladeCachePath.resolve(lxcURL.substring(lxcURL.lastIndexOf("/") + 1));
+
 		Path lxcDirPath = bladeCachePath.resolve("lxc");
+
+		if (Files.exists(checksumPath)) {
+			Files.delete(checksumPath);
+		}
+
+		BladeUtil.downloadLink(lxcChecksumURL, lxcDirPath.toFile(), checksumPath);
 
 		if (Files.exists(lxcDirPath) && Files.exists(checksumPath) && Files.exists(downloadPath) &&
 			!_validChecksum(checksumPath, downloadPath)) {
