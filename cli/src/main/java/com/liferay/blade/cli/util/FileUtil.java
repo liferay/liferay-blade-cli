@@ -231,6 +231,10 @@ public class FileUtil {
 
 				final File f = new File(destDir, entryName);
 
+				if (!f.toPath().normalize().startsWith(destDir.toPath().normalize())) {
+					throw new RuntimeException("Bad zip entry");
+				}
+
 				if (!BladeUtil.isSafelyRelative(f, destDir)) {
 					throw new ZipException(
 						"Entry " + f.getName() + " is outside of the target destination: " + destDir);
@@ -282,6 +286,10 @@ public class FileUtil {
 				String entryName = zipEntry.getName();
 
 				final File f = new File(destinationDir, entryName);
+
+				if (!f.toPath().normalize().startsWith(destinationDir.toPath().normalize())) {
+					throw new RuntimeException("Bad zip entry");
+				}
 
 				if (!BladeUtil.isSafelyRelative(f, destinationDir)) {
 					throw new ZipException(
