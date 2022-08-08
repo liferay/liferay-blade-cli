@@ -515,11 +515,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	}
 
 	private boolean _containsDir(File currentDir, File parentDir) throws Exception {
-		String currentPath = currentDir.getCanonicalPath();
 
 		String parentPath = parentDir.getCanonicalPath();
 
-		return currentPath.startsWith(parentPath);
+		return currentDir.getCanonicalFile().toPath().startsWith(parentPath);
 	}
 
 	private File _getDefaultDir(String defaultDirProperty, String defaultDirValue) throws Exception {
