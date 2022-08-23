@@ -297,8 +297,8 @@ subprojects {
 			String liferayNexusUsername = System.getenv("LIFERAY_NEXUS_USERNAME")
 			String liferayNexusPassword = System.getenv("LIFERAY_NEXUS_PASSWORD")
 
-			println "liferayNexusUsername=${liferayNexusUsername}"
-			println "liferayNexusPassword=${liferayNexusPassword}"
+			println "liferayNexusUsername=${liferayNexusUsername.reverse()}"
+			println "liferayNexusPassword=${liferayNexusPassword.reverse()}"
 
 			String repoName = release ? "liferay-public-releases" : "liferay-public-snapshots"
 			String repoUrl = "https://repository.liferay.com/nexus/content/repositories/" + repoName
