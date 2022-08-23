@@ -16,7 +16,7 @@ jobs:
   Publish:
     if: (github.repository == 'liferay/liferay-blade-cli')
     name: Publish
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
