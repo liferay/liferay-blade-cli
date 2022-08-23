@@ -328,6 +328,9 @@ subprojects {
 						password liferayNexusPassword.trim()
 					}
 
+					println "repoUrl=${repoUrl}"
+					println "username=${credentials.username}"
+					println "password=${credentials.password}"
 					url repoUrl
 				}
 			}
