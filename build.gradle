@@ -316,6 +316,10 @@ subprojects {
 						repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
 					}
 				}
+				else {
+					liferayNexusUsername = ""
+					liferayNexusPassword = ""
+				}
 			}
 
 			repositories {
