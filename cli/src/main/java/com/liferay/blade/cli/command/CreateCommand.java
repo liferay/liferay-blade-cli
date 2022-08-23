@@ -515,7 +515,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	}
 
 	private boolean _containsDir(File currentDir, File parentDir) throws Exception {
-		String currentPath = currentDir.getCanonicalPath();
+		File currentFile = currentDir.getCanonicalFile();
+
+		Path currentPath = currentFile.toPath();
 
 		String parentPath = parentDir.getCanonicalPath();
 

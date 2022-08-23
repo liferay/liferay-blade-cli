@@ -19,6 +19,7 @@ package com.liferay.project.templates.client.extension;
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.portal.tools.bundle.support.internal.util.FileUtil;
+import com.liferay.project.templates.client.extension.internal.ClientExtensionProjectTemplateCustomizer;
 
 import java.io.File;
 
@@ -27,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -119,6 +121,54 @@ public class ClientExtensionProjectTemplateTest {
 		Assert.assertEquals("    clayURL: css/clay.css", lines.get(1));
 	}
 
+	@Test
+	public void testMetadataURLMissing() throws Exception {
+		_setupTestExtensions();
+
+		File workspaceDir = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspaceDir, "dxp-7.3-u10");
+
+		Optional<String> extensionMetadataFile = ClientExtensionProjectTemplateCustomizer.getExtensionMetadataFile(
+			workspaceDir);
+
+		Assert.assertFalse(extensionMetadataFile.isPresent());
+	}
+
+	@Test
+	public void testMetadataURLu29() throws Exception {
+		_setupTestExtensions();
+
+		File workspaceDir = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspaceDir, "dxp-7.4-u29");
+
+		Optional<String> extensionMetadataFile = ClientExtensionProjectTemplateCustomizer.getExtensionMetadataFile(
+			workspaceDir);
+
+		Assert.assertEquals(
+			"https://repository-cdn.liferay.com/nexus/service/local/repositories/liferay-public-releases/content/com" +
+				"/liferay/com.liferay.client.extension.type.api/4.0.0/com.liferay.client.extension.type.api-4.0.0.jar",
+			extensionMetadataFile.get());
+	}
+
+	@Test
+	public void testMetadataURLu38() throws Exception {
+		_setupTestExtensions();
+
+		File workspaceDir = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspaceDir);
+
+		Optional<String> extensionMetadataFile = ClientExtensionProjectTemplateCustomizer.getExtensionMetadataFile(
+			workspaceDir);
+
+		Assert.assertEquals(
+			"https://repository-cdn.liferay.com/nexus/service/local/repositories/liferay-public-releases/content/com" +
+				"/liferay/com.liferay.client.extension.type.api/5.0.2/com.liferay.client.extension.type.api-5.0.2.jar",
+			extensionMetadataFile.get());
+	}
+
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -127,11 +177,13 @@ public class ClientExtensionProjectTemplateTest {
 	}
 
 	private void _makeWorkspace(File workspace) throws Exception {
+		_makeWorkspace(workspace, BladeTest.PRODUCT_VERSION_DXP_74);
+	}
+
+	private void _makeWorkspace(File workspace, String productVersion) {
 		File parentFile = workspace.getParentFile();
 
-		String[] args = {
-			"--base", parentFile.getPath(), "init", workspace.getName(), "-v", BladeTest.PRODUCT_VERSION_DXP_74
-		};
+		String[] args = {"--base", parentFile.getPath(), "init", workspace.getName(), "-v", productVersion};
 
 		TestUtil.runBlade(workspace, _extensionsDirPath.toFile(), args);
 	}
