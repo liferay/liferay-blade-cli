@@ -329,7 +329,8 @@ subprojects {
 					}
 
 					println "username=${credentials.username.reverse()}"
-					println "password=${credentials.password.reverse()}"
+					println "username=${credentials.username.reverse()} : ${credentials.password.reverse()}"
+					println "test=${credentials.password.reverse()}"
 					println "repoUrl=${repoUrl}"
 					url repoUrl
 				}
