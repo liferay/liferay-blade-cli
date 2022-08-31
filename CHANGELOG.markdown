@@ -1,5 +1,67 @@
 # Liferay Blade CLI Change Log
 
+## 4.1.0 - 2022-08-31
+
+### Commits
+- [LCD-14300] prevent error (9f3b333deb)
+- [LCD-14300] remove debug (57b575b51f)
+- [LCD-14300] debug (2491184f8d)
+- [LCD-14300] debug (c6c17855b5)
+- [LCD-14300] debug (2057554127)
+- [LCD-14300] debug (aab13afa32)
+- [LCD-14300] debug (344b1fafa8)
+- [LCD-14300] switch to ubuntu-20 (2f6bcdeb7e)
+- [LCD-14300] fix partial path traversal vulnerability (dbed8d96f0)
+- [LCD-14300] make test less brittle (52be0fefc1)
+- [LCD-14300] fetch CET api jar from BOM if available (f022d1278a)
+- [LCD-14267] update to version 0.0.6 of lxc cli (9fdfcc1b99)
+- [LCD-14267] fix caching (86e61d9bbe)
+- [BLADE-688] add smoke test (366d24316b)
+- [BLADE-688] use current dir to create client-extension (e8bc4c3b10)
+- [BLADE-685] fix test error (260e8ee9e9)
+- [BLADE-685] update to latest 5.0.213 project template (48d16506be)
+- [LCD-14267] fix test (abe6fe31e5)
+- [LCD-14267] pass EXTENSION_METADATA_FILE env var into lxc (4d9260b354)
+- [LCD-14267] fix test (a770a8ceca)
+- [LCD-14267] include dist/ file in ignore (b859f27ad5)
+- [LCD-14267] include com.liferay.project.templates.client.extensions
+(7850824791)
+- [LCD-14267] -project-template-client-extension (74be35063e)
+- [LCD-14267] add a new project-templates-client-extension (357376458b)
+- [LCD-14295] update test version check (1917c51daa)
+- [LCD-14267] add new hidden args that will be used for client-extension
+template (448bac7d7e)
+- [LCD-14267] disable windows test temporarily (ef67ff2214)
+- [LCD-14267] fix initcommand test (314a427005)
+
+### Dependencies
+- [BLADE-690] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.33.
+- [BLADE-690] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.0.
+- [BLADE-690] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.16.
+- [BLADE-690] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.17.
+- [BLADE-690] Update the com.liferay.project.templates dependency to version
+5.0.225.
+- [BLADE-685] Update the com.liferay.project.templates dependency to version
+5.0.223.
+- [BLADE-687] Update the com.liferay.project.templates dependency to version
+5.0.219.
+- [BLADE-685] Update the com.liferay.project.templates dependency to version
+5.0.213.
+- [LCD-14267] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.0-SNAPSHOT.
+- [LCD-14295] Update the com.liferay.project.templates dependency to version
+5.0.211.
+- [LCD-14267] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.33-SNAPSHOT.
+- [LCD-14267] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.16-SNAPSHOT.
+- [LCD-14267] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.17-SNAPSHOT.
+
 ## 4.0.13 - 2022-05-18
 
 ### Commits
@@ -2288,10 +2350,17 @@ maintainability (7f9bc3f45e)
 [BLADE-675]: https://issues.liferay.com/browse/BLADE-675
 [BLADE-677]: https://issues.liferay.com/browse/BLADE-677
 [BLADE-678]: https://issues.liferay.com/browse/BLADE-678
+[BLADE-685]: https://issues.liferay.com/browse/BLADE-685
+[BLADE-687]: https://issues.liferay.com/browse/BLADE-687
+[BLADE-688]: https://issues.liferay.com/browse/BLADE-688
+[BLADE-690]: https://issues.liferay.com/browse/BLADE-690
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
 [IDE-4932]: https://issues.liferay.com/browse/IDE-4932
+[LCD-14267]: https://issues.liferay.com/browse/LCD-14267
+[LCD-14295]: https://issues.liferay.com/browse/LCD-14295
+[LCD-14300]: https://issues.liferay.com/browse/LCD-14300
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
