@@ -403,38 +403,8 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		Matcher matcher = pattern.matcher(content);
 
-		Assert.assertTrue(matcher.matches());
+		Assert.assertTrue(content, matcher.matches());
 	}
-
-	/*
-		private void _enableStandaloneProfile(File pomXMLFile) throws Exception {
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-
-			Document document = documentBuilder.parse(pomXMLFile);
-
-			Element projectElement = document.getDocumentElement();
-
-			Element profilesElement = XMLTestUtil.getChildElement(projectElement, "profiles");
-
-			Element profileElement = XMLTestUtil.getChildElement(profilesElement, "profile");
-
-			Element activationElement = XMLTestUtil.getChildElement(profileElement, "activation");
-
-			Element activeByDefaultElement = XMLTestUtil.getChildElement(activationElement, "activeByDefault");
-
-			activeByDefaultElement.setTextContent("true");
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource domSource = new DOMSource(document);
-			StreamResult streamResult = new StreamResult(pomXMLFile);
-
-			transformer.transform(domSource, streamResult);
-		}
-
-	*/
 
 	private void _verifyImportPackage(File serviceJar) throws Exception {
 		try (Jar jar = new Jar(serviceJar)) {
