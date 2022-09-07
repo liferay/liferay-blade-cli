@@ -270,7 +270,7 @@ subprojects {
 
 					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)
 
-					"name: \"com.liferay.project.templates.js.theme\", version: \"${newVersion}-SNAPSHOT\""
+					"name: \"com.liferay.project.templates.client.extension\", version: \"${newVersion}-SNAPSHOT\""
 				}
 
 				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.theme", version: "(.*)"/) {
