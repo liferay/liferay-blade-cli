@@ -52,7 +52,7 @@ public class GradleExecTest {
 	public void testGradleWrapper() throws Exception {
 		File workspace70 = new File(_rootPath.toFile(), "workspace70");
 
-		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70);
+		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_DXP_70);
 
 		String[] args = {"--base", workspace70.toString(), "create", "-t", "api", "foo"};
 

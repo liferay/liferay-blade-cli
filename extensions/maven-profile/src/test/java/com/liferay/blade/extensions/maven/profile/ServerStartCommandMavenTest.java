@@ -208,8 +208,7 @@ public class ServerStartCommandMavenTest {
 
 	private void _initBladeWorkspace() throws Exception {
 		String[] initArgs = {
-			"--base", _testWorkspaceDir.toString(), "init", "-f", "-v", BladeTest.PRODUCT_VERSION_PORTAL_71, "-P",
-			"maven"
+			"--base", _testWorkspaceDir.toString(), "init", "-f", "-v", BladeTest.PRODUCT_VERSION_DXP_71, "-P", "maven"
 		};
 
 		TestUtil.runBlade(_testWorkspaceDir, _extensionsDir, initArgs);

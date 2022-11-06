@@ -71,7 +71,7 @@ public class SampleCommandsTest {
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
 		args = new String[] {
-			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_721
+			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_72107
 		};
 
 		outputStream = StringPrintStream.newInstance();

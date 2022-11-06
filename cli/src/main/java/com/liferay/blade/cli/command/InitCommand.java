@@ -21,7 +21,6 @@ import aQute.bnd.version.Version;
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceProvider;
-import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ProductInfo;
@@ -34,15 +33,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import java.lang.reflect.Field;
-
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +47,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.Supplier;
 
 /**
  * @author Gregory Amerson
@@ -237,9 +232,17 @@ public class InitCommand extends BaseCommand<InitArgs> {
 					targetPlatformVersion.getMicro());
 		}
 		else {
-			liferayVersion = _getDefaultMavenTargetPlatformVersion(productInfos, initArgs);
+			workspaceProductKey = _getProductForMaven(productInfos, initArgs);
 
-			workspaceProductKey = liferayVersion;
+			liferayVersion = initArgs.getLiferayVersion();
+		}
+
+		Object productInfoObject = productInfos.get(workspaceProductKey);
+
+		if (productInfoObject == null) {
+			_addError("Unable to get product info for selected version " + workspaceProductKey);
+
+			return;
 		}
 
 		projectTemplatesArgs.setLiferayVersion(liferayVersion);
@@ -324,33 +327,20 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		getBladeCLI().addErrors("init", Collections.singleton(msg));
 	}
 
-	@SuppressWarnings("unchecked")
-	private String _getDefaultMavenTargetPlatformVersion(Map<String, Object> productInfos, InitArgs initArgs)
-		throws Exception {
+	private String _getDefaultProductKey(InitArgs initArgs) throws Exception {
+		String liferayVersion = initArgs.getLiferayVersion();
 
-		String possibleProductKey = _getDefaultProductKey(initArgs);
-
-		Object productInfoObject = productInfos.get(possibleProductKey);
-
-		if (productInfoObject == null) {
-			return possibleProductKey;
+		if (liferayVersion.startsWith("portal") || liferayVersion.startsWith("dxp")) {
+			return initArgs.getLiferayVersion();
 		}
 
-		ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
+		Map<String, Object> productInfos = BladeUtil.getProductInfos();
 
-		return productInfo.getTargetPlatformVersion();
-	}
+		Set<String> productInfoKeySet = productInfos.keySet();
 
-	private String _getDefaultProductKey(InitArgs initArgs) throws Exception {
-		Class<?> commandArgsClass = initArgs.getClass();
-
-		Field field = commandArgsClass.getDeclaredField("_liferayVersion");
-
-		List<String> possibleValues = _getPossibleProductVersions(field);
-
-		Optional<String> defaultVersion = possibleValues.stream(
+		Optional<String> defaultVersion = productInfoKeySet.stream(
 		).filter(
-			value -> value.startsWith("portal-" + initArgs.getLiferayVersion())
+			value -> value.startsWith(initArgs.getProduct() + "-" + initArgs.getLiferayVersion())
 		).findFirst();
 
 		if (!defaultVersion.isPresent()) {
@@ -360,22 +350,35 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		return defaultVersion.get();
 	}
 
-	private List<String> _getPossibleProductVersions(Field field) throws Exception {
-		ParameterPossibleValues possibleValuesAnnotation = field.getDeclaredAnnotation(ParameterPossibleValues.class);
+	@SuppressWarnings("unchecked")
+	private String _getProductForMaven(Map<String, Object> productInfos, InitArgs initArgs) throws Exception {
+		String possibleProductKey = _getDefaultProductKey(initArgs);
 
-		List<String> possibleValues = new ArrayList<>();
+		if (possibleProductKey.startsWith("portal")) {
+			initArgs.setProduct("portal");
+		}
+		else if (possibleProductKey.startsWith("dxp")) {
+			initArgs.setProduct("dxp");
+		}
+		else {
+			for (Map.Entry<String, Object> entryKey : productInfos.entrySet()) {
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)entryKey.getValue());
 
-		if (possibleValuesAnnotation != null) {
-			Class<? extends Supplier<List<String>>> possibleValuesSupplier = possibleValuesAnnotation.value();
+				if (Objects.equals(possibleProductKey, productInfo.getTargetPlatformVersion())) {
+					String productKey = entryKey.getKey();
 
-			if (possibleValuesSupplier != null) {
-				Supplier<List<String>> instance = possibleValuesSupplier.newInstance();
+					String[] productKeyValues = productKey.split("-");
 
-				possibleValues = instance.get();
+					if (Objects.nonNull(productKeyValues)) {
+						initArgs.setProduct(productKeyValues[0]);
+
+						return productKey;
+					}
+				}
 			}
 		}
 
-		return possibleValues;
+		return possibleProductKey;
 	}
 
 	private boolean _isPluginsSDK(File dir) {
