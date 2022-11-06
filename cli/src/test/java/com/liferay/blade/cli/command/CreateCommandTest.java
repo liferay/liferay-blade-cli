@@ -1100,7 +1100,8 @@ public class CreateCommandTest {
 
 		String[] args = {
 			"create", "--base", workspace.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-t", "form-field",
-			"sampleFormField"};
+			"sampleFormField"
+		};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1512,7 +1513,8 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("compileOnly group: \"com.liferay.portal\", name: \"release.dxp.api\""));
+		Assert.assertTrue(
+			content, content.contains("compileOnly group: \"com.liferay.portal\", name: \"release.dxp.api\""));
 	}
 
 	@Test
@@ -1533,7 +1535,8 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("compileOnly group: \"com.liferay.portal\", name: \"release.dxp.api\""));
+		Assert.assertTrue(
+			content, content.contains("compileOnly group: \"com.liferay.portal\", name: \"release.dxp.api\""));
 	}
 
 	@Test
@@ -1563,8 +1566,7 @@ public class CreateCommandTest {
 
 		_makeWorkspaceVersion(workspace72, BladeTest.PRODUCT_VERSION_DXP_72);
 
-		String[] sevenTwoArgs = {
-			"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two"};
+		String[] sevenTwoArgs = {"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two"};
 
 		TestUtil.runBlade(workspace72, _extensionsDir, sevenTwoArgs);
 

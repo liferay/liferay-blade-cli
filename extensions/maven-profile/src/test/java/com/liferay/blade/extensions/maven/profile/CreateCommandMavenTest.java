@@ -175,13 +175,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	public void testCreateMVCPortlet72() throws Exception {
 		File workspaceDir = _workspaceDir;
 
-		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_721);
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_72107);
 
 		File modulesDir = new File(workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
-			"mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_721
+			"mvc-portlet", "foo", "-v", BladeTest.LIFERAY_VERSION_72107
 		};
 
 		File projectDir = new File(modulesDir, "foo");
@@ -217,7 +217,8 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		String[] mavenArgs = {
 			"create", "--base", _workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven",
-			"-t", "mvc-portlet", "foo"};
+			"-t", "mvc-portlet", "foo"
+		};
 
 		File projectDir = new File(modulesDir, "foo");
 
@@ -227,7 +228,7 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 		_checkMavenBuildFiles(projectPath);
 
-		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.portal.bom</artifactId>.*");
+		_contains(_checkFileExists(projectPath + "/pom.xml"), ".*<artifactId>release.dxp.bom</artifactId>.*");
 
 		TestUtil.updateMavenRepositories(projectPath);
 

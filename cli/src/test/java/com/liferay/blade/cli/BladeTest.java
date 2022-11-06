@@ -51,15 +51,15 @@ public class BladeTest extends BladeCLI {
 	public static final String LIFERAY_VERSION_73101 = "7.3.10.u15";
 
 	public static final String PRODUCT_VERSION_DXP_70 = "dxp-7.0-sp17";
-	
+
 	public static final String PRODUCT_VERSION_DXP_71 = "dxp-7.1-sp7";
-	
+
 	public static final String PRODUCT_VERSION_DXP_72 = "dxp-7.2-sp7";
 
 	public static final String PRODUCT_VERSION_DXP_73 = "dxp-7.3-u15";
 
 	public static final String PRODUCT_VERSION_DXP_74 = "dxp-7.4-u38";
-	
+
 	public static final String PRODUCT_VERSION_PORTAL_71 = "portal-7.1-ga4";
 
 	public static final String PRODUCT_VERSION_PORTAL_73 = "portal-7.3-ga8";
