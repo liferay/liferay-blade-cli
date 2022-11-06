@@ -472,7 +472,7 @@ public class CreateCommandTest {
 	public void testCreateNpmAngular71() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
-		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_71);
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_DXP_71);
 
 		String[] args = {
 			"create", "--base", workspace.getAbsolutePath(), "-t", "npm-angular-portlet", "-v", "7.1", "npmangular"
@@ -903,7 +903,7 @@ public class CreateCommandTest {
 	public void testCreateWarCoreExt72() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
-		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_72);
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_DXP_72);
 
 		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "war-core-ext", "warCoreExt"};
 
@@ -1094,14 +1094,13 @@ public class CreateCommandTest {
 	public void testCreateWorkspaceFormField72() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
-		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_72);
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_DXP_70);
 
 		File modulesDir = new File(workspace, "modules");
 
 		String[] args = {
 			"create", "--base", workspace.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-t", "form-field",
-			"sampleFormField", "-v", BladeTest.LIFERAY_VERSION_72
-		};
+			"sampleFormField"};
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
@@ -1501,7 +1500,7 @@ public class CreateCommandTest {
 
 		File modulesDir = new File(workspace70, "modules");
 
-		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70);
+		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_DXP_70);
 
 		String[] sevenZeroArgs = {
 			"--base", workspace70.getAbsolutePath(), "create", "-t", "npm-angular-portlet", "seven-zero"
@@ -1513,7 +1512,7 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("com.liferay.frontend.js.loader.modules.extender.api"));
+		Assert.assertTrue(content, content.contains("compileOnly group: \"com.liferay.portal\", name: \"release.dxp.api\""));
 	}
 
 	@Test
@@ -1522,7 +1521,7 @@ public class CreateCommandTest {
 
 		File modulesDir = new File(workspace71, "modules");
 
-		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_PORTAL_71);
+		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_DXP_71);
 
 		String[] sevenOneArgs = {
 			"--base", workspace71.getAbsolutePath(), "create", "-v", "7.1", "-t", "npm-angular-portlet", "seven-one"
@@ -1534,7 +1533,7 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertTrue(content, content.contains("com.liferay.frontend.js.loader.modules.extender.api"));
+		Assert.assertTrue(content, content.contains("compileOnly group: \"com.liferay.portal\", name: \"release.dxp.api\""));
 	}
 
 	@Test
@@ -1562,11 +1561,10 @@ public class CreateCommandTest {
 
 		File modulesDir = new File(workspace72, "modules");
 
-		_makeWorkspace(workspace72);
+		_makeWorkspaceVersion(workspace72, BladeTest.PRODUCT_VERSION_DXP_72);
 
 		String[] sevenTwoArgs = {
-			"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two", "-v", "7.2"
-		};
+			"--base", workspace72.getAbsolutePath(), "create", "-t", "portlet", "seven-two"};
 
 		TestUtil.runBlade(workspace72, _extensionsDir, sevenTwoArgs);
 
@@ -1574,7 +1572,7 @@ public class CreateCommandTest {
 
 		String content = FileUtil.read(buildGradle);
 
-		Assert.assertFalse(content, content.contains("release.portal.api"));
+		Assert.assertTrue(content, content.contains("release.dxp.api"));
 	}
 
 	@Test
@@ -1672,7 +1670,7 @@ public class CreateCommandTest {
 		_contains(
 			_checkFileExists(projectPath + "/foo/package.json"),
 			new String[] {
-				".*@angular/animations.*", ".*liferay-npm-bundler\": \"2.18.2.*",
+				".*@angular/animations.*", ".*liferay-npm-bundler\": \"2.30.0.*",
 				".*build\": \"tsc && liferay-npm-bundler.*"
 			});
 
@@ -1803,9 +1801,9 @@ public class CreateCommandTest {
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_PORTAL_70);
+		_makeWorkspaceVersion(workspace70, BladeTest.PRODUCT_VERSION_DXP_70);
 
-		_enableTargetPlatformInWorkspace(workspace70, "7.0.6-2");
+		_enableTargetPlatformInWorkspace(workspace70, "7.0.10.17");
 
 		String[] sevenZeroArgs = {
 			"--base", workspace70.getAbsolutePath(), "create", "-t", "service-builder", "seven-zero"
@@ -1856,9 +1854,9 @@ public class CreateCommandTest {
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_PORTAL_71);
+		_makeWorkspaceVersion(workspace71, BladeTest.PRODUCT_VERSION_DXP_71);
 
-		_enableTargetPlatformInWorkspace(workspace71, "7.1.3-1");
+		_enableTargetPlatformInWorkspace(workspace71, "7.1.10.7");
 
 		String[] sevenOneArgs = {
 			"--base", workspace71.getAbsolutePath(), "create", "-t", "service-builder", "seven-one"
@@ -1908,9 +1906,9 @@ public class CreateCommandTest {
 
 		String projectPath = modulesDir.getAbsolutePath();
 
-		_makeWorkspaceVersion(workspace72, BladeTest.PRODUCT_VERSION_PORTAL_72);
+		_makeWorkspaceVersion(workspace72, BladeTest.PRODUCT_VERSION_DXP_72);
 
-		_enableTargetPlatformInWorkspace(workspace72, "7.2.1-1");
+		_enableTargetPlatformInWorkspace(workspace72, "7.2.10.7");
 
 		String[] sevenTwoArgs = {
 			"--base", workspace72.getAbsolutePath(), "create", "-t", "service-builder", "seven-two"

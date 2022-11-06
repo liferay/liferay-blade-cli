@@ -148,7 +148,7 @@ public class InitCommandTest {
 
 		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
 
-		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_70};
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_DXP_70};
 
 		BladeTest bladeTest = _getBladeTestCustomWorkspace(projectDir);
 
@@ -415,7 +415,7 @@ public class InitCommandTest {
 
 	@Test
 	public void testInitWithLiferayVersion70() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_70};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_DXP_70};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -423,12 +423,12 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.0-ga7"));
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=dxp-7.0-sp17"));
 	}
 
 	@Test
 	public void testInitWithLiferayVersion71() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_71};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_DXP_71};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -436,12 +436,12 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.1-ga4"));
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=dxp-7.1-sp7"));
 	}
 
 	@Test
 	public void testInitWithLiferayVersion72() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_72};
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_DXP_72};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
@@ -449,7 +449,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
 
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.2-ga2"));
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=dxp-7.2-sp7"));
 	}
 
 	@Test
