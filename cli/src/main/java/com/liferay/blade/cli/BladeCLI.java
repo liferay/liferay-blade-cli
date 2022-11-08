@@ -83,7 +83,6 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.input.CloseShieldInputStream;
@@ -923,7 +922,7 @@ public class BladeCLI {
 				String arg = args[x];
 
 				if (arg.equals("--base")) {
-					if (x + 1 == args.length || args[x + 1].startsWith("-")) {
+					if (((x + 1) == args.length) || args[x + 1].startsWith("-")) {
 						error("Error: The parameter for base path is mising.");
 
 						System.exit(0);
@@ -1004,9 +1003,10 @@ public class BladeCLI {
 			String arg = argsArray[x];
 
 			if (profileFlags.contains(arg)) {
-				if (x + 1 == argsArray.length || argsArray[x + 1].startsWith("-")) {
-					throw new MissingCommandException("The parameter for profile name is mising.");
+				if (((x + 1) == argsArray.length) || argsArray[x + 1].startsWith("-")) {
+					throw new MissingCommandException("Error: The parameter for profile name is mising");
 				}
+
 				profile = argsArray[x + 1];
 
 				break;
