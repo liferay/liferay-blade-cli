@@ -919,16 +919,19 @@ public class BladeCLI {
 		String defaultBasePath = ".";
 
 		if (args.length > 2) {
-			return IntStream.range(
-				0, args.length - 1
-			).filter(
-				i -> args[i].equals("--base") && (args.length > (i + 1))
-			).mapToObj(
-				i -> args[i + 1]
-			).findFirst(
-			).orElse(
-				defaultBasePath
-			);
+			for (int x = 0; x < args.length; x++) {
+				String arg = args[x];
+
+				if (arg.equals("--base")) {
+					if (x + 1 == args.length || args[x + 1].startsWith("-")) {
+						error("Error: The parameter for base path is mising.");
+
+						System.exit(0);
+					}
+
+					defaultBasePath = args[x + 1];
+				}
+			}
 		}
 
 		return defaultBasePath;
@@ -955,7 +958,8 @@ public class BladeCLI {
 			return _getCommandProfile(argsList.toArray(new String[0]));
 		}
 		catch (MissingCommandException missingCommandException) {
-			error(missingCommandException);
+			error(missingCommandException.getMessage());
+			System.exit(0);
 		}
 
 		return null;
@@ -1000,6 +1004,9 @@ public class BladeCLI {
 			String arg = argsArray[x];
 
 			if (profileFlags.contains(arg)) {
+				if (x + 1 == argsArray.length || argsArray[x + 1].startsWith("-")) {
+					throw new MissingCommandException("The parameter for profile name is mising.");
+				}
 				profile = argsArray[x + 1];
 
 				break;
