@@ -13,6 +13,7 @@ task testBladeCreateCommandVueJsWidget(type: JavaExec)
 task testBladeGwCommand(type: JavaExec)
 task testBladeHelpCommand(type: JavaExec)
 task testBladeInitCommand(type: JavaExec)
+task testBladeInitCommandBadProfileArgs(type: JavaExec)
 task testBladeInitCommandLegacy(type: JavaExec)
 task testBladeInitCommandList(type: JavaExec)
 task testBladeInitCommandListAll(type: JavaExec)
@@ -294,6 +295,26 @@ testBladeInitCommand {
 		standardStream.reset()
 
 		assert !error.contains("error")
+	}
+}
+
+testBladeInitCommandBadProfileArgs {
+	File initDirBadProfile = new File(buildDir, "badProfileArgs")
+	initDirBadProfile.mkdirs()
+
+	args = [jar.archivePath, "init", "-v", "portal-7.4-ga8", "-b"]
+	errorOutput = errorStream
+	standardOutput = standardStream
+	workingDir = initDirBadProfile
+
+	doLast {
+		String error = errorStream.toString().toLowerCase()
+		String output = standardStream.toString().toLowerCase()
+
+		errorStream.reset()
+		standardStream.reset()
+
+		assert error.contains("missing")
 	}
 }
 
