@@ -958,7 +958,7 @@ public class BladeCLI {
 		}
 		catch (MissingCommandException missingCommandException) {
 			error(missingCommandException.getMessage());
-			System.exit(0);
+			System.exit(1);
 		}
 
 		return null;
@@ -1004,7 +1004,7 @@ public class BladeCLI {
 
 			if (profileFlags.contains(arg)) {
 				if (((x + 1) == argsArray.length) || argsArray[x + 1].startsWith("-")) {
-					throw new MissingCommandException("Error: The parameter for profile name is mising");
+					throw new MissingCommandException("Error: The parameter for profile name is missing");
 				}
 
 				profile = argsArray[x + 1];
