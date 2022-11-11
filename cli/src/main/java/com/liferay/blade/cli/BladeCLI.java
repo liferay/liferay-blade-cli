@@ -958,7 +958,7 @@ public class BladeCLI {
 		}
 		catch (MissingCommandException missingCommandException) {
 			error(missingCommandException.getMessage());
-			System.exit(1);
+			System.exit(0);
 		}
 
 		return null;
