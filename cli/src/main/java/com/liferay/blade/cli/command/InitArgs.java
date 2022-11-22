@@ -35,16 +35,16 @@ public class InitArgs extends BaseArgs {
 		return CommandType.NON_WORKSPACE;
 	}
 
+	public String getLiferayProduct() {
+		return _liferayProduct;
+	}
+
 	public String getLiferayVersion() {
 		return _liferayVersion;
 	}
 
 	public String getName() {
 		return _name;
-	}
-
-	public String getProduct() {
-		return _product;
 	}
 
 	public boolean isAll() {
@@ -75,6 +75,10 @@ public class InitArgs extends BaseArgs {
 		_force = force;
 	}
 
+	public void setLiferayProduct(String liferayProduct) {
+		_liferayProduct = liferayProduct;
+	}
+
 	public void setLiferayVersion(String liferayVersion) {
 		_liferayVersion = liferayVersion;
 	}
@@ -85,10 +89,6 @@ public class InitArgs extends BaseArgs {
 
 	public void setName(String name) {
 		_name = name;
-	}
-
-	public void setProduct(String product) {
-		_product = product;
 	}
 
 	public void setRefresh(boolean refresh) {
@@ -108,6 +108,9 @@ public class InitArgs extends BaseArgs {
 	)
 	private boolean _force;
 
+	@Parameter(description = "The option for Liferay Platform product. (portal)|(dxp)", names = "--liferay-product")
+	private String _liferayProduct = "portal";
+
 	@Parameter(
 		description = "The Liferay product to target. Typing \"more\" will show all product versions.",
 		names = {"-v", "--liferay-version"}, required = true, validateValueWith = LiferayMoreVersionValidator.class
@@ -123,9 +126,6 @@ public class InitArgs extends BaseArgs {
 
 	@Parameter(description = "[name]")
 	private String _name;
-
-	@Parameter(description = "The option for Liferay Platform product. (portal)|(dxp)", names = "--product")
-	private String _product = "portal";
 
 	@Parameter(description = "force to refresh workspace template", names = {"-r", "--refresh"})
 	private boolean _refresh;

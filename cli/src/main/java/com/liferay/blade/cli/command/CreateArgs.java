@@ -99,6 +99,10 @@ public class CreateArgs extends BaseArgs {
 		return _jsProjectType;
 	}
 
+	public String getLiferayProduct() {
+		return _liferayProduct;
+	}
+
 	public String getLiferayVersion() {
 		return _liferayVersion;
 	}
@@ -113,10 +117,6 @@ public class CreateArgs extends BaseArgs {
 
 	public String getPackageName() {
 		return _packageName;
-	}
-
-	public String getProduct() {
-		return _product;
 	}
 
 	public String getService() {
@@ -195,6 +195,10 @@ public class CreateArgs extends BaseArgs {
 		_jsProjectType = jsProjectType;
 	}
 
+	public void setLiferayProduct(String product) {
+		_liferayProduct = product;
+	}
+
 	public void setLiferayVersion(String liferayVersion) {
 		_liferayVersion = liferayVersion;
 	}
@@ -209,10 +213,6 @@ public class CreateArgs extends BaseArgs {
 
 	public void setPackageName(String packageName) {
 		_packageName = packageName;
-	}
-
-	public void setProduct(String product) {
-		_product = product;
 	}
 
 	public void setService(String service) {
@@ -299,6 +299,9 @@ public class CreateArgs extends BaseArgs {
 	@ParameterDepdendencyValidator(order = 2, value = JsProjectTypeValidator.class)
 	private String _jsProjectType;
 
+	@Parameter(description = "The option for Liferay Platform product. (portal)|(dxp)", names = "--liferay-product")
+	private String _liferayProduct = "portal";
+
 	@Parameter(
 		description = "The version of Liferay to target when creating the project. Available options are 7.0, 7.1, 7.2, 7.3, 7.4.",
 		names = {"-v", "--liferay-version"}
@@ -321,9 +324,6 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(description = "The Java package to use when generating Java source.", names = {"-p", "--package-name"})
 	private String _packageName;
-
-	@Parameter(description = "The option for Liferay Platform product. (portal)|(dxp)", names = "--product")
-	private String _product = "portal";
 
 	@Parameter(
 		description = "If a new DS component needs to be created, provides the name of the service to be implemented.",
