@@ -21,9 +21,9 @@ apply plugin: "java"
 apply plugin: "maven-publish"
 
 dependencies {
-	compile group: "com.beust", name: "jcommander", version: "1.72"
-	compile group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.123"
-	compile project(":cli")
+	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
+	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.123"
+	compileOnly project(":cli")
 
 	testCompile gradleTestKit()
 	testCompile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "4.3.0"
