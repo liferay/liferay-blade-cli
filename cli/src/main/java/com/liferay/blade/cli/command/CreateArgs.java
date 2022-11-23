@@ -195,8 +195,8 @@ public class CreateArgs extends BaseArgs {
 		_jsProjectType = jsProjectType;
 	}
 
-	public void setLiferayProduct(String product) {
-		_liferayProduct = product;
+	public void setLiferayProduct(String liferayProduct) {
+		_liferayProduct = liferayProduct;
 	}
 
 	public void setLiferayVersion(String liferayVersion) {
