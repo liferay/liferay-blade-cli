@@ -162,7 +162,7 @@ public class ConvertServiceBuilderCommand {
 		projectTemplatesArgs.setName(sbProjectFileName.toString());
 		projectTemplatesArgs.setPackageName(oldServiceBuilderXml.getPackagePath());
 		projectTemplatesArgs.setTemplate("service-builder");
-		projectTemplatesArgs.setProduct(_convertArgs.getProduct());
+		projectTemplatesArgs.setLiferayProduct(_convertArgs.getLiferayProduct());
 
 		createCommand.execute(projectTemplatesArgs);
 
