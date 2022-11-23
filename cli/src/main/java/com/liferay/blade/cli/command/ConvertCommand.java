@@ -981,7 +981,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseArgs.getBase());
 
-		projectTemplatesArgs.setLiferayProduct(workspaceProvider.getProduct(createArgs.getBase()));
+		projectTemplatesArgs.setProduct(workspaceProvider.getProduct(createArgs.getBase()));
 
 		createCommand.execute(projectTemplatesArgs);
 	}

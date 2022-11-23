@@ -242,13 +242,13 @@ public class CreateCommandMavenTest implements MavenExecutor {
 	@Test
 	public void testCreateMVCPortletDXP73() throws Exception {
 		MavenTestUtil.makeMavenWorkspace(
-			_extensionsDir, _workspaceDir, BladeTest.LIFERAY_VERSION_73101, "--liferay-product", "dxp");
+			_extensionsDir, _workspaceDir, BladeTest.LIFERAY_VERSION_73101, "--product", "dxp");
 
 		File modulesDir = new File(_workspaceDir, "modules");
 
 		String[] mavenArgs = {
 			"create", "--base", _workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven",
-			"-t", "mvc-portlet", "foo", "--liferay-product", "dxp", "-v", "7.3.10.1"
+			"-t", "mvc-portlet", "foo", "--product", "dxp", "-v", "7.3.10.1"
 		};
 
 		File projectDir = new File(modulesDir, "foo");

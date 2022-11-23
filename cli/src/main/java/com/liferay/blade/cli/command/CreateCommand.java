@@ -371,7 +371,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		Optional<String> product = _getProduct(workspaceProvider, createArgs);
 
-		projectTemplatesArgs.setLiferayProduct(product.orElse(createArgs.getLiferayProduct()));
+		projectTemplatesArgs.setProduct(product.orElse(createArgs.getProduct()));
 
 		projectTemplatesArgs.setTemplate(template);
 

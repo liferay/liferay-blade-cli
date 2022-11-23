@@ -47,8 +47,7 @@ public class ConvertArgs extends BaseArgs {
 		_removeSource = removeSource;
 		_source = source;
 		_name = name;
-
-		_liferayProduct = product;
+		_product = product;
 	}
 
 	public ConvertArgs(boolean all, boolean list, boolean themeBuilder, File source, List<String> name) {
@@ -59,16 +58,16 @@ public class ConvertArgs extends BaseArgs {
 		return CommandType.WORKSPACE_ONLY;
 	}
 
-	public String getLiferayProduct() {
-		return _liferayProduct;
-	}
-
 	public String getLiferayVersion() {
 		return _liferayVersion;
 	}
 
 	public List<String> getName() {
 		return _name;
+	}
+
+	public String getProduct() {
+		return _product;
 	}
 
 	public File getSource() {
@@ -91,19 +90,16 @@ public class ConvertArgs extends BaseArgs {
 		return _themeBuilder;
 	}
 
-	public void setLiferayProduct(String liferayProduct) {
-		_liferayProduct = liferayProduct;
-	}
-
 	public void setLiferayVersion(String liferayVersion) {
 		_liferayVersion = liferayVersion;
 	}
 
+	public void setProduct(String product) {
+		_product = product;
+	}
+
 	@Parameter(description = "Migrate all plugin projects", names = {"-a", "--all"})
 	private boolean _all;
-
-	@Parameter(description = "The option for Liferay Platform product. (portal)|(dxp)", names = "--liferay-product")
-	private String _liferayProduct = "portal";
 
 	@Parameter(
 		description = "The version of Liferay to target when converting the project. Available options are 7.0, 7.1, 7.2, 7.3, 7.4.",
@@ -116,6 +112,9 @@ public class ConvertArgs extends BaseArgs {
 
 	@Parameter(description = "[name]")
 	private List<String> _name = new ArrayList<>();
+
+	@Parameter(description = "The option for Liferay Platform product. (portal)|(dxp)", names = "--product")
+	private String _product = "portal";
 
 	@Parameter(description = "Remove source plugin projects, default value is true", names = {"-r", "--remove"})
 	private boolean _removeSource = false;

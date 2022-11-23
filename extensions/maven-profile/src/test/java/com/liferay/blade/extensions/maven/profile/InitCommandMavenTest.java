@@ -54,7 +54,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 	public void testMavenInitDXPProject() throws Exception {
 		String[] args = {
 			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "-v",
-			BladeTest.LIFERAY_VERSION_73101, "--liferay-product", "dxp"
+			BladeTest.LIFERAY_VERSION_73101, "--product", "dxp"
 		};
 
 		File mavenworkspace = new File(_workspaceDir, "mavenworkspace");
@@ -214,7 +214,7 @@ public class InitCommandMavenTest implements MavenExecutor {
 	@Test
 	public void testMavenInitWithPrompter() throws Exception {
 		String[] args = {
-			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "--liferay-product", "dxp"
+			"--base", _workspaceDir.getPath(), "init", "-P", "maven", "mavenworkspace", "--product", "dxp"
 		};
 
 		String responses = "4" + System.lineSeparator();
