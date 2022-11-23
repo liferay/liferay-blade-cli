@@ -4,6 +4,7 @@ buildscript {
 	}
 
 	repositories {
+		mavenCentral()
 		maven {
 			if (project.hasProperty("release")) {
 				url "https://repository.liferay.com/nexus/content/groups/public"
