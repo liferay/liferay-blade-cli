@@ -251,7 +251,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		projectTemplatesArgs.setName(name);
 
 		if (mavenBuild) {
-			projectTemplatesArgs.setProduct(initArgs.getProduct());
+			projectTemplatesArgs.setLiferayProduct(initArgs.getLiferayProduct());
 		}
 
 		String template = "workspace";
@@ -340,7 +340,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		Optional<String> defaultVersion = productInfoKeySet.stream(
 		).filter(
-			value -> value.startsWith(initArgs.getProduct() + "-" + initArgs.getLiferayVersion())
+			value -> value.startsWith(initArgs.getLiferayProduct() + "-" + initArgs.getLiferayVersion())
 		).findFirst();
 
 		if (!defaultVersion.isPresent()) {
@@ -355,10 +355,10 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		String possibleProductKey = _getDefaultProductKey(initArgs);
 
 		if (possibleProductKey.startsWith("portal")) {
-			initArgs.setProduct("portal");
+			initArgs.setLiferayProduct("portal");
 		}
 		else if (possibleProductKey.startsWith("dxp")) {
-			initArgs.setProduct("dxp");
+			initArgs.setLiferayProduct("dxp");
 		}
 		else {
 			for (Map.Entry<String, Object> entryKey : productInfos.entrySet()) {
@@ -370,7 +370,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 					String[] productKeyValues = productKey.split("-");
 
 					if (Objects.nonNull(productKeyValues)) {
-						initArgs.setProduct(productKeyValues[0]);
+						initArgs.setLiferayProduct(productKeyValues[0]);
 
 						return productKey;
 					}
