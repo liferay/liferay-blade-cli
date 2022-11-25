@@ -232,7 +232,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 					targetPlatformVersion.getMicro());
 		}
 		else {
-			workspaceProductKey = _getProductForMaven(productInfos, initArgs);
+			workspaceProductKey = _setProductAndVersionForMaven(productInfos, initArgs);
 
 			liferayVersion = initArgs.getLiferayVersion();
 		}
@@ -243,6 +243,10 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			_addError("Unable to get product info for selected version " + workspaceProductKey);
 
 			return;
+		}
+
+		if (Objects.equals(initArgs.getLiferayProduct(), "commerce")) {
+			initArgs.setLiferayProduct("dxp");
 		}
 
 		projectTemplatesArgs.setLiferayVersion(liferayVersion);
@@ -330,7 +334,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	private String _getDefaultProductKey(InitArgs initArgs) throws Exception {
 		String liferayVersion = initArgs.getLiferayVersion();
 
-		if (liferayVersion.startsWith("portal") || liferayVersion.startsWith("dxp")) {
+		if (liferayVersion.startsWith("portal") || liferayVersion.startsWith("dxp") ||
+			liferayVersion.startsWith("commerce")) {
+
 			return initArgs.getLiferayVersion();
 		}
 
@@ -348,37 +354,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		return defaultVersion.get();
-	}
-
-	@SuppressWarnings("unchecked")
-	private String _getProductForMaven(Map<String, Object> productInfos, InitArgs initArgs) throws Exception {
-		String possibleProductKey = _getDefaultProductKey(initArgs);
-
-		if (possibleProductKey.startsWith("portal")) {
-			initArgs.setLiferayProduct("portal");
-		}
-		else if (possibleProductKey.startsWith("dxp")) {
-			initArgs.setLiferayProduct("dxp");
-		}
-		else {
-			for (Map.Entry<String, Object> entryKey : productInfos.entrySet()) {
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)entryKey.getValue());
-
-				if (Objects.equals(possibleProductKey, productInfo.getTargetPlatformVersion())) {
-					String productKey = entryKey.getKey();
-
-					String[] productKeyValues = productKey.split("-");
-
-					if (Objects.nonNull(productKeyValues)) {
-						initArgs.setLiferayProduct(productKeyValues[0]);
-
-						return productKey;
-					}
-				}
-			}
-		}
-
-		return possibleProductKey;
 	}
 
 	private boolean _isPluginsSDK(File dir) {
@@ -516,6 +491,46 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				}
 
 			});
+	}
+
+	@SuppressWarnings("unchecked")
+	private String _setProductAndVersionForMaven(Map<String, Object> productInfos, InitArgs initArgs) throws Exception {
+		String possibleProductKey = _getDefaultProductKey(initArgs);
+
+		if (possibleProductKey.startsWith("portal") || possibleProductKey.startsWith("dxp") ||
+			possibleProductKey.startsWith("commerce")) {
+
+			Object productInfoObject = productInfos.get(possibleProductKey);
+
+			if (Objects.nonNull(productInfoObject)) {
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
+
+				initArgs.setLiferayVersion(productInfo.getTargetPlatformVersion());
+
+				String[] productKeyValues = possibleProductKey.split("-");
+
+				initArgs.setLiferayProduct(productKeyValues[0]);
+
+				return possibleProductKey;
+			}
+		}
+		else {
+			for (Map.Entry<String, Object> entryKey : productInfos.entrySet()) {
+				ProductInfo productInfo = new ProductInfo((Map<String, String>)entryKey.getValue());
+
+				if (Objects.equals(possibleProductKey, productInfo.getTargetPlatformVersion())) {
+					possibleProductKey = entryKey.getKey();
+
+					String[] productKeyValues = possibleProductKey.split("-");
+
+					initArgs.setLiferayProduct(productKeyValues[0]);
+
+					return possibleProductKey;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	private void _setWorkspacePluginVersion(Path path, String version) throws Exception {

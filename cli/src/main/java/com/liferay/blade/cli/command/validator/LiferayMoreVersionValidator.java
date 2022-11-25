@@ -45,7 +45,8 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 		possibleValues.addAll(WorkspaceConstants.originalLiferayVersions);
 
 		if ((!possibleValues.contains(value) && !allTargetPlatformVersions.contains(value)) ||
-			(!BladeUtil.verifyWorkspaceProduct(value) && !VersionUtil.isLiferayVersion(value))) {
+			(!BladeUtil.verifyPortalDxpWorkspaceProduct(value) && !VersionUtil.isLiferayVersion(value) &&
+			 !BladeUtil.verifyCommerceWorkspaceProduct(value))) {
 
 			throw new ParameterException(value + " is not a valid value.");
 		}
