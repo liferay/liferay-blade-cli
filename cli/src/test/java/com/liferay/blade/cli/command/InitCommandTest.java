@@ -414,6 +414,32 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testInitWithCommerceProduct206() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_COMMERCE_206};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
+
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=commerce-2.0.6"));
+	}
+
+	@Test
+	public void testInitWithCommerceProduct207() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_COMMERCE_207};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
+
+		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=commerce-2.0.7-7.2"));
+	}
+
+	@Test
 	public void testInitWithLiferayVersion70() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_DXP_70};
 
