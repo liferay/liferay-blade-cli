@@ -19,7 +19,7 @@ subprojects {
 		flatDir {
 			dirs "${rootProject.projectDir}/libs"
 		}
-		mavenCentral()
+
 		jcenter()
 
 		maven {
@@ -33,5 +33,7 @@ subprojects {
 		maven {
 			url "https://${repoHost}/nexus/content/repositories/liferay-public-snapshots/"
 		}
+
+		mavenCentral()
 	}
 }

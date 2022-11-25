@@ -216,7 +216,6 @@ repositories {
 		}
 	}
 
-	mavenCentral()
 	jcenter()
 
 	maven {
@@ -232,6 +231,8 @@ repositories {
 	maven {
 		url "https://repo.gradle.org/gradle/libs-releases-local/"
 	}
+
+	mavenCentral()
 }
 
 sourceSets {
