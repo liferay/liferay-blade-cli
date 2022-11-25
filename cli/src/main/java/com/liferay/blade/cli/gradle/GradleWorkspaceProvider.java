@@ -161,8 +161,14 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 					}
 				}
 			}
-			else if (productKey.contains("dxp")) {
-				return "dxp";
+			else {
+				String product = productKey.substring(0, productKey.indexOf("-"));
+
+				if (Objects.equals(product, "commerce")) {
+					product = "dxp";
+				}
+
+				return product;
 			}
 		}
 		catch (Exception exception) {

@@ -77,7 +77,7 @@ dependencies {
 
 	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "4.3.0"
 	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
-	compile group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.231"
+	compile group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.235"
 	compile group: "commons-io", name: "commons-io", version: "2.6"
 	compile group: "org.apache.ant", name: "ant", version: "1.10.7"
 	compile group: "commons-lang", name: "commons-lang", version: "2.6"
@@ -216,6 +216,8 @@ repositories {
 		}
 	}
 
+	jcenter()
+
 	maven {
 		url "https://${repoHost}/nexus/content/repositories/liferay-public-releases/"
 	}
@@ -226,11 +228,11 @@ repositories {
 		}
 	}
 
-	mavenCentral()
-
 	maven {
 		url "https://repo.gradle.org/gradle/libs-releases-local/"
 	}
+
+	mavenCentral()
 }
 
 sourceSets {

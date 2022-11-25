@@ -23,6 +23,8 @@ buildscript {
 				url "https://repository-cdn.liferay.com/nexus/content/groups/public"
 			}
 		}
+
+		mavenCentral()
 	}
 }
 

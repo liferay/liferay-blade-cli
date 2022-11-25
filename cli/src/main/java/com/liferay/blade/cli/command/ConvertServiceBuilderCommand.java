@@ -32,6 +32,7 @@ import java.nio.file.Path;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -162,7 +163,10 @@ public class ConvertServiceBuilderCommand {
 		projectTemplatesArgs.setName(sbProjectFileName.toString());
 		projectTemplatesArgs.setPackageName(oldServiceBuilderXml.getPackagePath());
 		projectTemplatesArgs.setTemplate("service-builder");
-		projectTemplatesArgs.setProduct(_convertArgs.getProduct());
+
+		Optional<String> product = Optional.ofNullable(workspaceProvider.getProduct(baseDir));
+
+		projectTemplatesArgs.setLiferayProduct(product.orElse(_convertArgs.getLiferayProduct()));
 
 		createCommand.execute(projectTemplatesArgs);
 

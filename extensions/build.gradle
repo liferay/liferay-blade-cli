@@ -20,6 +20,8 @@ subprojects {
 			dirs "${rootProject.projectDir}/libs"
 		}
 
+		jcenter()
+
 		maven {
 			url "https://repo.gradle.org/gradle/libs-releases/"
 		}
@@ -31,5 +33,7 @@ subprojects {
 		maven {
 			url "https://${repoHost}/nexus/content/repositories/liferay-public-snapshots/"
 		}
+
+		mavenCentral()
 	}
 }

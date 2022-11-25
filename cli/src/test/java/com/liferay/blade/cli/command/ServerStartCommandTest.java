@@ -372,7 +372,7 @@ public class ServerStartCommandTest {
 	}
 
 	private void _customizeProdProperties() throws Exception {
-		Path prodConfigPath = _testWorkspacePath.resolve(Paths.get("configs", "prod", "portal-env.properties"));
+		Path prodConfigPath = _testWorkspacePath.resolve(Paths.get("configs", "prod", "portal-ext.properties"));
 
 		Properties portalEnvProperties = new Properties();
 
@@ -489,7 +489,7 @@ public class ServerStartCommandTest {
 
 		Assert.assertTrue(bundlesFolderExists);
 
-		Path bundleConfigPath = bundlesFolderPath.resolve("portal-env.properties");
+		Path bundleConfigPath = bundlesFolderPath.resolve("portal-ext.properties");
 
 		boolean bundleConfigFileExists = Files.exists(bundleConfigPath);
 
