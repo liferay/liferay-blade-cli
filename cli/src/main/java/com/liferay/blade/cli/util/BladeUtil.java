@@ -792,7 +792,7 @@ public class BladeUtil {
 
 	private static final Pattern _microPattern = Pattern.compile("(((e|f|s)p)|(ga)|(u))([0-9]+)(-[0-9]+)?");
 	private static final Pattern _productCommerceVersionPattern = Pattern.compile(
-		"^(commerce)-([1-9]\\d|[0-9])\\.([0-9]\\d|\\d).([0-9]\\d|\\d)(-(([1-9]\\d|[0-9])\\.([1-9]\\d|[0-9])$)+)*");
+		"^(commerce)-([1-9]\\d|[0-9])\\.([0-9]\\d|\\d).([0-9]\\d|\\d)(-(([1-9]\\d|[0-9])\\.([1-9]\\d|[0-9])$)+)+");
 	private static Map<String, Object> _productInfoMap = Collections.emptyMap();
 	private static final Pattern _productPortalDXPVersionPattern = Pattern.compile(
 		"^(portal|dxp)-([1-9]\\d|[0-9])\\.([0-9]\\d|\\d)-((((e|f|s|d)(p|e))|u|ga)([0-9]\\d*)$)+");
