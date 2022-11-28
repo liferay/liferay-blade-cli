@@ -3,7 +3,7 @@ import de.undercouch.gradle.tasks.download.Download
 buildscript {
 	dependencies {
 		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "4.3.0"
-		classpath group: "de.undercouch", name: "gradle-download-task", version: "3.3.0"
+		classpath group: "de.undercouch", name: "gradle-download-task", version: "5.1.0"
 	}
 
 	repositories {
