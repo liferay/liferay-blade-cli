@@ -644,6 +644,8 @@ public class BladeCLI {
 					printUsage();
 				}
 				catch (ParameterException parameterException) {
+					error("Error");
+
 					error(_jCommander.getParsedCommand() + ": " + parameterException.getMessage());
 				}
 			}
