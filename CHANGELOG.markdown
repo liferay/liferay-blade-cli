@@ -1,5 +1,52 @@
 # Liferay Blade CLI Change Log
 
+## 4.1.1 - 2022-12-07
+
+### Commits
+- [BLADE-697] fix junit test error (0b16578f1e)
+- [BLADE-700] parameterException message should be start with Error (371de49477)
+- [BLADE-699] upgrade gradle download task version (7465dba63a)
+- [BLADE-698] add test for commerce product (0ca492c121)
+- [BLADE-698] fix regex error for commerce product (79086689f0)
+- [BLADE-694] fix commerce product key support issue (e79fccc327)
+- [BLADE-694] improve get product logic for convert service builder (18cc3cabfe)
+- [BLADE-694] set correct liferay product for commerce (287b2c4353)
+- [BLADE-694] fix variable name error (4368a4760d)
+- [BLADE-694] restore compileOnly for maven-profile (dc72f85329)
+- [BLADE-694] update project extension version (197d33e2a6)
+- [BLADE-694] upgrade gradle version to 6.9.2 (3b5b30f8da)
+- [BLADE-694] Rename parameter '--product' as '--liferay-product' (985c9b3d4d)
+- [BLADE-695] add smoke test (eb7f416594)
+- [BLADE-695] fix spelling error (aa8ecfd4b0)
+- [BLADE-695] Fix bugs when parameter is mising (b43e3dffa7)
+- [BLADE-692] fix error test (f4278907e1)
+- [BLADE-692] set correct product base on target platform version (08a937171d)
+
+### Dependencies
+- [BLADE-701] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.34.
+- [BLADE-701] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.1.
+- [BLADE-701] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.17.
+- [BLADE-701] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.18.
+- [BLADE-697] Update the com.liferay.project.templates dependency to version
+5.0.237.
+- [BLADE-699] Update the gradle-download-task dependency to version 5.1.0.
+- [BLADE-694] Update the com.liferay.project.templates dependency to version
+5.0.235.
+- [BLADE-692] Update the com.liferay.project.templates dependency to version
+5.0.231.
+- [BLADE-691] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.34-SNAPSHOT.
+- [BLADE-691] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.1-SNAPSHOT.
+- [BLADE-691] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.17-SNAPSHOT.
+- [BLADE-691] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.18-SNAPSHOT.
+
 ## 4.1.0 - 2022-09-01
 
 ### Commits
@@ -2355,6 +2402,15 @@ maintainability (7f9bc3f45e)
 [BLADE-687]: https://issues.liferay.com/browse/BLADE-687
 [BLADE-688]: https://issues.liferay.com/browse/BLADE-688
 [BLADE-690]: https://issues.liferay.com/browse/BLADE-690
+[BLADE-691]: https://issues.liferay.com/browse/BLADE-691
+[BLADE-692]: https://issues.liferay.com/browse/BLADE-692
+[BLADE-694]: https://issues.liferay.com/browse/BLADE-694
+[BLADE-695]: https://issues.liferay.com/browse/BLADE-695
+[BLADE-697]: https://issues.liferay.com/browse/BLADE-697
+[BLADE-698]: https://issues.liferay.com/browse/BLADE-698
+[BLADE-699]: https://issues.liferay.com/browse/BLADE-699
+[BLADE-700]: https://issues.liferay.com/browse/BLADE-700
+[BLADE-701]: https://issues.liferay.com/browse/BLADE-701
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
