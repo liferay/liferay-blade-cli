@@ -70,10 +70,10 @@ createWrapperZip {
 }
 
 dependencies {
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.34", changing: true
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.client.extension", version: "1.0.1", changing: true
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.17", changing: true
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.18", changing: true
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.35-SNAPSHOT", changing: true
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.client.extension", version: "1.0.2-SNAPSHOT", changing: true
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.18-SNAPSHOT", changing: true
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.19-SNAPSHOT", changing: true
 
 	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "4.3.0"
 	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
@@ -313,6 +313,6 @@ unzipPortal {
 	into buildDir
 }
 
-version = "4.1.1"
+version = "4.1.2-SNAPSHOT"
 
 apply from: "blade-jar-smoke-tests.gradle"
