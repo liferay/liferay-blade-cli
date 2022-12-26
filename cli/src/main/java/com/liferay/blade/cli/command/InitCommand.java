@@ -340,11 +340,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			return initArgs.getLiferayVersion();
 		}
 
-		Map<String, Object> productInfos = BladeUtil.getProductInfos();
+		List<String> productInfoKeys = BladeUtil.getWorkspaceProductKeys(false);
 
-		Set<String> productInfoKeySet = productInfos.keySet();
-
-		Optional<String> defaultVersion = productInfoKeySet.stream(
+		Optional<String> defaultVersion = productInfoKeys.stream(
 		).filter(
 			value -> value.startsWith(initArgs.getLiferayProduct() + "-" + initArgs.getLiferayVersion())
 		).findFirst();
