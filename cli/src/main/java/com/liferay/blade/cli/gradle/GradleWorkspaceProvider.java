@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author Christopher Bryan Boyd
+ * @author Seiphon Wang
  */
 public class GradleWorkspaceProvider implements WorkspaceProvider {
 
@@ -53,10 +54,16 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 		".*name:\\s*\"com\\.liferay\\.gradle\\.plugins\\.workspace\",\\s*version:\\s*\"([0-9\\.]+)\".*",
 		Pattern.MULTILINE | Pattern.DOTALL);
 
-	public Properties getGradleProperties(File dir) {
-		File file = getGradlePropertiesFile(dir);
+	public File getGradleLocalPropertiesFile(File dir) {
+		return new File(getWorkspaceDir(dir), _GRADLE_LOCAL_PROPERTIES_FILE_NAME);
+	}
 
-		return BladeUtil.getProperties(file);
+	public Properties getGradleProperties(File dir) {
+		Properties properties = BladeUtil.getProperties(getGradlePropertiesFile(dir));
+
+		properties.putAll(BladeUtil.getProperties(getGradleLocalPropertiesFile(dir)));
+
+		return properties;
 	}
 
 	public File getGradlePropertiesFile(File dir) {
@@ -291,6 +298,8 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 	}
 
 	private static final String _BUILD_GRADLE_FILE_NAME = "build.gradle";
+
+	private static final String _GRADLE_LOCAL_PROPERTIES_FILE_NAME = "gradle-local.properties";
 
 	private static final String _GRADLE_PROPERTIES_FILE_NAME = "gradle.properties";
 
