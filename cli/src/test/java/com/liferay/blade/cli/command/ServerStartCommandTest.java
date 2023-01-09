@@ -595,6 +595,8 @@ public class ServerStartCommandTest {
 		}
 
 		Assert.assertTrue("Expected a new process", _isServerRunning());
+
+		System.out.println("test");
 	}
 
 	private void _runServerDebug() throws Exception, InterruptedException {
