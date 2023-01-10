@@ -63,14 +63,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 		Properties gradleLocalProperties = BladeUtil.getProperties(getGradleLocalPropertiesFile(dir));
 
-		if (gradleLocalProperties != null) {
-			if (properties != null) {
-				properties.putAll(gradleLocalProperties);
-			}
-			else {
-				properties = gradleLocalProperties;
-			}
-		}
+		properties.putAll(gradleLocalProperties);
 
 		return properties;
 	}
