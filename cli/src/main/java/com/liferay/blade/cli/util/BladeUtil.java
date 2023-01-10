@@ -352,16 +352,15 @@ public class BladeUtil {
 	}
 
 	public static Properties getProperties(File file) {
+		Properties properties = new Properties();
+
 		try (InputStream inputStream = new FileInputStream(file)) {
-			Properties properties = new Properties();
-
 			properties.load(inputStream);
-
-			return properties;
 		}
 		catch (Exception exception) {
-			return null;
 		}
+
+		return properties;
 	}
 
 	public static Collection<String> getTemplateNames(BladeCLI blade) throws Exception {
