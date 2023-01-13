@@ -83,6 +83,21 @@ public class SamplesCommandTest {
 	}
 
 	@Test
+	public void testGetSampleClientExtension() throws Exception {
+		File root = temporaryFolder.getRoot();
+
+		String[] args = {"samples", "-d", root.getPath() + "/client-extensions", "able-iframe"};
+
+		BladeTest bladeTest = _getBladeTest();
+
+		bladeTest.run(args);
+
+		File projectDir = new File(root, "client-extensions/able-iframe");
+
+		Assert.assertTrue(projectDir.exists());
+	}
+
+	@Test
 	public void testGetSampleMaven70() throws Exception {
 		File root = temporaryFolder.getRoot();
 
