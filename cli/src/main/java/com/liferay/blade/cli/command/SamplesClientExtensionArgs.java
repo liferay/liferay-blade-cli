@@ -44,10 +44,7 @@ public class SamplesClientExtensionArgs extends BaseArgs {
 	@Parameter(description = "The directory where to create the new client extension project.", names = {"-d", "--dir"})
 	private File _dir;
 
-	@Parameter(
-		description = "Show all client extension types.", hidden = true,
-		names = {"-l", "--list"}
-	)
+	@Parameter(description = "Show all client extension types.", hidden = true, names = {"-l", "--list"})
 	private boolean _list;
 
 	@Parameter(description = "[name]")
