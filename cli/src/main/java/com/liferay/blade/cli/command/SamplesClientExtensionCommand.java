@@ -50,7 +50,7 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		final String clientExtensionSampleArchiveName = _clientExtensionSampleName + ".zip";
 
 		final String clientExtensionSampleUrl =
-			" https://repository-cdn.liferay.com/nexus/service/local/artifact/maven/content?r=" +
+			"https://repository-cdn.liferay.com/nexus/service/local/artifact/maven/content?r=" +
 				"liferay-public-releases&g=com.liferay&a=com.liferay.sample.minimal.workspace&v=LATEST&p=zip";
 
 		if (_downloadClientExtensionSampleIfNeeded(clientExtensionSampleArchiveName, clientExtensionSampleUrl)) {

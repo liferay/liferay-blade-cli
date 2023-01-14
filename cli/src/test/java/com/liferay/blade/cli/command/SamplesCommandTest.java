@@ -86,7 +86,7 @@ public class SamplesCommandTest {
 	public void testGetSampleClientExtension() throws Exception {
 		File root = temporaryFolder.getRoot();
 
-		String[] args = {"samples", "-d", root.getPath() + "/client-extensions", "able-iframe"};
+		String[] args = {"samples client-extensions", "-d", root.getPath(), "able-iframe"};
 
 		BladeTest bladeTest = _getBladeTest();
 

@@ -45,7 +45,7 @@ public class SamplesClientExtensionArgs extends BaseArgs {
 	private File _dir;
 
 	@Parameter(
-		description = "Show all client extension types for client extension project.", hidden = true,
+		description = "Show all client extension types.", hidden = true,
 		names = {"-l", "--list"}
 	)
 	private boolean _list;
