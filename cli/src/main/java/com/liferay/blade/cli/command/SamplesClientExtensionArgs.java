@@ -37,7 +37,7 @@ public class SamplesClientExtensionArgs extends BaseArgs {
 		return _sampleName;
 	}
 
-	public boolean isNeedListAllCientExtension() {
+	public boolean isListAllCientExtensions() {
 		return _list;
 	}
 

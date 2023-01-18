@@ -57,9 +57,9 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 			_extractSamplesClientExtensionRepo(clientExtensionSampleArchiveName);
 		}
 
-		boolean needListAllCientExtension = samplesClientExtensionArgs.isNeedListAllCientExtension();
+		boolean listAllCientExtension = samplesClientExtensionArgs.isListAllCientExtensions();
 
-		if (needListAllCientExtension) {
+		if (listAllCientExtension) {
 			_listSamples(_clientExtensionSampleName);
 
 			return;
@@ -196,8 +196,9 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		}
 
 		bladeCLI.out(
-			"Please provide the sample client extension project name to create, e.g. \"blade samples " +
-				"client-extensions able-global-js\"\n");
+			"Specify client extension sample to download (\"blade samples client-extensions able-custom-element\"). " +
+				"Otherwise (\"blade samples client-extensions\") will download all available client extension " +
+					"samples.\n");
 		bladeCLI.out("Currently available samples:");
 
 		Set<String> keySet = samplesMap.keySet();
