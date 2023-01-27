@@ -1,47 +1,21 @@
 sourceCompatibility = "1.8";
 targetCompatibility = "1.8";
 
-copyTestModules {
-	dependsOn ":modules:sample:sample-api:deploy", ":modules:sample:sample-service:deploy"
-}
-
-testIntegrationTomcat{
-	overwriteCopyTestModules = true
-}
-
 dependencies {
-	testCompile group: "com.liferay.portal", name: "release.portal.api"
-
-	testIntegrationCompile group: "com.liferay", name: "com.liferay.arquillian.extension.junit.bridge", version: "1.0.21"
+	testIntegrationCompile group: "com.liferay", name: "com.liferay.arquillian.extension.junit.bridge", version: "latest.release"
 	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.test", version: "latest.release"
 	testIntegrationCompile group: "com.liferay.portal", name: "release.portal.api"
+	testIntegrationCompile group: "junit", name: "junit", version: "4.13.1"
 	testIntegrationCompile group: "org.apache.logging.log4j", name: "log4j-api", version: "2.18.0"
 	testIntegrationCompile group: "org.apache.logging.log4j", name: "log4j-core", version: "2.18.0"
 	testIntegrationCompile group: "org.slf4j", name: "log4j-over-slf4j", version: "1.7.25"
 	testIntegrationCompile project(":modules:sample:sample-api")
 	testIntegrationCompile project(":modules:sample:sample-service")
-	testIntegrationCompile group: "junit", name: "junit", version: "4.13.1"
 
-
+	testModules group: "com.liferay", name: "com.liferay.arquillian.extension.junit.bridge.connector", version: "latest.release"
+	testModules group: "com.liferay.portal", name: "com.liferay.portal.test", version: "latest.release"
+	testModules group: "com.liferay.portal", name: "com.liferay.portal.test.integration", version: "latest.release"
+	testModules group: "org.apache.aries.jmx", name: "org.apache.aries.jmx.core", version: "latest.release"
 	testModules project(":modules:sample:sample-api")
 	testModules project(":modules:sample:sample-service")
-	testModules group: "com.liferay", name: "com.liferay.arquillian.extension.junit.bridge.connector", version: "1.0.2"
-	testModules group: "com.liferay.portal", name: "com.liferay.portal.test", version: "14.2.3"
-	testModules group: "org.apache.aries.jmx", name: "org.apache.aries.jmx.core", version: "1.1.8"
-	testModules group: "com.liferay.portal", name: "com.liferay.portal.test.integration", version: "latest.release"
-}
-
-repositories {
-	mavenLocal()
-	maven {
-		url "https://repository.liferay.com/nexus/content/groups/public"
-	}
-}
-
-testIntegrationTomcat {
-	overwriteCopyTestModules = true
-}
-
-setUpTestableTomcat {
-	dependsOn ":initBundle"
 }
