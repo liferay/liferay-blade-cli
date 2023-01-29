@@ -122,7 +122,6 @@ public class FooPersistenceTest {
 	public void testUpdateExisting() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
-
 		Foo newFoo = _persistence.create(pk);
 
 		newFoo.setUuid(RandomTestUtil.randomString());

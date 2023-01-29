@@ -19,3 +19,7 @@ dependencies {
 	testModules project(":modules:sample:sample-api")
 	testModules project(":modules:sample:sample-service")
 }
+
+testIntegrationTomcat {
+	overwriteCopyTestModules = true
+}

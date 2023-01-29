@@ -1,14 +1,17 @@
 buildscript {
 	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "4.1.9"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "4.1.10"
 		classpath group: "net.saliman", name: "gradle-properties-plugin", version: "1.4.6"
 	}
 	1
 	repositories {
-		mavenLocal()
 		maven {
 			url "https://repository.liferay.com/nexus/content/groups/public"
 		}
+		maven {
+			url "https://repository.liferay.com/nexus/content/repositories/liferay-public-snapshots"
+		}
+
 	}
 }
 
