@@ -847,12 +847,11 @@ public class BladeCLI {
 					else if (!name0.isEmpty() || !name1.isEmpty()) {
 						return name0.compareTo(name1);
 					}
-					else {
-						String longestName0 = parameterDescription0.getLongestName();
-						String longestName1 = parameterDescription1.getLongestName();
 
-						return longestName0.compareTo(longestName1);
-					}
+					String longestName0 = parameterDescription0.getLongestName();
+					String longestName1 = parameterDescription1.getLongestName();
+
+					return longestName0.compareTo(longestName1);
 				}
 
 			});

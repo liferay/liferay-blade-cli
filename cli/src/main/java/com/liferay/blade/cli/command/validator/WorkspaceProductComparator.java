@@ -60,48 +60,46 @@ public class WorkspaceProductComparator implements Comparator<Pair<String, Produ
 
 			return -1 * aProductMainVersion.compareTo(bProductMainVersion);
 		}
-		else {
-			String aProductMicroVersion = _getProductMicroVersion(aKey);
-			String bProductMicroVersion = _getProductMicroVersion(bKey);
 
-			if (BladeUtil.isEmpty(aProductMicroVersion)) {
-				return 1;
+		String aProductMicroVersion = _getProductMicroVersion(aKey);
+		String bProductMicroVersion = _getProductMicroVersion(bKey);
+
+		if (BladeUtil.isEmpty(aProductMicroVersion)) {
+			return 1;
+		}
+		else if (BladeUtil.isEmpty(bProductMicroVersion)) {
+			return -1;
+		}
+		else if (Version.isVersion(aProductMicroVersion) && Version.isVersion(bProductMicroVersion)) {
+			Version aMicroVersion = Version.parseVersion(aProductMicroVersion);
+			Version bMicroVersion = Version.parseVersion(bProductMicroVersion);
+
+			return -1 * aMicroVersion.compareTo(bMicroVersion);
+		}
+
+		ProductInfo aProductInfo = aPair.second();
+		ProductInfo bProductInfo = bPair.second();
+
+		try {
+			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("M/d/yyyy", Locale.ENGLISH);
+
+			LocalDate aDate = LocalDate.parse(aProductInfo.getReleaseDate(), dateTimeFormatter);
+			LocalDate bDate = LocalDate.parse(bProductInfo.getReleaseDate(), dateTimeFormatter);
+
+			return bDate.compareTo(aDate);
+		}
+		catch (Exception exception) {
+			String aMicroVersionPrefix = aProductMicroVersion.substring(0, 2);
+			String bMicroVersionPrefix = bProductMicroVersion.substring(0, 2);
+
+			if (!aMicroVersionPrefix.equalsIgnoreCase(bMicroVersionPrefix)) {
+				return -1 * aMicroVersionPrefix.compareTo(bMicroVersionPrefix);
 			}
-			else if (BladeUtil.isEmpty(bProductMicroVersion)) {
-				return -1;
-			}
-			else if (Version.isVersion(aProductMicroVersion) && Version.isVersion(bProductMicroVersion)) {
-				Version aMicroVersion = Version.parseVersion(aProductMicroVersion);
-				Version bMicroVersion = Version.parseVersion(bProductMicroVersion);
 
-				return -1 * aMicroVersion.compareTo(bMicroVersion);
-			}
-			else {
-				ProductInfo aProductInfo = aPair.second();
-				ProductInfo bProductInfo = bPair.second();
+			String aMicroVersionString = aProductMicroVersion.substring(2);
+			String bMicroVersionString = bProductMicroVersion.substring(2);
 
-				try {
-					DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("M/d/yyyy", Locale.ENGLISH);
-
-					LocalDate aDate = LocalDate.parse(aProductInfo.getReleaseDate(), dateTimeFormatter);
-					LocalDate bDate = LocalDate.parse(bProductInfo.getReleaseDate(), dateTimeFormatter);
-
-					return bDate.compareTo(aDate);
-				}
-				catch (Exception exception) {
-					String aMicroVersionPrefix = aProductMicroVersion.substring(0, 2);
-					String bMicroVersionPrefix = bProductMicroVersion.substring(0, 2);
-
-					if (!aMicroVersionPrefix.equalsIgnoreCase(bMicroVersionPrefix)) {
-						return -1 * aMicroVersionPrefix.compareTo(bMicroVersionPrefix);
-					}
-
-					String aMicroVersionString = aProductMicroVersion.substring(2);
-					String bMicroVersionString = bProductMicroVersion.substring(2);
-
-					return Integer.parseInt(bMicroVersionString) - Integer.parseInt(aMicroVersionString);
-				}
-			}
+			return Integer.parseInt(bMicroVersionString) - Integer.parseInt(aMicroVersionString);
 		}
 	}
 

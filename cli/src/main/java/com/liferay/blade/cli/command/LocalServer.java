@@ -176,9 +176,8 @@ public class LocalServer {
 		else if (_serverType.equals("jboss") || _serverType.equals("wildfly")) {
 			return _appServerPath.map(path -> path.resolve("standalone/log/server.log"));
 		}
-		else {
-			return Optional.empty();
-		}
+
+		return Optional.empty();
 	}
 
 	public String getServerType() {
