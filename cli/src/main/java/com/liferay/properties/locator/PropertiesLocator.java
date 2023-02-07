@@ -371,9 +371,8 @@ public class PropertiesLocator {
 
 				});
 		}
-		else {
-			return new PrintWriter(System.out);
-		}
+
+		return new PrintWriter(System.out);
 	}
 
 	private String _getPortletNameAsProperty(String[] portletNames) {
