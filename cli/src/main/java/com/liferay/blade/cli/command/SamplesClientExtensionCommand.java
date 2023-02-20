@@ -51,7 +51,7 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 
 		final String clientExtensionSampleUrl =
 			"https://repository.liferay.com/nexus/service/local/artifact/maven/content?r=" +
-				"liferay-public-releases&g=com.liferay.workspace&a=com.sample.minimal.workspace&v=LATEST&p=zip";
+				"liferay-public-releases&g=com.liferay.workspace&a=com.sample.workspace&v=LATEST&p=zip";
 
 		if (_downloadClientExtensionSampleIfNeeded(clientExtensionSampleArchiveName, clientExtensionSampleUrl)) {
 			_extractSamplesClientExtensionRepo(clientExtensionSampleArchiveName);
@@ -196,7 +196,7 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		}
 
 		bladeCLI.out(
-			"Specify client extension sample to download (\"blade samples client-extensions able-custom-element\"). " +
+			"Specify client extension sample to download (\"blade samples client-extensions sample-global-css\"). " +
 				"Otherwise (\"blade samples client-extensions\") will download all available client extension " +
 					"samples.\n");
 		bladeCLI.out("Currently available samples:");
