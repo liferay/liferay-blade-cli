@@ -19,11 +19,15 @@ package com.liferay.blade.gradle.tooling;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+
 import java.io.File;
+
 import java.lang.reflect.Method;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -36,6 +40,7 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.PublishArtifactSet;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.tooling.provider.model.ToolingModelBuilder;
@@ -98,29 +103,45 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 				outputFiles.addAll(files);
 			}
 
-			ConfigurationContainer configurations = project.getConfigurations();
-
 			ExtensionContainer liferayExtensionContainer = project.getExtensions();
 
 			Object liferayExtension = liferayExtensionContainer.findByName("liferay");
 
-			String liferayHome = _getExtensionProperty(liferayExtension, "liferayHome");
+			String liferayHome = null;
 
-			String deployDir =  _getExtensionProperty(liferayExtension, "deployDir");
-			
+			String deployDir = null;
+
+			if (Objects.nonNull(liferayExtension)) {
+				liferayHome = _getExtensionProperty(liferayExtension, "liferayHome");
+
+				deployDir = _getExtensionProperty(liferayExtension, "deployDir");
+			}
+
 			Project rootProject = project.getRootProject();
-			
-			ExtensionContainer workspaceExtensionContainer = rootProject.getExtensions();
+
+			ExtensionAware workspaceExtensionAware = (ExtensionAware)rootProject.getGradle();
+
+			ExtensionContainer workspaceExtensionContainer = workspaceExtensionAware.getExtensions();
 
 			Object workspaceExtension = workspaceExtensionContainer.findByName("liferayWorkspace");
 
-			String dockerImageLiferay = _getExtensionProperty(workspaceExtension, "dockerImageLiferay");
+			String dockerImageLiferay = null;
 
-			String dockerImageId =  _getExtensionProperty(workspaceExtension, "dockerImageId");
+			String dockerImageId = null;
 
-			String dockerContainerId = _getExtensionProperty(workspaceExtension, "dockerContainerId");
+			String dockerContainerId = null;
+
+			if (Objects.nonNull(workspaceExtension)) {
+				dockerImageLiferay = _getExtensionProperty(workspaceExtension, "dockerImageLiferay");
+
+				dockerImageId = _getExtensionProperty(workspaceExtension, "dockerImageId");
+
+				dockerContainerId = _getExtensionProperty(workspaceExtension, "dockerContainerId");
+			}
 
 			try {
+				ConfigurationContainer configurations = project.getConfigurations();
+
 				Configuration archivesConfiguration = configurations.getByName(Dependency.ARCHIVES_CONFIGURATION);
 
 				PublishArtifactSet artifacts = archivesConfiguration.getArtifacts();
@@ -133,7 +154,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 				outputFiles.addAll(files);
 			}
-			catch (Exception e) {
+			catch (Exception exception) {
 			}
 
 			return new DefaultModel(
@@ -165,12 +186,13 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 						}
 					}
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 				}
 			}
 
 			return null;
 		}
+
 	}
 
 }
