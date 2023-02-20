@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -102,19 +103,45 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 				outputFiles.addAll(files);
 			}
 
-			ConfigurationContainer configurations = project.getConfigurations();
+			ExtensionContainer liferayExtensionContainer = project.getExtensions();
 
-			String liferayHome = _getLiferayHome(project);
+			Object liferayExtension = liferayExtensionContainer.findByName("liferay");
 
-			String deployDir = _getDeployDir(project);
+			String liferayHome = null;
 
-			String dockerImageLiferay = _getDockerImageLiferay(project);
+			String deployDir = null;
 
-			String dockerImageId = _getDockerImageId(project);
+			if (Objects.nonNull(liferayExtension)) {
+				liferayHome = _getExtensionProperty(liferayExtension, "liferayHome");
 
-			String dockerContainerId = _getDockerContainerId(project);
+				deployDir = _getExtensionProperty(liferayExtension, "deployDir");
+			}
+
+			Project rootProject = project.getRootProject();
+
+			ExtensionAware workspaceExtensionAware = (ExtensionAware)rootProject.getGradle();
+
+			ExtensionContainer workspaceExtensionContainer = workspaceExtensionAware.getExtensions();
+
+			Object workspaceExtension = workspaceExtensionContainer.findByName("liferayWorkspace");
+
+			String dockerImageLiferay = null;
+
+			String dockerImageId = null;
+
+			String dockerContainerId = null;
+
+			if (Objects.nonNull(workspaceExtension)) {
+				dockerImageLiferay = _getExtensionProperty(workspaceExtension, "dockerImageLiferay");
+
+				dockerImageId = _getExtensionProperty(workspaceExtension, "dockerImageId");
+
+				dockerContainerId = _getExtensionProperty(workspaceExtension, "dockerContainerId");
+			}
 
 			try {
+				ConfigurationContainer configurations = project.getConfigurations();
+
 				Configuration archivesConfiguration = configurations.getByName(Dependency.ARCHIVES_CONFIGURATION);
 
 				PublishArtifactSet artifacts = archivesConfiguration.getArtifacts();
@@ -140,37 +167,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			return modelName.equals(ProjectInfo.class.getName());
 		}
 
-		private String _getDeployDir(Project project) {
-			return _getExtensionProperty(project, "liferay", "deployDir");
-		}
-
-		private String _getDockerContainerId(Project project) {
-			Project rootProject = project.getRootProject();
-
-			return _getExtensionProperty(
-				(ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerContainerId");
-		}
-
-		private String _getDockerImageId(Project project) {
-			Project rootProject = project.getRootProject();
-
-			return _getExtensionProperty((ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerImageId");
-		}
-
-		private String _getDockerImageLiferay(Project project) {
-			Project rootProject = project.getRootProject();
-
-			return _getExtensionProperty(
-				(ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerImageLiferay");
-		}
-
-		private String _getExtensionProperty(ExtensionAware extensionAware, String extensionName, String property) {
-			ExtensionContainer extensionContainer = extensionAware.getExtensions();
-
-			Object extension = extensionContainer.findByName(extensionName);
-
-			String returnVal = null;
-
+		private String _getExtensionProperty(Object extension, String property) {
 			if (extension != null) {
 				Class<?> clazz = extension.getClass();
 
@@ -185,7 +182,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 						if ((method != null) && property.equals(propertyDescriptorName)) {
 							Object value = method.invoke(extension);
 
-							returnVal = String.valueOf(value);
+							return String.valueOf(value);
 						}
 					}
 				}
@@ -193,11 +190,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 				}
 			}
 
-			return returnVal;
-		}
-
-		private String _getLiferayHome(Project project) {
-			return _getExtensionProperty(project, "liferay", "liferayHome");
+			return null;
 		}
 
 	}
