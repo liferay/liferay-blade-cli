@@ -19,11 +19,8 @@ package com.liferay.blade.gradle.tooling;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-
 import java.io.File;
-
 import java.lang.reflect.Method;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -39,7 +36,6 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.PublishArtifactSet;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.tooling.provider.model.ToolingModelBuilder;
@@ -104,15 +100,25 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 			ConfigurationContainer configurations = project.getConfigurations();
 
-			String liferayHome = _getLiferayHome(project);
+			ExtensionContainer liferayExtensionContainer = project.getExtensions();
 
-			String deployDir = _getDeployDir(project);
+			Object liferayExtension = liferayExtensionContainer.findByName("liferay");
 
-			String dockerImageLiferay = _getDockerImageLiferay(project);
+			String liferayHome = _getExtensionProperty(liferayExtension, "liferayHome");
 
-			String dockerImageId = _getDockerImageId(project);
+			String deployDir =  _getExtensionProperty(liferayExtension, "deployDir");
+			
+			Project rootProject = project.getRootProject();
+			
+			ExtensionContainer workspaceExtensionContainer = rootProject.getExtensions();
 
-			String dockerContainerId = _getDockerContainerId(project);
+			Object workspaceExtension = workspaceExtensionContainer.findByName("liferayWorkspace");
+
+			String dockerImageLiferay = _getExtensionProperty(workspaceExtension, "dockerImageLiferay");
+
+			String dockerImageId =  _getExtensionProperty(workspaceExtension, "dockerImageId");
+
+			String dockerContainerId = _getExtensionProperty(workspaceExtension, "dockerContainerId");
 
 			try {
 				Configuration archivesConfiguration = configurations.getByName(Dependency.ARCHIVES_CONFIGURATION);
@@ -127,7 +133,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 
 				outputFiles.addAll(files);
 			}
-			catch (Exception exception) {
+			catch (Exception e) {
 			}
 
 			return new DefaultModel(
@@ -140,37 +146,7 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 			return modelName.equals(ProjectInfo.class.getName());
 		}
 
-		private String _getDeployDir(Project project) {
-			return _getExtensionProperty(project, "liferay", "deployDir");
-		}
-
-		private String _getDockerContainerId(Project project) {
-			Project rootProject = project.getRootProject();
-
-			return _getExtensionProperty(
-				(ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerContainerId");
-		}
-
-		private String _getDockerImageId(Project project) {
-			Project rootProject = project.getRootProject();
-
-			return _getExtensionProperty((ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerImageId");
-		}
-
-		private String _getDockerImageLiferay(Project project) {
-			Project rootProject = project.getRootProject();
-
-			return _getExtensionProperty(
-				(ExtensionAware)rootProject.getGradle(), "liferayWorkspace", "dockerImageLiferay");
-		}
-
-		private String _getExtensionProperty(ExtensionAware extensionAware, String extensionName, String property) {
-			ExtensionContainer extensionContainer = extensionAware.getExtensions();
-
-			Object extension = extensionContainer.findByName(extensionName);
-
-			String returnVal = null;
-
+		private String _getExtensionProperty(Object extension, String property) {
 			if (extension != null) {
 				Class<?> clazz = extension.getClass();
 
@@ -185,21 +161,16 @@ public class ProjectInfoPlugin implements Plugin<Project> {
 						if ((method != null) && property.equals(propertyDescriptorName)) {
 							Object value = method.invoke(extension);
 
-							returnVal = String.valueOf(value);
+							return String.valueOf(value);
 						}
 					}
 				}
-				catch (Exception exception) {
+				catch (Exception e) {
 				}
 			}
 
-			return returnVal;
+			return null;
 		}
-
-		private String _getLiferayHome(Project project) {
-			return _getExtensionProperty(project, "liferay", "liferayHome");
-		}
-
 	}
 
 }
