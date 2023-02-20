@@ -86,13 +86,13 @@ public class SamplesCommandTest {
 	public void testGetSampleClientExtension() throws Exception {
 		File root = temporaryFolder.getRoot();
 
-		String[] args = {"samples client-extensions", "-d", root.getPath(), "able-iframe"};
+		String[] args = {"samples client-extensions", "-d", root.getPath(), "sample-global-css"};
 
 		BladeTest bladeTest = _getBladeTest();
 
 		bladeTest.run(args);
 
-		File projectDir = new File(root, "client-extensions/able-iframe");
+		File projectDir = new File(root, "client-extensions/sample-global-css");
 
 		Assert.assertTrue(projectDir.exists());
 	}
