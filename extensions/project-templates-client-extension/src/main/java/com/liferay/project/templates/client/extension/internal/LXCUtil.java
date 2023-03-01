@@ -62,7 +62,7 @@ public class LXCUtil {
 			Files.delete(checksumPath);
 		}
 
-		BladeUtil.downloadLink(lxcChecksumURL, lxcDirPath.toFile(), checksumPath);
+		BladeUtil.downloadFile(lxcChecksumURL, lxcDirPath, checksumPath);
 
 		if (Files.exists(lxcDirPath) && Files.exists(checksumPath) && Files.exists(downloadPath) &&
 			!_validChecksum(checksumPath, downloadPath)) {
@@ -78,11 +78,11 @@ public class LXCUtil {
 			Files.createDirectories(lxcDirPath);
 
 			if (!Files.exists(checksumPath)) {
-				BladeUtil.downloadLink(lxcChecksumURL, lxcDirPath.toFile(), checksumPath);
+				BladeUtil.downloadFile(lxcChecksumURL, lxcDirPath, checksumPath);
 			}
 
 			if (!Files.exists(downloadPath)) {
-				BladeUtil.downloadLink(lxcURL, lxcDirPath.toFile(), downloadPath);
+				BladeUtil.downloadFile(lxcURL, lxcDirPath, downloadPath);
 			}
 
 			if (!_validChecksum(checksumPath, downloadPath)) {

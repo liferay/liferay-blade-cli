@@ -154,7 +154,7 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		}
 
 		if (!bladeRepoArchive.exists()) {
-			BladeUtil.downloadLink(bladeRepoUrl, cachePath.toFile(), bladeRepoArchive.toPath());
+			BladeUtil.downloadFile(bladeRepoUrl, cachePath, bladeRepoArchive.toPath());
 
 			return true;
 		}

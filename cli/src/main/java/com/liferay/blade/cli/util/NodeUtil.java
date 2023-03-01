@@ -44,7 +44,7 @@ public class NodeUtil {
 
 	public static final String YO_GENERATOR_10_VERSION = "10.x";
 
-	public static Path downloadNode() throws IOException {
+	public static Path downloadNode() throws Exception {
 		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
 		Path nodeDirPath = bladeCachePath.resolve("node");
@@ -57,7 +57,7 @@ public class NodeUtil {
 			Path downloadPath = bladeCachePath.resolve(nodeURL.substring(nodeURL.lastIndexOf("/") + 1));
 
 			if (!Files.exists(downloadPath)) {
-				BladeUtil.downloadLink(nodeURL, nodeDirPath.toFile(), downloadPath);
+				BladeUtil.downloadFile(nodeURL, nodeDirPath, downloadPath);
 			}
 
 			FileUtil.unpack(downloadPath, nodeDirPath, 1);

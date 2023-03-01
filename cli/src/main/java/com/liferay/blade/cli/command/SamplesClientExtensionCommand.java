@@ -16,24 +16,21 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.FileUtil;
-
 import java.io.File;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
 
 /**
  * @author Simon Jiang
@@ -53,9 +50,11 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 			"https://repository.liferay.com/nexus/service/local/artifact/maven/content?r=" +
 				"liferay-public-releases&g=com.liferay.workspace&a=com.sample.workspace&v=LATEST&p=zip";
 
-		if (_downloadClientExtensionSampleIfNeeded(clientExtensionSampleArchiveName, clientExtensionSampleUrl)) {
-			_extractSamplesClientExtensionRepo(clientExtensionSampleArchiveName);
-		}
+		Path _sampleCachePath = _getSamplesCachePath();
+		
+		BladeUtil.downloadFile(clientExtensionSampleUrl, _getSamplesCachePath(), _sampleCachePath.resolve(clientExtensionSampleArchiveName));
+
+		_extractSamplesClientExtensionRepo(clientExtensionSampleArchiveName);
 
 		boolean listAllCientExtension = samplesClientExtensionArgs.isListAllCientExtensions();
 
@@ -111,43 +110,16 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		}
 	}
 
-	private boolean _downloadClientExtensionSampleIfNeeded(
-			String clientExtensionSampleArchiveName, String clientExtensionSampleUrl)
-		throws Exception {
-
-		Path cachePath = _getSamplesCachePath();
-
-		File clientExtensionSampleArchive = new File(cachePath.toFile(), clientExtensionSampleArchiveName);
-
-		if (clientExtensionSampleArchive.exists()) {
-			Date now = new Date();
-
-			long diff = now.getTime() - clientExtensionSampleArchive.lastModified();
-
-			boolean old = false;
-
-			if (diff > _FILE_EXPIRATION_TIME) {
-				old = true;
-			}
-
-			if (old || !BladeUtil.isZipValid(clientExtensionSampleArchive)) {
-				clientExtensionSampleArchive.delete();
-			}
-		}
-
-		if (!clientExtensionSampleArchive.exists()) {
-			BladeUtil.downloadLink(clientExtensionSampleUrl, cachePath.toFile(), clientExtensionSampleArchive.toPath());
-
-			return true;
-		}
-
-		return false;
-	}
-
 	private void _extractSamplesClientExtensionRepo(String samplesClientExtensionArchiveName) throws Exception {
 		Path samplesCachePath = _getSamplesCachePath();
 
 		File samplesClientExtensionArchive = new File(samplesCachePath.toFile(), samplesClientExtensionArchiveName);
+
+		File samplesClientExtensionExtractDir = new File(samplesCachePath.toFile(), _clientExtensionSampleName);
+
+		if (samplesClientExtensionExtractDir.exists()) {
+			samplesClientExtensionExtractDir.delete();
+		}
 
 		FileUtil.unzip(
 			samplesClientExtensionArchive, new File(samplesCachePath.toFile(), _clientExtensionSampleName), null);
@@ -216,8 +188,6 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 			sample -> bladeCLI.out("\t\t " + sample)
 		);
 	}
-
-	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
