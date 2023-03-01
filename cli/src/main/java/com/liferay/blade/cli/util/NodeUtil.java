@@ -360,14 +360,14 @@ public class NodeUtil {
 
 			if (OSDetector.isWindows()) {
 				process = BladeUtil.startProcess(
-					nodeDirPath.toString() + File.separator + "node.exe " + npmDir + File.separator + "bin" +
-						File.separator + "npm-cli.js install --scripts-prepend-node-path",
+					"\"" + nodeDirPath.toString() + File.separator + "node.exe\" \"" + npmDir + File.separator + "bin" +
+						File.separator + "npm-cli.js\" install --scripts-prepend-node-path",
 					scriptDirPath.toFile());
 			}
 			else {
 				process = BladeUtil.startProcess(
-					nodeDirPath.toString() + File.separator + "bin" + File.separator + "node " + npmDir +
-						File.separator + "bin" + File.separator + "npm-cli.js install --scripts-prepend-node-path",
+					"\"" + nodeDirPath.toString() + File.separator + "bin" + File.separator + "node\" \"" + npmDir +
+						File.separator + "bin" + File.separator + "npm-cli.js\" install --scripts-prepend-node-path",
 					scriptDirPath.toFile());
 			}
 
