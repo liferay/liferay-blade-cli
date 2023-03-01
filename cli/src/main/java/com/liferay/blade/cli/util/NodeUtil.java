@@ -253,7 +253,7 @@ public class NodeUtil {
 		return process.waitFor();
 	}
 
-	private static boolean _containsFiles(Path path) throws IOException {
+	private static boolean _containsFiles(Path path) throws Exception {
 		try (Stream<Path> files = Files.list(path)) {
 			if (files.count() > 0) {
 				return true;

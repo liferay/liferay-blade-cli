@@ -114,6 +114,16 @@ public class FileUtil {
 		}
 	}
 
+	public static boolean exists(Path path) {
+		if (path == null) {
+			return false;
+		}
+
+		File file = path.toFile();
+
+		return file.exists();
+	}
+
 	public static boolean exists(String path) {
 		if (path == null) {
 			return false;

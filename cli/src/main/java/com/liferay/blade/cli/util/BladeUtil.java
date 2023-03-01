@@ -16,6 +16,16 @@
 
 package com.liferay.blade.cli.util;
 
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.Extensions;
+import com.liferay.blade.cli.command.SamplesCommand;
+import com.liferay.blade.cli.command.validator.WorkspaceProductComparator;
+import com.liferay.portal.tools.bundle.support.commands.DownloadCommand;
+import com.liferay.project.templates.ProjectTemplates;
+import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
+
+import groovy.json.JsonSlurper;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,19 +34,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileTime;
+
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -84,18 +98,10 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.RedirectLocations;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+
 import org.gradle.internal.impldep.com.google.common.base.Strings;
+
 import org.osgi.framework.Version;
-
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.Extensions;
-import com.liferay.blade.cli.command.SamplesCommand;
-import com.liferay.blade.cli.command.validator.WorkspaceProductComparator;
-import com.liferay.portal.tools.bundle.support.commands.DownloadCommand;
-import com.liferay.project.templates.ProjectTemplates;
-import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
-
-import groovy.json.JsonSlurper;
 
 /**
  * @author Gregory Amerson
@@ -158,9 +164,9 @@ public class BladeUtil {
 
 	public static void downloadFile(String urlString, Path cacheDirPath, Path targetPath) throws Exception {
 		URL downladURL = new URL(urlString);
-		
+
 		URI downladURI = downladURL.toURI();
-		
+
 		try (CloseableHttpClient closeableHttpClient = _getHttpClient(downladURL.toURI(), null, null, -1)) {
 			_downloadFile(closeableHttpClient, downladURI, cacheDirPath, targetPath);
 		}
@@ -173,26 +179,6 @@ public class BladeUtil {
 
 		downloadFile(zipUrl, githubCacheDirPath, target);
 	}
-
-//	public static void downloadLink(String link, File cacheDir, Path target) throws IOException {
-//		try {
-//			DownloadCommand downloadCommand = new DownloadCommand();
-//
-//			downloadCommand.setCacheDir(cacheDir);
-//			downloadCommand.setPassword(null);
-//			downloadCommand.setToken(false);
-//			downloadCommand.setUrl(new URL(link));
-//			downloadCommand.setUserName(null);
-//			downloadCommand.setQuiet(true);
-//
-//			downloadCommand.execute();
-//
-//			Files.move(downloadCommand.getDownloadPath(), target, StandardCopyOption.REPLACE_EXISTING);
-//		}
-//		catch (Exception exception) {
-//			throw new IOException(MessageFormat.format("Can not download for link {0}", link), exception);
-//		}
-//	}
 
 	public static File findParentFile(File dir, String[] fileNames, boolean checkParents) {
 		if (dir == null) {
@@ -851,7 +837,9 @@ public class BladeUtil {
 			Files.delete(targetPath);
 		}
 
-		Files.createDirectories(cacheDirPath);
+		if (!FileUtil.exists(cacheDirPath)) {
+			Files.createDirectories(cacheDirPath);
+		}
 
 		HttpGet httpGet = new HttpGet(uri);
 

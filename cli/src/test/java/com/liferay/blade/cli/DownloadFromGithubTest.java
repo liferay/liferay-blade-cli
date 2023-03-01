@@ -16,7 +16,10 @@
 
 package com.liferay.blade.cli;
 
+import com.liferay.blade.cli.util.BladeUtil;
+
 import java.io.File;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -24,8 +27,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import com.liferay.blade.cli.util.BladeUtil;
 
 /**
  * @author Christopher Bryan Boyd

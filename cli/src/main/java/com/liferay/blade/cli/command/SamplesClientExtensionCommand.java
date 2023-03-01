@@ -16,9 +16,15 @@
 
 package com.liferay.blade.cli.command;
 
+import com.liferay.blade.cli.BladeCLI;
+import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.FileUtil;
+
 import java.io.File;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,10 +33,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import com.liferay.blade.cli.BladeCLI;
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.FileUtil;
 
 /**
  * @author Simon Jiang
@@ -44,21 +46,22 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 	public void execute() throws Exception {
 		final SamplesClientExtensionArgs samplesClientExtensionArgs = getArgs();
 
-		final String clientExtensionSampleArchiveName = _clientExtensionSampleName + ".zip";
+		final String sampleArchiveName = _clientExtensionSampleName + ".zip";
 
 		final String clientExtensionSampleUrl =
 			"https://repository.liferay.com/nexus/service/local/artifact/maven/content?r=" +
 				"liferay-public-releases&g=com.liferay.workspace&a=com.sample.workspace&v=LATEST&p=zip";
 
-		Path _sampleCachePath = _getSamplesCachePath();
-		
-		BladeUtil.downloadFile(clientExtensionSampleUrl, _getSamplesCachePath(), _sampleCachePath.resolve(clientExtensionSampleArchiveName));
+		Path sampleCachePath = _getSamplesCachePath();
 
-		_extractSamplesClientExtensionRepo(clientExtensionSampleArchiveName);
+		BladeUtil.downloadFile(
+			clientExtensionSampleUrl, _getSamplesCachePath(), sampleCachePath.resolve(sampleArchiveName));
 
-		boolean listAllCientExtension = samplesClientExtensionArgs.isListAllCientExtensions();
+		_extractSamplesClientExtension(sampleArchiveName);
 
-		if (listAllCientExtension) {
+		boolean listAllClientExtension = samplesClientExtensionArgs.isListAllCientExtensions();
+
+		if (listAllClientExtension) {
 			_listSamples(_clientExtensionSampleName);
 
 			return;
@@ -90,7 +93,7 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 
 		File clientExtensionDir = new File(workDir, "client-extensions");
 
-		if (!FileUtil.exists(clientExtensionDir.getAbsolutePath())) {
+		if (!FileUtil.exists(clientExtensionDir.toPath())) {
 			clientExtensionDir.mkdir();
 		}
 
@@ -110,19 +113,18 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		}
 	}
 
-	private void _extractSamplesClientExtensionRepo(String samplesClientExtensionArchiveName) throws Exception {
+	private void _extractSamplesClientExtension(String samplesArchiveName) throws Exception {
 		Path samplesCachePath = _getSamplesCachePath();
 
-		File samplesClientExtensionArchive = new File(samplesCachePath.toFile(), samplesClientExtensionArchiveName);
+		File samplesArchiveFile = new File(samplesCachePath.toFile(), samplesArchiveName);
 
-		File samplesClientExtensionExtractDir = new File(samplesCachePath.toFile(), _clientExtensionSampleName);
+		File samplesExtractDir = new File(samplesCachePath.toFile(), _clientExtensionSampleName);
 
-		if (samplesClientExtensionExtractDir.exists()) {
-			samplesClientExtensionExtractDir.delete();
+		if (samplesExtractDir.exists()) {
+			samplesExtractDir.delete();
 		}
 
-		FileUtil.unzip(
-			samplesClientExtensionArchive, new File(samplesCachePath.toFile(), _clientExtensionSampleName), null);
+		FileUtil.unzip(samplesArchiveFile, new File(samplesCachePath.toFile(), _clientExtensionSampleName), null);
 	}
 
 	private Path _getSamplesCachePath() throws Exception {
@@ -137,13 +139,12 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		return samplesCachePath;
 	}
 
-	private void _listSamples(String samplesClientExtensionRepoName) throws Exception {
+	private void _listSamples(String samplesRepoName) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		Path cachePath = _getSamplesCachePath();
 
-		File samplesClientExtensionRepo = new File(
-			cachePath.toFile(), samplesClientExtensionRepoName + "/client-extensions");
+		File samplesClientExtensionRepo = new File(cachePath.toFile(), samplesRepoName + "/client-extensions");
 
 		Map<String, List<Path>> samplesMap = new HashMap<>();
 
