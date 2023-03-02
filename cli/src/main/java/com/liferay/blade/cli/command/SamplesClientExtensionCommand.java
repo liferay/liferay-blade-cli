@@ -52,12 +52,10 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 			"https://repository.liferay.com/nexus/service/local/artifact/maven/content?r=" +
 				"liferay-public-releases&g=com.liferay.workspace&a=com.sample.workspace&v=LATEST&p=zip";
 
-		Path sampleCachePath = _getSamplesCachePath();
+		Path sampleArchivePath = BladeUtil.downloadFile(
+			clientExtensionSampleUrl, _getSamplesCachePath(), sampleArchiveName);
 
-		BladeUtil.downloadFile(
-			clientExtensionSampleUrl, _getSamplesCachePath(), sampleCachePath.resolve(sampleArchiveName));
-
-		_extractSamplesClientExtension(sampleArchiveName);
+		_extractSamplesClientExtension(sampleArchivePath);
 
 		boolean listAllClientExtension = samplesClientExtensionArgs.isListAllCientExtensions();
 
@@ -93,7 +91,7 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 
 		File clientExtensionDir = new File(workDir, "client-extensions");
 
-		if (!FileUtil.exists(clientExtensionDir.toPath())) {
+		if (!clientExtensionDir.exists()) {
 			clientExtensionDir.mkdir();
 		}
 
@@ -113,10 +111,8 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		}
 	}
 
-	private void _extractSamplesClientExtension(String samplesArchiveName) throws Exception {
+	private void _extractSamplesClientExtension(Path samplesArchivePath) throws Exception {
 		Path samplesCachePath = _getSamplesCachePath();
-
-		File samplesArchiveFile = new File(samplesCachePath.toFile(), samplesArchiveName);
 
 		File samplesExtractDir = new File(samplesCachePath.toFile(), _clientExtensionSampleName);
 
@@ -124,7 +120,8 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 			samplesExtractDir.delete();
 		}
 
-		FileUtil.unzip(samplesArchiveFile, new File(samplesCachePath.toFile(), _clientExtensionSampleName), null);
+		FileUtil.unzip(
+			samplesArchivePath.toFile(), new File(samplesCachePath.toFile(), _clientExtensionSampleName), null);
 	}
 
 	private Path _getSamplesCachePath() throws Exception {

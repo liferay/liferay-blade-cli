@@ -54,13 +54,11 @@ public class NodeUtil {
 
 			String nodeURL = _getNodeURL();
 
-			Path downloadPath = bladeCachePath.resolve(nodeURL.substring(nodeURL.lastIndexOf("/") + 1));
+			String targetFileName = nodeURL.substring(nodeURL.lastIndexOf("/") + 1);
 
-			if (!Files.exists(downloadPath)) {
-				BladeUtil.downloadFile(nodeURL, nodeDirPath, downloadPath);
-			}
+			Path targetFilePath = BladeUtil.downloadFile(nodeURL, nodeDirPath, targetFileName);
 
-			FileUtil.unpack(downloadPath, nodeDirPath, 1);
+			FileUtil.unpack(targetFilePath, nodeDirPath, 1);
 
 			if (OSDetector.isWindows()) {
 				Path nodePath;

@@ -108,21 +108,19 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 
 					Path projectPath = Files.createTempDirectory("extension");
 
-					Path zip = projectPath.resolve("master.zip");
-
 					boolean quiet = args.isQuiet();
 
 					if (!quiet) {
 						bladeCLI.out("Downloading github repository " + githubRootUrl);
 					}
 
-					BladeUtil.downloadGithubProject(String.valueOf(githubRootUrl), zip);
+					Path masterZipPath = BladeUtil.downloadGithubProject(String.valueOf(githubRootUrl), "master.zip");
 
 					if (!quiet) {
 						bladeCLI.out("Unzipping github repository to " + projectPath);
 					}
 
-					FileUtil.unzip(zip.toFile(), projectPath.toFile(), null);
+					FileUtil.unzip(masterZipPath.toFile(), projectPath.toFile(), null);
 
 					Path extractedDirectory;
 
@@ -166,12 +164,10 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 					}
 				}
 				else {
-					Path path = Files.createTempDirectory(null);
+					Path tempDirecoryPath = Files.createTempDirectory(null);
 
 					try {
-						Path zip = path.resolve("master.zip");
-
-						File dir = path.toFile();
+						File tempDirecoryFile = tempDirecoryPath.toFile();
 
 						boolean quiet = args.isQuiet();
 
@@ -179,15 +175,15 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 							bladeCLI.out("Downloading github repository " + pathArg);
 						}
 
-						BladeUtil.downloadGithubProject(pathArg, zip);
+						Path masterZipPath = BladeUtil.downloadGithubProject(pathArg, "master.zip");
 
 						if (!quiet) {
-							bladeCLI.out("Unzipping github repository to " + path);
+							bladeCLI.out("Unzipping github repository to " + tempDirecoryPath);
 						}
 
-						FileUtil.unzip(zip.toFile(), dir, null);
+						FileUtil.unzip(masterZipPath.toFile(), tempDirecoryFile, null);
 
-						File[] directories = dir.listFiles(File::isDirectory);
+						File[] directories = tempDirecoryFile.listFiles(File::isDirectory);
 
 						if ((directories != null) && (directories.length > 0)) {
 							Path directory = directories[0].toPath();
@@ -217,7 +213,7 @@ public class InstallExtensionCommand extends BaseCommand<InstallExtensionArgs> {
 						throw exception;
 					}
 					finally {
-						FileUtil.deleteDir(path);
+						FileUtil.deleteDir(tempDirecoryPath);
 					}
 				}
 			}

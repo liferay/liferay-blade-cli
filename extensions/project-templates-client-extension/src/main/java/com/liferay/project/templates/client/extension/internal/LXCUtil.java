@@ -48,52 +48,47 @@ public class LXCUtil {
 
 	public static Path downloadLxc() throws Exception {
 		Path bladeCachePath = BladeUtil.getBladeCachePath();
-		String lxcChecksumURL = _getLxcURL() + ".checksum";
-
-		Path checksumPath = bladeCachePath.resolve(lxcChecksumURL.substring(lxcChecksumURL.lastIndexOf("/") + 1));
 
 		String lxcURL = _getLxcURL();
 
-		Path downloadPath = bladeCachePath.resolve(lxcURL.substring(lxcURL.lastIndexOf("/") + 1));
+		String lxcFileName = lxcURL.substring(lxcURL.lastIndexOf("/") + 1);
+
+		Path lxcDownloadPath = bladeCachePath.resolve(lxcFileName);
 
 		Path lxcDirPath = bladeCachePath.resolve("lxc");
 
-		if (Files.exists(checksumPath)) {
-			Files.delete(checksumPath);
-		}
+		String lxcChecksumURL = lxcURL + ".checksum";
 
-		BladeUtil.downloadFile(lxcChecksumURL, lxcDirPath, checksumPath);
+		String checksumFileName = lxcChecksumURL.substring(lxcChecksumURL.lastIndexOf("/") + 1);
 
-		if (Files.exists(lxcDirPath) && Files.exists(checksumPath) && Files.exists(downloadPath) &&
-			!_validChecksum(checksumPath, downloadPath)) {
+		Path checksumDownloadPath = BladeUtil.downloadFile(lxcChecksumURL, bladeCachePath, checksumFileName);
 
-			Files.delete(checksumPath);
-			Files.delete(downloadPath);
+		if (Files.exists(lxcDirPath) && Files.exists(checksumDownloadPath) && Files.exists(lxcDownloadPath) &&
+			!_validChecksum(checksumDownloadPath, lxcDownloadPath)) {
+
+			Files.delete(checksumDownloadPath);
+			Files.delete(lxcDownloadPath);
 			FileUtil.deleteDir(lxcDirPath);
 		}
 
-		if (!Files.exists(lxcDirPath) || !_containsFiles(lxcDirPath) || !Files.exists(checksumPath) ||
-			!Files.exists(downloadPath)) {
+		if (!Files.exists(lxcDirPath) || !_containsFiles(lxcDirPath) || !Files.exists(checksumDownloadPath) ||
+			!Files.exists(lxcDownloadPath)) {
 
 			Files.createDirectories(lxcDirPath);
 
-			if (!Files.exists(checksumPath)) {
-				BladeUtil.downloadFile(lxcChecksumURL, lxcDirPath, checksumPath);
-			}
+			checksumDownloadPath = BladeUtil.downloadFile(lxcChecksumURL, bladeCachePath, checksumFileName);
 
-			if (!Files.exists(downloadPath)) {
-				BladeUtil.downloadFile(lxcURL, lxcDirPath, downloadPath);
-			}
+			lxcDownloadPath = BladeUtil.downloadFile(lxcURL, bladeCachePath, lxcFileName);
 
-			if (!_validChecksum(checksumPath, downloadPath)) {
-				Files.delete(checksumPath);
-				Files.delete(downloadPath);
+			if (!_validChecksum(checksumDownloadPath, lxcDownloadPath)) {
+				Files.delete(checksumDownloadPath);
+				Files.delete(lxcDownloadPath);
 				FileUtil.deleteDir(lxcDirPath);
 
 				throw new IOException("Downloaded checksum failed, please try again");
 			}
 
-			FileUtil.unpack(downloadPath, lxcDirPath, 1);
+			FileUtil.unpack(lxcDownloadPath, lxcDirPath, 1);
 
 			if (OSDetector.isWindows()) {
 				Path lxcPath;

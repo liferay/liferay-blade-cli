@@ -20,7 +20,6 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.command.SamplesCommand;
 import com.liferay.blade.cli.command.validator.WorkspaceProductComparator;
-import com.liferay.portal.tools.bundle.support.commands.DownloadCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
@@ -162,22 +161,22 @@ public class BladeUtil {
 		return s1.compareTo(v2.getQualifier());
 	}
 
-	public static void downloadFile(String urlString, Path cacheDirPath, Path targetPath) throws Exception {
+	public static Path downloadFile(String urlString, Path cacheDirPath, String targetFileName) throws Exception {
 		URL downladURL = new URL(urlString);
 
 		URI downladURI = downladURL.toURI();
 
 		try (CloseableHttpClient closeableHttpClient = _getHttpClient(downladURL.toURI(), null, null, -1)) {
-			_downloadFile(closeableHttpClient, downladURI, cacheDirPath, targetPath);
+			return _downloadFile(closeableHttpClient, downladURI, cacheDirPath, targetFileName);
 		}
 	}
 
-	public static void downloadGithubProject(String url, Path target) throws Exception {
+	public static Path downloadGithubProject(String url, String target) throws Exception {
 		String zipUrl = url + "/archive/master.zip";
 
 		Path githubCacheDirPath = getBladeCachePath().resolve("github");
 
-		downloadFile(zipUrl, githubCacheDirPath, target);
+		return downloadFile(zipUrl, githubCacheDirPath, target);
 	}
 
 	public static File findParentFile(File dir, String[] fileNames, boolean checkParents) {
@@ -331,19 +330,9 @@ public class BladeUtil {
 		JsonSlurper jsonSlurper = new JsonSlurper();
 
 		try {
-			DownloadCommand downloadCommand = new DownloadCommand();
+			Path productInfoPath = downloadFile(_PRODUCT_INFO_URL, _workspaceCacheDir.toPath(), ".product_info.json");
 
-			downloadCommand.setCacheDir(_workspaceCacheDir);
-			downloadCommand.setConnectionTimeout(5000);
-			downloadCommand.setPassword(null);
-			downloadCommand.setToken(false);
-			downloadCommand.setUrl(new URL(_PRODUCT_INFO_URL));
-			downloadCommand.setUserName(null);
-			downloadCommand.setQuiet(true);
-
-			downloadCommand.execute();
-
-			try (BufferedReader reader = Files.newBufferedReader(downloadCommand.getDownloadPath())) {
+			try (BufferedReader reader = Files.newBufferedReader(productInfoPath)) {
 				_productInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
 			}
 		}
@@ -794,7 +783,7 @@ public class BladeUtil {
 	}
 
 	private static Path _downloadFile(
-			CloseableHttpClient closeableHttpClient, URI uri, Path cacheDirPath, Path targetPath)
+			CloseableHttpClient closeableHttpClient, URI uri, Path cacheDirPath, String targetFileName)
 		throws Exception {
 
 		HttpHead httpHead = new HttpHead(uri);
@@ -827,6 +816,10 @@ public class BladeUtil {
 			}
 		}
 
+		Files.createDirectories(cacheDirPath);
+
+		Path targetPath = cacheDirPath.resolve(targetFileName);
+
 		if (Files.exists(targetPath)) {
 			FileTime fileTime = Files.getLastModifiedTime(targetPath);
 
@@ -835,10 +828,6 @@ public class BladeUtil {
 			}
 
 			Files.delete(targetPath);
-		}
-
-		if (!FileUtil.exists(cacheDirPath)) {
-			Files.createDirectories(cacheDirPath);
 		}
 
 		HttpGet httpGet = new HttpGet(uri);

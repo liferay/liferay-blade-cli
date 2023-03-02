@@ -20,13 +20,6 @@ Private-Package:\
 	\
 	com.liferay.blade.gradle.tooling,\
 	\
-	com.liferay.portal.tools.bundle.support,\
-	com.liferay.portal.tools.bundle.support.commands,\
-	com.liferay.portal.tools.bundle.support.constants,\
-	com.liferay.portal.tools.bundle.support.internal,\
-	com.liferay.portal.tools.bundle.support.internal.util,\
-	com.liferay.portal.tools.bundle.support.util,\
-	\
 	groovy.json,\
 	\
 	org.apache.commons.beanutils,\

@@ -70,21 +70,23 @@ createWrapperZip {
 }
 
 dependencies {
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.35-SNAPSHOT", changing: true
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.client.extension", version: "1.0.2-SNAPSHOT", changing: true
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.18-SNAPSHOT", changing: true
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.19-SNAPSHOT", changing: true
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.35-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.client.extension", version: "1.0.2-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.18-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.19-SNAPSHOT"
 
 	compile group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "4.3.0"
 	compile group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
 	compile group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.237"
+	compile group: "commons-beanutils", name: "commons-beanutils", version: "1.9.4"
 	compile group: "commons-io", name: "commons-io", version: "2.6"
-	compile group: "org.apache.ant", name: "ant", version: "1.10.7"
 	compile group: "commons-lang", name: "commons-lang", version: "2.6"
-	compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
+	compile group: "org.apache.ant", name: "ant", version: "1.10.7"
 	compile group: "org.apache.commons", name: "commons-compress", version: "1.18"
-	compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.7'
-	compile group: 'org.apache.commons', name: 'commons-text', version: '1.8'
+	compile group: "org.apache.commons", name: "commons-configuration2", version: "2.7"
+	compile group: "org.apache.commons", name: "commons-text", version: "1.8"
+	compile group: "org.apache.httpcomponents", name: "httpclient", version: "4.5.13"
+	compile group: "org.apache.httpcomponents", name: "httpcore", version: "4.4.14"
 	compile group: "org.apache.maven", name: "maven-aether-provider", version: "3.3.9"
 	compile group: "org.apache.maven", name: "maven-settings", version: "3.3.9"
 	compile group: "org.apache.maven", name: "maven-settings-builder", version: "3.3.9"
@@ -101,18 +103,14 @@ dependencies {
 	compile group: "org.gradle", name: "gradle-base-services-groovy", version: "5.6.4"
 	compile group: "org.gradle", name: "gradle-core", version: "5.6.4"
 	compile group: "org.gradle", name: "gradle-tooling-api", version: "5.6.4"
+	compile group: "org.json", name: "json", version: "20190722"
 	compile group: "org.jsoup", name: "jsoup", version: "1.11.3"
+	compile group: "org.tukaani", name: "xz", version: "1.6"
 	compile name: "org.objectweb.asm-6.0.0"
 	compile name: "org.objectweb.asm.analysis-6.0.0"
 	compile name: "org.objectweb.asm.commons-6.0.0"
 	compile name: "org.objectweb.asm.tree-6.0.0"
 	compile name: "org.objectweb.asm.util-6.0.0"
-	compile group: 'org.json', name: 'json', version: '20190722'
-
-	compile(group: "com.liferay", name: "com.liferay.portal.tools.bundle.support", version: "3.7.3") {
-		exclude group: "biz.aQute.bnd", module: "biz.aQute.bnd"
-	}
-
 	compile project(":gradle-tooling")
 
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"

@@ -18,7 +18,7 @@ package com.liferay.project.templates.client.extension;
 
 import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.portal.tools.bundle.support.internal.util.FileUtil;
+import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.project.templates.client.extension.internal.ClientExtensionProjectTemplateCustomizer;
 
 import java.io.File;
