@@ -58,7 +58,7 @@ public class ServerStartCommand extends BaseCommand<ServerStartArgs> {
 		String serverType = localServer.getServerType();
 
 		if (!localServer.isSupported()) {
-			bladeCLI.error(serverType + " not supported");
+			bladeCLI.error(serverType + " directory cannot be found. Execute 'blade server init' to create it.");
 
 			return;
 		}
