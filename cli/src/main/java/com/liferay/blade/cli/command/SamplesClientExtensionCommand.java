@@ -86,13 +86,11 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		File workDir = samplesClientExtensionArgs.getDir();
 
 		if (workDir == null) {
-			workDir = samplesClientExtensionArgs.getBase();
+			workDir = new File(samplesClientExtensionArgs.getBase(), "client-extensions");
 		}
 
-		File clientExtensionDir = new File(workDir, "client-extensions");
-
-		if (!clientExtensionDir.exists()) {
-			clientExtensionDir.mkdir();
+		if (!workDir.exists()) {
+			workDir.mkdir();
 		}
 
 		Path cachePath = _getSamplesCachePath();
@@ -104,7 +102,7 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 			String fileName = file.getName();
 
 			if (Files.isDirectory(file.toPath()) && (Objects.isNull(sampleName) || fileName.equals(sampleName))) {
-				File dest = new File(clientExtensionDir, fileName);
+				File dest = new File(workDir, fileName);
 
 				FileUtil.copyDir(file.toPath(), dest.toPath());
 			}
@@ -120,8 +118,7 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 			samplesExtractDir.delete();
 		}
 
-		FileUtil.unzip(
-			samplesArchivePath.toFile(), new File(samplesCachePath.toFile(), _clientExtensionSampleName), null);
+		FileUtil.unzip(samplesArchivePath.toFile(), samplesExtractDir, null);
 	}
 
 	private Path _getSamplesCachePath() throws Exception {
