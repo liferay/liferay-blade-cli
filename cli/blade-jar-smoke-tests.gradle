@@ -18,6 +18,7 @@ task testBladeInitCommandLegacy(type: JavaExec)
 task testBladeInitCommandList(type: JavaExec)
 task testBladeInitCommandListAll(type: JavaExec)
 task testBladeReturnCodeFailure(type: Exec)
+task testBladeSamplesClientExtensionCommand(type: JavaExec)
 task testBladeSamplesCommand(type: JavaExec)
 task testBladeVersionCommand(type: JavaExec)
 
@@ -400,6 +401,22 @@ testBladeReturnCodeFailure {
 
 		assert execResult.getExitValue() > 0
 		assert error.contains("foo")
+	}
+}
+
+testBladeSamplesClientExtensionCommand {
+	args = [jar.archivePath, "samples", "client-extensions", "-d", clientExtensionDir.path, "sample-global-css"]
+	standardOutput = standardStream
+	errorOutput = errorStream
+
+	doLast{
+		File projectDir = new File(clientExtensionDir, "sample-global-css")
+		String error = errorStream.toString().toLowerCase()
+
+		errorStream.reset()
+		standardStream.reset()
+
+		assert projectDir.exists()
 	}
 }
 
