@@ -166,6 +166,10 @@ public class BladeUtil {
 
 		URI downladURI = downladURL.toURI();
 
+		if (Objects.equals(downladURI.getScheme(), "file")) {
+			return Paths.get(downladURI);
+		}
+
 		try (CloseableHttpClient closeableHttpClient = _getHttpClient(downladURL.toURI(), null, null, -1)) {
 			return _downloadFile(closeableHttpClient, downladURI, cacheDirPath, targetFileName);
 		}
