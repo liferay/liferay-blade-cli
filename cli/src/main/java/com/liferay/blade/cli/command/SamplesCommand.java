@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,14 +58,21 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		final String bladeRepoArchiveName = bladeRepoName + ".zip";
 
-		final String bladeRepoUrl =
-			"https://github.com/liferay/liferay-blade-samples/archive/" + liferayVersion + ".zip";
-
 		final String sampleName = samplesArgs.getSampleName();
 
 		Path cachePath = _getSamplesCachePath();
 
-		Path bladeRepoArchivePath = BladeUtil.downloadFile(bladeRepoUrl, cachePath, bladeRepoArchiveName);
+		Path bladeRepoArchivePath;
+
+		if (_needDownloadBladeSamplesRepo(bladeRepoArchiveName)) {
+			final String bladeRepoUrl =
+				"https://github.com/liferay/liferay-blade-samples/archive/" + liferayVersion + ".zip";
+
+			bladeRepoArchivePath = BladeUtil.downloadFile(bladeRepoUrl, cachePath, bladeRepoArchiveName);
+		}
+		else {
+			bladeRepoArchivePath = cachePath.resolve(bladeRepoArchiveName);
+		}
 
 		_extractBladeRepo(bladeRepoArchivePath);
 
@@ -222,6 +230,34 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		);
 	}
 
+	private boolean _needDownloadBladeSamplesRepo(String bladeRepoArchiveName) throws Exception {
+		Path cachePath = _getSamplesCachePath();
+
+		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
+
+		if (bladeRepoArchive.exists()) {
+			Date now = new Date();
+
+			long diff = now.getTime() - bladeRepoArchive.lastModified();
+
+			boolean old = false;
+
+			if (diff > _FILE_EXPIRATION_TIME) {
+				old = true;
+			}
+
+			if (old || !BladeUtil.isZipValid(bladeRepoArchive)) {
+				bladeRepoArchive.delete();
+
+				return true;
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
 	private String _parseGradleScript(String script, String section, boolean contentsOnly) {
 		int begin = script.indexOf(section + " {");
 
@@ -324,6 +360,8 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Files.write(sampleGradleFile.toPath(), script.getBytes());
 	}
+
+	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
