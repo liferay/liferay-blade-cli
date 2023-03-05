@@ -20,7 +20,6 @@ import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.command.SamplesCommand;
 import com.liferay.blade.cli.command.validator.WorkspaceProductComparator;
-import com.liferay.portal.tools.bundle.support.commands.DownloadCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
@@ -37,6 +36,7 @@ import java.io.PrintStream;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -44,17 +44,16 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileTime;
 
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
-import java.text.MessageFormat;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -74,6 +73,30 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.DateUtils;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.RedirectLocations;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 import org.gradle.internal.impldep.com.google.common.base.Strings;
 
@@ -138,32 +161,26 @@ public class BladeUtil {
 		return s1.compareTo(v2.getQualifier());
 	}
 
-	public static void downloadGithubProject(String url, Path target) throws IOException {
+	public static Path downloadFile(String urlString, Path cacheDirPath, String targetFileName) throws Exception {
+		URL downladURL = new URL(urlString);
+
+		URI downladURI = downladURL.toURI();
+
+		if (Objects.equals(downladURI.getScheme(), "file")) {
+			return Paths.get(downladURI);
+		}
+
+		try (CloseableHttpClient closeableHttpClient = _getHttpClient(downladURL.toURI(), null, null, -1)) {
+			return _downloadFile(closeableHttpClient, downladURI, cacheDirPath, targetFileName);
+		}
+	}
+
+	public static Path downloadGithubProject(String url, String target) throws Exception {
 		String zipUrl = url + "/archive/master.zip";
 
 		Path githubCacheDirPath = getBladeCachePath().resolve("github");
 
-		downloadLink(zipUrl, githubCacheDirPath.toFile(), target);
-	}
-
-	public static void downloadLink(String link, File cacheDir, Path target) throws IOException {
-		try {
-			DownloadCommand downloadCommand = new DownloadCommand();
-
-			downloadCommand.setCacheDir(cacheDir);
-			downloadCommand.setPassword(null);
-			downloadCommand.setToken(false);
-			downloadCommand.setUrl(new URL(link));
-			downloadCommand.setUserName(null);
-			downloadCommand.setQuiet(true);
-
-			downloadCommand.execute();
-
-			Files.move(downloadCommand.getDownloadPath(), target, StandardCopyOption.REPLACE_EXISTING);
-		}
-		catch (Exception exception) {
-			throw new IOException(MessageFormat.format("Can not download for link {0}", link), exception);
-		}
+		return downloadFile(zipUrl, githubCacheDirPath, target);
 	}
 
 	public static File findParentFile(File dir, String[] fileNames, boolean checkParents) {
@@ -317,19 +334,9 @@ public class BladeUtil {
 		JsonSlurper jsonSlurper = new JsonSlurper();
 
 		try {
-			DownloadCommand downloadCommand = new DownloadCommand();
+			Path productInfoPath = downloadFile(_PRODUCT_INFO_URL, _workspaceCacheDir.toPath(), ".product_info.json");
 
-			downloadCommand.setCacheDir(_workspaceCacheDir);
-			downloadCommand.setConnectionTimeout(5000);
-			downloadCommand.setPassword(null);
-			downloadCommand.setToken(false);
-			downloadCommand.setUrl(new URL(_PRODUCT_INFO_URL));
-			downloadCommand.setUserName(null);
-			downloadCommand.setQuiet(true);
-
-			downloadCommand.execute();
-
-			try (BufferedReader reader = Files.newBufferedReader(downloadCommand.getDownloadPath())) {
+			try (BufferedReader reader = Files.newBufferedReader(productInfoPath)) {
 				_productInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
 			}
 		}
@@ -769,6 +776,134 @@ public class BladeUtil {
 		}
 
 		return false;
+	}
+
+	private static void _checkResponseStatus(HttpResponse httpResponse) throws IOException {
+		StatusLine statusLine = httpResponse.getStatusLine();
+
+		if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
+			throw new IOException(statusLine.getReasonPhrase());
+		}
+	}
+
+	private static Path _downloadFile(
+			CloseableHttpClient closeableHttpClient, URI uri, Path cacheDirPath, String targetFileName)
+		throws Exception {
+
+		HttpHead httpHead = new HttpHead(uri);
+
+		HttpContext httpContext = new BasicHttpContext();
+
+		Date lastModifiedDate;
+
+		try (CloseableHttpResponse closeableHttpResponse = closeableHttpClient.execute(httpHead, httpContext)) {
+			_checkResponseStatus(closeableHttpResponse);
+
+			Header dispositionHeader = closeableHttpResponse.getFirstHeader("Content-Disposition");
+
+			if (dispositionHeader == null) {
+				RedirectLocations redirectLocations = (RedirectLocations)httpContext.getAttribute(
+					HttpClientContext.REDIRECT_LOCATIONS);
+
+				if (redirectLocations != null) {
+					uri = redirectLocations.get(redirectLocations.size() - 1);
+				}
+			}
+
+			Header lastModifiedHeader = closeableHttpResponse.getFirstHeader(HttpHeaders.LAST_MODIFIED);
+
+			if (lastModifiedHeader != null) {
+				lastModifiedDate = DateUtils.parseDate(lastModifiedHeader.getValue());
+			}
+			else {
+				lastModifiedDate = new Date();
+			}
+		}
+
+		Files.createDirectories(cacheDirPath);
+
+		Path targetPath = cacheDirPath.resolve(targetFileName);
+
+		if (Files.exists(targetPath)) {
+			FileTime fileTime = Files.getLastModifiedTime(targetPath);
+
+			if (fileTime.toMillis() == lastModifiedDate.getTime()) {
+				return targetPath;
+			}
+
+			Files.delete(targetPath);
+		}
+
+		HttpGet httpGet = new HttpGet(uri);
+
+		try (CloseableHttpResponse closeableHttpResponse = closeableHttpClient.execute(httpGet)) {
+			_checkResponseStatus(closeableHttpResponse);
+
+			HttpEntity httpEntity = closeableHttpResponse.getEntity();
+
+			try (InputStream inputStream = httpEntity.getContent();
+				OutputStream outputStream = Files.newOutputStream(targetPath)) {
+
+				byte[] buffer = new byte[10 * 1024];
+				int read = -1;
+
+				while ((read = inputStream.read(buffer)) >= 0) {
+					outputStream.write(buffer, 0, read);
+				}
+			}
+		}
+
+		Files.setLastModifiedTime(targetPath, FileTime.fromMillis(lastModifiedDate.getTime()));
+
+		return targetPath;
+	}
+
+	private static CloseableHttpClient _getHttpClient(
+		URI uri, String userName, String password, int connectionTimeout) {
+
+		HttpClientBuilder httpClientBuilder = _getHttpClientBuilder(uri, userName, password, connectionTimeout);
+
+		return httpClientBuilder.build();
+	}
+
+	private static HttpClientBuilder _getHttpClientBuilder(
+		URI uri, String userName, String password, int connectionTimeout) {
+
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+
+		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+
+		httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+
+		RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+
+		requestConfigBuilder.setConnectTimeout(connectionTimeout);
+		requestConfigBuilder.setCookieSpec(CookieSpecs.STANDARD);
+		requestConfigBuilder.setRedirectsEnabled(true);
+
+		httpClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
+
+		if ((userName != null) && (password != null)) {
+			credentialsProvider.setCredentials(
+				new AuthScope(uri.getHost(), uri.getPort()), new UsernamePasswordCredentials(userName, password));
+		}
+
+		String scheme = uri.getScheme();
+
+		String proxyHost = System.getProperty(scheme + ".proxyHost");
+		String proxyPort = System.getProperty(scheme + ".proxyPort");
+		String proxyUser = System.getProperty(scheme + ".proxyUser");
+		String proxyPassword = System.getProperty(scheme + ".proxyPassword");
+
+		if ((proxyHost != null) && (proxyPort != null) && (proxyUser != null) && (proxyPassword != null)) {
+			credentialsProvider.setCredentials(
+				new AuthScope(proxyHost, Integer.parseInt(proxyPort)),
+				new UsernamePasswordCredentials(proxyUser, proxyPassword));
+		}
+
+		httpClientBuilder.useSystemProperties();
+
+		return httpClientBuilder;
 	}
 
 	private static final String[] _APP_SERVER_PROPERTIES_FILE_NAMES = {

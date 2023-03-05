@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,9 +62,11 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		final String sampleName = samplesArgs.getSampleName();
 
-		if (_downloadBladeRepoIfNeeded(bladeRepoArchiveName, bladeRepoUrl)) {
-			_extractBladeRepo(bladeRepoArchiveName);
-		}
+		Path cachePath = _getSamplesCachePath();
+
+		Path bladeRepoArchivePath = BladeUtil.downloadFile(bladeRepoUrl, cachePath, bladeRepoArchiveName);
+
+		_extractBladeRepo(bladeRepoArchivePath);
 
 		if (sampleName == null) {
 			_listSamples(bladeRepoName);
@@ -132,42 +133,10 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		return s.replaceAll("(?m)^\t", "");
 	}
 
-	private boolean _downloadBladeRepoIfNeeded(String bladeRepoArchiveName, String bladeRepoUrl) throws Exception {
-		Path cachePath = _getSamplesCachePath();
-
-		File bladeRepoArchive = new File(cachePath.toFile(), bladeRepoArchiveName);
-
-		if (bladeRepoArchive.exists()) {
-			Date now = new Date();
-
-			long diff = now.getTime() - bladeRepoArchive.lastModified();
-
-			boolean old = false;
-
-			if (diff > _FILE_EXPIRATION_TIME) {
-				old = true;
-			}
-
-			if (old || !BladeUtil.isZipValid(bladeRepoArchive)) {
-				bladeRepoArchive.delete();
-			}
-		}
-
-		if (!bladeRepoArchive.exists()) {
-			BladeUtil.downloadLink(bladeRepoUrl, cachePath.toFile(), bladeRepoArchive.toPath());
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private void _extractBladeRepo(String bladeRepoArchiveName) throws Exception {
+	private void _extractBladeRepo(Path bladeRepoArchivePath) throws Exception {
 		Path samplesCachePath = _getSamplesCachePath();
 
-		File bladeRepoArchive = new File(samplesCachePath.toFile(), bladeRepoArchiveName);
-
-		FileUtil.unzip(bladeRepoArchive, samplesCachePath.toFile(), null);
+		FileUtil.unzip(bladeRepoArchivePath.toFile(), samplesCachePath.toFile(), null);
 	}
 
 	private String _getLiferayVersion(BladeCLI bladeCLI, SamplesArgs samplesArgs) throws Exception {
@@ -355,8 +324,6 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 		Files.write(sampleGradleFile.toPath(), script.getBytes());
 	}
-
-	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 

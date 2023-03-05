@@ -18,9 +18,6 @@ package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.util.BladeUtil;
 
-import java.io.File;
-import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -35,16 +32,11 @@ import org.junit.rules.TemporaryFolder;
 public class DownloadFromGithubTest {
 
 	@Test
-	public void testDownloadFromGithub() throws IOException {
-		File testDirFile = tempFolder.newFolder();
+	public void testDownloadFromGithub() throws Exception {
+		Path masterZipPath = BladeUtil.downloadGithubProject(
+			"https://github.com/liferay/liferay-blade-cli", "master.zip");
 
-		Path testDirPath = testDirFile.toPath();
-
-		Path zip = testDirPath.resolve("master.zip");
-
-		BladeUtil.downloadGithubProject("https://github.com/liferay/liferay-blade-cli", zip);
-
-		Assert.assertTrue(Files.exists(zip));
+		Assert.assertTrue(Files.exists(masterZipPath));
 	}
 
 	@Rule

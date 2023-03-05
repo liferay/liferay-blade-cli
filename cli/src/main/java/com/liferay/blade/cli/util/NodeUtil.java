@@ -44,7 +44,7 @@ public class NodeUtil {
 
 	public static final String YO_GENERATOR_10_VERSION = "10.x";
 
-	public static Path downloadNode() throws IOException {
+	public static Path downloadNode() throws Exception {
 		Path bladeCachePath = BladeUtil.getBladeCachePath();
 
 		Path nodeDirPath = bladeCachePath.resolve("node");
@@ -54,13 +54,11 @@ public class NodeUtil {
 
 			String nodeURL = _getNodeURL();
 
-			Path downloadPath = bladeCachePath.resolve(nodeURL.substring(nodeURL.lastIndexOf("/") + 1));
+			String targetFileName = nodeURL.substring(nodeURL.lastIndexOf("/") + 1);
 
-			if (!Files.exists(downloadPath)) {
-				BladeUtil.downloadLink(nodeURL, nodeDirPath.toFile(), downloadPath);
-			}
+			Path targetFilePath = BladeUtil.downloadFile(nodeURL, nodeDirPath, targetFileName);
 
-			FileUtil.unpack(downloadPath, nodeDirPath, 1);
+			FileUtil.unpack(targetFilePath, nodeDirPath, 1);
 
 			if (OSDetector.isWindows()) {
 				Path nodePath;
@@ -253,7 +251,7 @@ public class NodeUtil {
 		return process.waitFor();
 	}
 
-	private static boolean _containsFiles(Path path) throws IOException {
+	private static boolean _containsFiles(Path path) throws Exception {
 		try (Stream<Path> files = Files.list(path)) {
 			if (files.count() > 0) {
 				return true;

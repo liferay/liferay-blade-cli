@@ -27,7 +27,6 @@ import java.nio.file.Path;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,19 +46,20 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 	public void execute() throws Exception {
 		final SamplesClientExtensionArgs samplesClientExtensionArgs = getArgs();
 
-		final String clientExtensionSampleArchiveName = _clientExtensionSampleName + ".zip";
+		final String sampleArchiveName = _clientExtensionSampleName + ".zip";
 
 		final String clientExtensionSampleUrl =
 			"https://repository.liferay.com/nexus/service/local/artifact/maven/content?r=" +
 				"liferay-public-releases&g=com.liferay.workspace&a=com.sample.workspace&v=LATEST&p=zip";
 
-		if (_downloadClientExtensionSampleIfNeeded(clientExtensionSampleArchiveName, clientExtensionSampleUrl)) {
-			_extractSamplesClientExtensionRepo(clientExtensionSampleArchiveName);
-		}
+		Path sampleArchivePath = BladeUtil.downloadFile(
+			clientExtensionSampleUrl, _getSamplesCachePath(), sampleArchiveName);
 
-		boolean listAllCientExtension = samplesClientExtensionArgs.isListAllCientExtensions();
+		_extractSamplesClientExtension(sampleArchivePath);
 
-		if (listAllCientExtension) {
+		boolean listAllClientExtension = samplesClientExtensionArgs.isListAllCientExtensions();
+
+		if (listAllClientExtension) {
 			_listSamples(_clientExtensionSampleName);
 
 			return;
@@ -86,13 +86,11 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		File workDir = samplesClientExtensionArgs.getDir();
 
 		if (workDir == null) {
-			workDir = samplesClientExtensionArgs.getBase();
+			workDir = new File(samplesClientExtensionArgs.getBase(), "client-extensions");
 		}
 
-		File clientExtensionDir = new File(workDir, "client-extensions");
-
-		if (!FileUtil.exists(clientExtensionDir.getAbsolutePath())) {
-			clientExtensionDir.mkdir();
+		if (!workDir.exists()) {
+			workDir.mkdir();
 		}
 
 		Path cachePath = _getSamplesCachePath();
@@ -104,53 +102,23 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 			String fileName = file.getName();
 
 			if (Files.isDirectory(file.toPath()) && (Objects.isNull(sampleName) || fileName.equals(sampleName))) {
-				File dest = new File(clientExtensionDir, fileName);
+				File dest = new File(workDir, fileName);
 
 				FileUtil.copyDir(file.toPath(), dest.toPath());
 			}
 		}
 	}
 
-	private boolean _downloadClientExtensionSampleIfNeeded(
-			String clientExtensionSampleArchiveName, String clientExtensionSampleUrl)
-		throws Exception {
-
-		Path cachePath = _getSamplesCachePath();
-
-		File clientExtensionSampleArchive = new File(cachePath.toFile(), clientExtensionSampleArchiveName);
-
-		if (clientExtensionSampleArchive.exists()) {
-			Date now = new Date();
-
-			long diff = now.getTime() - clientExtensionSampleArchive.lastModified();
-
-			boolean old = false;
-
-			if (diff > _FILE_EXPIRATION_TIME) {
-				old = true;
-			}
-
-			if (old || !BladeUtil.isZipValid(clientExtensionSampleArchive)) {
-				clientExtensionSampleArchive.delete();
-			}
-		}
-
-		if (!clientExtensionSampleArchive.exists()) {
-			BladeUtil.downloadLink(clientExtensionSampleUrl, cachePath.toFile(), clientExtensionSampleArchive.toPath());
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private void _extractSamplesClientExtensionRepo(String samplesClientExtensionArchiveName) throws Exception {
+	private void _extractSamplesClientExtension(Path samplesArchivePath) throws Exception {
 		Path samplesCachePath = _getSamplesCachePath();
 
-		File samplesClientExtensionArchive = new File(samplesCachePath.toFile(), samplesClientExtensionArchiveName);
+		File samplesExtractDir = new File(samplesCachePath.toFile(), _clientExtensionSampleName);
 
-		FileUtil.unzip(
-			samplesClientExtensionArchive, new File(samplesCachePath.toFile(), _clientExtensionSampleName), null);
+		if (samplesExtractDir.exists()) {
+			samplesExtractDir.delete();
+		}
+
+		FileUtil.unzip(samplesArchivePath.toFile(), samplesExtractDir, null);
 	}
 
 	private Path _getSamplesCachePath() throws Exception {
@@ -165,13 +133,12 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		return samplesCachePath;
 	}
 
-	private void _listSamples(String samplesClientExtensionRepoName) throws Exception {
+	private void _listSamples(String samplesRepoName) throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
 		Path cachePath = _getSamplesCachePath();
 
-		File samplesClientExtensionRepo = new File(
-			cachePath.toFile(), samplesClientExtensionRepoName + "/client-extensions");
+		File samplesClientExtensionRepo = new File(cachePath.toFile(), samplesRepoName + "/client-extensions");
 
 		Map<String, List<Path>> samplesMap = new HashMap<>();
 
@@ -216,8 +183,6 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 			sample -> bladeCLI.out("\t\t " + sample)
 		);
 	}
-
-	private static final long _FILE_EXPIRATION_TIME = 604800000;
 
 	private static final File _USER_HOME_DIR = new File(System.getProperty("user.home"));
 
