@@ -13,7 +13,7 @@ env:
 jobs:
   CheckSourceFormatting:
     name: Check source formatting
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -34,17 +34,19 @@ jobs:
           ./gradlew --no-daemon checkSourceFormatting
   LinuxJDK8:
     name: Linux JDK8
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Set up JDK8
-        uses: actions/setup-java@v1
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Setup Java 8
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.8
+          java-version: 8
+          distribution: 'zulu'
+          cache: gradle
       - name: Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
@@ -71,17 +73,19 @@ jobs:
           token: "7793a209-c075-4644-9bdb-9205dbe5c4e7"
   LinuxJDK11:
     name: Linux JDK11
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Set up JDK11
-        uses: actions/setup-java@v1
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Setup Java 11
+        uses: actions/setup-java@v3
         with:
           java-version: 11
+          distribution: 'zulu'
+          cache: gradle
       - name: Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
@@ -111,8 +115,8 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
+      - name: Check out repository
+        uses: actions/checkout@v3
       - name: Setup Java 11
         uses: actions/setup-java@v3
         with:
