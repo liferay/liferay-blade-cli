@@ -43,7 +43,7 @@ public class TemplateNameValidator implements ValidatorSupplier {
 
 	@Override
 	public void validate(String name, String value) throws ParameterException {
-		if (Objects.equals("portlet", value)) {
+		if (Objects.equals(value, "portlet")) {
 			value = "mvc-portlet";
 		}
 

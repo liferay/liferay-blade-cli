@@ -118,7 +118,7 @@ public class GradleExec {
 			}
 		}
 
-		if (Objects.equals("gradle", executable)) {
+		if (Objects.equals(executable, "gradle")) {
 			if (_isGradleInstalled()) {
 				if (!baseArgs.isQuiet()) {
 					_blade.out("Could not find gradle wrapper, using gradle");

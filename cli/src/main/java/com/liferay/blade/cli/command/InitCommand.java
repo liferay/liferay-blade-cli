@@ -108,7 +108,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		String profileName = initArgs.getProfileName();
 
-		boolean mavenBuild = Objects.equals("maven", profileName);
+		boolean mavenBuild = Objects.equals(profileName, "maven");
 
 		if (destDir.exists()) {
 			if (pluginsSDK) {
