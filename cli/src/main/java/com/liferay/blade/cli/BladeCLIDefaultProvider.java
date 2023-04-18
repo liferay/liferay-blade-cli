@@ -32,12 +32,12 @@ public class BladeCLIDefaultProvider implements IDefaultProvider {
 
 	@Override
 	public String getDefaultValueFor(String optionName) {
-		if ((Objects.equals("-v", optionName) || Objects.equals("--version", optionName)) && (_args.length > 0) &&
-			Objects.equals("init", _args[0]) &&
+		if ((Objects.equals(optionName, "-v") || Objects.equals(optionName, "--version")) && (_args.length > 0) &&
+			Objects.equals(_args[0], "init") &&
 			Arrays.stream(
 				_args
 			).filter(
-				arg -> Objects.equals("-l", arg) || Objects.equals("--list", arg)
+				arg -> Objects.equals(arg, "-l") || Objects.equals(arg, "--list")
 			).findAny(
 			).isPresent()) {
 

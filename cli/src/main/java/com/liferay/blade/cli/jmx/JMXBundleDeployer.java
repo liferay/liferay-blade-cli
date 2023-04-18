@@ -215,22 +215,22 @@ public class JMXBundleDeployer extends JMXLocalConnector {
 
 		Object state = cd.get("State");
 
-		if (Objects.equals("UNINSTALLED", state)) {
+		if (Objects.equals(state, "UNINSTALLED")) {
 			dto.state = Bundle.UNINSTALLED;
 		}
-		else if (Objects.equals("INSTALLED", state)) {
+		else if (Objects.equals(state, "INSTALLED")) {
 			dto.state = Bundle.INSTALLED;
 		}
-		else if (Objects.equals("RESOLVED", state)) {
+		else if (Objects.equals(state, "RESOLVED")) {
 			dto.state = Bundle.RESOLVED;
 		}
-		else if (Objects.equals("STARTING", state)) {
+		else if (Objects.equals(state, "STARTING")) {
 			dto.state = Bundle.STARTING;
 		}
-		else if (Objects.equals("STOPPING", state)) {
+		else if (Objects.equals(state, "STOPPING")) {
 			dto.state = Bundle.STOPPING;
 		}
-		else if (Objects.equals("ACTIVE", state)) {
+		else if (Objects.equals(state, "ACTIVE")) {
 			dto.state = Bundle.ACTIVE;
 		}
 

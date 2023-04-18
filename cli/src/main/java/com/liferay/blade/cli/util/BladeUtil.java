@@ -187,7 +187,7 @@ public class BladeUtil {
 		if (dir == null) {
 			return null;
 		}
-		else if (Objects.equals(".", dir.toString()) || !dir.isAbsolute()) {
+		else if (Objects.equals(dir.toString(), ".") || !dir.isAbsolute()) {
 			try {
 				dir = dir.getCanonicalFile();
 			}

@@ -653,7 +653,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 					@Override
 					public boolean accept(File dir, String name) {
-						if (!Objects.equals("_diffs", name) && !Objects.equals("WEB-INF", name)) {
+						if (!Objects.equals(name, "_diffs") && !Objects.equals(name, "WEB-INF")) {
 							return true;
 						}
 
@@ -1289,7 +1289,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 					GAV gav = null;
 
-					if (Objects.equals("__remove__", value)) {
+					if (Objects.equals(value, "__remove__")) {
 						gav = new GAV(key);
 
 						gav.setRemove(true);

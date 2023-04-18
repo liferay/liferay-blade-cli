@@ -108,7 +108,7 @@ public class VersionCommand extends BaseCommand<VersionArgs> {
 
 		String bundleSymbolicName = attributes.getValue(Constants.BUNDLE_SYMBOLICNAME);
 
-		if (Objects.equals("com.liferay.blade.cli", bundleSymbolicName)) {
+		if (Objects.equals(bundleSymbolicName, "com.liferay.blade.cli")) {
 			return attributes.getValue(Constants.BUNDLE_VERSION);
 		}
 

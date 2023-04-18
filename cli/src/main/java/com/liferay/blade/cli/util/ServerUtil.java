@@ -44,12 +44,12 @@ public class ServerUtil {
 			}
 
 			if (match) {
-				if (Objects.equals("tomcat", serverType)) {
+				if (Objects.equals(serverType, "tomcat")) {
 					Path executable = path.resolve(Paths.get("bin", getTomcatExecutable()));
 
 					match = Files.exists(executable);
 				}
-				else if (Objects.equals("jboss", serverType) || Objects.equals("wildfly", serverType)) {
+				else if (Objects.equals(serverType, "jboss") || Objects.equals(serverType, "wildfly")) {
 					Path executable = path.resolve(Paths.get("bin", getJBossWildflyExecutable()));
 
 					match = Files.exists(executable);

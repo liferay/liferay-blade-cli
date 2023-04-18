@@ -80,7 +80,7 @@ public class BladeTest extends BladeCLI {
 
 		File settingsFile = new File(settingsBaseDir, ".blade/settings.properties");
 
-		if (settingsFile.exists() && Objects.equals("settings.properties", settingsFile.getName())) {
+		if (settingsFile.exists() && Objects.equals(settingsFile.getName(), "settings.properties")) {
 			_migrateBladeSettingsFile(settingsFile);
 		}
 
