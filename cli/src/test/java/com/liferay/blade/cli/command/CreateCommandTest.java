@@ -721,6 +721,39 @@ public class CreateCommandTest {
 
 		_contains(componentFile, ".*^public class SimulatorSimulationPanelApp.*extends BaseJSPPanelApp.*$");
 
+		_contains(componentFile, ".*public void setServletContext.*$");
+
+		_checkFileExists(projectPath + "/build.gradle");
+	}
+
+	@Test
+	public void testCreateSimulationPanelEntryForDXPU72() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_DXP_74_U72);
+
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-t", "simulation-panel-entry", "-p", "test.simulator",
+			"simulator"
+		};
+
+		TestUtil.runBlade(workspace, _extensionsDir, args);
+
+		File projectDir = new File(workspace, "modules/simulator");
+
+		String projectPath = projectDir.getAbsolutePath();
+
+		_checkFileExists(projectPath);
+
+		_checkFileExists(projectPath + "/bnd.bnd");
+
+		File componentFile = _checkFileExists(
+			projectPath + "/src/main/java/test/simulator/application/list/SimulatorSimulationPanelApp.java");
+
+		_contains(componentFile, ".*^public class SimulatorSimulationPanelApp.*extends BaseJSPPanelApp.*$");
+
+		_contains(componentFile, ".*protected ServletContext getServletContext().*");
+
 		_checkFileExists(projectPath + "/build.gradle");
 	}
 
