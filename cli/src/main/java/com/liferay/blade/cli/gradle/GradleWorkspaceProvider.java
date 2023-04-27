@@ -24,7 +24,6 @@ import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ProductInfo;
-import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -123,12 +122,7 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			}
 
 			if (baseLiferayVersion.isPresent()) {
-				String presentLiferayVersion = baseLiferayVersion.get();
-
-				return new String(
-					String.valueOf(VersionUtil.getMajorVersion(presentLiferayVersion)) + "." +
-						String.valueOf(VersionUtil.getMinorVersion(presentLiferayVersion)) + "." +
-							String.valueOf(VersionUtil.getMicroVersion(presentLiferayVersion)));
+				return baseLiferayVersion.get();
 			}
 		}
 		catch (Exception exception) {
