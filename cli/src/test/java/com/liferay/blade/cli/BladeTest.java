@@ -64,6 +64,8 @@ public class BladeTest extends BladeCLI {
 
 	public static final String PRODUCT_VERSION_DXP_74 = "dxp-7.4-u38";
 
+	public static final String PRODUCT_VERSION_DXP_74_U72 = "dxp-7.4-u72";
+
 	public static final String PRODUCT_VERSION_PORTAL_71 = "portal-7.1-ga4";
 
 	public static final String PRODUCT_VERSION_PORTAL_73 = "portal-7.3-ga8";
