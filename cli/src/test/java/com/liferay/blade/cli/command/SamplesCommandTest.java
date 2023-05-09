@@ -86,7 +86,9 @@ public class SamplesCommandTest {
 	public void testGetSampleClientExtension() throws Exception {
 		File root = temporaryFolder.getRoot();
 
-		String[] args = {"samples client-extensions", "-d", root.getPath() + "/client-extensions", "liferay-sample-global-css"};
+		String[] args = {
+			"samples client-extensions", "-d", root.getPath() + "/client-extensions", "liferay-sample-global-css"
+		};
 
 		BladeTest bladeTest = _getBladeTest();
 
