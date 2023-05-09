@@ -50,7 +50,7 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 
 		final String clientExtensionSampleUrl =
 			"https://repository.liferay.com/nexus/service/local/artifact/maven/content?r=" +
-				"liferay-public-releases&g=com.liferay.workspace&a=com.sample.workspace&v=LATEST&p=zip";
+				"liferay-public-releases&g=com.liferay.workspace&a=com.liferay.sample.workspace&v=LATEST&p=zip";
 
 		Path sampleArchivePath = BladeUtil.downloadFile(
 			clientExtensionSampleUrl, _getSamplesCachePath(), sampleArchiveName);

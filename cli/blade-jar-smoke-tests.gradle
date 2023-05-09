@@ -405,12 +405,12 @@ testBladeReturnCodeFailure {
 }
 
 testBladeSamplesClientExtensionCommand {
-	args = [jar.archivePath, "samples", "client-extensions", "-d", clientExtensionDir.path, "sample-global-css"]
+	args = [jar.archivePath, "samples", "client-extensions", "-d", clientExtensionDir.path, "liferay-sample-global-css"]
 	standardOutput = standardStream
 	errorOutput = errorStream
 
 	doLast{
-		File projectDir = new File(clientExtensionDir, "sample-global-css")
+		File projectDir = new File(clientExtensionDir, "liferay-sample-global-css")
 		String error = errorStream.toString().toLowerCase()
 
 		errorStream.reset()
