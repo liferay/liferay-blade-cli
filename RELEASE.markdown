@@ -6,8 +6,8 @@
 2. Create a new branch based on ticket
 3. Run `gradlew prepareRelease`
 4. Commit the changes
-5. Generate release notes (@lawrence-lee to provide this command)
-6. Commit the release notes
+5. Generate changelog`./gradlew -b changelogs-sdk.gradle buildChangelogs`
+6. Commit the changelog
 7. Create PR on `liferay/liferay-blade-cli` repo from this branch
 8. If the PR passes all the tests, merge the PR to master.
 9. Generate a new tag based on the new version `git tag 4.1.2`
