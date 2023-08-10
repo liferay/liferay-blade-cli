@@ -45,6 +45,8 @@ public class UtilTest {
 	public void testAppServerProperties() throws Exception {
 		File dir = temporaryFolder.getRoot();
 
+		// Foo comment
+
 		File appServerProperty1 = new File(dir, "app.server." + System.getProperty("user.name") + ".properties");
 
 		appServerProperty1.createNewFile();
