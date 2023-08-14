@@ -196,7 +196,7 @@ Private-Package:\
 	\
 	org.objectweb.asm.*,\
 	\
-	org.osgi.dto,\
+	org.osgi.dto;-split-package:=merge-first,\
 	org.osgi.framework;-split-package:=merge-first,\
 	org.osgi.framework.dto,\
 	org.osgi.resource;-split-package:=merge-first,\

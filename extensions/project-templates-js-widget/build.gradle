@@ -16,7 +16,7 @@ buildscript {
 }
 
 apply plugin: "biz.aQute.bnd.builder"
-apply plugin: "java"
+apply plugin: "java-library"
 apply plugin: "maven-publish"
 
 dependencies {
@@ -24,10 +24,10 @@ dependencies {
 	compileOnly group: "org.apache.maven.archetype", name: "archetype-common", version: "2.4"
 	compileOnly project(":cli")
 
-	testCompile gradleTestKit()
-	testCompile group: "junit", name: "junit", version: "4.12"
-	testCompile project(":cli")
-	testCompile project(path: ":cli", configuration: "testApi")
+	testImplementation gradleTestKit()
+	testImplementation group: "junit", name: "junit", version: "4.12"
+	testImplementation project(":cli")
+	testImplementation project(path: ":cli", configuration: "testApi")
 }
 
 jar.baseName = "com.liferay.project.templates.js.widget"

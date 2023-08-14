@@ -16,17 +16,17 @@ buildscript {
 	}
 }
 
+apply plugin: "java-library"
 apply plugin: 'biz.aQute.bnd.builder'
-apply plugin: 'java'
 
 dependencies {
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
 	compileOnly project(":cli")
 
-	testCompile gradleTestKit()
-	testCompile group: "junit", name: "junit", version: "4.12"
-	testCompile project(":cli")
-	testCompile project(path: ":cli", configuration: "testApi")
+	testImplementation gradleTestKit()
+	testImplementation group: "junit", name: "junit", version: "4.12"
+	testImplementation project(":cli")
+	testImplementation project(path: ":cli", configuration: "testApi")
 }
 
 version = "1.0.0"

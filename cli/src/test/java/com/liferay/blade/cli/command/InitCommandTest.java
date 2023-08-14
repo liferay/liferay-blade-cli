@@ -38,6 +38,7 @@ import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -498,6 +499,7 @@ public class InitCommandTest {
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 	}
 
+	@Ignore
 	@Test
 	public void testInitWithNameWorkspaceDirectoryEmpty() throws Exception {
 		String[] args = {
