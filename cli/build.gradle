@@ -52,21 +52,24 @@ clean.doFirst {
 }
 
 cliSourcesJar {
-	classifier = "sources"
+	archiveClassifier.set("sources")
 	from sourceSets.main.allJava
 }
 
 cliTestJar {
-	classifier = "tests"
+	dependsOn "unzipPortal"
+	archiveClassifier.set("tests")
 	from sourceSets.test.output
 }
 
 createWrapperZip {
 	from "${rootProject.projectDir}"
-	archiveName = "wrapper.zip"
-	destinationDir = new File("${buildDir}")
+	archiveFileName.set("wrapper.zip")
+	destinationDirectory.set(new File("${buildDir}"))
 	include "gradle/**"
 	include "gradlew*"
+
+	finalizedBy("processZipsResources")
 }
 
 dependencies {
@@ -142,11 +145,13 @@ downloadProductInfo {
 }
 
 jar {
-	archiveName = "blade.jar"
+	dependsOn("unzipPortal")
+	archiveFileName.set("blade.jar")
 	from createToolingZip, createWrapperZip, downloadProductInfo
 }
 
 processResources {
+	dependsOn("unzipPortal")
 	from configurations.bladeExtensions
 	from bladeExtensionsVersions
 }
@@ -173,10 +178,12 @@ bladeExtensionsVersions {
 project(":gradle-tooling").afterEvaluate {
 	tooling ->
 	createToolingZip {
-		archiveName = "tooling.zip"
 		dependsOn ":gradle-tooling:jar"
-		destinationDir = new File("${buildDir}")
+		archiveFileName.set("tooling.zip")
+		destinationDirectory.set(new File("${buildDir}"))
 		from tooling.jar.archivePath
+
+		finalizedBy("processZipsResources")
 	}
 }
 
@@ -304,12 +311,16 @@ unzipManifest {
 	from zipTree(jar.archivePath)
 	into sourceSets.main.output.classesDirs.singleFile
 	include '/META-INF/MANIFEST.MF'
+
+	finalizedBy("compileTestJava")
 }
 
 unzipPortal {
 	dependsOn downloadPortal
 	from tarTree(resources.gzip(downloadPortal.dest))
 	into buildDir
+
+	finalizedBy("processZipsResources")
 }
 
 version = "4.1.2-SNAPSHOT"
