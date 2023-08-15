@@ -38,12 +38,14 @@ eclipse {
 	}
 }
 
-jar.baseName = "com.liferay.project.templates.activator"
+jar{
+	archiveBaseName.set("com.liferay.project.templates.activator")
+}
 
 publishing {
 	publications {
 		mavenProfileJar(MavenPublication) {
-			artifactId = jar.baseName
+			artifactId = jar.archiveBaseName
 
 			from components.java
 		}

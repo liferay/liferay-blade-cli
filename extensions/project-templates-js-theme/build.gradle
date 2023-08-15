@@ -30,12 +30,20 @@ dependencies {
 	testImplementation project(path: ":cli", configuration: "testApi")
 }
 
-jar.baseName = "com.liferay.project.templates.js.theme"
+compileJava{
+	dependsOn(":cli:unzipPortal")
+}
+
+jar{
+	dependsOn(":cli:unzipPortal")
+
+	archiveBaseName.set("com.liferay.project.templates.js.theme")
+}
 
 publishing {
 	publications {
 		mavenProfileJar(MavenPublication) {
-			artifactId = jar.baseName
+			artifactId = jar.archiveBaseName
 
 			from components.java
 		}

@@ -34,7 +34,11 @@ eclipse {
 	}
 }
 
-jar.baseName = "com.liferay.project.templates.sample"
+jar{
+	dependsOn(":cli:unzipPortal")
+
+	archiveBaseName.set("com.liferay.project.templates.sample")
+}
 
 test {
 	dependsOn jar

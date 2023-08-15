@@ -38,12 +38,16 @@ eclipse {
 	}
 }
 
-jar.baseName = "com.liferay.project.templates.social.bookmark"
+jar{
+	dependsOn(":cli:unzipPortal")
+
+	archiveBaseName.set("com.liferay.project.templates.social.bookmark")
+}
 
 publishing {
 	publications {
 		mavenProfileJar(MavenPublication) {
-			artifactId = jar.baseName
+			artifactId = jar.archiveBaseName
 
 			from components.java
 		}

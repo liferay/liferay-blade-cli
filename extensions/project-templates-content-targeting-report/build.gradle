@@ -38,12 +38,14 @@ eclipse {
 	}
 }
 
-jar.baseName = "com.liferay.project.templates.content.targeting.report"
+jar{
+	archiveBaseName.set("com.liferay.project.templates.content.targeting.report")
+}
 
 publishing {
 	publications {
 		mavenProfileJar(MavenPublication) {
-			artifactId = jar.baseName
+			artifactId = jar.archiveBaseName
 
 			from components.java
 		}
