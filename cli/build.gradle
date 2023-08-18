@@ -110,10 +110,10 @@ dependencies {
 	api name: "org.objectweb.asm.tree-6.0.0"
 	api name: "org.objectweb.asm.util-6.0.0"
 
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.35-SNAPSHOT"
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.client.extension", version: "1.0.2-SNAPSHOT"
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.18-SNAPSHOT"
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.19-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.35"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.client.extension", version: "1.0.2"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.18"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.19"
 
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	compileOnly project(":gradle-tooling")
@@ -323,6 +323,6 @@ unzipPortal {
 	finalizedBy("processZipsResources")
 }
 
-version = "5.0.0-SNAPSHOT"
+version = "5.0.0"
 
 apply from: "blade-jar-smoke-tests.gradle"
