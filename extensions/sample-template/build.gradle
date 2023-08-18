@@ -1,6 +1,6 @@
 buildscript {
 	dependencies {
-		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "4.3.0"
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "5.3.0"
 	}
 
 	repositories {
@@ -17,15 +17,15 @@ buildscript {
 
 apply plugin: "biz.aQute.bnd.builder"
 apply plugin: "eclipse"
-apply plugin: "java"
+apply plugin: "java-library"
 
 dependencies {
 	compileOnly project(":cli")
 
-	testCompile gradleTestKit()
-	testCompile group: "junit", name: "junit", version: "4.12"
-	testCompile project(path: ":cli")
-	testCompile project(path: ":cli", configuration: "testApi")
+	testImplementation gradleTestKit()
+	testImplementation group: "junit", name: "junit", version: "4.12"
+	testImplementation project(path: ":cli")
+	testImplementation project(path: ":cli", configuration: "testApi")
 }
 
 eclipse {
