@@ -55,11 +55,11 @@ mkdir -p $tmpDir
 
 if [ -z "$repoHost" ]; then
 	if [ "$nexusOpt" = "-PlocalNexus" ]; then
-		repoHost="https://localhost:8081"
+		repoHost="http://localhost:8081"
 	else
-		repoHost="https://repository.liferay.com"
+		repoHost="http://repository.liferay.com"
 	fi
-elif [ "$repoHost" = "https://localhost:8081" ]; then
+elif [ "$repoHost" = "http://localhost:8081" ]; then
 	nexusOpt="-PlocalNexus"
 fi
 
