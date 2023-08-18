@@ -31,10 +31,12 @@ dependencies {
 
 compileJava{
 	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
 }
 
 jar{
 	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
 }
 
 test {

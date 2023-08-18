@@ -38,6 +38,11 @@ eclipse {
 	}
 }
 
+compileJava{
+	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
+}
+
 jar{
 	dependsOn(":cli:unzipPortal")
 
@@ -47,7 +52,7 @@ jar{
 publishing {
 	publications {
 		mavenProfileJar(MavenPublication) {
-			artifactId = jar.archiveBaseName
+			artifactId = jar.baseName
 
 			from components.java
 		}

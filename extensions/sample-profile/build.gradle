@@ -21,10 +21,12 @@ apply plugin: 'biz.aQute.bnd.builder'
 
 compileJava{
 	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
 }
 
 jar{
 	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
 }
 
 dependencies {

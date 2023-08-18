@@ -42,7 +42,7 @@ public class ServerCommandsMavenTest {
 		File workspaceDir = temporaryFolder.newFolder("build", "test", "workspace");
 
 		String[] args = {
-			"--base", workspaceDir.getPath(), "init", "-f", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_741
+			"--base", workspaceDir.getPath(), "init", "-f", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_PORTAL_7456
 		};
 
 		TestUtil.runBlade(workspaceDir, extensionsDir, args);
@@ -57,6 +57,8 @@ public class ServerCommandsMavenTest {
 				_addNexusRepositoriesElement(document, "repositories", "repository");
 				_addNexusRepositoriesElement(document, "pluginRepositories", "pluginRepository");
 			});
+
+		XMLTestUtil.updateWorkspaceBundleUrl(workspaceDir, BladeTest.LIFERAY_VERSION_PORTAL_7456);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 

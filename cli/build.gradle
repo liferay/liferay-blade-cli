@@ -132,6 +132,10 @@ dependencies {
 	testImplementation project(":gradle-tooling")
 }
 
+compileTestJava{
+	dependsOn("unzipPortal")
+}
+
 downloadPortal {
 	src "https://releases-cdn.liferay.com/portal/7.4.3.4-ga4/liferay-ce-portal-tomcat-7.4.3.4-ga4-20211020095956970.tar.gz"
 	dest new File("${System.getProperty('user.home')}/.liferay/bundles", 'liferay-ce-portal-tomcat-7.4.3.4-ga4-20211020095956970.tar.gz')
@@ -313,6 +317,10 @@ unzipManifest {
 	include '/META-INF/MANIFEST.MF'
 
 	finalizedBy("compileTestJava")
+}
+
+processZipsResources{
+	dependsOn("unzipPortal")
 }
 
 unzipPortal {
