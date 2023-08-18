@@ -1,5 +1,150 @@
 # Liferay Blade CLI Change Log
 
+## 5.0.0 - 2023-08-18
+
+### Commits
+- [BLADE-729] liferay-blade-cli: manually bumps snapshot version to 5.0.0
+(76b05274a1)
+- [BLADE-724] liferay-blade-cli: bumps bnd lib version to 5.3.0 in extensions
+(d59e5a6ac6)
+- [BLADE-728] improve build.gradle for gradle 7 (45604becfa)
+- [BLADE-728] upgrade blade configuraton for gradle 7 (c17e7fe341)
+- [BLADE-724] cli: bumps expected workspace version (1653063764)
+- [BLADE-724] cli: for now, build against an exact release version of project
+templates. Once we make the release process stable, we can explore making it
+dynamic against the latest release. (af8f2e620c)
+- [BLADE-724] fixes failure in GradleToolingTest (63cfb92dca)
+- [BLADE-724] liferay-blade-cli: auto SF (b8ad762eff)
+- [BLADE-724] liferay-blade-cli: bumps bnd gradle lib to 5.3.0 (f5daa56352)
+- [BLADE-725] (152ef55dbf)
+- [BLADE-725] add changelog command (a928cdfd7d)
+- [BLADE-725] create release document (76835e08c6)
+- [BLADE-724] liferay-blade-cli: always use the latest release of the project
+templates artifact (9c84835665)
+- [BLADE-719] update workspace plugin version for initBundle test (93e713adea)
+- [BLADE-717] fix client extension test error (1d8fbc957e)
+- [BLADE-717] Update Test (129b79cac3)
+- [BLADE-717] Update samples url (0625cc4d4c)
+- [BLADE-716] add test form simulator (a8b20a9bf9)
+- [BLADE-716] set correct target platform for project template (3b6308f950)
+- [BLADE-711] update github actions (42e893179e)
+- [BLADE-711] Update blade server start error message (b9049836a7)
+- [BLADE-712] improve blade samples command logic (6d762724f0)
+- [BLADE-712] return local file path when uri start with file (fed725e8dc)
+- [BLADE-712] add smoke test for client extenstion sample (c9c6baa160)
+- [BLADE-712] improve download performance (96475c7816)
+- [BLADE-712] check the file last modify date before download (e06e9e1738)
+- [BLADE-710] install liferay js failed when path contain blank spaces
+(b416b013f8)
+- [BLADE-708] fix gradle tooling performance issue (61b98daa5d)
+- [BLADE-709] fix client extension sample workspace renamed issue (64e0f4cd67)
+- [BLADE-707] update sample minimal workspace name (a5cd5da27b)
+- [BLADE-696] improve command description (7f5d33d133)
+- [BLADE-696] remove hidden property for --list (ec405c9681)
+- [BLADE-696] fix test error (df2e8b0919)
+- [BLADE-696] add junit testAdd ability to download client extensions samples
+from liferay-portal (a29eba3b0c)
+- [BLADE-705] improve get properties (058f171a34)
+- [BLADE-705] Fix NPE issue (961e738e35)
+- [BLADE-705] Gradle local properties should also be loaded (2269e821a5)
+- [BLADE-703] should return correct prodcut keys order (74a3071068)
+
+### Dependencies
+- [BLADE-729] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.35.
+- [BLADE-729] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.2.
+- [BLADE-729] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.18.
+- [BLADE-729] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.19.
+- [BLADE-728] Update the biz.aQute.bndlib dependency to version 5.3.0.
+- [BLADE-728] Update the com.liferay.gogo.shell.client dependency to version
+1.0.0.
+- [BLADE-728] Update the com.liferay.project.templates dependency to version
+5.0.257.
+- [BLADE-728] Update the commons-beanutils dependency to version 1.9.4.
+- [BLADE-728] Update the commons-io dependency to version 2.6.
+- [BLADE-728] Update the commons-lang dependency to version 2.6.
+- [BLADE-728] Update the ant dependency to version 1.10.7.
+- [BLADE-728] Update the commons-compress dependency to version 1.18.
+- [BLADE-728] Update the commons-configuration2 dependency to version 2.7.
+- [BLADE-728] Update the commons-text dependency to version 1.8.
+- [BLADE-728] Update the httpclient dependency to version 4.5.13.
+- [BLADE-728] Update the httpcore dependency to version 4.4.14.
+- [BLADE-728] Update the maven-aether-provider dependency to version 3.3.9.
+- [BLADE-728] Update the maven-settings dependency to version 3.3.9.
+- [BLADE-728] Update the maven-settings-builder dependency to version 3.3.9.
+- [BLADE-728] Update the aether-api dependency to version 1.0.2.v20150114.
+- [BLADE-728] Update the aether-connector-basic dependency to version
+1.0.2.v20150114.
+- [BLADE-728] Update the aether-impl dependency to version 1.0.2.v20150114.
+- [BLADE-728] Update the aether-spi dependency to version 1.0.2.v20150114.
+- [BLADE-728] Update the aether-transport-classpath dependency to version
+1.0.2.v20150114.
+- [BLADE-728] Update the aether-transport-file dependency to version
+1.0.2.v20150114.
+- [BLADE-728] Update the aether-transport-http dependency to version
+1.0.2.v20150114.
+- [BLADE-728] Update the aether-transport-wagon dependency to version
+1.0.2.v20150114.
+- [BLADE-728] Update the aether-util dependency to version 1.0.2.v20150114.
+- [BLADE-728] Update the jansi dependency to version 1.17.1.
+- [BLADE-728] Update the gradle-base-services-groovy dependency to version
+5.6.4.
+- [BLADE-728] Update the gradle-core dependency to version 5.6.4.
+- [BLADE-728] Update the gradle-tooling-api dependency to version 5.6.4.
+- [BLADE-728] Update the json dependency to version 20190722.
+- [BLADE-728] Update the jsoup dependency to version 1.11.3.
+- [BLADE-728] Update the xz dependency to version 1.6.
+- [BLADE-728] Update the diffutils dependency to version 1.3.0.
+- [BLADE-728] Update the junit dependency to version 4.12.
+- [BLADE-728] Update the zipdiff dependency to version 1.0.
+- [BLADE-728] Update the easymock dependency to version 3.5.1.
+- [BLADE-728] Update the osgi.core dependency to version 6.0.0.
+- [BLADE-728] Update the powermock-api-easymock dependency to version 2.0.4.
+- [BLADE-728] Update the powermock-classloading-xstream dependency to version
+2.0.4.
+- [BLADE-728] Update the powermock-module-junit4 dependency to version 2.0.4.
+- [BLADE-728] Update the powermock-module-junit4-rule dependency to version
+2.0.4.
+- [BLADE-728] Update the zt-process-killer dependency to version 1.9.
+- [BLADE-724] Update the com.liferay.project.templates dependency to version
+5.0.257.
+- [BLADE-724] Update the biz.aQute.bnd.gradle dependency to version 5.3.0.
+- [BLADE-724] Update the com.liferay.project.templates dependency to version
+latest.release.
+- [BLADE-719] Update the com.liferay.project.templates dependency to version
+5.0.246.
+- [BLADE-714] Update the com.liferay.project.templates dependency to version
+5.0.243.
+- [BLADE-713] Update the com.liferay.project.templates dependency to version
+5.0.241.
+- [BLADE-712] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.35-SNAPSHOT.
+- [BLADE-712] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.2-SNAPSHOT.
+- [BLADE-712] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.18-SNAPSHOT.
+- [BLADE-712] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.19-SNAPSHOT.
+- [BLADE-712] Update the commons-beanutils dependency to version 1.9.4.
+- [BLADE-712] Update the ant dependency to version 1.10.7.
+- [BLADE-712] Update the commons-configuration2 dependency to version 2.7.
+- [BLADE-712] Update the commons-text dependency to version 1.8.
+- [BLADE-712] Update the httpclient dependency to version 4.5.13.
+- [BLADE-712] Update the httpcore dependency to version 4.4.14.
+- [BLADE-712] Update the json dependency to version 20190722.
+- [BLADE-712] Update the xz dependency to version 1.6.
+- [BLADE-702] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.35-SNAPSHOT.
+- [BLADE-702] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.2-SNAPSHOT.
+- [BLADE-702] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.18-SNAPSHOT.
+- [BLADE-702] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.19-SNAPSHOT.
+
 ## 4.1.1 - 2022-12-07
 
 ### Commits
@@ -257,6 +402,7 @@ version 1.0.10.
 5.0.165.
 - [BLADE-659] Update the com.liferay.project.templates dependency to version
 5.0.163.
+- [] Update the com.liferay.project.templates dependency to version 5.0.161.
 - [LPS-141989] Update the com.liferay.project.templates dependency to version
 5.0.161.
 - [BLADE-649] Update the com.liferay.blade.extensions.maven.profile dependency
@@ -2069,46 +2215,18 @@ dependency to version 1.1.0.
 - [] Update the com.liferay.project.templates dependency to version 4.0.1.
 - [] Update the powermock-classloading-xstream dependency to version 1.7.3.
 - [] Update the powermock-module-junit4-rule dependency to version 1.7.3.
-- [BLADE-214] Update the biz.aQute.bnd.gradle dependency to version 3.5.0.
-- [BLADE-214] Update the com.liferay.gradle.plugins.source.formatter dependency
-to version latest.release.
-- [BLADE-214] Update the gradle-download-task dependency to version 3.3.0.
-- [BLADE-214] Update the aQute.libg dependency to version 3.5.0.
-- [BLADE-214] Update the biz.aQute.bndlib dependency to version 3.5.0.
-- [BLADE-214] Update the com.liferay.gogo.shell.client dependency to version
-1.0.0.
-- [BLADE-214] Update the com.liferay.project.templates dependency to version
-4.0.0.
-- [BLADE-214] Update the commons-io dependency to version 2.5.
 - [BLADE-214] Update the asciitable dependency to version 0.3.2.
-- [BLADE-214] Update the commons-lang3 dependency to version 3.4.
-- [BLADE-214] Update the maven-aether-provider dependency to version 3.3.9.
-- [BLADE-214] Update the maven-settings dependency to version 3.3.9.
-- [BLADE-214] Update the maven-settings-builder dependency to version 3.3.9.
-- [BLADE-214] Update the aether-api dependency to version 1.0.2.v20150114.
-- [BLADE-214] Update the aether-connector-basic dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-impl dependency to version 1.0.2.v20150114.
-- [BLADE-214] Update the aether-spi dependency to version 1.0.2.v20150114.
-- [BLADE-214] Update the aether-transport-classpath dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-transport-file dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-transport-http dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-transport-wagon dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-util dependency to version 1.0.2.v20150114.
-- [BLADE-214] Update the jansi dependency to version 1.17.1.
-- [BLADE-214] Update the gradle-base-services-groovy dependency to version 3.0.
-- [BLADE-214] Update the gradle-core dependency to version 3.0.
-- [BLADE-214] Update the gradle-tooling-api dependency to version 3.0.
-- [BLADE-214] Update the osgi.core dependency to version 6.0.0.
-- [BLADE-214] Update the junit dependency to version 4.12.
-- [BLADE-214] Update the easymock dependency to version 3.5.1.
-- [BLADE-214] Update the osgi.core dependency to version 6.0.0.
-- [BLADE-214] Update the powermock-api-easymock dependency to version 1.7.3.
-- [BLADE-214] Update the powermock-module-junit4 dependency to version 1.7.3.
+- [] Update the com.liferay.gogo.shell.client dependency to version 1.0.0.
+- [BLADE-244] Update the jansi dependency to version 1.17.1.
+- [BLADE-228] Update the com.liferay.project.templates dependency to version
+4.0.0.
+- [BLADE-190] Update the easymock dependency to version 3.5.1.
+- [BLADE-190] Update the powermock-api-easymock dependency to version 1.7.3.
+- [BLADE-190] Update the powermock-module-junit4 dependency to version 1.7.3.
+- [BLADE-190] Update the osgi.core dependency to version 6.0.0.
+- [] Update the gradle-core dependency to version 3.0.
+- [] Update the com.liferay.project.templates dependency to version 3.1.3.
+- [] Update the com.liferay.project.templates dependency to version 3.1.1.
 
 ## 2.1.0 - 2017-06-14
 
@@ -2406,11 +2524,30 @@ maintainability (7f9bc3f45e)
 [BLADE-692]: https://issues.liferay.com/browse/BLADE-692
 [BLADE-694]: https://issues.liferay.com/browse/BLADE-694
 [BLADE-695]: https://issues.liferay.com/browse/BLADE-695
+[BLADE-696]: https://issues.liferay.com/browse/BLADE-696
 [BLADE-697]: https://issues.liferay.com/browse/BLADE-697
 [BLADE-698]: https://issues.liferay.com/browse/BLADE-698
 [BLADE-699]: https://issues.liferay.com/browse/BLADE-699
 [BLADE-700]: https://issues.liferay.com/browse/BLADE-700
 [BLADE-701]: https://issues.liferay.com/browse/BLADE-701
+[BLADE-702]: https://issues.liferay.com/browse/BLADE-702
+[BLADE-703]: https://issues.liferay.com/browse/BLADE-703
+[BLADE-705]: https://issues.liferay.com/browse/BLADE-705
+[BLADE-707]: https://issues.liferay.com/browse/BLADE-707
+[BLADE-708]: https://issues.liferay.com/browse/BLADE-708
+[BLADE-709]: https://issues.liferay.com/browse/BLADE-709
+[BLADE-710]: https://issues.liferay.com/browse/BLADE-710
+[BLADE-711]: https://issues.liferay.com/browse/BLADE-711
+[BLADE-712]: https://issues.liferay.com/browse/BLADE-712
+[BLADE-713]: https://issues.liferay.com/browse/BLADE-713
+[BLADE-714]: https://issues.liferay.com/browse/BLADE-714
+[BLADE-716]: https://issues.liferay.com/browse/BLADE-716
+[BLADE-717]: https://issues.liferay.com/browse/BLADE-717
+[BLADE-719]: https://issues.liferay.com/browse/BLADE-719
+[BLADE-724]: https://issues.liferay.com/browse/BLADE-724
+[BLADE-725]: https://issues.liferay.com/browse/BLADE-725
+[BLADE-728]: https://issues.liferay.com/browse/BLADE-728
+[BLADE-729]: https://issues.liferay.com/browse/BLADE-729
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
