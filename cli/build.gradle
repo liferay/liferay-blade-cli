@@ -222,7 +222,7 @@ repositories {
 
 	if (project.hasProperty("localNexus")) {
 		maven {
-			url "https://localhost:8081/nexus/content/groups/public/"
+			url "http://localhost:8081/nexus/content/groups/public/"
 		}
 	}
 
