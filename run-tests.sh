@@ -20,19 +20,19 @@ function checkError {
 sed "s/all/bin/" gradle/wrapper/gradle-wrapper.properties > gradle-wrapper.properties.edited
 mv gradle-wrapper.properties.edited gradle/wrapper/gradle-wrapper.properties
 
-./gradlew --no-daemon :extensions:maven-profile:publishToMavenLocal -Pparallel -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
+./gradlew --no-daemon :extensions:maven-profile:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
 
 checkError
 
-./gradlew --no-daemon :extensions:project-templates-client-extension:publishToMavenLocal -Pparallel -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
+./gradlew --no-daemon :extensions:project-templates-client-extension:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
 
 checkError
 
-./gradlew --no-daemon :extensions:project-templates-js-theme:publishToMavenLocal -Pparallel -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
+./gradlew --no-daemon :extensions:project-templates-js-theme:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
 
 checkError
 
-./gradlew --no-daemon :extensions:project-templates-js-widget:publishToMavenLocal -Pparallel -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
+./gradlew --no-daemon :extensions:project-templates-js-widget:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
 
 checkError
 
