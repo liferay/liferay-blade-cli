@@ -38,7 +38,16 @@ eclipse {
 	}
 }
 
-jar.baseName = "com.liferay.project.templates.content.targeting.report"
+compileJava{
+	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
+}
+
+jar{
+	dependsOn(":cli:unzipPortal")
+
+	archiveBaseName.set("com.liferay.project.templates.content.targeting.report")
+}
 
 publishing {
 	publications {

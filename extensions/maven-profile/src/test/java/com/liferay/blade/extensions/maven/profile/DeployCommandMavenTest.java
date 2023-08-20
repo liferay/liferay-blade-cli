@@ -42,10 +42,12 @@ public class DeployCommandMavenTest {
 		File workspaceDir = temporaryFolder.newFolder();
 
 		String[] args = {
-			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_72107
+			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_PORTAL_7456
 		};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
+
+		XMLTestUtil.updateWorkspaceBundleUrl(workspaceDir, BladeTest.LIFERAY_VERSION_PORTAL_7456);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
@@ -79,7 +81,7 @@ public class DeployCommandMavenTest {
 
 		args = new String[] {
 			"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "mvc-portlet", "foo", "-v",
-			BladeTest.LIFERAY_VERSION_72107
+			BladeTest.LIFERAY_VERSION_PORTAL_7456
 		};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
@@ -104,10 +106,12 @@ public class DeployCommandMavenTest {
 		File workspaceDir = temporaryFolder.newFolder();
 
 		String[] args = {
-			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_72107
+			"--base", workspaceDir.getPath(), "init", "-P", "maven", "-v", BladeTest.LIFERAY_VERSION_PORTAL_7456
 		};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);
+
+		XMLTestUtil.updateWorkspaceBundleUrl(workspaceDir, BladeTest.LIFERAY_VERSION_PORTAL_7456);
 
 		args = new String[] {"--base", workspaceDir.getPath(), "server", "init"};
 
@@ -137,7 +141,7 @@ public class DeployCommandMavenTest {
 
 		args = new String[] {
 			"--base", modulesDirectory.getAbsolutePath(), "create", "-t", "war-mvc-portlet", "foo", "-v",
-			BladeTest.LIFERAY_VERSION_72107
+			BladeTest.LIFERAY_VERSION_PORTAL_7456
 		};
 
 		TestUtil.runBlade(workspaceDir, _extensionsDir, args);

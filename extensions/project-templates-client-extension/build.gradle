@@ -30,7 +30,16 @@ dependencies {
 	testImplementation project(path: ":cli", configuration: "testApi")
 }
 
-jar.baseName = "com.liferay.project.templates.client.extension"
+compileJava{
+	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
+}
+
+jar{
+	dependsOn(":cli:unzipPortal")
+
+	archiveBaseName.set("com.liferay.project.templates.client.extension")
+}
 
 publishing {
 	publications {

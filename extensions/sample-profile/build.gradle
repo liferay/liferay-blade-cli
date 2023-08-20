@@ -19,6 +19,16 @@ buildscript {
 apply plugin: "java-library"
 apply plugin: 'biz.aQute.bnd.builder'
 
+compileJava{
+	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
+}
+
+jar{
+	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
+}
+
 dependencies {
 	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
 	compileOnly project(":cli")

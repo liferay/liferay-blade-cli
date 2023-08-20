@@ -29,6 +29,16 @@ dependencies {
 	testImplementation project(path: ":cli", configuration: "testApi")
 }
 
+compileJava{
+	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
+}
+
+jar{
+	dependsOn(":cli:unzipPortal")
+	dependsOn(":cli:unzipManifest")
+}
+
 test {
 	dependsOn jar
 
