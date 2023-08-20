@@ -312,10 +312,10 @@ subprojects {
 					liferayNexusPassword = "admin123"
 
 					if (release) {
-						repoUrl = "https://localhost:8081/nexus/content/repositories/releases/"
+						repoUrl = "http://localhost:8081/nexus/content/repositories/releases/"
 					}
 					else {
-						repoUrl = "https://localhost:8081/nexus/content/repositories/snapshots/"
+						repoUrl = "http://localhost:8081/nexus/content/repositories/snapshots/"
 					}
 				}
 				else {
