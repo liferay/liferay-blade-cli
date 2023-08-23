@@ -222,6 +222,7 @@ repositories {
 
 	if (project.hasProperty("localNexus")) {
 		maven {
+			allowInsecureProtocol = true
 			url "http://localhost:8081/nexus/content/groups/public/"
 		}
 	}
