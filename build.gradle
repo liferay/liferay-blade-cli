@@ -180,7 +180,8 @@ repositories {
 
 	if (!remoteNexus) {
 		maven {
-			url "https://localhost:8081/nexus/content/groups/public/"
+			allowInsecureProtocol = true
+			url "http://localhost:8081/nexus/content/groups/public/"
 		}
 	}
 }
@@ -326,6 +327,10 @@ subprojects {
 
 			repositories {
 				maven {
+					if (localNexus) {
+						allowInsecureProtocol = true
+					}
+
 					credentials {
 						username liferayNexusUsername.trim()
 						password liferayNexusPassword.trim()
