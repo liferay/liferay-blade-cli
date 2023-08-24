@@ -187,6 +187,13 @@ fi
 
 unzip -p cli/build/libs/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
 
+unzip -q /tmp/$timestamp/myExtractedMavenProfile.jar -d /tmp/$timestamp/localMavenJarExploded
+unzip -q /tmp/$timestamp/maven_profile.jar -d /tmp/$timestamp/remoteMavenJarExploded
+
+echo "Doing a more detailed diff..."
+diff -r /tmp/$timestamp/localMavenJarExploded /tmp/$timestamp/remoteMavenJarExploded
+
+echo "Doing the standard jar diff..."
 diff -s /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
 
 if [ "$?" != "0" ]; then
