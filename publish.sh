@@ -187,7 +187,14 @@ fi
 
 unzip -p cli/build/libs/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
 
-diff /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
+unzip -q /tmp/$timestamp/myExtractedMavenProfile.jar -d /tmp/$timestamp/localMavenJarExploded
+unzip -q /tmp/$timestamp/maven_profile.jar -d /tmp/$timestamp/remoteMavenJarExploded
+
+echo "Doing a more detailed diff..."
+diff -r /tmp/$timestamp/localMavenJarExploded /tmp/$timestamp/remoteMavenJarExploded
+
+echo "Doing the standard jar diff..."
+diff -s /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
 
 if [ "$?" != "0" ]; then
 	echo Failed local blade.jar diff with downloaded maven profile jar. The embedded maven profile jar and nexus maven profile jar are not identical
@@ -221,7 +228,7 @@ fi
 
 unzip -p /tmp/$timestamp/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
 
-diff /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
+diff -s /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
 
 if [ "$?" != "0" ]; then
 	echo Failed local blade.jar diff with downloaded maven profile jar. The embedded maven profile jar and nexus maven profile jar are not identical
