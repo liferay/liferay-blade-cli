@@ -187,8 +187,11 @@ fi
 
 unzip -p cli/build/libs/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
 
-unzip -q /tmp/$timestamp/myExtractedMavenProfile.jar -d /tmp/$timestamp/localMavenJarExploded
-unzip -q /tmp/$timestamp/maven_profile.jar -d /tmp/$timestamp/remoteMavenJarExploded
+cp /tmp/$timestamp/myExtractedMavenProfile.{jar,zip}
+unzip -q /tmp/$timestamp/myExtractedMavenProfile.zip -d /tmp/$timestamp/localMavenJarExploded
+
+cp /tmp/$timestamp/maven_profile.{jar,zip}
+unzip -q /tmp/$timestamp/maven_profile.zip -d /tmp/$timestamp/remoteMavenJarExploded
 
 echo "Doing a more detailed diff..."
 diff -r /tmp/$timestamp/localMavenJarExploded /tmp/$timestamp/remoteMavenJarExploded
