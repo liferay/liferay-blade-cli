@@ -187,24 +187,26 @@ fi
 
 unzip -p cli/build/libs/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
 
-cp /tmp/$timestamp/myExtractedMavenProfile.{jar,zip}
-unzip -q /tmp/$timestamp/myExtractedMavenProfile.zip -d /tmp/$timestamp/localMavenJarExploded
+mkdir -p /tmp/$timestamp/localMavenJarExploded
+mkdir -p /tmp/$timestamp/remoteMavenJarExploded
 
-cp /tmp/$timestamp/maven_profile.{jar,zip}
-unzip -q /tmp/$timestamp/maven_profile.zip -d /tmp/$timestamp/remoteMavenJarExploded
+unzip /tmp/$timestamp/myExtractedMavenProfile.jar -d /tmp/$timestamp/localMavenJarExploded
+unzip /tmp/$timestamp/maven_profile.jar -d /tmp/$timestamp/remoteMavenJarExploded
 
-echo "Doing a more detailed diff..."
-diff -r /tmp/$timestamp/localMavenJarExploded /tmp/$timestamp/remoteMavenJarExploded
+sed -i 's/Bnd-LastModified.*/Bnd-LastModified:/g; s/Canary-Timestamp.*/Canary-Timestamp:/g' /tmp/$timestamp/localMavenJarExploded/META-INF/MANIFEST.MF
+sed -i 's/Bnd-LastModified.*/Bnd-LastModified:/g; s/Canary-Timestamp.*/Canary-Timestamp:/g' /tmp/$timestamp/remoteMavenJarExploded/META-INF/MANIFEST.MF
 
-echo "Doing the standard jar diff..."
-diff -s /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
+diff -s /tmp/$timestamp/localMavenJarExploded/ /tmp/$timestamp/remoteMavenJarExploded/
 
 if [ "$?" != "0" ]; then
 	echo Failed local blade.jar diff with downloaded maven profile jar. The embedded maven profile jar and nexus maven profile jar are not identical
+	rm -rf /tmp/$timestamp/localMavenJarExploded/
+	rm -rf /tmp/$timestamp/remoteMavenJarExploded/
 	exit 1
 fi
 
-# Now lets go ahead and publish the blade cli jar for real since the embedded maven profile was correct
+rm -rf /tmp/$timestamp/localMavenJarExploded/
+rm -rf /tmp/$timestamp/remoteMavenJarExploded/
 
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} --refresh-dependencies :cli:publish --info ${scanOpt} > /tmp/$timestamp/blade-cli-publish-command.txt; retcode=$?
 bladeCliPublishCommand=$(cat /tmp/$timestamp/blade-cli-publish-command.txt)
@@ -231,12 +233,26 @@ fi
 
 unzip -p /tmp/$timestamp/blade.jar "$embeddedMavenProfileJar" > /tmp/$timestamp/myExtractedMavenProfile.jar
 
-diff -s /tmp/$timestamp/myExtractedMavenProfile.jar /tmp/$timestamp/maven_profile.jar
+mkdir -p /tmp/$timestamp/localMavenJarExploded
+mkdir -p /tmp/$timestamp/remoteMavenJarExploded
+
+unzip /tmp/$timestamp/myExtractedMavenProfile.jar -d /tmp/$timestamp/localMavenJarExploded
+unzip /tmp/$timestamp/maven_profile.jar -d /tmp/$timestamp/remoteMavenJarExploded
+
+sed -i 's/Bnd-LastModified.*/Bnd-LastModified:/g; s/Canary-Timestamp.*/Canary-Timestamp:/g' /tmp/$timestamp/localMavenJarExploded/META-INF/MANIFEST.MF
+sed -i 's/Bnd-LastModified.*/Bnd-LastModified:/g; s/Canary-Timestamp.*/Canary-Timestamp:/g' /tmp/$timestamp/remoteMavenJarExploded/META-INF/MANIFEST.MF
+
+diff -s /tmp/$timestamp/localMavenJarExploded/ /tmp/$timestamp/remoteMavenJarExploded/
 
 if [ "$?" != "0" ]; then
 	echo Failed local blade.jar diff with downloaded maven profile jar. The embedded maven profile jar and nexus maven profile jar are not identical
+	rm -rf /tmp/$timestamp/localMavenJarExploded/
+	rm -rf /tmp/$timestamp/remoteMavenJarExploded/
 	exit 1
 fi
+
+rm -rf /tmp/$timestamp/localMavenJarExploded/
+rm -rf /tmp/$timestamp/remoteMavenJarExploded/
 
 localBladeVersion=$(java -jar /tmp/$timestamp/blade.jar version)
 
