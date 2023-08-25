@@ -141,8 +141,13 @@ if [ "$retcode" != "0" ] || [ -z "$mavenProfilePublishCommand" ]; then
 	exit 1
 fi
 
+echo "DEBUG: raw grepping: "
+echo "$mavenProfilePublishCommand" | grep Uploading | grep '.jar '
+
 # Grep the output of the previous command to find the url of the published jar
 mavenProfilePublishUrl=$(echo "$mavenProfilePublishCommand" | grep Uploading | grep '.jar ' | grep -v -e '-sources' -e '-tests' | cut -d' ' -f4)
+
+echo "DEBUG: grepped mavenProfilePublishUrl: ${mavenProfilePublishUrl}"
 
 if [ "$?" != "0" ] || [ -z "$mavenProfilePublishUrl" ]; then
 	echo Failed grepping for mavenProfilePublishUrl
