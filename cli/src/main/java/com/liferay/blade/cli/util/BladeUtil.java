@@ -27,7 +27,6 @@ import groovy.json.JsonSlurper;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,6 +76,7 @@ import java.util.zip.ZipFile;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -125,16 +125,13 @@ public class BladeUtil {
 
 	public static boolean canConnect(String host, int port) {
 		InetSocketAddress localAddress = new InetSocketAddress(0);
-		InetSocketAddress remoteAddress = new InetSocketAddress(host, Integer.valueOf(port));
+		InetSocketAddress remoteAddress = new InetSocketAddress(host, port);
 
 		return _canConnect(localAddress, remoteAddress);
 	}
 
 	public static int compareVersions(Version v1, Version v2) {
 		if (v2 == v1) {
-
-			// quicktest
-
 			return 0;
 		}
 
@@ -170,7 +167,7 @@ public class BladeUtil {
 			return Paths.get(downladURI);
 		}
 
-		try (CloseableHttpClient closeableHttpClient = _getHttpClient(downladURL.toURI(), null, null, -1)) {
+		try (CloseableHttpClient closeableHttpClient = getHttpClient(downladURL.toURI(), null, null, -1)) {
 			return _downloadFile(closeableHttpClient, downladURI, cacheDirPath, targetFileName);
 		}
 	}
@@ -278,6 +275,56 @@ public class BladeUtil {
 		return null;
 	}
 
+	public static CloseableHttpClient getHttpClient(URI uri, String userName, String password, int connectionTimeout) {
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+
+		RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+
+		requestConfigBuilder.setConnectTimeout(connectionTimeout);
+		requestConfigBuilder.setCookieSpec(CookieSpecs.STANDARD);
+		requestConfigBuilder.setRedirectsEnabled(true);
+
+		httpClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
+
+		String scheme = uri.getScheme();
+
+		String proxyHost = System.getProperty(scheme + ".proxyHost");
+		String proxyPort = System.getProperty(scheme + ".proxyPort");
+
+		String proxyUser = userName;
+
+		if (Objects.isNull(proxyUser)) {
+			proxyUser = System.getProperty(scheme + ".proxyUser");
+		}
+
+		String proxyPassword = password;
+
+		if (Objects.isNull(proxyPassword)) {
+			proxyPassword = System.getProperty(scheme + ".proxyPassword");
+		}
+
+		if ((proxyUser != null) && (proxyPassword != null)) {
+			CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+
+			if ((proxyHost != null) && (proxyPort != null)) {
+				credentialsProvider.setCredentials(
+					new AuthScope(proxyHost, Integer.parseInt(proxyPort)),
+					new UsernamePasswordCredentials(proxyUser, proxyPassword));
+			}
+
+			httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+		}
+		else {
+			if ((proxyHost != null) && (proxyPort != null)) {
+				httpClientBuilder.setProxy(new HttpHost(proxyHost, Integer.parseInt(proxyPort)));
+			}
+		}
+
+		httpClientBuilder.useSystemProperties();
+
+		return httpClientBuilder.build();
+	}
+
 	public static Map<String, String> getInitTemplates(BladeCLI bladeCLI) throws IOException {
 		Map<String, String> initTemplates = new HashMap<>();
 
@@ -289,11 +336,7 @@ public class BladeUtil {
 			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(
 				extensions, "*.project.templates.workspace*");
 
-			Iterator<Path> iterator = directoryStream.iterator();
-
-			while (iterator.hasNext()) {
-				Path path = iterator.next();
-
+			for (Path path : directoryStream) {
 				String fileName = String.valueOf(path.getFileName());
 
 				String template = ProjectTemplatesUtil.getTemplateName(fileName);
@@ -361,7 +404,7 @@ public class BladeUtil {
 	public static Properties getProperties(File file) {
 		Properties properties = new Properties();
 
-		try (InputStream inputStream = new FileInputStream(file)) {
+		try (InputStream inputStream = Files.newInputStream(file.toPath())) {
 			properties.load(inputStream);
 		}
 		catch (Exception exception) {
@@ -396,18 +439,18 @@ public class BladeUtil {
 	public static List<String> getWorkspaceProductKeys(boolean promoted) {
 		Map<String, Object> productInfos = getProductInfos();
 
-		return productInfos.entrySet(
+		return productInfos.keySet(
 		).stream(
 		).filter(
-			entry -> Objects.nonNull(productInfos.get(entry.getKey()))
+			key -> Objects.nonNull(productInfos.get(key))
 		).map(
-			entry -> new Pair<>(entry.getKey(), new ProductInfo((Map<String, String>)productInfos.get(entry.getKey())))
+			key -> new Pair<>(key, new ProductInfo((Map<String, String>)productInfos.get(key)))
 		).filter(
 			pair -> {
 				ProductInfo productInfo = pair.second();
 
 				return Objects.nonNull(productInfo.getTargetPlatformVersion()) &&
-					   (!promoted || (promoted && productInfo.isPromoted()));
+					   (!promoted || productInfo.isPromoted());
 			}
 		).sorted(
 			new WorkspaceProductComparator()
@@ -429,10 +472,9 @@ public class BladeUtil {
 		).map(
 			entry -> new ProductInfo((Map<String, String>)productInfos.get(entry.getKey()))
 		).filter(
-			product ->
-				Objects.nonNull(product.getTargetPlatformVersion()) && (!promoted || (promoted && product.isPromoted()))
+			product -> Objects.nonNull(product.getTargetPlatformVersion()) && (!promoted || product.isPromoted())
 		).map(
-			product -> product.getTargetPlatformVersion()
+			ProductInfo::getTargetPlatformVersion
 		).collect(
 			Collectors.toSet()
 		);
@@ -440,9 +482,9 @@ public class BladeUtil {
 
 	public static boolean hasGradleWrapper(File dir) {
 		File gradlew = new File(dir, _GRADLEW_UNIX_FILE_NAME);
-		File gradlebat = new File(dir, _GRADLEW_WINDOWS_FILE_NAME);
+		File gradleBat = new File(dir, _GRADLEW_WINDOWS_FILE_NAME);
 
-		if (gradlew.exists() && gradlebat.exists()) {
+		if (gradlew.exists() && gradleBat.exists()) {
 			return true;
 		}
 
@@ -560,6 +602,8 @@ public class BladeUtil {
 	}
 
 	public static boolean searchZip(Path path, Predicate<String> test) {
+		boolean retCode = false;
+
 		if (Files.exists(path) && !Files.isDirectory(path)) {
 			try (ZipFile zipFile = new ZipFile(path.toFile())) {
 				Stream<? extends ZipEntry> stream = zipFile.stream();
@@ -571,7 +615,7 @@ public class BladeUtil {
 						String entryName = zipEntry.getName();
 
 						if (test.test(entryName)) {
-							return true;
+							retCode = true;
 						}
 					}
 				}
@@ -580,7 +624,7 @@ public class BladeUtil {
 			}
 		}
 
-		return false;
+		return retCode;
 	}
 
 	public static void setShell(ProcessBuilder processBuilder, String cmd) {
@@ -623,7 +667,7 @@ public class BladeUtil {
 		int dashPosition = micro.indexOf("-");
 
 		if (dashPosition > 0) {
-			sb.append(micro.substring(0, dashPosition));
+			sb.append(micro, 0, dashPosition);
 
 			if (segments.length == 3) {
 				sb.append(".");
@@ -771,11 +815,7 @@ public class BladeUtil {
 		catch (IOException ioException) {
 		}
 
-		if (connected) {
-			return true;
-		}
-
-		return false;
+		return connected;
 	}
 
 	private static void _checkResponseStatus(HttpResponse httpResponse) throws IOException {
@@ -858,54 +898,6 @@ public class BladeUtil {
 		return targetPath;
 	}
 
-	private static CloseableHttpClient _getHttpClient(
-		URI uri, String userName, String password, int connectionTimeout) {
-
-		HttpClientBuilder httpClientBuilder = _getHttpClientBuilder(uri, userName, password, connectionTimeout);
-
-		return httpClientBuilder.build();
-	}
-
-	private static HttpClientBuilder _getHttpClientBuilder(
-		URI uri, String userName, String password, int connectionTimeout) {
-
-		HttpClientBuilder httpClientBuilder = HttpClients.custom();
-
-		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-
-		httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-
-		RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-
-		requestConfigBuilder.setConnectTimeout(connectionTimeout);
-		requestConfigBuilder.setCookieSpec(CookieSpecs.STANDARD);
-		requestConfigBuilder.setRedirectsEnabled(true);
-
-		httpClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
-
-		if ((userName != null) && (password != null)) {
-			credentialsProvider.setCredentials(
-				new AuthScope(uri.getHost(), uri.getPort()), new UsernamePasswordCredentials(userName, password));
-		}
-
-		String scheme = uri.getScheme();
-
-		String proxyHost = System.getProperty(scheme + ".proxyHost");
-		String proxyPort = System.getProperty(scheme + ".proxyPort");
-		String proxyUser = System.getProperty(scheme + ".proxyUser");
-		String proxyPassword = System.getProperty(scheme + ".proxyPassword");
-
-		if ((proxyHost != null) && (proxyPort != null) && (proxyUser != null) && (proxyPassword != null)) {
-			credentialsProvider.setCredentials(
-				new AuthScope(proxyHost, Integer.parseInt(proxyPort)),
-				new UsernamePasswordCredentials(proxyUser, proxyPassword));
-		}
-
-		httpClientBuilder.useSystemProperties();
-
-		return httpClientBuilder;
-	}
-
 	private static final String[] _APP_SERVER_PROPERTIES_FILE_NAMES = {
 		"app.server." + System.getProperty("user.name") + ".properties",
 		"app.server." + System.getenv("COMPUTERNAME") + ".properties",
@@ -924,13 +916,13 @@ public class BladeUtil {
 
 	private static final String _PRODUCT_INFO_URL = "https://releases.liferay.com/tools/workspace/.product_info.json";
 
-	private static final Pattern _microPattern = Pattern.compile("(((e|f|s)p)|(ga)|(u))([0-9]+)(-[0-9]+)?");
+	private static final Pattern _microPattern = Pattern.compile("((([efs])p)|(ga)|(u))([0-9]+)(-[0-9]+)?");
 	private static final Pattern _productCommerceVersionPattern = Pattern.compile(
 		"^(commerce)-([1-9]\\d|[0-9])\\.([0-9]\\d|\\d).([0-9]\\d|\\d)(-(([1-9]\\d|[0-9])\\.([1-9]\\d|[0-9])$)+)*");
 	private static Map<String, Object> _productInfoMap = Collections.emptyMap();
 	private static final Pattern _productPortalDXPVersionPattern = Pattern.compile(
-		"^(portal|dxp)-([1-9]\\d|[0-9])\\.([0-9]\\d|\\d)-((((e|f|s|d)(p|e))|u|ga)([0-9]\\d*)$)+");
-	private static File _workspaceCacheDir = new File(
+		"^(portal|dxp)-([1-9]\\d|[0-9])\\.([0-9]\\d|\\d)-(((([efsd])([pe]))|u|ga)([0-9]\\d*)$)+");
+	private static final File _workspaceCacheDir = new File(
 		System.getProperty("user.home"), _DEFAULT_WORKSPACE_CACHE_DIR_NAME);
 
 }
