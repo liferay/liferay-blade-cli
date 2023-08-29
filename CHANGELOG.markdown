@@ -1,8 +1,26 @@
 # Liferay Blade CLI Change Log
 
-## 5.0.0 - 2023-08-20
+## 5.0.0 - 2023-08-29
 
 ### Commits
+- [BLADE-729] liferay-blade-cli: updates the remote repo host to use https
+(7f1f55a91f)
+- [BLADE-729] liferay-blade-cli: adds debug output to publish.sh (ee7317577c)
+- [BLADE-729] liferay-blade-cli: rolls back loud diff code in publish.sh
+(d8c427d56d)
+- [BLADE-729] fix maven profile diff error (0a9fa3632d)
+- [BLADE-729] liferay-blade-cli: copies the jar files to be zip files first
+(88d7b0580c)
+- [BLADE-729] liferay-blade-cli: explode the jars and do a recursive diff on the
+directories (844e83ed0c)
+- [BLADE-729] Revert "BLADE-729 liferay-blade-cli: diff loudly during publish
+for now" (90c6c20e7a)
+- [BLADE-729] liferay-blade-cli: diff loudly during publish for now (810de32285)
+- [BLADE-729] liferay-blade-cli: allowInsecureProtocol for local nexus
+publishing (638d497602)
+- [BLADE-729] cli: manually roll back to 5.0.0 (94f6013962)
+- [BLADE-729] disable macos verify (ea2fa5d7ef)
+- [BLADE-729] restore remtoe deploy configuration (038995ce46)
 - [BLADE-729] liferay-blade-cli: manually bumps snapshot version to 5.0.0
 (a8547aec08)
 - [BLADE-728] make test run in parallel model (3a9f04a80c)
@@ -57,6 +75,30 @@ from liferay-portal (a29eba3b0c)
 - [BLADE-703] should return correct prodcut keys order (74a3071068)
 
 ### Dependencies
+- [BLADE-729] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.37.
+- [BLADE-729] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.4.
+- [BLADE-729] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.20.
+- [BLADE-729] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.21.
+- [BLADE-729] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.37-SNAPSHOT.
+- [BLADE-729] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.4-SNAPSHOT.
+- [BLADE-729] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.20-SNAPSHOT.
+- [BLADE-729] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.21-SNAPSHOT.
+- [BLADE-729] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.36.
+- [BLADE-729] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.3.
+- [BLADE-729] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.19.
+- [BLADE-729] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.20.
 - [BLADE-729] Update the com.liferay.blade.extensions.maven.profile dependency
 to version 1.0.35.
 - [BLADE-729] Update the com.liferay.project.templates.client.extension
@@ -410,6 +452,7 @@ version 1.0.10.
 5.0.165.
 - [BLADE-659] Update the com.liferay.project.templates dependency to version
 5.0.163.
+- [] Update the com.liferay.project.templates dependency to version 5.0.161.
 - [LPS-141989] Update the com.liferay.project.templates dependency to version
 5.0.161.
 - [BLADE-649] Update the com.liferay.blade.extensions.maven.profile dependency
@@ -2222,46 +2265,18 @@ dependency to version 1.1.0.
 - [] Update the com.liferay.project.templates dependency to version 4.0.1.
 - [] Update the powermock-classloading-xstream dependency to version 1.7.3.
 - [] Update the powermock-module-junit4-rule dependency to version 1.7.3.
-- [BLADE-214] Update the biz.aQute.bnd.gradle dependency to version 3.5.0.
-- [BLADE-214] Update the com.liferay.gradle.plugins.source.formatter dependency
-to version latest.release.
-- [BLADE-214] Update the gradle-download-task dependency to version 3.3.0.
-- [BLADE-214] Update the aQute.libg dependency to version 3.5.0.
-- [BLADE-214] Update the biz.aQute.bndlib dependency to version 3.5.0.
-- [BLADE-214] Update the com.liferay.gogo.shell.client dependency to version
-1.0.0.
-- [BLADE-214] Update the com.liferay.project.templates dependency to version
-4.0.0.
-- [BLADE-214] Update the commons-io dependency to version 2.5.
 - [BLADE-214] Update the asciitable dependency to version 0.3.2.
-- [BLADE-214] Update the commons-lang3 dependency to version 3.4.
-- [BLADE-214] Update the maven-aether-provider dependency to version 3.3.9.
-- [BLADE-214] Update the maven-settings dependency to version 3.3.9.
-- [BLADE-214] Update the maven-settings-builder dependency to version 3.3.9.
-- [BLADE-214] Update the aether-api dependency to version 1.0.2.v20150114.
-- [BLADE-214] Update the aether-connector-basic dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-impl dependency to version 1.0.2.v20150114.
-- [BLADE-214] Update the aether-spi dependency to version 1.0.2.v20150114.
-- [BLADE-214] Update the aether-transport-classpath dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-transport-file dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-transport-http dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-transport-wagon dependency to version
-1.0.2.v20150114.
-- [BLADE-214] Update the aether-util dependency to version 1.0.2.v20150114.
-- [BLADE-214] Update the jansi dependency to version 1.17.1.
-- [BLADE-214] Update the gradle-base-services-groovy dependency to version 3.0.
-- [BLADE-214] Update the gradle-core dependency to version 3.0.
-- [BLADE-214] Update the gradle-tooling-api dependency to version 3.0.
-- [BLADE-214] Update the osgi.core dependency to version 6.0.0.
-- [BLADE-214] Update the junit dependency to version 4.12.
-- [BLADE-214] Update the easymock dependency to version 3.5.1.
-- [BLADE-214] Update the osgi.core dependency to version 6.0.0.
-- [BLADE-214] Update the powermock-api-easymock dependency to version 1.7.3.
-- [BLADE-214] Update the powermock-module-junit4 dependency to version 1.7.3.
+- [] Update the com.liferay.gogo.shell.client dependency to version 1.0.0.
+- [BLADE-244] Update the jansi dependency to version 1.17.1.
+- [BLADE-228] Update the com.liferay.project.templates dependency to version
+4.0.0.
+- [BLADE-190] Update the easymock dependency to version 3.5.1.
+- [BLADE-190] Update the powermock-api-easymock dependency to version 1.7.3.
+- [BLADE-190] Update the powermock-module-junit4 dependency to version 1.7.3.
+- [BLADE-190] Update the osgi.core dependency to version 6.0.0.
+- [] Update the gradle-core dependency to version 3.0.
+- [] Update the com.liferay.project.templates dependency to version 3.1.3.
+- [] Update the com.liferay.project.templates dependency to version 3.1.1.
 
 ## 2.1.0 - 2017-06-14
 
