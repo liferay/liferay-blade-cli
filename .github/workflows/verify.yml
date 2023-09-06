@@ -38,7 +38,7 @@ jobs:
     timeout-minutes: 60
     strategy:
       matrix:
-        cores: [8]
+        cores: [4]
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -67,20 +67,13 @@ jobs:
         with:
           name: LinuxJDK8-tests.zip
           path: tests.zip
-      - name: Run reporter
-        uses: check-run-reporter/action@v2.0.0
-        if: ${{ always() }}
-        with:
-          label: "Linux JDK8 test reports"
-          report: "**/TEST-*.xml"
-          token: "7793a209-c075-4644-9bdb-9205dbe5c4e7"
   LinuxJDK11:
     name: Linux JDK11
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
       matrix:
-        cores: [8]
+        cores: [4]
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -109,13 +102,6 @@ jobs:
         with:
           name: LinuxJDK11-tests.zip
           path: tests.zip
-      - name: Run reporter
-        uses: check-run-reporter/action@v2.0.0
-        if: ${{ always() }}
-        with:
-          label: "Linux JDK11 test reports"
-          report: "**/TEST-*.xml"
-          token: "7793a209-c075-4644-9bdb-9205dbe5c4e7"
   #MacOSJDK11:
   #  name: MacOS JDK11
   #  runs-on: macos-latest
