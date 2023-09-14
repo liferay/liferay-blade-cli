@@ -15,6 +15,7 @@ buildscript {
 	}
 }
 
+
 apply plugin: "biz.aQute.bnd.builder"
 apply plugin: "eclipse"
 apply plugin: "java-library"

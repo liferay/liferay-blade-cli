@@ -36,9 +36,6 @@ jobs:
     name: Linux JDK8
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    strategy:
-      matrix:
-        cores: [4]
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -48,13 +45,12 @@ jobs:
           java-version: 8
           distribution: 'zulu'
           cache: gradle
-      - name: Cache
-        uses: actions/cache@v3
+      - name: Restore Cache
+        uses: actions/cache/restore@v3
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          path: |
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle') }}
       - name: Build
         shell: bash
         env:
@@ -67,13 +63,16 @@ jobs:
         with:
           name: LinuxJDK8-tests.zip
           path: tests.zip
+      - name: Save Cache
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ~/.gradle/caches
+          key: ${{ steps.restore-cache.outputs.cache-primary-key }}
   LinuxJDK11:
     name: Linux JDK11
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    strategy:
-      matrix:
-        cores: [4]
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -86,8 +85,10 @@ jobs:
       - name: Cache
         uses: actions/cache@v3
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build
