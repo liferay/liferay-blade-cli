@@ -78,7 +78,7 @@ dependencies {
 	api group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.257"
 	api group: "commons-io", name: "commons-io", version: '2.7'
 	api group: "commons-lang", name: "commons-lang", version: "2.6"
-	api group: "org.apache.ant", name: "ant", version: "1.10.7"
+	api group: "org.apache.ant", name: "ant", version: '1.10.11'
 	api group: "org.apache.commons", name: "commons-compress", version: "1.18"
 	api group: "org.apache.commons", name: "commons-configuration2", version: "2.7"
 	api group: "org.apache.commons", name: "commons-text", version: "1.8"
