@@ -20,7 +20,7 @@ apply plugin: "java-library"
 apply plugin: 'biz.aQute.bnd.builder'
 
 dependencies {
-	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
+	compileOnly group: "com.beust", name: "jcommander", version: '1.74'
 	compileOnly project(":cli")
 
 	testImplementation gradleTestKit()

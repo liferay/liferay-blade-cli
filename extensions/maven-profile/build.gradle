@@ -22,7 +22,7 @@ apply plugin: "java"
 apply plugin: "maven-publish"
 
 dependencies {
-	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
+	compileOnly group: "com.beust", name: "jcommander", version: '1.74'
 	compileOnly group: "com.liferay", name: "com.liferay.project.templates.extensions", version: "1.0.123"
 	compileOnly project(":cli")
 
