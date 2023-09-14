@@ -22,16 +22,16 @@ apply plugin: "biz.aQute.bnd.builder"
 apply plugin: "java-library"
 apply plugin: "maven-publish"
 
-task bladeExtensionsVersions
-task cliSourcesJar(type: Jar)
-task cliTestJar(type: Jar, dependsOn: testClasses)
-task copyMavenProfileJar(type: Copy)
-task createToolingZip(type:Zip)
-task createWrapperZip(type:Zip)
-task downloadPortal(type: Download)
-task downloadProductInfo(type: Download)
-task unzipManifest(type: Copy)
-task unzipPortal(type: Copy)
+tasks.register('bladeExtensionsVersions')
+tasks.register('cliSourcesJar', Jar)
+tasks.register('cliTestJar', Jar) { dependsOn testClasses }
+tasks.register('copyMavenProfileJar', Copy)
+tasks.register('createToolingZip', Zip)
+tasks.register('createWrapperZip', Zip)
+tasks.register('downloadPortal', Download)
+tasks.register('downloadProductInfo', Download)
+tasks.register('unzipManifest', Copy)
+tasks.register('unzipPortal', Copy)
 
 configurations {
 	bladeExtensions {
