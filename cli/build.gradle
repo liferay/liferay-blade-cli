@@ -123,10 +123,6 @@ dependencies {
 	testImplementation group: "net.diibadaaba.zipdiff", name: "zipdiff", version: "1.0"
 	testImplementation group: "org.easymock", name: "easymock", version: "3.5.1"
 	testImplementation group: "org.osgi", name: "osgi.core", version: "6.0.0"
-	testImplementation group: "org.powermock", name: "powermock-api-easymock", version: "2.0.4"
-	testImplementation group: "org.powermock", name: "powermock-classloading-xstream", version: "2.0.4"
-	testImplementation group: "org.powermock", name: "powermock-module-junit4", version: "2.0.4"
-	testImplementation group: "org.powermock", name: "powermock-module-junit4-rule", version: "2.0.4"
 	testImplementation group: "org.zeroturnaround", name: "zt-process-killer", version: "1.9"
 	testImplementation project(":gradle-tooling")
 }
