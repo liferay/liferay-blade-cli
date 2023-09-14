@@ -45,12 +45,15 @@ jobs:
           java-version: 8
           distribution: 'zulu'
           cache: gradle
-      - name: Restore Cache
-        uses: actions/cache/restore@v3
+      - name: Cache
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle') }}
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Build
         shell: bash
         env:
@@ -63,12 +66,6 @@ jobs:
         with:
           name: LinuxJDK8-tests.zip
           path: tests.zip
-      - name: Save Cache
-        uses: actions/cache/save@v3
-        with:
-          path: |
-            ~/.gradle/caches
-          key: ${{ steps.restore-cache.outputs.cache-primary-key }}
   LinuxJDK11:
     name: Linux JDK11
     runs-on: ubuntu-latest
