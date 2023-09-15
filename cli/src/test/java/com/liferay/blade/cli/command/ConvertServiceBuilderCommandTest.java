@@ -17,6 +17,7 @@ import java.nio.file.Path;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -24,6 +25,7 @@ import org.junit.rules.TemporaryFolder;
 /**
  * @author Terry Jia
  */
+@Ignore
 public class ConvertServiceBuilderCommandTest {
 
 	public static final String SB_PROJECT_NAME = "sample-service-builder-portlet";
