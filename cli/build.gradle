@@ -317,10 +317,6 @@ unzipManifest {
 	finalizedBy("compileTestJava")
 }
 
-processZipsResources{
-	dependsOn("unzipPortal")
-}
-
 unzipPortal {
 	dependsOn downloadPortal
 	from tarTree(resources.gzip(downloadPortal.dest))
