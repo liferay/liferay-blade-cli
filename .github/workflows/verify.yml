@@ -48,8 +48,10 @@ jobs:
       - name: Cache
         uses: actions/cache@v3
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build
@@ -58,19 +60,6 @@ jobs:
           GITHUB_CI: "true"
         run: |
           ./run-tests.sh
-      - name: Upload tests zip
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: LinuxJDK8-tests.zip
-          path: tests.zip
-      - name: Run reporter
-        uses: check-run-reporter/action@v2.0.0
-        if: ${{ always() }}
-        with:
-          label: "Linux JDK8 test reports"
-          report: "**/TEST-*.xml"
-          token: "7793a209-c075-4644-9bdb-9205dbe5c4e7"
   LinuxJDK11:
     name: Linux JDK11
     runs-on: ubuntu-latest
@@ -87,8 +76,10 @@ jobs:
       - name: Cache
         uses: actions/cache@v3
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build
@@ -103,13 +94,6 @@ jobs:
         with:
           name: LinuxJDK11-tests.zip
           path: tests.zip
-      - name: Run reporter
-        uses: check-run-reporter/action@v2.0.0
-        if: ${{ always() }}
-        with:
-          label: "Linux JDK11 test reports"
-          report: "**/TEST-*.xml"
-          token: "7793a209-c075-4644-9bdb-9205dbe5c4e7"
   #MacOSJDK11:
   #  name: MacOS JDK11
   #  runs-on: macos-latest

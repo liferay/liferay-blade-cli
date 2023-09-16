@@ -30,11 +30,11 @@ jar{
 }
 
 dependencies {
-	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
+	compileOnly group: "com.beust", name: "jcommander", version: "1.82"
 	compileOnly project(":cli")
 
 	testImplementation gradleTestKit()
-	testImplementation group: "junit", name: "junit", version: "4.12"
+	testImplementation group: "junit", name: "junit", version: "4.13.1"
 	testImplementation project(":cli")
 	testImplementation project(path: ":cli", configuration: "testApi")
 }

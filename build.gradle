@@ -31,13 +31,13 @@ buildscript {
 apply plugin: "com.liferay.change.log.builder"
 apply plugin: "com.liferay.source.formatter"
 
-task clean(type:Delete)
-task dockerImageBuild(type:Exec)
-task dockerNexusDelete(type:Exec)
-task dockerNexusStart(type:Exec)
-task dockerNexusStop(type:Exec)
-task dockerPublishRelease(type:Exec)
-task dockerPublishSnapshots(type:Exec)
+tasks.register('clean', Delete)
+tasks.register('dockerImageBuild', Exec)
+tasks.register('dockerNexusDelete', Exec)
+tasks.register('dockerNexusStart', Exec)
+tasks.register('dockerNexusStop', Exec)
+tasks.register('dockerPublishRelease', Exec)
+tasks.register('dockerPublishSnapshots', Exec)
 
 String userHome = System.getProperty("user.home")
 
@@ -206,13 +206,13 @@ subprojects {
 		targetCompatibility = "1.8"
 	}
 
-	tasks.withType(GenerateModuleMetadata) {
+	tasks.withType(GenerateModuleMetadata).configureEach {
 		enabled = false
 	}
 
 	pluginManager.withPlugin("maven-publish") {
-		task prepareRelease
-		task prepareSnapshot
+		tasks.register('prepareRelease')
+		tasks.register('prepareSnapshot')
 
 		prepareRelease {
 			doLast {

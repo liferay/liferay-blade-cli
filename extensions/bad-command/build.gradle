@@ -20,7 +20,7 @@ apply plugin: "biz.aQute.bnd.builder"
 apply plugin: 'java'
 
 dependencies {
-	compileOnly group: "com.beust", name: "jcommander", version: "1.72"
+	compileOnly group: "com.beust", name: "jcommander", version: "1.82"
 	compileOnly project(":cli")
 }
 
