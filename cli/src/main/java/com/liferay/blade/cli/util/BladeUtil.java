@@ -62,30 +62,27 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.client.utils.DateUtils;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.client.RedirectLocations;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.protocol.RedirectLocations;
+import org.apache.hc.client5.http.utils.DateUtils;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.protocol.BasicHttpContext;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 import org.gradle.internal.impldep.com.google.common.base.Strings;
 
@@ -156,7 +153,7 @@ public class BladeUtil {
 			return Paths.get(downladURI);
 		}
 
-		try (CloseableHttpClient closeableHttpClient = getHttpClient(downladURL.toURI(), null, null, -1)) {
+		try (CloseableHttpClient closeableHttpClient = getHttpClient(downladURL.toURI(), null, null)) {
 			return _downloadFile(closeableHttpClient, downladURI, cacheDirPath, targetFileName);
 		}
 	}
@@ -264,13 +261,12 @@ public class BladeUtil {
 		return null;
 	}
 
-	public static CloseableHttpClient getHttpClient(URI uri, String userName, String password, int connectionTimeout) {
+	public static CloseableHttpClient getHttpClient(URI uri, String userName, String password) {
 		HttpClientBuilder httpClientBuilder = HttpClients.custom();
 
 		RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
 
-		requestConfigBuilder.setConnectTimeout(connectionTimeout);
-		requestConfigBuilder.setCookieSpec(CookieSpecs.STANDARD);
+		requestConfigBuilder.setCookieSpec(RequestConfig.DEFAULT.getCookieSpec());
 		requestConfigBuilder.setRedirectsEnabled(true);
 
 		httpClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
@@ -293,12 +289,12 @@ public class BladeUtil {
 		}
 
 		if ((proxyUser != null) && (proxyPassword != null)) {
-			CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+			BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
 			if ((proxyHost != null) && (proxyPort != null)) {
 				credentialsProvider.setCredentials(
 					new AuthScope(proxyHost, Integer.parseInt(proxyPort)),
-					new UsernamePasswordCredentials(proxyUser, proxyPassword));
+					new UsernamePasswordCredentials(proxyUser, proxyPassword.toCharArray()));
 			}
 
 			httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
@@ -808,10 +804,8 @@ public class BladeUtil {
 	}
 
 	private static void _checkResponseStatus(HttpResponse httpResponse) throws IOException {
-		StatusLine statusLine = httpResponse.getStatusLine();
-
-		if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
-			throw new IOException(statusLine.getReasonPhrase());
+		if (httpResponse.getCode() != HttpStatus.SC_OK) {
+			throw new IOException(httpResponse.getReasonPhrase());
 		}
 	}
 
@@ -834,7 +828,7 @@ public class BladeUtil {
 				RedirectLocations redirectLocations = (RedirectLocations)httpContext.getAttribute(
 					HttpClientContext.REDIRECT_LOCATIONS);
 
-				if (redirectLocations != null) {
+				if ((redirectLocations != null) && (redirectLocations.size() > 0)) {
 					uri = redirectLocations.get(redirectLocations.size() - 1);
 				}
 			}
