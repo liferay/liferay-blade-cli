@@ -904,7 +904,8 @@ public class BladeUtil {
 		"^(commerce)-([1-9]\\d|[0-9])\\.([0-9]\\d|\\d).([0-9]\\d|\\d)(-(([1-9]\\d|[0-9])\\.([1-9]\\d|[0-9])$)+)*");
 	private static Map<String, Object> _productInfoMap = Collections.emptyMap();
 	private static final Pattern _productPortalDXPVersionPattern = Pattern.compile(
-		"^(portal|dxp)-([1-9]\\d|[0-9])\\.([0-9]\\d|\\d)-(((([efsd])([pe]))|u|ga)([0-9]\\d*)$)+");
+		"^(portal|dxp)-((([1-9]\\d|[0-9])\\.([0-9]\\d|\\d))-(((([efsd])([pe]))|u|ga)([0-9]\\d*)$)+)|" +
+			"((\\d{4})\\.([qQ]\\d)\\.\\d)");
 	private static final File _workspaceCacheDir = new File(
 		System.getProperty("user.home"), _DEFAULT_WORKSPACE_CACHE_DIR_NAME);
 

@@ -62,6 +62,22 @@ public class WorkspaceProductComparatorTest {
 
 		pairs.add(new Pair<>("portal-7.3-ga1", new ProductInfo(map)));
 
+		map.put("releaseDate", "6/29/2022");
+
+		pairs.add(new Pair<>("dxp-2022.q3.1", new ProductInfo(map)));
+
+		map.put("releaseDate", "6/29/2023");
+
+		pairs.add(new Pair<>("dxp-2023.q2.1", new ProductInfo(map)));
+
+		map.put("releaseDate", "7/29/2023");
+
+		pairs.add(new Pair<>("dxp-2023.q3.1", new ProductInfo(map)));
+
+		map.put("releaseDate", "8/29/2023");
+
+		pairs.add(new Pair<>("dxp-2023.q3.2", new ProductInfo(map)));
+
 		String[] actuals = pairs.stream(
 		).sorted(
 			new WorkspaceProductComparator()
@@ -74,7 +90,8 @@ public class WorkspaceProductComparatorTest {
 		);
 
 		String[] expecteds = {
-			"dxp-7.2-sp1", "dxp-7.2-sp3", "dxp-7.2-sp2", "portal-7.3-ga1", "portal-7.1-ga2", "portal-7.1-ga1"
+			"dxp-2023.q3.2", "dxp-2023.q3.1", "dxp-2023.q2.1", "dxp-2022.q3.1", "dxp-7.2-sp1", "dxp-7.2-sp3",
+			"dxp-7.2-sp2", "portal-7.3-ga1", "portal-7.1-ga2", "portal-7.1-ga1"
 		};
 
 		Assert.assertArrayEquals(expecteds, actuals);

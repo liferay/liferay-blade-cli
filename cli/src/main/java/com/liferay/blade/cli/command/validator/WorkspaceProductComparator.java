@@ -43,7 +43,55 @@ public class WorkspaceProductComparator implements Comparator<Pair<String, Produ
 		else if (aKey.startsWith("commerce") && !bKey.startsWith("commerce")) {
 			return 1;
 		}
-		else if (!StringUtil.equals(_getProductMainVersion(aKey), _getProductMainVersion(bKey))) {
+		else if (!StringUtil.isNullOrEmpty(_getProductQuarterVersion(aKey, 1)) &&
+				 StringUtil.isNullOrEmpty(_getProductQuarterVersion(bKey, 1))) {
+
+			return -1;
+		}
+		else if (!StringUtil.isNullOrEmpty(_getProductQuarterVersion(aKey, 1)) &&
+				 !StringUtil.isNullOrEmpty(_getProductQuarterVersion(bKey, 1))) {
+
+			if (!StringUtil.equals(_getProductQuarterVersion(aKey, 1), _getProductQuarterVersion(bKey, 1))) {
+				Version aYearVersion = Version.parseVersion(_getProductQuarterVersion(aKey, 1));
+				Version bYearVersion = Version.parseVersion(_getProductQuarterVersion(bKey, 1));
+
+				return -1 * aYearVersion.compareTo(bYearVersion);
+			}
+
+			String aProductQuarterVersion = _getProductQuarterVersion(aKey, 2);
+			String bProductQuarterVersion = _getProductQuarterVersion(bKey, 2);
+
+			if (BladeUtil.isEmpty(aProductQuarterVersion)) {
+				return 1;
+			}
+			else if (BladeUtil.isEmpty(bProductQuarterVersion)) {
+				return -1;
+			}
+			else if (!StringUtil.equals(aProductQuarterVersion, bProductQuarterVersion)) {
+				Version aQuarterVersion = Version.parseVersion(aProductQuarterVersion);
+				Version bQuarterVersion = Version.parseVersion(bProductQuarterVersion);
+
+				return -1 * aQuarterVersion.compareTo(bQuarterVersion);
+			}
+
+			String aProductQuarterMicroVersion = _getProductQuarterVersion(aKey, 3);
+			String bProductQuarterMicroVersion = _getProductQuarterVersion(bKey, 3);
+
+			if (BladeUtil.isEmpty(aProductQuarterMicroVersion)) {
+				return 1;
+			}
+			else if (BladeUtil.isEmpty(bProductQuarterMicroVersion)) {
+				return -1;
+			}
+			else if (!StringUtil.equals(aProductQuarterMicroVersion, bProductQuarterMicroVersion)) {
+				Version aMicroVersion = Version.parseVersion(aProductQuarterMicroVersion);
+				Version bMicroVersion = Version.parseVersion(bProductQuarterMicroVersion);
+
+				return -1 * aMicroVersion.compareTo(bMicroVersion);
+			}
+		}
+
+		if (!StringUtil.equals(_getProductMainVersion(aKey), _getProductMainVersion(bKey))) {
 			Version aProductMainVersion = Version.parseVersion(_getProductMainVersion(aKey));
 			Version bProductMainVersion = Version.parseVersion(_getProductMainVersion(bKey));
 
@@ -103,15 +151,26 @@ public class WorkspaceProductComparator implements Comparator<Pair<String, Produ
 	}
 
 	private String _getProductMicroVersion(String productKey) {
-		String[] prodcutKeyArrays = StringUtil.split(productKey, "-");
+		String[] productKeyArrays = StringUtil.split(productKey, "-");
 
-		if (prodcutKeyArrays.length > 2) {
-			return prodcutKeyArrays[2];
+		if (productKeyArrays.length > 2) {
+			return productKeyArrays[2];
 		}
 
 		return null;
 	}
 
+	private String _getProductQuarterVersion(String productKey, int pos) {
+		Matcher aMatcher = _versionQuaterPattern.matcher(productKey.substring(productKey.indexOf('-') + 1));
+
+		if (aMatcher.find()) {
+			return aMatcher.group(pos);
+		}
+
+		return "";
+	}
+
 	private static final Pattern _versionPattern = Pattern.compile("([0-9\\.]+).*");
+	private static final Pattern _versionQuaterPattern = Pattern.compile("(\\d{4})\\.[qQ](\\d)\\.(\\d)");
 
 }
