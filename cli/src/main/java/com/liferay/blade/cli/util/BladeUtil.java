@@ -457,7 +457,7 @@ public class BladeUtil {
 		).filter(
 			entry -> Objects.nonNull(productInfos.get(entry.getKey()))
 		).map(
-			entry -> new ProductInfo((Map<String, String>)productInfos.get(entry.getKey()))
+			entry -> new ProductInfo((Map<String, String>)entry.getValue())
 		).filter(
 			product -> Objects.nonNull(product.getTargetPlatformVersion()) && (!promoted || product.isPromoted())
 		).map(
