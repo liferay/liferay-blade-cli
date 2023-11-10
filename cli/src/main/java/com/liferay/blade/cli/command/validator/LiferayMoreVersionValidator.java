@@ -9,6 +9,7 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ProductKeyUtil;
 import com.liferay.project.templates.extensions.util.VersionUtil;
 
 import java.util.ArrayList;
@@ -34,8 +35,8 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 		possibleValues.addAll(WorkspaceConstants.originalLiferayVersions);
 
 		if ((!possibleValues.contains(value) && !allTargetPlatformVersions.contains(value)) ||
-			(!BladeUtil.verifyPortalDxpWorkspaceProduct(value) && !VersionUtil.isLiferayVersion(value) &&
-			 !BladeUtil.verifyCommerceWorkspaceProduct(value))) {
+			(!ProductKeyUtil.verifyPortalDxpWorkspaceProduct(value) && !VersionUtil.isLiferayVersion(value) &&
+			 !ProductKeyUtil.verifyCommerceWorkspaceProduct(value))) {
 
 			throw new ParameterException(value + " is not a valid value.");
 		}
