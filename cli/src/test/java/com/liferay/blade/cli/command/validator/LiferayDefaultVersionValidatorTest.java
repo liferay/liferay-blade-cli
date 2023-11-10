@@ -40,7 +40,7 @@ public class LiferayDefaultVersionValidatorTest {
 
 		String last = vals.get(vals.size() - 1);
 
-		Assert.assertTrue(last, last.startsWith("commerce"));
+		Assert.assertTrue(last, last.startsWith("portal"));
 	}
 
 }
