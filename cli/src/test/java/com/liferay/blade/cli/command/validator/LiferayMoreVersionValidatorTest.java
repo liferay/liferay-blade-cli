@@ -6,11 +6,9 @@
 package com.liferay.blade.cli.command.validator;
 
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.Pair;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ProductKeyUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -65,12 +63,8 @@ public class LiferayMoreVersionValidatorTest {
 		}
 
 		List<String> sorted = randomLines.stream(
-		).map(
-			line -> new Pair<String, ProductInfo>(line, new ProductInfo(Collections.emptyMap()))
 		).sorted(
-			new WorkspaceProductComparator()
-		).map(
-			Pair::first
+			ProductKeyUtil.comparator
 		).collect(
 			Collectors.toList()
 		);
