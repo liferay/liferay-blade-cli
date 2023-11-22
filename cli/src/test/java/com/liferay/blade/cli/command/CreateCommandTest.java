@@ -1694,7 +1694,7 @@ public class CreateCommandTest {
 		_contains(
 			_checkFileExists(projectPath + "/foo/package.json"),
 			new String[] {
-				".*@angular/animations.*", ".*liferay-npm-bundler\": \"2.30.0.*",
+				".*@angular/animations.*", ".*liferay-npm-bundler\": \"2.31.2.*",
 				".*build\": \"tsc && liferay-npm-bundler.*"
 			});
 
