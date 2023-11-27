@@ -1,5 +1,115 @@
 # Liferay Blade CLI Change Log
 
+## 5.0.1 - 2023-11-27
+
+### Commits
+- [BLADE-739] upgrade project template and change aether related libs name
+(469a08ae6e)
+- [BLADE-738] cli: LiferayDefaultVersionValidatorTest: updates assertion based
+on latest product info (a394703a93)
+- [BLADE-738] cli: removes WorkspaceProductComparator and
+WorkspaceProductComparatorTest (9ebf5ac8a9)
+- [BLADE-738] cli: BladeUtil: removes unused fields and methods (3de6c562fc)
+- [BLADE-738] cli: BladeUtil: simplify entry usage (0a54e42514)
+- [BLADE-738] cli: updates test resources to account for new quarterly keys
+(17d275e8d0)
+- [BLADE-738] cli: BladeUtil: uses ProductKeyUtil.comparator (f71505e277)
+- [BLADE-738] cli: LiferayMoreVersionValidatorTest: uses
+ProductKeyUtil.comparator (5ccaca532d)
+- [BLADE-738] cli: LiferayMoreVersionValidator: uses new ProductKeyUtil
+validators (89384a380e)
+- [BLADE-738] cli: adds ProductKeyUtilTest to test the comparator (afbd31a9b0)
+- [BLADE-738] cli: adds ProductKeyUtil to handle parsing and validation of
+product key strings (1fca7b63bc)
+- [BLADE-738] cli: adds ProductKeyInfo and ProductKeyVersion models to hold
+comparisons (293d543534)
+- [BLADE-738] add new regex patter for dxp-2023.q3.1 (c1036676d8)
+- [BLADE-737] upgrade httpclient version to 5.2.1 (1b4ce44978)
+- [BLADE-737] update httpClient dependency version (aa0df1341d)
+- [BLADE-735] fix test error (b6ce6e27a5)
+- [BLADE-730] remove upload test result (dc1fd80551)
+- [BLADE-730] ignore convert tests (be4361da00)
+- [BLADE-730] remove unused task dependency (45d7da88de)
+- [BLADE-730] use same cache key in github action (c0a3a5cceb)
+- [BLADE-730] improve task definition (730bf9d300)
+- [BLADE-730] update junit to 4.13.1 for CVE-2020-15250 Vulnerability
+(591ff727e5)
+- [BLADE-730] update jcommand version for WS-2019-0490 Vulnerability
+(9092a9c17d)
+- [BLADE-730] make action can use cache (9661da3835)
+- [BLADE-730] fix initBundle test error (2f14c91518)
+- [BLADE-730] remove unnecessory powermock related dependencies (10377b8856)
+- [BLADE-730] update junit for CVE-2020-15250 vulnerability (25141f8e47)
+- [BLADE-730] update org.jsoup for CVE-2021-37714 vulnerability (e28ce8f478)
+- [BLADE-730] update org.json for CVE-2022-45688 vulnerability (a7684ec2d8)
+- [BLADE-730] update maven-aether-provider for CVE-2018-10237 vulnerability
+(1dd350adc5)
+- [BLADE-730] update common-text for CVE-2022-42889 vulnerability (1786fb6aba)
+- [BLADE-730] update common-configuration2 for CVE-2022-33980 vulnerability
+(90844eca1e)
+- [BLADE-730] update common-compress for CVE-2019-12402 vulnerability
+(fa97b3811d)
+- [BLADE-730] update apache ant for CVE-2020-1945 vulnerability (d148801287)
+- [BLADE-730] update common-io for CVE-2021-29425 vulnerability (835974b5a6)
+- [BLADE-730] remove unnecessory dependency (8b1a74ac8d)
+- [BLADE-730] improve task definition (7cbc52e6d9)
+- [BLADE-730] remove check-report action (838c93f10a)
+- [BLADE-730] improve performance (afa73ae88a)
+- [BLADE-730] blade should support proxy when no userName and password"
+(117c04697c)
+
+### Dependencies
+- [BLADE-740] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.38.
+- [BLADE-740] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.5.
+- [BLADE-740] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.21.
+- [BLADE-740] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.22.
+- [BLADE-739] Update the com.liferay.project.templates dependency to version
+5.0.269.
+- [BLADE-739] Update the maven-resolver-api dependency to version 1.9.17.
+- [BLADE-739] Update the maven-resolver-connector-basic dependency to version
+1.9.17.
+- [BLADE-739] Update the maven-resolver-impl dependency to version 1.9.17.
+- [BLADE-739] Update the maven-resolver-spi dependency to version 1.9.17.
+- [BLADE-739] Update the maven-resolver-transport-classpath dependency to
+version 1.9.17.
+- [BLADE-739] Update the maven-resolver-transport-file dependency to version
+1.9.17.
+- [BLADE-739] Update the maven-resolver-transport-http dependency to version
+1.9.17.
+- [BLADE-739] Update the maven-resolver-transport-wagon dependency to version
+1.9.17.
+- [BLADE-739] Update the maven-resolver-util dependency to version 1.9.17.
+- [BLADE-737] Update the httpclient5 dependency to version 5.2.1.
+- [BLADE-737] Update the httpclient5-fluent dependency to version 5.2.1.
+- [BLADE-737] Update the httpclient dependency to version 4.5.14.
+- [BLADE-735] Update the com.liferay.project.templates dependency to version
+5.0.264.
+- [BLADE-730] Update the commons-io dependency to version 2.7.
+- [BLADE-730] Update the ant dependency to version 1.10.11.
+- [BLADE-730] Update the commons-compress dependency to version 1.21.
+- [BLADE-730] Update the commons-configuration2 dependency to version 2.8.0.
+- [BLADE-730] Update the commons-text dependency to version 1.10.0.
+- [BLADE-730] Update the maven-resolver-provider dependency to version 3.6.3.
+- [BLADE-730] Update the json dependency to version 20230227.
+- [BLADE-730] Update the jsoup dependency to version 1.15.3.
+- [BLADE-730] Update the junit dependency to version 4.13.1.
+- [BLADE-730] Update the com.liferay.project.templates dependency to version
+5.0.262.
+- [BLADE-730] Update the maven-settings dependency to version 3.6.3.
+- [BLADE-730] Update the maven-settings-builder dependency to version 3.6.3.
+- [BLADE-729] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.38-SNAPSHOT.
+- [BLADE-729] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.5-SNAPSHOT.
+- [BLADE-729] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.21-SNAPSHOT.
+- [BLADE-729] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.22-SNAPSHOT.
+
 ## 5.0.0 - 2023-08-29
 
 ### Commits
@@ -2598,6 +2708,12 @@ maintainability (7f9bc3f45e)
 [BLADE-725]: https://issues.liferay.com/browse/BLADE-725
 [BLADE-728]: https://issues.liferay.com/browse/BLADE-728
 [BLADE-729]: https://issues.liferay.com/browse/BLADE-729
+[BLADE-730]: https://issues.liferay.com/browse/BLADE-730
+[BLADE-735]: https://issues.liferay.com/browse/BLADE-735
+[BLADE-737]: https://issues.liferay.com/browse/BLADE-737
+[BLADE-738]: https://issues.liferay.com/browse/BLADE-738
+[BLADE-739]: https://issues.liferay.com/browse/BLADE-739
+[BLADE-740]: https://issues.liferay.com/browse/BLADE-740
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
