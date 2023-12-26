@@ -501,7 +501,7 @@ public class ServerStartCommandTest {
 
 	private void _initBladeWorkspace() throws Exception {
 		String[] initArgs = {
-			"--base", _testWorkspacePath.toString(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_71
+			"--base", _testWorkspacePath.toString(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, initArgs);

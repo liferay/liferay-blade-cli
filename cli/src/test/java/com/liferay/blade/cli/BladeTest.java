@@ -57,11 +57,11 @@ public class BladeTest extends BladeCLI {
 
 	public static final String PRODUCT_VERSION_DXP_74_U72 = "dxp-7.4-u72";
 
-	public static final String PRODUCT_VERSION_PORTAL_71 = "portal-7.1-ga4";
-
 	public static final String PRODUCT_VERSION_PORTAL_73 = "portal-7.3-ga8";
 
 	public static final String PRODUCT_VERSION_PORTAL_74 = "portal-7.4-ga4";
+
+	public static final String PRODUCT_VERSION_PORTAL_QUARTER_RELEASE = "dxp-2023.q4.2";
 
 	public static BladeTestBuilder builder() {
 		return new BladeTestBuilder();
@@ -119,7 +119,7 @@ public class BladeTest extends BladeCLI {
 					while (scanner.hasNextLine() && !bridj) {
 						String line = scanner.nextLine();
 
-						if ((line != null) && (line.length() > 0)) {
+						if ((line != null) && !line.isEmpty()) {
 							if (line.contains("org/bridj/Platform$DeleteFiles")) {
 								bridj = true;
 							}

@@ -323,6 +323,6 @@ Private-Package:\
 	@jansi-*.jar,\
 	${project.buildDir}/tooling.zip,\
 	${project.buildDir}/wrapper.zip,\
-	${project.buildDir}/.product_info.json,\
+	${project.buildDir}/releases.json,\
 	mvnw.cmd
 -sources: false

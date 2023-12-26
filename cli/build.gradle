@@ -31,7 +31,7 @@ tasks.register('copyMavenProfileJar', Copy)
 tasks.register('createToolingZip', Zip)
 tasks.register('createWrapperZip', Zip)
 tasks.register('downloadPortal', Download)
-tasks.register('downloadProductInfo', Download)
+tasks.register('downloadReleasesInfo', Download)
 tasks.register('unzipManifest', Copy)
 tasks.register('unzipPortal', Copy)
 
@@ -77,7 +77,7 @@ createWrapperZip {
 dependencies {
 	api group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "5.3.0"
 	api group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
-	api group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.269"
+	api group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.283"
 	api group: "commons-io", name: "commons-io", version: "2.7"
 	api group: "commons-lang", name: "commons-lang", version: "2.6"
 	api group: "org.apache.ant", name: "ant", version: "1.10.11"
@@ -102,7 +102,7 @@ dependencies {
 	api group: "org.gradle", name: "gradle-base-services-groovy", version: "5.6.4"
 	api group: "org.gradle", name: "gradle-core", version: "5.6.4"
 	api group: "org.gradle", name: "gradle-tooling-api", version: "5.6.4"
-	api group: "org.json", name: "json", version: "20230227"
+	api group: "org.json", name: "json", version: "20231013"
 	api group: "org.jsoup", name: "jsoup", version: "1.15.3"
 	api group: "org.tukaani", name: "xz", version: "1.6"
 	api name: "org.objectweb.asm-6.0.0"
@@ -139,8 +139,8 @@ downloadPortal {
 	onlyIfNewer true
 }
 
-downloadProductInfo {
-	src "https://releases-cdn.liferay.com/tools/workspace/.product_info.json"
+downloadReleasesInfo {
+	src "http://localhost:3000/releases.json"
 	dest buildDir
 	onlyIfNewer true
 }
@@ -148,7 +148,7 @@ downloadProductInfo {
 jar {
 	dependsOn("unzipPortal")
 	archiveFileName.set("blade.jar")
-	from createToolingZip, createWrapperZip, downloadProductInfo
+	from createToolingZip, createWrapperZip, downloadReleasesInfo
 }
 
 processResources {

@@ -17,7 +17,6 @@ import com.liferay.blade.cli.util.ProductInfo;
 import java.io.File;
 import java.io.FilenameFilter;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -75,17 +74,13 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			if (!baseLiferayVersion.isPresent()) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
-				Map<String, Object> productInfoMap = BladeUtil.getProductInfos();
+				ProductInfo productInfo = BladeUtil.getProductInfo(productKey);
 
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
-
-				if (productInfo != null) {
-					baseLiferayVersion = Optional.ofNullable(
-						productInfo.getTargetPlatformVersion()
-					).filter(
-						BladeUtil::isNotEmpty
-					);
-				}
+				baseLiferayVersion = Optional.ofNullable(
+					productInfo.getTargetPlatformVersion()
+				).filter(
+					BladeUtil::isNotEmpty
+				);
 			}
 
 			if (!baseLiferayVersion.isPresent()) {
@@ -144,6 +139,13 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 					}
 				}
 				else {
+					Matcher dxpQuarterlyVersionMatcher = WorkspaceConstants.dxpQuarterReleaseVersionPattern.matcher(
+						targetPlatformVersion);
+
+					if (dxpQuarterlyVersionMatcher.matches()) {
+						return "dxp";
+					}
+
 					Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
 
 					int microVersion = version.getMicro();

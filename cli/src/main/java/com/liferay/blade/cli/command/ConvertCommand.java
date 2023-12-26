@@ -1211,12 +1211,10 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			Path userHomePath = userHomeDir.toPath();
 
-			Path productInfoPath = userHomePath.resolve(".liferay/workspace/.product_info.json");
+			Path productInfoPath = userHomePath.resolve(".liferay/workspace/releases.json");
 
 			if (!Files.exists(productInfoPath)) {
-				Map<String, Object> productInfos = BladeUtil.getProductInfos();
-
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(productKey));
+				ProductInfo productInfo = BladeUtil.getProductInfo(productKey);
 
 				return Optional.of(productInfo.getTargetPlatformVersion());
 			}

@@ -49,6 +49,7 @@ import org.gradle.testkit.runner.BuildTask;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -455,6 +456,34 @@ public class CreateCommandTest {
 		File projectDir = new File(workspace, "modules/foo");
 
 		_checkGradleBuildFiles(projectDir.getAbsolutePath());
+	}
+
+	@Ignore
+	@Test
+	public void testCreateMVCPortletQuarterRelease() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspaceVersion(workspace, BladeTest.PRODUCT_VERSION_PORTAL_QUARTER_RELEASE);
+
+		String[] gradleArgs = {"create", "--base", workspace.getAbsolutePath(), "-t", "mvc-portlet", "foo"};
+
+		File projectDir = new File(workspace, "modules/foo");
+
+		String projectPath = projectDir.getAbsolutePath();
+
+		TestUtil.runBlade(workspace, _extensionsDir, gradleArgs);
+
+		_checkGradleBuildFiles(projectPath);
+
+		_contains(
+			_checkFileExists(projectPath + "/src/main/java/foo/portlet/FooPortlet.java"),
+			".*^public class FooPortlet extends MVCPortlet.*$");
+
+		_checkFileExists(projectPath + "/build.gradle");
+
+		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/view.jsp");
+
+		_checkFileExists(projectPath + "/src/main/resources/META-INF/resources/init.jsp");
 	}
 
 	@Test

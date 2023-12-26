@@ -27,6 +27,7 @@ import org.gradle.testkit.runner.BuildTask;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -113,6 +114,20 @@ public class InitCommandTest {
 		String pathStringToTest = dotFile.getAbsolutePath();
 
 		String[] args = {"--base", pathStringToTest, "init", ".", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
+
+		BladeTest bladeTest = _getBladeTestCustomWorkspace(emptyDir);
+
+		bladeTest.run(args);
+
+		Assert.assertNotNull(bladeTest.getWorkspaceProvider(emptyDir));
+	}
+
+	@Ignore
+	@Test
+	public void testBladeInitQuarterRelease() throws Exception {
+		File emptyDir = temporaryFolder.newFolder();
+
+		String[] args = {"--base", emptyDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_QUARTER_RELEASE};
 
 		BladeTest bladeTest = _getBladeTestCustomWorkspace(emptyDir);
 
@@ -347,7 +362,7 @@ public class InitCommandTest {
 
 		String firstLine = lines.get(0);
 
-		Assert.assertTrue(firstLine, firstLine.contains("dxp-7.4-"));
+		Assert.assertTrue(firstLine, firstLine.contains("dxp-"));
 	}
 
 	@Test
@@ -668,7 +683,7 @@ public class InitCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath.toString(), "foo-1.0.0.jar");
 	}
 
-	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "9.0.12";
+	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "9.1.3";
 
 	private File _extensionsDir = null;
 	private File _workspaceDir = null;

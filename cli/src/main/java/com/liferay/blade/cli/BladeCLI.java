@@ -31,6 +31,7 @@ import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
 import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ProductKeyInfo;
 import com.liferay.blade.cli.util.Prompter;
 
 import java.io.BufferedReader;
@@ -862,14 +863,19 @@ public class BladeCLI {
 
 			Iterator<String> it = options.iterator();
 
-			Map<String, Object> productInfos = BladeUtil.getProductInfos(true, error());
+			Map<String, Object> releasesInfos = BladeUtil.getReleasesInfos(true, error());
 
 			Map<String, String> optionsMap = new LinkedHashMap<>();
 
 			for (int x = 1; it.hasNext(); x++) {
 				String option = it.next();
 
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(option));
+				ProductKeyInfo productKeyInfo = new ProductKeyInfo(
+					option, (Map<String, String>)releasesInfos.get(option));
+
+				ProductInfo productInfo = new ProductInfo(
+					productKeyInfo,
+					BladeUtil.getReleaseProperties(productKeyInfo.getProduct(), productKeyInfo.getProductKey()));
 
 				optionsMap.put(String.valueOf(x), productInfo.getTargetPlatformVersion());
 			}
@@ -982,9 +988,7 @@ public class BladeCLI {
 		for (String arg : args) {
 			String[] argSplit = arg.split(" ");
 
-			for (String argEach : argSplit) {
-				argsCollection.add(argEach);
-			}
+			Collections.addAll(argsCollection, argSplit);
 		}
 
 		String[] argsArray = argsCollection.toArray(new String[0]);

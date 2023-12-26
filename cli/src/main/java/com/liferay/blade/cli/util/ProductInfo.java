@@ -5,8 +5,7 @@
 
 package com.liferay.blade.cli.util;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.Properties;
 
 /**
  * @author Simon Jiang
@@ -14,14 +13,15 @@ import java.util.Optional;
  */
 public class ProductInfo {
 
-	public ProductInfo(Map<String, String> productMap) {
-		_appServerTomcatVersion = _safeGet(productMap, "appServerTomcatVersion", "");
-		_bundleUrl = _safeGet(productMap, "bundleUrl", "");
-		_liferayDockerImage = _safeGet(productMap, "liferayDockerImage", "");
-		_liferayProductVersion = _safeGet(productMap, "liferayProductVersion", "");
-		_releaseDate = _safeGet(productMap, "releaseDate", "");
-		_targetPlatformVersion = _safeGet(productMap, "targetPlatformVersion", "");
-		_promoted = Boolean.parseBoolean(_safeGet(productMap, "promoted", "false"));
+	public ProductInfo(ProductKeyInfo productKeyInfo, Properties releaseProperties) {
+		_productKeyInfo = productKeyInfo;
+
+		_appServerTomcatVersion = releaseProperties.getProperty("app.server.tomcat.version");
+		_bundleUrl = releaseProperties.getProperty("bundle.url");
+		_liferayDockerImage = releaseProperties.getProperty("liferay.docker.image");
+		_liferayProductVersion = releaseProperties.getProperty("liferay.product.version");
+		_releaseDate = releaseProperties.getProperty("release.date");
+		_targetPlatformVersion = releaseProperties.getProperty("target.platform.version");
 	}
 
 	public String getAppServerTomcatVersion() {
@@ -40,6 +40,10 @@ public class ProductInfo {
 		return _liferayProductVersion;
 	}
 
+	public ProductKeyInfo getProductKey() {
+		return _productKeyInfo;
+	}
+
 	public String getReleaseDate() {
 		return _releaseDate;
 	}
@@ -48,25 +52,11 @@ public class ProductInfo {
 		return _targetPlatformVersion;
 	}
 
-	public boolean isPromoted() {
-		return _promoted;
-	}
-
-	private String _safeGet(Map<String, String> map, String key, String defVal) {
-		return Optional.ofNullable(
-			map
-		).map(
-			m -> m.get(key)
-		).orElse(
-			defVal
-		);
-	}
-
 	private String _appServerTomcatVersion;
 	private String _bundleUrl;
 	private final String _liferayDockerImage;
 	private final String _liferayProductVersion;
-	private Boolean _promoted = false;
+	private ProductKeyInfo _productKeyInfo;
 	private final String _releaseDate;
 	private String _targetPlatformVersion;
 

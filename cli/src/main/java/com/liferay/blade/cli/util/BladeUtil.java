@@ -37,6 +37,8 @@ import java.nio.file.attribute.FileTime;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
+import java.text.MessageFormat;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,7 +51,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -318,41 +319,15 @@ public class BladeUtil {
 		}
 	}
 
-	public static Map<String, Object> getProductInfos() {
-		return getProductInfos(false, null);
-	}
-
 	@SuppressWarnings("unchecked")
-	public static synchronized Map<String, Object> getProductInfos(boolean trace, PrintStream printStream) {
-		if (!_productInfoMap.isEmpty()) {
-			return _productInfoMap;
-		}
+	public static ProductInfo getProductInfo(String productKey) {
+		Map<String, Object> releasesInfos = getReleasesInfos();
 
-		JsonSlurper jsonSlurper = new JsonSlurper();
+		ProductKeyInfo productKeyInfo = new ProductKeyInfo(
+			productKey, (Map<String, String>)releasesInfos.get(productKey));
 
-		try {
-			Path productInfoPath = downloadFile(_PRODUCT_INFO_URL, _workspaceCacheDir.toPath(), ".product_info.json");
-
-			try (BufferedReader reader = Files.newBufferedReader(productInfoPath)) {
-				_productInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
-			}
-		}
-		catch (Exception exception1) {
-			if (trace && (printStream != null)) {
-				exception1.printStackTrace(printStream);
-			}
-
-			try (InputStream resourceAsStream = BladeUtil.class.getResourceAsStream("/.product_info.json")) {
-				_productInfoMap = (Map<String, Object>)jsonSlurper.parse(resourceAsStream);
-			}
-			catch (Exception exception2) {
-				if (trace && (printStream != null)) {
-					exception2.printStackTrace(printStream);
-				}
-			}
-		}
-
-		return _productInfoMap;
+		return new ProductInfo(
+			productKeyInfo, getReleaseProperties(productKeyInfo.getProduct(), productKeyInfo.getProductKey()));
 	}
 
 	public static Properties getProperties(File file) {
@@ -365,6 +340,68 @@ public class BladeUtil {
 		}
 
 		return properties;
+	}
+
+	public static Properties getReleaseProperties(String product, String productKey) {
+		Properties properties = new Properties();
+
+		File productDest = new File(_workspaceCacheDir, product);
+
+		File releasePropertiesDest = new File(productDest, productKey);
+
+		try {
+			String actualReleasePropertiesUrl = MessageFormat.format(_RELEASE_PROPERTIES_URL, product, productKey);
+
+			Path releasesPropertiesPath = downloadFile(
+				actualReleasePropertiesUrl, releasePropertiesDest.toPath(), "release.properties");
+
+			if (Files.exists(releasesPropertiesPath)) {
+				try (InputStream input = Files.newInputStream(releasesPropertiesPath)) {
+					properties.load(input);
+				}
+			}
+		}
+		catch (Exception exception) {
+		}
+
+		return properties;
+	}
+
+	public static Map<String, Object> getReleasesInfos() {
+		return getReleasesInfos(false, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static synchronized Map<String, Object> getReleasesInfos(boolean trace, PrintStream printStream) {
+		if (!_releasesInfoMap.isEmpty()) {
+			return _releasesInfoMap;
+		}
+
+		JsonSlurper jsonSlurper = new JsonSlurper();
+
+		try {
+			Path releasesInfoPath = downloadFile(_RELEASE_INFO_URL, _workspaceCacheDir.toPath(), "releases.json");
+
+			try (BufferedReader reader = Files.newBufferedReader(releasesInfoPath)) {
+				_releasesInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
+			}
+		}
+		catch (Exception exception1) {
+			if (trace && (printStream != null)) {
+				exception1.printStackTrace(printStream);
+			}
+
+			try (InputStream resourceAsStream = BladeUtil.class.getResourceAsStream("/releases.json")) {
+				_releasesInfoMap = (Map<String, Object>)jsonSlurper.parse(resourceAsStream);
+			}
+			catch (Exception exception2) {
+				if (trace && (printStream != null)) {
+					exception2.printStackTrace(printStream);
+				}
+			}
+		}
+
+		return _releasesInfoMap;
 	}
 
 	public static Collection<String> getTemplateNames(BladeCLI blade) throws Exception {
@@ -391,25 +428,29 @@ public class BladeUtil {
 
 	@SuppressWarnings("unchecked")
 	public static List<String> getWorkspaceProductKeys(boolean promoted) {
-		Map<String, Object> productInfos = getProductInfos();
+		Map<String, Object> releasesInfos = getReleasesInfos();
 
-		return productInfos.keySet(
+		return releasesInfos.keySet(
 		).stream(
 		).filter(
-			key -> Objects.nonNull(productInfos.get(key))
+			key -> Objects.nonNull(releasesInfos.get(key))
 		).filter(
 			key -> {
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(key));
+				ProductKeyInfo productKeyInfo = new ProductKeyInfo(key, (Map<String, String>)releasesInfos.get(key));
 
-				if (productInfo.getTargetPlatformVersion() == null) {
+				if (productKeyInfo.getProduct() == null) {
 					return false;
 				}
 
-				if (promoted && !productInfo.isPromoted()) {
+				if (!promoted || productKeyInfo.isPromoted()) {
+					return true;
+				}
+
+				if (productKeyInfo.getReleaseDate() == null) {
 					return false;
 				}
 
-				return true;
+				return productKeyInfo.getLiferayProductVersion() != null;
 			}
 		).sorted(
 			ProductKeyUtil.comparator
@@ -419,21 +460,24 @@ public class BladeUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Set<String> getWorkspaceProductTargetPlatformVersions(boolean promoted) {
-		Map<String, Object> productInfos = getProductInfos();
+	public static Map<String, ProductKeyInfo> getWorkspaceProductTargetPlatformVersions(boolean promoted) {
+		Map<String, Object> releasesInfos = getReleasesInfos();
 
-		return productInfos.entrySet(
+		return releasesInfos.entrySet(
 		).stream(
 		).filter(
-			entry -> Objects.nonNull(productInfos.get(entry.getKey()))
+			entry -> Objects.nonNull(releasesInfos.get(entry.getKey()))
 		).map(
-			entry -> new ProductInfo((Map<String, String>)entry.getValue())
+			entry -> new ProductKeyInfo(entry.getKey(), (Map<String, String>)entry.getValue())
 		).filter(
-			product -> Objects.nonNull(product.getTargetPlatformVersion()) && (!promoted || product.isPromoted())
+			productKeyInfo -> !promoted || productKeyInfo.isPromoted()
 		).map(
-			ProductInfo::getTargetPlatformVersion
+			productKeyInfo -> new ProductInfo(
+				productKeyInfo, getReleaseProperties(productKeyInfo.getProduct(), productKeyInfo.getProductKey()))
+		).filter(
+			productInfo -> Objects.nonNull(productInfo.getTargetPlatformVersion())
 		).collect(
-			Collectors.toSet()
+			Collectors.toMap(ProductInfo::getTargetPlatformVersion, ProductInfo::getProductKey)
 		);
 	}
 
@@ -857,10 +901,14 @@ public class BladeUtil {
 
 	private static final String _GRADLEW_WINDOWS_FILE_NAME = "gradlew.bat";
 
-	private static final String _PRODUCT_INFO_URL = "https://releases.liferay.com/tools/workspace/.product_info.json";
+	//private static final String _PRODUCT_INFO_URL = "https://releases.liferay.com/tools/workspace/.product_info.json";
+
+	private static final String _RELEASE_INFO_URL = "http://localhost:3000/releases.json";
+
+	private static final String _RELEASE_PROPERTIES_URL = "http://localhost:3000/{0}/{1}/release.properties";
 
 	private static final Pattern _microPattern = Pattern.compile("((([efs])p)|(ga)|(u))([0-9]+)(-[0-9]+)?");
-	private static Map<String, Object> _productInfoMap = Collections.emptyMap();
+	private static Map<String, Object> _releasesInfoMap = Collections.emptyMap();
 	private static final File _workspaceCacheDir = new File(
 		System.getProperty("user.home"), _DEFAULT_WORKSPACE_CACHE_DIR_NAME);
 

@@ -21,7 +21,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.apache.maven.archetype.ArchetypeGenerationRequest;
@@ -82,28 +81,7 @@ public class ClientExtensionProjectTemplateCustomizer implements ProjectTemplate
 
 		String projectName = projectTemplatesArgs.getName();
 
-		List<String> args = new ArrayList<>();
-
-		args.add("generate");
-		args.add("-i");
-		args.add(projectName);
-
-		ClientExtensionProjectTemplatesArgsExt clientExtensionTemplateExt =
-			(ClientExtensionProjectTemplatesArgsExt)projectTemplatesArgs.getProjectTemplatesArgsExt();
-
-		String extensionName = clientExtensionTemplateExt.getExtensionName();
-
-		if (extensionName != null) {
-			args.add("-n");
-			args.add(extensionName);
-		}
-
-		String extensionType = clientExtensionTemplateExt.getExtensionType();
-
-		if (extensionType != null) {
-			args.add("-t");
-			args.add(extensionType);
-		}
+		List<String> args = _getProjectTemplatesArgs(projectTemplatesArgs, projectName);
 
 		File destinationDir = projectTemplatesArgs.getDestinationDir();
 
@@ -153,12 +131,10 @@ public class ClientExtensionProjectTemplateCustomizer implements ProjectTemplate
 
 			Path userHomePath = userHomeDir.toPath();
 
-			Path productInfoPath = userHomePath.resolve(".liferay/workspace/.product_info.json");
+			Path productInfoPath = userHomePath.resolve(".liferay/workspace/releases.json");
 
 			if (!Files.exists(productInfoPath)) {
-				Map<String, Object> productInfos = BladeUtil.getProductInfos();
-
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(productKey));
+				ProductInfo productInfo = BladeUtil.getProductInfo(productKey);
 
 				return productInfo.getTargetPlatformVersion();
 			}
@@ -181,6 +157,33 @@ public class ClientExtensionProjectTemplateCustomizer implements ProjectTemplate
 		}
 
 		return null;
+	}
+
+	private List<String> _getProjectTemplatesArgs(ProjectTemplatesArgs projectTemplatesArgs, String projectName) {
+		List<String> args = new ArrayList<>();
+
+		args.add("generate");
+		args.add("-i");
+		args.add(projectName);
+
+		ClientExtensionProjectTemplatesArgsExt clientExtensionTemplateExt =
+			(ClientExtensionProjectTemplatesArgsExt)projectTemplatesArgs.getProjectTemplatesArgsExt();
+
+		String extensionName = clientExtensionTemplateExt.getExtensionName();
+
+		if (extensionName != null) {
+			args.add("-n");
+			args.add(extensionName);
+		}
+
+		String extensionType = clientExtensionTemplateExt.getExtensionType();
+
+		if (extensionType != null) {
+			args.add("-t");
+			args.add(extensionType);
+		}
+
+		return args;
 	}
 
 	private static final String _BASE_BOM_URL =

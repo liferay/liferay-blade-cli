@@ -179,10 +179,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			return;
 		}
 
-		String templateValidateStrig = _checkTemplateVersionRange(templateFile, projectTemplatesArgs);
+		String templateValidateString = _checkTemplateVersionRange(templateFile, projectTemplatesArgs);
 
-		if (!StringUtil.isNullOrEmpty(templateValidateStrig)) {
-			getBladeCLI().error(templateValidateStrig);
+		if (!StringUtil.isNullOrEmpty(templateValidateString)) {
+			getBladeCLI().error(templateValidateString);
 
 			return;
 		}
@@ -345,15 +345,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(dir);
 
 		projectTemplatesArgs.setDependencyManagementEnabled(
-			(workspaceProvider != null) ? workspaceProvider.isDependencyManagementEnabled(dir) : false);
+			(workspaceProvider != null) && workspaceProvider.isDependencyManagementEnabled(dir));
 
 		Optional<String> liferayVersion = _getLiferayVersion(workspaceProvider, createArgs);
 
 		if (!liferayVersion.isPresent()) {
 			throw new IOException("Cannot determine Liferay Version. Please enter a valid value for Liferay Version.");
 		}
-
-		projectTemplatesArgs.setLiferayVersion(liferayVersion.get());
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
@@ -363,6 +361,25 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		projectTemplatesArgs.setLiferayProduct(product.orElse(createArgs.getLiferayProduct()));
 
 		projectTemplatesArgs.setTemplate(template);
+
+		Matcher dxpQuarterlyVersionMatcher = WorkspaceConstants.dxpQuarterReleaseVersionPattern.matcher(
+			liferayVersion.get());
+
+		if (dxpQuarterlyVersionMatcher.matches() && product.isPresent() && Objects.equals(product.get(), "dxp")) {
+			String projectTemplate = projectTemplatesArgs.getTemplate();
+
+			switch (projectTemplate) {
+				case _TEMPLATE_PORTLET_PROVIDER_NAME:
+					projectTemplatesArgs.setLiferayVersion("7.4.13.u86");
+				case _TEMPLATE_SIMULATION_PANEL_NAME:
+					projectTemplatesArgs.setLiferayVersion("7.4.13.u72");
+				default:
+					projectTemplatesArgs.setLiferayVersion("7.4");
+			}
+		}
+		else {
+			projectTemplatesArgs.setLiferayVersion(liferayVersion.get());
+		}
 
 		return projectTemplatesArgs;
 	}
@@ -475,6 +492,15 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		try (InputStream fileInputStream = Files.newInputStream(templateFile.toPath(), StandardOpenOption.READ);
 			JarInputStream in = new JarInputStream(fileInputStream)) {
 
+			String versionString = projectTemplatesArgs.getLiferayVersion();
+
+			Matcher dxpQuarterlyVersionMatcher = WorkspaceConstants.dxpQuarterReleaseVersionPattern.matcher(
+				versionString);
+
+			if (dxpQuarterlyVersionMatcher.matches()) {
+				return "";
+			}
+
 			Manifest manifest = in.getManifest();
 
 			Attributes attributes = manifest.getMainAttributes();
@@ -483,17 +509,13 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			VersionRange versionRange = new VersionRange(versionRangeValue);
 
-			String versionString = projectTemplatesArgs.getLiferayVersion();
-
-			String liferayVersionString = new String(
-				String.valueOf(VersionUtil.getMajorVersion(versionString)) + "." +
-					String.valueOf(VersionUtil.getMinorVersion(versionString)));
+			String liferayVersionString =
+				VersionUtil.getMajorVersion(versionString) + "." + VersionUtil.getMinorVersion(versionString);
 
 			if (!versionRange.includes(Version.parseVersion(liferayVersionString))) {
-				return new String(
-					"Error: The " + projectTemplatesArgs.getTemplate() +
-						" project can only be created in liferay version range: " + versionRange +
-							", current liferay version is " + liferayVersionString + ".");
+				return "Error: The " + projectTemplatesArgs.getTemplate() +
+					" project can only be created in liferay version range: " + versionRange +
+						", current liferay version is " + liferayVersionString + ".";
 			}
 		}
 		catch (Exception exception) {
@@ -645,6 +667,10 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		return bladeCLI.isWorkspaceDir(dir);
 	}
+
+	private static final String _TEMPLATE_PORTLET_PROVIDER_NAME = "portlet-provider";
+
+	private static final String _TEMPLATE_SIMULATION_PANEL_NAME = "simulation-panel-entry";
 
 	private Pattern _inValidNamePattern = Pattern.compile("((-)\\2+)");
 

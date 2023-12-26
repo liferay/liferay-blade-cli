@@ -7,6 +7,7 @@ package com.liferay.blade.extensions.maven.profile;
 
 import aQute.bnd.version.Version;
 
+import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
@@ -14,6 +15,7 @@ import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 import java.io.File;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
 
 /**
  * @author Christopher Bryan Boyd
@@ -33,6 +35,13 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 
 		if (targetPlatformVersion == null) {
 			return "portal";
+		}
+
+		Matcher dxpQuarterlyVersionMatcher = WorkspaceConstants.dxpQuarterReleaseVersionPattern.matcher(
+			targetPlatformVersion);
+
+		if (dxpQuarterlyVersionMatcher.matches()) {
+			return "dxp";
 		}
 
 		try {

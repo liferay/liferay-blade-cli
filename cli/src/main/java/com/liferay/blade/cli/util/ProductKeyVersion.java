@@ -18,8 +18,6 @@ public class ProductKeyVersion implements Comparable<ProductKeyVersion> {
 	public int compareTo(final ProductKeyVersion version) {
 		return Comparator.comparingInt(
 			ProductKeyVersion::getNumber
-		).thenComparing(
-			ProductKeyVersion::getType
 		).compare(
 			this, version
 		);
@@ -29,19 +27,10 @@ public class ProductKeyVersion implements Comparable<ProductKeyVersion> {
 		return _number;
 	}
 
-	public String getType() {
-		return _type;
-	}
-
 	public void setNumber(int number) {
 		_number = number;
 	}
 
-	public void setType(String type) {
-		_type = type;
-	}
-
 	private int _number = 0;
-	private String _type;
 
 }
