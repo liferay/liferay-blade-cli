@@ -51,8 +51,6 @@ public class WorkspaceConstants {
 
 	public static final String DEFAULT_WORKSPACE_PRODUCT_PROPERTY = "liferay.workspace.product";
 
-	public static final Pattern dxpQuarterReleaseVersionPattern = Pattern.compile(
-		"^(?<product>dxp)-(?<major>2\\d{3})\\.(?<minor>q[1234])\\.(?<micro>\\d+)$");
 	public static final List<String> originalLiferayVersions = Arrays.asList("7.0", "7.1", "7.2", "7.3", "7.4");
 
 }

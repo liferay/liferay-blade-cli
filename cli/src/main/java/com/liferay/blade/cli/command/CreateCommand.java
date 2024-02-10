@@ -17,6 +17,7 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ReleaseInfo;
 import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
@@ -362,10 +363,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		projectTemplatesArgs.setTemplate(template);
 
-		Matcher dxpQuarterlyVersionMatcher = WorkspaceConstants.dxpQuarterReleaseVersionPattern.matcher(
-			liferayVersion.get());
+		ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(liferayVersion.get());
 
-		if (dxpQuarterlyVersionMatcher.matches() && product.isPresent() && Objects.equals(product.get(), "dxp")) {
+		if (releaseInfo.getProductKey().isQuarterly() && product.isPresent() && Objects.equals(product.get(), "dxp")) {
 			String projectTemplate = projectTemplatesArgs.getTemplate();
 
 			switch (projectTemplate) {
@@ -494,10 +494,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			String versionString = projectTemplatesArgs.getLiferayVersion();
 
-			Matcher dxpQuarterlyVersionMatcher = WorkspaceConstants.dxpQuarterReleaseVersionPattern.matcher(
-				versionString);
+			ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(versionString);
 
-			if (dxpQuarterlyVersionMatcher.matches()) {
+			if (releaseInfo.getProductKey().isPromoted()) {
 				return "";
 			}
 

@@ -8,7 +8,7 @@ package com.liferay.project.templates.client.extension.internal;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ReleaseInfo;
 import com.liferay.project.templates.extensions.ProjectTemplateCustomizer;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
@@ -134,9 +134,9 @@ public class ClientExtensionProjectTemplateCustomizer implements ProjectTemplate
 			Path productInfoPath = userHomePath.resolve(".liferay/workspace/releases.json");
 
 			if (!Files.exists(productInfoPath)) {
-				ProductInfo productInfo = BladeUtil.getProductInfo(productKey);
+				ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(productKey);
 
-				return productInfo.getTargetPlatformVersion();
+				return releaseInfo.getTargetPlatformVersion();
 			}
 
 			JSONObject jsonObject = new JSONObject(new String(Files.readAllBytes(productInfoPath.normalize())));

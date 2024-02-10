@@ -122,7 +122,6 @@ public class InitCommandTest {
 		Assert.assertNotNull(bladeTest.getWorkspaceProvider(emptyDir));
 	}
 
-	@Ignore
 	@Test
 	public void testBladeInitQuarterRelease() throws Exception {
 		File emptyDir = temporaryFolder.newFolder();

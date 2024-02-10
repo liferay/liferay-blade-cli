@@ -11,9 +11,9 @@ import java.util.Properties;
  * @author Simon Jiang
  * @author Gregory Amerson
  */
-public class ProductInfo {
+public class ReleaseInfo {
 
-	public ProductInfo(ProductKeyInfo productKeyInfo, Properties releaseProperties) {
+	public ReleaseInfo(ProductKeyInfo productKeyInfo, Properties releaseProperties) {
 		_productKeyInfo = productKeyInfo;
 
 		_appServerTomcatVersion = releaseProperties.getProperty("app.server.tomcat.version");

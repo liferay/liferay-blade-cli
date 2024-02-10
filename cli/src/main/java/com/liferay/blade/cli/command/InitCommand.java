@@ -13,7 +13,7 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ReleaseInfo;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.util.FileUtil;
@@ -214,14 +214,11 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				return;
 			}
 
-			ProductInfo productInfo = BladeUtil.getProductInfo(workspaceProductKey);
+			ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(workspaceProductKey);
 
-			String targetPlatformVersion = productInfo.getTargetPlatformVersion();
+			String targetPlatformVersion = releaseInfo.getTargetPlatformVersion();
 
-			Matcher targetPlatformMatcher = WorkspaceConstants.dxpQuarterReleaseVersionPattern.matcher(
-				targetPlatformVersion);
-
-			if (targetPlatformMatcher.matches()) {
+			if (releaseInfo.getProductKey().isQuarterly()) {
 				liferayVersion = "7.4";
 			}
 			else {
@@ -499,9 +496,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		if (possibleProductKey.startsWith("portal") || possibleProductKey.startsWith("dxp") ||
 			possibleProductKey.startsWith("commerce")) {
 
-			ProductInfo productInfo = BladeUtil.getProductInfo(possibleProductKey);
+			ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(possibleProductKey);
 
-			initArgs.setLiferayVersion(productInfo.getTargetPlatformVersion());
+			initArgs.setLiferayVersion(releaseInfo.getTargetPlatformVersion());
 
 			String[] productKeyValues = possibleProductKey.split("-");
 
@@ -511,9 +508,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		for (Map.Entry<String, Object> entryKey : productInfos.entrySet()) {
-			ProductInfo productInfo = BladeUtil.getProductInfo(entryKey.getKey());
+			ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(entryKey.getKey());
 
-			if (Objects.equals(possibleProductKey, productInfo.getTargetPlatformVersion())) {
+			if (Objects.equals(possibleProductKey, releaseInfo.getTargetPlatformVersion())) {
 				possibleProductKey = entryKey.getKey();
 
 				String[] productKeyValues = possibleProductKey.split("-");

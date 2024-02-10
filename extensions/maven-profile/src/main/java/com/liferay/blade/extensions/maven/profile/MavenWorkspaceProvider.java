@@ -10,10 +10,12 @@ import aQute.bnd.version.Version;
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ProductKeyInfo;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 
@@ -37,10 +39,11 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 			return "portal";
 		}
 
-		Matcher dxpQuarterlyVersionMatcher = WorkspaceConstants.dxpQuarterReleaseVersionPattern.matcher(
-			targetPlatformVersion);
+		Map<String, ProductKeyInfo> workspaceProductTargetPlatformVersions = BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
 
-		if (dxpQuarterlyVersionMatcher.matches()) {
+		ProductKeyInfo productKeyInfo = workspaceProductTargetPlatformVersions.get(targetPlatformVersion);
+
+		if (productKeyInfo.isQuarterly()) {
 			return "dxp";
 		}
 

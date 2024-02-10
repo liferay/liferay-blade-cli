@@ -320,13 +320,13 @@ public class BladeUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ProductInfo getProductInfo(String productKey) {
+	public static ReleaseInfo getReleaseInfo(String productKey) {
 		Map<String, Object> releasesInfos = getReleasesInfos();
 
 		ProductKeyInfo productKeyInfo = new ProductKeyInfo(
 			productKey, (Map<String, String>)releasesInfos.get(productKey));
 
-		return new ProductInfo(
+		return new ReleaseInfo(
 			productKeyInfo, getReleaseProperties(productKeyInfo.getProduct(), productKeyInfo.getProductKey()));
 	}
 
@@ -472,12 +472,12 @@ public class BladeUtil {
 		).filter(
 			productKeyInfo -> !promoted || productKeyInfo.isPromoted()
 		).map(
-			productKeyInfo -> new ProductInfo(
+			productKeyInfo -> new ReleaseInfo(
 				productKeyInfo, getReleaseProperties(productKeyInfo.getProduct(), productKeyInfo.getProductKey()))
 		).filter(
-			productInfo -> Objects.nonNull(productInfo.getTargetPlatformVersion())
+			releaseInfo -> Objects.nonNull(releaseInfo.getTargetPlatformVersion())
 		).collect(
-			Collectors.toMap(ProductInfo::getTargetPlatformVersion, ProductInfo::getProductKey)
+			Collectors.toMap(ReleaseInfo::getTargetPlatformVersion, ReleaseInfo::getProductKey)
 		);
 	}
 

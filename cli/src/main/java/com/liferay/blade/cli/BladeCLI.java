@@ -30,7 +30,7 @@ import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ReleaseInfo;
 import com.liferay.blade.cli.util.ProductKeyInfo;
 import com.liferay.blade.cli.util.Prompter;
 
@@ -873,11 +873,11 @@ public class BladeCLI {
 				ProductKeyInfo productKeyInfo = new ProductKeyInfo(
 					option, (Map<String, String>)releasesInfos.get(option));
 
-				ProductInfo productInfo = new ProductInfo(
+				ReleaseInfo releaseInfo = new ReleaseInfo(
 					productKeyInfo,
 					BladeUtil.getReleaseProperties(productKeyInfo.getProduct(), productKeyInfo.getProductKey()));
 
-				optionsMap.put(String.valueOf(x), productInfo.getTargetPlatformVersion());
+				optionsMap.put(String.valueOf(x), releaseInfo.getTargetPlatformVersion());
 			}
 
 			return optionsMap;

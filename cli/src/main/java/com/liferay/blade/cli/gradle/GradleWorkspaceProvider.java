@@ -12,11 +12,13 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ProductKeyInfo;
+import com.liferay.blade.cli.util.ReleaseInfo;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -74,10 +76,10 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			if (!baseLiferayVersion.isPresent()) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
-				ProductInfo productInfo = BladeUtil.getProductInfo(productKey);
+				ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(productKey);
 
 				baseLiferayVersion = Optional.ofNullable(
-					productInfo.getTargetPlatformVersion()
+					releaseInfo.getTargetPlatformVersion()
 				).filter(
 					BladeUtil::isNotEmpty
 				);
@@ -139,10 +141,11 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 					}
 				}
 				else {
-					Matcher dxpQuarterlyVersionMatcher = WorkspaceConstants.dxpQuarterReleaseVersionPattern.matcher(
-						targetPlatformVersion);
+					Map<String, ProductKeyInfo> workspaceProductTargetPlatformVersions = BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
 
-					if (dxpQuarterlyVersionMatcher.matches()) {
+					ProductKeyInfo productKeyInfo = workspaceProductTargetPlatformVersions.get(targetPlatformVersion);
+
+					if (productKeyInfo.isQuarterly()) {
 						return "dxp";
 					}
 
