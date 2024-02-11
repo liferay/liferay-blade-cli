@@ -9,11 +9,12 @@ import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductKeyUtil;
-import com.liferay.project.templates.extensions.util.VersionUtil;
+import com.liferay.blade.cli.util.ProductKeyInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -30,15 +31,22 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 	public void validate(String name, String value) throws ParameterException {
 		List<String> possibleValues = new ArrayList<>(get());
 
-		Set<String> allTargetPlatformVersions = BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
+		Map<String, ProductKeyInfo> workspaceProductTargetPlatformVersions =
+			BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
 
 		possibleValues.addAll(WorkspaceConstants.originalLiferayVersions);
 
-		if ((!possibleValues.contains(value) && !allTargetPlatformVersions.contains(value)) ||
-			(!ProductKeyUtil.verifyPortalDxpWorkspaceProduct(value) && !VersionUtil.isLiferayVersion(value) &&
-			 !ProductKeyUtil.verifyCommerceWorkspaceProduct(value))) {
+		Set<String> allTargetPlatformVersions = workspaceProductTargetPlatformVersions.keySet();
 
-			throw new ParameterException(value + " is not a valid value.");
+		if (!possibleValues.contains(value) && !allTargetPlatformVersions.contains(value)) {
+			ProductKeyInfo productKeyInfo = workspaceProductTargetPlatformVersions.get(value);
+
+			if (!productKeyInfo.isQuarterly() &&
+				!(Objects.equals(productKeyInfo.getProduct(), "dxp") ||
+				  Objects.equals(productKeyInfo.getProduct(), "portal"))) {
+
+				throw new ParameterException(value + " is not a valid value.");
+			}
 		}
 	}
 

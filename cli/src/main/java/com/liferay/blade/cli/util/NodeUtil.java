@@ -16,6 +16,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermissions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -111,9 +112,7 @@ public class NodeUtil {
 			commands.add(nodePath.toString());
 			commands.add(liferayPath.toString());
 
-			for (String arg : args) {
-				commands.add(arg);
-			}
+			Collections.addAll(commands, args);
 		}
 		else {
 			Path nodePath = nodeDirPath.resolve("bin/node");
@@ -192,9 +191,7 @@ public class NodeUtil {
 			commands.add(nodePath.toString());
 			commands.add(yoPath.toString());
 
-			for (String arg : args) {
-				commands.add(arg);
-			}
+			Collections.addAll(commands, args);
 		}
 		else {
 			Path nodePath = nodeDirPath.resolve("bin/node");

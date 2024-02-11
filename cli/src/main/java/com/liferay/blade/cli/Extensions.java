@@ -26,6 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -296,9 +297,7 @@ public class Extensions implements Closeable {
 					if ((withArguments && !type.equals(boolean.class)) ||
 						(!withArguments && type.equals(boolean.class))) {
 
-						for (String name : names) {
-							flags.add(name);
-						}
+						Collections.addAll(flags, names);
 					}
 				}
 			}

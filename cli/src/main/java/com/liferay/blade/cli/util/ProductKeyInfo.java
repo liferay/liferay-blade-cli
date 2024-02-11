@@ -5,84 +5,114 @@
 
 package com.liferay.blade.cli.util;
 
+import java.text.SimpleDateFormat;
+
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @author Drew Brokke
+ * @author Simon Jiang
  */
 public class ProductKeyInfo implements Comparable<ProductKeyInfo> {
 
+	public ProductKeyInfo(String productKey, Map<String, String> releaseMap) {
+		_productKey = productKey;
+
+		_releaseDate = _safeGet(releaseMap, "releaseDate", "");
+		_liferayProductVersion = _safeGet(releaseMap, "liferayProductVersion", "");
+		_product = _safeGet(releaseMap, "product", "");
+
+		_promoted = Boolean.parseBoolean(_safeGet(releaseMap, "promoted", "false"));
+		_quarterly = Boolean.parseBoolean(_safeGet(releaseMap, "quarterly", "false"));
+	}
+
 	@Override
-	public int compareTo(final ProductKeyInfo keyInfo) {
+	public int compareTo(ProductKeyInfo keyInfo) {
 		return Comparator.comparing(
-			ProductKeyInfo::getProductRank
+			(Function<ProductKeyInfo, Integer>)productKeyInfo -> {
+				if (Objects.equals(productKeyInfo.getProduct(), "dxp")) {
+					return 1;
+				}
+
+				return -1;
+			}
 		).thenComparing(
-			ProductKeyInfo::isQuarterly
+			productKeyInfo -> {
+				if (productKeyInfo.isQuarterly()) {
+					return 1;
+				}
+
+				return -1;
+			}
 		).thenComparing(
-			ProductKeyInfo::getMajorProductKeyVersion
+			productKeyInfo -> ProductKeyUtil.createProductKeyVersion(productKeyInfo.getLiferayProductVersion())
 		).thenComparing(
-			ProductKeyInfo::getMinorProductKeyVersion
-		).thenComparing(
-			ProductKeyInfo::getMicroProductKeyVersion
+			ProductKeyInfo::getReleaseDate
 		).reversed(
 		).compare(
 			this, keyInfo
 		);
 	}
 
-	public ProductKeyVersion getMajorProductKeyVersion() {
-		return _majorProductKeyVersion;
-	}
-
-	public ProductKeyVersion getMicroProductKeyVersion() {
-		return _microProductKeyVersion;
-	}
-
-	public ProductKeyVersion getMinorProductKeyVersion() {
-		return _minorProductKeyVersion;
+	public String getLiferayProductVersion() {
+		return _liferayProductVersion;
 	}
 
 	public String getProduct() {
 		return _product;
 	}
 
-	public int getProductRank() {
-		return _productRank;
+	public String getProductKey() {
+		return _productKey;
+	}
+
+	public Date getReleaseDate() {
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+			return format.parse(_releaseDate);
+		}
+		catch (Exception exception) {
+			return null;
+		}
+	}
+
+	public boolean isPromoted() {
+		return _promoted;
 	}
 
 	public boolean isQuarterly() {
 		return _quarterly;
 	}
 
-	public void setMajorProductKeyVersion(ProductKeyVersion majorProductKeyVersion) {
-		_majorProductKeyVersion = majorProductKeyVersion;
-	}
-
-	public void setMicroProductKeyVersion(ProductKeyVersion microProductKeyVersion) {
-		_microProductKeyVersion = microProductKeyVersion;
-	}
-
-	public void setMinorProductKeyVersion(ProductKeyVersion minorProductKeyVersion) {
-		_minorProductKeyVersion = minorProductKeyVersion;
-	}
-
 	public void setProduct(String product) {
 		_product = product;
-	}
-
-	public void setProductRank(int productRank) {
-		_productRank = productRank;
 	}
 
 	public void setQuarterly(boolean quarterly) {
 		_quarterly = quarterly;
 	}
 
-	private ProductKeyVersion _majorProductKeyVersion = ProductKeyVersion.BLANK;
-	private ProductKeyVersion _microProductKeyVersion = ProductKeyVersion.BLANK;
-	private ProductKeyVersion _minorProductKeyVersion = ProductKeyVersion.BLANK;
+	private String _safeGet(Map<String, String> map, String key, String defVal) {
+		return Optional.ofNullable(
+			map
+		).map(
+			m -> m.get(key)
+		).orElse(
+			defVal
+		);
+	}
+
+	private String _liferayProductVersion;
 	private String _product;
-	private int _productRank = -1;
-	private boolean _quarterly = false;
+	private String _productKey;
+	private Boolean _promoted = false;
+	private Boolean _quarterly = false;
+	private String _releaseDate;
 
 }

@@ -12,7 +12,8 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ProductKeyInfo;
+import com.liferay.blade.cli.util.ReleaseInfo;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -75,17 +76,13 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			if (!baseLiferayVersion.isPresent()) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
-				Map<String, Object> productInfoMap = BladeUtil.getProductInfos();
+				ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(productKey);
 
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
-
-				if (productInfo != null) {
-					baseLiferayVersion = Optional.ofNullable(
-						productInfo.getTargetPlatformVersion()
-					).filter(
-						BladeUtil::isNotEmpty
-					);
-				}
+				baseLiferayVersion = Optional.ofNullable(
+					releaseInfo.getTargetPlatformVersion()
+				).filter(
+					BladeUtil::isNotEmpty
+				);
 			}
 
 			if (!baseLiferayVersion.isPresent()) {
@@ -144,6 +141,15 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 					}
 				}
 				else {
+					Map<String, ProductKeyInfo> workspaceProductTargetPlatformVersions =
+						BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
+
+					ProductKeyInfo productKeyInfo = workspaceProductTargetPlatformVersions.get(targetPlatformVersion);
+
+					if (productKeyInfo.isQuarterly()) {
+						return "dxp";
+					}
+
 					Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
 
 					int microVersion = version.getMicro();

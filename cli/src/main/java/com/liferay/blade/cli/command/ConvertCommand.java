@@ -13,7 +13,7 @@ import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ListUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ReleaseInfo;
 import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.blade.gradle.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
@@ -1211,14 +1211,12 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			Path userHomePath = userHomeDir.toPath();
 
-			Path productInfoPath = userHomePath.resolve(".liferay/workspace/.product_info.json");
+			Path productInfoPath = userHomePath.resolve(".liferay/workspace/releases.json");
 
 			if (!Files.exists(productInfoPath)) {
-				Map<String, Object> productInfos = BladeUtil.getProductInfos();
+				ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(productKey);
 
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(productKey));
-
-				return Optional.of(productInfo.getTargetPlatformVersion());
+				return Optional.of(releaseInfo.getTargetPlatformVersion());
 			}
 
 			JSONObject jsonObject = new JSONObject(new String(Files.readAllBytes(productInfoPath.normalize())));

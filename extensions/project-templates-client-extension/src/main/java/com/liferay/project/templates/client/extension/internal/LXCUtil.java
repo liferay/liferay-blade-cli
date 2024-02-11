@@ -25,6 +25,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.security.MessageDigest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -126,9 +127,7 @@ public class LXCUtil {
 			commands.add("/c");
 			commands.add(lxcPath.toString());
 
-			for (String arg : args) {
-				commands.add(arg);
-			}
+			Collections.addAll(commands, args);
 		}
 		else {
 			commands.add("sh");

@@ -20,6 +20,9 @@ public abstract class BaseCommand<T extends BaseArgs> {
 		_args = args;
 	}
 
+	public void commandPostAction() throws Exception {
+	}
+
 	public abstract void execute() throws Exception;
 
 	public T getArgs() {

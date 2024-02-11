@@ -9,10 +9,12 @@ import aQute.bnd.version.Version;
 
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ProductKeyInfo;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
 
 import java.io.File;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -33,6 +35,15 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 
 		if (targetPlatformVersion == null) {
 			return "portal";
+		}
+
+		Map<String, ProductKeyInfo> workspaceProductTargetPlatformVersions =
+			BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
+
+		ProductKeyInfo productKeyInfo = workspaceProductTargetPlatformVersions.get(targetPlatformVersion);
+
+		if (productKeyInfo.isQuarterly()) {
+			return "dxp";
 		}
 
 		try {
