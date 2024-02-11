@@ -141,7 +141,8 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 					}
 				}
 				else {
-					Map<String, ProductKeyInfo> workspaceProductTargetPlatformVersions = BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
+					Map<String, ProductKeyInfo> workspaceProductTargetPlatformVersions =
+						BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
 
 					ProductKeyInfo productKeyInfo = workspaceProductTargetPlatformVersions.get(targetPlatformVersion);
 

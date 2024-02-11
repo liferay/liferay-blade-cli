@@ -11,8 +11,6 @@ import com.liferay.blade.cli.command.SamplesCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
 
-import groovy.json.JsonSlurper;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -319,17 +317,6 @@ public class BladeUtil {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public static ReleaseInfo getReleaseInfo(String productKey) {
-		Map<String, Object> releasesInfos = getReleasesInfos();
-
-		ProductKeyInfo productKeyInfo = new ProductKeyInfo(
-			productKey, (Map<String, String>)releasesInfos.get(productKey));
-
-		return new ReleaseInfo(
-			productKeyInfo, getReleaseProperties(productKeyInfo.getProduct(), productKeyInfo.getProductKey()));
-	}
-
 	public static Properties getProperties(File file) {
 		Properties properties = new Properties();
 
@@ -342,66 +329,45 @@ public class BladeUtil {
 		return properties;
 	}
 
-	public static Properties getReleaseProperties(String product, String productKey) {
-		Properties properties = new Properties();
+	@SuppressWarnings("unchecked")
+	public static ReleaseInfo getReleaseInfo(String productKey) {
+		Map<String, Object> releasesInfos = getReleaseKeyInfos();
 
+		ProductKeyInfo productKeyInfo = new ProductKeyInfo(
+			productKey, (Map<String, String>)releasesInfos.get(productKey));
+
+		return new ReleaseInfo(
+			productKeyInfo, getReleaseProperties(productKeyInfo.getProduct(), productKeyInfo.getProductKey()));
+	}
+
+	public static Map<String, Object> getReleaseKeyInfos() {
+		return getReleaseKeyInfos(false, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static synchronized Map<String, Object> getReleaseKeyInfos(boolean trace, PrintStream printStream) {
+		if (!_releaseKeyInfoMap.isEmpty()) {
+			return _releaseKeyInfoMap;
+		}
+
+		_releaseKeyInfoMap = (Map<String, Object>)ResourceUtil.readJson(
+			Map.class, ResourceUtil.getURLResolver(_workspaceCacheDir, _RELEASE_INFO_URL, "releases.json"),
+			ResourceUtil.getClassLoaderResolver("/releases.json"));
+
+		return _releaseKeyInfoMap;
+	}
+
+	public static Properties getReleaseProperties(String product, String productKey) {
 		File productDest = new File(_workspaceCacheDir, product);
 
 		File releasePropertiesDest = new File(productDest, productKey);
 
-		try {
-			String actualReleasePropertiesUrl = MessageFormat.format(_RELEASE_PROPERTIES_URL, product, productKey);
+		String actualReleasePropertiesUrl = MessageFormat.format(_RELEASE_PROPERTIES_URL, product, productKey);
 
-			Path releasesPropertiesPath = downloadFile(
-				actualReleasePropertiesUrl, releasePropertiesDest.toPath(), "release.properties");
-
-			if (Files.exists(releasesPropertiesPath)) {
-				try (InputStream input = Files.newInputStream(releasesPropertiesPath)) {
-					properties.load(input);
-				}
-			}
-		}
-		catch (Exception exception) {
-		}
-
-		return properties;
-	}
-
-	public static Map<String, Object> getReleasesInfos() {
-		return getReleasesInfos(false, null);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static synchronized Map<String, Object> getReleasesInfos(boolean trace, PrintStream printStream) {
-		if (!_releasesInfoMap.isEmpty()) {
-			return _releasesInfoMap;
-		}
-
-		JsonSlurper jsonSlurper = new JsonSlurper();
-
-		try {
-			Path releasesInfoPath = downloadFile(_RELEASE_INFO_URL, _workspaceCacheDir.toPath(), "releases.json");
-
-			try (BufferedReader reader = Files.newBufferedReader(releasesInfoPath)) {
-				_releasesInfoMap = (Map<String, Object>)jsonSlurper.parse(reader);
-			}
-		}
-		catch (Exception exception1) {
-			if (trace && (printStream != null)) {
-				exception1.printStackTrace(printStream);
-			}
-
-			try (InputStream resourceAsStream = BladeUtil.class.getResourceAsStream("/releases.json")) {
-				_releasesInfoMap = (Map<String, Object>)jsonSlurper.parse(resourceAsStream);
-			}
-			catch (Exception exception2) {
-				if (trace && (printStream != null)) {
-					exception2.printStackTrace(printStream);
-				}
-			}
-		}
-
-		return _releasesInfoMap;
+		return ResourceUtil.readProperties(
+			ResourceUtil.getLocalFileResolver(new File(releasePropertiesDest, "release.properties")),
+			ResourceUtil.getURLResolver(releasePropertiesDest, actualReleasePropertiesUrl, "release.properties"),
+			ResourceUtil.getURLResolver(releasePropertiesDest, actualReleasePropertiesUrl, "release.properties"));
 	}
 
 	public static Collection<String> getTemplateNames(BladeCLI blade) throws Exception {
@@ -428,7 +394,7 @@ public class BladeUtil {
 
 	@SuppressWarnings("unchecked")
 	public static List<String> getWorkspaceProductKeys(boolean promoted) {
-		Map<String, Object> releasesInfos = getReleasesInfos();
+		Map<String, Object> releasesInfos = getReleaseKeyInfos();
 
 		return releasesInfos.keySet(
 		).stream(
@@ -461,7 +427,7 @@ public class BladeUtil {
 
 	@SuppressWarnings("unchecked")
 	public static Map<String, ProductKeyInfo> getWorkspaceProductTargetPlatformVersions(boolean promoted) {
-		Map<String, Object> releasesInfos = getReleasesInfos();
+		Map<String, Object> releasesInfos = getReleaseKeyInfos();
 
 		return releasesInfos.entrySet(
 		).stream(
@@ -840,7 +806,7 @@ public class BladeUtil {
 			Header lastModifiedHeader = closeableHttpResponse.getFirstHeader(HttpHeaders.LAST_MODIFIED);
 
 			if (lastModifiedHeader != null) {
-				lastModifiedDate = DateUtils.parseDate(lastModifiedHeader.getValue());
+				lastModifiedDate = DateUtils.toDate(DateUtils.parseStandardDate(lastModifiedHeader.getValue()));
 			}
 			else {
 				lastModifiedDate = new Date();
@@ -908,7 +874,7 @@ public class BladeUtil {
 	private static final String _RELEASE_PROPERTIES_URL = "http://localhost:3000/{0}/{1}/release.properties";
 
 	private static final Pattern _microPattern = Pattern.compile("((([efs])p)|(ga)|(u))([0-9]+)(-[0-9]+)?");
-	private static Map<String, Object> _releasesInfoMap = Collections.emptyMap();
+	private static Map<String, Object> _releaseKeyInfoMap = Collections.emptyMap();
 	private static final File _workspaceCacheDir = new File(
 		System.getProperty("user.home"), _DEFAULT_WORKSPACE_CACHE_DIR_NAME);
 

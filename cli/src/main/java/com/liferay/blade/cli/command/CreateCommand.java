@@ -365,7 +365,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 		ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(liferayVersion.get());
 
-		if (releaseInfo.getProductKey().isQuarterly() && product.isPresent() && Objects.equals(product.get(), "dxp")) {
+		if (releaseInfo.getProductKey(
+			).isQuarterly() && product.isPresent() && Objects.equals(product.get(), "dxp")) {
+
 			String projectTemplate = projectTemplatesArgs.getTemplate();
 
 			switch (projectTemplate) {
@@ -496,7 +498,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(versionString);
 
-			if (releaseInfo.getProductKey().isPromoted()) {
+			if (releaseInfo.getProductKey(
+				).isPromoted()) {
+
 				return "";
 			}
 

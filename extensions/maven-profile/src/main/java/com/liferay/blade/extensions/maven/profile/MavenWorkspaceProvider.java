@@ -7,7 +7,6 @@ package com.liferay.blade.extensions.maven.profile;
 
 import aQute.bnd.version.Version;
 
-import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ProductKeyInfo;
@@ -17,7 +16,6 @@ import java.io.File;
 
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Matcher;
 
 /**
  * @author Christopher Bryan Boyd
@@ -39,7 +37,8 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 			return "portal";
 		}
 
-		Map<String, ProductKeyInfo> workspaceProductTargetPlatformVersions = BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
+		Map<String, ProductKeyInfo> workspaceProductTargetPlatformVersions =
+			BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
 
 		ProductKeyInfo productKeyInfo = workspaceProductTargetPlatformVersions.get(targetPlatformVersion);
 

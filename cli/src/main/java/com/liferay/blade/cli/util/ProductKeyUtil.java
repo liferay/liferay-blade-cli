@@ -23,7 +23,7 @@ public class ProductKeyUtil {
 
 	@SuppressWarnings("unchecked")
 	public static ProductKeyInfo createProductKeyInfo(String productKey) {
-		Map<String, Object> releasesInfos = BladeUtil.getReleasesInfos();
+		Map<String, Object> releasesInfos = BladeUtil.getReleaseKeyInfos();
 
 		return new ProductKeyInfo(productKey, (Map<String, String>)releasesInfos.get(productKey));
 	}

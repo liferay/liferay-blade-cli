@@ -9,7 +9,6 @@ import aQute.bnd.version.Version;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
-import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
@@ -18,10 +17,9 @@ import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.util.FileUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -37,7 +35,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 /**
  * @author Gregory Amerson
@@ -51,7 +48,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void execute() throws Exception {
 		BladeCLI bladeCLI = getBladeCLI();
 
@@ -134,7 +130,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 				_trace("Found Plugins SDK, moving contents to new subdirectory and initing workspace.");
 
-				Path tempDir = Files.createTempDirectory("orignal-sdk");
+				Path tempDir = Files.createTempDirectory("original-sdk");
 
 				temp = tempDir.toFile();
 
@@ -193,7 +189,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		String liferayVersion;
 		String workspaceProductKey;
 
-		Map<String, Object> releasesInfos = BladeUtil.getReleasesInfos(initArgs.isTrace(), bladeCLI.error());
+		Map<String, Object> releasesInfos = BladeUtil.getReleaseKeyInfos(initArgs.isTrace(), bladeCLI.error());
 
 		if (!mavenBuild) {
 			workspaceProductKey = _getDefaultProductKey(initArgs);
@@ -216,13 +212,13 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 			ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(workspaceProductKey);
 
-			String targetPlatformVersion = releaseInfo.getTargetPlatformVersion();
+			if (releaseInfo.getProductKey(
+				).isQuarterly()) {
 
-			if (releaseInfo.getProductKey().isQuarterly()) {
 				liferayVersion = "7.4";
 			}
 			else {
-				Version normalTargetPlatformVersion = _makeCompatibleVersion(targetPlatformVersion);
+				Version normalTargetPlatformVersion = _makeCompatibleVersion(releaseInfo.getTargetPlatformVersion());
 
 				liferayVersion =
 					normalTargetPlatformVersion.getMajor() + "." + normalTargetPlatformVersion.getMinor() + "." +
@@ -232,15 +228,23 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		else {
 			workspaceProductKey = _setProductAndVersionForMaven(releasesInfos, initArgs);
 
+			Object productInfoObject = releasesInfos.get(workspaceProductKey);
+
+			if (productInfoObject == null) {
+				_addError("Unable to get product info for selected version " + workspaceProductKey);
+
+				return;
+			}
+
 			liferayVersion = initArgs.getLiferayVersion();
-		}
 
-		Object productInfoObject = releasesInfos.get(workspaceProductKey);
+			ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(workspaceProductKey);
 
-		if (productInfoObject == null) {
-			_addError("Unable to get product info for selected version " + workspaceProductKey);
+			if (releaseInfo.getProductKey(
+				).isQuarterly()) {
 
-			return;
+				liferayVersion = "7.4";
+			}
 		}
 
 		if (Objects.equals(initArgs.getLiferayProduct(), "commerce")) {
@@ -318,6 +322,8 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		settings.setProfileName(profileName);
 
 		settings.save();
+
+		commandPostAction();
 	}
 
 	@Override
@@ -329,7 +335,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		getBladeCLI().addErrors("init", Collections.singleton(msg));
 	}
 
-	private String _getDefaultProductKey(InitArgs initArgs) throws Exception {
+	private String _getDefaultProductKey(InitArgs initArgs) {
 		String liferayVersion = initArgs.getLiferayVersion();
 
 		if (liferayVersion.startsWith("portal") || liferayVersion.startsWith("dxp") ||
@@ -345,11 +351,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			value -> value.startsWith(initArgs.getLiferayProduct() + "-" + initArgs.getLiferayVersion())
 		).findFirst();
 
-		if (!defaultVersion.isPresent()) {
-			return initArgs.getLiferayVersion();
-		}
-
-		return defaultVersion.get();
+		return defaultVersion.orElseGet(initArgs::getLiferayVersion);
 	}
 
 	private boolean _isPluginsSDK(File dir) {
@@ -357,9 +359,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			return false;
 		}
 
-		List<String> names = Arrays.asList(dir.list());
+		List<String> names = Arrays.asList(Objects.requireNonNull(dir.list()));
 
-		if ((names != null) && names.contains("portlets") && names.contains("hooks") && names.contains("layouttpl") &&
+		if (names.contains("portlets") && names.contains("hooks") && names.contains("layouttpl") &&
 			names.contains("themes") && names.contains("build.properties") && names.contains("build.xml") &&
 			names.contains("build-common.xml") && names.contains("build-common-plugin.xml")) {
 
@@ -377,11 +379,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		File buildProperties = new File(dir, "build.properties");
 		Properties properties = new Properties();
 
-		InputStream in = null;
-
-		try {
-			in = new FileInputStream(buildProperties);
-
+		try (BufferedReader in = Files.newBufferedReader(buildProperties.toPath())) {
 			properties.load(in);
 
 			String sdkVersionValue = (String)properties.get("lp.version");
@@ -392,15 +390,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 		catch (Exception exception) {
 		}
-		finally {
-			if (in != null) {
-				try {
-					in.close();
-				}
-				catch (Exception exception) {
-				}
-			}
-		}
 
 		return false;
 	}
@@ -408,7 +397,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 	private Version _makeCompatibleVersion(String targetPlatformVersion) {
 		int dash = targetPlatformVersion.indexOf("-");
 
-		Version productTargetPlatformVersion = null;
+		Version productTargetPlatformVersion;
 
 		if (dash != -1) {
 			productTargetPlatformVersion = Version.parseVersion(targetPlatformVersion.substring(0, dash));
@@ -489,8 +478,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			});
 	}
 
-	@SuppressWarnings("unchecked")
-	private String _setProductAndVersionForMaven(Map<String, Object> productInfos, InitArgs initArgs) throws Exception {
+	private String _setProductAndVersionForMaven(Map<String, Object> releaseInfos, InitArgs initArgs) throws Exception {
 		String possibleProductKey = _getDefaultProductKey(initArgs);
 
 		if (possibleProductKey.startsWith("portal") || possibleProductKey.startsWith("dxp") ||
@@ -507,15 +495,15 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			return possibleProductKey;
 		}
 
-		for (Map.Entry<String, Object> entryKey : productInfos.entrySet()) {
+		for (Map.Entry<String, Object> entryKey : releaseInfos.entrySet()) {
 			ReleaseInfo releaseInfo = BladeUtil.getReleaseInfo(entryKey.getKey());
 
 			if (Objects.equals(possibleProductKey, releaseInfo.getTargetPlatformVersion())) {
 				possibleProductKey = entryKey.getKey();
 
-				String[] productKeyValues = possibleProductKey.split("-");
-
-				initArgs.setLiferayProduct(productKeyValues[0]);
+				initArgs.setLiferayProduct(
+					releaseInfo.getProductKey(
+					).getProduct());
 
 				return possibleProductKey;
 			}

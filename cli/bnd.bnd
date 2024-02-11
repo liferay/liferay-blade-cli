@@ -3,7 +3,6 @@ Bundle-Version: ${project.version}.${tstamp}
 JPM-Command: blade
 Main-Class: com.liferay.blade.cli.BladeCLI
 Private-Package:\
-	aQute.bnd.header;-split-package:=merge-first,\
 	aQute.bnd.maven;-split-package:=merge-first,\
 	aQute.bnd.osgi;-split-package:=merge-first,\
 	aQute.bnd.service;-split-package:=merge-first,\
@@ -17,6 +16,13 @@ Private-Package:\
 	aQute.libg.reporter;-split-package:=merge-first,\
 	\
 	aQute.service.reporter;-split-package:=merge-first,\
+	\
+	com.google.gson,\
+	com.google.gson.stream,\
+	com.google.gson.internal.bind,\
+	com.google.gson.internal,\
+	com.google.gson.reflect,\
+	com.google.gson.internal.sql,\
 	\
 	com.liferay.blade.gradle.tooling,\
 	\

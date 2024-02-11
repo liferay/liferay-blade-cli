@@ -30,9 +30,9 @@ import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
-import com.liferay.blade.cli.util.ReleaseInfo;
 import com.liferay.blade.cli.util.ProductKeyInfo;
 import com.liferay.blade.cli.util.Prompter;
+import com.liferay.blade.cli.util.ReleaseInfo;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -100,7 +100,7 @@ public class BladeCLI {
 
 		boolean profileNameIsPresent = false;
 
-		if ((profileName != null) && (profileName.length() > 0)) {
+		if ((profileName != null) && !profileName.isEmpty()) {
 			profileNameIsPresent = true;
 		}
 
@@ -863,7 +863,7 @@ public class BladeCLI {
 
 			Iterator<String> it = options.iterator();
 
-			Map<String, Object> releasesInfos = BladeUtil.getReleasesInfos(true, error());
+			Map<String, Object> releaseKeyInfos = BladeUtil.getReleaseKeyInfos(true, error());
 
 			Map<String, String> optionsMap = new LinkedHashMap<>();
 
@@ -871,7 +871,7 @@ public class BladeCLI {
 				String option = it.next();
 
 				ProductKeyInfo productKeyInfo = new ProductKeyInfo(
-					option, (Map<String, String>)releasesInfos.get(option));
+					option, (Map<String, String>)releaseKeyInfos.get(option));
 
 				ReleaseInfo releaseInfo = new ReleaseInfo(
 					productKeyInfo,

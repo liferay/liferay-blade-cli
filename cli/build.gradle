@@ -76,6 +76,7 @@ createWrapperZip {
 
 dependencies {
 	api group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "5.3.0"
+	api group: "com.google.code.gson", name: "gson", version: "2.9.0"
 	api group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
 	api group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.283"
 	api group: "commons-io", name: "commons-io", version: "2.7"
@@ -111,7 +112,7 @@ dependencies {
 	api name: "org.objectweb.asm.tree-6.0.0"
 	api name: "org.objectweb.asm.util-6.0.0"
 
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.39-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.40-SNAPSHOT"
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.client.extension", version: "1.0.6-SNAPSHOT"
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.22-SNAPSHOT"
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.23-SNAPSHOT"
@@ -213,6 +214,7 @@ if (project.hasProperty("release") || project.hasProperty("snapshots")) {
 }
 
 repositories {
+	mavenLocal()
 	flatDir {
 		dirs "${rootProject.projectDir}/libs"
 	}

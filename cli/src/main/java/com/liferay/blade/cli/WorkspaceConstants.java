@@ -7,7 +7,6 @@ package com.liferay.blade.cli;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * @author David Truong
