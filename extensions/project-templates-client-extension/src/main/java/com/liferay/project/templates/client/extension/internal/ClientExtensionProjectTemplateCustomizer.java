@@ -7,8 +7,7 @@ package com.liferay.project.templates.client.extension.internal;
 
 import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.project.templates.extensions.ProjectTemplateCustomizer;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 
@@ -21,7 +20,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.apache.maven.archetype.ArchetypeGenerationRequest;
@@ -156,11 +154,9 @@ public class ClientExtensionProjectTemplateCustomizer implements ProjectTemplate
 			Path productInfoPath = userHomePath.resolve(".liferay/workspace/.product_info.json");
 
 			if (!Files.exists(productInfoPath)) {
-				Map<String, Object> productInfos = BladeUtil.getProductInfos();
+				ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(productKey);
 
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(productKey));
-
-				return productInfo.getTargetPlatformVersion();
+				return releaseEntry.getTargetPlatformVersion();
 			}
 
 			JSONObject jsonObject = new JSONObject(new String(Files.readAllBytes(productInfoPath.normalize())));
