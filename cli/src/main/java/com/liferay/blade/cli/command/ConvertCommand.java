@@ -13,7 +13,7 @@ import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CopyDirVisitor;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ListUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.blade.gradle.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
@@ -65,8 +65,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.LoadProperties;
-
-import org.json.JSONObject;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1160,13 +1158,14 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			String productKey = productKeyOpt.get();
 
-			Optional<String> targetPlatformVersionFromProduct = _getTargetPlatformVersionFromProduct(productKey);
+			String targetPlatformVersion = ReleaseUtil.withReleaseEntry(
+				productKey, ReleaseUtil.ReleaseEntry::getTargetPlatformVersion);
 
-			if (!targetPlatformVersionFromProduct.isPresent()) {
+			if (targetPlatformVersion == null) {
 				return Collections.emptyList();
 			}
 
-			String simplifiedVersion = BladeUtil.simplifyTargetPlatformVersion(targetPlatformVersionFromProduct.get());
+			String simplifiedVersion = BladeUtil.simplifyTargetPlatformVersion(targetPlatformVersion);
 
 			String[] versionParts = simplifiedVersion.split("\\.");
 
@@ -1200,43 +1199,6 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 		}
 
 		return Collections.emptyList();
-	}
-
-	@SuppressWarnings("unchecked")
-	private Optional<String> _getTargetPlatformVersionFromProduct(String productKey) {
-		try {
-			File userHomeDir = new File(System.getProperty("user.home"));
-
-			userHomeDir = userHomeDir.getCanonicalFile();
-
-			Path userHomePath = userHomeDir.toPath();
-
-			Path productInfoPath = userHomePath.resolve(".liferay/workspace/.product_info.json");
-
-			if (!Files.exists(productInfoPath)) {
-				Map<String, Object> productInfos = BladeUtil.getProductInfos();
-
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(productKey));
-
-				return Optional.of(productInfo.getTargetPlatformVersion());
-			}
-
-			JSONObject jsonObject = new JSONObject(new String(Files.readAllBytes(productInfoPath.normalize())));
-
-			return Optional.ofNullable(
-				jsonObject.get(productKey)
-			).map(
-				JSONObject.class::cast
-			).map(
-				info -> info.get("targetPlatformVersion")
-			).map(
-				Object::toString
-			);
-		}
-		catch (Exception exception) {
-		}
-
-		return Optional.empty();
 	}
 
 	private boolean _hasServiceXmlFile(File dir) {
