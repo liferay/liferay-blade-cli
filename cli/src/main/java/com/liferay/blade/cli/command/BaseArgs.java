@@ -36,6 +36,10 @@ public class BaseArgs {
 		return _quiet;
 	}
 
+	public boolean isRefreshReleases() {
+		return _refreshReleases;
+	}
+
 	public boolean isTrace() {
 		return _trace;
 	}
@@ -50,6 +54,10 @@ public class BaseArgs {
 
 	public void setQuiet(boolean quiet) {
 		_quiet = quiet;
+	}
+
+	public void setRefreshReleases(boolean refreshReleases) {
+		_refreshReleases = refreshReleases;
 	}
 
 	@Parameter(
@@ -68,6 +76,9 @@ public class BaseArgs {
 
 	@Parameter(description = "Do not print any optional messages to console.", hidden = true, names = {"-q", "--quiet"})
 	private boolean _quiet;
+
+	@Parameter(description = "Force Blade to check for new releases", names = "--refresh-releases")
+	private boolean _refreshReleases;
 
 	@Parameter(description = "Print exception stack traces when they occur.", hidden = true, names = "--trace")
 	private boolean _trace;
