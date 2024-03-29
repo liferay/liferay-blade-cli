@@ -19,6 +19,7 @@ buildscript {
 }
 
 apply plugin: "biz.aQute.bnd.builder"
+apply plugin: "idea"
 apply plugin: "java-library"
 apply plugin: "maven-publish"
 
