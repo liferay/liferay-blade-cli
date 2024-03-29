@@ -32,6 +32,7 @@ import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
 import com.liferay.blade.cli.util.ProductInfo;
 import com.liferay.blade.cli.util.Prompter;
+import com.liferay.blade.cli.util.ReleaseUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -473,7 +474,13 @@ public class BladeCLI {
 
 						Object commandArgs = objects.get(0);
 
-						_validateParameters((BaseArgs)commandArgs);
+						BaseArgs baseArgs = (BaseArgs)commandArgs;
+
+						if (baseArgs.isRefreshReleases()) {
+							ReleaseUtil.refreshReleases();
+						}
+
+						_validateParameters(baseArgs);
 
 						String parameterMessage = null;
 
