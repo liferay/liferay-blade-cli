@@ -7,14 +7,10 @@ package com.liferay.blade.cli.command.validator;
 
 import com.beust.jcommander.ParameterException;
 
-import com.liferay.blade.cli.WorkspaceConstants;
-import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductKeyUtil;
-import com.liferay.project.templates.extensions.util.VersionUtil;
+import com.liferay.blade.cli.util.ReleaseUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Simon Jiang
@@ -23,21 +19,19 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 
 	@Override
 	public List<String> get() {
-		return BladeUtil.getWorkspaceProductKeys(false);
+		return ReleaseUtil.withReleaseEntriesStream(
+			stream -> stream.map(
+				ReleaseUtil.ReleaseEntry::getReleaseKey
+			).collect(
+				Collectors.toList()
+			));
 	}
 
 	@Override
 	public void validate(String name, String value) throws ParameterException {
-		List<String> possibleValues = new ArrayList<>(get());
+		ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(value);
 
-		Set<String> allTargetPlatformVersions = BladeUtil.getWorkspaceProductTargetPlatformVersions(false);
-
-		possibleValues.addAll(WorkspaceConstants.originalLiferayVersions);
-
-		if ((!possibleValues.contains(value) && !allTargetPlatformVersions.contains(value)) ||
-			(!ProductKeyUtil.verifyPortalDxpWorkspaceProduct(value) && !VersionUtil.isLiferayVersion(value) &&
-			 !ProductKeyUtil.verifyCommerceWorkspaceProduct(value))) {
-
+		if (releaseEntry == null) {
 			throw new ParameterException(value + " is not a valid value.");
 		}
 	}
