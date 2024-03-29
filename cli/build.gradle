@@ -78,7 +78,7 @@ dependencies {
 	api group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "5.3.0"
 	api group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.16.1"
 	api group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
-	api group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.269"
+	api group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.289"
 	api group: "commons-io", name: "commons-io", version: "2.7"
 	api group: "commons-lang", name: "commons-lang", version: "2.6"
 	api group: "org.apache.ant", name: "ant", version: "1.10.11"
