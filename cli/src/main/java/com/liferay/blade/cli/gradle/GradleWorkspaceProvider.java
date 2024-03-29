@@ -12,12 +12,11 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ReleaseUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -75,17 +74,14 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			if (!baseLiferayVersion.isPresent()) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
-				Map<String, Object> productInfoMap = BladeUtil.getProductInfos();
+				String targetPlatformVersion = ReleaseUtil.withReleaseEntry(
+					productKey, ReleaseUtil.ReleaseEntry::getTargetPlatformVersion);
 
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoMap.get(productKey));
-
-				if (productInfo != null) {
-					baseLiferayVersion = Optional.ofNullable(
-						productInfo.getTargetPlatformVersion()
-					).filter(
-						BladeUtil::isNotEmpty
-					);
-				}
+				baseLiferayVersion = Optional.ofNullable(
+					targetPlatformVersion
+				).filter(
+					BladeUtil::isNotEmpty
+				);
 			}
 
 			if (!baseLiferayVersion.isPresent()) {
