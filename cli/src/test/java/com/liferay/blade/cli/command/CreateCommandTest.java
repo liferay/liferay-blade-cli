@@ -710,7 +710,7 @@ public class CreateCommandTest {
 
 		_contains(componentFile, ".*^public class SimulatorSimulationPanelApp.*extends BaseJSPPanelApp.*$");
 
-		_contains(componentFile, ".*public void setServletContext.*$");
+		_contains(componentFile, ".*private ServletContext _servletContext;.*$");
 
 		_checkFileExists(projectPath + "/build.gradle");
 	}
