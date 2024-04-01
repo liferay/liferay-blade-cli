@@ -6,6 +6,7 @@
 package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.command.BaseArgs;
+import com.liferay.blade.cli.util.ReleaseUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,18 +19,13 @@ import java.nio.file.Paths;
 
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
  * @author Gregory Amerson
  */
 public class BladeTest extends BladeCLI {
-
-	public static final String LIFERAY_VERSION_70 = "7.0";
-
-	public static final String LIFERAY_VERSION_71 = "7.1";
-
-	public static final String LIFERAY_VERSION_72 = "7.2";
 
 	public static final String LIFERAY_VERSION_73 = "7.3";
 
@@ -41,30 +37,78 @@ public class BladeTest extends BladeCLI {
 
 	public static final String LIFERAY_VERSION_PORTAL_7456 = "7.4.3.56";
 
-	public static final String PRODUCT_VERSION_COMMERCE_206 = "commerce-2.0.6";
+	public static final String PRODUCT_VERSION_DXP_70 = getFirstProductKey(
+		_getProductPredicate(
+			"dxp"
+		).and(
+			_getProductGroupVersionPredicate("7.0")
+		));
 
-	public static final String PRODUCT_VERSION_COMMERCE_207 = "commerce-2.0.7-7.2";
+	public static final String PRODUCT_VERSION_DXP_71 = getFirstProductKey(
+		_getProductPredicate(
+			"dxp"
+		).and(
+			_getProductGroupVersionPredicate("7.1")
+		));
 
-	public static final String PRODUCT_VERSION_DXP_70 = "dxp-7.0-sp17";
+	public static final String PRODUCT_VERSION_DXP_72 = getFirstProductKey(
+		_getProductPredicate(
+			"dxp"
+		).and(
+			_getProductGroupVersionPredicate("7.2")
+		));
 
-	public static final String PRODUCT_VERSION_DXP_71 = "dxp-7.1-sp7";
+	public static final String PRODUCT_VERSION_DXP_73 = getFirstProductKey(
+		_getProductPredicate(
+			"dxp"
+		).and(
+			_getProductGroupVersionPredicate("7.3")
+		));
 
-	public static final String PRODUCT_VERSION_DXP_72 = "dxp-7.2-sp7";
-
-	public static final String PRODUCT_VERSION_DXP_73 = "dxp-7.3-u15";
-
-	public static final String PRODUCT_VERSION_DXP_74 = "dxp-7.4-u38";
+	public static final String PRODUCT_VERSION_DXP_74 = getFirstProductKey(
+		_getProductPredicate(
+			"dxp"
+		).and(
+			_getProductGroupVersionPredicate("7.4")
+		));
 
 	public static final String PRODUCT_VERSION_DXP_74_U72 = "dxp-7.4-u72";
 
-	public static final String PRODUCT_VERSION_PORTAL_71 = "portal-7.1-ga4";
+	public static final String PRODUCT_VERSION_PORTAL_71 = getFirstProductKey(
+		_getProductPredicate(
+			"portal"
+		).and(
+			_getProductGroupVersionPredicate("7.1")
+		));
 
-	public static final String PRODUCT_VERSION_PORTAL_73 = "portal-7.3-ga8";
+	public static final String PRODUCT_VERSION_PORTAL_73 = getFirstProductKey(
+		_getProductPredicate(
+			"portal"
+		).and(
+			_getProductGroupVersionPredicate("7.3")
+		));
 
-	public static final String PRODUCT_VERSION_PORTAL_74 = "portal-7.4-ga4";
+	public static final String PRODUCT_VERSION_PORTAL_74 = getFirstProductKey(
+		_getProductPredicate(
+			"portal"
+		).and(
+			_getProductGroupVersionPredicate("7.4")
+		));
 
 	public static BladeTestBuilder builder() {
 		return new BladeTestBuilder();
+	}
+
+	public static String getFirstProductKey(Predicate<ReleaseUtil.ReleaseEntry> predicate) {
+		return ReleaseUtil.withReleaseEntriesStream(
+			releaseEntryStream -> releaseEntryStream.filter(
+				predicate
+			).map(
+				ReleaseUtil.ReleaseEntry::getReleaseKey
+			).findFirst(
+			).orElse(
+				""
+			));
 	}
 
 	@Override
@@ -225,6 +269,14 @@ public class BladeTest extends BladeCLI {
 
 	protected BladeTest(PrintStream out, PrintStream err, InputStream in) {
 		super(out, err, in);
+	}
+
+	private static Predicate<ReleaseUtil.ReleaseEntry> _getProductGroupVersionPredicate(String productGroupVersion) {
+		return releaseEntry -> Objects.equals(releaseEntry.getProductGroupVersion(), productGroupVersion);
+	}
+
+	private static Predicate<ReleaseUtil.ReleaseEntry> _getProductPredicate(String product) {
+		return releaseEntry -> Objects.equals(releaseEntry.getProduct(), product);
 	}
 
 	private File _getSettingsBaseDir() {
