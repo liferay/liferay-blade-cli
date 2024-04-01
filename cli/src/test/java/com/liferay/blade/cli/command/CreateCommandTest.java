@@ -2073,16 +2073,14 @@ public class CreateCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private void _addDefaultModulesDir(File workspace) throws Exception {
+	private void _appendGradleProperty(File workspace, String key, String value) throws Exception {
 		File gradleProperties = new File(workspace, "gradle.properties");
 
 		Assert.assertTrue(gradleProperties.exists());
 
-		String configLine =
-			System.lineSeparator() + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY + "=" +
-				WorkspaceConstants.DEFAULT_MODULES_DIR;
+		String propertyString = String.format("%n%s=%s", key, value);
 
-		Files.write(gradleProperties.toPath(), configLine.getBytes(), StandardOpenOption.APPEND);
+		Files.write(gradleProperties.toPath(), propertyString.getBytes(), StandardOpenOption.APPEND);
 	}
 
 	private File _checkFileDoesNotExists(String path) {
@@ -2127,6 +2125,18 @@ public class CreateCommandTest {
 		Assert.assertTrue(gradlePath.toString(), Files.exists(gradlePath));
 
 		_checkFileDoesNotExists(projectPath + "/bnd.bnd");
+	}
+
+	private void _configureGradleProperties(File workspace) throws Exception {
+
+		// Set default modules dir
+
+		_appendGradleProperty(
+			workspace, WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY, WorkspaceConstants.DEFAULT_MODULES_DIR);
+
+		// Increase maximum memory to fix issue with some 7zip bundles
+
+		_appendGradleProperty(workspace, "org.gradle.jvmargs", "-Xmx8g");
 	}
 
 	private void _contains(File file, String pattern) throws Exception {
@@ -2189,7 +2199,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(gradlewFile.getAbsolutePath());
 
-		_addDefaultModulesDir(workspace);
+		_configureGradleProperties(workspace);
 	}
 
 	private void _makeWorkspaceVersion(File workspace, String version) throws Exception {
@@ -2199,7 +2209,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		_addDefaultModulesDir(workspace);
+		_configureGradleProperties(workspace);
 	}
 
 	private void _resolveProject(BuildTask buildTask, String projectPath) throws Exception {
