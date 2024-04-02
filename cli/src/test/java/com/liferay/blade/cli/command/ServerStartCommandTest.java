@@ -5,7 +5,6 @@
 
 package com.liferay.blade.cli.command;
 
-import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
 
@@ -500,9 +499,7 @@ public class ServerStartCommandTest {
 	}
 
 	private void _initBladeWorkspace() throws Exception {
-		String[] initArgs = {
-			"--base", _testWorkspacePath.toString(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_71
-		};
+		String[] initArgs = {"--base", _testWorkspacePath.toString(), "init", "-v", _LIFERAY_WORKSPACE_PRODUCT_KEY};
 
 		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, initArgs);
 	}
@@ -732,6 +729,8 @@ public class ServerStartCommandTest {
 
 	private static final String _LIFERAY_WORKSPACE_BUNDLE_WILDFLY =
 		"liferay-ce-portal-wildfly-7.1.1-ga2-20181112144637000.tar.gz";
+
+	private static final String _LIFERAY_WORKSPACE_PRODUCT_KEY = "portal-7.1-ga2";
 
 	private int _debugPort = -1;
 	private ExecutorService _executorService = Executors.newSingleThreadExecutor();
