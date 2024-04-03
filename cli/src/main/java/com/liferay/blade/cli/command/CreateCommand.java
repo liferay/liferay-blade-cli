@@ -373,8 +373,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		properties.put("setAddOns", createArgs.getAddOns());
 		properties.put("setContributorType", createArgs.getContributorType());
 		properties.put("setDependencyInjector", createArgs.getDependencyInjector());
-		properties.put("setExtensionName", createArgs.getExtensionName());
-		properties.put("setExtensionType", createArgs.getExtensionType());
 		properties.put("setFramework", createArgs.getFramework());
 		properties.put("setFrameworkDependencies", createArgs.getFrameworkDependencies());
 		properties.put("setHostBundleSymbolicName", createArgs.getHostBundleBSN());

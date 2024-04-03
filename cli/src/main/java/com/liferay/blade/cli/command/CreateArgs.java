@@ -52,14 +52,6 @@ public class CreateArgs extends BaseArgs {
 		return _dir;
 	}
 
-	public String getExtensionName() {
-		return _extensionName;
-	}
-
-	public String getExtensionType() {
-		return _extensionType;
-	}
-
 	public String getFramework() {
 		return _framework;
 	}
@@ -142,14 +134,6 @@ public class CreateArgs extends BaseArgs {
 
 	public void setDir(File dir) {
 		_dir = dir;
-	}
-
-	public void setExtensionName(String extensionName) {
-		_extensionName = extensionName;
-	}
-
-	public void setExtensionType(String extensionType) {
-		_extensionType = extensionType;
 	}
 
 	public void setFramework(String framework) {
@@ -239,14 +223,6 @@ public class CreateArgs extends BaseArgs {
 
 	@Parameter(description = "The directory where to create the new project.", names = {"-d", "--dir"})
 	private File _dir;
-
-	@Parameter(description = "Sets the name of client-extension template.", hidden = true, names = "--extension-name")
-	private String _extensionName;
-
-	@Parameter(
-		description = "Sets the type of the client-extension template.", hidden = true, names = "--extension-type"
-	)
-	private String _extensionType;
 
 	@Parameter(
 		description = "The name of the framework to use in the generated project.", hidden = true, names = "--framework"

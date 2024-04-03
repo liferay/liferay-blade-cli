@@ -90,15 +90,6 @@ fi
 # Publish the Activator Project Template
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-activator:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
 
-# Publish the Content Targeting Report Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-report:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
-
-# Publish the Content Targeting Rule Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-rule:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
-
-# Publish the Content Targeting Tracking Action Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-content-targeting-tracking-action:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
-
 # Publish the Freemarker Portlet Project Template
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-freemarker-portlet:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
 
@@ -120,15 +111,6 @@ jsWidgetTemplatePublishCommand=$(cat /tmp/$timestamp/js-widget-template-publish-
 
 if [ "$retcode" != "0" ] || [ -z "$jsWidgetTemplatePublishCommand" ]; then
 	echo Failed :extensions:project-templates-js-widget:publish
-	exit 1
-fi
-
-# Publish the Client Extension Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-client-extension:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/client-extension-template-publish-command.txt; retcode=$?
-clientExtensionTemplatePublishCommand=$(cat /tmp/$timestamp/client-extension-template-publish-command.txt)
-
-if [ "$retcode" != "0" ] || [ -z "$clientExtensionTemplatePublishCommand" ]; then
-	echo Failed :extensions:project-templates-client-extension:publish
 	exit 1
 fi
 
