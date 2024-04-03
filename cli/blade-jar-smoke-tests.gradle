@@ -228,7 +228,7 @@ testBladeInitCommand {
 		initDir.mkdirs()
 	}
 
-	args = [jar.archivePath, "init", "-v", "dxp-7.2-ga1"]
+	args = [jar.archivePath, "init", "-v", "dxp-7.2.8"]
 	errorOutput = errorStream
 	standardOutput = standardStream
 	workingDir = initDir
@@ -305,7 +305,7 @@ testBladeInitCommandList {
 		standardStream.reset()
 
 		assert !error.contains("error")
-		assert !output.contains("dxp-7.2-sp1")
+		assert !output.contains("dxp-2023.q4.6")
 	}
 }
 
@@ -327,7 +327,7 @@ testBladeInitCommandListAll {
 		standardStream.reset()
 
 		assert !error.contains("error")
-		assert output.contains("dxp-7.2-sp1")
+		assert output.contains("dxp-2023.q4.6")
 	}
 }
 
