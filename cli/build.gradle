@@ -32,7 +32,7 @@ tasks.register('copyMavenProfileJar', Copy)
 tasks.register('createToolingZip', Zip)
 tasks.register('createWrapperZip', Zip)
 tasks.register('downloadPortal', Download)
-tasks.register('downloadProductInfo', Download)
+tasks.register('downloadReleasesJson', Download)
 tasks.register('unzipManifest', Copy)
 tasks.register('unzipPortal', Copy)
 
@@ -141,8 +141,8 @@ downloadPortal {
 	onlyIfNewer true
 }
 
-downloadProductInfo {
-	src "https://releases-cdn.liferay.com/tools/workspace/.product_info.json"
+downloadReleasesJson {
+	src "https://releases-cdn.liferay.com/releases.json"
 	dest buildDir
 	onlyIfNewer true
 }
@@ -150,7 +150,7 @@ downloadProductInfo {
 jar {
 	dependsOn("unzipPortal")
 	archiveFileName.set("blade.jar")
-	from createToolingZip, createWrapperZip, downloadProductInfo
+	from createToolingZip, createWrapperZip, downloadReleasesJson
 }
 
 processResources {

@@ -321,8 +321,8 @@ Private-Package:\
 	@com.liferay.gogo.shell.client-1.0.0.jar,\
 	@com.liferay.project.templates-*.jar,\
 	@jansi-*.jar,\
+	${project.buildDir}/releases.json,\
 	${project.buildDir}/tooling.zip,\
 	${project.buildDir}/wrapper.zip,\
-	${project.buildDir}/.product_info.json,\
 	mvnw.cmd
 -sources: false
