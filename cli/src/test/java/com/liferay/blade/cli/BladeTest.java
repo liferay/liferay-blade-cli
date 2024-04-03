@@ -74,13 +74,6 @@ public class BladeTest extends BladeCLI {
 
 	public static final String PRODUCT_VERSION_DXP_74_U72 = "dxp-7.4-u72";
 
-	public static final String PRODUCT_VERSION_PORTAL_71 = getFirstProductKey(
-		_getProductPredicate(
-			"portal"
-		).and(
-			_getProductGroupVersionPredicate("7.1")
-		));
-
 	public static final String PRODUCT_VERSION_PORTAL_73 = getFirstProductKey(
 		_getProductPredicate(
 			"portal"
