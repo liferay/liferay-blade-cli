@@ -191,59 +191,31 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
 
-		String liferayVersion;
-		String workspaceProductKey;
+		Optional<ReleaseUtil.ReleaseEntry> releaseEntryOptional = _getDefaultReleaseEntry(
+			initArgs.getLiferayProduct(), initArgs.getLiferayVersion());
 
-		if (!mavenBuild) {
-			workspaceProductKey = _getDefaultProductKey(initArgs);
-
-			if (_legacyProductKeys.contains(workspaceProductKey)) {
-				_addError(
-					"This version of blade does not support " + workspaceProductKey + ". Please use blade 3.9.2 to " +
-						"initialize a workspace with this version. https://bit.ly/3lVgTeH");
-
-				return;
-			}
-
-			ReleaseUtil.ReleaseProperties releaseProperties = ReleaseUtil.getReleaseProperties(workspaceProductKey);
-
-			if (releaseProperties.getLiferayProductVersion() == null) {
-				_addError("Unable to get product info for selected version " + workspaceProductKey);
-
-				return;
-			}
-
-			liferayVersion = releaseProperties.getTargetPlatformVersion();
-		}
-		else {
-			workspaceProductKey = _setProductAndVersionForMaven(initArgs);
-
-			liferayVersion = initArgs.getLiferayVersion();
-		}
-
-		ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(workspaceProductKey);
-
-		if (releaseEntry.getReleaseKey() == null) {
-			_addError("Unable to get product info for selected version " + workspaceProductKey);
+		if (!releaseEntryOptional.isPresent()) {
+			_addError("Unable to get product info for selected version " + initArgs.getLiferayVersion());
 
 			return;
 		}
 
-		if (Objects.equals(initArgs.getLiferayProduct(), "commerce")) {
-			initArgs.setLiferayProduct("dxp");
+		ReleaseUtil.ReleaseEntry releaseEntry = releaseEntryOptional.get();
+
+		String workspaceProductKey = releaseEntry.getReleaseKey();
+
+		if (!mavenBuild && _legacyProductKeys.contains(workspaceProductKey)) {
+			_addError(
+				"This version of blade does not support " + workspaceProductKey + ". Please use blade 3.9.2 to " +
+					"initialize a workspace with this version. https://bit.ly/3lVgTeH");
+
+			return;
 		}
 
-		projectTemplatesArgs.setLiferayVersion(liferayVersion);
-
+		projectTemplatesArgs.setLiferayProduct(releaseEntry.getProduct());
+		projectTemplatesArgs.setLiferayVersion(releaseEntry.getTargetPlatformVersion());
 		projectTemplatesArgs.setMaven(mavenBuild);
 		projectTemplatesArgs.setName(name);
-
-		if (mavenBuild) {
-			projectTemplatesArgs.setLiferayProduct(initArgs.getLiferayProduct());
-		}
-		else {
-			projectTemplatesArgs.setLiferayProduct(releaseEntry.getProduct());
-		}
 
 		String template = "workspace";
 
@@ -318,25 +290,37 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		getBladeCLI().addErrors("init", Collections.singleton(msg));
 	}
 
-	private String _getDefaultProductKey(InitArgs initArgs) throws Exception {
-		String liferayVersion = initArgs.getLiferayVersion();
-
+	private Optional<ReleaseUtil.ReleaseEntry> _getDefaultReleaseEntry(String liferayProduct, String liferayVersion) {
 		ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(liferayVersion);
 
 		if (releaseEntry.getReleaseKey() != null) {
-			return releaseEntry.getReleaseKey();
+			return Optional.of(releaseEntry);
 		}
 
-		Optional<String> defaultVersion = ReleaseUtil.withReleaseEntriesStream(
+		Optional<ReleaseUtil.ReleaseEntry> defaultVersion = ReleaseUtil.withReleaseEntriesStream(
 			stream -> stream.filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), initArgs.getLiferayProduct())
+				releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
 			).filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getProductGroupVersion(), liferayVersion)
-			).map(
-				ReleaseUtil.ReleaseEntry::getReleaseKey
+				releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
 			).findFirst());
 
-		return defaultVersion.orElse(liferayVersion);
+		if (!defaultVersion.isPresent()) {
+			defaultVersion = ReleaseUtil.withReleaseEntriesStream(
+				stream -> stream.filter(
+					releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
+				).filter(
+					releaseEntry1 -> Objects.equals(releaseEntry1.getProductGroupVersion(), liferayVersion)
+				).findFirst());
+		}
+
+		if (!defaultVersion.isPresent()) {
+			defaultVersion = ReleaseUtil.withReleaseEntriesStream(
+				stream -> stream.filter(
+					releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
+				).findFirst());
+		}
+
+		return defaultVersion;
 	}
 
 	private boolean _isPluginsSDK(File dir) {
@@ -459,22 +443,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				}
 
 			});
-	}
-
-	@SuppressWarnings("unchecked")
-	private String _setProductAndVersionForMaven(InitArgs initArgs) throws Exception {
-		String possibleProductKey = _getDefaultProductKey(initArgs);
-
-		ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(possibleProductKey);
-
-		if (releaseEntry != null) {
-			initArgs.setLiferayProduct(releaseEntry.getProduct());
-
-			initArgs.setLiferayVersion(
-				ReleaseUtil.withReleaseEntry(possibleProductKey, ReleaseUtil.ReleaseEntry::getTargetPlatformVersion));
-		}
-
-		return null;
 	}
 
 	private void _setWorkspacePluginVersion(Path path, String version) throws Exception {
