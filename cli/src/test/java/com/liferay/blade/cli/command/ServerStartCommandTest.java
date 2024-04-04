@@ -502,6 +502,8 @@ public class ServerStartCommandTest {
 		String[] initArgs = {"--base", _testWorkspacePath.toString(), "init", "-v", _LIFERAY_WORKSPACE_PRODUCT_KEY};
 
 		TestUtil.runBlade(_testWorkspacePath, _extensionsPath, initArgs);
+
+		TestUtil.increaseGradleMemory(_testWorkspacePath.toFile());
 	}
 
 	private void _initServerBundle(String... additionalArgs) throws Exception {
