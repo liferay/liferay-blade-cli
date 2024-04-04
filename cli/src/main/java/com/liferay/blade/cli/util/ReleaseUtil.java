@@ -26,10 +26,8 @@ public class ReleaseUtil {
 		return _releaseUtil._releaseEntryMap.getOrDefault(releaseKey, _EMPTY_RELEASE_ENTRY);
 	}
 
-	public static void refreshReleases() {
-		System.out.println("Checking for new releases...");
-
-		_releaseUtil = new ReleaseUtil(0);
+	public static void populateReleases(int maxAge) {
+		_releaseUtil = new ReleaseUtil(maxAge);
 	}
 
 	public static Stream<ReleaseEntry> releaseEntriesStream() {
@@ -101,12 +99,13 @@ public class ReleaseUtil {
 		File releasesJsonFile = new File(_workspaceCacheDir, "releases.json");
 
 		_releaseEntries = ResourceUtil.readJson(
-			ReleaseEntries.class, ResourceUtil.getLocalFileResolver(releasesJsonFile, maxAge, ChronoUnit.DAYS),
-			ResourceUtil.getURLResolver(
-				_workspaceCacheDir, "https://releases.liferay.com/releases.json", "releases.json"),
+			ReleaseEntries.class, ResourceUtil.getLocalFileResolver(System.getenv("BLADE_LOCAL_RELEASES_JSON_FILE")),
+			ResourceUtil.getLocalFileResolver(releasesJsonFile, maxAge, ChronoUnit.DAYS),
 			ResourceUtil.getURLResolver(
 				_workspaceCacheDir, "https://releases-cdn.liferay.com/releases.json", "releases.json"),
-			ResourceUtil.getLocalFileResolver(releasesJsonFile), ResourceUtil.getClassLoaderResolver("/releases.json"));
+			ResourceUtil.getURLResolver(
+				_workspaceCacheDir, "https://releases.liferay.com/releases.json", "releases.json"),
+			ResourceUtil.getClassLoaderResolver("/releases.json"));
 
 		if (_releaseEntries == null) {
 			throw new RuntimeException("Could not find releases.json");
@@ -121,7 +120,7 @@ public class ReleaseUtil {
 
 	private static final ReleaseEntry _EMPTY_RELEASE_ENTRY = new ReleaseEntry();
 
-	private static ReleaseUtil _releaseUtil = new ReleaseUtil(7);
+	private static ReleaseUtil _releaseUtil;
 
 	private final ReleaseEntries _releaseEntries;
 	private final Map<String, ReleaseEntry> _releaseEntryMap = new HashMap<>();
