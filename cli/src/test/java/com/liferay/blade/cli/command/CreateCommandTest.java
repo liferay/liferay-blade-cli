@@ -2073,16 +2073,6 @@ public class CreateCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private void _appendGradleProperty(File workspace, String key, String value) throws Exception {
-		File gradleProperties = new File(workspace, "gradle.properties");
-
-		Assert.assertTrue(gradleProperties.exists());
-
-		String propertyString = String.format("%n%s=%s", key, value);
-
-		Files.write(gradleProperties.toPath(), propertyString.getBytes(), StandardOpenOption.APPEND);
-	}
-
 	private File _checkFileDoesNotExists(String path) {
 		File file = new File(path);
 
@@ -2131,12 +2121,10 @@ public class CreateCommandTest {
 
 		// Set default modules dir
 
-		_appendGradleProperty(
+		TestUtil.appendGradleProperty(
 			workspace, WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY, WorkspaceConstants.DEFAULT_MODULES_DIR);
 
-		// Increase maximum memory to fix issue with some 7zip bundles
-
-		_appendGradleProperty(workspace, "org.gradle.jvmargs", "-Xmx8g");
+		TestUtil.increaseGradleMemory(workspace);
 	}
 
 	private void _contains(File file, String pattern) throws Exception {
