@@ -25,12 +25,14 @@ import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.ParameterValidator;
 import com.liferay.blade.cli.command.validator.ValidatorFunctionPredicate;
 import com.liferay.blade.cli.gradle.GradleExecutionException;
+import com.liferay.blade.cli.util.ArrayUtil;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
 import com.liferay.blade.cli.util.Prompter;
 import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.blade.cli.util.ResourceUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -405,6 +407,20 @@ public class BladeCLI {
 
 	public void run(String[] args) throws Exception {
 		try {
+			if (ArrayUtil.contains(args, "--trace")) {
+				ResourceUtil.setTrace(true);
+			}
+
+			int releasesMaxAge = 7;
+
+			if (ArrayUtil.contains(args, "--refresh-releases")) {
+				System.out.println("Checking for new releases...");
+
+				releasesMaxAge = 0;
+			}
+
+			ReleaseUtil.populateReleases(releasesMaxAge);
+
 			_removeOutDatedTempDir();
 
 			Extensions extensions = getExtensions();
@@ -473,10 +489,6 @@ public class BladeCLI {
 						Object commandArgs = objects.get(0);
 
 						BaseArgs baseArgs = (BaseArgs)commandArgs;
-
-						if (baseArgs.isRefreshReleases()) {
-							ReleaseUtil.refreshReleases();
-						}
 
 						_validateParameters(baseArgs);
 
