@@ -81,12 +81,9 @@ public class BladeTest extends BladeCLI {
 			_getProductGroupVersionPredicate("7.3")
 		));
 
-	public static final String PRODUCT_VERSION_PORTAL_74 = getFirstProductKey(
-		_getProductPredicate(
-			"portal"
-		).and(
-			_getProductGroupVersionPredicate("7.4")
-		));
+	// Temporarily hard-coded due to an upstream issue with release metadata
+
+	public static final String PRODUCT_VERSION_PORTAL_74 = "portal-7.4-ga107";
 
 	public static BladeTestBuilder builder() {
 		return new BladeTestBuilder();
