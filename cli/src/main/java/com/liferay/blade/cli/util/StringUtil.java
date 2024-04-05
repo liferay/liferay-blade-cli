@@ -32,10 +32,8 @@ public class StringUtil {
 	}
 
 	public static boolean isNullOrEmpty(String arg) {
-		boolean hasContent = Optional.of(
+		boolean hasContent = Optional.ofNullable(
 			arg
-		).filter(
-			s -> s != null
 		).map(
 			String::trim
 		).filter(

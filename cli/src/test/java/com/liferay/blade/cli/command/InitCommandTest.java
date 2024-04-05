@@ -10,6 +10,7 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
+import com.liferay.blade.cli.util.ReleaseUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -306,9 +307,9 @@ public class InitCommandTest {
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output.contains("dxp-7.2-sp6"));
+		Assert.assertTrue(output, output.contains("dxp-2023.q4.6"));
 
-		Assert.assertTrue(output, output.contains("dxp-7.2-sp1"));
+		Assert.assertTrue(output, output.contains("dxp-7.4-u110"));
 
 		Assert.assertTrue(output, output.contains("portal-7.0-ga7"));
 	}
@@ -317,7 +318,7 @@ public class InitCommandTest {
 	public void testInitCommandListMoreOptions() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "testworkspace"};
 
-		String responses = "more" + System.lineSeparator() + "dxp-7.2-sp2" + System.lineSeparator();
+		String responses = "more" + System.lineSeparator() + "dxp-7.2-dxp-5" + System.lineSeparator();
 
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(responses.getBytes());
 
@@ -326,7 +327,7 @@ public class InitCommandTest {
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, output.contains("dxp-7.3-ep4"));
+		Assert.assertTrue(output, output.contains("dxp-7.3-u34"));
 	}
 
 	@Test
@@ -347,7 +348,7 @@ public class InitCommandTest {
 
 		String firstLine = lines.get(0);
 
-		Assert.assertTrue(firstLine, firstLine.contains("dxp-7.4-"));
+		Assert.assertEquals(firstLine, BladeTest.getFirstProductKey(ReleaseUtil.ReleaseEntry::isPromoted));
 	}
 
 	@Test
@@ -403,81 +404,23 @@ public class InitCommandTest {
 	}
 
 	@Test
-	public void testInitWithCommerceProduct206() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_COMMERCE_206};
-
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-
-		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
-
-		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
-
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=commerce-2.0.6"));
-	}
-
-	@Test
-	public void testInitWithCommerceProduct207() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_COMMERCE_207};
-
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-
-		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
-
-		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
-
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=commerce-2.0.7-7.2"));
-	}
-
-	@Test
 	public void testInitWithLiferayVersion70() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_DXP_70};
-
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-
-		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
-
-		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
-
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=dxp-7.0-sp17"));
+		_testInitWithLiferayVersion(BladeTest.PRODUCT_VERSION_DXP_70);
 	}
 
 	@Test
 	public void testInitWithLiferayVersion71() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_DXP_71};
-
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-
-		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
-
-		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
-
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=dxp-7.1-sp7"));
+		_testInitWithLiferayVersion(BladeTest.PRODUCT_VERSION_DXP_71);
 	}
 
 	@Test
 	public void testInitWithLiferayVersion72() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_DXP_72};
-
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-
-		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
-
-		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
-
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=dxp-7.2-sp7"));
+		_testInitWithLiferayVersion(BladeTest.PRODUCT_VERSION_DXP_72);
 	}
 
 	@Test
 	public void testInitWithLiferayVersion73() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_73};
-
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-
-		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
-
-		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
-
-		Assert.assertTrue(contents, contents.contains("liferay.workspace.product=portal-7.3-ga8"));
+		_testInitWithLiferayVersion(BladeTest.PRODUCT_VERSION_PORTAL_73);
 	}
 
 	@Test(expected = AssertionError.class)
@@ -513,9 +456,7 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(settingsGradlePath));
 
-		boolean contentContainsVersion = contents.contains(_GRADLE_PLUGINS_WORKSPACE_VERSION);
-
-		if (!contentContainsVersion) {
+		if (!contents.contains(_GRADLE_PLUGINS_WORKSPACE_VERSION)) {
 			StringBuilder sb = new StringBuilder("Error checking com.liferay.gradle.plugins.workspace version.");
 
 			sb.append(System.lineSeparator());
@@ -654,6 +595,18 @@ public class InitCommandTest {
 		Assert.assertTrue(Files.exists(buildCommonPluginXmlPath));
 	}
 
+	private void _testInitWithLiferayVersion(String liferayVersion) throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", liferayVersion};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		Path gradlePropertiesPath = _workspacePath.resolve("gradle.properties");
+
+		String contents = new String(Files.readAllBytes(gradlePropertiesPath));
+
+		Assert.assertTrue(contents, contents.contains(String.format("liferay.workspace.product=%s", liferayVersion)));
+	}
+
 	private void _verifyGradleBuild() throws Exception {
 		_createBundle();
 
@@ -668,7 +621,7 @@ public class InitCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath.toString(), "foo-1.0.0.jar");
 	}
 
-	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "9.0.12";
+	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "10.0.3";
 
 	private File _extensionsDir = null;
 	private File _workspaceDir = null;

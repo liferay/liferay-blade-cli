@@ -19,6 +19,7 @@ buildscript {
 }
 
 apply plugin: "biz.aQute.bnd.builder"
+apply plugin: "idea"
 apply plugin: "java-library"
 apply plugin: "maven-publish"
 
@@ -31,7 +32,7 @@ tasks.register('copyMavenProfileJar', Copy)
 tasks.register('createToolingZip', Zip)
 tasks.register('createWrapperZip', Zip)
 tasks.register('downloadPortal', Download)
-tasks.register('downloadProductInfo', Download)
+tasks.register('downloadReleasesJson', Download)
 tasks.register('unzipManifest', Copy)
 tasks.register('unzipPortal', Copy)
 
@@ -76,8 +77,9 @@ createWrapperZip {
 
 dependencies {
 	api group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "5.3.0"
+	api group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.16.1"
 	api group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
-	api group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.269"
+	api group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.289"
 	api group: "commons-io", name: "commons-io", version: "2.7"
 	api group: "commons-lang", name: "commons-lang", version: "2.6"
 	api group: "org.apache.ant", name: "ant", version: "1.10.11"
@@ -112,7 +114,6 @@ dependencies {
 	api name: "org.objectweb.asm.util-6.0.0"
 
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.39-SNAPSHOT"
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.client.extension", version: "1.0.6-SNAPSHOT"
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.22-SNAPSHOT"
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.23-SNAPSHOT"
 
@@ -139,8 +140,8 @@ downloadPortal {
 	onlyIfNewer true
 }
 
-downloadProductInfo {
-	src "https://releases-cdn.liferay.com/tools/workspace/.product_info.json"
+downloadReleasesJson {
+	src "https://releases-cdn.liferay.com/releases.json"
 	dest buildDir
 	onlyIfNewer true
 }
@@ -148,7 +149,7 @@ downloadProductInfo {
 jar {
 	dependsOn("unzipPortal")
 	archiveFileName.set("blade.jar")
-	from createToolingZip, createWrapperZip, downloadProductInfo
+	from createToolingZip, createWrapperZip, downloadReleasesJson
 }
 
 processResources {
@@ -323,6 +324,6 @@ unzipPortal {
 	finalizedBy("processZipsResources")
 }
 
-version = "5.0.2-SNAPSHOT"
+version = "6.0.0-SNAPSHOT"
 
 apply from: "blade-jar-smoke-tests.gradle"

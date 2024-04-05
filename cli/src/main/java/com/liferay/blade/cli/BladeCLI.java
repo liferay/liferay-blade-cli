@@ -25,13 +25,14 @@ import com.liferay.blade.cli.command.validator.ParameterPossibleValues;
 import com.liferay.blade.cli.command.validator.ParameterValidator;
 import com.liferay.blade.cli.command.validator.ValidatorFunctionPredicate;
 import com.liferay.blade.cli.gradle.GradleExecutionException;
-import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ArrayUtil;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
-import com.liferay.blade.cli.util.ProductInfo;
 import com.liferay.blade.cli.util.Prompter;
+import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.blade.cli.util.ResourceUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -406,6 +407,16 @@ public class BladeCLI {
 
 	public void run(String[] args) throws Exception {
 		try {
+			if (ArrayUtil.contains(args, "--trace")) {
+				ResourceUtil.setTrace(true);
+			}
+
+			if (ArrayUtil.contains(args, "--refresh-releases")) {
+				System.out.println("Checking for new releases...");
+
+				ReleaseUtil.populateReleases(0);
+			}
+
 			_removeOutDatedTempDir();
 
 			Extensions extensions = getExtensions();
@@ -473,7 +484,9 @@ public class BladeCLI {
 
 						Object commandArgs = objects.get(0);
 
-						_validateParameters((BaseArgs)commandArgs);
+						BaseArgs baseArgs = (BaseArgs)commandArgs;
+
+						_validateParameters(baseArgs);
 
 						String parameterMessage = null;
 
@@ -862,16 +875,14 @@ public class BladeCLI {
 
 			Iterator<String> it = options.iterator();
 
-			Map<String, Object> productInfos = BladeUtil.getProductInfos(true, error());
-
 			Map<String, String> optionsMap = new LinkedHashMap<>();
 
 			for (int x = 1; it.hasNext(); x++) {
 				String option = it.next();
 
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfos.get(option));
+				ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(option);
 
-				optionsMap.put(String.valueOf(x), productInfo.getTargetPlatformVersion());
+				optionsMap.put(String.valueOf(x), releaseEntry.getTargetPlatformVersion());
 			}
 
 			return optionsMap;

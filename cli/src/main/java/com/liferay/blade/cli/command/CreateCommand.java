@@ -373,8 +373,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		properties.put("setAddOns", createArgs.getAddOns());
 		properties.put("setContributorType", createArgs.getContributorType());
 		properties.put("setDependencyInjector", createArgs.getDependencyInjector());
-		properties.put("setExtensionName", createArgs.getExtensionName());
-		properties.put("setExtensionType", createArgs.getExtensionType());
 		properties.put("setFramework", createArgs.getFramework());
 		properties.put("setFrameworkDependencies", createArgs.getFrameworkDependencies());
 		properties.put("setHostBundleSymbolicName", createArgs.getHostBundleBSN());
@@ -472,6 +470,12 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	}
 
 	private String _checkTemplateVersionRange(File templateFile, ProjectTemplatesArgs projectTemplatesArgs) {
+		String versionString = projectTemplatesArgs.getLiferayVersion();
+
+		if (VersionUtil.isLiferayQuarterlyVersion(versionString)) {
+			return "";
+		}
+
 		try (InputStream fileInputStream = Files.newInputStream(templateFile.toPath(), StandardOpenOption.READ);
 			JarInputStream in = new JarInputStream(fileInputStream)) {
 
@@ -483,17 +487,14 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			VersionRange versionRange = new VersionRange(versionRangeValue);
 
-			String versionString = projectTemplatesArgs.getLiferayVersion();
-
-			String liferayVersionString = new String(
-				String.valueOf(VersionUtil.getMajorVersion(versionString)) + "." +
-					String.valueOf(VersionUtil.getMinorVersion(versionString)));
+			String liferayVersionString = String.format(
+				"%s.%s", VersionUtil.getMajorVersion(versionString), VersionUtil.getMinorVersion(versionString));
 
 			if (!versionRange.includes(Version.parseVersion(liferayVersionString))) {
-				return new String(
-					"Error: The " + projectTemplatesArgs.getTemplate() +
-						" project can only be created in liferay version range: " + versionRange +
-							", current liferay version is " + liferayVersionString + ".");
+				return String.format(
+					"Error: The %s project can only be created in liferay version range: %s, current liferay version " +
+						"is %s.",
+					projectTemplatesArgs.getTemplate(), versionRange, liferayVersionString);
 			}
 		}
 		catch (Exception exception) {

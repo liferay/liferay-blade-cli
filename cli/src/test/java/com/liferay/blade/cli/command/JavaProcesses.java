@@ -179,10 +179,11 @@ public class JavaProcesses {
 			tomcatFilter
 		).findAny();
 
-		System.out.println(
-			"tomcatProcess = " +
-				tomcatProcess.get(
-				).getId());
+		tomcatProcess.map(
+			JavaProcess::getId
+		).ifPresent(
+			System.out::println
+		);
 	}
 
 	public static int maxProcessId() {

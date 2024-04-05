@@ -228,11 +228,6 @@ subprojects {
 					"name: \"com.liferay.blade.extensions.maven.profile\", version: \"$version\""
 				}
 
-				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.client.extension", version: "(.*)-SNAPSHOT"/) {
-					all, version ->
-					"name: \"com.liferay.project.templates.client.extension\", version: \"$version\""
-				}
-
 				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.theme", version: "(.*)-SNAPSHOT"/) {
 					all, version ->
 					"name: \"com.liferay.project.templates.js.theme\", version: \"$version\""
@@ -265,15 +260,6 @@ subprojects {
 					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)
 
 					"name: \"com.liferay.blade.extensions.maven.profile\", version: \"${newVersion}-SNAPSHOT\""
-				}
-
-				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.client.extension", version: "(.*)"/) {
-					all, version ->
-					Version currentVersion = new Version(version)
-
-					Version newVersion = new Version(currentVersion.major, currentVersion.minor, currentVersion.micro + 1)
-
-					"name: \"com.liferay.project.templates.client.extension\", version: \"${newVersion}-SNAPSHOT\""
 				}
 
 				buildGradle.text = buildGradle.text.replaceAll(/name: "com.liferay.project.templates.js.theme", version: "(.*)"/) {

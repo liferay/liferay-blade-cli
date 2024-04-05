@@ -710,7 +710,7 @@ public class CreateCommandTest {
 
 		_contains(componentFile, ".*^public class SimulatorSimulationPanelApp.*extends BaseJSPPanelApp.*$");
 
-		_contains(componentFile, ".*public void setServletContext.*$");
+		_contains(componentFile, ".*private ServletContext _servletContext;.*$");
 
 		_checkFileExists(projectPath + "/build.gradle");
 	}
@@ -2073,18 +2073,6 @@ public class CreateCommandTest {
 	@Rule
 	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	private void _addDefaultModulesDir(File workspace) throws Exception {
-		File gradleProperties = new File(workspace, "gradle.properties");
-
-		Assert.assertTrue(gradleProperties.exists());
-
-		String configLine =
-			System.lineSeparator() + WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY + "=" +
-				WorkspaceConstants.DEFAULT_MODULES_DIR;
-
-		Files.write(gradleProperties.toPath(), configLine.getBytes(), StandardOpenOption.APPEND);
-	}
-
 	private File _checkFileDoesNotExists(String path) {
 		File file = new File(path);
 
@@ -2127,6 +2115,16 @@ public class CreateCommandTest {
 		Assert.assertTrue(gradlePath.toString(), Files.exists(gradlePath));
 
 		_checkFileDoesNotExists(projectPath + "/bnd.bnd");
+	}
+
+	private void _configureGradleProperties(File workspace) throws Exception {
+
+		// Set default modules dir
+
+		TestUtil.appendGradleProperty(
+			workspace, WorkspaceConstants.DEFAULT_MODULES_DIR_PROPERTY, WorkspaceConstants.DEFAULT_MODULES_DIR);
+
+		TestUtil.increaseGradleMemory(workspace);
 	}
 
 	private void _contains(File file, String pattern) throws Exception {
@@ -2189,7 +2187,7 @@ public class CreateCommandTest {
 
 		_checkFileExists(gradlewFile.getAbsolutePath());
 
-		_addDefaultModulesDir(workspace);
+		_configureGradleProperties(workspace);
 	}
 
 	private void _makeWorkspaceVersion(File workspace, String version) throws Exception {
@@ -2199,7 +2197,7 @@ public class CreateCommandTest {
 
 		TestUtil.runBlade(workspace, _extensionsDir, args);
 
-		_addDefaultModulesDir(workspace);
+		_configureGradleProperties(workspace);
 	}
 
 	private void _resolveProject(BuildTask buildTask, String projectPath) throws Exception {

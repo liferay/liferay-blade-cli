@@ -5,12 +5,9 @@
 
 package com.liferay.blade.cli.command.validator;
 
-import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.ProductKeyUtil;
+import com.liferay.blade.cli.util.ReleaseUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
@@ -22,62 +19,26 @@ import org.junit.Test;
 public class LiferayMoreVersionValidatorTest {
 
 	@Test
-	public void testSort() throws Exception {
+	public void testGet() throws Exception {
+		List<String> expectedReleaseKeys = ReleaseUtil.withReleaseEntriesStream(
+			releaseEntryStream -> releaseEntryStream.map(
+				ReleaseUtil.ReleaseEntry::getReleaseKey
+			).collect(
+				Collectors.toList()
+			));
+
 		LiferayMoreVersionValidator lmvv = new LiferayMoreVersionValidator();
 
 		List<String> vals = lmvv.get();
 
-		String first = vals.get(0);
+		Assert.assertEquals(vals.toString(), expectedReleaseKeys.size(), vals.size());
 
-		Assert.assertTrue(first, first.startsWith("dxp"));
+		for (int i = 0; i < expectedReleaseKeys.size(); i++) {
+			String actual = vals.get(i);
+			String expected = expectedReleaseKeys.get(i);
 
-		String second = vals.get(1);
-
-		Assert.assertTrue(second, second.startsWith("dxp"));
-
-		String last = vals.get(vals.size() - 1);
-
-		Assert.assertTrue(last, last.startsWith("commerce"));
-	}
-
-	@Test
-	public void testWithRandom() throws Exception {
-		List<String> randomLines = new ArrayList<>();
-
-		try (Scanner scanner = new Scanner(
-				FileUtil.collect(LiferayMoreVersionValidatorTest.class.getResourceAsStream("random.txt")))) {
-
-			while (scanner.hasNextLine()) {
-				randomLines.add(scanner.nextLine());
-			}
+			Assert.assertEquals(expected, actual);
 		}
-
-		List<String> sortedLines = new ArrayList<>();
-
-		try (Scanner scanner = new Scanner(
-				FileUtil.collect(LiferayMoreVersionValidatorTest.class.getResourceAsStream("sorted.txt")))) {
-
-			while (scanner.hasNextLine()) {
-				sortedLines.add(scanner.nextLine());
-			}
-		}
-
-		List<String> sorted = randomLines.stream(
-		).sorted(
-			ProductKeyUtil.comparator
-		).collect(
-			Collectors.toList()
-		);
-
-		Assert.assertEquals(
-			sortedLines.stream(
-			).collect(
-				Collectors.joining(System.lineSeparator())
-			),
-			sorted.stream(
-			).collect(
-				Collectors.joining(System.lineSeparator())
-			));
 	}
 
 }

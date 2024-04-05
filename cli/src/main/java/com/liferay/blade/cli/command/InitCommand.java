@@ -5,14 +5,12 @@
 
 package com.liferay.blade.cli.command;
 
-import aQute.bnd.version.Version;
-
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ProductInfo;
+import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.util.FileUtil;
@@ -56,9 +54,14 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		InitArgs initArgs = getArgs();
 
 		if (initArgs.isList()) {
-			List<String> keys = BladeUtil.getWorkspaceProductKeys(!initArgs.isAll());
-
-			keys.forEach(bladeCLI::out);
+			ReleaseUtil.releaseEntriesStream(
+			).filter(
+				releaseEntry -> initArgs.isAll() || releaseEntry.isPromoted()
+			).map(
+				ReleaseUtil.ReleaseEntry::getReleaseKey
+			).forEach(
+				bladeCLI::out
+			);
 
 			return;
 		}
@@ -188,64 +191,31 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
 
-		String liferayVersion;
-		String workspaceProductKey;
+		Optional<ReleaseUtil.ReleaseEntry> releaseEntryOptional = _getDefaultReleaseEntry(
+			initArgs.getLiferayProduct(), initArgs.getLiferayVersion());
 
-		Map<String, Object> productInfos = BladeUtil.getProductInfos(initArgs.isTrace(), bladeCLI.error());
-
-		if (!mavenBuild) {
-			workspaceProductKey = _getDefaultProductKey(initArgs);
-
-			if (_legacyProductKeys.contains(workspaceProductKey)) {
-				_addError(
-					"This version of blade does not support " + workspaceProductKey + ". Please use blade 3.9.2 to " +
-						"initialize a workspace with this version. https://bit.ly/3lVgTeH");
-
-				return;
-			}
-
-			Object productInfoObject = productInfos.get(workspaceProductKey);
-
-			if (productInfoObject == null) {
-				_addError("Unable to get product info for selected version " + workspaceProductKey);
-
-				return;
-			}
-
-			ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
-
-			Version targetPlatformVersion = _makeCompatibleVersion(productInfo.getTargetPlatformVersion());
-
-			liferayVersion = new String(
-				targetPlatformVersion.getMajor() + "." + targetPlatformVersion.getMinor() + "." +
-					targetPlatformVersion.getMicro());
-		}
-		else {
-			workspaceProductKey = _setProductAndVersionForMaven(productInfos, initArgs);
-
-			liferayVersion = initArgs.getLiferayVersion();
-		}
-
-		Object productInfoObject = productInfos.get(workspaceProductKey);
-
-		if (productInfoObject == null) {
-			_addError("Unable to get product info for selected version " + workspaceProductKey);
+		if (!releaseEntryOptional.isPresent()) {
+			_addError("Unable to get product info for selected version " + initArgs.getLiferayVersion());
 
 			return;
 		}
 
-		if (Objects.equals(initArgs.getLiferayProduct(), "commerce")) {
-			initArgs.setLiferayProduct("dxp");
+		ReleaseUtil.ReleaseEntry releaseEntry = releaseEntryOptional.get();
+
+		String workspaceProductKey = releaseEntry.getReleaseKey();
+
+		if (!mavenBuild && _legacyProductKeys.contains(workspaceProductKey)) {
+			_addError(
+				"This version of blade does not support " + workspaceProductKey + ". Please use blade 3.9.2 to " +
+					"initialize a workspace with this version. https://bit.ly/3lVgTeH");
+
+			return;
 		}
 
-		projectTemplatesArgs.setLiferayVersion(liferayVersion);
-
+		projectTemplatesArgs.setLiferayProduct(releaseEntry.getProduct());
+		projectTemplatesArgs.setLiferayVersion(releaseEntry.getTargetPlatformVersion());
 		projectTemplatesArgs.setMaven(mavenBuild);
 		projectTemplatesArgs.setName(name);
-
-		if (mavenBuild) {
-			projectTemplatesArgs.setLiferayProduct(initArgs.getLiferayProduct());
-		}
 
 		String template = "workspace";
 
@@ -320,27 +290,37 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		getBladeCLI().addErrors("init", Collections.singleton(msg));
 	}
 
-	private String _getDefaultProductKey(InitArgs initArgs) throws Exception {
-		String liferayVersion = initArgs.getLiferayVersion();
+	private Optional<ReleaseUtil.ReleaseEntry> _getDefaultReleaseEntry(String liferayProduct, String liferayVersion) {
+		ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(liferayVersion);
 
-		if (liferayVersion.startsWith("portal") || liferayVersion.startsWith("dxp") ||
-			liferayVersion.startsWith("commerce")) {
-
-			return initArgs.getLiferayVersion();
+		if (releaseEntry.getReleaseKey() != null) {
+			return Optional.of(releaseEntry);
 		}
 
-		List<String> productInfoKeys = BladeUtil.getWorkspaceProductKeys(false);
-
-		Optional<String> defaultVersion = productInfoKeys.stream(
-		).filter(
-			value -> value.startsWith(initArgs.getLiferayProduct() + "-" + initArgs.getLiferayVersion())
-		).findFirst();
+		Optional<ReleaseUtil.ReleaseEntry> defaultVersion = ReleaseUtil.withReleaseEntriesStream(
+			stream -> stream.filter(
+				releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
+			).filter(
+				releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
+			).findFirst());
 
 		if (!defaultVersion.isPresent()) {
-			return initArgs.getLiferayVersion();
+			defaultVersion = ReleaseUtil.withReleaseEntriesStream(
+				stream -> stream.filter(
+					releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
+				).filter(
+					releaseEntry1 -> Objects.equals(releaseEntry1.getProductGroupVersion(), liferayVersion)
+				).findFirst());
 		}
 
-		return defaultVersion.get();
+		if (!defaultVersion.isPresent()) {
+			defaultVersion = ReleaseUtil.withReleaseEntriesStream(
+				stream -> stream.filter(
+					releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
+				).findFirst());
+		}
+
+		return defaultVersion;
 	}
 
 	private boolean _isPluginsSDK(File dir) {
@@ -394,21 +374,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		}
 
 		return false;
-	}
-
-	private Version _makeCompatibleVersion(String targetPlatformVersion) {
-		int dash = targetPlatformVersion.indexOf("-");
-
-		Version productTargetPlatformVersion = null;
-
-		if (dash != -1) {
-			productTargetPlatformVersion = Version.parseVersion(targetPlatformVersion.substring(0, dash));
-		}
-		else {
-			productTargetPlatformVersion = Version.parseVersion(targetPlatformVersion);
-		}
-
-		return productTargetPlatformVersion;
 	}
 
 	private void _moveContentsToDirectory(File src, File dest) throws Exception {
@@ -478,46 +443,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				}
 
 			});
-	}
-
-	@SuppressWarnings("unchecked")
-	private String _setProductAndVersionForMaven(Map<String, Object> productInfos, InitArgs initArgs) throws Exception {
-		String possibleProductKey = _getDefaultProductKey(initArgs);
-
-		if (possibleProductKey.startsWith("portal") || possibleProductKey.startsWith("dxp") ||
-			possibleProductKey.startsWith("commerce")) {
-
-			Object productInfoObject = productInfos.get(possibleProductKey);
-
-			if (Objects.nonNull(productInfoObject)) {
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
-
-				initArgs.setLiferayVersion(productInfo.getTargetPlatformVersion());
-
-				String[] productKeyValues = possibleProductKey.split("-");
-
-				initArgs.setLiferayProduct(productKeyValues[0]);
-
-				return possibleProductKey;
-			}
-		}
-		else {
-			for (Map.Entry<String, Object> entryKey : productInfos.entrySet()) {
-				ProductInfo productInfo = new ProductInfo((Map<String, String>)entryKey.getValue());
-
-				if (Objects.equals(possibleProductKey, productInfo.getTargetPlatformVersion())) {
-					possibleProductKey = entryKey.getKey();
-
-					String[] productKeyValues = possibleProductKey.split("-");
-
-					initArgs.setLiferayProduct(productKeyValues[0]);
-
-					return possibleProductKey;
-				}
-			}
-		}
-
-		return null;
 	}
 
 	private void _setWorkspacePluginVersion(Path path, String version) throws Exception {

@@ -39,6 +39,23 @@ import org.w3c.dom.Text;
  */
 public class TestUtil {
 
+	public static void appendGradleProperty(File workspaceDir, String key, String value) throws Exception {
+		File gradleProperties = new File(workspaceDir, "gradle.properties");
+
+		Assert.assertTrue(gradleProperties.exists());
+
+		String propertyString = String.format("%n%s=%s", key, value);
+
+		Files.write(gradleProperties.toPath(), propertyString.getBytes(), StandardOpenOption.APPEND);
+	}
+
+	public static void increaseGradleMemory(File workspaceDir) throws Exception {
+
+		// Increase maximum memory to fix issue with some 7zip bundles
+
+		appendGradleProperty(workspaceDir, "org.gradle.jvmargs", "-Xmx8g");
+	}
+
 	public static void removeComments(String projectPath) throws Exception {
 		File pomXMLFile = new File(projectPath, "/pom.xml");
 

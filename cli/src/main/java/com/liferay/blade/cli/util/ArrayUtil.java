@@ -7,6 +7,8 @@ package com.liferay.blade.cli.util;
 
 import java.lang.reflect.Array;
 
+import java.util.Objects;
+
 /**
  * @author Gregory Amerson
  */
@@ -36,6 +38,20 @@ public class ArrayUtil {
 		System.arraycopy(array2, 0, newArray, array1.length, array2.length);
 
 		return newArray;
+	}
+
+	public static boolean contains(Object[] array, Object value) {
+		if (isEmpty(array)) {
+			return false;
+		}
+
+		for (Object object : array) {
+			if (Objects.equals(object, value)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public static boolean isEmpty(Object[] array) {

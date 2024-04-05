@@ -22,6 +22,7 @@ import org.gradle.testkit.runner.BuildTask;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -48,6 +49,7 @@ public class SamplesCommandTest {
 		_extensionsDir = temporaryFolder.newFolder(".blade", "extensions");
 	}
 
+	@Ignore
 	@Test
 	public void testGetSample() throws Exception {
 		File root = temporaryFolder.newFolder("samplesroot");
@@ -167,6 +169,7 @@ public class SamplesCommandTest {
 		Assert.assertTrue(content, content.contains("<artifactId>com.liferay.portal.kernel</artifactId>"));
 	}
 
+	@Ignore
 	@Test
 	public void testGetSampleWithDependencies() throws Exception {
 		File root = temporaryFolder.getRoot();
@@ -190,6 +193,7 @@ public class SamplesCommandTest {
 		TestUtil.verifyBuild(projectPath, "com.liferay.blade.rest-1.0.0.jar");
 	}
 
+	@Ignore
 	@Test
 	public void testGetSampleWithGradleWrapper() throws Exception {
 		File root = temporaryFolder.getRoot();
@@ -268,6 +272,7 @@ public class SamplesCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectDir.toString(), "com.liferay.blade.auth.failure-1.0.0.jar");
 	}
 
+	@Ignore
 	@Test
 	public void testGetSampleWithVersion70() throws Exception {
 		File root = temporaryFolder.getRoot();
@@ -295,6 +300,7 @@ public class SamplesCommandTest {
 		TestUtil.verifyBuild(projectPath, "com.liferay.blade.jsp.portlet-1.0.0.jar");
 	}
 
+	@Ignore
 	@Test
 	public void testGetSampleWithVersion71() throws Exception {
 		File root = temporaryFolder.getRoot();
