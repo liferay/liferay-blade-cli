@@ -23,6 +23,10 @@ import java.util.stream.Stream;
 public class ReleaseUtil {
 
 	public static ReleaseEntry getReleaseEntry(String releaseKey) {
+		if (_releaseUtil == null) {
+			populateReleases(_DEFAULT_MAX_AGE);
+		}
+
 		return _releaseUtil._releaseEntryMap.getOrDefault(releaseKey, _EMPTY_RELEASE_ENTRY);
 	}
 
@@ -31,6 +35,10 @@ public class ReleaseUtil {
 	}
 
 	public static Stream<ReleaseEntry> releaseEntriesStream() {
+		if (_releaseUtil == null) {
+			populateReleases(_DEFAULT_MAX_AGE);
+		}
+
 		return _releaseUtil._releaseEntries.stream();
 	}
 
@@ -117,6 +125,8 @@ public class ReleaseUtil {
 			_releaseEntryMap.put(releaseEntry.getReleaseKey(), releaseEntry);
 		}
 	}
+
+	private static final int _DEFAULT_MAX_AGE = 7;
 
 	private static final ReleaseEntry _EMPTY_RELEASE_ENTRY = new ReleaseEntry();
 
