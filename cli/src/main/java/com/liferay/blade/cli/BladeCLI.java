@@ -411,15 +411,11 @@ public class BladeCLI {
 				ResourceUtil.setTrace(true);
 			}
 
-			int releasesMaxAge = 7;
-
 			if (ArrayUtil.contains(args, "--refresh-releases")) {
 				System.out.println("Checking for new releases...");
 
-				releasesMaxAge = 0;
+				ReleaseUtil.populateReleases(0);
 			}
-
-			ReleaseUtil.populateReleases(releasesMaxAge);
 
 			_removeOutDatedTempDir();
 
