@@ -87,12 +87,6 @@ if [ "$retcode" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
 	exit 1
 fi
 
-# Publish the Activator Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-activator:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
-
-# Publish the Freemarker Portlet Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-freemarker-portlet:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}; retcode=$?
-
 # Publish the Social Bookmark Project Template
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-social-bookmark:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
 
