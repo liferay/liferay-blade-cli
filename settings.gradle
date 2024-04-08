@@ -12,7 +12,6 @@ gradleEnterprise {
 include "cli"
 include "extensions:bad-command"
 include "extensions:maven-profile"
-include "extensions:project-templates-freemarker-portlet"
 include "extensions:project-templates-js-theme"
 include "extensions:project-templates-js-widget"
 include "extensions:project-templates-social-bookmark"
