@@ -490,7 +490,7 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "activator", "exist"};
+		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "simulation-panel-entry", "exist"};
 
 		File existFile = new File(workspace, "modules/exist/file.txt");
 
@@ -2055,7 +2055,10 @@ public class CreateCommandTest {
 
 		_makeWorkspace(workspace);
 
-		String[] args = {"create", "--base", workspace.getAbsolutePath(), "-t", "activatorXXX", "wrong-activator"};
+		String[] args = {
+			"create", "--base", workspace.getAbsolutePath(), "-t", "simulation-panel-entryXXX",
+			"wrong-simulation-panel-entry"
+		};
 
 		try {
 			TestUtil.runBlade(workspace, _extensionsDir, false, args);
@@ -2063,7 +2066,7 @@ public class CreateCommandTest {
 		catch (Exception exception) {
 		}
 
-		File projectDir = new File(workspace, "modules/wrong-activator");
+		File projectDir = new File(workspace, "modules/wrong-simulation-panel-entry");
 
 		String projectPath = projectDir.getAbsolutePath();
 
