@@ -1,5 +1,108 @@
 # Liferay Blade CLI Change Log
 
+## 6.0.0 - 2024-04-09
+
+### Commits
+- [BLADE-744] liferay-blade-cli: updates README.markdown (97af22f2bf)
+- [BLADE-743] liferay-blade-cli: removes references to
+project-templates-freemarker-portlet (eedb89e157)
+- [BLADE-743] extensions: removes project-templates-freemarker-portlet directory
+(767f913a38)
+- [BLADE-743] liferay-blade-cli: removes project-templates-freemarker-portlet
+project (e6609b536c)
+- [BLADE-743] liferay-blade-cli: removes references to
+project-templates-activator (5de01e90a1)
+- [BLADE-743] extensions: removes project-templates-activator directory
+(8858bac075)
+- [BLADE-743] liferay-blade-cli: settings.gradle: removes
+project-templates-activator project (931eef5375)
+- [BLADE-743] cli: BladeTest: temporarily hard-codes the value (f4911ea824)
+- [BLADE-743] liferay-blade-cli: StringUtil: fixes NPE - allows null strings
+(ea8883aee7)
+- [BLADE-743] liferay-blade-cli: BladeCLI: simplify (a9dfccae98)
+- [BLADE-743] liferay-blade-cli: ReleaseUtil: initialize releases if none are
+found (386284c9a2)
+- [BLADE-743] liferay-blade-cli: ServerStartCommandTest: apply Gradle memory fix
+(b8c3f214b5)
+- [BLADE-743] liferay-blade-cli: CreateCommandTest: update usage (1bef0138c5)
+- [BLADE-743] liferay-blade-cli: TestUtil: adds helper methods for updating
+Gradle properties (e031f4f2cf)
+- [BLADE-743] cli: ReleaseUtil: adjusts priority, and adds an option for an
+environment var (664823dde6)
+- [BLADE-743] cli: BladeCLI: ResourceUtil follows the trace arg (40df81fcd4)
+- [BLADE-743] cli: ArrayUtil: adds contains helper method (ac30f96335)
+- [BLADE-743] extensions: SampleTemplatesTest: fixes test case (712de2d3a5)
+- [BLADE-743] cli: updates expected values in smoke tests (2fb3877b67)
+- [BLADE-743] cli: ReleaseUtil: removes unused methods and classes (6b64416129)
+- [BLADE-743] cli: BladeTest: removes unused field (eb63e348b7)
+- [BLADE-743] cli: removes unused ProductKey classes (064a52e19c)
+- [BLADE-743] cli: InitCommand: use fallback matching on the version
+(77211e2843)
+- [BLADE-743] extensions: bumps com.liferay.project.templates.extensions
+dependency version (ee13e989ab)
+- [BLADE-743] liferay-blade-cli: removes references to deleted extensions
+(9638e81984)
+- [BLADE-743] extensions: removes project-templates-client-extension
+(327816f3cf)
+- [BLADE-743] extensions: removes content-targeting extensions (ac9d5617f9)
+- [BLADE-743] liferay-blade-cli: build.gradle: major version bump (96bf2a919b)
+- [BLADE-743] cli: LiferayMoreVersionValidatorTest: fixes test cases
+(63a6c7653b)
+- [BLADE-743] cli: ServerStartCommandTest: fixes test case (66403e64f7)
+- [BLADE-743] cli: SamplesCommandTest: ignores tests that break because of the
+Gradle 8 updates (949214e649)
+- [BLADE-743] cli: CreateCommandTest: fix the heap size failure (51d31ed06b)
+- [BLADE-743] cli: CreateCommandTest: fixes test cases (109f69bbc8)
+- [BLADE-743] cli: UtilTest: fixes test cases (1b05f9c561)
+- [BLADE-743] cli: InitCommandTest: fixes test cases (fd4596342a)
+- [BLADE-743] cli: BladeTest: adds helper method and ensures that the constants
+are reading live values (74efac8666)
+- [BLADE-743] cli: JavaProcesses: source formatting (de19eb8644)
+- [BLADE-743] cli: BladeUtil: removes unused methods and fields (e7575bb556)
+- [BLADE-743] extensions: ClientExtensionProjectTemplateCustomizer: uses
+ReleaseUtil (fb11aaf187)
+- [BLADE-743] cli: GradleWorkspaceProvider: uses ReleaseUtil (b659fbceca)
+- [BLADE-743] cli: LiferayMoreVersionValidator: uses ReleaseUtil (1d2e6c1436)
+- [BLADE-743] cli: LiferayDefaultVersionValidator: uses ReleaseUtil (4bbc561d74)
+- [BLADE-743] cli: InitCommand: uses ReleaseUtil (602c08be8d)
+- [BLADE-743] cli: CreateCommand: provides exception for quarterly versions
+(eb06764098)
+- [BLADE-743] cli: ConvertCommand: uses ReleaseUtil (2b4393066b)
+- [BLADE-743] cli: BladeCLI: uses ReleaseUtil to get target platform version
+(6573bd1438)
+- [BLADE-743] cli: BladeCLI: refreshes releases if the refreshReleases flag is
+found (9da0a8c85e)
+- [BLADE-743] cli: adds flag to force Blade to check for new releases
+(9e25ca5477)
+- [BLADE-743] cli: adds ReleaseUtil (60ff1aad26)
+- [BLADE-743] cli: adds ResourceUtil (b4d98fbfde)
+- [BLADE-743] cli: bnd.bnd: includes json lib (c43add9065)
+- [BLADE-743] cli: build.gradle, bnd.bnd: adds releases.json into the jar during
+build (0c50c3361e)
+- [BLADE-743] cli: build.gradle: adds idea plugin to generate IDE files
+(02eadfcd8f)
+- [BLADE-743] cli: build.gradle: bumps project templates version (c9fb7111e5)
+- [BLADE-743] cli: build.gradle: updates json dependencies (77cc0e5ca0)
+
+### Dependencies
+- [BLADE-744] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.39.
+- [BLADE-744] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.22.
+- [BLADE-744] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.23.
+- [BLADE-743] Update the com.liferay.project.templates dependency to version
+5.0.289.
+- [BLADE-743] Update the jackson-databind dependency to version 2.16.1.
+- [BLADE-741] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.39-SNAPSHOT.
+- [BLADE-741] Update the com.liferay.project.templates.client.extension
+dependency to version 1.0.6-SNAPSHOT.
+- [BLADE-741] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.22-SNAPSHOT.
+- [BLADE-741] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.23-SNAPSHOT.
+
 ## 5.0.1 - 2023-11-27
 
 ### Commits
@@ -2714,6 +2817,9 @@ maintainability (7f9bc3f45e)
 [BLADE-738]: https://issues.liferay.com/browse/BLADE-738
 [BLADE-739]: https://issues.liferay.com/browse/BLADE-739
 [BLADE-740]: https://issues.liferay.com/browse/BLADE-740
+[BLADE-741]: https://issues.liferay.com/browse/BLADE-741
+[BLADE-743]: https://issues.liferay.com/browse/BLADE-743
+[BLADE-744]: https://issues.liferay.com/browse/BLADE-744
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
