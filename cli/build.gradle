@@ -2,7 +2,7 @@ import de.undercouch.gradle.tasks.download.Download
 
 buildscript {
 	dependencies {
-		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "5.3.0"
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "6.4.0"
 		classpath group: "de.undercouch", name: "gradle-download-task", version: "5.4.0"
 	}
 
@@ -76,7 +76,7 @@ createWrapperZip {
 }
 
 dependencies {
-	api group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "5.3.0"
+	api group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "6.4.0"
 	api group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.16.1"
 	api group: "com.liferay", name: "com.liferay.gogo.shell.client", version: "1.0.0"
 	api group: "com.liferay", name: "com.liferay.project.templates", version: "5.0.289"

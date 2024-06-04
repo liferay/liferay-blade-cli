@@ -1,6 +1,6 @@
 buildscript {
 	dependencies {
-		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "5.3.0"
+		classpath group: "biz.aQute.bnd", name: "biz.aQute.bnd.gradle", version: "6.4.0"
 	}
 
 	repositories {
@@ -27,7 +27,7 @@ dependencies {
 	compileOnly project(":cli")
 
 	testImplementation gradleTestKit()
-	testImplementation group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "5.3.0"
+	testImplementation group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "6.4.0"
 	testImplementation group: "junit", name: "junit", version: "4.13.1"
 	testImplementation group: "org.zeroturnaround", name: "zt-process-killer", version: "1.9"
 	testImplementation project(":cli")
