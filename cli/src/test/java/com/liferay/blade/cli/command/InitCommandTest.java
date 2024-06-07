@@ -456,19 +456,11 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(settingsGradlePath));
 
-		if (!contents.contains(_GRADLE_PLUGINS_WORKSPACE_VERSION)) {
-			StringBuilder sb = new StringBuilder("Error checking com.liferay.gradle.plugins.workspace version.");
-
-			sb.append(System.lineSeparator());
-
-			sb.append("Expected " + _GRADLE_PLUGINS_WORKSPACE_VERSION);
-
-			sb.append(System.lineSeparator());
-
-			sb.append(contents);
-
-			Assert.fail(String.valueOf(sb));
-		}
+		Assert.assertTrue(
+			String.join(
+				System.lineSeparator(), "Error checking com.liferay.gradle.plugins.workspace version.",
+				"Expected " + _GRADLE_PLUGINS_WORKSPACE_VERSION, contents),
+			contents.contains(_GRADLE_PLUGINS_WORKSPACE_VERSION));
 	}
 
 	@Test
