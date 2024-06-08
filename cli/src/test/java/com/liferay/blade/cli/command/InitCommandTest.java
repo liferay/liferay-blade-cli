@@ -311,7 +311,7 @@ public class InitCommandTest {
 
 		Assert.assertTrue(output, output.contains("dxp-7.4-u110"));
 
-		Assert.assertTrue(output, output.contains("portal-7.0-ga7"));
+		Assert.assertTrue(output, output.contains("portal-7.1-ga2"));
 	}
 
 	@Test
