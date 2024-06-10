@@ -311,7 +311,7 @@ public class InitCommandTest {
 
 		Assert.assertTrue(output, output.contains("dxp-7.4-u110"));
 
-		Assert.assertTrue(output, output.contains("portal-7.0-ga7"));
+		Assert.assertTrue(output, output.contains("portal-7.1-ga2"));
 	}
 
 	@Test
@@ -456,19 +456,11 @@ public class InitCommandTest {
 
 		String contents = new String(Files.readAllBytes(settingsGradlePath));
 
-		if (!contents.contains(_GRADLE_PLUGINS_WORKSPACE_VERSION)) {
-			StringBuilder sb = new StringBuilder("Error checking com.liferay.gradle.plugins.workspace version.");
-
-			sb.append(System.lineSeparator());
-
-			sb.append("Expected " + _GRADLE_PLUGINS_WORKSPACE_VERSION);
-
-			sb.append(System.lineSeparator());
-
-			sb.append(contents);
-
-			Assert.fail(String.valueOf(sb));
-		}
+		Assert.assertTrue(
+			String.join(
+				System.lineSeparator(), "Error checking com.liferay.gradle.plugins.workspace version.",
+				"Expected " + _GRADLE_PLUGINS_WORKSPACE_VERSION, contents),
+			contents.contains(_GRADLE_PLUGINS_WORKSPACE_VERSION));
 	}
 
 	@Test
@@ -621,7 +613,7 @@ public class InitCommandTest {
 		GradleRunnerUtil.verifyBuildOutput(projectPath.toString(), "foo-1.0.0.jar");
 	}
 
-	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "10.0.3";
+	private static final String _GRADLE_PLUGINS_WORKSPACE_VERSION = "10.1.0";
 
 	private File _extensionsDir = null;
 	private File _workspaceDir = null;
