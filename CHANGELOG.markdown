@@ -1,5 +1,31 @@
 # Liferay Blade CLI Change Log
 
+## 7.0.0 - 2024-06-11
+
+### Commits
+- [LPD-28093] cli: test: fixes expected version since 7.0 is no longer present
+in the releases.json (3f93e5965f)
+- [LPD-28093] cli: test: fixes SF error (6fa573e740)
+- [LPD-28093] cli: test: updates expected workspace version (77df699733)
+- [LPD-28093] cli: uses project templates version 5.0.293 (8b78c3f0a8)
+- [LPD-28093] liferay-blade-cli: bumps snapshot version to 7.0.0 (e3683ae545)
+
+### Dependencies
+- [LPD-28297] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.40.
+- [LPD-28297] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.23.
+- [LPD-28297] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.24.
+- [LPD-28093] Update the com.liferay.project.templates dependency to version
+5.0.293.
+- [BLADE-745] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.40-SNAPSHOT.
+- [BLADE-745] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.23-SNAPSHOT.
+- [BLADE-745] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.24-SNAPSHOT.
+
 ## 6.0.0 - 2024-04-09
 
 ### Commits
@@ -2820,6 +2846,7 @@ maintainability (7f9bc3f45e)
 [BLADE-741]: https://issues.liferay.com/browse/BLADE-741
 [BLADE-743]: https://issues.liferay.com/browse/BLADE-743
 [BLADE-744]: https://issues.liferay.com/browse/BLADE-744
+[BLADE-745]: https://issues.liferay.com/browse/BLADE-745
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -2827,6 +2854,8 @@ maintainability (7f9bc3f45e)
 [LCD-14267]: https://issues.liferay.com/browse/LCD-14267
 [LCD-14295]: https://issues.liferay.com/browse/LCD-14295
 [LCD-14300]: https://issues.liferay.com/browse/LCD-14300
+[LPD-28093]: https://issues.liferay.com/browse/LPD-28093
+[LPD-28297]: https://issues.liferay.com/browse/LPD-28297
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
