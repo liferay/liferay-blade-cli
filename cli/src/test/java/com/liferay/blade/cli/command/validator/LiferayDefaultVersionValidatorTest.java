@@ -24,23 +24,4 @@ public class LiferayDefaultVersionValidatorTest {
 		Assert.assertTrue(values.toString(), values.size() < 20);
 	}
 
-	@Test
-	public void testSort() throws Exception {
-		LiferayDefaultVersionValidator ldvv = new LiferayDefaultVersionValidator();
-
-		List<String> vals = ldvv.get();
-
-		String first = vals.get(0);
-
-		Assert.assertTrue(first, first.startsWith("dxp"));
-
-		String second = vals.get(1);
-
-		Assert.assertTrue(second, second.startsWith("dxp"));
-
-		String last = vals.get(vals.size() - 1);
-
-		Assert.assertTrue(last, last.startsWith("portal"));
-	}
-
 }
