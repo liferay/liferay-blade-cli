@@ -330,20 +330,36 @@ public class BladeUtil {
 	}
 
 	public static ReleaseEntry getReleaseEntry(String version) {
+		return getReleaseEntry(null, version);
+	}
+
+	public static ReleaseEntry getReleaseEntry(String product, String version) {
 		Optional<ReleaseEntry> releaseEntryOptional = Optional.ofNullable(ReleaseUtil.getReleaseEntry(version));
 
-		if (!releaseEntryOptional.isPresent()) {
-			releaseEntryOptional = ReleaseUtil.getReleaseEntryStream(
-			).filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getProductGroupVersion(), version)
-			).findFirst();
+		Predicate<ReleaseEntry> targetPlatformVersionPredicate = releaseEntry -> Objects.equals(
+			releaseEntry.getTargetPlatformVersion(), version);
+		Predicate<ReleaseEntry> productGroupVersionPredicate = releaseEntry -> Objects.equals(
+			releaseEntry.getProductGroupVersion(), version);
+
+		if (product != null) {
+			Predicate<ReleaseEntry> productPredicate = releaseEntry -> Objects.equals(
+				releaseEntry.getProduct(), product);
+
+			if (!releaseEntryOptional.isPresent()) {
+				releaseEntryOptional = _getReleaseEntryOptional(productPredicate.and(targetPlatformVersionPredicate));
+			}
+
+			if (!releaseEntryOptional.isPresent()) {
+				releaseEntryOptional = _getReleaseEntryOptional(productPredicate.and(productGroupVersionPredicate));
+			}
 		}
 
 		if (!releaseEntryOptional.isPresent()) {
-			releaseEntryOptional = ReleaseUtil.getReleaseEntryStream(
-			).filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), version)
-			).findFirst();
+			releaseEntryOptional = _getReleaseEntryOptional(targetPlatformVersionPredicate);
+		}
+
+		if (!releaseEntryOptional.isPresent()) {
+			releaseEntryOptional = _getReleaseEntryOptional(productGroupVersionPredicate);
 		}
 
 		return releaseEntryOptional.orElse(null);
@@ -773,6 +789,13 @@ public class BladeUtil {
 		Files.setLastModifiedTime(targetPath, FileTime.fromMillis(lastModifiedDate.getTime()));
 
 		return targetPath;
+	}
+
+	private static Optional<ReleaseEntry> _getReleaseEntryOptional(Predicate<ReleaseEntry> releaseEntryPredicate) {
+		return ReleaseUtil.getReleaseEntryStream(
+		).filter(
+			releaseEntryPredicate
+		).findFirst();
 	}
 
 	private static final String[] _APP_SERVER_PROPERTIES_FILE_NAMES = {
