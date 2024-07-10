@@ -26,13 +26,15 @@ import com.liferay.blade.cli.command.validator.ParameterValidator;
 import com.liferay.blade.cli.command.validator.ValidatorFunctionPredicate;
 import com.liferay.blade.cli.gradle.GradleExecutionException;
 import com.liferay.blade.cli.util.ArrayUtil;
+import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.CombinedClassLoader;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
 import com.liferay.blade.cli.util.Prompter;
-import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.blade.cli.util.ResourceUtil;
+import com.liferay.release.util.ReleaseEntry;
+import com.liferay.release.util.ReleaseUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -414,7 +416,7 @@ public class BladeCLI {
 			if (ArrayUtil.contains(args, "--refresh-releases")) {
 				System.out.println("Checking for new releases...");
 
-				ReleaseUtil.populateReleases(0);
+				ReleaseUtil.initialize(0);
 			}
 
 			_removeOutDatedTempDir();
@@ -880,7 +882,7 @@ public class BladeCLI {
 			for (int x = 1; it.hasNext(); x++) {
 				String option = it.next();
 
-				ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(option);
+				ReleaseEntry releaseEntry = BladeUtil.getReleaseEntry(option);
 
 				optionsMap.put(String.valueOf(x), releaseEntry.getTargetPlatformVersion());
 			}

@@ -12,7 +12,8 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.release.util.ReleaseEntry;
+import com.liferay.release.util.ReleaseUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -74,8 +75,8 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			if (!baseLiferayVersion.isPresent()) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
-				String targetPlatformVersion = ReleaseUtil.withReleaseEntry(
-					productKey, ReleaseUtil.ReleaseEntry::getTargetPlatformVersion);
+				String targetPlatformVersion = ReleaseUtil.getFromReleaseEntry(
+					productKey, ReleaseEntry::getTargetPlatformVersion);
 
 				baseLiferayVersion = Optional.ofNullable(
 					targetPlatformVersion

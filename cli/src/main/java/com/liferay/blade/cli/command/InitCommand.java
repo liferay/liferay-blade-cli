@@ -10,10 +10,11 @@ import com.liferay.blade.cli.BladeSettings;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.util.FileUtil;
+import com.liferay.release.util.ReleaseEntry;
+import com.liferay.release.util.ReleaseUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,11 +55,11 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		InitArgs initArgs = getArgs();
 
 		if (initArgs.isList()) {
-			ReleaseUtil.releaseEntriesStream(
+			ReleaseUtil.getReleaseEntryStream(
 			).filter(
 				releaseEntry -> initArgs.isAll() || releaseEntry.isPromoted()
 			).map(
-				ReleaseUtil.ReleaseEntry::getReleaseKey
+				ReleaseEntry::getReleaseKey
 			).forEach(
 				bladeCLI::out
 			);
@@ -191,7 +192,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
 
-		Optional<ReleaseUtil.ReleaseEntry> releaseEntryOptional = _getDefaultReleaseEntry(
+		Optional<ReleaseEntry> releaseEntryOptional = _getDefaultReleaseEntry(
 			initArgs.getLiferayProduct(), initArgs.getLiferayVersion());
 
 		if (!releaseEntryOptional.isPresent()) {
@@ -200,7 +201,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			return;
 		}
 
-		ReleaseUtil.ReleaseEntry releaseEntry = releaseEntryOptional.get();
+		ReleaseEntry releaseEntry = releaseEntryOptional.get();
 
 		String workspaceProductKey = releaseEntry.getReleaseKey();
 
@@ -290,34 +291,34 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		getBladeCLI().addErrors("init", Collections.singleton(msg));
 	}
 
-	private Optional<ReleaseUtil.ReleaseEntry> _getDefaultReleaseEntry(String liferayProduct, String liferayVersion) {
-		ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(liferayVersion);
+	private Optional<ReleaseEntry> _getDefaultReleaseEntry(String liferayProduct, String liferayVersion) {
+		ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(liferayVersion);
 
 		if (releaseEntry.getReleaseKey() != null) {
 			return Optional.of(releaseEntry);
 		}
 
-		Optional<ReleaseUtil.ReleaseEntry> defaultVersion = ReleaseUtil.withReleaseEntriesStream(
-			stream -> stream.filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
-			).filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
-			).findFirst());
+		Optional<ReleaseEntry> defaultVersion = ReleaseUtil.getReleaseEntryStream(
+		).filter(
+			releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
+		).filter(
+			releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
+		).findFirst();
 
 		if (!defaultVersion.isPresent()) {
-			defaultVersion = ReleaseUtil.withReleaseEntriesStream(
-				stream -> stream.filter(
-					releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
-				).filter(
-					releaseEntry1 -> Objects.equals(releaseEntry1.getProductGroupVersion(), liferayVersion)
-				).findFirst());
+			defaultVersion = ReleaseUtil.getReleaseEntryStream(
+			).filter(
+				releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
+			).filter(
+				releaseEntry1 -> Objects.equals(releaseEntry1.getProductGroupVersion(), liferayVersion)
+			).findFirst();
 		}
 
 		if (!defaultVersion.isPresent()) {
-			defaultVersion = ReleaseUtil.withReleaseEntriesStream(
-				stream -> stream.filter(
-					releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
-				).findFirst());
+			defaultVersion = ReleaseUtil.getReleaseEntryStream(
+			).filter(
+				releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
+			).findFirst();
 		}
 
 		return defaultVersion;
