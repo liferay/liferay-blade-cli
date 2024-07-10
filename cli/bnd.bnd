@@ -21,6 +21,10 @@ Private-Package:\
 	com.fasterxml.jackson.*,\
 	\
 	com.liferay.blade.gradle.tooling,\
+	com.liferay.release.util,\
+	com.liferay.release.util.internal,\
+	com.liferay.release.util.internal.util,\
+	com.liferay.release.util.internal.constants,\
 	\
 	groovy.json,\
 	\
