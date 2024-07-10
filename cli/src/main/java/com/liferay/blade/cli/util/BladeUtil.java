@@ -10,6 +10,8 @@ import com.liferay.blade.cli.Extensions;
 import com.liferay.blade.cli.command.SamplesCommand;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
+import com.liferay.release.util.ReleaseEntry;
+import com.liferay.release.util.ReleaseUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,6 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -324,6 +327,26 @@ public class BladeUtil {
 		}
 
 		return properties;
+	}
+
+	public static ReleaseEntry getReleaseEntry(String version) {
+		Optional<ReleaseEntry> releaseEntryOptional = Optional.ofNullable(ReleaseUtil.getReleaseEntry(version));
+
+		if (!releaseEntryOptional.isPresent()) {
+			releaseEntryOptional = ReleaseUtil.getReleaseEntryStream(
+			).filter(
+				releaseEntry1 -> Objects.equals(releaseEntry1.getProductGroupVersion(), version)
+			).findFirst();
+		}
+
+		if (!releaseEntryOptional.isPresent()) {
+			releaseEntryOptional = ReleaseUtil.getReleaseEntryStream(
+			).filter(
+				releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), version)
+			).findFirst();
+		}
+
+		return releaseEntryOptional.orElse(null);
 	}
 
 	public static Collection<String> getTemplateNames(BladeCLI blade) throws Exception {
