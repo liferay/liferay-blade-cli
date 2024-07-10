@@ -5,7 +5,8 @@
 
 package com.liferay.blade.cli.command.validator;
 
-import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.release.util.ReleaseEntry;
+import com.liferay.release.util.ReleaseUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,12 +21,12 @@ public class LiferayMoreVersionValidatorTest {
 
 	@Test
 	public void testGet() throws Exception {
-		List<String> expectedReleaseKeys = ReleaseUtil.withReleaseEntriesStream(
-			releaseEntryStream -> releaseEntryStream.map(
-				ReleaseUtil.ReleaseEntry::getReleaseKey
-			).collect(
-				Collectors.toList()
-			));
+		List<String> expectedReleaseKeys = ReleaseUtil.getReleaseEntryStream(
+		).map(
+			ReleaseEntry::getReleaseKey
+		).collect(
+			Collectors.toList()
+		);
 
 		LiferayMoreVersionValidator lmvv = new LiferayMoreVersionValidator();
 

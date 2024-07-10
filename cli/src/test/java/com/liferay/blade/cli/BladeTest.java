@@ -6,7 +6,8 @@
 package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.command.BaseArgs;
-import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.release.util.ReleaseEntry;
+import com.liferay.release.util.ReleaseUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,16 +90,16 @@ public class BladeTest extends BladeCLI {
 		return new BladeTestBuilder();
 	}
 
-	public static String getFirstProductKey(Predicate<ReleaseUtil.ReleaseEntry> predicate) {
-		return ReleaseUtil.withReleaseEntriesStream(
-			releaseEntryStream -> releaseEntryStream.filter(
-				predicate
-			).map(
-				ReleaseUtil.ReleaseEntry::getReleaseKey
-			).findFirst(
-			).orElse(
-				""
-			));
+	public static String getFirstProductKey(Predicate<ReleaseEntry> predicate) {
+		return ReleaseUtil.getReleaseEntryStream(
+		).filter(
+			predicate
+		).map(
+			ReleaseEntry::getReleaseKey
+		).findFirst(
+		).orElse(
+			""
+		);
 	}
 
 	@Override
@@ -261,11 +262,11 @@ public class BladeTest extends BladeCLI {
 		super(out, err, in);
 	}
 
-	private static Predicate<ReleaseUtil.ReleaseEntry> _getProductGroupVersionPredicate(String productGroupVersion) {
+	private static Predicate<ReleaseEntry> _getProductGroupVersionPredicate(String productGroupVersion) {
 		return releaseEntry -> Objects.equals(releaseEntry.getProductGroupVersion(), productGroupVersion);
 	}
 
-	private static Predicate<ReleaseUtil.ReleaseEntry> _getProductPredicate(String product) {
+	private static Predicate<ReleaseEntry> _getProductPredicate(String product) {
 		return releaseEntry -> Objects.equals(releaseEntry.getProduct(), product);
 	}
 

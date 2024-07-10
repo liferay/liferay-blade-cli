@@ -10,7 +10,7 @@ import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.cli.util.FileUtil;
-import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -348,7 +348,7 @@ public class InitCommandTest {
 
 		String firstLine = lines.get(0);
 
-		Assert.assertEquals(firstLine, BladeTest.getFirstProductKey(ReleaseUtil.ReleaseEntry::isPromoted));
+		Assert.assertEquals(firstLine, BladeTest.getFirstProductKey(ReleaseEntry::isPromoted));
 	}
 
 	@Test
