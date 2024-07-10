@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -192,16 +191,14 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
 
-		Optional<ReleaseEntry> releaseEntryOptional = _getDefaultReleaseEntry(
+		ReleaseEntry releaseEntry = BladeUtil.getReleaseEntry(
 			initArgs.getLiferayProduct(), initArgs.getLiferayVersion());
 
-		if (!releaseEntryOptional.isPresent()) {
+		if (releaseEntry == null) {
 			_addError("Unable to get product info for selected version " + initArgs.getLiferayVersion());
 
 			return;
 		}
-
-		ReleaseEntry releaseEntry = releaseEntryOptional.get();
 
 		String workspaceProductKey = releaseEntry.getReleaseKey();
 
@@ -289,39 +286,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 	private void _addError(String msg) {
 		getBladeCLI().addErrors("init", Collections.singleton(msg));
-	}
-
-	private Optional<ReleaseEntry> _getDefaultReleaseEntry(String liferayProduct, String liferayVersion) {
-		ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(liferayVersion);
-
-		if (releaseEntry.getReleaseKey() != null) {
-			return Optional.of(releaseEntry);
-		}
-
-		Optional<ReleaseEntry> defaultVersion = ReleaseUtil.getReleaseEntryStream(
-		).filter(
-			releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
-		).filter(
-			releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
-		).findFirst();
-
-		if (!defaultVersion.isPresent()) {
-			defaultVersion = ReleaseUtil.getReleaseEntryStream(
-			).filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
-			).filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getProductGroupVersion(), liferayVersion)
-			).findFirst();
-		}
-
-		if (!defaultVersion.isPresent()) {
-			defaultVersion = ReleaseUtil.getReleaseEntryStream(
-			).filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
-			).findFirst();
-		}
-
-		return defaultVersion;
 	}
 
 	private boolean _isPluginsSDK(File dir) {
