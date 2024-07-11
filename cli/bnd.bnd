@@ -148,6 +148,7 @@ Private-Package:\
 	org.gradle.internal.nativeintegration,\
 	org.gradle.internal.nativeintegration.console,\
 	org.gradle.internal.operations;-split-package:=merge-first,\
+	org.gradle.internal.operations.logging;-split-package:=merge-first,\
 	org.gradle.internal.reflect;-split-package:=merge-first,\
 	org.gradle.internal.resource,\
 	org.gradle.internal.scripts;-split-package:=merge-first,\
