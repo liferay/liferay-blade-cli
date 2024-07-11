@@ -42,7 +42,7 @@ jar{
 publishing {
 	publications {
 		mavenProfileJar(MavenPublication) {
-			artifactId = jar.baseName
+			artifactId = jar.archiveBaseName.get()
 
 			from components.java
 		}
