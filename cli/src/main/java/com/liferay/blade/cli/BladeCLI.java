@@ -32,7 +32,6 @@ import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
 import com.liferay.blade.cli.util.Prompter;
-import com.liferay.blade.cli.util.ResourceUtil;
 import com.liferay.release.util.ReleaseEntry;
 import com.liferay.release.util.ReleaseUtil;
 
@@ -409,9 +408,8 @@ public class BladeCLI {
 
 	public void run(String[] args) throws Exception {
 		try {
-			if (ArrayUtil.contains(args, "--trace")) {
-				ResourceUtil.setTrace(true);
-			}
+
+			// TODO: re-add programmatic setting of log levels on ResourceUtil
 
 			if (ArrayUtil.contains(args, "--refresh-releases")) {
 				System.out.println("Checking for new releases...");
