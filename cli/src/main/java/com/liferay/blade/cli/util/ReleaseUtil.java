@@ -5,6 +5,7 @@
 
 package com.liferay.blade.cli.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.File;
@@ -50,6 +51,7 @@ public class ReleaseUtil {
 		return function.apply(getReleaseEntry(releaseKey));
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class ReleaseEntry {
 
 		public String getProduct() {
