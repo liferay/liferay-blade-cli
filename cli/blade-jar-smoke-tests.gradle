@@ -343,7 +343,7 @@ testBladeReturnCodeFailure {
 		errorStream.reset()
 		standardStream.reset()
 
-		assert execResult.getExitValue() > 0
+		assert executionResult.get().getExitValue() > 0
 		assert error.contains("foo")
 	}
 }

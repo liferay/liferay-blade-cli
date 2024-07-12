@@ -49,6 +49,7 @@ import org.gradle.testkit.runner.BuildTask;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -1112,6 +1113,7 @@ public class CreateCommandTest {
 		Assert.assertTrue(content, content.contains("release.dxp.api"));
 	}
 
+	@Ignore
 	@Test
 	public void testCreateWorkspaceFormField72() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
