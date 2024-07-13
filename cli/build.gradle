@@ -55,6 +55,7 @@ clean.doFirst {
 }
 
 cliSourcesJar {
+	dependsOn "unzipPortal"
 	archiveClassifier.set("sources")
 	from sourceSets.main.allJava
 }
