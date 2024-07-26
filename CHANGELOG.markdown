@@ -1,5 +1,37 @@
 # Liferay Blade CLI Change Log
 
+## 7.0.1 - 2024-07-26
+
+### Commits
+- [LPD-31577] liferay-blade-cli: bumps expected version of workspace in tests
+(4305a9108a)
+- [LPD-31577] liferay-blade-cli: bumps version of project templates (54bd599f66)
+- [BLADE-750] cli: fixes Gradle 8 implicit dependency error (6404a33a6a)
+- [BLADE-750] cli: temp ignores test case while Project Templates are being
+updated (48fb3b724e)
+- [BLADE-750] bnd.bnd: fixes missing class error (7ac3d4b1f4)
+- [BLADE-750] liferay-blade-cli: move to Gradle 8.4 - gw wrapper --version 8.4
+(c54c1b7b35)
+- [BLADE-750] cli: allows extra properties (6cfef29ced)
+- [LPD-28297] cli: removes sorting test case since Blade no longer controls
+sorting (890266a836)
+
+### Dependencies
+- [LPD-32144] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.41.
+- [LPD-32144] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.24.
+- [LPD-32144] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.25.
+- [LPD-31577] Update the com.liferay.project.templates dependency to version
+5.0.295.
+- [LPD-28297] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.41-SNAPSHOT.
+- [LPD-28297] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.24-SNAPSHOT.
+- [LPD-28297] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.25-SNAPSHOT.
+
 ## 7.0.0 - 2024-06-11
 
 ### Commits
@@ -2847,6 +2879,7 @@ maintainability (7f9bc3f45e)
 [BLADE-743]: https://issues.liferay.com/browse/BLADE-743
 [BLADE-744]: https://issues.liferay.com/browse/BLADE-744
 [BLADE-745]: https://issues.liferay.com/browse/BLADE-745
+[BLADE-750]: https://issues.liferay.com/browse/BLADE-750
 [IDE-2756]: https://issues.liferay.com/browse/IDE-2756
 [IDE-3043]: https://issues.liferay.com/browse/IDE-3043
 [IDE-3167]: https://issues.liferay.com/browse/IDE-3167
@@ -2856,6 +2889,8 @@ maintainability (7f9bc3f45e)
 [LCD-14300]: https://issues.liferay.com/browse/LCD-14300
 [LPD-28093]: https://issues.liferay.com/browse/LPD-28093
 [LPD-28297]: https://issues.liferay.com/browse/LPD-28297
+[LPD-31577]: https://issues.liferay.com/browse/LPD-31577
+[LPD-32144]: https://issues.liferay.com/browse/LPD-32144
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
