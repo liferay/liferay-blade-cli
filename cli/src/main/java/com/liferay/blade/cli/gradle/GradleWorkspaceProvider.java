@@ -13,6 +13,7 @@ import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -74,8 +75,8 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 			if (!baseLiferayVersion.isPresent()) {
 				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
-				String targetPlatformVersion = ReleaseUtil.withReleaseEntry(
-					productKey, ReleaseUtil.ReleaseEntry::getTargetPlatformVersion);
+				String targetPlatformVersion = ReleaseUtil.getFromReleaseEntry(
+					productKey, ReleaseEntry::getTargetPlatformVersion);
 
 				baseLiferayVersion = Optional.ofNullable(
 					targetPlatformVersion
@@ -119,47 +120,27 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 
 	@Override
 	public String getProduct(File workspaceDir) {
-		try {
-			Properties gradleProperties = getGradleProperties(workspaceDir);
+		Properties gradleProperties = getGradleProperties(workspaceDir);
 
-			String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
+		String versionKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
 
-			if (productKey == null) {
-				String targetPlatformVersion = gradleProperties.getProperty(
-					WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY);
+		if (versionKey == null) {
+			versionKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY);
+		}
 
-				if (targetPlatformVersion == null) {
-					String dockerImageProperty = gradleProperties.getProperty(
-						WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
+		if (versionKey != null) {
+			ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(versionKey);
 
-					if (dockerImageProperty == null) {
-						return "portal";
-					}
-					else if (dockerImageProperty.contains("dxp")) {
-						return "dxp";
-					}
-				}
-				else {
-					Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
-
-					int microVersion = version.getMicro();
-
-					if (microVersion >= 10) {
-						return "dxp";
-					}
-				}
-			}
-			else {
-				String product = productKey.substring(0, productKey.indexOf("-"));
-
-				if (Objects.equals(product, "commerce")) {
-					product = "dxp";
-				}
-
-				return product;
+			if (releaseEntry != null) {
+				return releaseEntry.getProduct();
 			}
 		}
-		catch (Exception exception) {
+
+		String dockerImageProperty = gradleProperties.getProperty(
+			WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
+
+		if ((dockerImageProperty != null) && dockerImageProperty.contains("dxp")) {
+			return "dxp";
 		}
 
 		return "portal";
