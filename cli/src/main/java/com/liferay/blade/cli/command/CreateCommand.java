@@ -17,12 +17,13 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgsExt;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
-import com.liferay.project.templates.extensions.util.VersionUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.io.File;
 import java.io.IOException;
@@ -353,7 +354,9 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			throw new IOException("Cannot determine Liferay Version. Please enter a valid value for Liferay Version.");
 		}
 
-		projectTemplatesArgs.setLiferayVersion(liferayVersion.get());
+		ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(liferayVersion.get());
+
+		projectTemplatesArgs.setLiferayVersion(releaseEntry.getTargetPlatformVersion());
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
@@ -472,10 +475,6 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 	private String _checkTemplateVersionRange(File templateFile, ProjectTemplatesArgs projectTemplatesArgs) {
 		String versionString = projectTemplatesArgs.getLiferayVersion();
 
-		if (VersionUtil.isLiferayQuarterlyVersion(versionString)) {
-			return "";
-		}
-
 		try (InputStream fileInputStream = Files.newInputStream(templateFile.toPath(), StandardOpenOption.READ);
 			JarInputStream in = new JarInputStream(fileInputStream)) {
 
@@ -487,14 +486,18 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 
 			VersionRange versionRange = new VersionRange(versionRangeValue);
 
-			String liferayVersionString = String.format(
-				"%s.%s", VersionUtil.getMajorVersion(versionString), VersionUtil.getMinorVersion(versionString));
+			if (!versionRange.includes(
+					Version.parseVersion(
+						versionString.replaceAll(
+							"[a-z]", ""
+						).replaceAll(
+							"-", "."
+						)))) {
 
-			if (!versionRange.includes(Version.parseVersion(liferayVersionString))) {
 				return String.format(
 					"Error: The %s project can only be created in liferay version range: %s, current liferay version " +
 						"is %s.",
-					projectTemplatesArgs.getTemplate(), versionRange, liferayVersionString);
+					projectTemplatesArgs.getTemplate(), versionRange, versionString);
 			}
 		}
 		catch (Exception exception) {
