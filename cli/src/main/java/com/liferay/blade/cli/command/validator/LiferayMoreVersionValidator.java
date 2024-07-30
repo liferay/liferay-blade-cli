@@ -8,6 +8,7 @@ package com.liferay.blade.cli.command.validator;
 import com.beust.jcommander.ParameterException;
 
 import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,17 +20,17 @@ public class LiferayMoreVersionValidator implements ValidatorSupplier {
 
 	@Override
 	public List<String> get() {
-		return ReleaseUtil.withReleaseEntriesStream(
-			stream -> stream.map(
-				ReleaseUtil.ReleaseEntry::getReleaseKey
-			).collect(
-				Collectors.toList()
-			));
+		return ReleaseUtil.getReleaseEntryStream(
+		).map(
+			ReleaseEntry::getReleaseKey
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	@Override
 	public void validate(String name, String value) throws ParameterException {
-		ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(value);
+		ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(value);
 
 		if (releaseEntry == null) {
 			throw new ParameterException(value + " is not a valid value.");

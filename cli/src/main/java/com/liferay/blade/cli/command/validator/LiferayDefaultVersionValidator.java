@@ -6,6 +6,7 @@
 package com.liferay.blade.cli.command.validator;
 
 import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,14 +20,14 @@ public class LiferayDefaultVersionValidator extends LiferayMoreVersionValidator 
 
 	@Override
 	public List<String> get() {
-		return ReleaseUtil.withReleaseEntriesStream(
-			stream -> stream.filter(
-				ReleaseUtil.ReleaseEntry::isPromoted
-			).map(
-				ReleaseUtil.ReleaseEntry::getReleaseKey
-			).collect(
-				Collectors.toList()
-			));
+		return ReleaseUtil.getReleaseEntryStream(
+		).filter(
+			ReleaseEntry::isPromoted
+		).map(
+			ReleaseEntry::getReleaseKey
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 }
