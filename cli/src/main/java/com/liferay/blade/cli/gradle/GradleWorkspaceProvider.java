@@ -63,59 +63,49 @@ public class GradleWorkspaceProvider implements WorkspaceProvider {
 	@Override
 	@SuppressWarnings("unchecked")
 	public String getLiferayVersion(File workspaceDir) {
-		try {
-			Properties gradleProperties = getGradleProperties(workspaceDir);
+		Properties gradleProperties = getGradleProperties(workspaceDir);
 
-			Optional<String> baseLiferayVersion = Optional.ofNullable(
-				gradleProperties.getProperty(WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY)
+		Optional<String> baseLiferayVersion = Optional.ofNullable(
+			gradleProperties.getProperty(WorkspaceConstants.DEFAULT_TARGET_PLATFORM_VERSION_PROPERTY)
+		).filter(
+			BladeUtil::isNotEmpty
+		);
+
+		if (!baseLiferayVersion.isPresent()) {
+			String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
+
+			String targetPlatformVersion = ReleaseUtil.getFromReleaseEntry(
+				productKey, ReleaseEntry::getTargetPlatformVersion);
+
+			baseLiferayVersion = Optional.ofNullable(
+				targetPlatformVersion
 			).filter(
 				BladeUtil::isNotEmpty
 			);
+		}
 
-			if (!baseLiferayVersion.isPresent()) {
-				String productKey = gradleProperties.getProperty(WorkspaceConstants.DEFAULT_WORKSPACE_PRODUCT_PROPERTY);
+		if (!baseLiferayVersion.isPresent()) {
+			String dockerImageProperty = gradleProperties.getProperty(
+				WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
 
-				String targetPlatformVersion = ReleaseUtil.getFromReleaseEntry(
-					productKey, ReleaseEntry::getTargetPlatformVersion);
+			if (BladeUtil.isEmpty(dockerImageProperty)) {
+				return null;
+			}
 
-				baseLiferayVersion = Optional.ofNullable(
-					targetPlatformVersion
+			Matcher matcher = patternDockerImageLiferayVersion.matcher(dockerImageProperty);
+
+			if (matcher.find()) {
+				baseLiferayVersion = ReleaseUtil.getReleaseEntryStream(
 				).filter(
-					BladeUtil::isNotEmpty
+					releaseEntry -> dockerImageProperty.startsWith(releaseEntry.getLiferayDockerImage())
+				).findFirst(
+				).map(
+					ReleaseEntry::getTargetPlatformVersion
 				);
 			}
-
-			if (!baseLiferayVersion.isPresent()) {
-				String dockerImageProperty = gradleProperties.getProperty(
-					WorkspaceConstants.DEFAULT_LIFERAY_DOCKER_IMAGE_PROPERTY);
-
-				if (BladeUtil.isEmpty(dockerImageProperty)) {
-					return null;
-				}
-
-				Matcher matcher = patternDockerImageLiferayVersion.matcher(dockerImageProperty);
-
-				if (matcher.find()) {
-					baseLiferayVersion = Optional.of(matcher.group(1));
-
-					if (dockerImageProperty.contains("dxp")) {
-						baseLiferayVersion = Optional.of(baseLiferayVersion.get() + ".10");
-					}
-					else {
-						baseLiferayVersion = Optional.of(baseLiferayVersion.get() + ".0");
-					}
-				}
-			}
-
-			if (baseLiferayVersion.isPresent()) {
-				return baseLiferayVersion.get();
-			}
-		}
-		catch (Exception exception) {
-			BladeCLI.instance.error(exception);
 		}
 
-		return null;
+		return baseLiferayVersion.orElse(null);
 	}
 
 	@Override
