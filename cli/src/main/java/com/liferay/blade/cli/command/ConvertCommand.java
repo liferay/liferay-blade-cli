@@ -19,6 +19,7 @@ import com.liferay.blade.gradle.model.GradleDependency;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.util.Validator;
 import com.liferay.project.templates.extensions.util.VersionUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1158,8 +1159,8 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			String productKey = productKeyOpt.get();
 
-			String targetPlatformVersion = ReleaseUtil.withReleaseEntry(
-				productKey, ReleaseUtil.ReleaseEntry::getTargetPlatformVersion);
+			String targetPlatformVersion = ReleaseUtil.getFromReleaseEntry(
+				productKey, ReleaseEntry::getTargetPlatformVersion);
 
 			if (targetPlatformVersion == null) {
 				return Collections.emptyList();

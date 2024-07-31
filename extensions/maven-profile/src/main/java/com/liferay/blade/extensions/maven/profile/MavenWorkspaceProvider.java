@@ -5,11 +5,11 @@
 
 package com.liferay.blade.extensions.maven.profile;
 
-import aQute.bnd.version.Version;
-
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
+import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.io.File;
 
@@ -35,19 +35,13 @@ public class MavenWorkspaceProvider implements WorkspaceProvider {
 			return "portal";
 		}
 
-		try {
-			Version version = Version.parseVersion(targetPlatformVersion.replaceAll("-", "."));
+		ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(targetPlatformVersion);
 
-			int microVersion = version.getMicro();
-
-			if (microVersion >= 10) {
-				return "dxp";
-			}
-		}
-		catch (Exception exception) {
+		if (releaseEntry == null) {
+			return "portal";
 		}
 
-		return "portal";
+		return releaseEntry.getProduct();
 	}
 
 	@Override

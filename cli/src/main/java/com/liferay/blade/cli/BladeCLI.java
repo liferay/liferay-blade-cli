@@ -32,7 +32,7 @@ import com.liferay.blade.cli.util.Pair;
 import com.liferay.blade.cli.util.ProcessesUtil;
 import com.liferay.blade.cli.util.Prompter;
 import com.liferay.blade.cli.util.ReleaseUtil;
-import com.liferay.blade.cli.util.ResourceUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -408,13 +408,15 @@ public class BladeCLI {
 	public void run(String[] args) throws Exception {
 		try {
 			if (ArrayUtil.contains(args, "--trace")) {
-				ResourceUtil.setTrace(true);
+
+				// TODO restore ability to get more logging
+
 			}
 
 			if (ArrayUtil.contains(args, "--refresh-releases")) {
 				System.out.println("Checking for new releases...");
 
-				ReleaseUtil.populateReleases(0);
+				ReleaseUtil.initialize(0);
 			}
 
 			_removeOutDatedTempDir();
@@ -880,7 +882,7 @@ public class BladeCLI {
 			for (int x = 1; it.hasNext(); x++) {
 				String option = it.next();
 
-				ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(option);
+				ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(option);
 
 				optionsMap.put(String.valueOf(x), releaseEntry.getTargetPlatformVersion());
 			}

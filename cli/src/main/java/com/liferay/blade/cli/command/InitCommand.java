@@ -14,6 +14,7 @@ import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.util.FileUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -54,11 +54,11 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		InitArgs initArgs = getArgs();
 
 		if (initArgs.isList()) {
-			ReleaseUtil.releaseEntriesStream(
+			ReleaseUtil.getReleaseEntryStream(
 			).filter(
 				releaseEntry -> initArgs.isAll() || releaseEntry.isPromoted()
 			).map(
-				ReleaseUtil.ReleaseEntry::getReleaseKey
+				ReleaseEntry::getReleaseKey
 			).forEach(
 				bladeCLI::out
 			);
@@ -191,16 +191,14 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		projectTemplatesArgs.setGradle(!mavenBuild);
 
-		Optional<ReleaseUtil.ReleaseEntry> releaseEntryOptional = _getDefaultReleaseEntry(
+		ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(
 			initArgs.getLiferayProduct(), initArgs.getLiferayVersion());
 
-		if (!releaseEntryOptional.isPresent()) {
+		if (releaseEntry == null) {
 			_addError("Unable to get product info for selected version " + initArgs.getLiferayVersion());
 
 			return;
 		}
-
-		ReleaseUtil.ReleaseEntry releaseEntry = releaseEntryOptional.get();
 
 		String workspaceProductKey = releaseEntry.getReleaseKey();
 
@@ -288,39 +286,6 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 	private void _addError(String msg) {
 		getBladeCLI().addErrors("init", Collections.singleton(msg));
-	}
-
-	private Optional<ReleaseUtil.ReleaseEntry> _getDefaultReleaseEntry(String liferayProduct, String liferayVersion) {
-		ReleaseUtil.ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(liferayVersion);
-
-		if (releaseEntry.getReleaseKey() != null) {
-			return Optional.of(releaseEntry);
-		}
-
-		Optional<ReleaseUtil.ReleaseEntry> defaultVersion = ReleaseUtil.withReleaseEntriesStream(
-			stream -> stream.filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
-			).filter(
-				releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
-			).findFirst());
-
-		if (!defaultVersion.isPresent()) {
-			defaultVersion = ReleaseUtil.withReleaseEntriesStream(
-				stream -> stream.filter(
-					releaseEntry1 -> Objects.equals(releaseEntry1.getProduct(), liferayProduct)
-				).filter(
-					releaseEntry1 -> Objects.equals(releaseEntry1.getProductGroupVersion(), liferayVersion)
-				).findFirst());
-		}
-
-		if (!defaultVersion.isPresent()) {
-			defaultVersion = ReleaseUtil.withReleaseEntriesStream(
-				stream -> stream.filter(
-					releaseEntry1 -> Objects.equals(releaseEntry1.getTargetPlatformVersion(), liferayVersion)
-				).findFirst());
-		}
-
-		return defaultVersion;
 	}
 
 	private boolean _isPluginsSDK(File dir) {

@@ -7,6 +7,7 @@ package com.liferay.blade.cli;
 
 import com.liferay.blade.cli.command.BaseArgs;
 import com.liferay.blade.cli.util.ReleaseUtil;
+import com.liferay.release.util.ReleaseEntry;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,6 @@ import java.nio.file.Paths;
 
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -37,49 +37,19 @@ public class BladeTest extends BladeCLI {
 
 	public static final String LIFERAY_VERSION_PORTAL_7456 = "7.4.3.56";
 
-	public static final String PRODUCT_VERSION_DXP_70 = getFirstProductKey(
-		_getProductPredicate(
-			"dxp"
-		).and(
-			_getProductGroupVersionPredicate("7.0")
-		));
+	public static final String PRODUCT_VERSION_DXP_70 = getFirstProductKey("dpx", "7.0");
 
-	public static final String PRODUCT_VERSION_DXP_71 = getFirstProductKey(
-		_getProductPredicate(
-			"dxp"
-		).and(
-			_getProductGroupVersionPredicate("7.1")
-		));
+	public static final String PRODUCT_VERSION_DXP_71 = getFirstProductKey("dpx", "7.1");
 
-	public static final String PRODUCT_VERSION_DXP_72 = getFirstProductKey(
-		_getProductPredicate(
-			"dxp"
-		).and(
-			_getProductGroupVersionPredicate("7.2")
-		));
+	public static final String PRODUCT_VERSION_DXP_72 = getFirstProductKey("dpx", "7.2");
 
-	public static final String PRODUCT_VERSION_DXP_73 = getFirstProductKey(
-		_getProductPredicate(
-			"dxp"
-		).and(
-			_getProductGroupVersionPredicate("7.3")
-		));
+	public static final String PRODUCT_VERSION_DXP_73 = getFirstProductKey("dpx", "7.3");
 
-	public static final String PRODUCT_VERSION_DXP_74 = getFirstProductKey(
-		_getProductPredicate(
-			"dxp"
-		).and(
-			_getProductGroupVersionPredicate("7.4")
-		));
+	public static final String PRODUCT_VERSION_DXP_74 = getFirstProductKey("dpx", "7.4");
 
 	public static final String PRODUCT_VERSION_DXP_74_U72 = "dxp-7.4-u72";
 
-	public static final String PRODUCT_VERSION_PORTAL_73 = getFirstProductKey(
-		_getProductPredicate(
-			"portal"
-		).and(
-			_getProductGroupVersionPredicate("7.3")
-		));
+	public static final String PRODUCT_VERSION_PORTAL_73 = getFirstProductKey("portal", "7.3");
 
 	// Temporarily hard-coded due to an upstream issue with release metadata
 
@@ -89,16 +59,10 @@ public class BladeTest extends BladeCLI {
 		return new BladeTestBuilder();
 	}
 
-	public static String getFirstProductKey(Predicate<ReleaseUtil.ReleaseEntry> predicate) {
-		return ReleaseUtil.withReleaseEntriesStream(
-			releaseEntryStream -> releaseEntryStream.filter(
-				predicate
-			).map(
-				ReleaseUtil.ReleaseEntry::getReleaseKey
-			).findFirst(
-			).orElse(
-				""
-			));
+	public static String getFirstProductKey(String product, String version) {
+		ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(product, version);
+
+		return releaseEntry.getReleaseKey();
 	}
 
 	@Override
@@ -259,14 +223,6 @@ public class BladeTest extends BladeCLI {
 
 	protected BladeTest(PrintStream out, PrintStream err, InputStream in) {
 		super(out, err, in);
-	}
-
-	private static Predicate<ReleaseUtil.ReleaseEntry> _getProductGroupVersionPredicate(String productGroupVersion) {
-		return releaseEntry -> Objects.equals(releaseEntry.getProductGroupVersion(), productGroupVersion);
-	}
-
-	private static Predicate<ReleaseUtil.ReleaseEntry> _getProductPredicate(String product) {
-		return releaseEntry -> Objects.equals(releaseEntry.getProduct(), product);
 	}
 
 	private File _getSettingsBaseDir() {
