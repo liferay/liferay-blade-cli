@@ -21,8 +21,6 @@ subprojects {
 			dirs "${rootProject.projectDir}/libs"
 		}
 
-		jcenter()
-
 		maven {
 			url "https://repo.gradle.org/gradle/libs-releases/"
 		}
@@ -36,5 +34,7 @@ subprojects {
 		}
 
 		mavenCentral()
+
+		jcenter()
 	}
 }
