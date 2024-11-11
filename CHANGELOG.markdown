@@ -1,5 +1,54 @@
 # Liferay Blade CLI Change Log
 
+## 7.0.2 - 2024-11-11
+
+### Commits
+- [LPD-41339] liferay-blade-cli: workflow: parameterize the jobs that are
+otherwise identical except for JDK version (35f153225c)
+- [LPD-41339] liferay-blade-cli: workflow: bumps version of upload-artifact
+(ab74e7df78)
+- [LPD-41339] liferay-blade-cli: put jcenter last (4b4eadc9eb)
+- [LPD-32781] cli: bnd.bnd: includes org.apache.http at runtime (b2bb226c16)
+- [LPD-32781] cli: bumps com.liferay.project.templates to 5.0.297 (c322469341)
+- [LPD-32781] cli: use string matching on the docker property to get the target
+platform version from the docker image property (49dba7b3f0)
+- [LPD-32781] liferay-blade-cli: auto SF (57243dd6f6)
+- [LPD-32781] extensions: bumps project templates compatible version ranges
+(b124de1dbe)
+- [LPD-32781] liferay-blade-cli: removes unused ResourceUtil (dafdd33d09)
+- [LPD-32781] liferay-blade-cli: CreateCommand: normalizes version string before
+checking Version range (da782b67f6)
+- [LPD-32781] liferay-blade-cli: updates getProduct methods in WorkspaceProvider
+classes (ca01fea6c5)
+- [LPD-32781] liferay-blade-cli: updates usages to use new lib and util in tests
+(d145cd6899)
+- [LPD-32781] liferay-blade-cli: updates usages to use new lib and util
+(c7bcbf9321)
+- [LPD-32781] liferay-blade-cli: ReleaseUtil extends from lib ReleaseUtil
+(3d8c2ebc81)
+- [LPD-32781] includes lib classes in resulting jar (0e77920e1c)
+- [LPD-32781] adds com.liferay.release.util dependency (dcb3cc70d9)
+- [LPD-32781] cli: bumps project templates dependency version (45263216e5)
+
+### Dependencies
+- [LPD-41339] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.42.
+- [LPD-41339] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.25.
+- [LPD-41339] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.26.
+- [LPD-32781] Update the com.liferay.project.templates dependency to version
+5.0.298.
+- [LPD-32781] Update the com.liferay.release.util dependency to version 1.0.0.
+- [LPD-32781] Update the com.liferay.project.templates dependency to version
+5.0.296.
+- [LPD-32144] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.42-SNAPSHOT.
+- [LPD-32144] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.25-SNAPSHOT.
+- [LPD-32144] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.26-SNAPSHOT.
+
 ## 7.0.1 - 2024-07-26
 
 ### Commits
@@ -2891,6 +2940,8 @@ maintainability (7f9bc3f45e)
 [LPD-28297]: https://issues.liferay.com/browse/LPD-28297
 [LPD-31577]: https://issues.liferay.com/browse/LPD-31577
 [LPD-32144]: https://issues.liferay.com/browse/LPD-32144
+[LPD-32781]: https://issues.liferay.com/browse/LPD-32781
+[LPD-41339]: https://issues.liferay.com/browse/LPD-41339
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
