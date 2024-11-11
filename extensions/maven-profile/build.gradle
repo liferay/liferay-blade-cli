@@ -44,4 +44,4 @@ publishing {
 	}
 }
 
-version = "1.0.42-SNAPSHOT"
+version = "1.0.42"
