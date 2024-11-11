@@ -32,45 +32,17 @@ jobs:
         shell: bash
         run: |
           ./gradlew --no-daemon checkSourceFormatting
-  LinuxJDK8:
-    name: Linux JDK8
+  RunTests:
+    name: Linux JDK${{matrix.javaVersion}}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      - name: Setup Java 8
+      - name: Setup Java ${{matrix.javaVersion}}
         uses: actions/setup-java@v3
         with:
-          java-version: 8
-          distribution: 'zulu'
-          cache: gradle
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Build
-        shell: bash
-        env:
-          GITHUB_CI: "true"
-        run: |
-          ./run-tests.sh
-  LinuxJDK11:
-    name: Linux JDK11
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      - name: Setup Java 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: 11.0.20
+          java-version: ${{matrix.javaVersion}}
           distribution: 'zulu'
           cache: gradle
       - name: Cache
@@ -92,8 +64,11 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: LinuxJDK11-tests.zip
+          name: LinuxJDK${{matrix.javaVersion}}-tests.zip
           path: tests.zip
+    strategy:
+      matrix:
+        javaVersion: [8, 11]
   #MacOSJDK11:
   #  name: MacOS JDK11
   #  runs-on: macos-latest
