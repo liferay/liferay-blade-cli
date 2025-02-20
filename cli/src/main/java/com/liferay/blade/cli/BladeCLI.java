@@ -364,7 +364,10 @@ public class BladeCLI {
 			jCommander.addCommand(baseArgs);
 		}
 
-		jCommander.usage(sb);
+		jCommander.getUsageFormatter(
+		).usage(
+			sb
+		);
 
 		try (Scanner scanner = new Scanner(sb.toString())) {
 			StringBuilder simplifiedUsageString = new StringBuilder();
@@ -396,13 +399,19 @@ public class BladeCLI {
 	}
 
 	public void printUsage(String command) {
-		_jCommander.usage(command);
+		_jCommander.getUsageFormatter(
+		).usage(
+			command
+		);
 	}
 
 	public void printUsage(String command, String message) {
 		out(message);
 
-		_jCommander.usage(command);
+		_jCommander.getUsageFormatter(
+		).usage(
+			command
+		);
 	}
 
 	public void run(String[] args) throws Exception {
