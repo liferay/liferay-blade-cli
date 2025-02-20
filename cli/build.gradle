@@ -114,14 +114,11 @@ dependencies {
 	api name: "org.objectweb.asm.commons-6.0.0"
 	api name: "org.objectweb.asm.tree-6.0.0"
 	api name: "org.objectweb.asm.util-6.0.0"
-
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.43-SNAPSHOT"
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.26-SNAPSHOT"
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.27-SNAPSHOT"
-
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	compileOnly project(":gradle-tooling")
-
 	testImplementation gradleTestKit()
 	testImplementation group: "com.googlecode.java-diff-utils", name: "diffutils", version: "1.3.0"
 	testImplementation group: "junit", name: "junit", version: "4.13.1"

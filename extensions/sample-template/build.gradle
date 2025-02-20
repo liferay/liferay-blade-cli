@@ -21,7 +21,6 @@ apply plugin: "java-library"
 
 dependencies {
 	compileOnly project(":cli")
-
 	testImplementation gradleTestKit()
 	testImplementation group: "junit", name: "junit", version: "4.13.1"
 	testImplementation project(path: ":cli")
