@@ -422,7 +422,7 @@ public class BladeCLI {
 
 			}
 
-			if (ArrayUtil.contains(args, "--refresh-releases")) {
+			if (ArrayUtil.contains(args, "init") || ArrayUtil.contains(args, "--refresh-releases")) {
 				System.out.println("Checking for new releases...");
 
 				ReleaseUtil.initialize(0);
