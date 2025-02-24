@@ -347,7 +347,7 @@ public class InitCommandTest {
 			}
 		}
 
-		String firstLine = lines.get(0);
+		String firstLine = lines.get(1);
 
 		ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(firstLine);
 

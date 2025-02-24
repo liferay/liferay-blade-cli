@@ -236,7 +236,9 @@ public class SamplesCommandTest {
 
 		String output = bladeTestResults.getOutput();
 
-		Assert.assertTrue(output, (output == null) || output.isEmpty());
+		output = output.trim();
+
+		Assert.assertEquals("Checking for new releases...", output);
 
 		String[] samplesArgs = {"samples", "-d", _rootDir.getPath() + "/test/workspace/modules", "auth-failure"};
 
