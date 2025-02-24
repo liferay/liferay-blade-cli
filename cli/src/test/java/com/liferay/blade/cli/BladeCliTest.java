@@ -27,6 +27,15 @@ public class BladeCliTest {
 	}
 
 	@Test
+	public void testBladeInitRefreshReleases() throws Exception {
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, "init", "--list");
+
+		String output = results.getOutput();
+
+		Assert.assertTrue(output, output.contains("Checking for new releases"));
+	}
+
+	@Test
 	public void testBladePrintUpdateIfAvailable() throws Exception {
 		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, "update", "--check");
 
@@ -37,6 +46,15 @@ public class BladeCliTest {
 		boolean updateAvailable = output.contains("A new update is available for this version of blade");
 
 		Assert.assertFalse("Current jar should be the latest version", updateAvailable);
+	}
+
+	@Test
+	public void testBladeRefreshReleasesFlag() throws Exception {
+		BladeTestResults results = TestUtil.runBlade(_rootDir, _extensionsDir, "help", "--refresh-releases");
+
+		String output = results.getOutput();
+
+		Assert.assertTrue(output, output.contains("Checking for new releases"));
 	}
 
 	@Rule
