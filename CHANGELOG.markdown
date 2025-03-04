@@ -1,13 +1,48 @@
 # Liferay Blade CLI Change Log
 
+## 7.0.3 - 2025-03-04
+
+### Commits
+- [LPD-49671] update related test cases (810df9cc07)
+- [LPD-49671] add test cases for refreshing releases (0ae3718b20)
+- [LPD-49671] automatically update releases.json on blade init (fb93048160)
+- [LPD-49398] cli: ignores failing Angular template test (0e16ae9452)
+- [LPD-49398] extensions: apply version range updates to the templates
+(47e5fe8aee)
+- [LPD-49398] cli: test: updates expected workspace version (c0125c4008)
+- [LPD-49543] update project-templates version (14a28fe7fb)
+- [LPD-49398] use JCommander.getUsageFormatter to be able to compile
+(72c42eacd9)
+
+### Dependencies
+- [LPD-49775] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.43.
+- [LPD-49775] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.26.
+- [LPD-49775] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.27.
+- [LPD-49543] Update the com.liferay.project.templates dependency to version
+5.1.7.
+- [LPD-41339] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.43-SNAPSHOT.
+- [LPD-41339] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.26-SNAPSHOT.
+- [LPD-41339] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.27-SNAPSHOT.
+
 ## 7.0.2 - 2024-11-11
 
 ### Commits
 - [LPD-41339] liferay-blade-cli: workflow: parameterize the jobs that are
-otherwise identical except for JDK version (35f153225c)
+otherwise identical except for JDK version (8abcb0bc5c)
 - [LPD-41339] liferay-blade-cli: workflow: bumps version of upload-artifact
-(ab74e7df78)
-- [LPD-41339] liferay-blade-cli: put jcenter last (4b4eadc9eb)
+(120530861b)
+- [LPD-41339] liferay-blade-cli: put jcenter last (0e855c7173)
+- [LPD-37083] cli: bumps expected version of workspace in tests to 12.0.0
+(450df4bed2)
+- [LPD-37083] update outdated Github Actions plugin (6cb08e19fa)
+- [LPD-37083] cli: build.gradle: bump com.liferay.project.templates to 5.1.2
+(511d097f40)
 - [LPD-32781] cli: bnd.bnd: includes org.apache.http at runtime (b2bb226c16)
 - [LPD-32781] cli: bumps com.liferay.project.templates to 5.0.297 (c322469341)
 - [LPD-32781] cli: use string matching on the docker property to get the target
@@ -37,6 +72,8 @@ to version 1.0.42.
 version 1.0.25.
 - [LPD-41339] Update the com.liferay.project.templates.js.widget dependency to
 version 1.0.26.
+- [LPD-37083] Update the com.liferay.project.templates dependency to version
+5.1.2.
 - [LPD-32781] Update the com.liferay.project.templates dependency to version
 5.0.298.
 - [LPD-32781] Update the com.liferay.release.util dependency to version 1.0.0.
@@ -2941,7 +2978,12 @@ maintainability (7f9bc3f45e)
 [LPD-31577]: https://issues.liferay.com/browse/LPD-31577
 [LPD-32144]: https://issues.liferay.com/browse/LPD-32144
 [LPD-32781]: https://issues.liferay.com/browse/LPD-32781
+[LPD-37083]: https://issues.liferay.com/browse/LPD-37083
 [LPD-41339]: https://issues.liferay.com/browse/LPD-41339
+[LPD-49398]: https://issues.liferay.com/browse/LPD-49398
+[LPD-49543]: https://issues.liferay.com/browse/LPD-49543
+[LPD-49671]: https://issues.liferay.com/browse/LPD-49671
+[LPD-49775]: https://issues.liferay.com/browse/LPD-49775
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
