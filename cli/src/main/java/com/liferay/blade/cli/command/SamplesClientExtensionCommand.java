@@ -152,7 +152,7 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		}
 
 		bladeCLI.out(
-			"Specify client extension sample to download (\"blade samples client-extensions sample-global-css\"). " +
+			"Specify client extension sample to download (\"blade samples client-extensions sample-global-css-1\"). " +
 				"Otherwise (\"blade samples client-extensions\") will download all available client extension " +
 					"samples.\n");
 		bladeCLI.out("Currently available samples:");

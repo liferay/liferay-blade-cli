@@ -78,14 +78,14 @@ public class SamplesCommandTest {
 		File root = temporaryFolder.getRoot();
 
 		String[] args = {
-			"samples client-extensions", "-d", root.getPath() + "/client-extensions", "liferay-sample-global-css"
+			"samples client-extensions", "-d", root.getPath() + "/client-extensions", "liferay-sample-global-css-1"
 		};
 
 		BladeTest bladeTest = _getBladeTest();
 
 		bladeTest.run(args);
 
-		File projectDir = new File(root, "client-extensions/liferay-sample-global-css");
+		File projectDir = new File(root, "client-extensions/liferay-sample-global-css-1");
 
 		Assert.assertTrue(projectDir.exists());
 	}
