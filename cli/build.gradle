@@ -117,6 +117,7 @@ dependencies {
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.44-SNAPSHOT"
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.27-SNAPSHOT"
 	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.28-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.npm.angular.portlet", version: "1.0.196"
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	compileOnly project(":gradle-tooling")
 	testImplementation gradleTestKit()
