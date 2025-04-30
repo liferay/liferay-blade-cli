@@ -10,5 +10,6 @@
 		<suppress checks="BNDDefinitionKeysCheck" files="extensions/maven-profile/bnd\.bnd" />
 		<suppress checks="CDNCheck" files="build.gradle" />
 		<suppress checks="GradleDependencyArtifactsCheck" />
+		<suppress checks="MarkdownFileExtensionCheck" />
 	</source-check>
 </suppressions>
