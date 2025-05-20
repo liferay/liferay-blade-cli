@@ -36,6 +36,12 @@ tasks.register('downloadReleasesJson', Download)
 tasks.register('unzipManifest', Copy)
 tasks.register('unzipPortal', Copy)
 
+if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+	tasks.withType(Test).configureEach() {
+		jvmArgs += '--add-opens=java.base/java.lang=ALL-UNNAMED'
+	}
+}
+
 configurations {
 	bladeExtensions {
 		resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
