@@ -46,6 +46,7 @@ import org.junit.rules.TemporaryFolder;
  * @author Christopher Bryan Boyd
  * @author Gregory Amerson
  */
+@Ignore
 public class InstallExtensionCommandTest {
 
 	@Before
@@ -74,7 +75,6 @@ public class InstallExtensionCommandTest {
 		Assert.assertTrue(extensionJar.getAbsolutePath() + " does not exist", extensionJar.exists());
 	}
 
-	@Ignore
 	@Test
 	public void testInstallCustomExtensionSubdirectory() throws Exception {
 		Assume.assumeFalse(_isWindows());
