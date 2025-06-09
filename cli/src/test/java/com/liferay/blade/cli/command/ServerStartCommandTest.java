@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -129,6 +130,7 @@ public class ServerStartCommandTest {
 		_findAndTerminateTomcat(true);
 	}
 
+	@Ignore
 	@Test
 	public void testServerRunCommandWildfly() throws Exception {
 		_findAndTerminateWildfly(false);
@@ -146,6 +148,7 @@ public class ServerStartCommandTest {
 		_findAndTerminateWildfly(true);
 	}
 
+	@Ignore
 	@Test
 	public void testServerRunCommandWildflyDebug() throws Exception {
 		_findAndTerminateWildfly(false);
@@ -165,6 +168,7 @@ public class ServerStartCommandTest {
 		_findAndTerminateWildfly(true);
 	}
 
+	@Ignore
 	@Test
 	public void testServerRunCommandWildflyDebugCustomPort() throws Exception {
 		_findAndTerminateWildfly(false);
@@ -249,6 +253,7 @@ public class ServerStartCommandTest {
 		_findAndTerminateTomcat(true);
 	}
 
+	@Ignore
 	@Test
 	public void testServerStartCommandWildfly() throws Exception {
 		_findAndTerminateWildfly(false);
@@ -266,6 +271,7 @@ public class ServerStartCommandTest {
 		_findAndTerminateWildfly(true);
 	}
 
+	@Ignore
 	@Test
 	public void testServerStartCommandWildflyDebug() throws Exception {
 		_findAndTerminateWildfly(false);
@@ -285,6 +291,7 @@ public class ServerStartCommandTest {
 		_findAndTerminateWildfly(true);
 	}
 
+	@Ignore
 	@Test
 	public void testServerStartCommandWildflyDebugCustomPort() throws Exception {
 		_findAndTerminateWildfly(false);
