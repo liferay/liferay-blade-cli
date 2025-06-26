@@ -2107,7 +2107,7 @@ public class CreateCommandTest {
 		if (!lines.isEmpty() && !lines.contains("war {")) {
 			String firstLine = lines.get(0);
 
-			if (!firstLine.equals("// Check GETTING_STARTED.markdown for information regarding usage.")) {
+			if (!firstLine.equals("// Check GETTING_STARTED.md for information regarding usage.")) {
 				_checkFileExists(projectPath + "/bnd.bnd");
 			}
 		}
