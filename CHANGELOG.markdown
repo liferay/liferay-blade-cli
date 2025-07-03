@@ -1,5 +1,65 @@
 # Liferay Blade CLI Change Log
 
+## 7.0.5 - 2025-07-03
+
+### Commits
+- [LPD-52268] cli: updates expected line value (c6a5899e81)
+- [LPD-52268] cli: updates expected workspace version (f82cd1bc44)
+- [LPD-52268] cli: bumps project templates version to 6.0.5 (96849973d6)
+- [LPD-55390] Support --add-opens in Java 11 as well (b5efd8aaed)
+- [LPD-55390] Temporarily ignore Wildfly tests since Wildfly is no longer
+supported (cba62075ba)
+- [LPD-55390] Support reflection on certain commands since it is needed in Java
+17 or newer (7f7fc7017c)
+- [LPD-55975] Temporarily ignore failing test (f75dc689f7)
+- [LPD-41660] Upgrade property that is not allowed in versions of java later
+than 8 (077be112e4)
+- [LPD-41660] Add Java 21 automation for blade-cli testing (d6057e0537)
+- [LPD-56473] increment version of com.liferay.project.templates (603a2da829)
+- [LPD-52143] Increment version of com.liferay.project.templates (b7e62d321b)
+- [LPD-44518] temporarily add
+com.liferay.project.templates.npm.angular.portlet-1.0.196-SNAPSHOT.jar to avoid
+test failures (b58e87af98)
+- [LPD-44518] suppress MarkdownFileExtensionCheck checks (b44dcd5f39)
+- [LPD-44518] update version to align with common syntax (8ecf37b81d)
+- [LPD-44518] add publish script (a67c489001)
+- [LPD-44518] move the npm-angular-portlet project template to Blade
+(83acf40ed3)
+- [LPD-44518] use the latest project-templates version (ab81882493)
+- [LPD-54552] liferay-blade-cli: publish.yml: uses ubuntu-latest (44e081da04)
+- [LCD-45904] fix tests (e25f8b00ec)
+- [LPD-49775] .github: updates worklow to actions/cache@v4 (02c722a8b6)
+
+### Dependencies
+- [LPD-52268] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.44.
+- [LPD-52268] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.27.
+- [LPD-52268] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.28.
+- [LPD-52268] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.196.
+- [LPD-52268] Update the com.liferay.project.templates dependency to version
+6.0.5.
+- [LPD-56473] Update the com.liferay.project.templates dependency to version
+6.0.0.
+- [LPD-52143] Update the com.liferay.project.templates dependency to version
+5.1.11.
+- [LPD-44518] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.196-SNAPSHOT.
+- [LPD-44518] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.196.
+- [LPD-44518] Update the com.liferay.project.templates dependency to version
+5.1.10.
+- [LCD-45904] Update the com.liferay.project.templates dependency to version
+5.1.8.
+- [LPD-49775] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.44-SNAPSHOT.
+- [LPD-49775] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.27-SNAPSHOT.
+- [LPD-49775] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.28-SNAPSHOT.
+
 ## 7.0.3 - 2025-03-04
 
 ### Commits
@@ -2973,6 +3033,7 @@ maintainability (7f9bc3f45e)
 [LCD-14267]: https://issues.liferay.com/browse/LCD-14267
 [LCD-14295]: https://issues.liferay.com/browse/LCD-14295
 [LCD-14300]: https://issues.liferay.com/browse/LCD-14300
+[LCD-45904]: https://issues.liferay.com/browse/LCD-45904
 [LPD-28093]: https://issues.liferay.com/browse/LPD-28093
 [LPD-28297]: https://issues.liferay.com/browse/LPD-28297
 [LPD-31577]: https://issues.liferay.com/browse/LPD-31577
@@ -2980,10 +3041,18 @@ maintainability (7f9bc3f45e)
 [LPD-32781]: https://issues.liferay.com/browse/LPD-32781
 [LPD-37083]: https://issues.liferay.com/browse/LPD-37083
 [LPD-41339]: https://issues.liferay.com/browse/LPD-41339
+[LPD-41660]: https://issues.liferay.com/browse/LPD-41660
+[LPD-44518]: https://issues.liferay.com/browse/LPD-44518
 [LPD-49398]: https://issues.liferay.com/browse/LPD-49398
 [LPD-49543]: https://issues.liferay.com/browse/LPD-49543
 [LPD-49671]: https://issues.liferay.com/browse/LPD-49671
 [LPD-49775]: https://issues.liferay.com/browse/LPD-49775
+[LPD-52143]: https://issues.liferay.com/browse/LPD-52143
+[LPD-52268]: https://issues.liferay.com/browse/LPD-52268
+[LPD-54552]: https://issues.liferay.com/browse/LPD-54552
+[LPD-55390]: https://issues.liferay.com/browse/LPD-55390
+[LPD-55975]: https://issues.liferay.com/browse/LPD-55975
+[LPD-56473]: https://issues.liferay.com/browse/LPD-56473
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
