@@ -20,17 +20,23 @@ function checkError {
 sed "s/all/bin/" gradle/wrapper/gradle-wrapper.properties > gradle-wrapper.properties.edited
 mv gradle-wrapper.properties.edited gradle/wrapper/gradle-wrapper.properties
 
-./gradlew --no-daemon :extensions:maven-profile:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
+project_names=(
+	maven-profile
+	project-templates-js-theme
+	project-templates-js-widget
+	project-templates-npm-angular-portlet
+	project-templates-social-bookmark
+)
 
-checkError
+for projectName in "${project_names[@]}" ; do
+	./gradlew --no-daemon :extensions:${projectName}:publishToMavenLocal \
+		-x :cli:bladeExtensionsVersions \
+		-x :cli:processResources \
+		--scan
 
-./gradlew --no-daemon :extensions:project-templates-js-theme:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
+	checkError
+done
 
-checkError
-
-./gradlew --no-daemon :extensions:project-templates-js-widget:publishToMavenLocal -x :cli:bladeExtensionsVersions -x :cli:processResources --scan
-
-checkError
 
 ./gradlew --no-daemon -PmavenLocal -Pparallel --continue clean check smokeTests --scan --stacktrace
 
