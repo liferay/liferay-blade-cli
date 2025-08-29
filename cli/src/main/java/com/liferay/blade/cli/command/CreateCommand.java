@@ -17,13 +17,11 @@ import com.liferay.blade.cli.WorkspaceConstants;
 import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleWorkspaceProvider;
 import com.liferay.blade.cli.util.BladeUtil;
-import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.blade.cli.util.StringUtil;
 import com.liferay.project.templates.ProjectTemplates;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgs;
 import com.liferay.project.templates.extensions.ProjectTemplatesArgsExt;
 import com.liferay.project.templates.extensions.util.ProjectTemplatesUtil;
-import com.liferay.release.util.ReleaseEntry;
 
 import java.io.File;
 import java.io.IOException;
@@ -354,9 +352,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 			throw new IOException("Cannot determine Liferay Version. Please enter a valid value for Liferay Version.");
 		}
 
-		ReleaseEntry releaseEntry = ReleaseUtil.getReleaseEntry(liferayVersion.get());
-
-		projectTemplatesArgs.setLiferayVersion(releaseEntry.getTargetPlatformVersion());
+		projectTemplatesArgs.setLiferayVersion(liferayVersion.get());
 
 		projectTemplatesArgs.setName(name);
 		projectTemplatesArgs.setPackageName(createArgs.getPackageName());
