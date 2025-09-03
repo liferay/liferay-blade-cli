@@ -28,6 +28,9 @@ Private-Package:\
 	\
 	groovy.json,\
 	\
+	org.apache.commons.codec,\
+	org.apache.commons.codec.binary,\
+	\
 	org.apache.commons.compress.archivers;-split-package:=merge-first,\
 	org.apache.commons.compress.archivers.tar;-split-package:=merge-first,\
 	org.apache.commons.compress.archivers.zip;-split-package:=merge-first,\
