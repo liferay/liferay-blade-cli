@@ -7,8 +7,8 @@ package com.liferay.blade.cli.command;
 
 import com.liferay.blade.cli.BladeCLI;
 import com.liferay.blade.cli.BladeSettings;
-import com.liferay.blade.cli.WorkspaceProvider;
 import com.liferay.blade.cli.gradle.GradleExec;
+import com.liferay.blade.cli.util.ArrayUtil;
 import com.liferay.blade.cli.util.BladeUtil;
 import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.project.templates.ProjectTemplates;
@@ -92,81 +92,70 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		_trace("Using destDir " + destDir);
 
-		if (destDir.exists() && !destDir.isDirectory()) {
+		if (destDir.isFile()) {
 			_addError(destDir.getAbsolutePath() + " is not a directory.");
 
 			return;
+		}
+
+		if (!pluginsSDK && bladeCLI.isInWorkspace(destDir)) {
+			_addError("blade does not support initializing a workspace inside of another workspace.");
+
+			return;
+		}
+
+		if (!pluginsSDK && ArrayUtil.isNotEmpty(destDir.list())) {
+			if (!initArgs.isForce()) {
+				_addError(
+					destDir.getAbsolutePath() +
+						" contains files, please move them before continuing or use -f (--force) option to init " +
+							"workspace.");
+
+				return;
+			}
+
+			_trace("Files found, continuing init.");
 		}
 
 		String profileName = initArgs.getProfileName();
 
 		boolean mavenBuild = Objects.equals(profileName, "maven");
 
-		if (destDir.exists()) {
-			if (pluginsSDK) {
-				if (!_isPluginsSDK70(destDir)) {
-					if (initArgs.isUpgrade()) {
-						if (mavenBuild) {
-							_addError("Upgrading Plugins SDK in Liferay Maven Workspace not supported.");
-
-							return;
-						}
-
-						_trace(
-							"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory and initing " +
-								"workspace.");
-
-						for (String fileName : _SDK_6_GA5_FILES) {
-							File file = new File(destDir, fileName);
-
-							if (file.exists()) {
-								file.delete();
-							}
-						}
-					}
-					else {
-						_addError(
-							"Unable to run blade init in Plugins SDK 6.2, please add -u (--upgrade) if you want to " +
-								"upgrade to 7.0");
-
-						return;
-					}
-				}
-
-				_trace("Found Plugins SDK, moving contents to new subdirectory and initing workspace.");
-
-				Path tempDir = Files.createTempDirectory("orignal-sdk");
-
-				temp = tempDir.toFile();
-
-				_moveContentsToDirectory(destDir, temp);
-			}
-			else {
-				String[] files = destDir.list();
-
-				if ((files != null) && (files.length > 0)) {
-					if (initArgs.isForce()) {
-						_trace("Files found, continuing init.");
-					}
-					else {
-						_addError(
-							destDir.getAbsolutePath() +
-								" contains files, please move them before continuing or use -f (--force) option to " +
-									"init workspace.");
-
-						return;
-					}
-				}
-			}
-		}
-		else {
-			WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
-
-			if ((workspaceProvider != null) || bladeCLI.isInWorkspace(baseDir)) {
-				_addError("blade does not support initializing a workspace inside of another workspace.");
+		if (pluginsSDK && !_isPluginsSDK70(destDir)) {
+			if (!initArgs.isUpgrade()) {
+				_addError(
+					"Unable to run blade init in Plugins SDK 6.2, please add -u (--upgrade) if you want to upgrade " +
+						"to 7.0");
 
 				return;
 			}
+
+			if (mavenBuild) {
+				_addError("Upgrading Plugins SDK in Liferay Maven Workspace not supported.");
+
+				return;
+			}
+
+			_trace(
+				"Found plugins-sdk 6.2, upgraded to 7.0, moving contents to new subdirectory and initing workspace.");
+
+			for (String fileName : _SDK_6_GA5_FILES) {
+				File file = new File(destDir, fileName);
+
+				if (file.exists()) {
+					file.delete();
+				}
+			}
+		}
+
+		if (pluginsSDK) {
+			_trace("Found Plugins SDK, moving contents to new subdirectory and initing workspace.");
+
+			Path tempDir = Files.createTempDirectory("orignal-sdk");
+
+			temp = tempDir.toFile();
+
+			_moveContentsToDirectory(destDir, temp);
 		}
 
 		ProjectTemplatesArgs projectTemplatesArgs = new ProjectTemplatesArgs();
