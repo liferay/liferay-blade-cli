@@ -62,4 +62,8 @@ public class ArrayUtil {
 		return false;
 	}
 
+	public static boolean isNotEmpty(Object[] array) {
+		return !isEmpty(array);
+	}
+
 }
