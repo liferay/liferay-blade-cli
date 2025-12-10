@@ -279,6 +279,46 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testDefaultInitWorkspaceDirectoryIsWorkspaceSubdirectory() throws Exception {
+		String[] args = {
+			"--base", _workspaceDir.getPath(), "init", "firstWorkspace", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
+		};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		File firstWorkspaceModules = new File(_workspaceDir, "firstWorkspace" + File.separator + "modules");
+
+		String[] moreArgs = {
+			"--base", firstWorkspaceModules.getPath(), "init", "nextWorkspace", "-v",
+			BladeTest.PRODUCT_VERSION_PORTAL_74
+		};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
+
+		Assert.assertTrue(
+			firstWorkspaceModules.getName() + " should exist but does not.", firstWorkspaceModules.exists());
+
+		File nextWorkspace = new File(_workspaceDir + File.separator + "firstWorkspace", "nextWorkspace");
+
+		Assert.assertFalse(nextWorkspace.getName() + " should not exist, but it does.", nextWorkspace.exists());
+
+		try {
+			BladeTestResults bladeTestResults = TestUtil.runBlade(firstWorkspaceModules, _extensionsDir, moreArgs);
+
+			Assert.assertFalse(
+				"There should be no results from the command, but bladeTestResults != null)", bladeTestResults != null);
+		}
+		catch (AssertionError e) {
+			String message = e.getMessage();
+
+			Assert.assertTrue(
+				"should say 'does not support initializing a workspace inside of another workspace', but says: " +
+					message,
+				message.contains("does not support initializing a workspace inside of another workspace"));
+		}
+	}
+
+	@Test
 	public void testInitCommandGradleOption() throws Exception {
 		String[] args = {
 			"--base", _workspaceDir.getPath(), "init", "-b", "gradle", "gradleworkspace", "-v",
