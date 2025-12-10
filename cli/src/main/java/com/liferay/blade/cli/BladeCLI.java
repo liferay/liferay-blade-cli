@@ -284,6 +284,18 @@ public class BladeCLI {
 		return _in;
 	}
 
+	public boolean isInWorkspace(File dir) {
+		while (dir.getParentFile() != null) {
+			dir = dir.getParentFile();
+
+			if (isWorkspaceDir(dir)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public boolean isWorkspace() {
 		BaseArgs baseArgs = getArgs();
 
