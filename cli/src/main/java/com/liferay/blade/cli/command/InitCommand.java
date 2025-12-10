@@ -162,7 +162,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		else {
 			WorkspaceProvider workspaceProvider = bladeCLI.getWorkspaceProvider(baseDir);
 
-			if (workspaceProvider != null) {
+			if ((workspaceProvider != null) || bladeCLI.isInWorkspace(baseDir)) {
 				_addError("blade does not support initializing a workspace inside of another workspace.");
 
 				return;
