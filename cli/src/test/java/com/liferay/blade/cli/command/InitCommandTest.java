@@ -596,8 +596,6 @@ public class InitCommandTest {
 
 		if ((workspaceName != null) && !workspaceName.isEmpty()) {
 			args2.add(3, workspaceName);
-
-			args2.add("-f");
 		}
 
 		BladeTestResults bladeTestResults = TestUtil.runBlade(
