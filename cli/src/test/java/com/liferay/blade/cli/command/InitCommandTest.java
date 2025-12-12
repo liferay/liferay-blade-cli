@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -276,6 +277,16 @@ public class InitCommandTest {
 					message,
 				message.contains("does not support initializing a workspace inside of another workspace"));
 		}
+	}
+
+	@Test
+	public void getTestDefaultInitWorkspaceDirectoryInWorkspaceWithName() {
+		_testDefaultInitWorkspaceDirectoryInWorkspace("workspace2");
+	}
+
+	@Test
+	public void testDefaultInitWorkspaceDirectoryInWorkspaceWithNoName() {
+		_testDefaultInitWorkspaceDirectoryInWorkspace(null);
 	}
 
 	@Test
@@ -590,6 +601,40 @@ public class InitCommandTest {
 		Files.createDirectories(buildCommonPluginXmlPath);
 
 		Assert.assertTrue(Files.exists(buildCommonPluginXmlPath));
+	}
+
+	private void _testDefaultInitWorkspaceDirectoryInWorkspace(String workspaceName) {
+		String workspaceName1 = "workspace1";
+
+		String[] args1 = {
+				"--base", _workspaceDir.getPath(), "init", workspaceName1, "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
+		};
+
+		File workspaceDir1 = new File(_workspaceDir.getPath() + File.separator + workspaceName1);
+
+		if (!workspaceDir1.exists()) {
+			TestUtil.runBlade(_workspaceDir, _extensionsDir, args1);
+		}
+
+		File workspaceModulesDir = new File(_workspaceDir + File.separator + workspaceName1 + File.separator + "modules");
+
+		String workspaceName2 = "workspace2";
+
+		List<String> args2 = new ArrayList<>(Arrays.asList("--base", workspaceModulesDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74));
+
+		if (workspaceName != null && !workspaceName.isEmpty()) {
+			args2.add(3, workspaceName);
+
+			args2.add("-f");
+		}
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(workspaceModulesDir, _extensionsDir, false, args2.toArray(new String[0]));
+
+		File workspaceDir2 = new File(workspaceModulesDir.getPath() + File.separator + workspaceName2);
+
+		Assert.assertFalse(workspaceDir2.exists());
+
+		Assert.assertTrue(bladeTestResults.getErrors().contains("blade does not support initializing a workspace inside of another workspace."));
 	}
 
 	private void _testInitWithLiferayVersion(String liferayVersion) throws Exception {
