@@ -242,18 +242,18 @@ public class InitCommandTest {
 	}
 
 	@Test
-	public void testDefaultInitWorkspaceDirectoryIsWorkspace() throws Exception {
-		_testDefaultInitWorkspaceDirectory(false, "workspace2");
-	}
-
-	@Test
-	public void getTestDefaultInitWorkspaceDirectoryInWorkspaceWithName() {
+	public void testDefaultInitWorkspaceDirectoryInWorkspaceWithName() {
 		_testDefaultInitWorkspaceDirectory(true, "workspace2");
 	}
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryInWorkspaceWithNoName() {
 		_testDefaultInitWorkspaceDirectory(true, null);
+	}
+
+	@Test
+	public void testDefaultInitWorkspaceDirectoryIsWorkspace() throws Exception {
+		_testDefaultInitWorkspaceDirectory(false, "workspace2");
 	}
 
 	@Test
@@ -570,11 +570,11 @@ public class InitCommandTest {
 		Assert.assertTrue(Files.exists(buildCommonPluginXmlPath));
 	}
 
-	private void _testDefaultInitWorkspaceDirectory(boolean isSubdirectory, String workspaceName) {
+	private void _testDefaultInitWorkspaceDirectory(boolean subdirectory, String workspaceName) {
 		String workspaceName1 = "workspace1";
 
 		String[] args1 = {
-				"--base", _workspaceDir.getPath(), "init", workspaceName1, "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
+			"--base", _workspaceDir.getPath(), "init", workspaceName1, "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
 		File workspaceDir1 = new File(_workspaceDir.getPath() + File.separator + workspaceName1);
@@ -583,30 +583,35 @@ public class InitCommandTest {
 			TestUtil.runBlade(_workspaceDir, _extensionsDir, args1);
 		}
 
-		File workspaceDir = workspaceDir1;
+		File baseDir = workspaceDir1;
 
-		if (isSubdirectory) {
-			workspaceDir = new File(_workspaceDir + File.separator + workspaceName1 + File.separator + "modules");
+		if (subdirectory) {
+			baseDir = new File(_workspaceDir + File.separator + workspaceName1 + File.separator + "modules");
 		}
-
 
 		String workspaceName2 = "workspace2";
 
-		List<String> args2 = new ArrayList<>(Arrays.asList("--base", workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74));
+		List<String> args2 = new ArrayList<>(
+			Arrays.asList("--base", baseDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74));
 
-		if (workspaceName != null && !workspaceName.isEmpty()) {
+		if ((workspaceName != null) && !workspaceName.isEmpty()) {
 			args2.add(3, workspaceName);
 
 			args2.add("-f");
 		}
 
-		BladeTestResults bladeTestResults = TestUtil.runBlade(workspaceDir, _extensionsDir, false, args2.toArray(new String[0]));
+		BladeTestResults bladeTestResults = TestUtil.runBlade(
+			baseDir, _extensionsDir, false, args2.toArray(new String[0]));
 
-		File workspaceDir2 = new File(workspaceDir.getPath() + File.separator + workspaceName2);
+		File workspaceDir2 = new File(baseDir.getPath() + File.separator + workspaceName2);
 
 		Assert.assertFalse(workspaceDir2.exists());
 
-		Assert.assertTrue(bladeTestResults.getErrors().contains("blade does not support initializing a workspace inside of another workspace."));
+		Assert.assertTrue(
+			bladeTestResults.getErrors(
+			).contains(
+				"blade does not support initializing a workspace inside of another workspace."
+			));
 	}
 
 	private void _testInitWithLiferayVersion(String liferayVersion) throws Exception {
