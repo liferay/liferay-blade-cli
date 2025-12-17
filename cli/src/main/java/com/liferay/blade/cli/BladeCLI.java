@@ -284,14 +284,6 @@ public class BladeCLI {
 		return _in;
 	}
 
-	public boolean isInWorkspace(File dir) {
-		if (dir == null) {
-			return false;
-		}
-
-		return isWorkspaceDir(dir);
-	}
-
 	public boolean isWorkspace() {
 		BaseArgs baseArgs = getArgs();
 
