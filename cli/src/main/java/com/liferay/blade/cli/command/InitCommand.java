@@ -98,7 +98,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			return;
 		}
 
-		if (!pluginsSDK && bladeCLI.isInWorkspace(destDir)) {
+		if (!pluginsSDK && bladeCLI.isWorkspaceDir(destDir)) {
 			_addError("blade does not support initializing a workspace inside of another workspace.");
 
 			return;
