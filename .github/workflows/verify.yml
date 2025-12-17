@@ -68,7 +68,7 @@ jobs:
           path: tests.zip
     strategy:
       matrix:
-        javaVersion: [8, 11, 21]
+        javaVersion: [11, 21]
   #MacOSJDK11:
   #  name: MacOS JDK11
   #  runs-on: macos-latest
