@@ -605,9 +605,10 @@ public class InitCommandTest {
 
 		Assert.assertFalse(workspaceDir2.exists());
 
+		String errors = bladeTestResults.getErrors();
+
 		Assert.assertTrue(
-			bladeTestResults.getErrors(
-			).contains(
+			errors.contains(
 				"blade does not support initializing a workspace inside of another workspace."
 			));
 	}
