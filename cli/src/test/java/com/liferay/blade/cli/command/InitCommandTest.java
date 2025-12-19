@@ -243,17 +243,17 @@ public class InitCommandTest {
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryInWorkspaceWithName() {
-		_testDefaultInitWorkspaceDirectory(true, "workspace2");
+		_testDefaultInitWorkspaceDirectory(true, true);
 	}
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryInWorkspaceWithNoName() {
-		_testDefaultInitWorkspaceDirectory(true, null);
+		_testDefaultInitWorkspaceDirectory(true, false);
 	}
 
 	@Test
 	public void testDefaultInitWorkspaceDirectoryIsWorkspace() throws Exception {
-		_testDefaultInitWorkspaceDirectory(false, "workspace2");
+		_testDefaultInitWorkspaceDirectory(false, true);
 	}
 
 	@Test
@@ -570,7 +570,7 @@ public class InitCommandTest {
 		Assert.assertTrue(Files.exists(buildCommonPluginXmlPath));
 	}
 
-	private void _testDefaultInitWorkspaceDirectory(boolean subdirectory, String workspaceName) {
+	private void _testDefaultInitWorkspaceDirectory(boolean subdirectory, boolean useNestedWorkspaceName) {
 		String workspaceName1 = "workspace1";
 
 		String[] args1 = {
@@ -594,8 +594,8 @@ public class InitCommandTest {
 		List<String> args2 = new ArrayList<>(
 			Arrays.asList("--base", baseDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74));
 
-		if ((workspaceName != null) && !workspaceName.isEmpty()) {
-			args2.add(3, workspaceName);
+		if (useNestedWorkspaceName) {
+			args2.add(3, workspaceName2);
 		}
 
 		BladeTestResults bladeTestResults = TestUtil.runBlade(
