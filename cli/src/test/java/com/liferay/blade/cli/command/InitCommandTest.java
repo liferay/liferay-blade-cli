@@ -571,40 +571,40 @@ public class InitCommandTest {
 	}
 
 	private void _testDefaultInitWorkspaceDirectory(boolean subdirectory, boolean useNestedWorkspaceName) {
-		String workspaceName1 = "workspace1";
+		String workspaceName = "workspace1";
 
 		String[] args1 = {
-			"--base", _workspaceDir.getPath(), "init", workspaceName1, "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
+			"--base", _workspaceDir.getPath(), "init", workspaceName, "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
-		File workspaceDir1 = new File(_workspaceDir.getPath() + File.separator + workspaceName1);
+		File workspaceDir = new File(_workspaceDir.getPath() + File.separator + workspaceName);
 
-		if (!workspaceDir1.exists()) {
+		if (!workspaceDir.exists()) {
 			TestUtil.runBlade(_workspaceDir, _extensionsDir, args1);
 		}
 
-		File baseDir = workspaceDir1;
+		File baseDir = workspaceDir;
 
 		if (subdirectory) {
-			baseDir = new File(_workspaceDir + File.separator + workspaceName1 + File.separator + "modules");
+			baseDir = new File(_workspaceDir + File.separator + workspaceName + File.separator + "modules");
 		}
 
-		String workspaceName2 = "workspace2";
+		String nestedWorkspaceName = "workspace2";
 
 		List<String> args2 = new ArrayList<>(
 			Arrays.asList("--base", baseDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74));
 
 		if (useNestedWorkspaceName) {
-			args2.add(3, workspaceName2);
+			args2.add(3, nestedWorkspaceName);
 		}
 
 		BladeTestResults bladeTestResults = TestUtil.runBlade(
 			baseDir, _extensionsDir, false, args2.toArray(new String[0]));
 
 		if (useNestedWorkspaceName) {
-			File workspaceDir2 = new File(baseDir.getPath() + File.separator + workspaceName2);
+			File nestedWorkspaceDir = new File(baseDir.getPath() + File.separator + nestedWorkspaceName);
 
-			Assert.assertFalse(workspaceDir2.exists());
+			Assert.assertFalse(nestedWorkspaceDir.exists());
 		}
 
 		String errors = bladeTestResults.getErrors();
