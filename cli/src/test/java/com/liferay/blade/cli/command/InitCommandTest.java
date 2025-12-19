@@ -610,9 +610,7 @@ public class InitCommandTest {
 		String errors = bladeTestResults.getErrors();
 
 		Assert.assertTrue(
-			errors.contains(
-				"blade does not support initializing a workspace inside of another workspace."
-			));
+			errors.contains("blade does not support initializing a workspace inside of another workspace."));
 	}
 
 	private void _testInitWithLiferayVersion(String liferayVersion) throws Exception {
