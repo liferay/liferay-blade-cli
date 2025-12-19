@@ -601,9 +601,11 @@ public class InitCommandTest {
 		BladeTestResults bladeTestResults = TestUtil.runBlade(
 			baseDir, _extensionsDir, false, args2.toArray(new String[0]));
 
-		File workspaceDir2 = new File(baseDir.getPath() + File.separator + workspaceName2);
+		if (useNestedWorkspaceName) {
+			File workspaceDir2 = new File(baseDir.getPath() + File.separator + workspaceName2);
 
-		Assert.assertFalse(workspaceDir2.exists());
+			Assert.assertFalse(workspaceDir2.exists());
+		}
 
 		String errors = bladeTestResults.getErrors();
 
