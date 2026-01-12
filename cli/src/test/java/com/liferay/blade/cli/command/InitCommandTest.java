@@ -9,6 +9,7 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
+import com.liferay.blade.cli.util.ArrayUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.release.util.ReleaseEntry;
@@ -21,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -242,18 +242,23 @@ public class InitCommandTest {
 	}
 
 	@Test
-	public void testDefaultInitWorkspaceDirectoryInWorkspaceWithName() {
-		_testDefaultInitWorkspaceDirectory(true, true);
+	public void testDefaultInitWorkspaceDirectoryIsWorkspace1() {
+		_testDefaultInitWorkspaceDirectoryIsWorkspace(".", null);
 	}
 
 	@Test
-	public void testDefaultInitWorkspaceDirectoryInWorkspaceWithNoName() {
-		_testDefaultInitWorkspaceDirectory(true, false);
+	public void testDefaultInitWorkspaceDirectoryIsWorkspace2() {
+		_testDefaultInitWorkspaceDirectoryIsWorkspace(".", "nextWorkspace");
 	}
 
 	@Test
-	public void testDefaultInitWorkspaceDirectoryIsWorkspace() throws Exception {
-		_testDefaultInitWorkspaceDirectory(false, true);
+	public void testDefaultInitWorkspaceDirectoryIsWorkspace3() {
+		_testDefaultInitWorkspaceDirectoryIsWorkspace("modules", null);
+	}
+
+	@Test
+	public void testDefaultInitWorkspaceDirectoryIsWorkspace4() {
+		_testDefaultInitWorkspaceDirectoryIsWorkspace("modules", "nextWorkspace");
 	}
 
 	@Test
@@ -570,47 +575,41 @@ public class InitCommandTest {
 		Assert.assertTrue(Files.exists(buildCommonPluginXmlPath));
 	}
 
-	private void _testDefaultInitWorkspaceDirectory(boolean subdirectory, boolean useNestedWorkspaceName) {
-		String workspaceName = "workspace1";
+	private void _testDefaultInitWorkspaceDirectoryIsWorkspace(
+		String subworkspaceBaseDirName, String subworkspaceName) {
 
-		String[] args1 = {
-			"--base", _workspaceDir.getPath(), "init", workspaceName, "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
+		String[] args = {"--base", _workspacePath.toString(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		Path subworkspacePath = _workspacePath.resolve(subworkspaceBaseDirName);
+
+		String[] moreArgs = {
+			"--base", String.valueOf(subworkspacePath), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
-		File workspaceDir = new File(_workspaceDir.getPath() + File.separator + workspaceName);
-
-		if (!workspaceDir.exists()) {
-			TestUtil.runBlade(_workspaceDir, _extensionsDir, args1);
+		if (subworkspaceName != null) {
+			ArrayUtil.append(moreArgs, subworkspaceName);
 		}
 
-		File baseDir = workspaceDir;
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
-		if (subdirectory) {
-			baseDir = new File(_workspaceDir + File.separator + workspaceName + File.separator + "modules");
+		Assert.assertTrue(_workspaceDir.getName() + " should exist but does not.", _workspaceDir.exists());
+
+		try {
+			BladeTestResults bladeTestResults = TestUtil.runBlade(_workspaceDir, _extensionsDir, moreArgs);
+
+			Assert.assertFalse(
+				"There should be no results from the command, but bladeTestResults != null)", bladeTestResults != null);
 		}
+		catch (AssertionError e) {
+			String message = e.getMessage();
 
-		String nestedWorkspaceName = "workspace2";
-
-		List<String> args2 = new ArrayList<>(
-			Arrays.asList("--base", baseDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74));
-
-		if (useNestedWorkspaceName) {
-			args2.add(3, nestedWorkspaceName);
+			Assert.assertTrue(
+				"should say 'does not support initializing a workspace inside of another workspace', but says: " +
+					message,
+				message.contains("does not support initializing a workspace inside of another workspace"));
 		}
-
-		BladeTestResults bladeTestResults = TestUtil.runBlade(
-			baseDir, _extensionsDir, false, args2.toArray(new String[0]));
-
-		if (useNestedWorkspaceName) {
-			File nestedWorkspaceDir = new File(baseDir.getPath() + File.separator + nestedWorkspaceName);
-
-			Assert.assertFalse(nestedWorkspaceDir.exists());
-		}
-
-		String errors = bladeTestResults.getErrors();
-
-		Assert.assertTrue(
-			errors.contains("blade does not support initializing a workspace inside of another workspace."));
 	}
 
 	private void _testInitWithLiferayVersion(String liferayVersion) throws Exception {
