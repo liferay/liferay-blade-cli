@@ -241,23 +241,13 @@ public class InitCommandTest {
 	}
 
 	@Test
-	public void testDefaultInitWorkspaceDirectoryIsWorkspace1() {
-		_testDefaultInitWorkspaceDirectoryIsWorkspace(".", null);
+	public void testDefaultInitWorkspaceInWorkspaceRoot() {
+		_testDefaultInitWorkspaceInWorkspace(".");
 	}
 
 	@Test
-	public void testDefaultInitWorkspaceDirectoryIsWorkspace2() {
-		_testDefaultInitWorkspaceDirectoryIsWorkspace(".", "nextWorkspace");
-	}
-
-	@Test
-	public void testDefaultInitWorkspaceDirectoryIsWorkspace3() {
-		_testDefaultInitWorkspaceDirectoryIsWorkspace("modules", null);
-	}
-
-	@Test
-	public void testDefaultInitWorkspaceDirectoryIsWorkspace4() {
-		_testDefaultInitWorkspaceDirectoryIsWorkspace("modules", "nextWorkspace");
+	public void testDefaultInitWorkspaceInWorkspaceSubdir() {
+		_testDefaultInitWorkspaceInWorkspace("modules");
 	}
 
 	@Test
@@ -574,9 +564,7 @@ public class InitCommandTest {
 		Assert.assertTrue(Files.exists(buildCommonPluginXmlPath));
 	}
 
-	private void _testDefaultInitWorkspaceDirectoryIsWorkspace(
-		String subworkspaceBaseDirName, String subworkspaceName) {
-
+	private void _testDefaultInitWorkspaceInWorkspace(String subworkspaceBaseDirName) {
 		String[] args = {"--base", _workspacePath.toString(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
