@@ -582,8 +582,8 @@ public class InitCommandTest {
 		try {
 			BladeTestResults bladeTestResults = TestUtil.runBlade(_workspaceDir, _extensionsDir, moreArgs);
 
-			Assert.assertFalse(
-				"There should be no results from the command, but bladeTestResults != null)", bladeTestResults != null);
+			Assert.assertNull(
+				"There should be no results from the command, but bladeTestResults != null)", bladeTestResults);
 		}
 		catch (AssertionError e) {
 			String message = e.getMessage();
