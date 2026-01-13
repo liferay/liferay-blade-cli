@@ -9,7 +9,6 @@ import com.liferay.blade.cli.BladeTest;
 import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.GradleRunnerUtil;
 import com.liferay.blade.cli.TestUtil;
-import com.liferay.blade.cli.util.ArrayUtil;
 import com.liferay.blade.cli.util.FileUtil;
 import com.liferay.blade.cli.util.ReleaseUtil;
 import com.liferay.release.util.ReleaseEntry;
@@ -587,10 +586,6 @@ public class InitCommandTest {
 		String[] moreArgs = {
 			"--base", String.valueOf(subworkspacePath), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
-
-		if (subworkspaceName != null) {
-			ArrayUtil.append(moreArgs, subworkspaceName);
-		}
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
 
