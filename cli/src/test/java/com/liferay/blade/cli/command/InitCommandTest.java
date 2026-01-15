@@ -581,20 +581,15 @@ public class InitCommandTest {
 			"--base", String.valueOf(subworkspacePath), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
 
-		try {
-			BladeTestResults bladeTestResults = TestUtil.runBlade(_workspaceDir, _extensionsDir, moreArgs);
+		BladeTestResults bladeTestResults = TestUtil.runBlade(_workspaceDir, _extensionsDir, false, moreArgs);
 
-			Assert.assertNull(
-				"There should be no results from the command, but bladeTestResults != null)", bladeTestResults);
-		}
-		catch (AssertionError e) {
-			String message = e.getMessage();
+		String errorMessage = bladeTestResults.getErrors();
 
-			Assert.assertTrue(
-				"should say 'does not support initializing a workspace inside of another workspace', but says: " +
-					message,
-				message.contains("does not support initializing a workspace inside of another workspace"));
-		}
+		String expectedErrorMessage = "does not support initializing a workspace inside of another workspace";
+
+		Assert.assertTrue(
+			"should say '" + expectedErrorMessage + "', but says: " + errorMessage,
+			errorMessage.contains(expectedErrorMessage));
 	}
 
 	private void _testInitWithLiferayVersion(String liferayVersion) throws Exception {
