@@ -565,19 +565,21 @@ public class InitCommandTest {
 	}
 
 	private void _testDefaultInitWorkspaceInWorkspace(String subworkspaceBaseDirName) {
+		File settingsFile = new File(_workspaceDir, "settings.gradle");
+
+		Assert.assertFalse(settingsFile.exists());
+
 		String[] args = {"--base", _workspacePath.toString(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		Assert.assertTrue(settingsFile.exists());
 
 		Path subworkspacePath = _workspacePath.resolve(subworkspaceBaseDirName);
 
 		String[] moreArgs = {
 			"--base", String.valueOf(subworkspacePath), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74
 		};
-
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, false, args);
-
-		Assert.assertTrue(_workspaceDir.getName() + " should exist but does not.", _workspaceDir.exists());
 
 		try {
 			BladeTestResults bladeTestResults = TestUtil.runBlade(_workspaceDir, _extensionsDir, moreArgs);
