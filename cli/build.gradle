@@ -331,6 +331,6 @@ unzipPortal {
 	finalizedBy("processZipsResources")
 }
 
-version = "7.0.6-SNAPSHOT"
+version = "8.0.0-SNAPSHOT"
 
 apply from: "blade-jar-smoke-tests.gradle"
