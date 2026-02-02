@@ -1,5 +1,88 @@
 # Liferay Blade CLI Change Log
 
+## 8.0.0 - 2026-02-02
+
+### Commits
+- [LPD-78046] bumps to 8.0.0 since generated workspaces will not support Java 8
+for Gradle runtime (b0c85f18da)
+- [LPD-77938] updates expected workspace version (783998aff4)
+- [LPD-77938] project tempaltes version 6.0.11 (f055d2fec7)
+- [LPD-24481] test: simplify assertion (011e58998e)
+- [LPD-24481] test: asserts initial workspace is actually created (c14624ce0a)
+- [LPD-24481] simplify assertion (741a9330cc)
+- [LPD-24481] renames and simplifies test cases (a97346b146)
+- [LPD-24481] removes this statement since it does not change anything about the
+scenarios being tested - the error should always happen before this (89751d179d)
+- [LPD-24481] uses original test method impl (bb7c539c81)
+- [LPD-24481] Rename vars for clarity (562be206a4)
+- [LPD-24481] Assertion only needed if using nested workspace name (7f5f4c326c)
+- [LPD-24481] Use boolean flag instead of name for nested workspace (eb16e3cf38)
+- [LPD-24481] Avoid chaining (e9f63499b1)
+- [LPD-24481] Not needed (e76c4c38af)
+- [LPD-24481] Simplify (f8e98d5123)
+- [LPD-24481] Not needed, since isWorkspaceDir already recursively checks
+parents (3ce934cdda)
+- [LPD-24481] Not needed (1e24c408d9)
+- [LPD-24481] Adapt helper method to simplify existing test (7c7241d8f3)
+- [LPD-24481] Add tests to validate init error in workspace subdirectory
+(119fe1bf2f)
+- [LPD-24481] InitCommand: refactor to flatten the nested if statements
+(128072513c)
+- [LPD-24481] adds convenience method to ArrayUtil (91c5efe4b7)
+- [LPD-24481] cli: adds extra guards to the isInWorkspace method (7af11fd514)
+- [LPD-24481] Extend condition for error about init in another workspace
+(2a86b5b0bc)
+- [LPD-24481] Add method to check if directory is a workspace subdirectory
+(d0b1e325b7)
+- [LPD-74755] uses Java 21 for the Publish workflow (e6aced4f1f)
+- [LPD-60729] Update project-templates to fix project templates versioning issue
+(7098b83c86)
+- [LPD-74755] removes Java 8 automated testing (d964e28ab8)
+- [LPD-66018] Grab the release entry version if it does exist to prevent the
+regression of version types such as dxp-2025.q3.1 from being viable versions in
+blade (1e380487fe)
+- [LPD-64238] explicitly add org.apache.commons.codec classes to ensure that
+creating workspaces in Developer Studio are successful with authenticated
+proxies (f04597af2f)
+- [LPD-63739] InitCommandTest: updates expected Workspace version to 14.0.0
+(9c73b7ff02)
+- [LPD-63739] updates com.liferay.project.templates to version 6.0.9
+(c5ea7eb116)
+- [LPD-64133] CreateCommand: just uses the version found in the properties or
+args (b5ce71b0f7)
+- [LPD-61180] Updates expected workspace version (2527c4e521)
+- [LPD-61180] Use com.liferay.project.templates:6.0.8 (0931ba6a6c)
+- [LPD-52268] liferay-blade-cli: removes temp jar (d58eb204fd)
+- [LPD-52268] liferay-blade-cli: updates test script to publish all extensions
+(8496adf5c0)
+
+### Dependencies
+- [LPD-78046] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.45.
+- [LPD-78046] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.28.
+- [LPD-78046] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.29.
+- [LPD-78046] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.197.
+- [LPD-77938] Update the com.liferay.project.templates dependency to version
+6.0.11.
+- [LPD-60729] Update the com.liferay.project.templates dependency to version
+6.0.10.
+- [LPD-64238] Update the commons-codec dependency to version 1.16.0.
+- [LPD-63739] Update the com.liferay.project.templates dependency to version
+6.0.9.
+- [LPD-52268] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.45-SNAPSHOT.
+- [LPD-52268] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.28-SNAPSHOT.
+- [LPD-52268] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.29-SNAPSHOT.
+- [LPD-52268] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.197-SNAPSHOT.
+- [LPD-61180] Update the com.liferay.project.templates dependency to version
+6.0.8.
+
 ## 7.0.5 - 2025-07-03
 
 ### Commits
@@ -3034,6 +3117,7 @@ maintainability (7f9bc3f45e)
 [LCD-14295]: https://issues.liferay.com/browse/LCD-14295
 [LCD-14300]: https://issues.liferay.com/browse/LCD-14300
 [LCD-45904]: https://issues.liferay.com/browse/LCD-45904
+[LPD-24481]: https://issues.liferay.com/browse/LPD-24481
 [LPD-28093]: https://issues.liferay.com/browse/LPD-28093
 [LPD-28297]: https://issues.liferay.com/browse/LPD-28297
 [LPD-31577]: https://issues.liferay.com/browse/LPD-31577
@@ -3053,6 +3137,15 @@ maintainability (7f9bc3f45e)
 [LPD-55390]: https://issues.liferay.com/browse/LPD-55390
 [LPD-55975]: https://issues.liferay.com/browse/LPD-55975
 [LPD-56473]: https://issues.liferay.com/browse/LPD-56473
+[LPD-60729]: https://issues.liferay.com/browse/LPD-60729
+[LPD-61180]: https://issues.liferay.com/browse/LPD-61180
+[LPD-63739]: https://issues.liferay.com/browse/LPD-63739
+[LPD-64133]: https://issues.liferay.com/browse/LPD-64133
+[LPD-64238]: https://issues.liferay.com/browse/LPD-64238
+[LPD-66018]: https://issues.liferay.com/browse/LPD-66018
+[LPD-74755]: https://issues.liferay.com/browse/LPD-74755
+[LPD-77938]: https://issues.liferay.com/browse/LPD-77938
+[LPD-78046]: https://issues.liferay.com/browse/LPD-78046
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
