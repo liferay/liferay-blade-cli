@@ -254,7 +254,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 							"Current blade version " + currentVersion + " is greater than the latest version.");
 
 						if (releaseShouldUpdate) {
-							bladeCLI.out("A new release update is available for blade: " + updateReleaseVersion);
+							bladeCLI.out("A new release update is available for blade: " + updateReleaseVersion.get());
 							bladeCLI.out("Run `blade update -r` to install.");
 						}
 					}
