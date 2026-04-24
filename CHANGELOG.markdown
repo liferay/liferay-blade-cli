@@ -1,10 +1,41 @@
 # Liferay Blade CLI Change Log
 
+## 8.0.1 - 2026-04-24
+
+### Commits
+- [LPD-85737] bumps project templates version to 6.0.15 (c10d36f45c)
+- [LPD-83749] bumps project templates version to 6.0.14 (a9350b3613)
+- [LPD-82954] adds task updateProjectTemplatesDependency to write the latest
+project templates and workspace versions automatically (bdc83576ce)
+- [LPD-78072] gets value out of the optional (c2f6ac653a)
+
+### Dependencies
+- [LPD-87437] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.46.
+- [LPD-87437] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.29.
+- [LPD-87437] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.30.
+- [LPD-87437] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.198.
+- [LPD-85737] Update the com.liferay.project.templates dependency to version
+6.0.15.
+- [LPD-83749] Update the com.liferay.project.templates dependency to version
+6.0.14.
+- [LPD-78073] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.46-SNAPSHOT.
+- [LPD-78073] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.29-SNAPSHOT.
+- [LPD-78073] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.30-SNAPSHOT.
+- [LPD-78073] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.198-SNAPSHOT.
+
 ## 8.0.0 - 2026-02-02
 
 ### Commits
 - [LPD-78046] bumps to 8.0.0 since generated workspaces will not support Java 8
-for Gradle runtime (b0c85f18da)
+for Gradle runtime (1a843030e6)
 - [LPD-77938] updates expected workspace version (783998aff4)
 - [LPD-77938] project tempaltes version 6.0.11 (f055d2fec7)
 - [LPD-24481] test: simplify assertion (011e58998e)
@@ -952,7 +983,6 @@ version 1.0.10.
 5.0.165.
 - [BLADE-659] Update the com.liferay.project.templates dependency to version
 5.0.163.
-- [] Update the com.liferay.project.templates dependency to version 5.0.161.
 - [LPS-141989] Update the com.liferay.project.templates dependency to version
 5.0.161.
 - [BLADE-649] Update the com.liferay.blade.extensions.maven.profile dependency
@@ -2765,18 +2795,46 @@ dependency to version 1.1.0.
 - [] Update the com.liferay.project.templates dependency to version 4.0.1.
 - [] Update the powermock-classloading-xstream dependency to version 1.7.3.
 - [] Update the powermock-module-junit4-rule dependency to version 1.7.3.
-- [BLADE-214] Update the asciitable dependency to version 0.3.2.
-- [] Update the com.liferay.gogo.shell.client dependency to version 1.0.0.
-- [BLADE-244] Update the jansi dependency to version 1.17.1.
-- [BLADE-228] Update the com.liferay.project.templates dependency to version
+- [BLADE-214] Update the biz.aQute.bnd.gradle dependency to version 3.5.0.
+- [BLADE-214] Update the com.liferay.gradle.plugins.source.formatter dependency
+to version latest.release.
+- [BLADE-214] Update the gradle-download-task dependency to version 3.3.0.
+- [BLADE-214] Update the aQute.libg dependency to version 3.5.0.
+- [BLADE-214] Update the biz.aQute.bndlib dependency to version 3.5.0.
+- [BLADE-214] Update the com.liferay.gogo.shell.client dependency to version
+1.0.0.
+- [BLADE-214] Update the com.liferay.project.templates dependency to version
 4.0.0.
-- [BLADE-190] Update the easymock dependency to version 3.5.1.
-- [BLADE-190] Update the powermock-api-easymock dependency to version 1.7.3.
-- [BLADE-190] Update the powermock-module-junit4 dependency to version 1.7.3.
-- [BLADE-190] Update the osgi.core dependency to version 6.0.0.
-- [] Update the gradle-core dependency to version 3.0.
-- [] Update the com.liferay.project.templates dependency to version 3.1.3.
-- [] Update the com.liferay.project.templates dependency to version 3.1.1.
+- [BLADE-214] Update the commons-io dependency to version 2.5.
+- [BLADE-214] Update the asciitable dependency to version 0.3.2.
+- [BLADE-214] Update the commons-lang3 dependency to version 3.4.
+- [BLADE-214] Update the maven-aether-provider dependency to version 3.3.9.
+- [BLADE-214] Update the maven-settings dependency to version 3.3.9.
+- [BLADE-214] Update the maven-settings-builder dependency to version 3.3.9.
+- [BLADE-214] Update the aether-api dependency to version 1.0.2.v20150114.
+- [BLADE-214] Update the aether-connector-basic dependency to version
+1.0.2.v20150114.
+- [BLADE-214] Update the aether-impl dependency to version 1.0.2.v20150114.
+- [BLADE-214] Update the aether-spi dependency to version 1.0.2.v20150114.
+- [BLADE-214] Update the aether-transport-classpath dependency to version
+1.0.2.v20150114.
+- [BLADE-214] Update the aether-transport-file dependency to version
+1.0.2.v20150114.
+- [BLADE-214] Update the aether-transport-http dependency to version
+1.0.2.v20150114.
+- [BLADE-214] Update the aether-transport-wagon dependency to version
+1.0.2.v20150114.
+- [BLADE-214] Update the aether-util dependency to version 1.0.2.v20150114.
+- [BLADE-214] Update the jansi dependency to version 1.17.1.
+- [BLADE-214] Update the gradle-base-services-groovy dependency to version 3.0.
+- [BLADE-214] Update the gradle-core dependency to version 3.0.
+- [BLADE-214] Update the gradle-tooling-api dependency to version 3.0.
+- [BLADE-214] Update the osgi.core dependency to version 6.0.0.
+- [BLADE-214] Update the junit dependency to version 4.12.
+- [BLADE-214] Update the easymock dependency to version 3.5.1.
+- [BLADE-214] Update the osgi.core dependency to version 6.0.0.
+- [BLADE-214] Update the powermock-api-easymock dependency to version 1.7.3.
+- [BLADE-214] Update the powermock-module-junit4 dependency to version 1.7.3.
 
 ## 2.1.0 - 2017-06-14
 
@@ -3146,6 +3204,12 @@ maintainability (7f9bc3f45e)
 [LPD-74755]: https://issues.liferay.com/browse/LPD-74755
 [LPD-77938]: https://issues.liferay.com/browse/LPD-77938
 [LPD-78046]: https://issues.liferay.com/browse/LPD-78046
+[LPD-78072]: https://issues.liferay.com/browse/LPD-78072
+[LPD-78073]: https://issues.liferay.com/browse/LPD-78073
+[LPD-82954]: https://issues.liferay.com/browse/LPD-82954
+[LPD-83749]: https://issues.liferay.com/browse/LPD-83749
+[LPD-85737]: https://issues.liferay.com/browse/LPD-85737
+[LPD-87437]: https://issues.liferay.com/browse/LPD-87437
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
