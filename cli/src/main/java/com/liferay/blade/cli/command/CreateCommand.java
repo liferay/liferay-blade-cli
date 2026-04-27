@@ -481,6 +481,7 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 		String versionString = projectTemplatesArgs.getLiferayVersion();
 
 		try (InputStream fileInputStream = Files.newInputStream(templateFile.toPath(), StandardOpenOption.READ);
+
 			JarInputStream in = new JarInputStream(fileInputStream)) {
 
 			Manifest manifest = in.getManifest();

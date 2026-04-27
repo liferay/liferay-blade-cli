@@ -403,6 +403,7 @@ public class FileUtil {
 
 	private static void _untar(Path tarPath, Path destinationDirPath, int stripComponents) throws IOException {
 		try (InputStream inputStream = Files.newInputStream(tarPath);
+
 			TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(
 				new GzipCompressorInputStream(inputStream))) {
 

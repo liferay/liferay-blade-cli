@@ -829,6 +829,7 @@ public class UpdateCommand extends BaseCommand<UpdateArgs> {
 		ClassLoader classLoader = UpdateCommand.class.getClassLoader();
 
 		try (InputStream inputStream = classLoader.getResourceAsStream("jpm_install.bat");
+
 			Scanner scanner = new Scanner(inputStream)) {
 
 			while (scanner.hasNextLine()) {

@@ -258,6 +258,7 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 				BaseArgs baseArgs = bladeCLI.getArgs();
 
 				try (final FileSystem fileSystem = FileSystems.getDefault();
+
 					final WatchService watchService = fileSystem.newWatchService()) {
 
 					final Map<WatchKey, Path> watchKeys = new HashMap<>();

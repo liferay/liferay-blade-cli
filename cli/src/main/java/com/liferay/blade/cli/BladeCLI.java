@@ -467,6 +467,7 @@ public class BladeCLI {
 			}
 			else {
 				try (CloseShieldInputStream closeShieldInputStream = new CloseShieldInputStream(in());
+
 					BufferedReader reader = new BufferedReader(new InputStreamReader(closeShieldInputStream))) {
 
 					ParameterException parameterException1 = null;

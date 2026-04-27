@@ -65,6 +65,7 @@ public class Prompter {
 		Optional<Boolean> answer = null;
 
 		try (CloseShieldInputStream closeShieldInputStream = new CloseShieldInputStream(inputStream);
+
 			Scanner scanner = new Scanner(closeShieldInputStream)) {
 
 			while ((answer == null) || !answer.isPresent()) {

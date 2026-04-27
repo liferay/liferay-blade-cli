@@ -22,7 +22,10 @@ import java.nio.charset.Charset;
 public class StringConverter {
 
 	public static String fromInputStream(final InputStream inputStream, Charset charset) throws IOException {
-		try (InputStream is = inputStream; ByteArrayOutputStream outputStream = _getOutputStream(is)) {
+		try (InputStream is = inputStream;
+
+			ByteArrayOutputStream outputStream = _getOutputStream(is)) {
+
 			return new String(outputStream.toByteArray(), charset);
 		}
 	}

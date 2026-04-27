@@ -1181,6 +1181,7 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 
 			try (InputStream inputStream = clazz.getResourceAsStream(
 					"/release-api/" + simplifiedVersion + "-versions.txt");
+
 				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
 
 				String dependency = null;
