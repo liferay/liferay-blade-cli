@@ -257,6 +257,12 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		args.setBase(destDir);
 
+		if (!mavenBuild) {
+			GradleExec gradleExec = new GradleExec(bladeCLI);
+
+			gradleExec.executeTask("updateWorkspace");
+		}
+
 		BladeSettings settings = bladeCLI.getBladeSettings();
 
 		if (profileName == null) {
