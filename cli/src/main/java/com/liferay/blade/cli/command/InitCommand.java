@@ -257,7 +257,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 		args.setBase(destDir);
 
-		if (!mavenBuild) {
+		if (!mavenBuild && !initArgs.isSkipUpdateWorkspace()) {
 			GradleExec gradleExec = new GradleExec(bladeCLI);
 
 			gradleExec.executeTask("updateWorkspace");
