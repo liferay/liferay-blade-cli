@@ -124,6 +124,17 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testBladeInitSkipUpdateWorkspaceTask() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-s", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
+
+		File workspaceRulesDir = new File(_workspaceDir, ".workspace-rules");
+
+		Assert.assertFalse(Files.exists(workspaceRulesDir.toPath()));
+	}
+
+	@Test
 	public void testBladeInitUpdateWorkspaceTask() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
