@@ -52,6 +52,10 @@ public class InitArgs extends BaseArgs {
 		return _refresh;
 	}
 
+	public boolean isSkipUpdateWorkspace() {
+		return _skipUpdateWorkspace;
+	}
+
 	public boolean isUpgrade() {
 		return _upgrade;
 	}
@@ -82,6 +86,10 @@ public class InitArgs extends BaseArgs {
 
 	public void setRefresh(boolean refresh) {
 		_refresh = refresh;
+	}
+
+	public void setSkipUpdateWorkspace(boolean skipUpdateWorkspace) {
+		_skipUpdateWorkspace = skipUpdateWorkspace;
 	}
 
 	public void setUpgrade(boolean upgrade) {
@@ -118,6 +126,9 @@ public class InitArgs extends BaseArgs {
 
 	@Parameter(description = "force to refresh workspace template", names = {"-r", "--refresh"})
 	private boolean _refresh;
+
+	@Parameter(description = "Skips updateWorkspace task upon init", names = {"-s", "--skip-update-workspace"})
+	private boolean _skipUpdateWorkspace;
 
 	@Parameter(description = "upgrade plugins-sdk from 6.2 to 7.0", names = {"-u", "--upgrade"})
 	private boolean _upgrade;
