@@ -1,5 +1,40 @@
 # Liferay Blade CLI Change Log
 
+## 8.0.2 - 2026-06-26
+
+### Commits
+- [LPD-91744] Skip updateWorkspace in test (ca40885a79)
+- [LPD-91744] Not needed (0462d7eeee)
+- [LPD-91744] Add test to ensure udpateWorkspace is skipped in init (f43653089e)
+- [LPD-91744] Don't run updateWorkspace if opted out (221b1ae754)
+- [LPD-91744] Add arg to skip updateWorkspace task during init (8969969672)
+- [LPD-91744] Add tests for .workspace-rules and updateWorkspace task after init
+(b09d0f1ef6)
+- [LPD-91744] Call updateWorkspace task after setting up workspace and base arg
+(c3f59a2305)
+- [LPD-91744] Bump project templates and expected workspace plugin versions
+(49838da6a9)
+
+### Dependencies
+- [LPD-90666] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.47.
+- [LPD-90666] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.30.
+- [LPD-90666] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.31.
+- [LPD-90666] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.199.
+- [LPD-90666] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.47-SNAPSHOT.
+- [LPD-90666] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.30-SNAPSHOT.
+- [LPD-90666] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.31-SNAPSHOT.
+- [LPD-90666] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.199-SNAPSHOT.
+- [LPD-91744] Update the com.liferay.project.templates dependency to version
+6.0.20.
+
 ## 8.0.1 - 2026-04-30
 
 ### Commits
@@ -3217,6 +3252,8 @@ maintainability (7f9bc3f45e)
 [LPD-85737]: https://issues.liferay.com/browse/LPD-85737
 [LPD-87437]: https://issues.liferay.com/browse/LPD-87437
 [LPD-87931]: https://issues.liferay.com/browse/LPD-87931
+[LPD-90666]: https://issues.liferay.com/browse/LPD-90666
+[LPD-91744]: https://issues.liferay.com/browse/LPD-91744
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
