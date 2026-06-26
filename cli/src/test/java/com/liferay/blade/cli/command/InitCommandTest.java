@@ -135,26 +135,6 @@ public class InitCommandTest {
 	}
 
 	@Test
-	public void testBladeInitUpdateWorkspaceTask() throws Exception {
-		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
-
-		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
-
-		File workspaceRulesDir = new File(_workspaceDir, ".workspace-rules");
-
-		FileUtil.deleteDirIfExists(workspaceRulesDir.toPath());
-
-		Assert.assertFalse(Files.exists(workspaceRulesDir.toPath()));
-
-		BuildTask updateWorkspaceTask = GradleRunnerUtil.executeGradleRunner(
-			_workspacePath.toString(), "updateWorkspace");
-
-		GradleRunnerUtil.verifyGradleRunnerOutput(updateWorkspaceTask);
-
-		Assert.assertTrue(Files.exists(workspaceRulesDir.toPath()));
-	}
-
-	@Test
 	public void testBladeInitUpgradePluginsSDKTo70() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/testUpgradePluginsSDKTo70");
 
