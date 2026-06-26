@@ -44,7 +44,7 @@ public class SampleWorkspaceTemplateTest {
 
 		String basePath = tempDir.getAbsolutePath();
 
-		String[] args = {"--base", basePath, "init", "-P", "sample", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
+		String[] args = {"--base", basePath, "init", "-P", "sample", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74, "-s"};
 
 		TestUtil.runBlade(_rootDir, _extensionsDir, args);
 
