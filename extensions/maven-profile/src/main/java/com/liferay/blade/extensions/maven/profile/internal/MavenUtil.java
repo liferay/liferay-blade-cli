@@ -66,10 +66,6 @@ public class MavenUtil {
 		}
 	}
 
-	public static File getpomXMLFile(File dir) {
-		return new File(getWorkspaceDir(dir), _POM_XML_FILE_NAME);
-	}
-
 	public static File getWorkspaceDir(File dir) {
 		File mavenParent = _findWorkspacePomFile(dir);
 
@@ -84,6 +80,10 @@ public class MavenUtil {
 		}
 
 		return null;
+	}
+
+	public static File getpomXMLFile(File dir) {
+		return new File(getWorkspaceDir(dir), _POM_XML_FILE_NAME);
 	}
 
 	public static boolean isWorkspace(File dir) {
