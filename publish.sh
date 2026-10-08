@@ -93,6 +93,15 @@ fi
 # Publish the NPM Angular Portlet Project Template
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-npm-angular-portlet:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
 
+# Publish the Form Field Project Template
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-form-field:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/form-field-template-publish-command.txt; retcode=$?
+formFieldTemplatePublishCommand=$(cat /tmp/$timestamp/form-field-template-publish-command.txt)
+
+if [ "$retcode" != "0" ] || [ -z "$formFieldTemplatePublishCommand" ]; then
+	echo Failed :extensions:project-templates-form-field:publish
+	exit 1
+fi
+
 # Publish the JS Theme Project Template
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-js-theme:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/js-theme-template-publish-command.txt; retcode=$?
 jsThemeTemplatePublishCommand=$(cat /tmp/$timestamp/js-theme-template-publish-command.txt)
