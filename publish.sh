@@ -88,10 +88,22 @@ if [ "$retcode" != "0" ] || [ -z "$remoteDeployCommandPublishCommand" ]; then
 fi
 
 # Publish the Social Bookmark Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-social-bookmark:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-social-bookmark:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/social-bookmark-template-publish-command.txt; retcode=$?
+socialBookmarkTemplatePublishCommand=$(cat /tmp/$timestamp/social-bookmark-template-publish-command.txt)
+
+if [ "$retcode" != "0" ] || [ -z "$socialBookmarkTemplatePublishCommand" ]; then
+	echo Failed :extensions:project-templates-social-bookmark:publish
+	exit 1
+fi
 
 # Publish the NPM Angular Portlet Project Template
-./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-npm-angular-portlet:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt}
+./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-npm-angular-portlet:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/npm-angular-portlet-template-publish-command.txt; retcode=$?
+npmAngularPortletTemplatePublishCommand=$(cat /tmp/$timestamp/npm-angular-portlet-template-publish-command.txt)
+
+if [ "$retcode" != "0" ] || [ -z "$npmAngularPortletTemplatePublishCommand" ]; then
+	echo Failed :extensions:project-templates-npm-angular-portlet:publish
+	exit 1
+fi
 
 # Publish the Form Field Project Template
 ./gradlew -q --no-daemon --console=plain $nexusOpt -P${releaseType} :extensions:project-templates-form-field:publish -x :cli:bladeExtensionsVersions -x :cli:processResources --info ${scanOpt} > /tmp/$timestamp/form-field-template-publish-command.txt; retcode=$?
