@@ -156,16 +156,16 @@ public class CreateArgs extends BaseArgs {
 		_jsFramework = jsFramework;
 	}
 
-	public void setJsInteractiveModel(boolean jsInteractiveModel) {
-		_jsInteractiveModel = jsInteractiveModel;
-	}
-
 	public void setJSProjectTarget(String jsProjectTarget) {
 		_jsProjectTarget = jsProjectTarget;
 	}
 
 	public void setJSProjectType(String jsProjectType) {
 		_jsProjectType = jsProjectType;
+	}
+
+	public void setJsInteractiveModel(boolean jsInteractiveModel) {
+		_jsInteractiveModel = jsInteractiveModel;
 	}
 
 	public void setLiferayProduct(String liferayProduct) {
