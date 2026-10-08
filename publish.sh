@@ -8,6 +8,8 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
+echo "test"
+
 export PATH="$PATH:$HOME/jpm/bin"
 
 bladeVersion=$(blade version)
