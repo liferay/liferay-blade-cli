@@ -199,6 +199,10 @@ subprojects {
 			maxLineLength = 120
 		}
 
+		dependencies {
+			sourceFormatter group: "com.liferay", name: "com.liferay.source.formatter", version: "1.0.1639"
+		}
+
 		formatSource {
 			maxLineLength = 120
 		}
@@ -356,6 +360,7 @@ configurations {
 
 dependencies {
 	projectTemplates group: "com.liferay", name: "com.liferay.project.templates", version: "latest.release"
+	sourceFormatter group: "com.liferay", name: "com.liferay.source.formatter", version: "1.0.1639"
 }
 
 updateProjectTemplatesDependency {
