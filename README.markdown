@@ -12,3 +12,5 @@ https://learn.liferay.com/web/guest/w/dxp/liferay-development/tooling/blade-cli
 
 All source to this project is available under
 [Apache 2.0 License](/LICENSE.txt).
+
+This is a test.
