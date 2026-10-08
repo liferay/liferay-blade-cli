@@ -22,6 +22,7 @@ mv gradle-wrapper.properties.edited gradle/wrapper/gradle-wrapper.properties
 
 project_names=(
 	maven-profile
+	project-templates-form-field
 	project-templates-js-theme
 	project-templates-js-widget
 	project-templates-npm-angular-portlet
