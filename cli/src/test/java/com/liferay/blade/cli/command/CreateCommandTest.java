@@ -384,37 +384,6 @@ public class CreateCommandTest {
 	}
 
 	@Test
-	public void testCreateMissingArgument() throws Exception {
-		File workspace = new File(_rootDir, "workspace");
-
-		_makeWorkspace(workspace);
-
-		String[] args = {"create", "foobar", "--base", workspace.getAbsolutePath()};
-
-		InputStream nullInputStream = new InputStream() {
-
-			@Override
-			public int read() throws IOException {
-				return -1;
-			}
-
-		};
-
-		String message = null;
-
-		try {
-			TestUtil.runBlade(workspace, _extensionsDir, nullInputStream, true, args);
-		}
-		catch (Throwable t) {
-			message = t.getMessage();
-		}
-
-		Assert.assertNotNull(message);
-
-		Assert.assertTrue(message, message.contains("Unable to acquire an answer"));
-	}
-
-	@Test
 	public void testCreateMVCPortlet() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
@@ -456,6 +425,37 @@ public class CreateCommandTest {
 		File projectDir = new File(workspace, "modules/foo");
 
 		_checkGradleBuildFiles(projectDir.getAbsolutePath());
+	}
+
+	@Test
+	public void testCreateMissingArgument() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] args = {"create", "foobar", "--base", workspace.getAbsolutePath()};
+
+		InputStream nullInputStream = new InputStream() {
+
+			@Override
+			public int read() throws IOException {
+				return -1;
+			}
+
+		};
+
+		String message = null;
+
+		try {
+			TestUtil.runBlade(workspace, _extensionsDir, nullInputStream, true, args);
+		}
+		catch (Throwable t) {
+			message = t.getMessage();
+		}
+
+		Assert.assertNotNull(message);
+
+		Assert.assertTrue(message, message.contains("Unable to acquire an answer"));
 	}
 
 	@Test
@@ -748,6 +748,25 @@ public class CreateCommandTest {
 	}
 
 	@Test
+	public void testCreateSpringMVCPortletInteractive() throws Exception {
+		File workspace = new File(_rootDir, "workspace");
+
+		_makeWorkspace(workspace);
+
+		String[] gradleArgs = {"create", "--base", workspace.getAbsolutePath(), "-t", "spring-mvc-portlet", "foo"};
+
+		String interactiveModeInput = "springportletmvc" + System.lineSeparator() + "jsp" + System.lineSeparator();
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(interactiveModeInput.getBytes());
+
+		TestUtil.runBlade(workspace, _extensionsDir, byteArrayInputStream, gradleArgs);
+
+		File project = new File(workspace, "modules/foo");
+
+		_checkGradleBuildFilesInWarProject(project.getAbsolutePath());
+	}
+
+	@Test
 	public void testCreateSpringMvcPortlet() throws Exception {
 		File workspace = new File(_rootDir, "workspace");
 
@@ -769,25 +788,6 @@ public class CreateCommandTest {
 		_checkFileExists(projectPath + "/src/main/java/com/test/controller/UserController.java");
 
 		_checkFileExists(projectPath + "/build.gradle");
-	}
-
-	@Test
-	public void testCreateSpringMVCPortletInteractive() throws Exception {
-		File workspace = new File(_rootDir, "workspace");
-
-		_makeWorkspace(workspace);
-
-		String[] gradleArgs = {"create", "--base", workspace.getAbsolutePath(), "-t", "spring-mvc-portlet", "foo"};
-
-		String interactiveModeInput = "springportletmvc" + System.lineSeparator() + "jsp" + System.lineSeparator();
-
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(interactiveModeInput.getBytes());
-
-		TestUtil.runBlade(workspace, _extensionsDir, byteArrayInputStream, gradleArgs);
-
-		File project = new File(workspace, "modules/foo");
-
-		_checkGradleBuildFilesInWarProject(project.getAbsolutePath());
 	}
 
 	@Test
