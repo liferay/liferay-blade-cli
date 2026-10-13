@@ -233,6 +233,21 @@ repositories {
 		}
 	}
 
+	exclusiveContent {
+		forRepository {
+			mavenCentral {
+				metadataSources {
+					artifact()
+					ignoreGradleMetadataRedirection()
+					mavenPom()
+				}
+			}
+		}
+		filter {
+			includeModule("org.gradle", "gradle-core")
+		}
+	}
+
 	mavenCentral()
 
 	maven {
