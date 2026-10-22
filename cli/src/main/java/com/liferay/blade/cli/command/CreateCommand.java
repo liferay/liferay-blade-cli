@@ -211,61 +211,67 @@ public class CreateCommand extends BaseCommand<CreateArgs> {
 				Class<? extends ProjectTemplatesArgsExt> argsClass = projectTemplatesArgsExt.getClass();
 
 				for (Field field : argsClass.getDeclaredFields()) {
-					if (field.isAnnotationPresent(Parameter.class)) {
-						Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
+					if (!field.isAnnotationPresent(Parameter.class)) {
+						continue;
+					}
 
-						String[] parameterAnnotationNames = parameterAnnotation.names();
+					Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
 
-						if (parameterAnnotation.required()) {
-							List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
+					String[] parameterAnnotationNames = parameterAnnotation.names();
 
-							for (Field createField : CreateArgs.class.getDeclaredFields()) {
-								if (createField.isAnnotationPresent(Parameter.class)) {
-									Parameter createParameterAnnotation = createField.getDeclaredAnnotation(
-										Parameter.class);
+					if (!parameterAnnotation.required()) {
+						continue;
+					}
 
-									String[] createParameterAnnotationNames = createParameterAnnotation.names();
+					List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
 
-									List<String> createParameterNamesList = Arrays.asList(
-										createParameterAnnotationNames);
+					for (Field createField : CreateArgs.class.getDeclaredFields()) {
+						if (!createField.isAnnotationPresent(Parameter.class)) {
+							continue;
+						}
 
-									boolean found = false;
+						Parameter createParameterAnnotation = createField.getDeclaredAnnotation(Parameter.class);
 
-									for (String createParameterName : createParameterNamesList) {
-										if (parameterNamesList.contains(createParameterName)) {
-											found = true;
+						String[] createParameterAnnotationNames = createParameterAnnotation.names();
 
-											break;
-										}
-									}
+						List<String> createParameterNamesList = Arrays.asList(createParameterAnnotationNames);
 
-									if (found) {
-										createField.setAccessible(true);
+						boolean found = false;
 
-										Object value = createField.get(createArgs);
+						for (String createParameterName : createParameterNamesList) {
+							if (parameterNamesList.contains(createParameterName)) {
+								found = true;
 
-										if (value == null) {
-											StringBuilder sb = new StringBuilder("The following option is required: [");
-
-											for (int x = 0; x < createParameterNamesList.size(); x++) {
-												String parameterName = createParameterNamesList.get(x);
-
-												if (x > 0) {
-													sb.append(" | ");
-												}
-
-												sb.append(parameterName);
-											}
-
-											sb.append("] ");
-
-											sb.append(parameterAnnotation.description());
-
-											throw new ParameterException(sb.toString());
-										}
-									}
-								}
+								break;
 							}
+						}
+
+						if (!found) {
+							continue;
+						}
+
+						createField.setAccessible(true);
+
+						Object value = createField.get(createArgs);
+
+						if (value == null) {
+							StringBuilder sb = new StringBuilder("The following option is required: [");
+
+							for (int x = 0; x < createParameterNamesList.size(); x++) {
+								String parameterName = createParameterNamesList.get(x);
+
+								if (x > 0) {
+									sb.append(" | ");
+								}
+
+								sb.append(parameterName);
+							}
+
+							sb.append("] ");
+
+							sb.append(parameterAnnotation.description());
+
+							throw new ParameterException(sb.toString());
 						}
 					}
 				}

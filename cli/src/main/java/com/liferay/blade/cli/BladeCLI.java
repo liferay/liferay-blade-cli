@@ -618,25 +618,27 @@ public class BladeCLI {
 
 							commandArgs = objects.get(0);
 
-							if (parameterException1 == null) {
-								_command = command;
+							if (parameterException1 != null) {
+								continue;
+							}
 
-								_args = (BaseArgs)commandArgs;
+							_command = command;
 
-								_args.setProfileName(profileName);
+							_args = (BaseArgs)commandArgs;
 
-								_args.setBase(baseDir);
+							_args.setProfileName(profileName);
 
-								try {
-									_validateParameterDependency(_args);
+							_args.setBase(baseDir);
 
-									runCommand();
+							try {
+								_validateParameterDependency(_args);
 
-									postRunCommand();
-								}
-								catch (ParameterException parameterException2) {
-									parameterException1 = parameterException2;
-								}
+								runCommand();
+
+								postRunCommand();
+							}
+							catch (ParameterException parameterException2) {
+								parameterException1 = parameterException2;
 							}
 						}
 					}
@@ -934,15 +936,17 @@ public class BladeCLI {
 			for (int x = 0; x < args.length; x++) {
 				String arg = args[x];
 
-				if (arg.equals("--base")) {
-					if (((x + 1) == args.length) || args[x + 1].startsWith("-")) {
-						error("Error: The parameter for base path is mising.");
-
-						System.exit(0);
-					}
-
-					defaultBasePath = args[x + 1];
+				if (!arg.equals("--base")) {
+					continue;
 				}
+
+				if (((x + 1) == args.length) || args[x + 1].startsWith("-")) {
+					error("Error: The parameter for base path is mising.");
+
+					System.exit(0);
+				}
+
+				defaultBasePath = args[x + 1];
 			}
 		}
 
@@ -1305,63 +1309,63 @@ public class BladeCLI {
 		Class<?> commandArgsClass = commandArgs.getClass();
 
 		for (Field field : commandArgsClass.getDeclaredFields()) {
-			if (field.isAnnotationPresent(Parameter.class)) {
-				Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
+			if (!field.isAnnotationPresent(Parameter.class)) {
+				continue;
+			}
 
-				String description = parameterAnnotation.description();
+			Parameter parameterAnnotation = field.getDeclaredAnnotation(Parameter.class);
 
-				String[] parameterAnnotationNames = parameterAnnotation.names();
+			String description = parameterAnnotation.description();
 
-				List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
+			String[] parameterAnnotationNames = parameterAnnotation.names();
 
-				StringBuilder sb = null;
+			List<String> parameterNamesList = Arrays.asList(parameterAnnotationNames);
 
-				String missingParametersFormatted = null;
+			StringBuilder sb = null;
 
-				boolean found = false;
+			String missingParametersFormatted = null;
 
-				if (missingParameterOptional.isPresent() &&
-					parameterNamesList.contains(missingParameterOptional.get())) {
+			boolean found = false;
 
-					sb = new StringBuilder("The following option is required: ");
+			if (missingParameterOptional.isPresent() && parameterNamesList.contains(missingParameterOptional.get())) {
+				sb = new StringBuilder("The following option is required: ");
 
-					missingParametersFormatted = _getParameterNames(parameterNamesList);
+				missingParametersFormatted = _getParameterNames(parameterNamesList);
 
-					sb.append(missingParametersFormatted);
+				sb.append(missingParametersFormatted);
 
-					if (missingParameterDescription.isPresent()) {
-						sb.append(" " + missingParameterDescription.get());
-					}
-					else if (!description.isEmpty()) {
-						sb.append(" " + description);
-					}
-
-					found = true;
+				if (missingParameterDescription.isPresent()) {
+					sb.append(" " + missingParameterDescription.get());
 				}
-				else if (!missingParameterOptional.isPresent() &&
-						 ((parameterAnnotationNames == null) || (parameterAnnotationNames.length == 0))) {
-
-					sb = new StringBuilder("The main parameter is required: ");
-
-					if (parameterAnnotation.description() != null) {
-						sb.append(" (" + parameterAnnotation.description() + ")");
-					}
-
-					missingParametersFormatted = "the main parameter";
-
-					found = true;
+				else if (!description.isEmpty()) {
+					sb.append(" " + description);
 				}
 
-				if (found) {
-					Map<String, String> optionsMap = _getPossibleDefaultValuesMap(field, sb, profileName);
+				found = true;
+			}
+			else if (!missingParameterOptional.isPresent() &&
+					 ((parameterAnnotationNames == null) || (parameterAnnotationNames.length == 0))) {
 
-					String message = sb.toString();
+				sb = new StringBuilder("The main parameter is required: ");
 
-					value = _promptForValueWithOptions(
-						field, sb, missingParametersFormatted, optionsMap, message, reader, out(), profileName);
-
-					break;
+				if (parameterAnnotation.description() != null) {
+					sb.append(" (" + parameterAnnotation.description() + ")");
 				}
+
+				missingParametersFormatted = "the main parameter";
+
+				found = true;
+			}
+
+			if (found) {
+				Map<String, String> optionsMap = _getPossibleDefaultValuesMap(field, sb, profileName);
+
+				String message = sb.toString();
+
+				value = _promptForValueWithOptions(
+					field, sb, missingParametersFormatted, optionsMap, message, reader, out(), profileName);
+
+				break;
 			}
 		}
 
@@ -1580,28 +1584,30 @@ public class BladeCLI {
 
 				Class<? extends Predicate<?>> predicateClass = validator.value();
 
-				if (predicateClass != null) {
-					ValidatorFunctionPredicate<T> validatorFunction =
-						(ValidatorFunctionPredicate<T>)predicateClass.newInstance();
+				if (predicateClass == null) {
+					continue;
+				}
 
-					if (!validatorFunction.test(args)) {
-						Field field = validatorPair.second();
+				ValidatorFunctionPredicate<T> validatorFunction =
+					(ValidatorFunctionPredicate<T>)predicateClass.newInstance();
 
-						List<String> possibleValues = validatorFunction.apply(args);
+				if (!validatorFunction.test(args)) {
+					Field field = validatorPair.second();
 
-						String possibleValueString = StringUtils.join(possibleValues, "|");
+					List<String> possibleValues = validatorFunction.apply(args);
 
-						Parameter parameterAnnotation = field.getAnnotation(Parameter.class);
+					String possibleValueString = StringUtils.join(possibleValues, "|");
 
-						if (!possibleValues.isEmpty()) {
-							throw new IllegalArgumentException(
-								"Parameter validataion failed for " + parameterAnnotation.names()[0] +
-									", possible value are " + possibleValueString);
-						}
+					Parameter parameterAnnotation = field.getAnnotation(Parameter.class);
 
+					if (!possibleValues.isEmpty()) {
 						throw new IllegalArgumentException(
-							"Parameter validataion failed for " + parameterAnnotation.names()[0]);
+							"Parameter validataion failed for " + parameterAnnotation.names()[0] +
+								", possible value are " + possibleValueString);
 					}
+
+					throw new IllegalArgumentException(
+						"Parameter validataion failed for " + parameterAnnotation.names()[0]);
 				}
 			}
 		}
@@ -1623,12 +1629,14 @@ public class BladeCLI {
 			for (ParameterValidator parameterValidator : validateParameters) {
 				Class<? extends Predicate<?>> predicateClass = parameterValidator.value();
 
-				if (predicateClass != null) {
-					Predicate<T> predicate = (Predicate<T>)predicateClass.newInstance();
+				if (predicateClass == null) {
+					continue;
+				}
 
-					if (!predicate.test(args)) {
-						throw new IllegalArgumentException();
-					}
+				Predicate<T> predicate = (Predicate<T>)predicateClass.newInstance();
+
+				if (!predicate.test(args)) {
+					throw new IllegalArgumentException();
 				}
 			}
 		}

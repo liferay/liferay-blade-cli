@@ -398,9 +398,11 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 							gav = new GAV(coordinates[0], coordinates[1], coordinates[2]);
 						}
 
-						if (!gav.isRemove()) {
-							convertedDependencies.add(gav);
+						if (gav.isRemove()) {
+							continue;
 						}
+
+						convertedDependencies.add(gav);
 					}
 				}
 
@@ -802,11 +804,13 @@ public class ConvertCommand extends BaseCommand<ConvertArgs> {
 						removedGav = true;
 					}
 
-					if ((name != null) && (org != null) && (rev != null) && !removedGav) {
-						GAV gav = new GAV(org, name, rev);
-
-						convertedGavs.add(gav);
+					if ((name == null) || (org == null) || (rev == null) || removedGav) {
+						continue;
 					}
+
+					GAV gav = new GAV(org, name, rev);
+
+					convertedGavs.add(gav);
 				}
 			}
 

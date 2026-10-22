@@ -117,13 +117,17 @@ public class LocalServer {
 					}
 				}
 
-				if ((_serverType == null) || _serverType.equals("")) {
-					String serverTypeTemp = properties.getProperty(BladeUtil.APP_SERVER_TYPE_PROPERTY);
-
-					if ((serverTypeTemp != null) && !serverTypeTemp.equals("")) {
-						_serverType = serverTypeTemp;
-					}
+				if ((_serverType != null) && !_serverType.equals("")) {
+					continue;
 				}
+
+				String serverTypeTemp = properties.getProperty(BladeUtil.APP_SERVER_TYPE_PROPERTY);
+
+				if ((serverTypeTemp == null) || serverTypeTemp.equals("")) {
+					continue;
+				}
+
+				_serverType = serverTypeTemp;
 			}
 
 			if (appServerParentDir.startsWith("/") || appServerParentDir.contains(":")) {

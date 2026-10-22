@@ -172,9 +172,11 @@ public class PropertiesLocator {
 
 			// Check for containing whole portletName in the path
 
-			if (_pathContainsPortletName(match.first(), portletNameAsProperty)) {
-				theMostLikelyMatches.add(new Pair<>(match.first(), match.second()));
+			if (!_pathContainsPortletName(match.first(), portletNameAsProperty)) {
+				continue;
 			}
+
+			theMostLikelyMatches.add(new Pair<>(match.first(), match.second()));
 		}
 
 		if (!theMostLikelyMatches.isEmpty()) {
@@ -187,9 +189,11 @@ public class PropertiesLocator {
 
 			// Check for containing same suffix the original property
 
-			if (_matchSuffix(property, match.second())) {
-				theMostLikelyMatches.add(new Pair<>(match.first(), match.second()));
+			if (!_matchSuffix(property, match.second())) {
+				continue;
 			}
+
+			theMostLikelyMatches.add(new Pair<>(match.first(), match.second()));
 		}
 
 		if (!theMostLikelyMatches.isEmpty()) {
@@ -230,11 +234,13 @@ public class PropertiesLocator {
 			String[] allConfigFields = _addConfigurationPropertiesByInheritance(
 				configClassData.getSuperClass(), configClassData.getConfigFields(), configClassesMap);
 
-			if (allConfigFields.length > 0) {
-				String className = configClass.getKey();
-
-				configurationProperties.add(new Pair<>(className, allConfigFields));
+			if (allConfigFields.length == 0) {
+				continue;
 			}
+
+			String className = configClass.getKey();
+
+			configurationProperties.add(new Pair<>(className, allConfigFields));
 		}
 
 		return configurationProperties;
@@ -296,17 +302,19 @@ public class PropertiesLocator {
 
 		for (Pair<String, String[]> match : matches) {
 			for (String matchProperty : match.second()) {
-				if (_match(property, matchProperty, match.first(), maxOccurrences, portletNames)) {
-					int occurrences = _getOccurrences(property, matchProperty);
-
-					if (occurrences > maxOccurrences) {
-						mostLikelyMatches.clear();
-
-						maxOccurrences = occurrences;
-					}
-
-					mostLikelyMatches.add(new Pair<>(match.first(), matchProperty));
+				if (!_match(property, matchProperty, match.first(), maxOccurrences, portletNames)) {
+					continue;
 				}
+
+				int occurrences = _getOccurrences(property, matchProperty);
+
+				if (occurrences > maxOccurrences) {
+					mostLikelyMatches.clear();
+
+					maxOccurrences = occurrences;
+				}
+
+				mostLikelyMatches.add(new Pair<>(match.first(), matchProperty));
 			}
 		}
 
@@ -336,9 +344,11 @@ public class PropertiesLocator {
 		int numOccurrences = 0;
 
 		for (String word : propertyWords) {
-			if (originalPropertyWordsList.contains(word)) {
-				numOccurrences++;
+			if (!originalPropertyWordsList.contains(word)) {
+				continue;
 			}
+
+			numOccurrences++;
 		}
 
 		return numOccurrences;
@@ -515,26 +525,28 @@ public class PropertiesLocator {
 								while (enu.hasMoreElements()) {
 									ZipEntry zipEntry = (ZipEntry)enu.nextElement();
 
-									if (_isLiferayJar(zipEntry.getName())) {
-										InputStream inputStream = zipFile.getInputStream(zipEntry);
+									if (!_isLiferayJar(zipEntry.getName())) {
+										continue;
+									}
 
-										try (JarInputStream jarIs = new JarInputStream(inputStream)) {
-											ZipEntry zipEntryJar = jarIs.getNextEntry();
+									InputStream inputStream = zipFile.getInputStream(zipEntry);
 
-											while (zipEntryJar != null) {
-												String name = zipEntryJar.getName();
+									try (JarInputStream jarIs = new JarInputStream(inputStream)) {
+										ZipEntry zipEntryJar = jarIs.getNextEntry();
 
-												if (name.endsWith("Configuration.class")) {
-													configClassesMap.put(
-														name.replace(".class", StringPool.BLANK),
-														new ConfigurationClassData(jarIs));
-												}
+										while (zipEntryJar != null) {
+											String name = zipEntryJar.getName();
 
-												zipEntryJar = jarIs.getNextEntry();
+											if (name.endsWith("Configuration.class")) {
+												configClassesMap.put(
+													name.replace(".class", StringPool.BLANK),
+													new ConfigurationClassData(jarIs));
 											}
+
+											zipEntryJar = jarIs.getNextEntry();
 										}
-										catch (Exception exception) {
-										}
+									}
+									catch (Exception exception) {
 									}
 								}
 							}
@@ -682,44 +694,46 @@ public class PropertiesLocator {
 						while (enu.hasMoreElements()) {
 							ZipEntry zipEntry = (ZipEntry)enu.nextElement();
 
-							if (_isLiferayJar(zipEntry.getName())) {
-								InputStream inputStream = zipFile.getInputStream(zipEntry);
+							if (!_isLiferayJar(zipEntry.getName())) {
+								continue;
+							}
 
-								try (JarInputStream jarIs = new JarInputStream(inputStream)) {
-									ZipEntry zipEntryJar = jarIs.getNextEntry();
+							InputStream inputStream = zipFile.getInputStream(zipEntry);
 
-									while (zipEntryJar != null) {
-										String zipEntryJarName = zipEntryJar.getName();
+							try (JarInputStream jarIs = new JarInputStream(inputStream)) {
+								ZipEntry zipEntryJar = jarIs.getNextEntry();
 
-										if (zipEntryJarName.equals("portlet.properties")) {
-											Properties portletProperties = new Properties();
+								while (zipEntryJar != null) {
+									String zipEntryJarName = zipEntryJar.getName();
 
-											portletProperties.load(jarIs);
+									if (zipEntryJarName.equals("portlet.properties")) {
+										Properties portletProperties = new Properties();
 
-											Enumeration<Object> enuKeys = portletProperties.keys();
+										portletProperties.load(jarIs);
 
-											String[] propertyKeys = new String[0];
+										Enumeration<Object> enuKeys = portletProperties.keys();
 
-											while (enuKeys.hasMoreElements()) {
-												propertyKeys = ArrayUtil.append(
-													propertyKeys, (String)enuKeys.nextElement());
-											}
+										String[] propertyKeys = new String[0];
 
-											if (propertyKeys.length != 0) {
-												String prop =
-													lpkgAbsolutePath + "/" + zipEntry.getName() + "/portlet.properties";
-
-												portletsProperties.add(new Pair<String, String[]>(prop, propertyKeys));
-											}
-
-											break;
+										while (enuKeys.hasMoreElements()) {
+											propertyKeys = ArrayUtil.append(
+												propertyKeys, (String)enuKeys.nextElement());
 										}
 
-										zipEntryJar = jarIs.getNextEntry();
+										if (propertyKeys.length != 0) {
+											String prop =
+												lpkgAbsolutePath + "/" + zipEntry.getName() + "/portlet.properties";
+
+											portletsProperties.add(new Pair<String, String[]>(prop, propertyKeys));
+										}
+
+										break;
 									}
+
+									zipEntryJar = jarIs.getNextEntry();
 								}
-								catch (Exception exception) {
-								}
+							}
+							catch (Exception exception) {
 							}
 						}
 					}

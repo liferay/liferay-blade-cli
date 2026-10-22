@@ -142,9 +142,11 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			for (String fileName : _SDK_6_GA5_FILES) {
 				File file = new File(destDir, fileName);
 
-				if (file.exists()) {
-					file.delete();
+				if (!file.exists()) {
+					continue;
 				}
+
+				file.delete();
 			}
 		}
 

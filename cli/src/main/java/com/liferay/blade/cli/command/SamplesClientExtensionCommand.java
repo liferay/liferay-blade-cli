@@ -90,11 +90,13 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		for (File file : samplesClientExtensionRepo.listFiles()) {
 			String fileName = file.getName();
 
-			if (Files.isDirectory(file.toPath()) && (Objects.isNull(sampleName) || fileName.equals(sampleName))) {
-				File dest = new File(workDir, fileName);
-
-				FileUtil.copyDir(file.toPath(), dest.toPath());
+			if (!Files.isDirectory(file.toPath()) || (Objects.nonNull(sampleName) && !fileName.equals(sampleName))) {
+				continue;
 			}
+
+			File dest = new File(workDir, fileName);
+
+			FileUtil.copyDir(file.toPath(), dest.toPath());
 		}
 	}
 
@@ -134,21 +136,25 @@ public class SamplesClientExtensionCommand extends BaseCommand<SamplesClientExte
 		for (File file : samplesClientExtensionRepo.listFiles()) {
 			String fileName = file.getName();
 
-			if (file.isDirectory()) {
-				Files.walkFileTree(file.toPath(), new SamplesVisitor());
-
-				List<Path> samplesList = samplesMap.get(fileName);
-
-				if (samplesList == null) {
-					samplesList = new ArrayList<>();
-
-					samplesMap.put(fileName, samplesList);
-				}
-
-				if (samplesMap.containsKey(fileName)) {
-					Collections.sort(samplesList);
-				}
+			if (!file.isDirectory()) {
+				continue;
 			}
+
+			Files.walkFileTree(file.toPath(), new SamplesVisitor());
+
+			List<Path> samplesList = samplesMap.get(fileName);
+
+			if (samplesList == null) {
+				samplesList = new ArrayList<>();
+
+				samplesMap.put(fileName, samplesList);
+			}
+
+			if (!samplesMap.containsKey(fileName)) {
+				continue;
+			}
+
+			Collections.sort(samplesList);
 		}
 
 		bladeCLI.out(

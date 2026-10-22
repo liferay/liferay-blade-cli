@@ -150,17 +150,19 @@ public class FileWatcher {
 				// if directory is created, and watching recursively, then
 				// register it and its sub-directories
 
-				if (_recursive && (kind == StandardWatchEventKinds.ENTRY_CREATE)) {
-					try {
-						if (Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) {
-							_registerAll(child);
-						}
-					}
-					catch (IOException ioException) {
+				if (!_recursive || (kind != StandardWatchEventKinds.ENTRY_CREATE)) {
+					continue;
+				}
 
-						// ignore to keep sample readbale
-
+				try {
+					if (Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) {
+						_registerAll(child);
 					}
+				}
+				catch (IOException ioException) {
+
+					// ignore to keep sample readbale
+
 				}
 			}
 
@@ -181,14 +183,16 @@ public class FileWatcher {
 
 			boolean valid = key.reset();
 
-			if (!valid) {
-				_keys.remove(key);
+			if (valid) {
+				continue;
+			}
 
-				// all directories are inaccessible
+			_keys.remove(key);
 
-				if (_keys.isEmpty()) {
-					break;
-				}
+			// all directories are inaccessible
+
+			if (_keys.isEmpty()) {
+				break;
 			}
 		}
 	}

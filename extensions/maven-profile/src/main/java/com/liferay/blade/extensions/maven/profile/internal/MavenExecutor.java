@@ -88,9 +88,11 @@ public interface MavenExecutor {
 									buildSuccess.set(true);
 								}
 
-								if (printOutput) {
-									System.out.println(line);
+								if (!printOutput) {
+									continue;
 								}
+
+								System.out.println(line);
 							}
 						}
 						catch (Exception exception) {
@@ -110,9 +112,11 @@ public interface MavenExecutor {
 								output.append(line);
 								output.append(System.lineSeparator());
 
-								if (printOutput) {
-									System.err.println(line);
+								if (!printOutput) {
+									continue;
 								}
+
+								System.err.println(line);
 							}
 						}
 						catch (Exception exception) {

@@ -373,19 +373,23 @@ public class WatchCommand extends BaseCommand<WatchArgs> {
 								}
 							}
 
-							if (!baseArgs.isQuiet()) {
-								bladeCLI.out("Watching files in " + watchPath + ". Press Crtl + C to stop.");
+							if (baseArgs.isQuiet()) {
+								continue;
 							}
+
+							bladeCLI.out("Watching files in " + watchPath + ". Press Crtl + C to stop.");
 						}
 
 						boolean valid = watchKey.reset();
 
-						if (!valid) {
-							watchKeys.remove(watchKey);
+						if (valid) {
+							continue;
+						}
 
-							if (watchKeys.isEmpty()) {
-								break;
-							}
+						watchKeys.remove(watchKey);
+
+						if (watchKeys.isEmpty()) {
+							break;
 						}
 					}
 				}

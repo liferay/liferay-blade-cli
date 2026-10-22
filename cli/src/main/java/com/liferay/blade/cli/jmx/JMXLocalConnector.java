@@ -109,12 +109,14 @@ public class JMXLocalConnector {
 
 						String nativeLibFileName = nativeLibFile.getName();
 
-						if (nativeLibFileName.contains("attach")) {
-							Method f = clazz.getDeclaredMethod("finalize");
-
-							f.setAccessible(true);
-							f.invoke(nativeLib);
+						if (!nativeLibFileName.contains("attach")) {
+							continue;
 						}
+
+						Method f = clazz.getDeclaredMethod("finalize");
+
+						f.setAccessible(true);
+						f.invoke(nativeLib);
 					}
 				}
 			}

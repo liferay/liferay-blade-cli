@@ -450,9 +450,11 @@ public class BndProperties extends Properties {
 					}
 			}
 
-			if (c != ' ') {
-				head = key;
+			if (c == ' ') {
+				continue;
 			}
+
+			head = key;
 		}
 	}
 

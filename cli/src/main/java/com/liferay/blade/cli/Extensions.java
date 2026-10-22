@@ -116,75 +116,89 @@ public class Extensions implements Closeable {
 		for (int x = 0; x < argsList.size(); x++) {
 			String s = argsList.get(x);
 
-			if (flagsWithArgs.contains(s)) {
-				addLast.add(argsList.remove(x));
-				addLast.add(argsList.remove(x));
-				x--;
+			if (!flagsWithArgs.contains(s)) {
+				continue;
 			}
+
+			addLast.add(argsList.remove(x));
+			addLast.add(argsList.remove(x));
+			x--;
 		}
 
 		for (int x = 0; x < argsList.size(); x++) {
 			String s = argsList.get(x);
 
-			if (flagsWithoutArgs.contains(s)) {
-				addLast.add(argsList.remove(x));
+			if (!flagsWithoutArgs.contains(s)) {
+				continue;
 			}
+
+			addLast.add(argsList.remove(x));
 		}
 
 		for (int x = 0; x < argsList.size(); x++) {
-			if (!spaceCommandSplitCollection.isEmpty()) {
-				String[] foundStrArray = null;
+			if (spaceCommandSplitCollection.isEmpty()) {
+				continue;
+			}
 
-				for (String[] strArray : spaceCommandSplitCollection) {
-					if ((argsList.size() >= (x + strArray.length)) && (foundStrArray == null)) {
-						boolean mismatch = false;
+			String[] foundStrArray = null;
 
-						if (strArray.length == 0) {
-							mismatch = true;
-						}
-
-						for (int y = 0; y < strArray.length; y++) {
-							if (Objects.equals(strArray[y], argsList.get(x + y))) {
-								continue;
-							}
-
-							mismatch = true;
-						}
-
-						if (!mismatch) {
-							foundStrArray = strArray;
-
-							break;
-						}
-					}
+			for (String[] strArray : spaceCommandSplitCollection) {
+				if ((argsList.size() < (x + strArray.length)) || (foundStrArray != null)) {
+					continue;
 				}
 
-				if (foundStrArray != null) {
-					Collection<String> commandParts = new ArrayList<>();
+				boolean mismatch = false;
 
-					for (int y = 0; y < foundStrArray.length; y++) {
-						if (Objects.equals(foundStrArray[y], argsList.get(x + y))) {
-							commandParts.add(foundStrArray[y]);
-						}
+				if (strArray.length == 0) {
+					mismatch = true;
+				}
+
+				for (int y = 0; y < strArray.length; y++) {
+					if (Objects.equals(strArray[y], argsList.get(x + y))) {
+						continue;
 					}
 
-					StringBuilder newCommand = new StringBuilder();
+					mismatch = true;
+				}
 
-					for (String commandPart : commandParts) {
-						if (Objects.equals(commandPart, argsList.get(x))) {
-							int len = newCommand.length();
+				if (!mismatch) {
+					foundStrArray = strArray;
 
-							if (len > 0) {
-								newCommand.append(" ");
-							}
-
-							newCommand.append(argsList.remove(x));
-						}
-					}
-
-					argsList.add(x, newCommand.toString());
+					break;
 				}
 			}
+
+			if (foundStrArray == null) {
+				continue;
+			}
+
+			Collection<String> commandParts = new ArrayList<>();
+
+			for (int y = 0; y < foundStrArray.length; y++) {
+				if (!Objects.equals(foundStrArray[y], argsList.get(x + y))) {
+					continue;
+				}
+
+				commandParts.add(foundStrArray[y]);
+			}
+
+			StringBuilder newCommand = new StringBuilder();
+
+			for (String commandPart : commandParts) {
+				if (!Objects.equals(commandPart, argsList.get(x))) {
+					continue;
+				}
+
+				int len = newCommand.length();
+
+				if (len > 0) {
+					newCommand.append(" ");
+				}
+
+				newCommand.append(argsList.remove(x));
+			}
+
+			argsList.add(x, newCommand.toString());
 		}
 
 		argsList.addAll(addLast);
@@ -239,11 +253,13 @@ public class Extensions implements Closeable {
 					for (Object key : properties.keySet()) {
 						String jarResource = key.toString() + "-" + properties.getProperty(key.toString()) + ".jar";
 
-						if (jarResource.startsWith("com.liferay.project.templates") &&
-							(classLoader.getResource(jarResource) != null)) {
+						if (!jarResource.startsWith("com.liferay.project.templates") ||
+							(classLoader.getResource(jarResource) == null)) {
 
-							templates.add(jarResource);
+							continue;
 						}
+
+						templates.add(jarResource);
 					}
 
 					for (String template : templates) {
@@ -287,20 +303,24 @@ public class Extensions implements Closeable {
 		for (Field field : clazz.getDeclaredFields()) {
 			Parameter annotation = field.getAnnotation(Parameter.class);
 
-			if (annotation != null) {
-				String[] names = annotation.names();
+			if (annotation == null) {
+				continue;
+			}
 
-				if ((names != null) && (names.length > 0)) {
-					Class<?> type = field.getType();
+			String[] names = annotation.names();
 
-					if ((withArguments && !type.equals(boolean.class)) ||
-						(!withArguments && type.equals(boolean.class))) {
+			if ((names == null) || (names.length == 0)) {
+				continue;
+			}
 
-						for (String name : names) {
-							flags.add(name);
-						}
-					}
-				}
+			Class<?> type = field.getType();
+
+			if ((withArguments && type.equals(boolean.class)) || (!withArguments && !type.equals(boolean.class))) {
+				continue;
+			}
+
+			for (String name : names) {
+				flags.add(name);
 			}
 		}
 

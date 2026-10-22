@@ -64,9 +64,11 @@ public class BuildServiceCommandMaven extends BaseCommand<BuildServiceArgsMaven>
 
 							sb.append(pathString);
 
-							if ((x + 1) != paths.size()) {
-								sb.append(",");
+							if ((x + 1) == paths.size()) {
+								continue;
 							}
+
+							sb.append(",");
 						}
 
 						String[] args = {"--projects", sb.toString(), "service-builder:build"};

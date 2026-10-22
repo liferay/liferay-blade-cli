@@ -167,9 +167,11 @@ public class BladeUtil {
 		for (String fileName : _APP_SERVER_PROPERTIES_FILE_NAMES) {
 			File file = new File(projectRoot, fileName);
 
-			if (file.exists()) {
-				properties.add(getProperties(file));
+			if (!file.exists()) {
+				continue;
 			}
+
+			properties.add(getProperties(file));
 		}
 
 		return properties;
@@ -456,9 +458,11 @@ public class BladeUtil {
 						while (scanner.hasNextLine()) {
 							String line = scanner.nextLine();
 
-							if (line != null) {
-								AnsiLinePrinter.println(printStream, line);
+							if (line == null) {
+								continue;
 							}
+
+							AnsiLinePrinter.println(printStream, line);
 						}
 					}
 				}
@@ -479,13 +483,17 @@ public class BladeUtil {
 				Collection<ZipEntry> entryCollection = stream.collect(Collectors.toSet());
 
 				for (ZipEntry zipEntry : entryCollection) {
-					if (!zipEntry.isDirectory()) {
-						String entryName = zipEntry.getName();
-
-						if (test.test(entryName)) {
-							retCode = true;
-						}
+					if (zipEntry.isDirectory()) {
+						continue;
 					}
+
+					String entryName = zipEntry.getName();
+
+					if (!test.test(entryName)) {
+						continue;
+					}
+
+					retCode = true;
 				}
 			}
 			catch (Exception exception) {

@@ -68,9 +68,11 @@ public class ExtensionsTest {
 			boolean correctSort = false;
 
 			for (String arg : sortedArgs) {
-				if (Objects.equals(arg, "extension install")) {
-					correctSort = true;
+				if (!Objects.equals(arg, "extension install")) {
+					continue;
 				}
+
+				correctSort = true;
 			}
 
 			Assert.assertTrue(correctSort);

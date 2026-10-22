@@ -117,28 +117,30 @@ public class BladeTest extends BladeCLI {
 					while (scanner.hasNextLine() && !bridj) {
 						String line = scanner.nextLine();
 
-						if ((line != null) && (line.length() > 0)) {
-							if (line.contains("org/bridj/Platform$DeleteFiles")) {
-								bridj = true;
+						if ((line == null) || (line.length() == 0)) {
+							continue;
+						}
+
+						if (line.contains("org/bridj/Platform$DeleteFiles")) {
+							bridj = true;
+						}
+						else if (!line.contains("org.bridj.BridJ log")) {
+							if (line.startsWith("SLF4J:")) {
+								continue;
 							}
-							else if (!line.contains("org.bridj.BridJ log")) {
-								if (line.startsWith("SLF4J:")) {
-									continue;
-								}
 
-								if (line.startsWith("Picked up JAVA_TOOL_OPTIONS")) {
-									continue;
-								}
+							if (line.startsWith("Picked up JAVA_TOOL_OPTIONS")) {
+								continue;
+							}
 
-								if (line.contains("LC_ALL: cannot change locale")) {
-									continue;
-								}
+							if (line.contains("LC_ALL: cannot change locale")) {
+								continue;
+							}
 
-								sb.append(line);
+							sb.append(line);
 
-								if (scanner.hasNextLine()) {
-									sb.append(System.lineSeparator());
-								}
+							if (scanner.hasNextLine()) {
+								sb.append(System.lineSeparator());
 							}
 						}
 					}
