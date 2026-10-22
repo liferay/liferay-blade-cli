@@ -280,6 +280,8 @@ sourceSets {
 test {
 	dependsOn jar, unzipManifest, unzipPortal
 
+	environment "LIFERAY_RELEASES_MIRRORS", buildDir.toURI().toString()
+
 	systemProperty "bladeJarPath", jar.archivePath
 	systemProperty "buildDir", "${buildDir}"
 	systemProperty "liferay.home", "${buildDir}/liferay-ce-portal-7.4.3.4-ga4"
