@@ -53,9 +53,11 @@ public class MavenUtil {
 				for (int nodeInt = 0; nodeInt < nodeList.getLength(); nodeInt++) {
 					Node sNode = nodeList.item(nodeInt);
 
-					if (sNode.getNodeType() == Node.ELEMENT_NODE) {
-						properties.put(sNode.getNodeName(), sNode.getTextContent());
+					if (sNode.getNodeType() != Node.ELEMENT_NODE) {
+						continue;
 					}
+
+					properties.put(sNode.getNodeName(), sNode.getTextContent());
 				}
 			}
 
@@ -64,10 +66,6 @@ public class MavenUtil {
 		catch (Throwable th) {
 			throw new RuntimeException("Unable to get maven properties", th);
 		}
-	}
-
-	public static File getpomXMLFile(File dir) {
-		return new File(getWorkspaceDir(dir), _POM_XML_FILE_NAME);
 	}
 
 	public static File getWorkspaceDir(File dir) {
@@ -84,6 +82,10 @@ public class MavenUtil {
 		}
 
 		return null;
+	}
+
+	public static File getpomXMLFile(File dir) {
+		return new File(getWorkspaceDir(dir), _POM_XML_FILE_NAME);
 	}
 
 	public static boolean isWorkspace(File dir) {

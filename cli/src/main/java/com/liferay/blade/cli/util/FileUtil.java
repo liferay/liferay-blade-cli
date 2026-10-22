@@ -157,9 +157,11 @@ public class FileUtil {
 			do {
 				read = in.read(buffer, 0, buffer.length);
 
-				if (read > 0) {
-					out.append(buffer, 0, read);
+				if (read <= 0) {
+					continue;
 				}
+
+				out.append(buffer, 0, read);
 			}
 			while (read >= 0);
 		}

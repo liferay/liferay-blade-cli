@@ -100,17 +100,19 @@ public class ConvertThemeCommand {
 			List<String> themes = new ArrayList<>();
 
 			for (File file : _pluginsSDKThemesDir.listFiles()) {
-				if (file.isDirectory()) {
-					if (_convertArgs.isAll()) {
-						Optional<Path> themePath = importTheme(file.getCanonicalPath(), removeSource);
+				if (!file.isDirectory()) {
+					continue;
+				}
 
-						if (themePath.isPresent()) {
-							_convertedPaths.add(themePath.get());
-						}
+				if (_convertArgs.isAll()) {
+					Optional<Path> themePath = importTheme(file.getCanonicalPath(), removeSource);
+
+					if (themePath.isPresent()) {
+						_convertedPaths.add(themePath.get());
 					}
-					else {
-						themes.add(file.getName());
-					}
+				}
+				else {
+					themes.add(file.getName());
 				}
 			}
 

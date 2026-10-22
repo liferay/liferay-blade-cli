@@ -100,9 +100,11 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		for (File file : samples.listFiles()) {
 			String fileName = file.getName();
 
-			if (file.isDirectory() && _topLevelFolders.contains(fileName)) {
-				Files.walkFileTree(file.toPath(), visitor);
+			if (!file.isDirectory() || !_topLevelFolders.contains(fileName)) {
+				continue;
 			}
+
+			Files.walkFileTree(file.toPath(), visitor);
 		}
 
 		for (Path path : visitor.getPaths()) {
@@ -110,19 +112,23 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 
 			String fileName = file.getName();
 
-			if (Files.isDirectory(path) && fileName.equals(sampleName)) {
-				File dest = new File(workDir, fileName);
-
-				FileUtil.copyDir(path, dest.toPath());
-
-				if (buildType.equals("gradle")) {
-					_updateBuildGradle(dest, bladeRepoName);
-				}
-
-				if (!BladeUtil.hasGradleWrapper(dest)) {
-					BladeUtil.addGradleWrapper(dest);
-				}
+			if (!Files.isDirectory(path) || !fileName.equals(sampleName)) {
+				continue;
 			}
+
+			File dest = new File(workDir, fileName);
+
+			FileUtil.copyDir(path, dest.toPath());
+
+			if (buildType.equals("gradle")) {
+				_updateBuildGradle(dest, bladeRepoName);
+			}
+
+			if (BladeUtil.hasGradleWrapper(dest)) {
+				continue;
+			}
+
+			BladeUtil.addGradleWrapper(dest);
 		}
 	}
 
@@ -177,27 +183,31 @@ public class SamplesCommand extends BaseCommand<SamplesArgs> {
 		for (File file : samples.listFiles()) {
 			String fileName = file.getName();
 
-			if (file.isDirectory() && _topLevelFolders.contains(fileName)) {
-				SamplesVisitor visitor = new SamplesVisitor();
-
-				Files.walkFileTree(file.toPath(), visitor);
-
-				List<Path> samplesList = samplesMap.get(fileName);
-
-				if (samplesList == null) {
-					samplesList = new ArrayList<>();
-
-					samplesMap.put(fileName, samplesList);
-				}
-
-				for (Path path : visitor.getPaths()) {
-					samplesList.add(path.getFileName());
-				}
-
-				if (samplesMap.containsKey(fileName)) {
-					Collections.sort(samplesList);
-				}
+			if (!file.isDirectory() || !_topLevelFolders.contains(fileName)) {
+				continue;
 			}
+
+			SamplesVisitor visitor = new SamplesVisitor();
+
+			Files.walkFileTree(file.toPath(), visitor);
+
+			List<Path> samplesList = samplesMap.get(fileName);
+
+			if (samplesList == null) {
+				samplesList = new ArrayList<>();
+
+				samplesMap.put(fileName, samplesList);
+			}
+
+			for (Path path : visitor.getPaths()) {
+				samplesList.add(path.getFileName());
+			}
+
+			if (!samplesMap.containsKey(fileName)) {
+				continue;
+			}
+
+			Collections.sort(samplesList);
 		}
 
 		bladeCLI.out("Please provide the sample project name to create, e.g. \"blade samples jsp-portlet\"\n");

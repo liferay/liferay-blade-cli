@@ -219,45 +219,6 @@ public class ConvertServiceBuilderCommandTest {
 	}
 
 	@Test
-	public void testConvertServiceBuilderWithoutRemove() throws Exception {
-		File testdir = new File(temporaryFolder.getRoot(), "build/testMigrateServiceBuilder");
-
-		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
-
-		Assert.assertTrue(testdir.exists());
-
-		File projectDir = new File(testdir, "plugins-sdk-with-git");
-
-		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
-
-		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
-
-		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		args = new String[] {"--base", projectDir.getPath(), "convert", SB_PROJECT_NAME};
-
-		TestUtil.runBlade(_rootDir, _extensionsDir, args);
-
-		File oldSbProject = new File(pluginsSdkDir, "portlets/sample-service-builder-portlet");
-
-		Assert.assertTrue(oldSbProject.exists());
-
-		File moduleDir = new File(projectDir, "modules");
-
-		File newSbDir = new File(moduleDir, "sample-service-builder");
-
-		File sbServiceDir = new File(newSbDir, "sample-service-builder-service");
-		File sbApiDir = new File(newSbDir, "sample-service-builder-api");
-		File sbWar = new File(newSbDir, "sample-service-builder-portlet");
-
-		Assert.assertTrue(sbServiceDir.getAbsolutePath(), sbServiceDir.exists());
-		Assert.assertTrue(sbApiDir.getAbsolutePath(), sbApiDir.exists());
-		Assert.assertTrue(sbWar.getAbsolutePath(), sbWar.exists());
-	}
-
-	@Test
 	public void testConvertServiceBuilderWithRemove() throws Exception {
 		File testdir = new File(temporaryFolder.getRoot(), "build/testMigrateServiceBuilder");
 
@@ -282,6 +243,45 @@ public class ConvertServiceBuilderCommandTest {
 		File oldSbProject = new File(pluginsSdkDir, "portlets/sample-service-builder-portlet");
 
 		Assert.assertFalse(oldSbProject.exists());
+
+		File moduleDir = new File(projectDir, "modules");
+
+		File newSbDir = new File(moduleDir, "sample-service-builder");
+
+		File sbServiceDir = new File(newSbDir, "sample-service-builder-service");
+		File sbApiDir = new File(newSbDir, "sample-service-builder-api");
+		File sbWar = new File(newSbDir, "sample-service-builder-portlet");
+
+		Assert.assertTrue(sbServiceDir.getAbsolutePath(), sbServiceDir.exists());
+		Assert.assertTrue(sbApiDir.getAbsolutePath(), sbApiDir.exists());
+		Assert.assertTrue(sbWar.getAbsolutePath(), sbWar.exists());
+	}
+
+	@Test
+	public void testConvertServiceBuilderWithoutRemove() throws Exception {
+		File testdir = new File(temporaryFolder.getRoot(), "build/testMigrateServiceBuilder");
+
+		FileUtil.unzip(new File("test-resources/projects/plugins-sdk-with-git.zip"), testdir);
+
+		Assert.assertTrue(testdir.exists());
+
+		File projectDir = new File(testdir, "plugins-sdk-with-git");
+
+		File pluginsSdkDir = new File(projectDir, "plugins-sdk");
+
+		FileUtil.deleteDirIfExists(pluginsSdkDir.toPath());
+
+		String[] args = {"--base", projectDir.getPath(), "init", "-u", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		args = new String[] {"--base", projectDir.getPath(), "convert", SB_PROJECT_NAME};
+
+		TestUtil.runBlade(_rootDir, _extensionsDir, args);
+
+		File oldSbProject = new File(pluginsSdkDir, "portlets/sample-service-builder-portlet");
+
+		Assert.assertTrue(oldSbProject.exists());
 
 		File moduleDir = new File(projectDir, "modules");
 
