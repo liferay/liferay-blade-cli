@@ -129,9 +129,9 @@ public class InitCommandTest {
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		File workspaceRulesDir = new File(_workspaceDir, ".workspace-rules");
+		File agentsDir = new File(_workspaceDir, ".agents");
 
-		Assert.assertFalse(Files.exists(workspaceRulesDir.toPath()));
+		Assert.assertFalse(Files.exists(agentsDir.toPath()));
 	}
 
 	@Test
@@ -193,14 +193,14 @@ public class InitCommandTest {
 	}
 
 	@Test
-	public void testBladeInitWorkspaceRules() throws Exception {
+	public void testBladeInitWorkspaceAgents() throws Exception {
 		String[] args = {"--base", _workspaceDir.getPath(), "init", "-v", BladeTest.PRODUCT_VERSION_PORTAL_74};
 
 		TestUtil.runBlade(_workspaceDir, _extensionsDir, args);
 
-		Path workspaceRulesPath = _workspacePath.resolve(".workspace-rules");
+		Path agentsPath = _workspacePath.resolve(".agents");
 
-		Assert.assertTrue(Files.exists(workspaceRulesPath));
+		Assert.assertTrue(Files.exists(agentsPath));
 	}
 
 	@Test
