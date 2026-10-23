@@ -280,7 +280,9 @@ sourceSets {
 test {
 	dependsOn jar, unzipManifest, unzipPortal
 
-	environment "LIFERAY_RELEASES_MIRRORS", buildDir.toURI().toString()
+	URI buildDirURI = buildDir.toURI()
+
+	environment "LIFERAY_RELEASES_MIRRORS", buildDirURI.toString()
 
 	systemProperty "bladeJarPath", jar.archivePath
 	systemProperty "buildDir", "${buildDir}"
