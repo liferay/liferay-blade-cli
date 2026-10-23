@@ -236,7 +236,6 @@ repositories {
 		forRepository {
 			mavenCentral {
 				metadataSources {
-					artifact()
 					ignoreGradleMetadataRedirection()
 					mavenPom()
 				}
