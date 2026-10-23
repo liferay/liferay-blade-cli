@@ -12,6 +12,7 @@ import aQute.bnd.osgi.Jar;
 import aQute.lib.io.IO;
 
 import com.liferay.blade.cli.BladeTest;
+import com.liferay.blade.cli.BladeTestResults;
 import com.liferay.blade.cli.TestUtil;
 import com.liferay.blade.extensions.maven.profile.internal.MavenExecutor;
 import com.liferay.project.templates.extensions.util.VersionUtil;
@@ -83,6 +84,54 @@ public class CreateCommandMavenTest implements MavenExecutor {
 
 			Assert.assertEquals("foo.api;version=\"1.0.0\"", mainAttributes.getValue("Export-Package"));
 		}
+	}
+
+	@Test
+	public void testCreateFormField71() throws Exception {
+		File workspaceDir = _workspaceDir;
+
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_741);
+
+		File modulesDir = new File(workspaceDir, "modules");
+
+		String[] mavenArgs = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
+			"form-field", "foo", "-v", "7.1"
+		};
+
+		File projectDir = new File(modulesDir, "foo");
+
+		String projectPath = projectDir.getAbsolutePath();
+
+		TestUtil.runBlade(workspaceDir, _extensionsDir, mavenArgs);
+
+		_checkMavenBuildFiles(projectPath);
+
+		_checkFileExists(projectPath + "/package.json");
+	}
+
+	@Test
+	public void testCreateFormField74() throws Exception {
+		File workspaceDir = _workspaceDir;
+
+		MavenTestUtil.makeMavenWorkspace(_extensionsDir, workspaceDir, BladeTest.LIFERAY_VERSION_741);
+
+		File modulesDir = new File(workspaceDir, "modules");
+
+		String[] mavenArgs = {
+			"create", "--base", workspaceDir.getAbsolutePath(), "-d", modulesDir.getAbsolutePath(), "-P", "maven", "-t",
+			"form-field", "foo", "-v", BladeTest.LIFERAY_VERSION_741
+		};
+
+		BladeTestResults bladeTestResults = TestUtil.runBlade(workspaceDir, _extensionsDir, false, mavenArgs);
+
+		String errors = bladeTestResults.getErrors();
+
+		Assert.assertTrue(errors, errors.contains("Form Field project in Maven is only supported in 7.0 and 7.1"));
+
+		File projectDir = new File(modulesDir, "foo");
+
+		Assert.assertFalse(projectDir.exists());
 	}
 
 	@Test
