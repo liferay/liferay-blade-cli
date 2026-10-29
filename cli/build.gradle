@@ -121,11 +121,11 @@ dependencies {
 	api name: "org.objectweb.asm.commons-6.0.0"
 	api name: "org.objectweb.asm.tree-6.0.0"
 	api name: "org.objectweb.asm.util-6.0.0"
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.48"
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.form.field", version: "1.0.206"
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.31"
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.32"
-	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.npm.angular.portlet", version: "1.0.200"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.blade.extensions.maven.profile", version: "1.0.49-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.form.field", version: "1.0.207-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.theme", version: "1.0.32-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.js.widget", version: "1.0.33-SNAPSHOT"
+	bladeExtensions group: "com.liferay.blade", name: "com.liferay.project.templates.npm.angular.portlet", version: "1.0.201-SNAPSHOT"
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	compileOnly project(":gradle-tooling")
 	testImplementation gradleTestKit()
@@ -350,6 +350,6 @@ unzipPortal {
 	finalizedBy("processZipsResources")
 }
 
-version = "8.1.0"
+version = "8.1.1-SNAPSHOT"
 
 apply from: "blade-jar-smoke-tests.gradle"
