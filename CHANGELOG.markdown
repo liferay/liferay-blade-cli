@@ -1,5 +1,47 @@
 # Liferay Blade CLI Change Log
 
+## 8.1.0 - 2026-10-29
+
+### Commits
+- [LPD-109266] Bump snapshot version to 8.1.0 (5c6d6e4bbf)
+- [LPD-109267] Update expected workspace plugin version (d6adf777d7)
+- [LPD-109267] Bump project-templates to 6.0.26 (0e757c086a)
+- [LPD-109264] Move form-field project template to blade (f59471e68f)
+- [LPD-111396] Remove unneeded artifact() metadata source for gradle-core
+(242e1c4525)
+- [LPD-111396] Use local releases mirror in tests (b55db705f2)
+- [LPD-111396] Update init tests for .workspace-rules rename to .agents
+(990596d1e1)
+- [LPD-111396] Stop tracking tests.zip (a3cf75ab38)
+- [LPD-111396] Run source formatting check on JDK 21 (2ba7604b9c)
+- [LPD-111396] Run CI tests on JDK 17 instead of JDK 11 (d6391a55ae)
+- [LPD-111396] Ignore Gradle module metadata for gradle-core from Maven Central
+(06b6a5970b)
+
+### Dependencies
+- [LPD-109266] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.48.
+- [LPD-109266] Update the com.liferay.project.templates.form.field dependency to
+version 1.0.206.
+- [LPD-109266] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.31.
+- [LPD-109266] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.32.
+- [LPD-109266] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.200.
+- [LPD-109267] Update the com.liferay.project.templates dependency to version
+6.0.26.
+- [LPD-109264] Update the com.liferay.project.templates.form.field dependency to
+version 1.0.206-SNAPSHOT.
+- [LPD-96463] Update the com.liferay.blade.extensions.maven.profile dependency
+to version 1.0.48-SNAPSHOT.
+- [LPD-96463] Update the com.liferay.project.templates.js.theme dependency to
+version 1.0.31-SNAPSHOT.
+- [LPD-96463] Update the com.liferay.project.templates.js.widget dependency to
+version 1.0.32-SNAPSHOT.
+- [LPD-96463] Update the com.liferay.project.templates.npm.angular.portlet
+dependency to version 1.0.200-SNAPSHOT.
+
 ## 8.0.2 - 2026-06-26
 
 ### Commits
@@ -3255,6 +3297,11 @@ maintainability (7f9bc3f45e)
 [LPD-87931]: https://issues.liferay.com/browse/LPD-87931
 [LPD-90666]: https://issues.liferay.com/browse/LPD-90666
 [LPD-91744]: https://issues.liferay.com/browse/LPD-91744
+[LPD-96463]: https://issues.liferay.com/browse/LPD-96463
+[LPD-109264]: https://issues.liferay.com/browse/LPD-109264
+[LPD-109266]: https://issues.liferay.com/browse/LPD-109266
+[LPD-109267]: https://issues.liferay.com/browse/LPD-109267
+[LPD-111396]: https://issues.liferay.com/browse/LPD-111396
 [LPS-47580]: https://issues.liferay.com/browse/LPS-47580
 [LPS-50156]: https://issues.liferay.com/browse/LPS-50156
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
