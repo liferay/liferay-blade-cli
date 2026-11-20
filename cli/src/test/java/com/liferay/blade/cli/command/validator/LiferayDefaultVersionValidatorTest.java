@@ -19,9 +19,15 @@ public class LiferayDefaultVersionValidatorTest {
 	public void testPromoted() throws Exception {
 		LiferayDefaultVersionValidator ldvv = new LiferayDefaultVersionValidator();
 
-		List<String> values = ldvv.get();
+		List<String> promotedValues = ldvv.get();
 
-		Assert.assertTrue(values.toString(), values.size() < 20);
+		Assert.assertFalse(promotedValues.isEmpty());
+
+		LiferayMoreVersionValidator lmvv = new LiferayMoreVersionValidator();
+
+		List<String> allValues = lmvv.get();
+
+		Assert.assertTrue(promotedValues.toString(), promotedValues.size() < allValues.size());
 	}
 
 }
