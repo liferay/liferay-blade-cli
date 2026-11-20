@@ -263,6 +263,23 @@ public class InitCommandTest {
 	}
 
 	@Test
+	public void testDefaultInitWorkspaceDirectoryHasFilesForcePromptedVersion() throws Exception {
+		String[] args = {"--base", _workspaceDir.getPath(), "init", "-f"};
+
+		Files.createFile(_workspacePath.resolve("foo"));
+
+		String responses = "1" + System.lineSeparator();
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(responses.getBytes());
+
+		TestUtil.runBlade(_workspaceDir, _extensionsDir, byteArrayInputStream, true, args);
+
+		Path buildGradlePath = _workspacePath.resolve("build.gradle");
+
+		Assert.assertTrue(Files.exists(buildGradlePath));
+	}
+
+	@Test
 	public void testDefaultInitWorkspaceInWorkspaceRoot() {
 		_testDefaultInitWorkspaceInWorkspace(".");
 	}
