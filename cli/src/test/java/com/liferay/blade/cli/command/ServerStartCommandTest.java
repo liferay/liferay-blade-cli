@@ -37,6 +37,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -97,6 +98,8 @@ public class ServerStartCommandTest {
 		_findAndTerminateTomcat(false);
 
 		_debugPort = _DEFAULT_DEBUG_PORT_TOMCAT;
+
+		Assume.assumeFalse("Port " + _debugPort + " is already in use", _isDebugPortListening(_debugPort));
 
 		_initBladeWorkspace();
 
@@ -220,6 +223,8 @@ public class ServerStartCommandTest {
 		_findAndTerminateTomcat(false);
 
 		_debugPort = _DEFAULT_DEBUG_PORT_TOMCAT;
+
+		Assume.assumeFalse("Port " + _debugPort + " is already in use", _isDebugPortListening(_debugPort));
 
 		_initBladeWorkspace();
 
