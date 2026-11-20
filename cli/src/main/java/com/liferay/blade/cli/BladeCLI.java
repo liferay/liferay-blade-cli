@@ -788,7 +788,8 @@ public class BladeCLI {
 	}
 
 	private JCommander _buildJCommanderWithCommandMap(
-		String[] args, Map<String, BaseCommand<? extends BaseArgs>> commandMap) {
+			String[] args, Map<String, BaseCommand<? extends BaseArgs>> commandMap)
+		throws Exception {
 
 		JCommander.Builder builder = JCommander.newBuilder();
 
@@ -796,6 +797,10 @@ public class BladeCLI {
 
 		for (Map.Entry<String, BaseCommand<? extends BaseArgs>> entry : commandMap.entrySet()) {
 			BaseCommand<? extends BaseArgs> value = entry.getValue();
+
+			Class<? extends BaseArgs> argsClass = value.getArgsClass();
+
+			value.setArgs(argsClass.newInstance());
 
 			try {
 				builder.addCommand(entry.getKey(), value.getArgs());
